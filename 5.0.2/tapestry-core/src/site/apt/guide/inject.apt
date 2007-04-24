@@ -1,0 +1,122 @@
+ ----
+ Injection with Components
+ ----
+ 
+Injection with Components
+
+  A key concept in Tapestry is the use of <injection>. The
+  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/index.html}Tapestry IoC container}} makes use of one form
+  of injection, via parameters to service builder methods.
+  
+  For components, Tapestry takes a completely different tack: injection directly into
+  instance variables.
+  
+Inject Annotation
+
+  The {{{../apidocs/org/apache/tapestry/annotations/Inject.html}Inject annotation}} is used to identify fields that will contain injected services and other resources.
+  
+  Tapestry allows for two kinds of injection:
+  
+  * Named injection, where the value attribute of the Inject annotation identifies a specific service or resource
+    to inject.
+    
+  * Annonymous injection, where Tapestry determines the object to inject into the field based on its type.
+  
+  []
+  
+  In both cases, the field is transformed into a read only value.  As elsewhere in Tapestry, this transformation occurs
+  at runtime (which is very important in terms of being able to test your components).
+  Attempting to update an injected field will result in a runtime exception.
+  
+* Asset Injection
+
+  When the field type is
+  {{{../apidocs/org/apache/tapestry/Asset.html}Asset}}, the value of the Inject annotation is treated specially, as a path
+  (relative to the component) to an {{{assets.html}asset}}.  
+  
+* Block Injection
+
+  For field type {{{../apidoc/org/apache/tapestry/Block.html}Block}}, the value of the Inject annotation is the
+  id of the {{{templates.apt}\<block\> element}}.  If the value is omitted, it is deduced from the field name
+  (by stripping out leading "_" and "$" characters).
+  
+* Named Injection
+
+  Here, a specific object is requested. The value of the Inject annotation is an
+  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/provider.html}object reference}} used to identify the exact service, or other resource,
+  to be injected.
+  
+  Commonly, the "infrastructure:" prefix is used with the Inject annotation, to indirectly identify services contributed
+  into the tapestry.Infrastructure service.
+  
+  Example:
+  
++----+
+@Inject("infrastructure:Request")
+private Request _request;
++----+
+
+  Here, a component requires access to the current Request object, which is defined in tapestry.Infrastructure using the key "request".
+  
+* Annonymous Injection
+
+  When a specific service is not identified, Tapestry will attempt to find the best match.
+  
+  A very common example occurs when a component needs access to its
+  {{{../apidocs/org/apache/tapestry/ComponentResources.html}resources}}.  The component
+  can define a field of the appropriate type
+  and use the Inject annotation without a value:
+  
++----+
+@Inject
+private ComponentResources _resources;
++----+
+
+  Tapestry uses the type of the field, ComponentResources, to determine what to inject into this field.
+
+  <<TODO: Don't like the name "Annonymous" either.>>
+
+  The following types are supported for annonymous injection out of the box:
+  
+  [java.lang.String]
+    The complete id of the component, which incorporates the complete class name of the containing page and the nested
+    id of the component within the page.
+    
+  [java.util.Locale]
+    The locale for the component (all components within a page use the same locale).
+    
+  [org.apache.commons.logging.Log]
+    A Log instance configured for the component, based on the component's class name.
+  
+  [org.apache.tapestry.ComponentResources]
+  	The resources for the component, often used to generate links related to the component.
+  		
+  [org.apache.tapestry.ioc.Messages]
+    The component message catalog for the component, from which
+    {{{localization.html}localized}} messages can be generated.
+   
+
+** Default Annonymous Injection
+  
+  There are a finite number of types that Tapestry can check for.  Beyond that, the final default behavior
+  for annonymous injection is to search for a service, defined in
+  the Tapestry IoC Registry, that matches
+  the field type.  This will fail, with a runtime exception, unless exactly one service in the Registry exists
+  with a service interface matching the field type.
+  
+  Caution should be used when leveraging this default behavior, since minor code changes may introduce new services
+  that will cause previously working injections to fail. In general, relying on default annonymous injection should
+  be avoided in anything but a prototype.
+    
+** Defining New Annonymous Injection Logic
+
+  Annonymous injection is controlled by the 
+  {{{../apidocs/org/apache/tapestry/services/InjectionProvider.html}tapestry.InjectionProvider}}
+  service. The configuration for this service is a 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/command.html}chain of command}} for handling annonymous injections.
+  
+Other Injections
+
+  Forthcoming will be additional annotations that will perform additional kinds of injections; injections of components,
+  or messages, of meta data, of assets, etc.
+  

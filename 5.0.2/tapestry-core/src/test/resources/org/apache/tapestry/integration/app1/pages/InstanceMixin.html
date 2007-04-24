@@ -1,0 +1,26 @@
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p> Date #1: [<t:comp type="Output" 
+        mixins="Emphasis" 
+        value="date1" 
+        test="showEmphasis"
+        format="format"/>]
+    </p>
+    
+    <p>
+        Date #2: [<t:comp id="output2"/>]  (via @Mixins)
+    </p>
+    
+    <p>
+        Date #3: [<t:comp id="output3"/>] (via @MixinClasses)
+    </p>
+
+    <p>
+        <t:comp id="toggle" type="ActionLink">Toggle emphasis</t:comp>
+    </p>
+    
+    <p>
+        Show emphasis: ${showEmphasis}
+    </p>
+
+</t:comp>

@@ -1,0 +1,15 @@
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p> Choose a number from 1 to 10: </p>
+
+    <p>
+        <t:comp type="Count" end="10" value="index">
+            <t:comp id="choose" type="ActionLink" context="index" class="linkClass">${index}</t:comp>
+        </t:comp>
+    </p>
+
+    <t:comp type="If" test="value">
+        <p> <strong>You chose: ${value}</strong>.</p>
+    </t:comp>
+
+</t:comp>
