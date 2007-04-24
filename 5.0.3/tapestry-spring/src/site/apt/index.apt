@@ -1,0 +1,81 @@
+ ----
+ Tapestry/Spring Integration
+ ----
+ 
+Tapestry/Spring Integration
+
+  Provides integration between Tapestry and Spring, allowing beans defined by Spring to be injected into Tapestry IoC services, and into
+  Tapestry components.
+  
+Version
+
+  This module is compiled and tested against Spring 1.2.8.  However, Spring 2.0 is fully backwards compatible to Spring 1.2.8.
+  
+  This module uses the Maven scope "provided" for the dependencies on Spring. This means that in your own POM, you will need to specify your own
+  dependency to Spring, including the correct version.  Example:
+  
++---+
+<dependency>
+  <groupId>org.springframework</groupId>
+  <artifactId>spring-web</artifactId>
+  <version>1.2.8</version>
+</dependency>    
++----+
+
+  With the default Maven scope, the Spring JARs and dependencies will be packaged into your application's WAR file.
+  
+  
+Usage
+
+  The integration is designed to be a very thin layer on top of Spring's normal configuration for a web application.
+  
+  Detailed instructions are available in the
+  {{{http://static.springframework.org/spring/docs/1.2.x/reference/beans.html#context-create}Spring 1.2.x documentation}}.
+  
+* web.xml changes
+  
+  The short form is that you must make a small change to your application's web.xml:
+ 
++---+
+<context-param>
+  <param-name>contextConfigLocation</param-name>
+  <param-value>/WEB-INF/daoContext.xml /WEB-INF/applicationContext.xml</param-value>
+</context-param>
+
+<listener>
+  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+</listener>
++---+
+
+  The \<context-param\> lists the Spring bean configuration file.  It is optional and defaults to just /WEB-INF/applicationContext.xml if omitted.
+  
+  The ContextLoaderListener is responsible for reading the bean configuration file (or files) and storing the result in the application context, where
+  the Tapestry-Spring integration code can make use of it.
+  
+* Injecting beans
+
+  Inside your component classes, you may use the 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/annotations/Inject.html}Inject}} annotation.  The annotation
+  value should be "spring:" + the name of the bean.  Example:
+  
++----+
+  @Inject("spring:userDAO")
+  private UserDAO _userDAO;
++----+
+
+Case Insensitivity
+
+  At startup, the names of all the beans provided by the Spring application context is obtained and use to build a case-insensitive map.
+  When a bean is requested, it is filtered through this map to get the case-sensitive name required by Spring. The upshot of this is that
+  you should not have to be concerned with case: in the above example "Spring:UserDAO" or "SPRING:userdao" would work equally well.
+  
+Limitations
+
+  Case insensitivity is limited to beans whose names are available at application startup; it is possible to programatically add bean definitions
+  at runtime, but these will not be available case-insensitively (but using exactly matching case will still work).
+  
+  No check is made for name clashes that would occur when two beans have names that differ only in case.
+  
+  Non-singleton beans are not handled properly. Tapestry will request the beans from the application context in a manner unsuitable for their lifecycle.
+  For the moment, you should consider the non-singleton beans to be not-injectable.  Instead, inject the tapestry.spring.WebApplicationContext service and
+  obtain the non-singleton beans as needed.
