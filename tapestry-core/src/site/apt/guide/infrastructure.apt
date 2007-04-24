@@ -1,0 +1,125 @@
+ ----
+ Infrastructure and Overrides
+ ----
+
+Introduction
+
+  Tapestry includes an object provider, "infrastructure:", which is used to access
+  the key built-in services provided by Tapestry.  This allows you to inject, 
+  into  your components or services, any of the services, using a shorter name, i.e.,
+  "infrastructure:Request" vs. "service:tapestry.Request".
+
+  This functionaliy serves a separate, and ultimately more important, purpose.
+  
+  In the vast majority of applications developed using Tapestry, the built in set of 
+  services does exactly what you need them to do. However, there are always outliers,
+  very special cases that aren't addressed. The infrastructure mechanism includes the ability
+  to <<override>> these services.  If infrastructure:AssetSource doesn't do quite what you need,
+  you will be able to provide your own service and make that infrastructure:AssetSource. It will be
+  your implementation that is injected into both your own services and components and the
+  services built into Tapestry (both public and internal).
+
+infrastructure: object provider
+
+  The infrastructure 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/provider.html}object provider}} 
+  is a key element in making Tapestry extensible; it adds a layer of
+  indirection between service implementations and their collaborators. Using the infrastructure
+  provider allows applications to identify and override individual services within Tapestry's
+  network of services. 
+  
+  The <expression> for the infrastructure provider is the name of a property. This property is
+  mapped to a particular service via a <pair> of services. The
+  {{{../apidocs/org/apache/tapestry/services/Infrastructure.html}tapestry.Infrastructure}} service
+  has a mapped configuration of 
+  {{{../apidocs/org/apache/tapestry/services/InfrastructureContribution.html}InfrastructureContribution}}s.
+  Each contribution is keyed on the property it provides.
+  
+  A second service (<<Caution:>> not yet implemented), tapestry.InfrastructureOverride, exists
+  to support a second, identical configuration. Any properties contributed here override the normal
+  Infrastructure properties.
+  
+  In order to override an individual Tapestry service, all that is necessary is to provide
+  a new implementation as a new service, and contribute that service into the configuration for
+  the tapestry.InfrastructureOverride service.
+  
+  In many cases, the original service can be injected into the new implementation; this must be done
+  using the original service's fully qualified service id.
+  
+  The following table identifies the services that are available via the infrastructure provider
+  by default:
+  
+  [AssetSource]
+    {{{../apidocs/org/apache/tapestry/services/AssetSource.html}AssetSource}} (tapestry.AssetSource)
+    
+    Obtains assets from public and internal resources.
+    
+  [ClasspathAssetAliasManager]
+    {{{../apidocs/org/apache/tapestry/services/ClasspathAssetAliasManager.html}ClasspathAssetAliasManager}} (tapestry.ClasspathAssetAliasManager)
+  
+    Used to convert resource paths for classpath resources into client URLs, which includes a configurable way of assigning
+    path aliases (resulting in shorter, more readable URLs).
+  
+  [BindingSource]
+    {{{../apidocs/org/apache/tapestry/services/BindingSource.html}BindingSource}} (tapestry.BindingSource)
+    
+    Central factory for creating all types of component Binding objects.
+  
+   	
+  [ComponentMessagesSource]
+  	{{{../apidocs/org/apache/tapestry/services/ComponentMessagesSource.html}ComponentMessagesSource}} (tapestry.ComponentMessagesSource)
+  	
+  	Access to message catalogs for components.
+  	
+  [ComponentSource]
+  	{{{../apidocs/org/apache/tapestry/services/ComponentSource.html}ComponentSource}} (tapestry.ComponentSource)
+  	
+  	Used to retrieve component instances via their complete id.
+
+  [Environment]
+    {{{../apidocs/org/apache/tapestry/services/Environment.html}Environment}} (tapestry.Environment)
+    
+    Used to access environmental services (typically, to install a new environmental service).
+
+  [MarkupWriterFactory]
+    {{{../apidocs/org/apache/tapestry/services/MarkupWriterFactory.html}MarkupWriterFactory}} (tapestry.MarkupWriterFactory)
+    
+    Used as a source for MarkupWriter instances.
+    
+  [PersistentFieldManager]
+    {{{../apidocs/org/apache/tapestry/services/PersistentFieldManager.html}PersistentFieldManager}} (tapestry.PersistentFieldManager)
+    
+    Main access point between components and persistent field storage.  Delegates out most behavior to
+    particular persistent strategies.
+    
+  [Request]
+    {{{../apidocs/org/apache/tapestry/services/Request.html}Request}}  (tapestry.Request)
+    
+     The current request object (for the current thread).        
+     
+  [ResourceDigestGenerator]
+    {{{../apidocs/org/apache/tapestry/services/ResourceDigestGenerator.html}ResourceDigestGenerator}} (tapestry.ResourceDigestGenerator)
+    
+    Responsible for identifying which classpath resources require a digest as part of thier URL, and generates the digest for files
+    as needed.  Digests are required for files which represent a security hazard, such as Java class files.
+       
+  [Response]
+    {{{../apidocs/org/apache/tapestry/services/Response.html}Response}}  (tapestry.Response)
+    
+    The current response object (for the current thread).
+    
+  [TypeCoercer]
+    {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/org/apache/tapestry/ioc/services/TypeCoercer.html}TypeCoercer}} (tapestry.ioc.TypeCoercer)
+    
+    Used to coerce values from one type to another (such as string to integer). Used throughout Tapestry, especially including
+    parameter type coercions.
+    
+  [ValidationMessagesSource]
+    {{{../apidocs/org/apache/tapestry/services/ValidationMessagesSource.html}ValidationMessagesSource}} (tapestry.ValidationMessagesSource)
+    
+    Provides access to localized messages related to input validation.
+
+Contributing to Infrastructure
+
+  To Be Documented
+  

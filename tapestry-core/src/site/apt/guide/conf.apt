@@ -1,0 +1,106 @@
+ ---
+ Configuring Tapestry
+ ---
+ 
+Configuring Tapestry
+
+  Tapestry runs on top of the standard Java Servlet API.  To the servlet container,
+  such as Tomcat, Tapestry appears as a <servlet filter>.  This gives Tapestry great
+  flexibility in matching URLs without requiring lots of configuration inside web.xml.
+  
+* web.xml
+
+  The majority of configuration occurs inside the servlet deployment descriptor,
+  WEB-INF/web.xml.
+  
+  Most of the configuration is boilerplate; the same for all applications.
+  
+  The application specific configuration is to identify the root application package.
+  Tapestry uses this package name to locate your page and component classes.
+  
+  Page classes must go in the pages sub-package, and components must go in the
+  components sub-package.
+  
+  You specify the root package as a context parameter:
+  
++----+
+<!DOCTYPE web-app
+      PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+      "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+    <display-name>My Tapestry Application</display-name>
+    <context-param>
+        <param-name>tapestry.app-package</param-name>
+        <param-value>org.example.myapp</param-value>
+    </context-param>
+    <filter>
+        <filter-name>app</filter-name>
+        <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>app</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>
++----+  
+
+  You may name the filter whatever you want, though "app" is a common convention.
+  
+  In this example, page classes will be stored in the <<<org.example.myapp.pages>>> package (or in sub-packages below).
+  Likewise, component classes will be stored in the <<<org.example.myapp.components>>> package.
+  
+* Tapestry Requests vs. Container Requests
+
+  The Tapestry filter matches all the requests that apply to Tapestry, and passes the rest off to the
+  servlet container.
+  
+  Actual files inside the web application take precedence over Tapestry pages, in situation where there
+  would be a naming conflict.  
+  
+  Tapestry recognizes the <root URL>, where the servlet path is simply "/", and renders the application page "Start",
+  if it exists.  
+  
+* Tapestry IoC Configuration
+
+  Most other configuration occurs inside your application's module builder class.  The application module builder
+  will often define new services, provide overrides of services, or make contributions to service configurations.
+  
+  Tapestry looks for a module builder class in the services package (under the root package). It capitalizes
+  the \<filter-name\> and appends "Module".  In the previous example, the module builder class
+  would be org.example.myapp.services.AppModule.
+  
+  If such a class exists, it is added to the IoC Registry. It is not an error for your application to not have a module, though
+  any non-trivial application will likely have one.
+  
+* Configuration Symbols
+
+  Tapestry may also be configured via {{{../tapestry-ioc/symbols.html}symbols}}.  A certain number of built-in services
+  (some of which are not even public) are configured via symbols.  These symbols can be overridden
+  by contributing to the tapestry.ioc.ApplicationDefaults service configuration, or on the command line
+  by defining JVM System Properties with the -D command line option.
+  
+  [tapestry.default-cookie-max-age]
+    The default age, in seconds, that cookies created by Tapestry will be kept in the client web browser.
+    The dfault value is equal to one week. 
+    
+    Primarily, this is used with a cookie that exists 
+    to track the preferred user locale.
+    
+  
+  [tapestry.file-check-interval]
+    Time (in milliseconds) between file system checks. During a file system check, only a single thread is active (all others
+    are blocked) and any files loaded are checked for changes (this is part of {{{reload.html}automatic component reloading}}).
+
+    The default is 1000 (one second),  and is usually overridden with a higher value in production (say, between one and five minutes).
+
+  [tapestry.supported-locales]
+    A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
+    If no match can be found, the first locale in the list is treated as the default.
+    
+    The default is (currently) "en". 
+    
+  [tapestry.start-page-name]
+    The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".
+    
+
+  
