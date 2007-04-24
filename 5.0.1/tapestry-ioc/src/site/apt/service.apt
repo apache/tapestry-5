@@ -1,0 +1,329 @@
+ ----
+ Tapestry IoC Services
+ ----
+ 
+Tapestry IoC Services
+
+  Services consist of two main parts: a service interface and a service implementation.
+  
+  The service interface is how the service will be represented throughout the rest of the
+  registry. Since what gets passed around is normally a proxy, you can't expect to cast a service
+  object down to the implementation class (you'll see a ClassCastException instead). In other
+  words, you should be careful to ensure that your service interface is complete, since
+  Tapestry IoC effectively walls you off from backdoors such as casts.
+  
+  Tapestry doesn't know how to instantiate and configure your service; instead it relies
+  on you to provide the code to do so, in a service builder method:
+  
++-----------------------------------------------------------------------------------+
+package org.example.myapp.services;
+
+import org.apache.tapestry.ioc.annotations.Id;
+
+@Id("myapp")
+public class MyAppModule
+{
+  public static Indexer buildIndexer()
+  {
+    return new IndexerImpl();
+  }
+}
++-----------------------------------------------------------------------------------+
+
+  Here the service interface is Indexer (presumably inside the org.example.myapp.services package,
+  since there isn't an import).  Tapestry doesn't know about the IndexerImpl class (the
+  service implementation of the Indexer service), but it does know 
+  about the buildIndexer() method.
+  
+{Injecting Dependencies} with @InjectService
+
+  It's pretty unlikely  that your service will be able to operate in a total vacuum. It will
+  have other dependencies.  For example, let's say the Indexer needs a JobScheduler to control
+  when it executes, and a FileSystem to access files and store indexes.
+  
++-----------------------------------------------------------------------------------+
+  public static Indexer buildIndexer(@InjectService("JobScheduler")
+    JobScheduler scheduler, @InjectService("FileSystem")
+    FileSystem fileSystem)
+  {
+    IndexerImpl indexer = new IndexerImpl(fileSystem);
+      
+    scheduler.scheduleDailyJob(indexer);
+      
+    return indexer;
+  }
++-----------------------------------------------------------------------------------+
+
+  Here we've annotated the parameters of the service builder method to identify what
+  service to inject for that parameter.  We used unqualified ids ... these are the names
+  of other services within the <same module>: there will be a buildJobScheduler()
+  and a buildFileSystem() service builder methods as well.
+  
+  Note that we don't invoke those service builder methods ... we just "advertise" that we need
+  the named services.  Tapestry IoC will provide the necessary proxies and, when we start to
+  invoke methods on those proxies, will ensure that the full service, including its
+  interceptors and its dependencies, are ready to go. Again, this is done in a 
+  thread-safe manner.   
+  
+  If we used fully qualified service ids, such as "org.examples.myapps.jobs.JobScheduler",
+  then we can access services from some other module entirely.
+  
+  If you find yourself injecting the same dependencies into multiple service builder 
+  (or service decorator) methods, you can 
+  {{{module.html#Caching Services}cache dependency injections}} in your module, by defining
+  a constructor.  This reduces duplication in your module.
+  
+Injecting Dependencies with @Inject
+
+  A second approach to injection uses the more general purpose
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}@Inject annotation}}.
+  
+  @Inject doesn't specify a service id <em>per se</em>.  With inject, you provide
+  an {{{provider.html}object reference}}.  Different prefixes on the reference
+  are interpreted in different ways.  The "service" prefix works identically
+  to the @InjectService annotation, so the previous example can be rewritten
+  as:
+    
++-----------------------------------------------------------------------------------+
+  public static Indexer buildIndexer(@Inject("service:JobScheduler")
+    JobScheduler scheduler, @Inject("service:FileSystem")
+    FileSystem fileSystem)
+  {
+    IndexerImpl indexer = new IndexerImpl(fileSystem);
+      
+    scheduler.scheduleDailyJob(indexer);
+      
+    return indexer;
+  }
++-----------------------------------------------------------------------------------+
+  
+Defining Visibility
+
+  Normally, a service can be referenced from any other module, simply by providing a
+  fully qualified service id.
+  
+  In some cases, it is desirable to mark a service a private, in which case, it is only
+  visible within the same module.
+  
+  The {{{../apidocs/org/apache/tapestry/ioc/annotations/Private.html}@Private annotation}} can
+  be attached to a service builder method to indicate that the service in question is private.
+  
+Defining Service Lifecycle
+
+  Each service has a <lifecycle> that controls when the service implementation is instantiated.
+  There are two built in lifecycles: "singleton" and "perthread", but
+  more can be added.
+  
+  Service lifecycle is specified using the 
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/Lifeycle.html}@Lifecycle annotation}},
+  which is attached to a builder method.  When this annotation is not present, the
+  default lifecycle, "singleton" is used.
+    
+* singleton
+  
+  Most services use the default lifecycle, "singleton".  With this lifecycle a <proxy>
+  is created when the service is first referenced.  By reference, we mean any situation in which
+  the service is requested by name, such as using the @InjectService annotation on a
+  service builder method, or by using the
+  {{{../apidocs/org/apache/tapestry/ioc/Registry.html}Registry}} API from outside the
+  container.
+  
+  In any case, the service proxy will only create the service implementation when a method
+  on the service interface is invoked. Until then, the service can be thought of as "virtual".
+  As the first method is invoked, the service builder method is invoked, then any service
+  decorations occur.  This construction process occurs only once.
+  
+* perthread
+
+  The perthread service lifecycle exists primarily to help multi-threaded servlet applications,
+  though it has other applications.
+  
+  With perthread, the service proxy will delegate to a local service instance that is associated
+  with the current thread. Two different threads, invoking methods on the same proxy, will
+  ultimately be invoking methods on two different service instances, each reserved to their own thread.
+  
+  This is useful when a service needs to keep request specific state, such as information extracted
+  from the HttpServletRequest (in a web application). The default singleton model would not work
+  in such a multi threaded environment.  Using perthread on select services allows state to be isolated
+  to those services.  Because the dispatch occurs <inside> the proxy, you can treat the service
+  as a global, like any other.
+  
+  You will see that your service builder method is invoked more than once.  It is invoked in each
+  thread where the perthread service is used.
+  
+  At the end of the request, the  Registry's cleanupThread() method is invoked; it will discard
+  any perthread service implementations for the current thread.
+  
+  <<Caution:>> A common technique in Tapestry IoC is to have a service builder method
+  register a core service implementation as an event listener with some event hub service.
+  With non-singleton objects, this can cause a number of problems; the event hub will
+  hold a reference to the per-thread instance, even after that per-thread instance has been
+  cleaned up (discarded by the inner proxy). Simply put, this is a pattern to avoid. For
+  the most part, perthread services should be simple holders of data specific to a thread or
+  a request, and should not have overly complex relationships with the other services
+  in the registry.
+  
+Eager Loading Services
+
+  Services are normally created only as needed (per the lifecycle discussion above).
+  
+  This can be tweaked slightly; by adding the 
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/EagerLoad.html}EagerLoad}} annotation to
+  the service builder method, Tapestry will instantiate the service when the Registry is first created.
+  
+  This will cause the service builder method to be invoked, as well as any service decorator methods.
+  
+  This feature is used when a service manages a resource, such as a thread, that needs to be created
+  as soon as the application starts up.  Another common example is a service that listens for events produced
+  by a second service; the first service may need to be created, and start listing, before any of its
+  service methods are invoked (which would normally trigger the instantiation of the service).
+  
+  Many services may be annotated with @EagerLoad; the order in which services are created is not defined. 
+  
+  With the perthread lifecycle, the service builder method will not be invoked (this won't happen until
+  a service method is invoked), but the decorators for
+  the service will be created. 
+     
+Injecting Resources
+
+  In addition to injecting services, Tapestry will key off of the parameter type to allow
+  other things to be injected.
+  
+  * java.lang.String: fully qualified service id for the service being created
+    
+  * org.apache.commons.logging.Log: to which service logging can occur
+  
+  * java.lang.Class: service interface implemented by the service to be constructed
+  
+  * {{{../apidocs/org/apache/tapestry/ioc/ServiceResources.html}ServiceResources}}:  access to other services
+  
+  []
+  
+  No annotation is needed for these cases.
+  
+  See also {{{configuration.html}service configuration}} for additional special cases
+  of resources that can be injected.
+  
+  Example:
+  
++-----------------------------------------------------------------------------------+
+  public static Indexer buildIndexer(String serviceId, Log serviceLog, @InjectService("JobScheduler")
+    JobScheduler scheduler, @InjectService("FileSystem")
+    FileSystem fileSystem)
+  {
+    IndexerImpl indexer = new IndexerImpl(serviceLog, fileSystem);
+      
+    scheduler.scheduleDailyJob(serviceId, indexer);
+
+    return indexer;
+  }
++-----------------------------------------------------------------------------------+  
+  
+  The order of parameters is completely irrelevant. They can come first or last or be
+  interspersed however you like.
+  
+  Injecting in the ServiceResources can be handy when you want to calculate the name
+  of a service dependency on the fly.  However, in the general case (where the
+  id of service dependencies is known at build time), it is easier
+  to use the @InjectService annotation.
+  
+Automatic Dependency Resolution
+
+  When injecting another service, you may choose to not provide the @InjectService annotation.
+  
+  Tapestry will search the registry for a service that implements the <exact> service interface (determined
+  from the parameter type).  If it finds exactly one match, then the corresponding service will be
+  injected.
+  
+  If it finds more than one match, that's an error.  
+  
+  Obviously, this is only useful when you can be sure that there's only one service in the entire registry
+  that implements the service interface.  When you are building a framework for others to use, you should
+  not use this feature ... it's all too likely that some end-user application will create a second service
+  with the same implementation and break your injections.
+  
+  On the other hand, if you are using Tapestry IoC as part of an application, then you can save yourself
+  a small amount of effort and maintenance by letting Tapestry automatically identify dependencies.
+  
+  Example:
+  
++-----------------------------------------------------------------------------------+
+  public static Indexer buildIndexer(JobScheduler scheduler, FileSystem fileSystem)
+  {
+    IndexerImpl indexer = new IndexerImpl(fileSystem);
+      
+    scheduler.scheduleDailyJob(indexer);
+      
+    return indexer;
+  }
++-----------------------------------------------------------------------------------+  
+
+  Assuming that JobScheduler and FileSystem are unique service interfaces, the above will work.
+  It is not necessary that Indexer, JobScheduler and FileSystem be in the same
+  module.
+  
+Builtin Services
+
+  A few services within the tapestry.ioc module are "builtin"; there is no 
+  service builder method
+  in the
+  {{{apidocs/org/apache/tapestry/ioc/services/TapestryIOCModule.html}TapestryIOCModule}} class.
+  
+*----------------------------------+-----------------------------------------------------------------------------------------+
+| <<Service Id>>                   | <<Service Interface>>                                                                   |
+*----------------------------------+-----------------------------------------------------------------------------------------+
+| tapestry.ioc.ClassFactory        | {{{../apidocs/org/apache/tapestry/ioc/services/ClassFactory.html}ClassFactory}}         |
+*----------------------------------+-----------------------------------------------------------------------------------------+
+| tapestry.ioc.LogSource           | {{{../apidocs/org/apache/tapestry/ioc/LogSource.html}LogSource}}                        |
+*----------------------------------+-----------------------------------------------------------------------------------------+
+| tapestry.ioc.RegistryShutdownHub | {{{../apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}    |
+*----------------------------------+-----------------------------------------------------------------------------------------+
+| tapestry.ioc.ThreadCleanupHub    | {{{../apidocs/org/apache/tapestry/ioc/services/ThreadCleanupHub.html}ThreadCleanupHub}} |
+*----------------------------------+-----------------------------------------------------------------------------------------+
+
+  
+Mutually Dependant Services
+
+  One of the benefits of Tapestry IoC's proxy-based approach to just-in-time instantiation 
+  is the automatic support for mutually dependent services.  For example, suppose that
+  the Indexer and the FileSystem needed to talk directly to each other.  Normally, this
+  would cause a "chicken-and-the-egg" problem: which one to create first?
+
+  With Tapestry IoC, this is not even considered a special case:
+  
++-----------------------------------------------------------------------------------+
+  public static Indexer buildIndexer(JobScheduler scheduler, FileSystem fileSystem)
+  {
+    IndexerImpl indexer = new IndexerImpl(fileSystem);
+  
+    scheduler.scheduleDailyJob(indexer);
+  
+    return indexer;
+  }
+    
+  public static buildFileSystem(Indexer indexer)
+  {
+    return new FileSystemImpl(indexer);
+  }  
++-----------------------------------------------------------------------------------+   
+  
+   Here, Indexer and FileSystem are mutually dependent. Eventually, one or the other
+   of them will be created ... let's say its FileSystem. The buildFileSystem() builder
+   method will be invoked, and a proxy to Indexer will be passed in.  Inside the
+   FileSystemImpl constructor (or at some later date), a method of the Indexer service
+   will be invoked, at which point, the builderIndexer() method is invoke. It still receives
+   the proxy to the FileSystem service.
+   
+   If the order is reversed, such that Indexer is built before FileSystem, everything still
+   works the same.
+   
+   This approach can be very powerful: I've (HLS) used it to break apart untestable
+   monolithic code into two mutually dependent halves, each of which can be unit tested.
+    
+   The exception to this rule is a service that depends on itself <during construction>.
+   This can occur when (indirectly, through other services) building the service
+   trys to invoke a method on the service being built. This can happen when the service
+   implemention's constructor invoke methods on service dependencies passed into it,
+   or when the service builder method itself does the same. This is actually a very rare
+   case and difficult to illustrate.
+        

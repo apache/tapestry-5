@@ -1,0 +1,65 @@
+ ----
+ Object Providers
+ ----
+
+Object Providers
+
+  The
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}@Inject annotation}}
+  is a flexible way to inject dependencies into a service. With this annotation
+  the value to be injected is not identified by a service id <per se>. Instead
+  the annotation's value is an <<object reference>>: a combination of a
+  <<provider prefix>> and an <<expression>> (separated by a colon). 
+  
+  The provider prefix
+  maps to a particular instance of
+  {{{../apidocs/org/apache/tapestry/ioc/ObjectProvider.html}ObjectProvider}}, which
+  understands the expression.
+  
+  In practice, @InjectService("Foo") and @Inject("service:Foo") work identically,
+  even with regards to the relative visibility of 
+  private services.  Here, the provider prefix is "service" and the expression
+  is "Foo".
+  
+* service provider
+
+  As outlined above, the service provider interprets the expression as
+  a service id, either fully qualified or local.
+  
+* infrastructure provider
+
+  The tapestry module provides the
+  {{{..tapestry-core/guide/infrastructure.html}infrastructure}} object provider, which exists
+  to provide shorter names for injecting services and to support overrides.  
+    
+* default provider  
+  
+  If the string does not contain a prefix, then the value is treated as a literal string.
+  It will be coerced to the proper type (such as int or long).
+  
+Defining New Providers
+
+  New providers can be specified by contributing to the
+  tapestry.ioc.MasterObjectProvider service's configuration.  The configuration
+  is mapped, with the keys being the provider prefix, and the values
+  being the object provider implementation.
+  
+  Example:
+  
++-----+
+  @Contribution("tapestry.ioc.MasterObjectProvider")
+  public void contributeMyProvider(MappedConfiguration<String,ObjectProvider> configuration)
+  {
+    configuration.add("myprefix", new MyObjectProvider());
+  }
++-----+
+
+  Of course, this is a simplified example. In a real scenario, the provider is most likely
+  a service with its own dependencies.      
+  
+  
+Providers and Symbols
+
+  It is occasionally useful to add a level of indirection, to allow control over exactly
+  what service (or other object) is injected.  Both the Inject and InjectService
+  annotations support the use of {{{symbols.html}symbols}}.
