@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+   Copyright 2006, 2007 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<project name="Tapestry Core">
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
+    
+    <publishDate format="dd MMM yyyy" />
+    
+    <body>
+        <links>
+            <item name="Tapestry" href="http://tapestry.apache.org/" />
+            <item name="Apache" href="http://www.apache.org/" />
+        </links>
+
+
+<!--
+
+This is probably useful but it drives me crazy whenever I reload a page.
+
+         <head>
+            <script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+            <script type="text/javascript">_uacct = "UA-400821-1"; urchinTracker();</script>
+        </head>
+ -->
+        <menu name="Tapestry Core">
+            <item name="Introduction" href="/index.html"/>
+            <item name="Component Reference" href="component-parameters.html"/>
+            <item name="Upgrade from Tapestry 4" href="/upgrade.html"/>
+            <item name="Download" href="http://tapestry.apache.org/download.html"/>
+        </menu> 
+
+        <menu name="User Guide">
+            <item name="Component Classes" href="guide/component-classes.html"/>
+            <item name="Component Templates" href="guide/templates.html"/>
+            <item name="Component Parameters" href="guide/parameters.html"/>
+            <item name="Page Navigation" href="guide/pagenav.html"/>
+            <item name="Input Validation" href="guide/validation.html"/>
+            <item name="Component Events" href="guide/event.html"/>
+            <item name="Page Lifecycle" href="guide/lifecycle.html"/>
+            <item name="Component Mixins" href="guide/mixins.html"/>
+            <item name="Localization" href="guide/localization.html"/>
+            <item name="Assets" href="guide/assets.html"/>
+            <item name="Type Coercion" href="guide/coercion.html"/>
+            <item name="Component Rendering" href="guide/rendering.html"/>
+            <item name="Persistent Data" href="guide/persist.html"/>
+            <item name="Application State" href="guide/appstate.html"/>
+            <item name="Injection" href="guide/inject.html"/>
+            <item name="Aliases" href="guide/alias.html"/>
+            <item name="Configuration" href="guide/conf.html"/>
+            <item name="Request Processing" href="guide/request.html"/>
+            <item name="DOM" href="guide/dom.html"/>
+            <item name="Class Reloading" href="guide/reload.html"/>
+            <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
+        </menu> 
+                        
+        <menu ref="reports"/>
+        
+    </body>
+</project>
