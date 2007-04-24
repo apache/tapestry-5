@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">    
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.apache.tapestry</groupId>
+    <artifactId>tapestry-simple</artifactId>
+    <version>5.0.1</version>
+    <packaging>maven-plugin</packaging>
+    <parent>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-project</artifactId>
+        <version>5.0.1</version>
+        <relativePath>../tapestry-project/pom.xml</relativePath>
+    </parent>
+    <name>Tapestry 5 Simple Archetype</name>
+    <inceptionYear>2007</inceptionYear>
+    <url>http://tapestry.apache.org/tapestry5/tapestry-simple</url>
+    <scm>
+        <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/${pom.artifactId}/trunk/</connection>
+        <url>http://svn.apache.org/viewvc/tapestry/tapestry5/${pom.artifactId}/trunk/</url>
+    </scm>
+    <description>Archetype for creating a basic Tapestry 5 application, including Eclipse control files.</description>
+</project>
