@@ -1,0 +1,190 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.tapestry</groupId>
+  <artifactId>tapestry-hibernate</artifactId>
+  <version>5.0.4-SNAPSHOT</version>
+  <name>Tapestry/Hibernate Integration Library</name>
+  <description>Provides support for simple CRUD applications built ontop of Tapestry and Hibernate</description>
+  <packaging>jar</packaging>
+  <parent>
+    <groupId>org.apache.tapestry</groupId>
+    <artifactId>tapestry-project</artifactId>
+    <version>5.0.4-SNAPSHOT</version>
+    <relativePath>../tapestry-project/pom.xml</relativePath>
+  </parent>
+  <inceptionYear>2007</inceptionYear>
+  <!-- Due to Maven 2 bugs, this has to be copied into each module POM. -->
+  <url>http://tapestry.apache.org/tapestry5/${pom.artifactId}/</url>
+  <scm>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/${pom.artifactId}/trunk/</connection>
+    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/${pom.artifactId}/trunk/</url>
+  </scm>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-core</artifactId>
+    </dependency>
+
+    <!-- Testing -->
+
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.easymock</groupId>
+      <artifactId>easymock</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <version>1.8.0.7</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+      <scope>test</scope>
+    </dependency>
+
+
+    <!-- Provided -->
+
+    <!-- The Hibernate dependencies are provided; which gives the final application
+         the ability to choose the appropriate version.  Further, in many cases
+         (such as JBoss deployment), they are, in fact, provided by the
+         container.  For a Tomcat deployment, you're more likely to include
+         the hibernate JARs and dependencies inside the WAR. -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <version>3.2.2.ga</version>
+      <scope>provided</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.transaction</groupId>
+          <artifactId>jta</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>geronimo-spec</groupId>
+      <artifactId>geronimo-spec-jta</artifactId>
+      <version>1.0-M1</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- The annotations should be compatible with the 3.2.2.ga release of the
+         core package. -->
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-annotations</artifactId>
+      <version>3.2.1.ga</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>c3p0</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>0.9.1</version>
+      <scope>provided</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+      </plugin>
+      <!-- This gets the plugin to clean up the cobertura.ser file left
+        in the root directory. -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>${cobertura-plugin-version}</version>
+        <executions>
+          <execution>
+            <id>clean</id>
+            <goals>
+              <goal>clean</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Tapestry-Module-Classes>org.apache.tapestry.hibernate.HibernateModule</Tapestry-Module-Classes>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <!--
+            <tags>
+            <tag>
+            <name>todo</name>
+            <!- - Should be a combination of the letters Xaoptcmf - ->
+            <placement>a</placement>
+            <head>To do something:</head>
+            </tag>
+            </tags> -->
+          <linksource>true</linksource>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+            <link>http://tapestry.apache.org/tapestry5/tapestry-ioc/apidocs/</link>
+            <link>http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/</link>
+            <link>http://www.hibernate.org/hib_docs/v3/api/</link>
+          </links>
+          <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>${cobertura-plugin-version}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
+      </plugin>
+
+
+      <!--      <plugin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-component-report</artifactId>
+        <version>5.0.2</version>
+        <configuration>
+          <rootPackage>org.apache.tapestry.corelib</rootPackage>
+        </configuration>
+      </plugin>-->
+    </plugins>
+  </reporting>
+</project>
