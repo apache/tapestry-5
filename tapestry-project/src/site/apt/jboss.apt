@@ -1,0 +1,11 @@
+ ----
+ Deployment Notes: JBoss
+ ----
+ 
+Deployment Notes: JBoss
+
+  JBoss's default servlet container is {{{tomcat.html}Tomcat}}, so deployment notes for Tomcat apply to JBoss as well.
+      
+* Logging
+
+  TODO: Discuss logging configuration for JBoss.     
