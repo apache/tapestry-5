@@ -1,0 +1,17 @@
+ ----
+ Deployment Notes: Jetty
+ ----
+ 
+Deployment Notes: Jetty
+
+  {{{http://jetty.mortbay.com}Jetty}} is the easiest servlet container to deploy Tapestry into, it just plain works.
+  
+  The easiest way to develop Tapestry applications is to run Jetty <embedded> inside your IDE. If you use Eclipse,
+  then {{{http://jettylauncher.sourceforge.net/}the Jetty Launcher plugin}} is invaluable.  The
+  {{{t5-tutorial.pdf}Tapestry 5 Tutorial}} [PDF] discusses installing and using Jetty Launcher.
+  
+  Jetty Launcher  only works  with Jetty <<4 or 5>> and <<not>> Jetty 6.
+  
+* Logging
+
+  TODO: Discuss logging configuration for Jetty.
