@@ -1,0 +1,154 @@
+ ----
+ Aliases and Overrides
+ ----
+
+Introduction
+
+  Tapestry includes an object provider, using the prefix "alias:", which is used to access
+  the key built-in services provided by Tapestry.  This is desirable, even though the resulting string
+  is usually longer than the service's normal id.
+  
+  In the vast majority of applications developed using Tapestry, the built-in set of 
+  services does exactly what you need them to do. However, there are always outliers,
+  very special cases that aren't addressed. The alias mechanism includes the ability
+  to <<override>> these services.  If alias:AssetSource doesn't do quite what you need,
+  you will be able to provide your own service and make <that> known as alias:AssetSource. It will be
+  your implementation that is injected into both your own services and components and the
+  services built into Tapestry.
+  
+alias: object provider
+
+  The "alias:" 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/provider.html}object provider}} 
+  is a key element in making Tapestry extensible; it adds a layer of
+  indirection between service implementations and their collaborators. Using the alias object
+  provider allows applications to identify and override individual services within Tapestry's
+  network of services. 
+  
+  The <expression> for the alias provider is the name of a property. This property is
+  mapped to a particular service via a <pair> of services. The
+  {{{../apidocs/org/apache/tapestry/services/Alias.html}Alias}} service
+  has a mapped configuration of 
+  {{{../apidocs/org/apache/tapestry/services/AliasContribution.html}AliasContribution}}s.
+  Each contribution is keyed on the property it provides.
+  
+  A second service. AliasOverrides, exists
+  to support a second, identical configuration. Any properties contributed here override the normal
+  Infrastructure properties.
+  
+  In order to override an individual Tapestry service, all that is necessary is to provide
+  a new implementation as a new service (with a new service id), and contribute that service into the configuration for
+  the AliasOverrides service.
+  
+  In many cases, the original service can be injected into the new implementation; this must be done
+  using the original service's service id.
+  
+  The following table identifies the services that are available via the alias provider
+  by default:
+  
+  [AssetSource]
+    {{{../apidocs/org/apache/tapestry/services/AssetSource.html}AssetSource}} 
+    
+    Obtains assets from public and internal resources.
+    
+  [ClasspathAssetAliasManager]
+    {{{../apidocs/org/apache/tapestry/services/ClasspathAssetAliasManager.html}ClasspathAssetAliasManager}} 
+  
+    Used to convert resource paths for classpath resources into client URLs, which includes a configurable way of assigning
+    path aliases (resulting in shorter, more readable URLs).
+  
+  [BindingSource]
+    {{{../apidocs/org/apache/tapestry/services/BindingSource.html}BindingSource}} 
+    
+    Central factory for creating all types of component Binding objects.
+  
+   	
+  [ComponentMessagesSource]
+  	{{{../apidocs/org/apache/tapestry/services/ComponentMessagesSource.html}ComponentMessagesSource}} 
+  	
+  	Access to message catalogs for components.
+  	
+  [ComponentSource]
+  	{{{../apidocs/org/apache/tapestry/services/ComponentSource.html}ComponentSource}} 
+  	
+  	Used to retrieve component instances via their complete id.
+
+  [Environment]
+    {{{../apidocs/org/apache/tapestry/services/Environment.html}Environment}} 
+    
+    Used to access environmental services (typically, to install a new environmental service).
+
+  [MarkupWriterFactory]
+    {{{../apidocs/org/apache/tapestry/services/MarkupWriterFactory.html}MarkupWriterFactory}} 
+    
+    Used as a source for MarkupWriter instances.
+    
+  [PersistentFieldManager]
+    {{{../apidocs/org/apache/tapestry/services/PersistentFieldManager.html}PersistentFieldManager}}
+    
+    Main access point between components and persistent field storage.  Delegates out most behavior to
+    particular persistent strategies.
+    
+  [Request]
+    {{{../apidocs/org/apache/tapestry/services/Request.html}Request}}  
+    
+     The current request object (for the current thread).        
+     
+  [ResourceDigestGenerator]
+    {{{../apidocs/org/apache/tapestry/services/ResourceDigestGenerator.html}ResourceDigestGenerator}} 
+    
+    Responsible for identifying which classpath resources require a digest as part of thier URL, and generates the digest for files
+    as needed.  Digests are required for files which represent a security hazard, such as Java class files.
+       
+  [Response]
+    {{{../apidocs/org/apache/tapestry/services/Response.html}Response}} 
+    
+    The current response object (for the current thread).
+    
+  [TypeCoercer]
+    {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/org/apache/tapestry/ioc/services/TypeCoercer.html}TypeCoercer}} 
+    
+    Used to coerce values from one type to another (such as string to integer). Used throughout Tapestry, especially including
+    parameter type coercions.
+    
+  [ValidationMessagesSource]
+    {{{../apidocs/org/apache/tapestry/services/ValidationMessagesSource.html}ValidationMessagesSource}} 
+    
+    Provides access to localized messages related to input validation.
+    
+  []
+  
+  <Several additional services have been contributed as well, the above documentation is somewhat out of date.>
+
+Contributing an Alias
+
+  To contribute a new service to the Alias service, you must first decide on a logical name.  Often, this is the
+  name of the service interface implemented by the service.
+  
+  You can then contribute into the Infrastructure service's configuration:
+  
++---+
+  public static void contributeAlias(@InjectService("MyService") MyService myService,
+     Configuration<InfrastructureContribution> configuration)
+  {
+     configuration.add(new InfrastructureContribution("MyName", myService));
+  }
++---+
+
+  The above example follows a typical pattern; the service to be vended is injected into the contributor method.
+  A contribution is made providing the name. 
+  
+  Notice that the contribution doesn't <have> to be a service; you can just instantiate an object inside the
+  contribution method and contribute that.
+  
+Contributing to AliasOverrides
+
+  To override a service, you need to know its logical name.
+  
+  You can then make a contribution to the AliasOverrides service configuration, as described in the previous section.
+  
+  The object contributed as an override will mask the default contribution.
+ 
+  
+  
+  
