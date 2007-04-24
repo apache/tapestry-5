@@ -1,0 +1,126 @@
+// Copyright 2006 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package org.apache.tapestry.internal.services;
+
+import java.util.Collection;
+import java.util.Iterator;
+
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.services.PersistentFieldChange;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.Session;
+import org.testng.annotations.Test;
+
+public class SessionPersistentFieldStrategyTest extends InternalBaseTestCase
+{
+    @Test
+    public void post_change_to_root_component()
+    {
+        Session session = newSession();
+        Request request = newRequest();
+        Object value = new Object();
+
+        train_getSession(request, true, session);
+
+        session.setAttribute("state:foo.Bar::field", value);
+
+        replay();
+
+        SessionPersistentFieldStrategy strategy = new SessionPersistentFieldStrategy(request);
+
+        strategy.postChange("foo.Bar", null, "field", value);
+
+        verify();
+    }
+
+    @Test
+    public void post_change_to_nested_component()
+    {
+        Session session = newSession();
+        Request request = newRequest();
+        Object value = new Object();
+
+        train_getSession(request, true, session);
+
+        session.setAttribute("state:foo.Bar:fee.fum:field", value);
+
+        replay();
+
+        SessionPersistentFieldStrategy strategy = new SessionPersistentFieldStrategy(request);
+
+        strategy.postChange("foo.Bar", "fee.fum", "field", value);
+
+        verify();
+    }
+
+    @Test
+    public void gather_changes_with_no_session()
+    {
+        Request request = newRequest();
+
+        train_getSession(request, false, null);
+
+        replay();
+
+        SessionPersistentFieldStrategy strategy = new SessionPersistentFieldStrategy(request);
+
+        Collection<PersistentFieldChange> changes = strategy.gatherFieldChanges("foo.Bar");
+
+        assertTrue(changes.isEmpty());
+
+        verify();
+    }
+
+    @Test
+    public void gather_changes_with_active_session()
+    {
+        Session session = newSession();
+        Request request = newRequest();
+
+        train_getSession(request, false, session);
+        train_getAttributeNames(
+                session,
+                "state:foo.Bar:",
+                "state:foo.Bar::root",
+                "state:foo.Bar:nested:down");
+
+        train_getAttribute(session, "state:foo.Bar::root", "ROOT");
+        train_getAttribute(session, "state:foo.Bar:nested:down", "DOWN");
+
+        replay();
+
+        SessionPersistentFieldStrategy stategy = new SessionPersistentFieldStrategy(request);
+
+        Collection<PersistentFieldChange> changes = stategy.gatherFieldChanges("foo.Bar");
+
+        assertEquals(changes.size(), 2);
+
+        Iterator<PersistentFieldChange> i = changes.iterator();
+
+        PersistentFieldChange change1 = i.next();
+
+        assertEquals(change1.getComponentId(), "");
+        assertEquals(change1.getFieldName(), "root");
+        assertEquals(change1.getValue(), "ROOT");
+
+        PersistentFieldChange change2 = i.next();
+
+        assertEquals(change2.getComponentId(), "nested");
+        assertEquals(change2.getFieldName(), "down");
+        assertEquals(change2.getValue(), "DOWN");
+
+        verify();
+    }
+}

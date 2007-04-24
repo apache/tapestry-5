@@ -1,0 +1,90 @@
+ ----
+ Parameter Type Coercions
+ ----
+ 
+Parameter Type Coercions
+
+  Tapestry automatically handles type coercions for parameters.
+  
+  Type coercions occur when a value passed into a parameter (as bound in template or
+  in an annoation) does not match the type of the parameter.
+  
+  For example, consider the Count component:
+  
++---+
+@ComponentClass
+public class Count
+{
+    @Parameter
+    private int _start = 1;
+
+    @Parameter(required = true)
+    private int _end;
+
+    @Parameter
+    private int _value;
+    
+    . . .
++---+
+
+  Here, the type of all three parameters is int.
+  
+  However, it is likely that the component will be used as so:
+  
++---+
+  Merry Christmas: <t:comp type="Count" end="3"> Ho! </t:comp>
++---+
+
+  A bare whole number is interpreted by the prop binding prefix as a long. So this is the <long> value 3.
+  
+  Tapestry will automatically coerce the bound value, a long, to the parameter's type, int. This may be a lossy coercion (if the long represents a number larger
+  than can be stored in an int).
+  
+TypeCoercer Service
+
+  The {{{../apidoc/org/apache/tapestry/ioc/services/TypeCoercer.html}tapestry.ioc.TypeCoercer}} service
+  is responsible for this type coercion.
+  
+  The service is quite flexible; it is configured with a 
+  basic set of coercions
+  for common cases, such as String --\> Long or Object --\> String, and can automatically
+  discover more complex coercions (for example, StringBuffer --\> String --\> Long --\> Integer). 
+  
+  The service's configuration is a collection of
+  {{{../apidoc/org/apache/tapestry/ioc/service/CoercionTuple.html}CoercionTuple}}s.  Each of
+  these tuples defines a source type, a target type, and a bit of code to perform the coersion.
+  
+  An example tuple, to convert from a String to a Double:
+  
++---+
+new CoercionTuple<String,Double>(String.class, Double.class,
+  new Coercer<String,Double>()
+  {
+    public Double coerce(String input)
+    {
+      return new Double(input);
+    }
+  }
+);
++---+
+  
+  As a special case, the service treats null input values as if they were instances of the special type Void. 
+  This allows tuples for converting nulls:
+  
++---+
+new CoercionTuple<Void,Boolean>(Void.class, Boolean.class,
+  new Coercer<String,Boolean>()
+  {
+    public Boolean coerce(Void input)
+    {
+      return false;
+    }
+  }
+);
++---+  
+ 
+Contributing New Coercions
+
+  To be documented.
+  
+                

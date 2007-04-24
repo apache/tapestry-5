@@ -1,0 +1,56 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>An Exception Has Occurred</title>
+    </head>
+    <body>
+        <h1 class="t-exception-report">A runtime exception has occurred.</h1>
+
+
+        <div class="t-exception-report">
+            <ul>
+                <t:comp type="Loop" source="stack" value="info">
+                    <li>
+                        <span class="t-exception-class-name">${info.className}</span>
+
+                        <t:comp type="If" test="info.message">
+                            <div class="t-exception-message">
+                                ${info.message}
+                            </div>
+                        </t:comp>
+
+                        <t:comp type="If" test="showPropertyList">
+                            <dl>
+                                <t:comp type="Loop" source="info.propertyNames" value="propertyName">
+                                    <dt>${propertyName}</dt>
+                                    <dd>${propertyValue}</dd>
+                                </t:comp>
+                                <t:comp type="If" test="info.stackTrace">
+                                    <dt>Stack trace</dt>
+                                    <dd>
+                                        <ul class="t-stack-trace">
+                                            <t:comp type="Loop" source="info.stackTrace"
+                                                value="frame">
+                                                <li>${frame}</li>
+                                            </t:comp>
+                                        </ul>
+                                    </dd>
+                                </t:comp>
+                            </dl>
+                        </t:comp>
+                    </li>
+                </t:comp>
+            </ul>
+        </div>
+        <div class="t-env-data">
+            <t:comp type="If" test="hasSession">
+                <h2>Session</h2>
+                <dl>
+                    <t:comp type="Loop" source="session.attributeNames" value="attributeName">
+                        <dt>${attributeName}</dt>
+                        <dd>${attributeValue}</dd>
+                    </t:comp>
+                </dl>
+            </t:comp>
+        </div>
+    </body>
+</html>
