@@ -1,0 +1,43 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<!-- 
+   Copyright 2007 The Apache Software Foundation
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-->
+
+<suite name="Tapestry Core" parallel="false" thread-count="10" annotations="1.5" verbose="2">
+  <test name="Tapestry Core">
+    <packages>
+      <package name="org.apache.tapestry.test.pagelevel"/>
+      <package name="org.apache.tapestry.integration.pagelevel"/>
+      <package name="org.apache.tapestry.integration"/>
+      <package name="org.apache.tapestry"/>
+      <package name="org.apache.tapestry.corelib.components"/>
+      <package name="org.apache.tapestry.dom"/>
+      <package name="org.apache.internal"/>
+      <package name="org.apache.tapestry.internal"/>
+      <package name="org.apache.tapestry.internal.beaneditor"/>
+      <package name="org.apache.tapestry.internal.grid"/>
+      <package name="org.apache.tapestry.internal.services"/>
+      <package name="org.apache.tapestry.internal.structure"/>
+      <package name="org.apache.tapestry.internal.util"/>
+      <package name="org.apache.tapestry.services"/>
+      <package name="org.apache.tapestry.util"/>
+      <package name="org.apache.tapestry.runtime"/>
+      <package name="org.apache.tapestry.internal.bindings"/>
+      <package name="org.apache.tapestry.internal.model"/>
+      <package name="org.apache.tapestry.translator"/>
+      <package name="org.apache.tapestry.validator"/>
+    </packages>
+  </test>
+</suite>
