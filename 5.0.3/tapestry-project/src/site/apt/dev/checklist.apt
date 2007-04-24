@@ -1,0 +1,131 @@
+ ----
+ Release Checklist
+ ----
+ 
+Release Checklist
+
+  Quick notes on how to prepare a new release of Tapestry.
+  
+Preparation
+
+  Send an announcement to the list, asking them to hold off on trunk checkins.
+  
+  Make <<sure>> (<<sure!>>) you have the latest copies of tapestry-project and all of the modules.
+  
+Bumping the Version Number
+
+  At this point, the version number of the tapestry-project POM is 5.0.x-SNAPSHOT.  Likewise,
+  each module has the same snapshot release number.
+  
+  The first step is to bump up those numbers to the final release value.
+  
+  * Edit tapestry-project/pom.xml, and change the \<version\> value (at the top of the file).  Change it from <<<5.0.x-SNAPSHOT>>> to <<<5.0.x>>>.
+  
+  * In each module, change the pom.xml \<version>\ field <<twice>>: once for the version of the module, once for the version of the parent.
+  
+  * The version number is mentioned in quickstart/src/site/apt/index.apt, change it there.
+  
+  * Finally, quickstart/src/main/resources/archetype-resources/pom.xml contains a copy of the version number, <<at the bottom>> of the file.
+  
+  * From tapestry-project, execute <<<mvn clean install>>>; this should take a couple of minutes.
+  
+Generate the Release Notes
+
+  JIRA has the ability to generate release notes automatically (this is why it is so important to keep the fix version number accurate).
+  
+  {{{https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=10573}https://issues.apache.org/jira/secure/ConfigureReleaseNote.jspa?projectId=10573}}
+  
+  Select the correct version, in HTML format.
+  
+  Paste the notes to the <<top>> of tapestry-project/src/site/xdoc/release-notes.xdoc
+  
+  Wrap the title ("Release Notes - Tapestry - Version 5.0.x") inside an \<h1\> element.
+  
+Build and Deploy
+
+  From tapestry-project, execute <<<mvn site site:deploy deploy>>>
+  
+  This will build the project site and each of the module sites.
+  
+  It will deploy the tapestry-project POM and each of the module's JARs (including source JARs).
+  
+  Since the version number is not longer -SNAPSHOT, it will be published to the Apache Maven 2 / Ibiblio Rsync repository.
+  That means that in a few hours, all of the files will be available from Maven's default central repository.
+  
+  In addition, the Tapestry project site will be updated with all the new documentation.
+  
+  This takes 10 - 15 minutes. There's a whole lot of FTP-ing and SSH-ing going on.  Maven tends to run the test suites repeatedly, which is a
+  bummer (that tapestry-core suite starts up Firefox and Selenium and takes about a minute to run each time).
+  
+  
+Commit Changes
+
+  Commit changes to tapestry-project and all modules.
+  
+Tag In Subversion
+
+  For tapestry-project and each module, you must tag the release.
+  
+  You do this with SVN, copying the trunk folder (in each module) to tags/releases/5.0.x.  The SVN tags/releases folder must
+  already exist, the specific folder must not.
+
+  I do this from Eclipse, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
+    
+  <<<copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/quickstart/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/quickstart/tags/releases/5.0.3>>>
+    
+Add The Next Release to JIRA
+
+  Use:
+  
+  {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}}
+  
+  to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.0.x + 1).  Example: after building out 5.0.3, create 5.0.4.    
+  Schedule it above the existing version.
+  
+  While you're there, use the <<Release>> option for the previous release; this ensures that any existing bugs are not marked as pending for the release,
+  and sets the date of release in JIRA.
+  
+Binary Distributions
+
+    Next we have to put together the binary distribution. This applys the the main modules, but not the Maven support (since by definition, Maven users will acquire 
+    those files from the Maven repository).  Currently this is: tapestry-ioc, tapestry-core, tapestry-hibernate, tapestry-spring and tapestry-test.
+    
+    I use a couple of shell aliases to help:
+    
++---+
+alias gatherdist='for i in tapestry-ioc tapestry-core tapestry-test tapestry-spring tapestry-hibernate ; do  echo $i; cp ../$i/target/*.gz ../$i/target/*.bz2 ../$i/target/*.zip target ; done'
+alias scpdist='scp target/*.zip target/*.gz target/*.bz2 target/*.asc target/*.md5 hlship@people.apache.org:/www/www.apache.org/dist/tapestry/'
+alias signdist='for i in target/*.zip target/*.gz target/*.bz2; do echo $i; gpg --armor --detach-sig $i; md5 -r $i > $i.md5; done'
++---+
+           
+    Gather the files to be distributed together.  From the tapestry-project folder, execute <<<gatherdist>>>.  This uses the Maven assembly:assemlby goal to build distributions (binary and
+    source archives in .zip, .tar.gz, and .tar.bz2 formats).
+
+  Next, sign the distributions using <<signdist>>>.  You will have to type in you GnuPG pass phrase <for each file> (sorry! --- I copy it to the clipboard and paste it the
+  dozen or so times).  This creates a .asc and a .md5 for  each distribution file.
+  
+  Next, copy the distributions to the Apache site using <<scpdist>>.
+  
+Wait 24 Hours
+
+	It takes up to 24 hours for all the mirrors to sync, to don't go announcing the new release just yet.
+	
+Update the Downloads Page
+
+ 	The downloads page is inside the tapestry-site project as,  src/site/apt/download.apt.
+ 	
+ 	If you should edit the large block concerning Tapestry 5, updating the version number. There is no need (at least until we have a final release of Tapestry 5) to keep the links
+ 	to the old version number.
+ 	
+ 	After making the changes, and checking it in to Subversion, you can build and deploy the site.
+  
+Advance the Version Numbers
+
+	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just release 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.      
+    
+    
+    
+    
+    
+  
+  
