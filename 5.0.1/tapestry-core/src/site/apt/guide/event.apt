@@ -1,0 +1,195 @@
+ ---
+ Component Events
+ ---
+ 
+Component Events
+
+  Component events are the means by which components are made aware of behaviors by the user, such
+  as clicking links and submitting forms.
+  
+  In Tapestry 4, you would configure a parameter of a component with the name of a method to invoke
+  when a certain event occured, usually a request from the client.
+  
+  This has some limitations, including the fact that only a single method could be invoked.
+  
+  Tapestry 5 introduces the
+  {{{../apidocs/org/apache/tapestry/annotations/OnEvent.html}OnEvent annotation}} which is used
+  to mark methods as <event handler methods>.  As with other annotations, these methods
+  may be private or public.
+  
+  Rather than configure a component to invoke a particular method, you annotate one or more
+  methods to listen for events from that component.
+  
+  For example, here's a portion of a page that lets the user choose a value between 1 and 10:
+  
++---+
+<p> Choose a number from 1 to 10: </p>
+
+<p>
+    <t:comp type="Count" end="10" value="index">
+        <t:comp id="choose" type="ActionLink" context="index">${index}</t:comp>
+    </t:comp>
+</p>
++---+
+
+  The ActionLink component creates an action URL.
+  
+  The URL identifies the page that contains the component, the type of event
+  ("action", the default), the id of the component ("choose"), plus the additional context value.
+  A sample URL: <<<http://localhost:8080/ActionPage.action/choose/3>>>.
+  
+  When there are additional context values, they are appended to the path.
+   
+  A Java method can be invoked when the link for the component is clicked by the user:
+  
++---+
+  @OnEvent(component = "choose")
+  void choose(int value)
+  {
+    _value = value;
+  }
++---+
+
+  Tapestry has done two things here:
+  
+  * It has identified method choose() as the method to invoke.
+  
+  * It has converted the context value from a string to an integer and passed it into the method.
+  
+  []
+  
+  In the above example, the choose() method will be invoked on <any event> that originates
+  inn component <<<choose>>>.  Since ActionLink components only emit a single type of event, "action", 
+  this will not be a problem.
+  
+  Some components can emit more than one type of event, in which case you will want to be more specific:
+  
++---+
+  @OnEvent(value = "action", component = "choose")
+  void choose(int value)
+  {
+    _value = value;
+  }
++---+
+  
+  The value attribute of the OnEvent annotation is the name of the event to match.
+  
+Event Handler Method Convention Names  
+  
+  As an alternative to the use of annotations, you may name your events in a specific fashion, and Tapestry will invoke your methods just as if
+  they were annotated.  
+  
+  This style of event handler methods start with the prefix "on", followed by the name of the action (capitalized).  You may then continue by adding "From" and
+  a capitalized component id.
+  
+  The previous example may be rewritten as:
+  
++---+
+  void onActionFromChoose(int value)
+  {
+    _value = value;
+  }
++---+  
+  
+  
+Context
+
+  The context values (the context parameter to the ActionLink component) can be any object.
+  However, only a simple conversion to string occurs.  This is in contrast to Tapestry 4, which had
+  an elaborate type mechanism with the odd name "DataSqueezer".
+  
+  Again, whatever your value is (string, number, date), it is converted into a plain string.
+  This results in a more readable URL.
+  
+  If you have multiple context values (by binding a list or array of objects to the ActionLink's
+  context parameter), then each one, in order, will be added to the URL.
+  
+  When an event handler method is invoked, a
+  {{{coercion.html}coercion}} from string to the actual type occurs. A runtime exception
+  occurs if there are more parameters than context strings.
+  
+  Alternately, an event handler method may take a parameter of type java.lang.Object[].  This parameter
+  will receive the entire context array. This is useful when, for example, the context
+  is off different lengths at different times. You should use either explicit, typed parameters or
+  a single parameter of type Object[].
+  
+Event Bubbling
+
+  The event will bubble up the hierarchy, until it is aborted. The event is aborted
+  when an event handler method returns a non-null value.
+  
+  The value returned from an event handler method determines how Tapestry will render a response.
+  
+Event Handler Returns Types
+
+  An event handler may return a number of different types:
+  
+  * A page component, via the {{{../apidocs/org/apache/tapestry/annotations/InjectPage.html}InjectPage}} annotation
+  
+  * A string, the <logical> name of a page (not the fully qualified class name)
+
+  * <More types to be determined>
+  
+  []
+  
+  Returning a page will abort the event and direct Tapestry to render the returned page.  It's completely acceptible to invoke
+  methods on the page before returning it (often to inform it about what it should display), but remember that rendering of the page
+  <<will occur in a subsequent request>>, which often requires that you store information persistently between requests.
+  
+  Returning a string is much the same, except that the string is used to locate the page to be activated. This is easy to use
+  when there is no need to invoke methods on the page before returning it.
+  
+  <TODO: Describe differences between client-originating events and flow-of-control events from components.>
+  
+End of Action Request
+
+  The default behavior at the end of an action request is to set up the page containing
+  the component to render.  This is normally the page that contains the component, but the active page
+  (the page that renders the response) may be altered based on the value returned from an component event
+  handler method.
+  
+  <<This is very important:>> The rendering occurs in a <<new>> request. The normal response
+  to an action request is a client-side redirect to re-render the page. Thus an action is <<two>>
+  requests: one to process the action and update server-side state, and a second request to render
+  the resulting page.
+  
+  It is very important that you make use of 
+  {{{persist.html}page persistence}} to allow information from the action request
+  to survive to the next render request.
+  
+Passivate and Activate Events
+
+  When a link to a page is created, the page will be sent a passivate event. The event handler method for the
+  passivate event may return a single value, or a list or array of values. 
+  These objects will become the context portion of the URI.  When a page is later rendered, the context is extracted from the URI and
+  passed to any activate event handlers.  In this way, information about the page can be encoded into URIs for the page, in a light-weight
+  (and human readable) manner.
+  
+  This was created with the intent of handling pages that exist to view (or perhaps to edit) a specific instance of some type; in the
+  context of a CRUD application, the context is used to store the primary key of some entity object:
+    
++---+
+
+  @ComponentClass
+  public class ViewCustomer
+  {
+    private Customer _customer;
+    
+    @Inject
+    private CustomerDAO _customerDAO;
+    
+    long onPassivate()
+    {
+      return _customer.getId();
+    }
+  
+    void onActivate(long customerId)
+    {
+      _customer = _customerDAO.get(customerId);
+    }
+  }
++---+
+  
+  Render page request URI's for this page would be created as <<</ViewCustomer.html/1234>>>.
+  
+   

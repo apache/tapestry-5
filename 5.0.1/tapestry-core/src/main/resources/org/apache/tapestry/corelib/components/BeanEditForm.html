@@ -1,0 +1,28 @@
+<form t:id="form" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <t:comp type="Errors"/>
+
+    <div class="t-beaneditor">
+        <div class="t-beaneditor-row" t:type="Loop" t:source="model.propertyNames"
+            t:value="propertyName">
+            <t:comp type="Delegate" to="blockForProperty"/>
+        </div>
+        <div class="t-beaneditor-row">
+            <input type="submit" value="Create/Update"/>
+        </div>
+    </div>
+    
+    <t:block id="text">
+        <label t:type="Label" for="textField"/>
+        <input t:id="textField"/>
+    </t:block>
+
+    <t:block id="enum">
+        <label t:type="Label" for="select"/>
+        <input t:id="select"/>
+    </t:block>
+    
+    <t:block id="checkbox">
+        <label t:type="Label" for="checkboxField"/>
+        <input t:id="checkboxField"/>
+    </t:block>
+</form>

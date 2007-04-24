@@ -1,0 +1,20 @@
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Any Component Demo</h1>
+    
+    <p>
+        Demonstrates a few things about the Any component.
+    </p>
+    
+    <span t:id="title" class="title">Page Title</span>
+    
+    <div t:id="heading" class="heading">Heading</div>
+    
+    <div t:id="section" element="h2" class="section">Section</div>
+        
+        
+    <ul>    
+    <t:comp type="Loop" source="1..3">
+        <li t:id="item">Item (${item.clientId})</li>
+    </t:comp>
+    </ul>    
+</t:comp>

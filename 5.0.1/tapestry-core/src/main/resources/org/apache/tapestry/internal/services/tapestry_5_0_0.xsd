@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd"
+    targetNamespace="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <xs:element name="comp">
+        <xs:annotation>
+            <xs:documentation> A component within the template. Allows any attributes, these are
+                bound to parameters of the component. A component will have either an id, a type, or
+                both (they are both optional, with the requirement for one or the other implemented
+                internally). </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true"> 
+            <xs:attribute name="id" type="xs:ID">
+                <xs:annotation>
+                    <xs:documentation> A unique identifier for the component within the template.  If the type
+                        is omitted, Tapestry will provide a unique id for the component.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="type" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        The name of a component type. This is optional, as the type may be determined elsewhere
+                        or otherwise defaulted by Tapestry.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="mixins" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>
+                        A comma-seperated list of mixin type names.  Mixins are optional and provide additional
+                        functionality to the base component.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:anyAttribute>
+                <xs:annotation>
+                    <xs:documentation>
+                        Any additional attributes are used to bind parameters of the component (or of mixins of the component).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:anyAttribute>
+        </xs:complexType>        
+    </xs:element>
+    <!-- body identifies where the body of the component belongs within the component's template -->
+    <xs:element name="body">
+        <xs:annotation>
+            <xs:documentation>
+                Defines the position within the template that the body of the component (the portion of the container's template
+                enclosed by the component) will be rendered.  This is optional, and only applies to components that wish to render 
+                their body within their template.
+            </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:element name="parameter">
+        <xs:annotation>
+            <xs:documentation>
+                A structured parameter passed to a component as a single object of type Block.  The receiving component
+                can get the Block to render. A parameter should always be enclosed by a component element
+                (either an explicit comp element, or an ordinary element instrumented with a Tapestry type or id).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>
+                        The name of the parameter to be bound to the Block.
+                    </xs:documentation>
+                </xs:annotation>                
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="block">
+        <xs:annotation>
+            <xs:documentation>
+                A block is simply a container of other elements.  Blocks do not render themselves or their bodies normally, unless
+                specifically directed to.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:attribute name="id" type="xs:ID">
+                <xs:annotation>
+                    <xs:documentation>
+                        An optional identifier that is used to reference the block from inside the Java class.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
