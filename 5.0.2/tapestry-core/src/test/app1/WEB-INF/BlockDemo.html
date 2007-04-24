@@ -1,0 +1,19 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <h1>Block Demo</h1>
+    
+    <p>
+        This page demonstrates how blocks may be used to contain text and other elements and control when and
+        if they are rendered.
+</p>    
+    
+    <form t:type="Form">
+        <select t:type="Select" t:id="blockName" model="',fred,barney'" onchange="this.form.submit();"/> <label t:type="Label" for="blockName">Block to display</label>
+    </form>
+    
+    <p>The block: [<t:comp type="Render" value="blockToRender"/>]</p>
+    
+<t:block id="fred">Block fred.</t:block>
+<t:block id="barney">Block barney.</t:block>
+    
+</html>

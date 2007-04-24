@@ -1,0 +1,12 @@
+<thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <tr>
+        <th t:type="Loop" source="columnNames" value="columnName" volatile="true" class="prop:cellClass">
+           <a t:id="sort">${columnModel.label}</a>
+            <t:comp type="If" test="activeSortColumn">
+                <a t:id="sort2">
+                    <img t:type="Img" src="icon" class="t-sort-icon" alt="prop:iconLabel"/>
+                </a>
+            </t:comp>
+        </th>
+    </tr>
+</thead>

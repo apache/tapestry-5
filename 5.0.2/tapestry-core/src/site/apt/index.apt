@@ -1,0 +1,174 @@
+ ----
+ tapestry-core
+ ----
+ 
+Tapestry Core
+
+  The tapestry-core module provides the interfaces and annotations that form the Tapestry API.
+  
+  tapestry-core is built upon the {{{../tapestry-ioc/index.html}Tapestry IoC Container}}.
+
+New And Of Note
+
+  Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
+  recently.
+  
+  * The default ExceptionReport page has been improved to show details of the incoming request,
+    and to display file content when an exception includes a location.
+  
+  * Action request URLs have been shortened and simplified for the common case. They may also include a query
+    parameter to identify the page's activation context.
+  
+  * {{{component-parameters.html}Component Reference Documentation}}, generated via a Maven plugin, is now available.
+  
+  * The return values for the "after" set of {{{guide/rendering.html}render phase methods}} have changed: all render phase 
+    methods return true (or void) to progress down the default path, and return false to either skip stages or return to earlier 
+    stages. This may break some existing code.
+  
+  * Component event handlers may now return a {{{apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}
+    to directly send a stream to the client web browser (this is intended for components that need to render
+    images, PDF, or other non-page oriented content).
+  
+  * The root URL for an application now renders the application's start page (it used to let the
+    servlet container render the static welcome page, if any). 
+  
+  * Named-based lookups of messages, resources, etc., are all case-insensitive.
+  
+  * Fast, smart, fully customizable Grid component for displaying tabular data.
+  
+  * Validating form components will use the same system as BeanEditForm to determine default validation for fields.
+  
+  * Select component will automatically provide a ValueEncoder and SelectModel when the value parameter is bound to an Enum type.
+  
+  * BeanEditForm component that creates a form and related controls to edit the properties of any JavaBean, automatically.
+    Inspired by {{{http://www.trailsframework.org/}Trails}} and {{{http://beanform.sourceforge.net/}BeanForm}} (both for Tapestry 4).
+  
+  * Case insensitve URLs.  Tapestry no longer cares about the case of the page names and commponent ids it puts
+    into URLs, and they are now generated in all lower-case for that clean "Web 2.0" look.  And they're 
+    shorter and "prettier", too!
+  
+  * Initial support for {{{guide/appstate.html}application state objects}}.
+  
+  * Input validation messages may now be overriden by providing a particular message key in the containing component's message catalog.
+  
+  * Property expressions may now reference public methods (with no parameters) in addition to traditional property names.
+  
+  * Page templates are now allowed to be stored in the WEB-INF , as well as on the classpath.
+  
+  * Invisible instrumentation, hiding Tapestry components inside ordinary HTML elements (a favorite feature of Tapestry 4), has been added to Tapestry 5.
+  
+  * Component parameter defaults may be computed on the fly.
+
+  * Component parameters may have default values.
+  
+  * The @ComponentClass anntotation, seen in the earlier {{{../screencast.html}screencasts}} has been removed.
+  
+Changes from Tapestry 4 to Tapestry 5
+
+  Tapestry 5 represents a significant advance over Tapestry 4.  The goal is to make Tapestry 5
+  <significantly> easier to use than Tapestry 4 (or any other Java web framework).
+  We're keeping the <essence> of Tapestry 4, but starting with a brand new code base designed
+  to provide a stable, powerful, extensible platform for many years to come.
+  
+  Here's a few of the planned and implemented features:
+  
+  * Simplified, minimal API based on annotations
+  
+  * <<No>> base class requirement; components are true, pure Pojos (Plain Old Java Objects)
+  
+  * Abstract classes ... gone!  Classes are normal, concrete classes.
+  
+  * <<No>> XML descriptors for pages and components ... just the annotations.
+  
+  * Less configuration all around.
+  
+  * Automatic reloading of templates and even <Java classes>
+  
+  * Super-duper Ajax integration built on {{{http://dojotoolkit.org} Dojo}}
+  
+  * Easy & fast unit testing of individual pages or components
+    
+Adaptive API
+
+  A key feature of Tapestry 5 is <adaptive API>.
+  
+  In traditional Java frameworks, including Tapestry 4, user code is expected to
+  conform to the framework.  You create classes that extend from framework-provided
+  base classes, or implement framework-provided interfaces.
+  
+  This works well until you upgrade to the next release of the framework: with
+  the new features of the upgrade, you will more often than not experience breaks
+  in backwards compatibility. Interfaces or base classes will have changed and your
+  existing code will need to be changed to match.
+  
+  In Tapestry 5, the framework <adapts to your code>.  You have control over the
+  names of the methods, the parameters they take, and the value that is returned. This
+  is driven by annotations, which tell Tapestry under what circumstances your
+  methods are to be invoked.
+  
+  For example, you may have a login form and have a method that gets invoked
+  when the form is submitted:
+  
++----+
+public class Login
+{
+  @Persist
+  private String _userId;
+  
+  private String _password;
+  
+  @Component
+  private Form _form;
+  
+  @InjectPage
+  private Start _startPage;
+  
+  @Inject
+  private LoginAuthenticator _authenticator;
+  
+  @OnEvent("submit")
+  private Object doLogin()
+  {
+    if (_authenticator.isValidLogin(_userId, _password))
+      return _startPage;
+      
+    // Stay on this page:
+  
+   _form.recordError("Invalid user name or password."); 
+    
+    return null;
+  }
+  
+  public String getUserId() { return _userId; }
+  
+  public String getPassword() { return _password; }
+  
+  public void setUserId(String userId) { _userId = userId; }
+  
+  public void setPassword(String password) { _password = password; }
+}
++----+
+
+  This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
+  within the application are injected with the @Inject annotation. The @OnEvent
+  annotation identifies, to Tapestry, when the method is to be invoked
+  (when a form component contained by the page emits a "submit" event). The method's 
+  return value directs Tapestry on what to do: jump to another page within the application
+  (by returning the injected Start page), or stay on the same page to display the
+  error message.
+  
+  This also represents a distinct change from Tapestry 4. In earlier versions of Tapestry, 
+  the Form component's listener parameter would be bound to the method to invoke, by name.  Further,
+  the listener method had to be public.
+  This new approach not only support multiple listeners, but provides an improved separation of
+  view concerns (inside the page's HTML template) and logic concerns, inside the Java class.
+    
+  In many cases, additional information about the event is available, and can be passed
+  into the method by adding parameters to the method. Again, Tapestry will adapt
+  to your parameters, in whatever order you supply them.
+  
+  Finally, Tapestry 5 explicitly seperates actions (requests that change things) and rendering (requests that
+  render pages) into two seperate requests.  Performing an action, such as clicking a link or submitting a form,
+  results in a <client side redirect> to the new page. This is often called "redirect after post". This helps ensure
+  that URLs in the browser are book-markable ... but also requires that a bit more information be stored in the session
+  between requests (using the @Persist annotation).  

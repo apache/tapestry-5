@@ -1,0 +1,13 @@
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <p>
+        This page demonstrates the order of render phase operations. Certains later phases
+        will execute in the exact opposite order from the earlier phases, to ensure
+        that output operations balance.
+    </p>
+    
+    <p>
+        [<t:comp type="Tracer" mixins="TracerMixin"> BODY </t:comp>]
+    </p>
+
+</t:comp>

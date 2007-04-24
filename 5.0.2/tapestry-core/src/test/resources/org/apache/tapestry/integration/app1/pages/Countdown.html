@@ -1,0 +1,11 @@
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <p> This component demonstrates embedded components defined in the component class using the @Component annotation.</p>
+    <p> Countdown: <t:comp id="count">
+            ${countValue}
+        </t:comp>
+    </p>
+    
+    <p>
+        Brought to you by the ${component:count} component.
+    </p>
+</t:comp>
