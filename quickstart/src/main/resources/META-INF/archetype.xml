@@ -1,0 +1,16 @@
+<archetype>
+    <id>tapestry-simple</id>    
+    <resources>
+        <resource>.classpath</resource>
+        <resource>.project</resource>
+        <resource>src/main/webapp/WEB-INF/web.xml</resource>
+        <resource>src/main/webapp/WEB-INF/Start.html</resource>
+        <resource>src/main/resources/log4j.properties</resource>
+        <resource>src/test/java/PLACEHOLDER</resource>
+        <resource>src/test/resources/PLACEHOLDER</resource>
+    </resources>
+    <sources>
+        <source>src/main/java/pages/Start.java</source>
+        <source>src/main/java/services/AppModule.java</source>
+    </sources>
+</archetype>
