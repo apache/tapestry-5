@@ -1,0 +1,1 @@
+some opaque resource. This file is needed by a unit test. Do not delete it.
