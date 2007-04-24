@@ -1,0 +1,51 @@
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Simple Form</h1>
+
+    <p> This is the <em>very early</em> start to Tapestry 5 form support. </p>
+
+    <form t:type="Form">
+        <input t:type="Checkbox" t:id="disabled"/>
+        <label id="l1" t:type="Label" for="disabled"/>
+        <br/>
+        
+        <div class="t-beaneditor">
+            
+            <label id="l2" t:type="Label" for="email">This isn't used</label>
+            <input t:type="TextField"
+                t:id="email" value="incident.email" size="50" disabled="disabled"/>
+            <br/>
+            <label id="l3" t:type="Label" for="message"/>
+            <input t:type="TextArea" t:id="message"
+                label="Incident Message" value="incident.message" cols="50" rows="10"
+                disabled="disabled"> You can put text here, but it isn't used. </input>
+            <br/>
+            <label id="l4" t:type="Label" for="operatingSystem"/>
+            <select t:type="Select"
+                t:id="operatingSystem" value="incident.operatingSystem" model="message:os-values"
+                disabled="disabled"/>
+            <br/>
+            <label id="l5" t:type="Label" for="department"/>
+            <select t:type="Select" t:id="department"
+                value="incident.department" disabled="disabled"/>
+            <br/>
+            <label id="l6" t:type="Label" for="urgent"/>
+            <input t:type="Checkbox" t:id="urgent" value="incident.urgent" disabled="disabled"/>
+            <br/>
+            <input type="submit"/></div>
+    </form>
+
+    <hr/>
+
+    <p> Entered data: </p>
+
+    <ul>
+        <li>email: [${incident.email}]</li>
+        <li>message: [${incident.message}]</li>
+        <li>OS: [${incident.operatingSystem}]</li>
+        <li>urgent: [${incident.urgent}]</li>
+        <li>department: [${incident.department}]</li>
+    </ul>
+
+
+
+</t:comp>

@@ -1,0 +1,247 @@
+ ----
+ Component Templates
+ ----
+ 
+Component Templates
+
+  Under Tapestry, component templates are files associated with page or component classes that contain the markup for
+  the component, along with any <embedded components>.
+  
+  In a change from Tapestry 4, under Tapestry 5, component templates are <<well formed XML documents>>. That means
+  that every open tag must have a matching close tag, every attribute must be quoted, and so forth.
+  
+  For the most part, these templates are standard (X)HTML; Tapestry extensions to ordinary markup are provided
+  in the form of a Tapestry namespace.
+  
+  We'll cover the specific content of templates shortly, first a few details about connecting a component to its template.
+    
+Template Location
+
+  Component templates are stored with the component class file.  The files have a ".html" extension, and are stored in
+  the same package as corresponding component class.
+  
+  Under a typical Maven directory structure, the Java class for a component
+  might be <<<src/main/java/org/example/myapp/components/MyComponent.java>>>.
+  The corresponding template will be <<<src/main/resources/org/example/myapp/components/MyComponent.html>>>.
+  
+  Likewise, the Java class for a component might be <<<src/main/java/org/example/myapp/pages/MyPage.java>>> and
+  the corresponding template will be <<<src/main/resources/org/example/myapp/pages/MyPage.html>>>.
+  
+  The template and the compiled class will be packaged together in the WEB-INF/classes folder of the application WAR.
+
+  For <pages> (not <components>), a second location will be searched: in the web application context.
+  The location is based on the logical name of the page, in the previous example, the template
+  would be <<<MyPage.html>>> in the root folder of the web application.
+  
+  A template on the classpath takes precendence over a file in the web application context.
+  
+Template Localization
+
+  Templates are {{{localization.html}localized}} in much the same way as individual files of a component's message
+  catalog: the effective locale is inserted into the name of the file.  Thus a German users will see the content
+  generated from <<<MyPage_de.html>>> and French users will see content generated from <<<MyPage_fr.html>>>.  When no
+  specific localization is available, the default location (<<<MyPage.html>>>) is used.  
+  
+Template Inheritance
+
+  If a component does not have a template, but extends from a component class that does have
+  a template, then the parent class' template will be used by the child component.
+  
+  This allows a component to extend from a base class but not have to duplicate the base class' template.
+    
+Tapestry Namespace
+
+  Component templates should include the Tapestry namespace, defining it in the root element of the template.
+    
++----+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>Hello World Page</title>
+    </head>
+    <body>
+        <h1>Hello World</h1>
+    </body>
+</html>
++---+  
+
+  This defines the namespace using the standard prefix, "t:".  The examples on this page all assume the use of the standard 
+  prefix.
+  
+Tapestry Elements
+
+  Tapestry elements are elements defined using the Tapestry namespace prefix.
+  
+  All other elements should be in the default namespace, with no prefix.
+  
+* \<comp\>
+
+  The \<comp\> element is used to identify an <embedded component> within the template.
+  
+  Embedded components have three parameters:
+  
+  * id: A unique id for the component (within its container).
+  
+  * type: Used to identify the type of the component; this is typically a partial class name (details below).
+  
+  * mixins: An optional comma seperated list of mixins for the the component.
+  
+  [] 
+  
+  Either id or type <<must>> be specified.
+  
+  If the id attribute is ommitted, Tapestry will assign a unique id for the element.
+  
+  The type attribute is optional; when not specified, Tapestry will expect the class to define
+  the type of the component (with 
+  {{{component-classes.html#Embedded Components}a Component annotation}}).
+  
+  Additional attributes are used to {{{parameters.html}bind parameters of the component}}. These may be formal parameters
+  or informal parameters.  Formal parameters will have a default binding prefix (usually "prop:").  Informal parameters
+  will be assumed to be literals (i.e., the "literal:" binding prefix).
+  
+  The \<comp\> element defines where, within the containing component's template, the embedded component is active.
+  
+  It also defines the <<body>> of the embedded component, the portion of the template enclosed by the open and close
+  \<comp\> tags.
+  
+  The following example presumes a component, "Count" that iterates from a start value (which defaults to 1) to
+  an end value (here specified as 3), rendering its body on each iteration:
+  
++----+
+<p>
+    Merry Christmas:
+    <t:comp type="Count" end="3">
+        Ho!
+    </t:comp>
+</p>
++---+  
+  
+* \<body\>
+
+  In many cases, a component is designed to integrate its template with its container's
+  template.  
+  
+  The \<body\> element is used to identify where, within a component's template, its
+  body (from the container's template) is to be rendered.
+  
+  Components have control over if, and even how often, their body is rendered.
+  
+  The following example is a Border component, that adds basic HTML elements
+  around the page specific content:
+  
++---+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <head>
+        <title>My Tapestry Application</title>
+    </head>
+    <body>
+        <t:body/>
+    </body>
+</html>
++---+  
+
+  A page would use this component as follow:
+  
++---+
+<t:comp type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  My Page Specific Content
+
+</t:comp >
++---+    
+   
+   When the page renders, the page's template and the Border component's template
+   are merged together:
+   
++---+
+<html>
+  <head>
+    <title>My Tapestry Application</title>
+  </head>
+  <body>
+    My Page Specific Content
+  </body>
+</html>
++---+   
+   
+   Tapestry 4 users will recognize the \<body\> element as a replacement for the
+   RenderBody component.
+   
+* \<block\>
+
+  A block is a container of a portion of the component template. A block does not normally render; any component or contents you put inside
+  a block will not ordinarily be rendered.  However, by injected the block, you can have precise control over when and if the content renders.   
+  
+  A block may be annonymous, or it may have an id (specified with the id attribute).  Non-annonmyous blocks may be 
+  {{{inject.html}injected}} into the component.
+  
+* \<parameter\>
+
+  A \<parameter\> element is a special kind of block.  It is placed inside the body of an embedded component.  The block defined by the
+  \<parameter\> is passsed to the component.  \<parameter\> includes a mandatory name attribute to identify which parameter of the component
+  to bind.  
+
+  Example:
+    
++---+
+<t:comp type="If" test="loggedIn">
+  Hello, ${userName}!
+  <t:parameter name="else">
+  Click <a t:type="ActionLink" t:id="login">here</a> to log in.
+  </t:parameter>
+</t:comp>
++---+
+   
+Invisible Instrumentation
+
+  A favorite feature of Tapestry 4 is <invisible instrumentation>, the ability to mark ordinary HTML elements as components. Invisible instrumentation
+  leads to more concise templates that are also more readable.
+  
+  For Tapestry 5, you make use of <namespaced> id or type attributes to mark an element as a component, for example:
+  
++---+
+<p>
+    Merry Christmas:
+    <span t:type="Count" end="3">
+        Ho!
+    </span>
+</p>
++---+   
+
+  The id, type and mixins attributes must be placed in the Tapestry namespace.  Any additional attributes may be in the Tapestry namespace
+  or in the default namespace. Placing an attribute in the Tapestry namespace is useful when the attribute is not defined for the
+  element being instrumented.
+    
+  It is valid to specify just the t:id attribute and not supply a specific type in either the template or in the containing class.
+  In this situation, Tapestry will make use of the
+  {{{../apidocs/org/apache/tapestry/corelib/components/Any.html}Any}} component, a kind of placeholder for any kind of element
+  whatsoever.
+   
+Expansions
+
+  Another option when rendering output is the use of  <expansions>.  Expansions
+  are special strings that may be emdedded in template bodies, and borrow some syntax
+  from the {{{http://ant.apache.org}Ant}} build tool.
+  
++---+
+  Welcome, ${userId}!
++---+    
+
+  Here, <<<$\{userId}>>> is the expansion.  In this example, the userId property of the 
+  component is extracted, converted to a string, and streamed into the output.  
+ 
+  Expansions may only occur in ordinary template text; they are not allowed inside
+  attributes, or inside CDATA sections.
+  
+  Under the covers, expansions are the same as
+  {{{parameters.html}parameter bindings}}.  The default
+  binding prefix for expansions is "prop:" (that is, the name of a property), but
+  other binding prefixes are useful, especially "message:" (to access a localized
+  message from the component's message catalog).
+  
+  Tapestry 4 users will note that expansions are a concise, easy replacement for the
+  Insert component, and for the \<span key="..."\> directive.
+  
+
+  
+  
