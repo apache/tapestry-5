@@ -1,0 +1,76 @@
+ ----
+ Request Processing
+ ----
+ 
+Request Processing
+
+  Understanding the request processing pipeline is very important, as it is one of the
+  chief extension points for Tapestry.
+  
+  Much of the early stages of processing are in the form of extensible 
+  {{{../ioc/pipeline.html}pipelines}}.
+  
+Tapestry Filter
+
+  All incoming requests originate with the TapestryFilter, which is configured
+  inside the application's {{{conf.html}web.xml}}.
+  
+  The TapestryFilter is responsible for a number of startup and initialization
+  functions.
+  
+  When it receives a request, the TapestryFilter obtains the
+  {{{../apidocs/org/apache/tapestry/services/HttpServletRequestHandler.html}tapestry.HttpServletRequestHandler}} 
+  service, and invokes its service() method. 
+    
+HttpServletRequestHandler Pipeline
+
+  This pipeline performs initial processing of the request. It can be extended
+  by contributing a
+  {{{../apidocs/org/apache/tapestry/services/HttpServletRequestFilter.html}tapestry.HttpServletRequestFilter}} into
+  the tapestry.HttpServletRequestHandler service's configuration.
+  
+  The terminator for the pipeline does two things:
+  
+  * It stores the request and response into the {{{.../apidocs/org/apache/tapestry/services/RequestGlobals.html}tapestry.RequestGlobals}}
+    service. This is a threaded service that stores per-thread/per-request information.
+    
+  * It wraps the request and response as a
+    {{{../apidocs/org/apache/tapestry/services/Request.html}Request}} and
+    {{{../apidocs/org/apache/tapestry/services/Response.html}Response}}, and passes them into the
+    {{{../apidocs/org/apache/tapestry/services/RequestHandler.html}tapestry.RequestHandler}} pipeline.
+ 
+  []
+     
+RequestHandler Pipeline
+ 
+   This pipeline is where most extensions related to requests take place.  Request represents an abstraction on top of HttpServletRequest; this
+   is necessary to support non-servlet applications, such as portlet applications. Where other code and services within
+   Tapestry require access to information in the request, such as query parameters, that information is obtained from the
+   Request (or Response) objects.
+   
+   The pipeline includes two built-in filters.  One filter is responsible for {{{reload.html}class and template reloading}}.
+   
+   A second filter detects incoming requests that are for static resources (images, stylesheets, static HTML files, etc.)
+   within the context; such requests are
+   processed by the servlet container directly.
+   
+   <<TODO: Describe request dispatch, once that is understood.>>
+   
+   The terminator for this pipeline stores the Request and the Response into RequestGlobals.
+   
+RequestGlobals Service
+
+  The tapestry.RequestGlobals service 
+  has a lifecycle of perthread; this means that a seperate instance exists for every thread, and therefore,
+  for every request.  The terminators of the two handler pipelines store the request/response pairs into the RequestGlobals service.
+  
+Request Service
+
+  The tapestry.Request service is a 
+  {{{../ioc/shadow.html}shadow}}
+  of the RequestGlobals services' request property. That is, any methods invoked
+  on this service are delegated to the request object stored inside the RequestGlobals.
+  
+  This service is also accessible with the object reference <<<infrastructure:Request>>>.
+   
+  

@@ -1,0 +1,157 @@
+/* Tapestry styles all start with "t-" */
+
+DIV.t-error {
+    border: 1px solid red;
+    padding: 0px;
+    margin: 4px 0px;
+}
+DIV.t-error DIV {
+    padding: 2px;
+    display: block;
+    margin: 0px;
+    background-color: red;
+    color: white;
+    font-weight: bold;
+}
+DIV.t-error UL {
+    margin: 2px 0px;
+    background-color:white;
+    color:red;
+}
+DIV.t-error LI {
+    margin-left: -20px;
+}
+.t-invisible {
+    display: none;
+}
+
+LABEL.t-error
+{
+  color:red;
+}
+
+INPUT.t-error, TEXTAREA.t-error
+{
+    border-color: red;
+    font-style: italic;
+    color: red;
+}
+
+DIV.t-exception-message
+{
+  font-style: italic;
+  font-size: 12pt;
+  border: thin dotted silver;
+  margin: 5px 0px;
+  padding: 3px;
+} 
+
+DIV.t-exception-report, DIV.t-env-data
+{
+  font-family: "Trebuchet MS", Arial, sans-serif; 
+}
+
+DIV.t-exception-report LI
+{ 
+  margin-left: -40px;
+}
+
+DIV.t-exception-report DT, DIV.t-env-data DT
+{
+  color:green;
+  padding-left: 2px;
+}
+
+DIV.t-exception-report LI
+{
+  list-style: none;
+}
+
+SPAN.t-exception-class-name
+{
+  display: block;
+  margin-top: 15px;
+  font-size: 12pt;
+  background-color: #c0c0c0;
+  color: blue;
+  padding: 2px 3px;
+  font-weight: bold;
+}
+
+UL.t-stack-trace LI
+{
+  font-family: Monaco, Times, monospace;
+  font-size: 10pt;
+  margin-left: -25px;
+  list-style: square;
+}
+
+H1.t-exception-report
+{
+  font-family: "Trebuchet MS", Arial, sans-serif; 
+  color: red;
+}
+
+DIV.t-exception-report DT:after
+{
+  content: ":";
+}
+
+DIV.t-exception-report DD, DIV.t-env-data DD
+{
+  margin-left: 10px;
+}
+
+
+TABLE.t-data-table
+{
+  margin: 0px;
+  padding: 2px;
+}
+
+
+TABLE.t-data-table TH
+{
+  background-color: black;
+  color: white;
+}
+
+TABLE.t-data-table TD
+{
+  border: 1px solid silver;
+  margin: 0px;
+}
+
+DIV.t-beaneditor
+{
+  display: block;
+  background: #ffc;
+  border: 2px solid silver;
+  padding: 2px;
+}
+
+FORM.t-beaneditor LABEL:after
+{
+  content: ":";
+}
+
+DIV.t-beaneditor-row
+{
+  padding: 4px 0px 2px 0px;
+}
+
+DIV.t-beaneditor LABEL:after
+{
+  vertical-align: middle;
+  content: ":";
+}
+
+DIV.t-beaneditor LABEL
+{
+  width: 10%;
+  display: block;
+  float: left;
+  text-align: right;
+  clear: left;
+  padding-right: 3px;
+}
