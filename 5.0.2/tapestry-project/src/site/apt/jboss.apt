@@ -1,0 +1,29 @@
+ ----
+ Deployment Notes: JBoss
+ ----
+ 
+Deployment Notes: JBoss
+
+  JBoss's default servlet container is {{{tomcat.html}Tomcat}}, so deployment notes for Tomcat apply to JBoss as well.
+  
+  JBoss has a very odd class loader structure that causes havoc with many frameworks, including Tapestry 5. The way to get around it is to edit the configuration file
+  <JBoss root>/server/default/deploy/jbossweb-tomcat55.sar/META-INF/jboss-service.xml and turn on the UseJBossWebLoader attribute:
+  
++----+
+      <!-- A flag indicating if the JBoss Loader should be used. This loader
+           uses a unified class loader as the class loader rather than the tomcat
+           specific class loader.
+           The default is false to ensure that wars have isolated class loading
+           for duplicate jars and jsp files.
+      -->
+      <attribute name="UseJBossWebLoader">true</attribute>
++----+     
+  
+  This is not a very good solution, as it affects all web applications within the server, potentially causing other problems. Hopefully a better solution will
+  be discoverred in the future. And perhaps a time traveller will venture back in time with that information and save me a lot of headaches yesterday.
+  
+  Tapestry has been tested with JBoss 4.0.5, which uses Tomcat 5.5.20.
+  
+* Logging
+
+  TODO: Discuss logging configuration for JBoss.     
