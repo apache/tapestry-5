@@ -1,0 +1,56 @@
+<document>
+  <properties>
+     <title>Bugs Fixed in 5.0.3</title>
+  </properties>
+    <body>
+
+     
+      
+      <h1>Release Notes - Tapestry - Version 5.0.3</h1>
+      
+      <h2>Bug</h2>
+      <ul>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1270'>TAPESTRY-1270</a>] - The StringTranslator should return null when an empty text field is submitted with a form, not the empty string</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1275'>TAPESTRY-1275</a>] - Recursive Components cause heap space overflow</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1282'>TAPESTRY-1282</a>] - Assets should be streamed with an appropriate content type, even when the container is unable to provide the content type</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1291'>TAPESTRY-1291</a>] - Race condition in IoC service creation can create runtime failures</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1297'>TAPESTRY-1297</a>] - incorrect context generated for URLs with final slash</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1300'>TAPESTRY-1300</a>] - Unit tests require english locale to run succesfully</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1303'>TAPESTRY-1303</a>] - Update licences and notice files for external dependencies (javassist, etc.)</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1314'>TAPESTRY-1314</a>] - ExceptionAnalyzer throws NPE when an exception message is null</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1316'>TAPESTRY-1316</a>] - Address class loader issues inside JBoss</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1321'>TAPESTRY-1321</a>] - JBoss deployment error</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1322'>TAPESTRY-1322</a>] - Spurious errors in log concerning page "favicon"</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1329'>TAPESTRY-1329</a>] - The favicon.ico file is not generated into the project by the quickstart archetype</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1343'>TAPESTRY-1343</a>] - Under Tomcat, a root path URL such as http://.../context (without a trailing slash) causes a StringIndexOutOfBoundsException inside PageRenderDispatcher</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1344'>TAPESTRY-1344</a>] - Render phase methods should be allowed to return a Renderable object</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1346'>TAPESTRY-1346</a>] - tapestry-hibernate module depends on missing ComponentClassLocator service</li>
+      </ul>
+      
+      <h2>Improvement</h2>
+      <ul>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1025'>TAPESTRY-1025</a>] - Add support for eager loading of services</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1295'>TAPESTRY-1295</a>] - Event handling methods that have too many parameters for the event context should be silently skipped</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1298'>TAPESTRY-1298</a>] - ExceptionReport can be too verbose and repetative</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1308'>TAPESTRY-1308</a>] - Exceptions while building services are poorly reported</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1320'>TAPESTRY-1320</a>] - Render phase BeginRender should respond to a "false" result by switching to phase AfterRender (rather than phase CleanupRender).</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1323'>TAPESTRY-1323</a>] - Support caseless mapped service configurations </li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1335'>TAPESTRY-1335</a>] - The "infrastructure:" object provider prefix is too long and the name is confusing, rename to "alias:"</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1339'>TAPESTRY-1339</a>] - Rework Tapestry IoC to remove the concept of module ids and qualified service ids</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1342'>TAPESTRY-1342</a>] - When an exception is reported concerning a particular method, the string identifying the method should include the file name and line number (if available)</li>
+      </ul>
+      
+      <h2>New Feature</h2>
+      <ul>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1276'>TAPESTRY-1276</a>] - If component should include an optional negate parameter</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1284'>TAPESTRY-1284</a>] - Tapestry Spring integration module</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1292'>TAPESTRY-1292</a>] - Allow lists to be used as select models</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1302'>TAPESTRY-1302</a>] - JavaScript support</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1311'>TAPESTRY-1311</a>] - Identify type of component via tag element name in templates</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1319'>TAPESTRY-1319</a>] - tapestry.InfrastructureOverrides is not yet implemented</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1325'>TAPESTRY-1325</a>] - Add an "asset:" object provider, to simplfy injecting assets into services</li>
+        <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1341'>TAPESTRY-1341</a>] - Allow service builders named "build" and determine service id from the result type</li>
+      </ul>
+      
+  </body>
+</document>
