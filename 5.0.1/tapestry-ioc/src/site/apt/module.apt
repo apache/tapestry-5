@@ -1,0 +1,228 @@
+ ---
+ Tapestry IoC Modules
+ ---
+ 
+Tapestry IoC Modules
+ 
+  You inform Tapestry about your services and contributions by providing a module builder class.
+
+  The module builder is a plain Java class.  A system of annotations and naming conventions allow
+  Tapestry to determine what services are provided by the module.
+
+  A module bulider defines builder methods, one for each service provided by the module.
+
+  Service builder methods are public methods. They are often static. Here's a trivial example:
+
++-----------------------------------------------------------------------------------+
+package org.example.myapp.services;
+
+public class MyAppModule
+{
+  public static Indexer buildIndexer()
+  {
+    return new IndexerImpl();
+  }
+}
++-----------------------------------------------------------------------------------+
+
+  By default, a module's id is the same as its package name (we'll see how to override
+  that shortly).  Here the module id will be org.example.myapp.services.
+
+  Any public method (static or instance) whose name starts with "build" is a service builder method, implicitly
+  defining a service within the module.  Here we're defining a service around
+  the Indexer service interface (presumably also in the org.example.myapp.services
+  package).
+
+  The service's unqualified id (the part after the module id) is derived from the method name.
+  Here "build" was stripped off of "buildIndexer", leaving "Indexer".  That's the unqualified id.
+  Prefixing with the module id results in the fully qualfied id 
+  org.example.myapp.services.Indexer.
+
+  We could extend this example by adding additional service builder methods, or by showing
+  how to inject dependencies. See {{{service.html#Injecting Dependencies}the service documentation}} 
+  for more details.
+
+Overriding the Module id
+
+  Adding an {{{../apidocs/org/apache/tapestry/ioc/annotations/Id.html}@Id annnotation}}
+  to the module builder class will control the module's id.
+  
++-----------------------------------------------------------------------------------+
+package org.example.myapp.services;
+
+import org.apache.tapestry.ioc.annotations.Id;
+
+@Id("myapp")
+public class MyAppModule
+{
+  public static Indexer buildIndexer()
+  {
+    return new IndexerImpl();
+  }
+}
++-----------------------------------------------------------------------------------+
+
+  This time, the module's id is "myapp" and the service's id is "myapp.Indexer".
+  
+  Remember that module ids must be unique, no other module builder class, even one
+  in a different package, may declare the id "myapp", or runtime warnings or
+  errors will occur.
+  
+  
+{Caching Services}
+
+  You will often find yourself in the position of injecting the same services
+  into your service builder or service decorator methods repeatedly. This can be quite
+  a bit of redundant typing.  Less code is better code, so as an alternative, you may define a <constructor> for your
+  module that accepts annotated parameters (as with 
+  {{{service.html#Injecting Dependencies}service builder injection}}).
+  
+  This gives you a chance to store common services in instance variables for later use inside 
+  service builder methods.
+  
++-----------------------------------------------------------------------------------+
+
+public class MyModule
+{   
+  private final JobScheduler _scheduler;
+  private final FileSystem _fileSystem;
+  
+  public MyModule(
+    @Inject("service:JobScheduler")
+    JobScheduler scheduler, 
+    @Inject("service:FileSystem")
+    FileSystem fileSystem)
+  {
+    _scheduler = scheduler;
+    _fileSystem = fileSystem;
+  }
+  
+  public Indexer buildIndexer()
+  {
+    IndexerImpl indexer = new IndexerImpl(_fileSystem);
+      
+    _scheduler.scheduleDailyJob(indexer);
+      
+    return indexer;
+  }
+}
++-----------------------------------------------------------------------------------+
+
+  Notice that we've switched from <static> methods to <instance> methods.  Since the builder
+  methods are not static, the MyModule class will be instantiated so that the methods may be
+  invoked. The constructor receives two common dependencies, which are stored into instance
+  fields that may later be used inside service builder methods such as buildIndexer().
+
+  In addition to injecting dependencies with the @InjectService and @Inject annotations,
+  you may also inject a number of <module> resources:
+  
+  * java.lang.String: the module id
+    
+  * org.apache.commons.logging.Log: log for the module
+   
+  * {{{../apidocs/org/apache/tapestry/ioc/ServiceLocator.html}ServiceLocator}}:  access to other services
+  
+  []
+  
+  Care should be taken with this approach: in some circustances, you may force a situtation in which
+  the module constructor is dependent on itself. For example, if you invoke a method on any injected services
+  defined within the same module from the module builder's constructor,
+  then the service implementation will be needed. Creating service implementations
+  requires the module builder instance ... that's a recursive reference. 
+  
+  Another common example would be using @Inject("infrastructure:<property>") when the module being constructed
+  contributes into the tapestry.Infrastructure service's configuration. Here, to resolve the contribution, Tapestry
+  needs an instance of the module builder class even as it is trying to invoke the module builder's constructor.
+  
+  Tapestry detects these scenarios and throws a runtime exception to prevent an endless loop.
+    
+{Autoloading modules}
+
+  When setting up the registry, Tapestry can automatically locate modules packaged into JARs.
+  It does this by searching for a particular global manifest entry. 
+  
+  The manifest entry name is "Tapestry-Module-Classes".  The value is a comma-seperated list
+  of fully qualified class names of module builder classes (this allows a single
+  JAR to contain multiple, related modules).  Whitespace is ignored.
+  
+  Example:
+  
++-----------------------------------------------------------------------------------+
+Manifest-Version: 1.0
+Tapestry-Module-Classes: org.example.mylib.LibModule, org.example.mylib.internal.InternalModule
++-----------------------------------------------------------------------------------+
+
+  If you are using Maven 2, then getting these entries into your JAR's manifest
+  is as simple as some configuration in your pom.xml:
+  
++-----------------------------------------------------------------------------------+
+<project>
+  . . .
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Tapestry-Module-Classes>org.example.mylib.LibModule, 
+                org.example.mylib.internal.InternalModule</Tapestry-Module-Classes>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  . . .
+</project>
++-----------------------------------------------------------------------------------+
+  
+  
+  More details are provided in the 
+  {{{http://maven.apache.org/guides/mini/guide-manifest.html}Maven Manifest Guide}}.
+  
+SubModule Annotation
+
+  Often, you will have several different modules working together that should all be loaded
+  as a unit. They will, of course, have individual, unique ids.
+  
+  One approach is to update the module ids into the manifest, as shown in the previous extension.
+  
+  This can become tedious, and somewhat brittle in the face of refactorings (such as renaming of classes
+  or packages).
+  
+  A better alternative is the 
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/SubModule.html}@SubModule annotation}}.
+  
+  The value for this annotation is a list of <additional> classes to be treated as module builder classes,
+  exactly as if they were identified in the manifest.  For example:
+  
++----+
+@Id("tapestry.internal.services")
+@SubModule(
+{ InternalTransformModule.class })
+public final class InternalModule
+{
+  . . .
++----+
+
+  In general, your should only need to identify a single module in the JAR manifest, and make use of
+  @SubModule to pull in any additional module builder classes.
+
+Module Builder Implementation Notes
+
+  Module builder classes are designed to be very, very simple to implement.
+    
+  Again, keep the methods very simple. Use {{{service.html#Injecting Dependencies}parameter injection}}
+  to gain access to the dependencies you need.
+  
+  Be careful about inheritance. Tapestry will see all <public> methods,
+  even those inherited from base classes.  Tapestry <only> sees public methods.  
+  
+  By convention, module builder class names end in Module and are final classes.
+  
+  You don't <have> to define your methods as static. The use of static methods is only absolutely
+  necessary in a few cases, where the constructor for a module is dependent on contributions
+  from the same module (this creates a chicken-and-the-egg situation that is resolved through
+  static methods).
