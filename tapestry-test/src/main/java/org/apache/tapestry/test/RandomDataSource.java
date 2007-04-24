@@ -41,11 +41,6 @@ public final class RandomDataSource
 
     private final List<String> _words = new ArrayList<String>();
 
-    public static void main(String[] args)
-    {
-        new RandomDataSource();
-    }
-
     public RandomDataSource()
     {
         for (int i = 0; i < 4; i++)
