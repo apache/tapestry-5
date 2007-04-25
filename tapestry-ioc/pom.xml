@@ -15,12 +15,7 @@
   </parent>
   <name>Tapestry Inversion of Control Container</name>
   <inceptionYear>2006</inceptionYear>
-  <url>http://tapestry.apache.org/tapestry5/tapestry-ioc/</url>
-  <!-- Due to Maven 2 bugs, this has to be copied into each module POM. -->
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/${pom.artifactId}/trunk/</connection>
-    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/${pom.artifactId}/trunk/</url>
-  </scm>
+
   <dependencies>
     <dependency>
       <groupId>jboss</groupId>

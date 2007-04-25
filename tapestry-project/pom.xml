@@ -20,11 +20,10 @@
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org</url>
   </organization>
-  <!-- Due to Maven 2 bugs, this has to be copied into each module POM. -->
   <scm>
     <connection>
-      scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/${pom.artifactId}/trunk/ </connection>
-    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/${pom.artifactId}/trunk/ </url>
+      scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-project </connection>
+    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/tapestry-project </url>
   </scm>
   <developers>
     <developer>

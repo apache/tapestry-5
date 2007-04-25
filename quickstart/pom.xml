@@ -15,10 +15,6 @@
   <name>Tapestry 5 Quickstart Archetype</name>
   <inceptionYear>2007</inceptionYear>
   <url>http://tapestry.apache.org/tapestry5/${pom.artifactId}/</url>
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/${pom.artifactId}/trunk/</connection>
-    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/${pom.artifactId}/trunk/</url>
-  </scm>
   <description>Archetype for creating a basic Tapestry 5 application, including Eclipse control
     files.</description>
 </project>
