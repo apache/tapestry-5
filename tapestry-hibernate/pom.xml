@@ -15,12 +15,7 @@
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
   <inceptionYear>2007</inceptionYear>
-  <!-- Due to Maven 2 bugs, this has to be copied into each module POM. -->
-  <url>http://tapestry.apache.org/tapestry5/${pom.artifactId}/</url>
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/${pom.artifactId}/trunk/</connection>
-    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/${pom.artifactId}/trunk/</url>
-  </scm>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.tapestry</groupId>
