@@ -5,7 +5,7 @@
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-project</artifactId>
   <packaging>pom</packaging>
-  <version>5.0.4-SNAPSHOT</version>
+  <version>5.0.4</version>
   <name>Tapestry 5 Project</name>
   <inceptionYear>2006</inceptionYear>
   <url>http://tapestry.apache.org/tapestry5/</url>
@@ -21,8 +21,7 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <connection>
-      scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-project </connection>
+    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-project </connection>
     <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/tapestry-project </url>
   </scm>
   <developers>
@@ -139,6 +138,19 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
           <configuration>
             <descriptorRefs>
@@ -192,6 +204,19 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>deploy</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <reporting>
     <plugins>
       <plugin>
@@ -214,8 +239,8 @@
   </reporting>
   <repositories>
     <repository>
-      <id>tapestry-snapshots</id>
-      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository/</url>
+      <id>tapestrys</id>
+      <url>http://people.apache.org/~hlship/tapestry-repository/</url>
     </repository>
     <repository>
       <id>codehaus.snapshots</id>
@@ -230,8 +255,8 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>tapestry-snapshots</id>
-      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository</url>
+      <id>tapestrys</id>
+      <url>http://people.apache.org/~hlship/tapestry-repository</url>
     </pluginRepository>
     <!-- I believe a version of the surefire plugin lives here. -->
     <pluginRepository>
@@ -273,12 +298,12 @@
     </repository>
     <snapshotRepository>
       <id>tapestry</id>
-      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository</url>
+      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-repository</url>
     </snapshotRepository>
   </distributionManagement>
 
   <properties>
-    <!-- Version 2.1-SNAPSHOT lists everything as 100% covered, wierd. -->
+    <!-- Version 2.1 lists everything as 100% covered, wierd. -->
     <cobertura-plugin-version>2.0</cobertura-plugin-version>
   </properties>
 
