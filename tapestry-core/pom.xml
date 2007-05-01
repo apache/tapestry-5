@@ -5,11 +5,11 @@
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-core</artifactId>
   <packaging>jar</packaging>
-  <version>5.0.4-SNAPSHOT</version>
+  <version>5.0.4</version>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.4-SNAPSHOT</version>
+    <version>5.0.4</version>
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
   <name>Tapestry Core Library</name>
