@@ -10,4 +10,4 @@ end
 
 puts "Uploading distributions ..."
 
-system 'scp target/dists/* hlship@people.apache.org:public_html/tapestry-releases'
+system 'scp #{DIST_DIR}/* hlship@people.apache.org:public_html/tapestry-releases'
