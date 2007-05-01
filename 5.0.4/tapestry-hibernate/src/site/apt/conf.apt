@@ -1,0 +1,40 @@
+  ----
+  Configuration
+  ----
+  
+Configuring Hibernate
+
+  The Tapestry Hibernate Library is responsible for configuring Hibernate for you. This is done in a just-in-time manner, the first time
+  a Hibernate Session is required.
+  
+  You should create a <<<hibernate.cfg.xml>>> file and place it in the root of your application (i.e., under src/main/resources).  Most Hibernate-specific
+  configuration occurs in this file.
+  
+  The library gets involved in terms of loading packages and entity class mappings.  This starts with a list of package names.
+  For each package, the library will:
+  
+  * {{{http://www.hibernate.org/hib_docs/annotations/api/org/hibernate/cfg/AnnotationConfiguration.html#addPackage(java.lang.String)}Add the package to the configuration}},
+    which will load annotations from the package-info class within the named package, if present.
+    
+  * Every Java class in the package (or any subpackage) will be {{{http://www.hibernate.org/hib_docs/annotations/api/org/hibernate/cfg/AnnotationConfiguration.html#addAnnotatedClass(java.lang.Class)}added as an annotated class}}.
+    This excludes inner classes, but includes all other classes.
+  
+  []
+  
+  By default, the package <application-root-package>.entities is scanned as described above. If you have additional packages containing 
+  entities, you must 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/configuration.html}contribute}} them to the tapestry.hibernate.HibernateSessionSource 
+  service configuration.
+  
+  Example:
+  
++----+
+  @Contribute("tapestry.hibernate.HibernateSessionSource")
+  public void contributeEntityPackages(Configuration<String> configuration)
+  {
+    configuration.add("org.example.myapp.domain");
+  }
++----+
+
+  You may add as many packages in this manner as you wish. This option is most often used when the entities themselves are contained in a library included
+  within an application, rather than part of the application directly.

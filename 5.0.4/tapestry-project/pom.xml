@@ -1,0 +1,310 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.tapestry</groupId>
+  <artifactId>tapestry-project</artifactId>
+  <packaging>pom</packaging>
+  <version>5.0.4</version>
+  <name>Tapestry 5 Project</name>
+  <inceptionYear>2006</inceptionYear>
+  <url>http://tapestry.apache.org/tapestry5/</url>
+  <licenses>
+    <license>
+      <name>Apache Software License 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org</url>
+  </organization>
+  <scm>
+    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-project </connection>
+    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/tapestry-project </url>
+  </scm>
+  <developers>
+    <developer>
+      <id>hls</id>
+      <name>Howard M. Lewis Ship</name>
+      <email>hlship@apache.org</email>
+      <url>http://howardlewisship.com</url>
+      <roles>
+        <role>Menace</role>
+      </roles>
+      <timezone>PDT</timezone>
+    </developer>
+  </developers>
+
+  <ciManagement>
+    <system>bamboo</system>
+    <url>http://tapestry.formos.com/bamboo/</url>
+  </ciManagement>
+
+  <mailingLists>
+    <mailingList>
+      <name>Tapestry User List</name>
+      <subscribe>users-subscribe@tapestry.apache.org</subscribe>
+      <unsubscribe> users-unsubscribe@tapestry.apache.org </unsubscribe>
+      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-users/ </archive>
+    </mailingList>
+    <mailingList>
+      <name>Tapestry Developer List</name>
+      <subscribe>dev-subscribe@tapestry.apache.org</subscribe>
+      <unsubscribe> dev-unsubscribe@tapestry.apache.org </unsubscribe>
+      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-dev/ </archive>
+    </mailingList>
+    <mailingList>
+      <name>Tapestry Commits List</name>
+      <subscribe>commits-subscribe@tapestry.apache.org</subscribe>
+      <unsubscribe> commits-unsubscribe@tapestry.apache.org </unsubscribe>
+      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-commits/ </archive>
+    </mailingList>
+  </mailingLists>
+
+  <modules>
+    <module>../tapestry-test</module>
+    <module>../tapestry-ioc</module>
+    <module>../tapestry-core</module>
+    <module>../tapestry-spring</module>
+    <module>../tapestry-hibernate</module>
+
+    <!-- Temporarily removed until the project is named correctly and set up with a trunk, etc. 
+			<module>../tapestry-Workbench</module>
+		-->
+    <!-- Now we're getting into the archetypes. -->
+    <module>../quickstart</module>
+    <!-- And the Maven plugin. -->
+    <module>../tapestry-component-report</module>
+  </modules>
+  <dependencyManagement>
+    <dependencies>
+
+      <dependency>
+        <groupId>log4j</groupId>
+        <artifactId>log4j</artifactId>
+        <version>1.2.9</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>2.4</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>jboss</groupId>
+        <artifactId>javassist</artifactId>
+        <version>3.4.ga</version>
+        <scope>runtime</scope>
+      </dependency>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>1.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>org.easymock</groupId>
+        <artifactId>easymock</artifactId>
+        <version>2.2</version>
+        <scope>test</scope>
+      </dependency>
+
+      <!-- Now, artifacts created by Tapestry sub-projects. -->
+
+      <dependency>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-ioc</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-core</artifactId>
+        <version>${project.version}</version>
+        <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-test</artifactId>
+        <version>${project.version}</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-gpg-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>sign-artifacts</id>
+              <phase>verify</phase>
+              <goals>
+                <goal>sign</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <configuration>
+            <descriptorRefs>
+              <descriptorRef>bin</descriptorRef>
+              <descriptorRef>src</descriptorRef>
+            </descriptorRefs>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>jar</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>1.5</source>
+            <target>1.5</target>
+            <optimize>true</optimize>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.3</version>
+          <configuration>
+            <suiteXmlFiles>
+              <suiteXmlFile> src/test/conf/testng.xml </suiteXmlFile>
+            </suiteXmlFiles>
+            <argLine>-Xmx500m</argLine>
+            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <configuration>
+            <archive>
+              <compress>true</compress>
+              <index>true</index>
+            </archive>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  <profiles>
+    <profile>
+      <id>deploy</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId> maven-project-info-reports-plugin </artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>license</report>
+              <report>scm</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <report>cim</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+    </plugins>
+  </reporting>
+  <repositories>
+    <repository>
+      <id>tapestrys</id>
+      <url>http://people.apache.org/~hlship/tapestry-repository/</url>
+    </repository>
+    <repository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+    </repository>
+    <!-- Pick up the selenium JARs. -->
+    <repository>
+      <id>openqa</id>
+      <name>OpenQA Maven Repository</name>
+      <url>http://maven.openqa.org/</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>tapestrys</id>
+      <url>http://people.apache.org/~hlship/tapestry-repository</url>
+    </pluginRepository>
+    <!-- I believe a version of the surefire plugin lives here. -->
+    <pluginRepository>
+      <id>howardlewisship.com</id>
+      <url>http://howardlewisship.com/repository</url>
+    </pluginRepository>
+    <!-- I believe the Cobertura plugin lives here. -->
+    <pluginRepository>
+      <id>codehaus.snapshots</id>
+      <url>http://snapshots.repository.codehaus.org</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <!-- Be sure to have the following in your ~/.m2/settings.xml
+		
+		<servers>
+		<server> <id>tapestry</id> <username>hlship</username>  </server>
+		</servers>
+		
+		Adjust for your personal apache.org user name. Otherwise (especially on Windows),
+		Maven and ssh trip over the user name when remote logging in.
+		
+		The <id> element below is used to rendevous with server data from settings.xml
+		in order to determine meta-information such as remote username. 
+		
+		Don't put your password in settings.xml; just upload to apache.org your
+		public key and make sure to ssh-add before invoking Maven.
+		
+	-->
+
+  <distributionManagement>
+    <site>
+      <id>tapestry</id>
+      <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/ </url>
+    </site>
+    <repository>
+      <id>tapestry</id>
+      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository</url>
+    </repository>
+    <snapshotRepository>
+      <id>tapestry</id>
+      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-repository</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <properties>
+    <!-- Version 2.1 lists everything as 100% covered, wierd. -->
+    <cobertura-plugin-version>2.0</cobertura-plugin-version>
+  </properties>
+
+</project>

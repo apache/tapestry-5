@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<project default="assemble">
+
+	<!-- Requires Ant 1.7.0 to execute! -->
+	
+	<property name="target.dir" value="target" />
+	<!-- Binary and source distributions, in .zip and .tar.gz formats, go here. -->
+	<property name="dists.dir" value="${target.dir}/dist" />
+	
+	
+	<!-- Read the Maven POM ... -->
+	<xmlproperty file="pom.xml" prefix="pom" keeproot="false"/>
+
+	<!-- ... to obtain the version number. -->
+	<property name="version" value="${pom.version}" />
+	
+	<property name="licenses" value="LICENSE*,*.txt"/>
+	<property name="sources" value="${licenses},pom.xml,src/**"/>
+	
+	<property name="bin.zip" value="${dists.dir}/tapestry-bin-${version}.zip"/>
+	<property name="src.zip" value="${dists.dir}/tapestry-src-${version}.zip"/>
+
+	<!-- This has to be kept synchronized with the modules, as they change. We include just the "runtime" modules,
+       no the ones used only within a Maven build; if the user is using Maven, they know how to (let Maven) get
+       the code. -->
+
+	<target name="assemble" description="Build distribution files.">
+		<mkdir dir="${dists.dir}" />
+
+		<echo>*** Building distribution for project version ${version} ***</echo>
+		
+		<echo>Building binary distribution</echo>
+			
+		<zip destfile="${bin.zip}">
+			<fileset dir="." includes="LICENSE*,*.txt" />
+
+			<!-- Folds the licences and the JARs into the subfolder.  Repetitive but such is life. -->
+			
+			<zipfileset prefix="tapestry-core" dir="../tapestry-core" includes="${licenses}" />
+			<zipfileset prefix="tapestry-core" dir="../tapestry-core/target" includes="*.jar" />
+
+			<zipfileset prefix="tapestry-hibernate" dir="../tapestry-hibernate" includes="${licenses}" />
+			<zipfileset prefix="tapestry-hibernate" dir="../tapestry-hibernate/target" includes="*.jar" />
+
+			<zipfileset prefix="tapestry-ioc" dir="../tapestry-ioc" includes="${licenses}" />
+			<zipfileset prefix="tapestry-ioc" dir="../tapestry-ioc/target" includes="*.jar" />
+
+			<zipfileset prefix="tapestry-spring" dir="../tapestry-spring" includes="${licenses}" />
+			<zipfileset prefix="tapestry-spring" dir="../tapestry-spring/target" includes="*.jar" />
+
+			<zipfileset prefix="tapestry-test" dir="../tapestry-test" includes="${licenses}" />
+			<zipfileset prefix="tapestry-test" dir="../tapestry-test/target" includes="*.jar" />
+
+		</zip>
+		
+		<!-- Build the other formats from the .zip -->
+
+        <tar destfile="${dists.dir}/tapestry-bin-${version}.tar.gz" compression="gzip">
+        	<zipfileset src="${bin.zip}"/>
+		</tar>
+
+        <tar destfile="${dists.dir}/tapestry-bin-${version}.tar.bz2" compression="bzip2">
+        	<zipfileset src="${bin.zip}"/>
+		</tar>
+	
+		<echo>Building source distribution</echo>
+		
+		<!-- Now on to the source files. -->
+			
+		<zip destfile="${src.zip}">
+			<fileset dir="." includes="${licenses}"/>
+			
+			<zipfileset prefix="tapestry-core" dir="../tapestry-core" includes="${sources}"/>
+			<zipfileset prefix="tapestry-hibernate" dir="../tapestry-hibernate" includes="${sources}"/>
+			<zipfileset prefix="tapestry-ioc" dir="../tapestry-ioc" includes="${sources}"/>
+			<zipfileset prefix="tapestry-spring" dir="../tapestry-spring" includes="${sources}"/>
+			<zipfileset prefix="tapestry-test" dir="../tapestry-spring" includes="${sources}"/>
+			
+			<zipfileset prefix="tapestry-project" dir="." includes="${sources}"/>
+			<zipfileset prefix="quickstart" dir="../quickstart" includes="${sources}"/>
+			<zipfileset prefix="tapestry-component-report" dir="../tapestry-component-report" includes="${sources}"/>
+			
+		</zip>
+		
+        <tar destfile="${dists.dir}/tapestry-src-${version}.tar.gz" compression="gzip" longfile="gnu">
+        	<zipfileset src="${src.zip}"/>
+		</tar>
+
+        <tar destfile="${dists.dir}/tapestry-src-${version}.tar.bz2" compression="bzip2" longfile="gnu">
+        	<zipfileset src="${src.zip}"/>
+		</tar>		
+		
+		<echo>Generating MD5 Checksums</echo>
+		
+		<checksum fileext=".md5">
+			<fileset dir="${dists.dir}" includes="*.bz2,*.gz,*.zip"/>
+		</checksum>
+		
+		<echo>*** Please sign the distributions using GPG before uploading the files. ***</echo>
+		
+	</target>
+	
+	<target name="clean" description="Remove distribution directory.">
+		<delete dir="${dists.dir}" quiet="true"/>
+	</target>
+		
+</project>

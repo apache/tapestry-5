@@ -1,0 +1,161 @@
+ ---
+ Component Events
+ ---
+ 
+Component Events
+
+  Component events are the means by which components are made aware of behaviors by the user, such
+  as clicking links and submitting forms.
+  
+  Component events are used for two purposes:
+  
+  * They represent requests initiated by the user, triggered by links and forms in the client web browser.
+    These are described more fully in {{{pagenav.html}page navigation}} and in 
+    {{{request.html}requst processing}}.
+    
+  * They represent flow-of-control within a request, allowing one component to notify its container
+    about some kind of circumstance ("a form was submitted"), or to collect some piece for data
+    from the container.
+    
+  []
+  
+  Often, a navigation request (originating with the user) will spawn a number of flow-of-control
+  requests.  For example, a Form component will be triggered by an action request, and will then
+  send notification events to announce when the form submission is about to be processed, and
+  whether it was succesful or not.
+  
+  In Tapestry 4, you would configure a parameter of a component with the name of a method to invoke
+  when a certain event occured, usually a request from the client.
+  
+  This has some limitations, including the fact that only a single method could be invoked.
+  
+  Tapestry 5 introduces the concept of <event handler methods>, identified via a naming convention, or
+  via the 
+  {{{../apidocs/org/apache/tapestry/annotations/OnEvent.html}OnEvent annotation}}.  Event handler methods
+  have any visibility, even private (normally they are given package private visibility, to support testing).
+  
+  Rather than configure a component to invoke a particular method, you identify one or more
+  methods to listen for events from that component. A single event handler method may receive notifications from
+  many different components.
+  
+  For example, here's a portion of a page (let's call it "Chooser") that lets the user choose a number between 1 and 10:
+  
++---+
+<p> Choose a number from 1 to 10: </p>
+
+<p>
+    <t:count end="10" value="index">
+        <a t:id="select" t:type="actionlink" context="index">${index}</t:comp>
+    </t:count>
+</p>
++---+
+
+  The ActionLink component creates an action URL.
+  
+  The URL identifies the page that contains the component ("chooser"), the type of event
+  (unless it is "action", the default and most common event type),
+  the id of the component within the page ("select"), plus the additional context value(s).
+  
+  A sample URL: <<<http://localhost:8080/chooser.select/3>>>.
+
+  When there are additional context values, they are appended to the path.
+  
+  This demonstrates a critical difference between Tapestry and a more traditional, action oriented framework.
+  This URL doesn't say what happens when the link is clicked, it identifies <which component is responsible>.
+
+  There's no simple mapping from URL to a piece of code; instead the component sends notifications, in the form
+  of invocations of event handler methods,   
+  
+   
+  A Java method can be invoked when the link for the component is clicked by the user:
+  
++---+
+  @OnEvent(component = "select")
+  void valueChosen(int value)
+  {
+    _value = value;
+  }
++---+
+
+  Tapestry has done two things here:
+  
+  * It has identified method valueChosen() as the method to invoke.
+  
+  * It has converted the context value from a string to an integer and passed it into the method.
+  
+  []
+  
+  In the above example, the valueChosen() method will be invoked on <any event> that originates
+  in component <<<choose>>> (and has at least one context value).  Since ActionLink components only emit a single type of event, "action", 
+  this will not be a problem.
+  
+  Some components can emit more than one type of event, in which case you will want to be more specific:
+  
++---+
+  @OnEvent(value = "action", component = "select")
+  void valueChosen(int value)
+  {
+    _value = value;
+  }
++---+
+  
+  The value attribute of the OnEvent annotation is the name of the event to match.
+  
+  "action" is the name of the default event type; the ActionLink and Form components each use this event type.
+  If you omit the component part of the OnEvent annotation, then you'll recieve notifications from
+  <all> contained components, possibly including nested components (due to event bubbling).
+  
+  You should qualify exactly which component(s) you wish to recieve events from.
+  
+Event Handler Method Convention Names  
+  
+  As an alternative to the use of annotations, you may name your events in a specific fashion, and Tapestry will invoke your methods just as if
+  they were annotated.  
+  
+  This style of event handler methods start with the prefix "on", followed by the name of the action (capitalized).  You may then continue by adding "From" and
+  a capitalized component id.
+  
+  The previous example may be rewritten as:
+  
++---+
+  void onActionFromSelect(int value)
+  {
+    _value = value;
+  }
++---+  
+  
+  If you event type is named "onAny", it will receive all types of events. This is rarely what you want!
+    
+  Note from Howard: I've found that I prefer the naming convention approach, and reserve the annotation just for situations that don't otherwise fit.  
+  
+Event Context
+
+  The context values (the context parameter to the ActionLink component) can be any object.
+  However, only a simple conversion to string occurs.  This is in contrast to Tapestry 4, which had
+  an elaborate type mechanism with the odd name "DataSqueezer".
+  
+  Again, whatever your value is (string, number, date), it is converted into a plain string.
+  This results in a more readable URL.
+  
+  If you have multiple context values (by binding a list or array of objects to the ActionLink's
+  context parameter), then each one, in order, will be added to the URL.
+  
+  When an event handler method is invoked, a
+  {{{coercion.html}coercion}} from string to the actual type occurs. An event handler method will only be invoked
+  <if the context contains at least as many values as the method has parameters>.  Methods with too many parameters
+  will be silently skipped.
+  
+  Alternately, an event handler method may take a parameter of type java.lang.Object[].  This parameter
+  will receive the entire context array. This is useful when, for example, the context
+  is of different lengths at different times. You should use either explicit, typed parameters or
+  a single parameter of type Object[].
+  
+Event Bubbling
+
+  The event will bubble up the hierarchy, until it is aborted. The event is aborted
+  when an event handler method returns a non-null value.
+  
+  For page navigation events, the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
+
+    
+   
