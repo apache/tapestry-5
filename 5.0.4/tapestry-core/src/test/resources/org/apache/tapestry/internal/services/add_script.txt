@@ -1,0 +1,6 @@
+<html><body><p>Ready to be updated with scripts.</p><script language="javascript" type="text/javascript">
+<!--
+doSomething();
+doSomethingElse();
+// -->
+</script></body></html>

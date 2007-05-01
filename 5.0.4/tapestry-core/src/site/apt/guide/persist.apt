@@ -1,0 +1,82 @@
+ ----
+ Persistent Page Data
+ ----
+ 
+Persistent Page Data
+
+  Most instance variables in Tapestry are automatically cleared at the end of each request.
+  
+  This is important, as it pertains to how Tapestry pages are pooled and shared, over time,
+  by many users.
+  
+  However, you often want to store some persistent data on a page, and have access
+  to it in later requests.
+  
+  This is accomplished with the 
+  {{{../apidocs/org/apache/tapestry/annotations/Persist.html}Persist annotation}}.
+  
+  This annotation is applied to private instance fields.
+    
++----+
+  @Persist
+  private int _value;
++----+
+    
+  Annotated fields will store their state between requests. Generally, speaking, this means
+  that the value is stored into the session (but other approaches are possible).
+  
+  Whenever you make a change to a persistent field, its value is stored.
+  
+  On later requests, the value for such persistent fields is reloaded from storage.
+  
+Persistence Strategies
+
+  The value for each field is the <strategy> used to store the field between requests.
+  
+  Currently, only the default value, "session", is supported. Other implementations, that store
+  the value on the client, are forthcoming.
+  
+* session strategy
+
+  The session strategy stores field changes into the session; the session is created as necessary.
+  
+  A suitably long session attribute name is used; it incorporates the
+  name of the page, the nested component id, and the name of the field.
+  
+* flash strategy
+
+  The flash strategy stores information in the session as well, just for not very long.  Values are
+  stored into the session, but then deleted from the session as they are first used to restore
+  a page's state.
+  
+  The flash is typically used to store temporary messages that should only be displayed to the user
+  once.
+  
+Persistence Search
+
+  By default the value for the Persist annotation is the empty string. When this is true,
+  then the actual strategy to be used is determined by a search up the 
+  component hiearchy.
+  
+  For each component, the meta-data property <<<tapestry.persistence-strategy>>> is checked.
+  This can be specified using the 
+  {{{../apidocs/org/apache/tapestry/annotations/Meta.html}Meta}} annotation.
+  
+  If the value is non-blank, then that strategy is used. This allows a component to control
+  the persistence strategy used inside any sub-components (that don't explicitly use a different
+  strategy).
+  
+  In any case, if no component provides the meta data, then the ultimate default, "session", is used.  
+  
+Default Values
+
+  As with other fields, a default value may be specified inline, or inside a constructor.
+  
+  This value is retained and used to reset the value of the field at the end of each request,
+  before the page is returned to the page pool.
+  
+  Handling of the null value can be a tricky case, due to the limitations of the underlying 
+  Servlet API.  Changing a persistent field's value to null <removes> the
+  field's attribute from the session. On later requests, the field will reset to its
+  default value. Since that is usually null, this is not a problem ... it is only a problem
+  if a field has a non-null default value and may be changed to null. 
