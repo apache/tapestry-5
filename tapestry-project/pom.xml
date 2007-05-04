@@ -5,7 +5,7 @@
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-project</artifactId>
   <packaging>pom</packaging>
-  <version>5.0.4</version>
+  <version>5.0.5-SNAPSHOT</version>
   <name>Tapestry 5 Project</name>
   <inceptionYear>2006</inceptionYear>
   <url>http://tapestry.apache.org/tapestry5/</url>
