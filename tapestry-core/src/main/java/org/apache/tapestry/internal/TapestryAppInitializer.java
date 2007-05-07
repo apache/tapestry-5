@@ -125,8 +125,7 @@ public class TapestryAppInitializer
                         InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, _aliasMode),
                 "before:ServletContext");
 
-        builder.add(new SyntheticModuleDef(TapestryAppInitializer.class, symbolSourceContribution,
-                aliasModeContribution));
+        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution));
     }
 
     private void overrideServices(RegistryBuilder builder)

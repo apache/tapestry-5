@@ -107,7 +107,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode",
                 provider, "before:ApplicationDefaults");
 
-        ModuleDef module = new SyntheticModuleDef(InternalBaseTestCase.class, contribution);
+        ModuleDef module = new SyntheticModuleDef(contribution);
 
         builder.add(module);
 
