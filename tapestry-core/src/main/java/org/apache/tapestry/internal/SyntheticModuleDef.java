@@ -29,23 +29,17 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
  */
 public class SyntheticModuleDef implements ModuleDef
 {
-    private final Class _builderClass;
-
     private final Set<ContributionDef> _contributionDefs;
 
-    public SyntheticModuleDef(Class builderClass, ContributionDef... contributionDefs)
+    public SyntheticModuleDef(ContributionDef... contributionDefs)
     {
-        _builderClass = builderClass;
         _contributionDefs = CollectionFactory.newSet(contributionDefs);
     }
 
-    /**
-     * Returns an arbitrary class (this is necessary because of how the RegistryBuilder assigns a
-     * Log for each module, even a synthetic module.
-     */
+    /** Returns null. */
     public Class getBuilderClass()
     {
-        return _builderClass;
+        return null;
     }
 
     /** Returns the configured set. */
