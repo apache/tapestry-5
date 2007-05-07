@@ -15,14 +15,12 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.util.Map;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
+import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.AliasManager;
 
@@ -32,19 +30,18 @@ public class AliasImpl implements Alias, ObjectProvider
 
     private final Map<Class, Object> _properties = newMap();
 
+    private final String _mode;
+
     private boolean _initialized = false;
 
     private AliasManager _masterManager;
 
     private AliasManager _overridesManager;
 
-    private String _mode;
-
-    private final OneShotLock _lock = new OneShotLock();
-
-    public AliasImpl(AliasManager masterManager, AliasManager overridesManager)
+    public AliasImpl(AliasManager masterManager, String mode, AliasManager overridesManager)
     {
         _masterManager = masterManager;
+        _mode = mode;
         _overridesManager = overridesManager;
     }
 
@@ -53,16 +50,9 @@ public class AliasImpl implements Alias, ObjectProvider
         return this;
     }
 
-    // Probably don't need to make this concurrent, since it executes at startup,
-    // before multithreading takes hold.
-
-    public synchronized void setMode(String mode)
+    private synchronized void initialize()
     {
-        _mode = notNull(mode, "mode");
-
-        // This method may only be invoked once.
-
-        _lock.lock();
+        if (_initialized) return;
 
         _properties.putAll(_masterManager.getAliasesForMode(_mode));
         _properties.putAll(_overridesManager.getAliasesForMode(_mode));
@@ -76,7 +66,7 @@ public class AliasImpl implements Alias, ObjectProvider
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
             ObjectLocator locator)
     {
-        if (!_initialized) throw new RuntimeException(ServicesMessages.aliasModeNotSet());
+        initialize();
 
         Object object = _properties.get(objectType);
 

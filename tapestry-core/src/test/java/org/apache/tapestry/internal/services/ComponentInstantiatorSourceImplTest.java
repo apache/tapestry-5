@@ -31,14 +31,20 @@ import javassist.NotFoundException;
 
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.InternalComponentResources;
+import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.SingleKeySymbolProvider;
+import org.apache.tapestry.internal.SyntheticModuleDef;
+import org.apache.tapestry.internal.SyntheticSymbolSourceContributionDef;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.transform.pages.BasicComponent;
 import org.apache.tapestry.internal.transform.pages.BasicSubComponent;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
+import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.services.PropertyAccess;
+import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.TapestryModule;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -276,9 +282,18 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         builder.add(TapestryModule.class);
 
+        SymbolProvider provider = new SingleKeySymbolProvider(
+                InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
+        ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode",
+                provider, "before:ApplicationDefaults");
+
+        ModuleDef module = new SyntheticModuleDef(InternalBaseTestCase.class, contribution);
+
+        builder.add(module);
+
         _registry = builder.build();
 
-        _registry.getService("Alias", Alias.class).setMode("servlet");
+        // _registry.getService("Alias", Alias.class).setMode("servlet");
 
         _source = _registry.getService(ComponentInstantiatorSource.class);
         _access = _registry.getService(PropertyAccess.class);

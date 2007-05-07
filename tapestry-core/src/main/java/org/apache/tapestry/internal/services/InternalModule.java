@@ -29,17 +29,16 @@ import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.events.InvalidationListener;
-import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.internal.bindings.PropBindingFactory;
 import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
@@ -419,22 +418,6 @@ public final class InternalModule
             final ApplicationGlobals applicationGlobals, final PropertyAccess propertyAccess,
             final TypeCoercer typeCoercer)
     {
-        ApplicationInitializerFilter setApplicationPackage = new ApplicationInitializerFilter()
-        {
-            public void initializeApplication(Context context, ApplicationInitializer initializer)
-            {
-                String packageName = context
-                        .getInitParameter(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
-
-                applicationGlobals.store(packageName);
-                _componentClassResolver.setApplicationPackage(packageName);
-
-                initializer.initializeApplication(context);
-            }
-        };
-
-        configuration.add("SetApplicationPackage", setApplicationPackage, "before:*.*");
-
         final InvalidationListener listener = new InvalidationListener()
         {
             public void objectWasInvalidated()

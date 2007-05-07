@@ -17,17 +17,13 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.ioc.ObjectProvider;
 
 /**
- * Primarily, the Alias service is an ObjectProvider that fits into the command chain and disambiguates
- * injections on type. Contributions to the Alias service identify the normal service to inject for a
- * particular service interface; this is only necessary when there is more than one service implementing
- * the same interface.
- * 
+ * Primarily, the Alias service is an ObjectProvider that fits into the command chain and
+ * disambiguates injections on type. Contributions to the Alias service identify the normal service
+ * to inject for a particular service interface; this is only necessary when there is more than one
+ * service implementing the same interface.
  */
 public interface Alias
 {
-    /** Inform the Alias service about what mode it is operating in. */
-    void setMode(String mode);
-
     /**
      * Returns an object that can provide objects based on contributions into the Alias (and
      * AliasOverrides) service.

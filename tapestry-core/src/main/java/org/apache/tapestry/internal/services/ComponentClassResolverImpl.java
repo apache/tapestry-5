@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.LibraryMapping;
 
@@ -38,7 +40,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private final ClassNameLocator _classNameLocator;
 
-    private String _appRootPackage;
+    private final String _appRootPackage;
 
     // Map from folder name to a list of root package names.
     // The key does not begin or end with a slash.
@@ -64,10 +66,20 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private final Map<String, String> _pageClassNameToLogicalName = newMap();
 
     public ComponentClassResolverImpl(ComponentInstantiatorSource componentInstantiatorSource,
-            ClassNameLocator classNameLocator, Collection<LibraryMapping> mappings)
+            ClassNameLocator classNameLocator,
+
+            @Inject
+            @Value("${tapestry.app-package}")
+            String appRootPackage,
+
+            Collection<LibraryMapping> mappings)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _classNameLocator = classNameLocator;
+
+        _appRootPackage = appRootPackage;
+
+        addPackagesToInstantiatorSource(_appRootPackage);
 
         for (LibraryMapping mapping : mappings)
         {
@@ -311,12 +323,5 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             throw new IllegalArgumentException(ServicesMessages.pageNameUnresolved(pageClassName));
 
         return result;
-    }
-
-    public void setApplicationPackage(String packageName)
-    {
-        _appRootPackage = packageName;
-
-        addPackagesToInstantiatorSource(packageName);
     }
 }

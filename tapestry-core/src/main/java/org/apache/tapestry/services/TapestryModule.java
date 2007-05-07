@@ -157,10 +157,10 @@ import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.SubModule;
@@ -236,6 +236,10 @@ public final class TapestryModule
 
     public static Alias build(Log log,
 
+    @org.apache.tapestry.ioc.annotations.Inject
+    @Value("${tapestry.alias-mode}")
+    String mode,
+
     @InjectService("AliasOverrides")
     AliasManager overridesManager,
 
@@ -243,7 +247,7 @@ public final class TapestryModule
     {
         AliasManager manager = new AliasManagerImpl(log, configuration);
 
-        return new AliasImpl(manager, overridesManager);
+        return new AliasImpl(manager, mode, overridesManager);
     }
 
     /**
@@ -591,14 +595,7 @@ public final class TapestryModule
             }
         };
 
-        // Or you can defuse the dependency by using @InjectService("foo") instead of
-        // @Inject("service:foo"). The latter requires the MasterObjectProvider, which requires
-        // the Alias service, which then fails if any contribution
-        // to the Alias service configuration makes use of @Inject. However, since its likely that
-        // end users will try
-        // to do this, the wrapper has been left in place (it does very little harm).
-
-        configuration.add("Alias", wrapper);
+        configuration.add("Alias", wrapper, "after:Value");
 
         configuration.add("Asset", assetObjectProvider, "before:Alias");
     }
