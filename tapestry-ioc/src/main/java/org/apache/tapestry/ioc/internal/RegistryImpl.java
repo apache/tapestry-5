@@ -144,7 +144,7 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         for (ModuleDef def : moduleDefs)
         {
-            Log log = _logSource.getLog(def.getBuilderClass());
+            Log log = _logSource.getLog(def.getLogName());
 
             Module module = new ModuleImpl(this, def, classFactory, log);
 
