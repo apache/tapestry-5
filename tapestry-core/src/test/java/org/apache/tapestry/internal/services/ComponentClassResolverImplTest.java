@@ -43,11 +43,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     {
         List<LibraryMapping> list = Arrays.asList(mappings);
 
-        ComponentClassResolverImpl resolver = new ComponentClassResolverImpl(source, locator, list);
-
-        resolver.setApplicationPackage(APP_ROOT_PACKAGE);
-
-        return resolver;
+        return new ComponentClassResolverImpl(source, locator, APP_ROOT_PACKAGE, list);
     }
 
     @Test

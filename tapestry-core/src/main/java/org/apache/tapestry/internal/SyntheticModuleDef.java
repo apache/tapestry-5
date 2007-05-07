@@ -1,0 +1,80 @@
+// Copyright 2007 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package org.apache.tapestry.internal;
+
+import java.util.Collections;
+import java.util.Set;
+
+import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry.ioc.def.DecoratorDef;
+import org.apache.tapestry.ioc.def.ModuleDef;
+import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
+/**
+ * A synthetic module definition, used to mix in some additional "pre-built" service configuration
+ * contributions.
+ */
+public class SyntheticModuleDef implements ModuleDef
+{
+    private final Class _builderClass;
+
+    private final Set<ContributionDef> _contributionDefs;
+
+    public SyntheticModuleDef(Class builderClass, ContributionDef... contributionDefs)
+    {
+        _builderClass = builderClass;
+        _contributionDefs = CollectionFactory.newSet(contributionDefs);
+    }
+
+    /**
+     * Returns an arbitrary class (this is necessary because of how the RegistryBuilder assigns a
+     * Log for each module, even a synthetic module.
+     */
+    public Class getBuilderClass()
+    {
+        return _builderClass;
+    }
+
+    /** Returns the configured set. */
+    public Set<ContributionDef> getContributionDefs()
+    {
+        return _contributionDefs;
+    }
+
+    /** Returns an empty set. */
+    public Set<DecoratorDef> getDecoratorDefs()
+    {
+        return Collections.emptySet();
+    }
+
+    /** Returns "SyntheticModule". */
+    public String getLogName()
+    {
+        return "SyntheticModule";
+    }
+
+    /** Returns null. */
+    public ServiceDef getServiceDef(String serviceId)
+    {
+        return null;
+    }
+
+    /** Returns an empty set. */
+    public Set<String> getServiceIds()
+    {
+        return Collections.emptySet();
+    }
+}

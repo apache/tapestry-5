@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -29,11 +30,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.ServletContextSymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.ioc.IOCUtilities;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
+import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.HttpServletRequestHandler;
 import org.apache.tapestry.services.ServletApplicationInitializer;
 import org.apache.tapestry.services.TapestryModule;
@@ -63,12 +65,13 @@ public class TapestryFilter implements Filter
     {
         _config = filterConfig;
 
-        // Note: configured as a <context-param>, not a filter <init-param>
-        String appPackage = _config.getServletContext().getInitParameter(
-                InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
+        ServletContext context = _config.getServletContext();
+
         String filterName = _config.getFilterName();
 
-        TapestryAppInitializer appInitializer = new TapestryAppInitializer(appPackage, filterName,
+        SymbolProvider provider = new ServletContextSymbolProvider(context);
+
+        TapestryAppInitializer appInitializer = new TapestryAppInitializer(provider, filterName,
                 "servlet");
 
         _registry = appInitializer.getRegistry();

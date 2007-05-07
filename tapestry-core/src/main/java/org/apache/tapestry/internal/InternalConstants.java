@@ -22,6 +22,8 @@ public final class InternalConstants
      */
     public static final String TAPESTRY_APP_PACKAGE_PARAM = "tapestry.app-package";
 
+    public static final String TAPESTRY_ALIAS_MODE_SYMBOL = "tapestry.alias-mode";
+    
     /**
      * The extension used for Tapestry component template files. Template files are well-formed XML
      * files. This is also used as the extension for page render requests (perhaps these will be
