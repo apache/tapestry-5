@@ -20,9 +20,13 @@ import java.util.Map.Entry;
 import org.apache.tapestry.ioc.IOCUtilities;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
+import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.TapestryModule;
+import org.apache.tapestry.test.pagelevel.PageTester;
 
 /**
  * This class is used to build the {@link Registry}. The Registry contains
@@ -36,43 +40,66 @@ import org.apache.tapestry.services.TapestryModule;
  */
 public class TapestryAppInitializer
 {
-    private String _appPackage;
+    private final SymbolProvider _appProvider;
 
-    private String _appName;
+    private final String _appPackage;
 
-    private String _aliasMode;
+    private final String _appName;
 
-    private Registry _registry;
+    private final String _aliasMode;
 
-    private long _startTime;
+    private final Registry _registry;
 
-    private long _registryCreatedTime;
+    private final long _startTime;
+
+    private final long _registryCreatedTime;
 
     private final Map<String, Object> _serviceOverrides;
 
     public TapestryAppInitializer(String appPackage, String appName, String aliasMode)
     {
-        this(appPackage, appName, aliasMode, null);
+        this(new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage),
+                appName, aliasMode);
     }
 
-    public TapestryAppInitializer(String appPackage, String appName, String aliasMode,
-            Map<String, Object> serviceOverrides)
+    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode,
+            ModuleDef... moduleDefs)
     {
-        _appPackage = appPackage;
+        this(appProvider, appName, aliasMode, null, moduleDefs);
+    }
+
+    /**
+     * @param appProvider
+     *            provides symbols for the application (normally, from the ServletContext init
+     *            parameters)
+     * @param appName
+     *            the name of the application (i.e., the name of the application servlet)
+     * @param aliasMode
+     *            the mode, used by the {@link Alias} service, normally "servlet"
+     * @param serviceOverrides
+     *            specific service overrides (used by {@link PageTester}
+     * @param moduleDefs
+     *            additional module definitions to be mixed in to those automatically located
+     */
+    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode,
+            Map<String, Object> serviceOverrides, ModuleDef... moduleDefs)
+    {
+        _appProvider = appProvider;
+
+        _appPackage = _appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
+
         _appName = appName;
         _aliasMode = aliasMode;
         _serviceOverrides = serviceOverrides;
 
         _startTime = System.currentTimeMillis();
 
-        createRegistry();
+        _registry = createRegistry(moduleDefs);
 
         _registryCreatedTime = System.currentTimeMillis();
-
-        setupServices();
     }
 
-    private void createRegistry()
+    private Registry createRegistry(ModuleDef... moduleDefs)
     {
         RegistryBuilder builder = new RegistryBuilder();
 
@@ -98,9 +125,31 @@ public class TapestryAppInitializer
 
         addModules(builder);
 
+        // Add any explicitly provided module defs
+
+        for (ModuleDef def : moduleDefs)
+            builder.add(def);
+
+        // Add a synthetic module that contributes symbol sources.
+
+        addSyntheticSymbolSourceModule(builder);
+
         overrideServices(builder);
 
-        _registry = builder.build();
+        return builder.build();
+    }
+
+    private void addSyntheticSymbolSourceModule(RegistryBuilder builder)
+    {
+        ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef(
+                "ServletContext", _appProvider, "before:ApplicationDefaults");
+
+        ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef(
+                "AliasMode", new SingleKeySymbolProvider(
+                        InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, _aliasMode),
+                "before:ServletContext");
+
+        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution));
     }
 
     private void overrideServices(RegistryBuilder builder)
@@ -112,13 +161,6 @@ public class TapestryAppInitializer
                 builder.addServiceOverride(e.getKey(), e.getValue());
             }
         }
-    }
-
-    private void setupServices()
-    {
-        Alias alias = _registry.getService("Alias", Alias.class);
-
-        alias.setMode(_aliasMode);
     }
 
     /**

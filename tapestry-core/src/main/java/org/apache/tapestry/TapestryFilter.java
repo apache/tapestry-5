@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -29,14 +30,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.ServletContextSymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
-import org.apache.tapestry.ioc.IOCUtilities;
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
+import org.apache.tapestry.ioc.def.ModuleDef;
+import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.HttpServletRequestHandler;
 import org.apache.tapestry.services.ServletApplicationInitializer;
-import org.apache.tapestry.services.TapestryModule;
 
 /**
  * The TapestryFilter is responsible for intercepting all requests into the web application. It
@@ -63,13 +63,14 @@ public class TapestryFilter implements Filter
     {
         _config = filterConfig;
 
-        // Note: configured as a <context-param>, not a filter <init-param>
-        String appPackage = _config.getServletContext().getInitParameter(
-                InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
+        ServletContext context = _config.getServletContext();
+
         String filterName = _config.getFilterName();
 
-        TapestryAppInitializer appInitializer = new TapestryAppInitializer(appPackage, filterName,
-                "servlet");
+        SymbolProvider provider = new ServletContextSymbolProvider(context);
+
+        TapestryAppInitializer appInitializer = new TapestryAppInitializer(provider, filterName,
+                "servlet", provideExtraModuleDefs(context));
 
         _registry = appInitializer.getRegistry();
 
@@ -94,17 +95,12 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Adds additional modules to the builder. This implementation adds any modules identified by
-     * {@link IOCUtilities#addDefaultModules(RegistryBuilder)}. Most subclasses will invoke this
-     * implementation, and add additional modules to the RegistryBuilder besides.
-     * {@link org.apache.tapestry.ioc.services.TapestryIOCModule} and {@link TapestryModule} will
-     * already have been added, as will an application module if present.
-     * 
-     * @param builder
+     * Overridden in subclasses to provide additional module definitions beyond those normally
+     * located. This implementation returns an empty array.
      */
-    protected void addModules(RegistryBuilder builder)
+    protected ModuleDef[] provideExtraModuleDefs(ServletContext context)
     {
-        IOCUtilities.addDefaultModules(builder);
+        return new ModuleDef[0];
     }
 
     public final void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -126,6 +122,7 @@ public class TapestryFilter implements Filter
 
     /** Shuts down and discards the registry. */
     public final void destroy()
+    
     {
         _registry.shutdown();
 

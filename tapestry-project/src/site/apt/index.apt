@@ -94,6 +94,9 @@ What's changed since Tapestry 4?
   
 New and Noteworthy
 
+  The {{{tapestry-spring/tapestry-spring}} module has also been simplified, to make
+  Spring beans look like Tapestry IoC services. It's all now quite seamless.
+
   The {{{tapestry-ioc/}tapestry-ioc}} module has been simplified, removing the concept
   of module ids and namespaces, as well as private services, and borrowing a lot of cool
   ideas from {{{http://code.google.com/p/google-guice/}Guice}}. The goal is to make the container

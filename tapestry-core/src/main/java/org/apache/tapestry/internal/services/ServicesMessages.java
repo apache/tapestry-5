@@ -49,11 +49,6 @@ class ServicesMessages
                 existing);
     }
 
-    static final String aliasModeNotSet()
-    {
-        return MESSAGES.get("alias-mode-not-set");
-    }
-
     static final String markupWriterNoCurrentElement()
     {
         return MESSAGES.get("markup-writer-no-current-element");

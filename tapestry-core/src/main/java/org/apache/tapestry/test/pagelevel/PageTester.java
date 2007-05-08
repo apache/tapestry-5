@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.dom.Node;
+import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.SingleKeySymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.internal.services.ActionLinkTarget;
 import org.apache.tapestry.internal.services.ComponentInvocation;
@@ -31,9 +33,9 @@ import org.apache.tapestry.internal.services.PageLinkTarget;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.NullAnnotationProvider;
 import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.ApplicationGlobals;
-import org.apache.tapestry.services.ComponentClassResolver;
 
 /**
  * This class is used to run a Tapestry app in an in-process testing environment. You can ask it to
@@ -107,12 +109,12 @@ public class PageTester implements ComponentInvoker
         _preferedLanguage = Locale.ENGLISH;
         _contextPath = contextPath;
         _cookies = new CookiesForPageTester();
-        _registry = new TapestryAppInitializer(appPackage, appName, "test",
+
+        SymbolProvider provider = new SingleKeySymbolProvider(
+                InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
+
+        _registry = new TapestryAppInitializer(provider, appName, "test",
                 addDefaultOverrides(serviceOverrides)).getRegistry();
-
-        // This is normally done by the ApplicationInitializer pipeline service.
-
-        _registry.getService(ComponentClassResolver.class).setApplicationPackage(appPackage);
 
         _localizationSetter = _registry.getService("LocalizationSetter", LocalizationSetter.class);
 

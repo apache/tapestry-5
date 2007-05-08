@@ -34,6 +34,10 @@ import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.InternalComponentResources;
+import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.SingleKeySymbolProvider;
+import org.apache.tapestry.internal.SyntheticModuleDef;
+import org.apache.tapestry.internal.SyntheticSymbolSourceContributionDef;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.parser.TemplateToken;
 import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
@@ -62,13 +66,15 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
 import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.InternalRegistry;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TapestryModule;
@@ -94,9 +100,20 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
 
         builder.add(TapestryModule.class);
 
+        // A synthetic module to ensure that the tapestry.alias-mode is set correctly.
+
+        SymbolProvider provider = new SingleKeySymbolProvider(
+                InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
+        ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode",
+                provider, "before:ApplicationDefaults");
+
+        ModuleDef module = new SyntheticModuleDef(contribution);
+
+        builder.add(module);
+
         _registry = builder.build();
 
-        _registry.getService(Alias.class).setMode("servlet");
+        // _registry.getService(Alias.class).setMode("servlet");
     }
 
     @AfterSuite

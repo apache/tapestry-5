@@ -31,36 +31,6 @@ public class AliasImplTest extends InternalBaseTestCase
 {
     private Map<Class, Object> _emptyMap = Collections.emptyMap();
 
-    @Test
-    public void mode_not_set_when_resolution_requested()
-    {
-        AliasManager manager = newAliasManager();
-        AliasManager overridesManager = newAliasManager();
-        ObjectLocator locator = mockObjectLocator();
-        AnnotationProvider annotationProvider = mockAnnotationProvider();
-
-        replay();
-
-        Alias alias = new AliasImpl(manager, overridesManager);
-
-        // Do not assume that alias and provider are the same;
-        // that's an implementation choice.
-
-        ObjectProvider provider = alias.getObjectProvider();
-
-        try
-        {
-            provider.provide(Runnable.class, annotationProvider, locator);
-            unreachable();
-        }
-        catch (RuntimeException ex)
-        {
-            assertEquals(ex.getMessage(), ServicesMessages.aliasModeNotSet());
-        }
-
-        verify();
-    }
-
     protected final AliasManager newAliasManager()
     {
         return newMock(AliasManager.class);
@@ -86,9 +56,7 @@ public class AliasImplTest extends InternalBaseTestCase
 
         replay();
 
-        Alias alias = new AliasImpl(manager, overridesManager);
-
-        alias.setMode(mode);
+        Alias alias = new AliasImpl(manager, mode, overridesManager);
 
         // Do not assume that infra and provider are the same;
         // that's an implementation choice.
@@ -131,9 +99,7 @@ public class AliasImplTest extends InternalBaseTestCase
 
         replay();
 
-        Alias alias = new AliasImpl(manager, overridesManager);
-
-        alias.setMode(mode);
+        Alias alias = new AliasImpl(manager, mode, overridesManager);
 
         ObjectProvider provider = alias.getObjectProvider();
 
@@ -160,9 +126,7 @@ public class AliasImplTest extends InternalBaseTestCase
 
         replay();
 
-        Alias alias = new AliasImpl(manager, overridesManager);
-
-        alias.setMode(mode);
+        Alias alias = new AliasImpl(manager, mode, overridesManager);
 
         // Do not assume that infra and provider are the same;
         // that's an implementation choice.

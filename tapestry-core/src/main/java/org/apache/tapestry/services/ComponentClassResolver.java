@@ -27,9 +27,9 @@ import org.apache.tapestry.internal.services.ClassNameLocator;
  * package is expected to have sub-packages: "pages", "components", "mixins" and "base" ("base" is
  * for base classes).
  * <p>
- * The resolver performs a search of the classpath (via {@link ClassNameLocator}, to build up
- * a set of case-insensitive maps from logical page name, component type, or mixin type to fully
- * qualified class name.
+ * The resolver performs a search of the classpath (via {@link ClassNameLocator}, to build up a set
+ * of case-insensitive maps from logical page name, component type, or mixin type to fully qualified
+ * class name.
  * <p>
  * Certain ambiguities occur if mapped packages overlap, either in terms of the the prefixes or the
  * package names. Keep things clearly seperate to avoid lookup problems.
@@ -94,12 +94,4 @@ public interface ComponentClassResolver
      *             if the mixin type can not be resolved
      */
     String resolveMixinTypeToClassName(String mixinType);
-
-    /**
-     * Sets the root package for the application. Pages are expected to be in a sub-package named
-     * "pages" (i.e., root.pages). Components will be in a sub-package named "components".
-     * 
-     * @param packageName
-     */
-    void setApplicationPackage(String packageName);
 }
