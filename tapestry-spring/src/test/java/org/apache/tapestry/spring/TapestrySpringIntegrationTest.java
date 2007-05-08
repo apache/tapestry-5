@@ -19,14 +19,22 @@ import org.testng.annotations.Test;
 
 public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
 {
-  @Test
-  public void integration_test() throws Exception
-  {
-    open(BASE_URL);
+    @Test
+    public void integration_test() throws Exception
+    {
+        open(BASE_URL);
 
-    type("input", "paris in the springtime");
-    clickAndWait("//input[@value='Convert']");
+        type("input", "paris in the springtime");
+        clickAndWait("//input[@value='Convert']");
 
-    assertFieldValue("input", "PARIS IN THE SPRINGTIME");
-  }
+        assertFieldValue("input", "PARIS IN THE SPRINGTIME");
+    }
+
+    @Test
+    public void access_to_spring_context() throws Exception
+    {
+        open(BASE_URL);
+
+        assertTextPresent("[upcase]");
+    }
 }

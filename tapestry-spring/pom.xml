@@ -7,12 +7,12 @@
   <artifactId>tapestry-spring</artifactId>
   <name>Tapestry/Spring Integration Library</name>
   <packaging>jar</packaging>
-  <version>5.0.4</version>
+  <version>5.0.5-SNAPSHOT</version>
   <description>Provides integration of Tapestry with the Spring IoC container.</description>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.4</version>
+    <version>5.0.5-SNAPSHOT</version>
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
 
@@ -30,6 +30,10 @@
       <artifactId>spring-web</artifactId>
       <version>1.2.8</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
     </dependency>
 
     <dependency>
@@ -67,19 +71,6 @@
           </execution>
         </executions>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-jar-plugin</artifactId>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Tapestry-Module-Classes>org.apache.tapestry.spring.SpringModule</Tapestry-Module-Classes>
-            </manifestEntries>
-          </archive>
-        </configuration>
-      </plugin>
-
     </plugins>
   </build>
   <reporting>
@@ -115,15 +106,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.tapestry</groupId>
-        <artifactId>tapestry-component-report</artifactId>
-        <version>5.0.2</version>
-        <configuration>
-          <rootPackage>org.apache.tapestry.corelib</rootPackage>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>

@@ -34,7 +34,20 @@ Usage
   
 * web.xml changes
   
-  The short form is that you must make a small change to your application's web.xml:
+  The short form is that you must make two small changes to your application's web.xml.
+  
+  First, a special filter is used in replace of the standard TapestryFilter:
+  
++---+
+  <filter>
+    <filter-name>app</filter-name>
+    <!-- Special filter that adds in a T5 IoC module derived from the Spring WebApplicationContext. -->
+    <filter-class>org.apache.tapestry.spring.TapestrySpringFilter</filter-class>
+  </filter>
++---+  
+ 
+   Secondly, you must add the normal Spring configuration, consisting of a \<listener\> element,
+   and (optionally) a \<context-param\> identifying which Spring bean configuration file(s) to load:
  
 +---+
 <context-param>
@@ -55,30 +68,47 @@ Usage
 * Injecting beans
 
   Inside your component classes, you may use the 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/annotations/Inject.html}Inject}} annotation in combination with
-  the {{{apidocs/org/apache/tapestry/spring/SpringBean.html}SpringBean}} annotation (to define the name of the bean).
+  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/annotations/Inject.html}Inject}} annotation.  Typically, just the field 
+  type is sufficient to identify the Spring bean to inject:
   
 +----+
   @Inject
-  @SpringBean("userDAO")
   private UserDAO _userDAO;
 +----+
 
-  This also works with parameters to service builder methods.
-
+  If you have multiple beans that implement the same interface (for instance, if you have wrapped your bean using a transaction interceptor), you must disambiguate.  The easiest way
+  to accomplish this is to add a 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/annotations/Service.html}Service}}
+  annotation to identify the name of the
+  Spring bean:
+  
++----+
+  @Inject
+  @Service("UserDAO")
+  private UserDAO _userDAO;
++----+  
+  
+  Injection of Spring beans via service builder methods or autobuilding occurs just the same: the Spring beans masquerade as Tapestry IoC services and all is well.
+ 
 Case Insensitivity
 
-  At startup, the names of all the beans provided by the Spring application context is obtained and use to build a case-insensitive map.
-  When a bean is requested, it is filtered through this map to get the case-sensitive name required by Spring. The upshot of this is that
-  you should not have to be concerned with case: in the above example "Spring:UserDAO" or "SPRING:userdao" would work equally well.
+  Spring beans names are treated exactly as Tapestry IoC service ids.  Since service ids are case insensitive, access to Spring beans by bean name will also
+  be case insensitive.
+  
+WebApplicationContext Service
+
+  The Spring WebApplicationContext is also added as a service, in addition to any services defined within the context.
   
 Limitations
 
-  Case insensitivity is limited to beans whose names are available at application startup; it is possible to programatically add bean definitions
-  at runtime, but these will not be available case-insensitively (but using exactly matching case will still work).
+  The names of beans are obtained at application start up. If new beans are programattically added to the Spring application context at runtime,
+  these will not be visible for injection.
   
-  No check is made for name clashes that would occur when two beans have names that differ only in case.
+  Only the bean <name> is used, not any of the bean's <aliases>.
+  
+  No check is made for name clashes that would occur when two beans have names that differ only in terms of capitalization.  If you're going to go around naming beans "userDAO" and "UserDao",
+  you're just asking for trouble.
   
   Non-singleton beans are not handled properly. Tapestry will request the beans from the application context in a manner unsuitable for their lifecycle.
-  For the moment, you should consider the non-singleton beans to be not-injectable.  Instead, inject the tapestry.spring.WebApplicationContext service and
+  For the moment, you should consider the non-singleton beans to be not-injectable.  Instead, inject the WebApplicationContext service and
   obtain the non-singleton beans as needed.
