@@ -114,7 +114,7 @@ public class PageTester implements ComponentInvoker
                 InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         _registry = new TapestryAppInitializer(provider, appName, "test",
-                addDefaultOverrides(serviceOverrides)).getRegistry();
+                addDefaultOverrides(serviceOverrides), null).getRegistry();
 
         _localizationSetter = _registry.getService("LocalizationSetter", LocalizationSetter.class);
 
