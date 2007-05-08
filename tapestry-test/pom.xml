@@ -5,14 +5,14 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-test</artifactId>
-  <version>5.0.4</version>
+  <version>5.0.5-SNAPSHOT</version>
   <name>Tapestry Test Utilities</name>
   <inceptionYear>2007</inceptionYear>
   <description>Test utilities needed by Tapestry</description>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.4</version>
+    <version>5.0.5-SNAPSHOT</version>
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
 
