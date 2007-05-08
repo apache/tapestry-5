@@ -14,20 +14,25 @@
 
 package org.example.testapp.pages;
 
+import java.util.Arrays;
+
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Retain;
-import org.apache.tapestry.spring.SpringBean;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.example.testapp.services.Upcase;
+import org.springframework.web.context.WebApplicationContext;
 
 public class Start
 {
     @Retain
     private String _input;
 
-    // Demonstrating case insensitivity
+    // We're matching on type here, just as we would a service provided in a T5 IoC module.
     @Inject
-    @SpringBean("Upcase")
     private Upcase _upcaseBean;
+
+    @Inject
+    private WebApplicationContext _context;
 
     void onSuccess()
     {
@@ -42,6 +47,11 @@ public class Start
     public void setInput(String input)
     {
         _input = input;
+    }
+
+    public String getSpringBeans()
+    {
+        return InternalUtils.join(Arrays.asList(_context.getBeanDefinitionNames()));
     }
 
 }

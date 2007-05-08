@@ -14,34 +14,21 @@
 
 package org.apache.tapestry.spring;
 
-import java.util.Collection;
-
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 import org.springframework.web.context.ContextLoaderListener;
 
 class SpringMessages
 {
-  private static final Messages MESSAGES = MessagesImpl.forClass(SpringMessages.class);
+    private static final Messages MESSAGES = MessagesImpl.forClass(SpringMessages.class);
 
-  static String failureObtainingContext(Throwable cause)
-  {
-    return MESSAGES.format("failure-obtaining-context", cause);
-  }
+    static String failureObtainingContext(Throwable cause)
+    {
+        return MESSAGES.format("failure-obtaining-context", cause);
+    }
 
-  static String missingContext()
-  {
-    return MESSAGES.format("missing-context", ContextLoaderListener.class.getName());
-  }
-
-  static String contextStartup(Collection<String> beanNames)
-  {
-    return MESSAGES.format("context-startup", InternalUtils.joinSorted(beanNames));
-  }
-
-  static String beanAccessFailure(String beanName, Class beanType, Throwable cause)
-  {
-    return MESSAGES.format("bean-access-failure", beanName, beanType.getName(), cause);
-  }
+    static String missingContext()
+    {
+        return MESSAGES.format("missing-context", ContextLoaderListener.class.getName());
+    }
 }

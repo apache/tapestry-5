@@ -23,7 +23,8 @@
   </context-param>
   <filter>
     <filter-name>app</filter-name>
-    <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
+    <!-- Special filter that adds in a T5 IoC module derived from the Spring WebApplicationContext. -->
+    <filter-class>org.apache.tapestry.spring.TapestrySpringFilter</filter-class>
   </filter>
   <filter-mapping>
     <filter-name>app</filter-name>

@@ -6,7 +6,7 @@ $group = nil
 $artifact = nil
 $package = nil
 $version = "1.0.0-SNAPSHOT"
-$archetypeVersion = "5.0.4-SNAPSHOT"
+$archetypeVersion = "5.0.4"
 $offline = false
 
 $opts = OptionParser.new do |opts|
