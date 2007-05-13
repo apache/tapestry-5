@@ -27,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
