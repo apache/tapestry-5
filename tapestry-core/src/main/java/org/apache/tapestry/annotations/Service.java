@@ -23,10 +23,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Used in conjunction with the {@link Inject} annotation (or the IoC container's
- * {@link org.apache.tapestry.ioc.annotations.Inject} annotation) to identify a service
- * <em>by name</em> and not by type (which is more typical). This is most useful when there are
- * multiple services with the same service interface and a particular one needs to be selected.
+ * Used in conjunction with the {@link Inject} annotation to identify a service <em>by name</em>
+ * and not by type. This is most useful when there are multiple services with the same service
+ * interface and a particular one needs to be selected.
  */
 @Target(
 { FIELD, PARAMETER })
