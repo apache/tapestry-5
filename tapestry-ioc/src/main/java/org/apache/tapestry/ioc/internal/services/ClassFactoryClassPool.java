@@ -20,9 +20,13 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import java.util.Set;
 import java.util.Map;
 
+import org.apache.tapestry.ioc.services.ClassFabUtils;
+
 import javassist.ClassPath;
 import javassist.ClassPool;
+import javassist.CtClass;
 import javassist.LoaderClassPath;
+import javassist.NotFoundException;
 
 /**
  * Used to ensure that {@link javassist.ClassPool#appendClassPath(javassist.ClassPath)} is invoked
@@ -43,6 +47,39 @@ public class ClassFactoryClassPool extends ClassPool
         super(null);
 
         addClassLoaderIfNeeded(contextClassLoader);
+    }
+
+    /**
+     * Returns the nearest super-class of the provided class that can be converted to a
+     * {@link CtClass}. This is used to filter out Hibernate-style proxies (created as subclasses
+     * of oridnary classes). This will automatically add the class' classLoader to the pool's class
+     * path.
+     * 
+     * @param clazz
+     *            class to import
+     * @return clazz, or a super-class of clazz
+     */
+    public Class importClass(Class clazz)
+    {
+        addClassLoaderIfNeeded(clazz.getClassLoader());
+
+        while (true)
+        {
+            try
+            {
+                String name = ClassFabUtils.toJavaClassName(clazz);
+
+                get(name);
+
+                break;
+            }
+            catch (NotFoundException ex)
+            {
+                clazz = clazz.getSuperclass();
+            }
+        }
+
+        return clazz;
     }
 
     /**

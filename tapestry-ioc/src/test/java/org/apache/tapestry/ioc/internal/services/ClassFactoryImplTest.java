@@ -18,6 +18,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.apache.tapestry.ioc.internal.util.LocationImpl;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -132,5 +133,37 @@ public class ClassFactoryImplTest extends IOCTestCase
                 .getConstructorLocation(cc)
                 .matches(
                         "org.apache.tapestry.ioc.internal.services.LineNumberBean\\(String, int\\) \\(at LineNumberBean.java:(19|20)\\)"));
+    }
+
+    /**
+     * Import a class (or two) where the class is from a known and available class loader.
+     */
+    @Test
+    public void import_ordinary_class()
+    {
+        ClassFactory factory = new ClassFactoryImpl();
+
+        assertSame(factory.importClass(Object.class), Object.class);
+        assertSame(factory.importClass(LocationImpl.class), LocationImpl.class);
+    }
+
+    /**
+     * Import a class where the bytecode is not available, to ensure that the super-class (from an
+     * available class loader) is returned.
+     */
+    @Test
+    public void import_proxy_class() throws Exception
+    {
+        ClassFactory alienFactory = new ClassFactoryImpl();
+
+        Class<TargetBean> clazz = TargetBean.class;
+
+        ClassFab cf = alienFactory.newClass(clazz.getName() + "$$Proxy", clazz);
+
+        Class alienClass = cf.createClass();
+
+        ClassFactory factory = new ClassFactoryImpl();
+
+        assertSame(factory.importClass(alienClass), clazz);
     }
 }

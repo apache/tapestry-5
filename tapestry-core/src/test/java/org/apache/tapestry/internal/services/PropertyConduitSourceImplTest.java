@@ -14,9 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import java.io.Serializable;
+
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry.ioc.services.ClassFab;
+import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.services.PropertyConduitSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -76,4 +81,35 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         smart.set(bean, "Howard");
     }
+
+    /**
+     * Or call this the "Hibernate" case; Hibernate creates sub-classes of entity classes in its own
+     * class loader to do all sorts of proxying. This trips up Javassist.
+     */
+    @Test
+    public void handle_beans_from_unexpected_classloader() throws Exception
+    {
+        // First, create something that looks like a Hibernate proxy.
+
+        ClassFactory factory = new ClassFactoryImpl();
+
+        Class clazz = SimpleBean.class;
+
+        ClassFab cf = factory.newClass(clazz.getName() + "$$Proxy", clazz);
+
+        cf.addInterface(Serializable.class);
+
+        Class proxyClass = cf.createClass();
+
+        SimpleBean simple = (SimpleBean) proxyClass.newInstance();
+
+        assertTrue(simple instanceof Serializable);
+
+        simple.setFirstName("Howard");
+
+        PropertyConduit conduit = _source.create(proxyClass, "firstName");
+
+        assertEquals(conduit.get(simple), "Howard");
+    }
+
 }
