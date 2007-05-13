@@ -182,6 +182,24 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     }
 
     @Test
+    public void builder_method_returns_array() throws Exception
+    {
+        Method m = BuilderMethodModule.class.getMethod("buildStringArray");
+
+        Log log = mockLog();
+
+        log.warn(IOCMessages.buildMethodWrongReturnType(m), null);
+
+        replay();
+
+        ModuleDef md = new DefaultModuleDefImpl(BuilderMethodModule.class, log, null);
+
+        assertTrue(md.getServiceIds().isEmpty());
+
+        verify();
+    }
+
+    @Test
     public void decorator_method_returns_void() throws Exception
     {
         invalidDecoratorMethod(VoidDecoratorMethodModule.class, "decorateVoid");

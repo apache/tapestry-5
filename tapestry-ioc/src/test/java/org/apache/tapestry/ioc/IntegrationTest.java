@@ -545,7 +545,22 @@ public class IntegrationTest extends IOCInternalTestCase
                     ex.getMessage(),
                     "Service interface java.lang.Runnable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
         }
+    }
 
+    @Test
+    public void service_build_method_return_type_not_interface()
+    {
+        Registry r = buildRegistry(ConcreteServiceBuilderModule.class);
+
+        StringHolder holder = r.getService(StringHolder.class);
+
+        // No interface means no proxy.
+
+        assertTrue(holder instanceof StringHolderImpl);
+
+        // But the implementation is cached
+
+        assertSame(r.getService(StringHolder.class), holder);
     }
 
     @Test
