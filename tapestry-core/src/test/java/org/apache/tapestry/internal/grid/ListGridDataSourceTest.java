@@ -44,7 +44,7 @@ public class ListGridDataSourceTest extends InternalBaseTestCase
     private final List _raw = Arrays.asList(
             new Datum(FRED, "Fred"),
             new Datum(BARNEY, "Barney"),
-            new Datum(WILMA, null),
+            new Datum(WILMA, "Wilma"),
             new Datum(BETTY, null));
 
     private final ListGridDataSource _source = new ListGridDataSource(_raw);
@@ -95,13 +95,13 @@ public class ListGridDataSourceTest extends InternalBaseTestCase
         // Without a secondary sort column, it's kind of arbitrary whether WILMA or BETTY is sorted
         // first.
 
-        sort("value", true, WILMA, BETTY, BARNEY, FRED);
+        sort("value", true, BETTY, BARNEY, FRED, WILMA);
     }
 
     @Test
     public void sort_on_string_value_descending()
     {
-        sort("value", false, FRED, BARNEY, WILMA, BETTY);
+        sort("value", false, WILMA, FRED, BARNEY, BETTY);
     }
 
     private void sort(String propertyName, boolean ascending, int... ids)
