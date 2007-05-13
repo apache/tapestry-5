@@ -48,6 +48,7 @@ import org.apache.tapestry.annotations.PageAttached;
 import org.apache.tapestry.annotations.PageDetached;
 import org.apache.tapestry.annotations.PageLoaded;
 import org.apache.tapestry.annotations.Path;
+import org.apache.tapestry.annotations.Service;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
@@ -138,6 +139,7 @@ import org.apache.tapestry.internal.services.ResourceStreamer;
 import org.apache.tapestry.internal.services.ResponseImpl;
 import org.apache.tapestry.internal.services.RetainWorker;
 import org.apache.tapestry.internal.services.RootPathDispatcher;
+import org.apache.tapestry.internal.services.ServiceAnnotationObjectProvider;
 import org.apache.tapestry.internal.services.SessionApplicationStatePersistenceStrategy;
 import org.apache.tapestry.internal.services.SessionHolder;
 import org.apache.tapestry.internal.services.SessionPersistentFieldStrategy;
@@ -571,6 +573,7 @@ public final class TapestryModule
      * <li>Alias: Searches by type among {@linkplain AliasContribution contributions} to the
      * {@link Alias} service</li>
      * <li>Asset: Checks for the {@link Path} annotation, and injects an {@link Asset}</li>
+     * <li>Service: Injects based on the {@link Service} annotation, if present</li>
      * </ul>
      */
     public static void contributeMasterObjectProvider(
@@ -598,6 +601,8 @@ public final class TapestryModule
         configuration.add("Alias", wrapper, "after:Value");
 
         configuration.add("Asset", assetObjectProvider, "before:Alias");
+
+        configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:Alias");
     }
 
     /**
