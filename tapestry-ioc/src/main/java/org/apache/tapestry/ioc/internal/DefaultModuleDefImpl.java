@@ -281,8 +281,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         // If the method name was just "build()", then work from the return type.
 
-        if (serviceId.equals(""))
-            serviceId = InternalUtils.lastTerm(method.getReturnType().getName());
+        if (serviceId.equals("")) serviceId = method.getReturnType().getSimpleName();
 
         // Any number of parameters is fine, we'll adapt. Eventually we have to check
         // that we can satisfy the parameters requested. Thrown exceptions of the method
@@ -291,7 +290,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         Class returnType = method.getReturnType();
 
-        if (!returnType.isInterface())
+        if (returnType.isPrimitive() || returnType.isArray())
         {
             _log.warn(buildMethodWrongReturnType(method), null);
             return;
