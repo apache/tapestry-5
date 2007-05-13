@@ -44,6 +44,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private final ClassFactory _classFactory;
 
+    private final Map<Class, Class> _classToEffectiveClass = newConcurrentMap();
+
     /** Keyed on combination of root class and expression. */
     private final Map<MultiKey, PropertyConduit> _cache = newConcurrentMap();
 
@@ -66,15 +68,31 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         notNull(rootClass, "rootClass");
         notBlank(expression, "expression");
 
-        MultiKey key = new MultiKey(rootClass, expression);
+        Class effectiveClass = toEffectiveClass(rootClass);
+
+        MultiKey key = new MultiKey(effectiveClass, expression);
 
         PropertyConduit result = _cache.get(key);
 
         if (result == null)
         {
-            result = build(rootClass, expression);
+            result = build(effectiveClass, expression);
             _cache.put(key, result);
 
+        }
+
+        return result;
+    }
+
+    private Class toEffectiveClass(Class rootClass)
+    {
+        Class result = _classToEffectiveClass.get(rootClass);
+
+        if (result == null)
+        {
+            result = _classFactory.importClass(rootClass);
+
+            _classToEffectiveClass.put(rootClass, result);
         }
 
         return result;
@@ -88,6 +106,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     public void objectWasInvalidated()
     {
         _cache.clear();
+        _classToEffectiveClass.clear();
     }
 
     /**
@@ -174,8 +193,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             String term = terms[i];
 
             boolean nullable = term.endsWith("?");
-            if (nullable)
-                term = term.substring(0, term.length() - 1);
+            if (nullable) term = term.substring(0, term.length() - 1);
 
             Method readMethod = readMethodForTerm(
                     activeType,
@@ -202,8 +220,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     previousStep,
                     readMethod.getName());
 
-            if (nullable)
-                builder.addln("if (%s == null) return null;", thisStep);
+            if (nullable) builder.addln("if (%s == null) return null;", thisStep);
 
             activeType = termType;
             result = readMethod;
@@ -245,8 +262,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             String term = terms[i];
 
             boolean nullable = term.endsWith("?");
-            if (nullable)
-                term = term.substring(0, term.length() - 1);
+            if (nullable) term = term.substring(0, term.length() - 1);
 
             Method readMethod = readMethodForTerm(activeType, expression, term, true);
 
@@ -263,8 +279,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                     previousStep,
                     readMethod.getName());
 
-            if (nullable)
-                builder.addln("if (%s == null) return;", thisStep);
+            if (nullable) builder.addln("if (%s == null) return;", thisStep);
 
             activeType = termType;
             previousStep = thisStep;
@@ -309,8 +324,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private Method writeMethodForTerm(Class activeType, String expression, String term)
     {
-        if (term.endsWith(PARENS))
-            return null;
+        if (term.endsWith(PARENS)) return null;
 
         PropertyAdapter adapter = _access.getAdapter(activeType).getPropertyAdapter(term);
 

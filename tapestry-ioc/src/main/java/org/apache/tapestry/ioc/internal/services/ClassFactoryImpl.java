@@ -104,6 +104,11 @@ public class ClassFactoryImpl implements ClassFactory
         }
     }
 
+    public Class importClass(Class clazz)
+    {
+        return _pool.importClass(clazz);
+    }
+
     public int getCreatedClassCount()
     {
         return _classSource.getCreatedClassCount();
