@@ -17,6 +17,7 @@ package org.apache.tapestry.model;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.internal.InternalComponentResources;
+import org.apache.tapestry.ioc.Location;
 
 /**
  * Mutable version of {@link org.apache.tapestry.model.ComponentModel} used during the
@@ -49,10 +50,12 @@ public interface MutableComponentModel extends ComponentModel
      *            the type of the component (posslibly blank)
      * @param componentClassName
      *            the fully qualified class name (derived from the field), used if the type is blank
+     * @param location
+     *            where the component is defined
      * @return a mutable model allowing parameters to be set
      */
     MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
-            String componentClassName);
+            String componentClassName, Location location);
 
     /**
      * Used to define the field persistence strategy for a particular field name. Returns a logical

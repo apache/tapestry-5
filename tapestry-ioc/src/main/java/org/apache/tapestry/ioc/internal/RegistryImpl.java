@@ -642,7 +642,7 @@ public class RegistryImpl implements Registry, InternalRegistry
             failure = ex;
         }
 
-        String description = _classFactory.getConstructorLocation(constructor);
+        String description = _classFactory.getConstructorLocation(constructor).toString();
 
         throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure),
                 failure);

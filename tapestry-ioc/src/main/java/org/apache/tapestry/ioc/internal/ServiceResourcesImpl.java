@@ -115,7 +115,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         if (constructor == null)
             throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-        String description = _classFactory.getConstructorLocation(constructor);
+        String description = _classFactory.getConstructorLocation(constructor).toString();
 
         ObjectCreator creator = new ConstructorServiceCreator(this, description, constructor);
 

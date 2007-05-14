@@ -25,10 +25,11 @@ import javassist.CtMethod;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodLocation;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.services.ClassFactory}.
@@ -119,7 +120,7 @@ public class ClassFactoryImpl implements ClassFactory
         return _loader;
     }
 
-    public MethodLocation getMethodLocation(Method method)
+    public Location getMethodLocation(Method method)
     {
         notNull(method, "method");
 
@@ -146,15 +147,21 @@ public class ClassFactoryImpl implements ClassFactory
 
             String sourceFile = ctMethod.getDeclaringClass().getClassFile2().getSourceFile();
 
-            return new MethodLocation(method, sourceFile, lineNumber);
+            String description = String.format(
+                    "%s (at %s:%d)",
+                    InternalUtils.asString(method),
+                    sourceFile,
+                    lineNumber);
+
+            return new StringLocation(description, lineNumber);
         }
         catch (Exception ex)
         {
-            return null;
+            return new StringLocation(InternalUtils.asString(method), 0);
         }
     }
 
-    public String getConstructorLocation(Constructor constructor)
+    public Location getConstructorLocation(Constructor constructor)
     {
         notNull(constructor, "constructor");
 
@@ -186,11 +193,13 @@ public class ClassFactoryImpl implements ClassFactory
         // A constructor resembles a method of type void
         descripton.append(")V");
 
+        int lineNumber = 0;
+
         try
         {
             CtConstructor ctConstructor = ctClass.getConstructor(descripton.toString());
 
-            int lineNumber = ctConstructor.getMethodInfo().getLineNumber(0);
+            lineNumber = ctConstructor.getMethodInfo().getLineNumber(0);
 
             String sourceFile = ctConstructor.getDeclaringClass().getClassFile2().getSourceFile();
 
@@ -200,6 +209,6 @@ public class ClassFactoryImpl implements ClassFactory
         {
         }
 
-        return builder.toString();
+        return new StringLocation(builder.toString(), lineNumber);
     }
 }

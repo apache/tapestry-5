@@ -19,6 +19,8 @@ import org.apache.tapestry.annotations.MixinClasses;
 import org.apache.tapestry.annotations.Mixins;
 import org.apache.tapestry.internal.KeyValue;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.internal.services.StringLocation;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -50,13 +52,15 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
             String id = annotation.id();
 
-            if (InternalUtils.isBlank(id))
-                id = InternalUtils.stripMemberPrefix(fieldName);
+            if (InternalUtils.isBlank(id)) id = InternalUtils.stripMemberPrefix(fieldName);
 
             String type = transformation.getFieldType(fieldName);
 
+            Location location = new StringLocation(String.format("%s.%s", transformation
+                    .getClassName(), fieldName), 0);
+
             MutableEmbeddedComponentModel embedded = model.addEmbeddedComponent(id, annotation
-                    .type(), type);
+                    .type(), type, location);
 
             addParameters(embedded, annotation.parameters());
 
@@ -84,8 +88,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
     {
         MixinClasses annotation = transformation.getFieldAnnotation(fieldName, MixinClasses.class);
 
-        if (annotation == null)
-            return;
+        if (annotation == null) return;
 
         for (Class c : annotation.value())
             model.addMixin(c.getName());
@@ -96,8 +99,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
     {
         Mixins annotation = transformation.getFieldAnnotation(fieldName, Mixins.class);
 
-        if (annotation == null)
-            return;
+        if (annotation == null) return;
 
         for (String typeName : annotation.value())
         {

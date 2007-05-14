@@ -432,11 +432,14 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         ComponentPageElement child1 = mockComponentPageElement();
         ComponentPageElement child2 = mockComponentPageElement();
         TypeCoercer coercer = mockTypeCoercer();
+        Location l = mockLocation();
 
         Instantiator ins = newInstantiator(pageComponent, model);
 
         train_getId(child1, "Child");
         train_getId(child2, "CHILD");
+
+        train_getLocation(child2, l);
 
         replay();
 
@@ -453,6 +456,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         {
             assertTrue(ex.getMessage().contains(
                     "already contains a child component with id 'CHILD'."));
+            assertSame(ex.getLocation(), l);
         }
 
         verify();

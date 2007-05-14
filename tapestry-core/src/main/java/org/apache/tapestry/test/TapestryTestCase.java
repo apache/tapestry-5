@@ -53,13 +53,15 @@ import org.apache.tapestry.annotations.Id;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
+import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.internal.services.MarkupWriterImpl;
 import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -71,6 +73,7 @@ import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategySource;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ClassTransformation;
@@ -946,4 +949,31 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(annotation.value()).andReturn(value).atLeastOnce();
     }
+
+    protected final void train_create(BeanModelSource source, Class beanClass,
+            boolean filterReadOnly, ComponentResources containerResources, BeanModel model)
+    {
+        expect(source.create(beanClass, filterReadOnly, containerResources)).andReturn(model);
+    }
+
+    protected final void train_getBoundType(ComponentResources resources, Class type)
+    {
+        expect(resources.getBoundType("object")).andReturn(type);
+    }
+
+    protected final BeanModel mockBeanModel()
+    {
+        return newMock(BeanModel.class);
+    }
+
+    protected final BeanModelSource mockBeanModelSource()
+    {
+        return newMock(BeanModelSource.class);
+    }
+
+    public final void train_getLocation(Locatable locatable, Location location)
+    {
+        expect(locatable.getLocation()).andReturn(location).atLeastOnce();
+    }
+
 }

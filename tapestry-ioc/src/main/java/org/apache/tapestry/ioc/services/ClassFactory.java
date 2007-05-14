@@ -17,6 +17,8 @@ package org.apache.tapestry.ioc.services;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import org.apache.tapestry.ioc.Location;
+
 /**
  * Service used when dynamically creating new classes.
  */
@@ -77,11 +79,11 @@ public interface ClassFactory
      *            to look up
      * @return the location, or null if the necessary information is not available
      */
-    MethodLocation getMethodLocation(Method method);
+    Location getMethodLocation(Method method);
 
     /**
      * Return a string representation fo the constructor (including class and parameters) and (if
      * available) file name and line number.
      */
-    String getConstructorLocation(Constructor constructor);
+    Location getConstructorLocation(Constructor constructor);
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -137,11 +138,9 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         List<String> names = newList();
 
-        if (_parameters != null)
-            names.addAll(_parameters.keySet());
+        if (_parameters != null) names.addAll(_parameters.keySet());
 
-        if (_parentModel != null)
-            names.addAll(_parentModel.getParameterNames());
+        if (_parentModel != null) names.addAll(_parentModel.getParameterNames());
 
         Collections.sort(names);
 
@@ -154,7 +153,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     }
 
     public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
-            String componentClassName)
+            String componentClassName, Location location)
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
@@ -166,7 +165,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
                     _componentClassName));
 
         MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type,
-                componentClassName, _componentClassName);
+                componentClassName, _componentClassName, location);
 
         _embeddedComponents.put(id, embedded);
 
@@ -177,11 +176,9 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         List<String> result = newList();
 
-        if (_embeddedComponents != null)
-            result.addAll(_embeddedComponents.keySet());
+        if (_embeddedComponents != null) result.addAll(_embeddedComponents.keySet());
 
-        if (_parentModel != null)
-            result.addAll(_parentModel.getEmbeddedComponentIds());
+        if (_parentModel != null) result.addAll(_parentModel.getEmbeddedComponentIds());
 
         Collections.sort(result);
 
@@ -222,8 +219,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
         String logicalFieldName = _persistentFieldNameAllocator.allocateId(stripped);
 
-        if (_persistentFields == null)
-            _persistentFields = newMap();
+        if (_persistentFields == null) _persistentFields = newMap();
 
         _persistentFields.put(logicalFieldName, strategy);
 
@@ -237,8 +233,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public void addMixinClassName(String mixinClassName)
     {
-        if (_mixinClassNames == null)
-            _mixinClassNames = newList();
+        if (_mixinClassNames == null) _mixinClassNames = newList();
 
         _mixinClassNames.add(mixinClassName);
     }
@@ -247,11 +242,9 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         List<String> result = newList();
 
-        if (_mixinClassNames != null)
-            result.addAll(_mixinClassNames);
+        if (_mixinClassNames != null) result.addAll(_mixinClassNames);
 
-        if (_parentModel != null)
-            result.addAll(_parentModel.getMixinClassNames());
+        if (_parentModel != null) result.addAll(_parentModel.getMixinClassNames());
 
         Collections.sort(result);
 
@@ -288,8 +281,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         notBlank(key, "key");
         notBlank(value, "value");
 
-        if (_metaData == null)
-            _metaData = newCaseInsensitiveMap();
+        if (_metaData == null) _metaData = newCaseInsensitiveMap();
 
         // TODO: Error if duplicate?
 
@@ -300,8 +292,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         String result = InternalUtils.get(_metaData, key);
 
-        if (result == null && _parentModel != null)
-            result = _parentModel.getMeta(key);
+        if (result == null && _parentModel != null) result = _parentModel.getMeta(key);
 
         return result;
     }

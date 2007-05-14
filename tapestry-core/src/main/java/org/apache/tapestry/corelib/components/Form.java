@@ -27,6 +27,7 @@ import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
+import org.apache.tapestry.FormValidationControl;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
@@ -72,7 +73,7 @@ import org.apache.tapestry.services.Heartbeat;
  * parameter. This context is encoded into the form's action URI (the parameter is not read when the
  * form is submitted, instead the values encoded into the form are used).
  */
-public class Form implements ClientElement
+public class Form implements ClientElement, FormValidationControl
 {
     /**
      * Invoked to let the containing component(s) prepare for the form rendering or the form
@@ -400,8 +401,8 @@ public class Form implements ClientElement
         }
     }
 
-    /**
-     * A convienience for invoking {@link ValidationTracker#recordError(String)}.
+    /* (non-Javadoc)
+     * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(java.lang.String)
      */
     public void recordError(String errorMessage)
     {
@@ -412,8 +413,8 @@ public class Form implements ClientElement
         _tracker = tracker;
     }
 
-    /**
-     * A convienience for invoking {@link ValidationTracker#recordError(Field, String)}.
+    /* (non-Javadoc)
+     * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(org.apache.tapestry.Field, java.lang.String)
      */
     public void recordError(Field field, String errorMessage)
     {
@@ -424,18 +425,16 @@ public class Form implements ClientElement
         _tracker = tracker;
     }
 
-    /**
-     * Returns true if the form's {@link ValidationTracker} contains any
-     * {@link ValidationTracker#getHasErrors() errors}.
+    /* (non-Javadoc)
+     * @see org.apache.tapestry.corelib.components.FormValidationControl#getHasErrors()
      */
     public boolean getHasErrors()
     {
         return _tracker.getHasErrors();
     }
 
-    /**
-     * Returns true if the form's {@link ValidationTracker} does not contain any
-     * {@link ValidationTracker#getHasErrors() errors}.
+    /* (non-Javadoc)
+     * @see org.apache.tapestry.corelib.components.FormValidationControl#isValid()
      */
     public boolean isValid()
     {
@@ -449,8 +448,8 @@ public class Form implements ClientElement
         _tracker = tracker;
     }
 
-    /**
-     * Invokes {@link ValidationTracker#clear()}.
+    /* (non-Javadoc)
+     * @see org.apache.tapestry.corelib.components.FormValidationControl#clearErrors()
      */
     public void clearErrors()
     {

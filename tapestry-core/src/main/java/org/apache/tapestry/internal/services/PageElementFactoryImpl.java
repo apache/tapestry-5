@@ -120,49 +120,59 @@ public class PageElementFactoryImpl implements PageElementFactory
             String id, String componentType, String componentClassName, String elementName,
             Location location)
     {
-        String finalClassName = componentClassName;
-
-        // This awkwardness is making me think that the page loader should resolve the component
-        // type before invoking this method (we would then remove the componentType parameter).
-
-        if (InternalUtils.isNonBlank(componentType))
+        try
         {
-            // The type actually overrides the specified class name. The class name is defined
-            // by the type of the field. In many scenarios, the field type is a common interface,
-            // and the type is used to determine the concrete class to instantiate.
+            String finalClassName = componentClassName;
 
-            try
+            // This awkwardness is making me think that the page loader should resolve the component
+            // type before invoking this method (we would then remove the componentType parameter).
+
+            if (InternalUtils.isNonBlank(componentType))
             {
-                finalClassName = _componentClassResolver
-                        .resolveComponentTypeToClassName(componentType);
+                // The type actually overrides the specified class name. The class name is defined
+                // by the type of the field. In many scenarios, the field type is a common
+                // interface,
+                // and the type is used to determine the concrete class to instantiate.
+
+                try
+                {
+                    finalClassName = _componentClassResolver
+                            .resolveComponentTypeToClassName(componentType);
+                }
+                catch (IllegalArgumentException ex)
+                {
+                    throw new TapestryException(ex.getMessage(), location, ex);
+                }
             }
-            catch (IllegalArgumentException ex)
-            {
-                throw new TapestryException(ex.getMessage(), location, ex);
-            }
+
+            Instantiator instantiator = _componentInstantiatorSource
+                    .findInstantiator(finalClassName);
+
+            // This is actually a good place to check for recursive templates, here where we've
+            // resolved
+            // the component type to a fully qualified class name.
+
+            checkForRecursion(finalClassName, container, location);
+
+            // The container for any components is the loading component, regardless of
+            // how the component elements are nested within the loading component's
+            // template.
+
+            ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id,
+                    elementName, instantiator, _typeCoercer, _messagesSource, location);
+
+            page.addLifecycleListener(result);
+
+            container.addEmbeddedElement(result);
+
+            addMixins(result, instantiator);
+
+            return result;
         }
-
-        Instantiator instantiator = _componentInstantiatorSource.findInstantiator(finalClassName);
-
-        // This is actually a good place to check for recursive templates, here where we've resolved
-        // the component type to a fully qualified class name.
-
-        checkForRecursion(finalClassName, container, location);
-
-        // The container for any components is the loading component, regardless of
-        // how the component elements are nested within the loading component's
-        // template.
-
-        ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id,
-                elementName, instantiator, _typeCoercer, _messagesSource, location);
-
-        page.addLifecycleListener(result);
-
-        container.addEmbeddedElement(result);
-
-        addMixins(result, instantiator);
-
-        return result;
+        catch (RuntimeException ex)
+        {
+            throw new TapestryException(ex.getMessage(), location, ex);
+        }
     }
 
     private void checkForRecursion(String componentClassName, ComponentPageElement container,
