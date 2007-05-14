@@ -41,7 +41,7 @@ public class BeanEditorDemo
     void onActionFromClear()
     {
         _data = null;
-        _edit.getForm().clearErrors();
+        _edit.clearErrors();
     }
 
     public boolean getClientValidation()

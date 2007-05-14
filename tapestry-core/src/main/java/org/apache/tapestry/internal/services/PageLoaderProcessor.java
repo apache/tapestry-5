@@ -125,8 +125,7 @@ class PageLoaderProcessor
         // ignore the value in the template. This may need improving to just ignore
         // the value if it is an unprefixed literal string.
 
-        if (resources.isBound(name))
-            return;
+        if (resources.isBound(name)) return;
 
         // Meta default of literal for the template.
 
@@ -145,10 +144,6 @@ class PageLoaderProcessor
 
         component.bindParameter(name, binding);
     }
-
-    // As element, components, parameters or blocks are started, they push an element onto this
-    // stack. Whenever an end element token is reached, the top value is popped off and executed,
-    // to return state to where it should be.
 
     private void addMixinsToComponent(ComponentPageElement component, EmbeddedComponentModel model,
             String mixins)
@@ -637,15 +632,15 @@ class PageLoaderProcessor
     private void dtd(DTDToken token)
     {
         // first DTD encountered wins.
-        if (_dtdAdded) return; 
-        
+        if (_dtdAdded) return;
+
         PageElement element = _pageElementFactory.newDTDElement(token);
         // since rendering via the markup writer is to the document tree,
         // we don't really care where this gets placed in the tree; the
         // DTDPageElement will set the dtd of the document directly, rather than
         // writing anything to the markup writer
         _page.getRootElement().addToTemplate(element);
-        
+
         _dtdAdded = true;
     }
 

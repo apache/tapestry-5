@@ -19,6 +19,7 @@ import java.util.Arrays;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -84,7 +85,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         model.addParameter("fred", true, "flint");
 
         // Checks that parameter names are case insensitive
-        
+
         assertEquals(model.getParameterModel("Fred").getDefaultBindingPrefix(), "flint");
 
         verify();
@@ -148,7 +149,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         try
         {
             // This also helps check that the comparison is caseless!
-            
+
             model.addParameter("Fred", true, TapestryConstants.PROP_BINDING_PREFIX);
             unreachable();
         }
@@ -198,6 +199,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
     {
         Resource r = mockResource();
         Log log = mockLog();
+        Location l = mockLocation();
 
         replay();
 
@@ -208,15 +210,18 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
                 "fred",
                 "Fred",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                l);
 
         assertEquals(fred.getId(), "fred");
         assertEquals(fred.getComponentType(), "Fred");
+        assertSame(fred.getLocation(), l);
 
         MutableEmbeddedComponentModel barney = model.addEmbeddedComponent(
                 "barney",
                 "Barney",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                null);
 
         assertEquals(model.getEmbeddedComponentIds(), Arrays.asList("barney", "fred"));
 
@@ -224,11 +229,10 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         assertSame(model.getEmbeddedComponentModel("barney"), barney);
 
         // Access by id is case insensitive
-        
+
         assertSame(model.getEmbeddedComponentModel("FRED"), fred);
         assertSame(model.getEmbeddedComponentModel("BARNEY"), barney);
-        
-        
+
         assertEquals(
                 fred.toString(),
                 "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred]");
@@ -246,11 +250,11 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, log, r, null);
 
-        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME);
+        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, null);
 
         try
         {
-            model.addEmbeddedComponent("fred", "Fred2", COMPONENT_CLASS_NAME);
+            model.addEmbeddedComponent("fred", "Fred2", COMPONENT_CLASS_NAME, null);
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -262,7 +266,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     @Test
     public void add_embedded_is_case_insensitive()
     {
@@ -273,11 +277,11 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, log, r, null);
 
-        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME);
+        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, null);
 
         try
         {
-            model.addEmbeddedComponent("FRED", "Fred2", COMPONENT_CLASS_NAME);
+            model.addEmbeddedComponent("FRED", "Fred2", COMPONENT_CLASS_NAME, null);
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -287,7 +291,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
                     "Embedded component 'FRED' has already been defined for component class org.example.components.Foo.");
         }
 
-        verify();      
+        verify();
     }
 
     @Test
@@ -303,7 +307,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
                 "fred",
                 "Fred",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                null);
 
         assertTrue(fred.getParameterNames().isEmpty());
 
@@ -330,7 +335,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
                 "fred",
                 "Fred",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                null);
 
         fred.addParameter("city", "bedrock");
 
@@ -362,7 +368,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
                 "fred",
                 "Fred",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                null);
 
         assertTrue(fred.getMixinClassNames().isEmpty());
 
@@ -382,7 +389,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
                 "fred",
                 "Fred",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                null);
 
         fred.addMixin("zip.zop.Zoom");
         fred.addMixin("foo.bar.Baz");
@@ -405,7 +413,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
                 "fred",
                 "Fred",
-                COMPONENT_CLASS_NAME);
+                COMPONENT_CLASS_NAME,
+                null);
 
         fred.addMixin("zip.zop.Zoom");
 
@@ -675,10 +684,9 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         assertEquals(model.getMeta("barney"), "rubble");
 
         // Ensure case insensitive:
-        
+
         assertEquals(model.getMeta("FRED"), "flintstone");
         assertEquals(model.getMeta("BARNEY"), "rubble");
-
 
         verify();
     }

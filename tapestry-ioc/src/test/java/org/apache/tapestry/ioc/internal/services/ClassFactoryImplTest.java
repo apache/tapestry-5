@@ -18,6 +18,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.LocationImpl;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
@@ -96,9 +97,11 @@ public class ClassFactoryImplTest extends IOCTestCase
 
         // 21 is the line containing the close brace
 
+        Location l = factory.getMethodLocation(m);
         assertEquals(
-                factory.getMethodLocation(m).toString(),
+                l.toString(),
                 "org.apache.tapestry.ioc.internal.services.LineNumberBean.fred() (at LineNumberBean.java:25)");
+        assertEquals(l.getLine(), 25);
 
         m = target.getMethod("betty", String.class, int.class);
 
@@ -131,6 +134,7 @@ public class ClassFactoryImplTest extends IOCTestCase
 
         assertTrue(factory
                 .getConstructorLocation(cc)
+                .toString()
                 .matches(
                         "org.apache.tapestry.ioc.internal.services.LineNumberBean\\(String, int\\) \\(at LineNumberBean.java:(19|20)\\)"));
     }

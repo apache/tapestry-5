@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 final class ComponentMessages
 {
@@ -29,5 +30,11 @@ final class ComponentMessages
     static String encloseErrorsInForm()
     {
         return MESSAGES.get("enclose-errors-in-form");
+    }
+
+    static String failureInstantiatingObject(Class objectType, String componentId, Throwable cause)
+    {
+        return MESSAGES.format("failure-instantitating-object", ClassFabUtils
+                .toJavaClassName(objectType), componentId, cause);
     }
 }

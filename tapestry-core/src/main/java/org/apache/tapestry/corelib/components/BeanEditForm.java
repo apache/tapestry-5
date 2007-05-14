@@ -21,6 +21,7 @@ import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
+import org.apache.tapestry.FormValidationControl;
 import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.ValueEncoder;
@@ -31,6 +32,7 @@ import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.TranslatorDefaultSource;
@@ -45,10 +47,10 @@ import org.apache.tapestry.util.EnumValueEncoder;
  * field, checkbox, drop down list) determined from the property type, and the order and validation
  * for the properties determined from annotations on the property's getter and setter methods.
  * <p>
- * You may add <t:parameter>s to the component; when the name matches (case insensitive) the name of
- * a property, then the corresponding Block is renderered, rather than any of the built in property
- * editor blocks. This allows you to override specific properties with your own customized UI, for
- * cases where the default UI is insufficient, or no built-in editor type is appropriate.
+ * You may add &lt;t:parameter&gt;s to the component; when the name matches (case insensitive) the
+ * name of a property, then the corresponding Block is renderered, rather than any of the built in
+ * property editor blocks. This allows you to override specific properties with your own customized
+ * UI, for cases where the default UI is insufficient, or no built-in editor type is appropriate.
  * <p>
  * This component is likely to change more than any other thing in Tapestry! What's available now is
  * a very limited preview of its eventual functionality.
@@ -57,7 +59,7 @@ import org.apache.tapestry.util.EnumValueEncoder;
  * @see BeanModelSource
  */
 @SupportsInformalParameters
-public class BeanEditForm implements ClientElement
+public class BeanEditForm implements ClientElement, FormValidationControl
 {
     /** The text label for the submit button of the form, by default "Create/Update". */
     @Parameter(value = "message:submit-label", defaultPrefix = "literal")
@@ -200,6 +202,16 @@ public class BeanEditForm implements ClientElement
 
         _resources.triggerEvent(Form.PREPARE, null, null);
 
+        // Now check to see if the value is null.
+
+        // The only problem here is that if the bound property is backed by a persistent field, it
+        // is assigned (and stored to the session, and propogated around the cluster) first,
+        // before values are assigned.
+
+        if (_object == null) _object = createDefaultObject();
+
+        assert _object != null;
+
         if (_model == null)
         {
             Class<? extends Object> beanType = _object.getClass();
@@ -208,6 +220,34 @@ public class BeanEditForm implements ClientElement
         }
 
         return true; // abort the form's prepare event
+    }
+
+    void inject(ComponentResources resources, BeanModelSource modelSource)
+    {
+        _resources = resources;
+        _modelSource = modelSource;
+    }
+
+    Object getObject()
+    {
+        return _object;
+    }
+
+    private Object createDefaultObject()
+    {
+        Class type = _resources.getBoundType("object");
+
+        try
+        {
+            return type.newInstance();
+        }
+        catch (Exception ex)
+        {
+            throw new TapestryException(ComponentMessages.failureInstantiatingObject(
+                    type,
+                    _resources.getCompleteId(),
+                    ex), _resources.getLocation(), ex);
+        }
     }
 
     public Translator getTranslateForProperty()
@@ -261,11 +301,6 @@ public class BeanEditForm implements ClientElement
                 .getContainerMessages());
     }
 
-    public Form getForm()
-    {
-        return _form;
-    }
-
     /** Returns the client id of the embedded form. */
     public String getClientId()
     {
@@ -281,4 +316,30 @@ public class BeanEditForm implements ClientElement
     {
         return _clientValidation;
     }
+
+    public void clearErrors()
+    {
+        _form.clearErrors();
+    }
+
+    public boolean getHasErrors()
+    {
+        return _form.getHasErrors();
+    }
+
+    public boolean isValid()
+    {
+        return _form.isValid();
+    }
+
+    public void recordError(Field field, String errorMessage)
+    {
+        _form.recordError(field, errorMessage);
+    }
+
+    public void recordError(String errorMessage)
+    {
+        _form.recordError(errorMessage);
+    }
+
 }

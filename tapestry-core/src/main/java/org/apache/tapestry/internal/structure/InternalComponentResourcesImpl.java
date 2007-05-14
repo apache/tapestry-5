@@ -29,6 +29,7 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
@@ -73,6 +74,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         _messagesSource = messagesSource;
 
         _component = componentInstantiator.newInstance(this);
+    }
+
+    public Location getLocation()
+    {
+        return _element.getLocation();
     }
 
     @Override

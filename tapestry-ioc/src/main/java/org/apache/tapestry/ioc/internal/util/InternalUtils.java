@@ -38,7 +38,6 @@ import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodLocation;
 
 /**
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the
@@ -66,7 +65,7 @@ public class InternalUtils
      */
     public static String asString(Method method, ClassFactory classFactory)
     {
-        MethodLocation location = classFactory.getMethodLocation(method);
+        Location location = classFactory.getMethodLocation(method);
 
         return location != null ? location.toString() : asString(method);
     }

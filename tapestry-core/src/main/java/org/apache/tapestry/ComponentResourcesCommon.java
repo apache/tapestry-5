@@ -20,13 +20,14 @@ import org.apache.commons.logging.Log;
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.internal.services.OnEventWorker;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
+import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentSource;
 
 /**
  * Operations shared by {@link ComponentResources} and {@link ComponentPageElement}.
  */
-public interface ComponentResourcesCommon
+public interface ComponentResourcesCommon extends Locatable
 {
     /**
      * Returns the id of the component. The id will be unique within the component's immediate

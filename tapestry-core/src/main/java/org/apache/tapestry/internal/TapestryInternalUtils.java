@@ -30,12 +30,12 @@ import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.MethodLocation;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 /** Shared utility methods used by various implementation classes. */
@@ -366,9 +366,9 @@ public class TapestryInternalUtils
 
     /**
      * Sorts the property names into presentation order. Filters out any properties that have an
-     * explicit {@link Order}, leaving the remainder. Estimates each properties position based on
-     * the relative position of the propertie's getter or setter. The code assumes that all methods
-     * are readable (have a getter method).
+     * explicit {@link Order}, leaving the remainder. Estimates each propertie's position based on
+     * the relative position of the property's getter. The code assumes that all methods are
+     * readable (have a getter method).
      * 
      * @param classAdapter
      *            defines the bean that contains the properties
@@ -391,11 +391,9 @@ public class TapestryInternalUtils
 
             Method readMethod = pa.getReadMethod();
 
-            MethodLocation location = classFactory.getMethodLocation(readMethod);
+            Location location = classFactory.getMethodLocation(readMethod);
 
-            int lineNumber = location != null ? location.getLineNumber() : 0;
-
-            properties.add(new PropertyOrder(name, computeDepth(readMethod), lineNumber));
+            properties.add(new PropertyOrder(name, computeDepth(readMethod), location.getLine()));
         }
 
         Collections.sort(properties);

@@ -17,12 +17,13 @@ package org.apache.tapestry.model;
 import java.util.List;
 
 import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.ioc.Locatable;
 
 /**
  * The model for a component embedded within another component, as defined by the
  * {@link org.apache.tapestry.annotations.Component} annotation.
  */
-public interface EmbeddedComponentModel
+public interface EmbeddedComponentModel extends Locatable
 {
     /** A unique id for the embedded component. */
     String getId();

@@ -77,7 +77,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return _classFactory.getConstructorLocation(constructor);
+                return _classFactory.getConstructorLocation(constructor).toString();
             }
         };
 
