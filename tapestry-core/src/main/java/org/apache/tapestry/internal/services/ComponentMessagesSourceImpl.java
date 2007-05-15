@@ -28,13 +28,20 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 {
     private final MessagesSource _messagesSource;
 
+    private final Resource _rootResource;
+
+    private final String _appCatalog;
+
     private static class ComponentModelBundle implements MessagesBundle
     {
         private final ComponentModel _model;
 
-        public ComponentModelBundle(final ComponentModel model)
+        private final MessagesBundle _rootBundle;
+
+        public ComponentModelBundle(ComponentModel model, MessagesBundle rootBundle)
         {
             _model = model;
+            _rootBundle = rootBundle;
         }
 
         public Resource getBaseResource()
@@ -51,18 +58,22 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         {
             ComponentModel parentModel = _model.getParentModel();
 
-            return parentModel != null ? new ComponentModelBundle(parentModel) : null;
+            if (parentModel == null) return _rootBundle;
+
+            return new ComponentModelBundle(parentModel, _rootBundle);
         }
-
     }
 
-    public ComponentMessagesSourceImpl()
+    public ComponentMessagesSourceImpl(Resource rootResource, String appCatalog)
     {
-        this(new URLChangeTracker());
+        this(rootResource, appCatalog, new URLChangeTracker());
     }
 
-    ComponentMessagesSourceImpl(URLChangeTracker tracker)
+    ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, URLChangeTracker tracker)
     {
+        _rootResource = rootResource;
+        _appCatalog = appCatalog;
+
         _messagesSource = new MessagesSourceImpl(tracker);
     }
 
@@ -73,7 +84,30 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     public Messages getMessages(ComponentModel componentModel, Locale locale)
     {
-        MessagesBundle bundle = new ComponentModelBundle(componentModel);
+        final Resource appCatalogResource = _rootResource.forFile(_appCatalog);
+
+        // If the application catalog exists, set it up as the root, otherwise use null.
+
+        MessagesBundle appCatalogBundle = appCatalogResource.toURL() == null ? null
+                : new MessagesBundle()
+                {
+                    public Resource getBaseResource()
+                    {
+                        return appCatalogResource;
+                    }
+
+                    public Object getId()
+                    {
+                        return _appCatalog;
+                    }
+
+                    public MessagesBundle getParent()
+                    {
+                        return null;
+                    }
+                };
+
+        MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
 
         return _messagesSource.getMessages(bundle, locale);
     }

@@ -23,8 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.LibraryMapping;
 
@@ -69,7 +70,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             ClassNameLocator classNameLocator,
 
             @Inject
-            @Value("${tapestry.app-package}")
+            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
             String appRootPackage,
 
             Collection<LibraryMapping> mappings)

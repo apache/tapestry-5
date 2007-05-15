@@ -37,7 +37,11 @@ Message Catalog Inheritance
   
 Application Message Catalog
 
-  Tapestry 4 supports an application-wide message catalog; this is <<not yet>> in Tapestry 5, but will likely be coming soon.
+  If the file <<<WEB-INF/>>><AppName><<<.properties>>> exists in the context, it will be used as an application-wide message catalog.  The <AppName>
+  is derived from the name of the filter inside the web.xml file.  The search for the file is case sensitive. The properties file may be localized.
+  
+  Individual pages and components
+  can override the values defined in this message catalog.
   
 Localized Component Templates
 

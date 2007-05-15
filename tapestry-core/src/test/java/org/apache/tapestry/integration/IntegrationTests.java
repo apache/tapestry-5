@@ -244,6 +244,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Via injected Messages property: [Accessed via injected Messages]");
         assertTextPresent("Via message: binding prefix: [Accessed via message: binding prefix]");
+        assertTextPresent("From Application Message Catalog: [Application Catalog Working]");
         assertTextPresent("Page locale: [en]");
         clickAndWait("link=French");
         assertTextPresent("Page locale: [fr]");

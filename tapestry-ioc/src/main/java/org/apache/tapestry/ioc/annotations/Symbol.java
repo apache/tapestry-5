@@ -22,24 +22,17 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.ioc.services.TypeCoercer;
-
 /**
- * Used in conjunction with {@link Inject} to inject a literal value, rather than a service. Symbols
- * in the value are expanded and the resulting string is coerced to the desired type. For IoC, this
- * annotation is only applied to parameters (on service builder methods, and on service
- * constructors); for components, it may also be applied to field.
- * 
- * @see SymbolSource
- * @see TypeCoercer
+ * Used to inject a symbol value, via a symbol name. This is used much like {@link Value}
+ * annotation, except that symbols are not expanded ... the entire value is a symbol name. This
+ * allows the annotation to reference a public constant variable.
  */
 @Target(
 { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
-public @interface Value
+public @interface Symbol
 {
-    /** The value to be coerced and injected. */
+    /** The name of the symbol to inject. */
     String value();
 }
