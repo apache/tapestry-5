@@ -42,7 +42,6 @@ import org.apache.tapestry.annotations.BeforeRenderBody;
 import org.apache.tapestry.annotations.BeforeRenderTemplate;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.CleanupRender;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.PageAttached;
 import org.apache.tapestry.annotations.PageDetached;
@@ -55,6 +54,7 @@ import org.apache.tapestry.corelib.data.GridPagerPosition;
 import org.apache.tapestry.dom.DefaultMarkupModel;
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.grid.GridDataSource;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry.internal.beaneditor.ValidateAnnotationConstraintGenerator;
@@ -164,8 +164,10 @@ import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceResources;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.SubModule;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ChainBuilder;
@@ -238,8 +240,8 @@ public final class TapestryModule
 
     public static Alias build(Log log,
 
-    @org.apache.tapestry.ioc.annotations.Inject
-    @Value("${tapestry.alias-mode}")
+    @Inject
+    @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
     String mode,
 
     @InjectService("AliasOverrides")
@@ -334,7 +336,7 @@ public final class TapestryModule
             MappedConfiguration<String, String> configuration,
 
             // @Inject not needed, because this isn't a service builder method
-            @Value("${tapestry.scriptaculous.path}")
+            @Symbol("tapestry.scriptaculous.path")
             String scriptaculousPath)
     {
         configuration.add("tapestry/", "org/apache/tapestry/");
@@ -1129,22 +1131,17 @@ public final class TapestryModule
         return _strategyBuilder.build(registry);
     }
 
-    // /**
-    // * The configuration of the model source is a mapping from type to string. The types are
-    // * property types and the values, the strings, represent different type of editors.
-    // */
-    // public BeanModelSource build(TypeCoercer typeCoercer,
-    //
-    // @InjectService("DataTypeAnalyzer")
-    // DataTypeAnalyzer analyzer)
-    // {
-    // return new BeanModelSourceImpl(typeCoercer, _propertyAccess, _propertyConduitSource,
-    // _componentClassFactory, analyzer);
-    // }
+    public static ComponentMessagesSource build(UpdateListenerHub updateListenerHub,
 
-    public static ComponentMessagesSource build(UpdateListenerHub updateListenerHub)
+    @InjectService("ContextAssetFactory")
+    AssetFactory contextAssetFactory,
+
+    @Inject
+    @Value("WEB-INF/${tapestry.app-name}.properties")
+    String appCatalog)
     {
-        ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl();
+        ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
+                .getRootResource(), appCatalog);
 
         updateListenerHub.addUpdateListener(service);
 
@@ -1298,7 +1295,7 @@ public final class TapestryModule
 
     ComponentClassResolver componentClassResolver,
 
-    @Value("${tapestry.start-page-name}")
+    @Symbol("tapestry.start-page-name")
     String startPageName)
     {
         // Looks for the root path and renders the start page

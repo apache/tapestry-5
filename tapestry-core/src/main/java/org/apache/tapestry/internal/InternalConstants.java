@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.internal;
 
+import org.apache.tapestry.services.Alias;
+
 public final class InternalConstants
 {
     /**
@@ -22,8 +24,18 @@ public final class InternalConstants
      */
     public static final String TAPESTRY_APP_PACKAGE_PARAM = "tapestry.app-package";
 
+    /**
+     * The application mode, generally "servlet", used to select the correct contributions to the
+     * {@link Alias} service.
+     */
     public static final String TAPESTRY_ALIAS_MODE_SYMBOL = "tapestry.alias-mode";
-    
+
+    /**
+     * The name of the application (i.e., the name of the application filter). Used, for example, to
+     * select additional resources related to the application.
+     */
+    public static final String TAPESTRY_APP_NAME_SYMBOL = "tapestry.app-name";
+
     /**
      * The extension used for Tapestry component template files. Template files are well-formed XML
      * files. This is also used as the extension for page render requests (perhaps these will be
@@ -35,12 +47,14 @@ public final class InternalConstants
     /** All purpose CSS class name for anything related to Tapestry errors. */
     public static final String TAPESTRY_ERROR_CLASS = "t-error";
 
-    /** The name of the query parameter that stores the page context inside an action request. */
-
+    /**
+     * The name of the query parameter that stores the page activation context inside an action
+     * request.
+     */
     public static final String PAGE_CONTEXT_NAME = "t:ac";
 
     public static final String OBJECT_RENDER_DIV_SECTION = "t-env-data-section";
-    
+
     private InternalConstants()
     {
     }

@@ -535,12 +535,6 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(binding.get()).andReturn(value);
     }
 
-    protected final <T extends Annotation> void train_getAnnotation(AnnotationProvider provider,
-            Class<T> annotationClass, T annotation)
-    {
-        expect(provider.getAnnotation(annotationClass)).andReturn(annotation).atLeastOnce();
-    }
-
     protected void train_getAttribute(HttpSession session, String attributeName, Object value)
     {
         expect(session.getAttribute(attributeName)).andReturn(value);

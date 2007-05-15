@@ -45,6 +45,7 @@ import org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl;
 import org.apache.tapestry.ioc.internal.services.PropertyAccessImpl;
 import org.apache.tapestry.ioc.internal.services.PropertyShadowBuilderImpl;
 import org.apache.tapestry.ioc.internal.services.StrategyBuilderImpl;
+import org.apache.tapestry.ioc.internal.services.SymbolObjectProvider;
 import org.apache.tapestry.ioc.internal.services.SymbolSourceImpl;
 import org.apache.tapestry.ioc.internal.services.SystemPropertiesSymbolProvider;
 import org.apache.tapestry.ioc.internal.services.ThreadLocaleImpl;
@@ -65,7 +66,6 @@ public final class TapestryIOCModule
         binder.bind(PropertyShadowBuilder.class, PropertyShadowBuilderImpl.class);
         binder.bind(PipelineBuilder.class, PipelineBuilderImpl.class);
         binder.bind(DefaultImplementationBuilder.class, DefaultImplementationBuilderImpl.class);
-        binder.bind(ObjectProvider.class, ValueObjectProvider.class).withId("ValueObjectProvider");
         binder.bind(ExceptionTracker.class, ExceptionTrackerImpl.class);
         binder.bind(ExceptionAnalyzer.class, ExceptionAnalyzerImpl.class);
         binder.bind(TypeCoercer.class, TypeCoercerImpl.class);
@@ -121,8 +121,7 @@ public final class TapestryIOCModule
     public static void contributeMasterObjectProvider(
             OrderedConfiguration<ObjectProvider> configuration,
 
-            @InjectService("ValueObjectProvider")
-            ObjectProvider valueObjectProvider)
+            ObjectLocator locator)
     {
         ObjectProvider defaultProvider = new ObjectProvider()
         {
@@ -135,7 +134,8 @@ public final class TapestryIOCModule
         };
 
         configuration.add("DefaultProvider", defaultProvider, "after:*");
-        configuration.add("Value", valueObjectProvider);
+        configuration.add("Value", locator.autobuild(ValueObjectProvider.class));
+        configuration.add("Symbol", locator.autobuild(SymbolObjectProvider.class));
     }
 
     /**

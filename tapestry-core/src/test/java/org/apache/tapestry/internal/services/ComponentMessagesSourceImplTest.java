@@ -22,6 +22,7 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
 
 /**
@@ -37,10 +38,11 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
     private final URLChangeTracker _tracker = new URLChangeTracker();
 
-    private final ComponentMessagesSourceImpl _source = new ComponentMessagesSourceImpl(_tracker);
-
     private final Resource _simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry/internal/services/SimpleComponent.class");
+
+    private final ComponentMessagesSourceImpl _source = new ComponentMessagesSourceImpl(
+            _simpleComponentResource, "AppCatalog.properties", _tracker);
 
     @Test
     public void simple_component()
@@ -110,7 +112,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     @Test
     public void messages_keys_are_case_insensitive()
     {
@@ -131,7 +133,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         assertEquals(messages.get("COlor"), "colour");
         assertEquals(messages.get("Framework"), "Tapestry");
 
-        verify();       
+        verify();
     }
 
     @Test
@@ -165,6 +167,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         assertEquals(messages.get("framework"), "Tapestry");
         assertEquals(messages.get("source"), "SubclassComponent");
         assertEquals(messages.get("metal"), "steel");
+        assertEquals(messages.get("app-catalog-source"), "AppCatalog");
+        assertEquals(messages.get("app-catalog-overridden"), "Overridden by Component");
 
         messages = _source.getMessages(model, Locale.UK);
 
@@ -172,6 +176,43 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         assertEquals(messages.get("framework"), "Tapestry");
         assertEquals(messages.get("source"), "SubclassComponent");
         assertEquals(messages.get("metal"), "aluminium");
+
+        verify();
+    }
+
+    @Test
+    public void no_app_catalog()
+    {
+        ComponentModel model = mockComponentModel();
+        ComponentModel parent = mockComponentModel();
+
+        train_getComponentClassName(
+                model,
+                "org.apache.tapestry.internal.services.SubclassComponent");
+
+        train_getBaseResource(model, new ClasspathResource(
+                "org/apache/tapestry/internal/services/SubclassComponent.class"));
+
+        train_getParentModel(model, parent);
+
+        train_getComponentClassName(parent, SIMPLE_COMPONENT_CLASS_NAME);
+
+        train_getBaseResource(parent, _simpleComponentResource);
+
+        train_getParentModel(parent, null);
+
+        replay();
+
+        forceCacheClear();
+
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(_simpleComponentResource,
+                "NoSuchAppCatalog.properties");
+
+        Messages messages = source.getMessages(model, Locale.ENGLISH);
+
+        assertEquals(messages.get("color"), "color");
+        assertEquals(messages.get("app-catalog-source"), "[[missing key: app-catalog-source]]");
+        assertEquals(messages.get("app-catalog-overridden"), "Overridden by Component");
 
         verify();
     }

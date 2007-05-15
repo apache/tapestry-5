@@ -42,7 +42,7 @@ import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -586,7 +586,7 @@ public final class InternalModule
             final RequestGlobals requestGlobals,
 
             // @Inject not needed because its a long, not a String
-            @Value("${tapestry.file-check-interval}")
+            @Symbol("tapestry.file-check-interval")
             long checkInterval,
 
             @InjectService("LocalizationSetter")

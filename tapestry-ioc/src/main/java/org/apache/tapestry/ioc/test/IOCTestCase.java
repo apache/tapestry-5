@@ -16,6 +16,7 @@ package org.apache.tapestry.ioc.test;
 
 import static org.easymock.EasyMock.isA;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Locale;
@@ -354,5 +355,10 @@ public class IOCTestCase extends TestBase
     protected final void train_toURL(Resource resource, URL url)
     {
         expect(resource.toURL()).andReturn(url).atLeastOnce();
+    }
+
+    protected final <T extends Annotation> void train_getAnnotation(AnnotationProvider annotationProvider, Class<T> annotationClass, T annotation)
+    {
+        expect(annotationProvider.getAnnotation(annotationClass)).andReturn(annotation);
     }
 }

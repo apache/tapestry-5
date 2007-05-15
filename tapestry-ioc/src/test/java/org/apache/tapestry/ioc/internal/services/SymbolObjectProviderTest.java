@@ -16,58 +16,66 @@ package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.ObjectProvider;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
-public class ValueObjectProviderTest extends IOCTestCase
+public class SymbolObjectProviderTest extends IOCTestCase
 {
     @Test
-    public void no_value_annotation()
+    public void no_annotation()
     {
-        SymbolSource symbolSource = mockSymbolSource();
+        SymbolSource source = mockSymbolSource();
         TypeCoercer coercer = mockTypeCoercer();
         AnnotationProvider annotationProvider = mockAnnotationProvider();
         ObjectLocator locator = mockObjectLocator();
 
-        train_getAnnotation(annotationProvider, Value.class, null);
+        train_getAnnotation(annotationProvider, Symbol.class, null);
 
         replay();
 
-        ValueObjectProvider provider = new ValueObjectProvider(symbolSource, coercer);
+        ObjectProvider provider = new SymbolObjectProvider(source, coercer);
 
-        assertNull(provider.provide(Runnable.class, annotationProvider, locator));
+        assertNull(provider.provide(Long.class, annotationProvider, locator));
 
         verify();
     }
 
     @Test
-    public void value_annotation_present()
+    public void annotation_present()
     {
-        SymbolSource symbolSource = mockSymbolSource();
+        SymbolSource source = mockSymbolSource();
         TypeCoercer coercer = mockTypeCoercer();
         AnnotationProvider annotationProvider = mockAnnotationProvider();
         ObjectLocator locator = mockObjectLocator();
-        String annotationValue = "${foo}";
-        String expanded = "Foo";
-        Runnable coerced = mockRunnable();
-        Value annotation = newMock(Value.class);
+        Symbol annotation = newMock(Symbol.class);
+        String symbolName = "example-symbol";
+        String symbolValue = "symbol-value";
+        Long coercedValue = 123l;
 
-        train_getAnnotation(annotationProvider, Value.class, annotation);
+        train_getAnnotation(annotationProvider, Symbol.class, annotation);
 
-        expect(annotation.value()).andReturn(annotationValue);
+        expect(annotation.value()).andReturn(symbolName);
 
-        train_expandSymbols(symbolSource, annotationValue, expanded);
-        train_coerce(coercer, expanded, Runnable.class, coerced);
+        train_valueForSymbol(source, symbolName, symbolValue);
+
+        train_coerce(coercer, symbolValue, Long.class, coercedValue);
 
         replay();
 
-        ValueObjectProvider provider = new ValueObjectProvider(symbolSource, coercer);
+        ObjectProvider provider = new SymbolObjectProvider(source, coercer);
 
-        assertSame(provider.provide(Runnable.class, annotationProvider, locator), coerced);
+        assertSame(provider.provide(Long.class, annotationProvider, locator), coercedValue);
 
         verify();
+    }
+
+    protected final void train_valueForSymbol(SymbolSource source, String symbolName,
+            String symbolValue)
+    {
+        expect(source.valueForSymbol(symbolName)).andReturn(symbolValue);
     }
 }

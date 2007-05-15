@@ -16,9 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.Cookies;
 
 /**
@@ -43,8 +42,7 @@ public class CookiesImpl implements Cookies
     @InjectService("CookieSink")
     CookieSink cookieSink,
 
-    @Inject
-    @Value("${tapestry.default-cookie-max-age}")
+    @Symbol("tapestry.default-cookie-max-age")
     int defaultMaxAge)
     {
         _contextPathSource = contextPathSource;
