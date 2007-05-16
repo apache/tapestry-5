@@ -571,7 +571,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(source.getClasspathAsset(path, locale)).andReturn(asset);
     }
 
-    protected final void train_getCompleteId(ComponentResources resources, String completeId)
+    protected final void train_getCompleteId(ComponentResourcesCommon resources, String completeId)
     {
         expect(resources.getCompleteId()).andReturn(completeId).atLeastOnce();
     }

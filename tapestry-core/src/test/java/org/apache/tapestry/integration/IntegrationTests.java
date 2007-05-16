@@ -901,6 +901,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("fred");
 
         assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(), parent.onAction(String), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(), child.onAction(String), child.onActionFromFred(), child.onActionFromFred(String), child.onAnyEventFromFred(), child.onAnyEventFromFred(String)]");
+    }
 
+    @Test
+    public void inherited_bindings()
+    {
+        open(BASE_URL);
+        clickAndWait("link=Inherited Bindings Demo");
+
+        assertTextPresent(
+                "Bound: [ value: the-bound-value, bound: true ]",
+                "Unbound: [ value: null, bound: false ]");
     }
 }
