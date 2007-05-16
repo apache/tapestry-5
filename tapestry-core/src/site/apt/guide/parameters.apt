@@ -131,6 +131,8 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 
   Parameters have a default prefix, usually "prop:", that is used when the prefix is not provided.
+  
+  A <special prefix>, "inherit:", is used to support {{{#Inherited Parameter Bindings}Inherted Parameter Bindings}}.
     
 Property Bindings
 
@@ -270,6 +272,21 @@ Optional Parameters
   the min parameter has a default value of 1. That value is used unless the min parameter is bound,
   in which case, the bound value supercedes the default.
   
+  
+{Inherited Parameter Bindings}
+
+  A special prefix, "inherit:" is used to identify the name of a parameter of the containing component.
+  If the parameter is bound in the containing component, then it will be bound to the same value
+  in the embedded component.
+  
+  If the parameter is not bound in the containing component, then it will not be bound in the embedded component
+  (and so, the embedded component may use a default binding).
+  
+  Inherited bindings are useful for complex components; they are often used when an inner component
+  has a default value for a parameter, and the outer component wants to make it possible to override that default.
+  
+  More examples on this coming soon.
+    
 Parameter Binding Defaults
 
   The Parameter annotation's value() attribute can be used to specify a <binding expression> that will be the
@@ -380,7 +397,7 @@ Parameter Caching
   In rare cases, it is desirable to defeat the caching; this can be done by setting the cache() attribute
   of the Parameter annotation to false.
   
-Parameter Type Cooercion
+Parameter Type Coercion
 
   Tapestry includes a mechanism for {{{coercion.html}coecing types automatically}}. Most often, this is used to
   convert literal strings into appropriate values, but in many cases, more complex conversions
@@ -428,5 +445,5 @@ public class MyComponent
   These resources are the linkage between the Java class you provide, and the infrastructure Tapestry
   builds around your class.  In any case, once the resources are injected,
   they can be queried.
-  
-  
+ 
+   

@@ -14,11 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.logging.Log;
@@ -45,6 +47,7 @@ import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
 import org.apache.tapestry.internal.structure.PageImpl;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
@@ -60,6 +63,8 @@ import org.apache.tapestry.services.PersistentFieldManager;
  */
 class PageLoaderProcessor
 {
+    private static final String INHERIT_PREFIX = "inherit:";
+
     private static Runnable NO_OP = new Runnable()
     {
         public void run()
@@ -92,6 +97,8 @@ class PageLoaderProcessor
     private ComponentModel _loadingComponentModel;
 
     private ComponentPageElement _loadingElement;
+
+    private final Map<String, Map<String, Binding>> _componentIdToBindingMap = newMap();
 
     private Locale _locale;
 
@@ -134,15 +141,22 @@ class PageLoaderProcessor
                 name,
                 TapestryConstants.LITERAL_BINDING_PREFIX);
 
-        Binding binding = _bindingSource.newBinding(
-                "parameter " + name,
-                _loadingElement.getComponentResources(),
-                component.getComponentResources(),
-                defaultBindingPrefix,
+        Binding binding = findBinding(
+                _loadingElement,
+                component,
+                name,
                 token.getValue(),
+                defaultBindingPrefix,
                 token.getLocation());
 
-        component.bindParameter(name, binding);
+        if (binding != null)
+        {
+            component.bindParameter(name, binding);
+
+            Map<String, Binding> bindingMap = _componentIdToBindingMap.get(component
+                    .getCompleteId());
+            bindingMap.put(name, binding);
+        }
     }
 
     private void addMixinsToComponent(ComponentPageElement component, EmbeddedComponentModel model,
@@ -162,7 +176,8 @@ class PageLoaderProcessor
     }
 
     private void bindParametersFromModel(EmbeddedComponentModel model,
-            ComponentPageElement loadingComponent, ComponentPageElement component)
+            ComponentPageElement loadingComponent, ComponentPageElement component,
+            Map<String, Binding> bindingMap)
     {
         for (String name : model.getParameterNames())
         {
@@ -173,19 +188,69 @@ class PageLoaderProcessor
                     name,
                     TapestryConstants.PROP_BINDING_PREFIX);
 
-            // At some point we may add meta data to control what the default prefix is within a
-            // component.
-
-            Binding binding = _bindingSource.newBinding(
-                    "parameter " + name,
-                    loadingComponent.getComponentResources(),
-                    component.getComponentResources(),
-                    defaultBindingPrefix,
+            Binding binding = findBinding(
+                    loadingComponent,
+                    component,
+                    name,
                     value,
-                    null);
+                    defaultBindingPrefix,
+                    component.getLocation());
 
-            component.bindParameter(name, binding);
+            if (binding != null)
+            {
+                component.bindParameter(name, binding);
+
+                // So that the binding can be shared if inherited by a subcomponent
+                bindingMap.put(name, binding);
+            }
         }
+    }
+
+    /**
+     * Creates a new binding, or returns an existing binding (or null) for the "inherit:" binding
+     * prefix. Mostly a wrapper around
+     * {@link BindingSource#newBinding(String, ComponentResources, ComponentResources, String, String, Location)
+     * 
+     * @return the new binding, or an existing binding (if inherited), or null (if inherited, and
+     *         the containing parameter is not bound)
+     */
+    private Binding findBinding(ComponentPageElement loadingComponent,
+            ComponentPageElement component, String name, String value, String defaultBindingPrefix,
+            Location location)
+    {
+        if (value.startsWith(INHERIT_PREFIX))
+        {
+            String loadingParameterName = value.substring(INHERIT_PREFIX.length());
+            Map<String, Binding> loadingComponentBindingMap = _componentIdToBindingMap
+                    .get(loadingComponent.getCompleteId());
+
+            // This may return null if the parameter is not bound in the loading component.
+
+            Binding existing = loadingComponentBindingMap.get(loadingParameterName);
+
+            if (existing == null) return null;
+
+            String description = String.format(
+                    "InheritedBinding[parameter %s %s(inherited from %s of %s)]",
+                    name,
+                    component.getCompleteId(),
+                    loadingParameterName,
+                    loadingComponent.getCompleteId());
+
+            // This helps with debugging, and re-orients any thrown exceptions
+            // to the location of the inherited binding, rather than the container component's
+            // binding.
+
+            return new InheritedBinding(description, existing, location);
+        }
+
+        return _bindingSource.newBinding(
+                "parameter " + name,
+                loadingComponent.getComponentResources(),
+                component.getComponentResources(),
+                defaultBindingPrefix,
+                value,
+                location);
     }
 
     /**
@@ -569,8 +634,11 @@ class PageLoaderProcessor
 
         addMixinsToComponent(newComponent, embeddedModel, token.getMixins());
 
+        Map<String, Binding> bindingMap = newMap();
+        _componentIdToBindingMap.put(newComponent.getCompleteId(), bindingMap);
+
         if (embeddedModel != null)
-            bindParametersFromModel(embeddedModel, _loadingElement, newComponent);
+            bindParametersFromModel(embeddedModel, _loadingElement, newComponent, bindingMap);
 
         addToBody(newComponent);
 

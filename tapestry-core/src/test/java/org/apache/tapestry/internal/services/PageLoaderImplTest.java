@@ -142,7 +142,10 @@ public class PageLoaderImplTest extends InternalBaseTestCase
                 "Barney",
                 "foo.components.Barney",
                 null,
-                l, childElement);
+                l,
+                childElement);
+
+        train_getCompleteId(childElement, PAGE_CLASS_NAME + "/Barney");
 
         rootElement.addToTemplate(childElement);
 
