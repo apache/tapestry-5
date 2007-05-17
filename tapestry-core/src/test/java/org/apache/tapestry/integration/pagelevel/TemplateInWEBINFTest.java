@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.pagelevel;
 
 import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.test.pagelevel.PageTester;
+import org.apache.tapestry.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;

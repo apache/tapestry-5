@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.util.Map;
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.test.pagelevel.PageTester;
+import org.apache.tapestry.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;

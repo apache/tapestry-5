@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test.pagelevel;
+package org.apache.tapestry.internal.test;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -21,11 +21,11 @@ import java.util.List;
 
 import org.apache.tapestry.services.Context;
 
-public class ContextForPageTester implements Context
+public class PageTesterContext implements Context
 {
     private final String _contextRoot;
 
-    public ContextForPageTester(final String contextRoot)
+    public PageTesterContext(String contextRoot)
     {
         _contextRoot = contextRoot;
     }
@@ -39,10 +39,7 @@ public class ContextForPageTester implements Context
     {
         File f = new File(_contextRoot + path);
 
-        if (!f.exists() || !f.isFile())
-        {
-            return null;
-        }
+        if (!f.exists() || !f.isFile()) { return null; }
         try
         {
             return f.toURL();

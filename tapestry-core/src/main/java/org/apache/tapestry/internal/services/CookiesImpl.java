@@ -16,16 +16,16 @@ package org.apache.tapestry.internal.services;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.Cookies;
+import org.apache.tapestry.services.Request;
 
 /**
  * Implementation of the {@link org.apache.tapestry.services.Cookies} service interface.
  */
 public class CookiesImpl implements Cookies
 {
-    private ContextPathSource _contextPathSource;
+    private Request _request;
 
     private CookieSource _cookieSource;
 
@@ -33,19 +33,16 @@ public class CookiesImpl implements Cookies
 
     private int _defaultMaxAge;
 
-    public CookiesImpl(@InjectService("ContextPathSource")
-    ContextPathSource contextPathSource,
+    public CookiesImpl(Request request,
 
-    @InjectService("CookieSource")
     CookieSource cookieSource,
 
-    @InjectService("CookieSink")
     CookieSink cookieSink,
 
     @Symbol("tapestry.default-cookie-max-age")
     int defaultMaxAge)
     {
-        _contextPathSource = contextPathSource;
+        _request = request;
         _cookieSource = cookieSource;
         _cookieSink = cookieSink;
         _defaultMaxAge = defaultMaxAge;
@@ -73,7 +70,7 @@ public class CookiesImpl implements Cookies
     public void writeCookieValue(String name, String value, int maxAge)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(_contextPathSource.getContextPath() + "/");
+        cookie.setPath(_request.getContextPath() + "/");
         cookie.setMaxAge(maxAge);
 
         _cookieSink.addCookie(cookie);
@@ -83,23 +80,26 @@ public class CookiesImpl implements Cookies
     {
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(path);
+
         _cookieSink.addCookie(cookie);
     }
 
     public void writeDomainCookieValue(String name, String value, String domain)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(_contextPathSource.getContextPath() + "/");
+        cookie.setPath(_request.getContextPath() + "/");
         cookie.setDomain(domain);
+
         _cookieSink.addCookie(cookie);
     }
 
     public void writeDomainCookieValue(String name, String value, String domain, int maxAge)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(_contextPathSource.getContextPath() + "/");
+        cookie.setPath(_request.getContextPath() + "/");
         cookie.setDomain(domain);
         cookie.setMaxAge(maxAge);
+
         _cookieSink.addCookie(cookie);
     }
 
@@ -108,14 +108,16 @@ public class CookiesImpl implements Cookies
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(path);
         cookie.setDomain(domain);
+
         _cookieSink.addCookie(cookie);
     }
 
     public void removeCookieValue(String name)
     {
         Cookie cookie = new Cookie(name, null);
-        cookie.setPath(_contextPathSource.getContextPath() + "/");
+        cookie.setPath(_request.getContextPath() + "/");
         cookie.setMaxAge(0);
+
         _cookieSink.addCookie(cookie);
     }
 

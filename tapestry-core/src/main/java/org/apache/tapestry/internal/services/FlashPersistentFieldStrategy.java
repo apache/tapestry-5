@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
 /**
@@ -29,9 +30,9 @@ public class FlashPersistentFieldStrategy extends AbstractSessionPersistentField
      */
     static final String PREFIX = "flash:";
 
-    public FlashPersistentFieldStrategy(SessionHolder sessionHolder)
+    public FlashPersistentFieldStrategy(Request request)
     {
-        super(PREFIX, sessionHolder);
+        super(PREFIX, request);
     }
 
     @Override

@@ -23,7 +23,6 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.internal.services.FormParameterLookup;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FormSupport;
@@ -43,33 +42,19 @@ class FormSupportImpl implements FormSupport
 
     private final ObjectOutputStream _actions;
 
-    private final FormParameterLookup _parameterLookup;
-
     private List<Runnable> _commands;
 
     /** Constructor used when processing a form submission. */
-    public FormSupportImpl(FormParameterLookup parameterLookup)
+    public FormSupportImpl()
     {
-        this(null, null, parameterLookup);
+        this(null, null);
     }
 
     /** Constructor used when rendering. */
     public FormSupportImpl(String clientId, ObjectOutputStream actions)
     {
-        this(clientId, actions, null);
-    }
-
-    /** For testing only. */
-    FormSupportImpl()
-    {
-        this(null, null, null);
-    }
-
-    FormSupportImpl(String clientId, ObjectOutputStream actions, FormParameterLookup parameterLookup)
-    {
         _clientId = clientId;
         _actions = actions;
-        _parameterLookup = parameterLookup;
     }
 
     public String allocateElementName(String id)
@@ -108,26 +93,19 @@ class FormSupportImpl implements FormSupport
 
     public void defer(Runnable command)
     {
-        if (_commands == null)
-            _commands = newList();
+        if (_commands == null) _commands = newList();
 
         _commands.add(notNull(command, "command"));
     }
 
     void executeDeferred()
     {
-        if (_commands == null)
-            return;
+        if (_commands == null) return;
 
         for (Runnable r : _commands)
             r.run();
 
         _commands.clear();
-    }
-
-    public String getParameterValue(String name)
-    {
-        return _parameterLookup.getParameter(name);
     }
 
     public String getClientId()

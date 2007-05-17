@@ -70,7 +70,9 @@ public class TapestryFilter implements Filter
         SymbolProvider provider = new ServletContextSymbolProvider(context);
 
         TapestryAppInitializer appInitializer = new TapestryAppInitializer(provider, filterName,
-                "servlet", provideExtraModuleDefs(context));
+                "servlet");
+
+        appInitializer.addModules(provideExtraModuleDefs(context));
 
         _registry = appInitializer.getRegistry();
 
@@ -122,7 +124,7 @@ public class TapestryFilter implements Filter
 
     /** Shuts down and discards the registry. */
     public final void destroy()
-    
+
     {
         _registry.shutdown();
 

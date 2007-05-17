@@ -44,7 +44,6 @@ import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.ComponentTemplateSource;
 import org.apache.tapestry.internal.services.DocumentScriptBuilder;
-import org.apache.tapestry.internal.services.FormParameterLookup;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.internal.services.LinkFactory;
 import org.apache.tapestry.internal.services.LinkFactoryListener;
@@ -490,15 +489,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(factory.createPageLink(page)).andReturn(link);
     }
 
-    protected final FormParameterLookup mockFormParameterLookup()
+    protected final void train_getParameter(Request request, String elementName, String value)
     {
-        return newMock(FormParameterLookup.class);
-    }
-
-    protected final void train_getParameter(FormParameterLookup lookup, String elementName,
-            String value)
-    {
-        expect(lookup.getParameter(elementName)).andReturn(value).atLeastOnce();
+        expect(request.getParameter(elementName)).andReturn(value).atLeastOnce();
     }
 
     protected final void train_isLoaded(InternalComponentResources resources, boolean isLoaded)

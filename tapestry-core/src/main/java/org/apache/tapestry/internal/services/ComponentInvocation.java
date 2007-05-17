@@ -21,7 +21,7 @@ import java.util.Map;
 
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.test.pagelevel.PageTester;
+import org.apache.tapestry.test.PageTester;
 
 /**
  * Represents an invocation for a page or a component in the current application. This information

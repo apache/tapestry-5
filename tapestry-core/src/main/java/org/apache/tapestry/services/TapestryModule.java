@@ -141,7 +141,6 @@ import org.apache.tapestry.internal.services.RetainWorker;
 import org.apache.tapestry.internal.services.RootPathDispatcher;
 import org.apache.tapestry.internal.services.ServiceAnnotationObjectProvider;
 import org.apache.tapestry.internal.services.SessionApplicationStatePersistenceStrategy;
-import org.apache.tapestry.internal.services.SessionHolder;
 import org.apache.tapestry.internal.services.SessionPersistentFieldStrategy;
 import org.apache.tapestry.internal.services.StaticFilesFilter;
 import org.apache.tapestry.internal.services.StreamResponseResultProcessor;
@@ -225,8 +224,7 @@ public final class TapestryModule
         binder.bind(BeanModelSource.class, BeanModelSourceImpl.class);
     }
 
-    public static MarkupWriterFactory build(@InjectService("ComponentInvocationMap")
-    final ComponentInvocationMap componentInvocationMap)
+    public static MarkupWriterFactory build(final ComponentInvocationMap componentInvocationMap)
     {
         // Temporary ...
         return new MarkupWriterFactory()
@@ -815,8 +813,6 @@ public final class TapestryModule
 
     private final PageResponseRenderer _pageResponseRenderer;
 
-    private final SessionHolder _sessionHolder;
-
     private final Environment _environment;
 
     private final StrategyBuilder _strategyBuilder;
@@ -848,9 +844,6 @@ public final class TapestryModule
     @InjectService("PageResponseRenderer")
     PageResponseRenderer pageResponseRenderer,
 
-    @InjectService("SessionHolder")
-    SessionHolder sessionHolder,
-
     Environment environment,
 
     @InjectService("StrategyBuilder")
@@ -874,7 +867,6 @@ public final class TapestryModule
         _chainBuilder = chainBuilder;
         _requestPageCache = requestPageCache;
         _pageResponseRenderer = pageResponseRenderer;
-        _sessionHolder = sessionHolder;
         _environment = environment;
         _strategyBuilder = strategyBuilder;
         _componentInstantiatorSource = componentInstantiatorSource;
@@ -1214,10 +1206,11 @@ public final class TapestryModule
 
     /** Contributes the default "session" strategy. */
     public void contributeApplicationStatePersistenceStrategySource(
-            MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration)
+            MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration,
+
+            Request request)
     {
-        configuration
-                .add("session", new SessionApplicationStatePersistenceStrategy(_sessionHolder));
+        configuration.add("session", new SessionApplicationStatePersistenceStrategy(request));
     }
 
     public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration,
@@ -1417,10 +1410,12 @@ public final class TapestryModule
      * Contributes the "session" strategy.
      */
     public void contributePersistentFieldManager(
-            MappedConfiguration<String, PersistentFieldStrategy> configuration)
+            MappedConfiguration<String, PersistentFieldStrategy> configuration,
+
+            Request request)
     {
-        configuration.add("session", new SessionPersistentFieldStrategy(_sessionHolder));
-        configuration.add("flash", new FlashPersistentFieldStrategy(_sessionHolder));
+        configuration.add("session", new SessionPersistentFieldStrategy(request));
+        configuration.add("flash", new FlashPersistentFieldStrategy(request));
     }
 
     public void contributeValidationMessagesSource(Configuration<String> configuration)

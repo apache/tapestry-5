@@ -18,13 +18,17 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
+import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry.services.Request;
 
 /** A Checkbox component is simply a &lt;input type="checkbox"&gt;. */
 public class Checkbox extends AbstractField
 {
+    @Inject
+    private Request _request;
 
     /**
      * The value to be read or updated. If not bound, the Checkbox will attempt to edit a property
@@ -64,7 +68,7 @@ public class Checkbox extends AbstractField
     @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
     {
-        String postedValue = formSupport.getParameterValue(elementName);
+        String postedValue = _request.getParameter(elementName);
 
         _value = postedValue != null;
     }

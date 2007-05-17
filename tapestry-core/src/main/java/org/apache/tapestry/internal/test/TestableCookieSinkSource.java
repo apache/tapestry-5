@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test.pagelevel;
+package org.apache.tapestry.internal.test;
 
 import java.util.Map;
 
@@ -22,11 +22,11 @@ import org.apache.tapestry.internal.services.CookieSink;
 import org.apache.tapestry.internal.services.CookieSource;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
-public class CookiesForPageTester implements CookieSource, CookieSink
+public class TestableCookieSinkSource implements CookieSource, CookieSink
 {
     private Map<String, Cookie> _cookies;
 
-    public CookiesForPageTester()
+    public TestableCookieSinkSource()
     {
         _cookies = CollectionFactory.newMap();
     }

@@ -35,12 +35,14 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.Response;
 
 public class LinkFactoryImpl implements LinkFactory
 {
-    private final ContextPathSource _contextPathSource;
+    private final Request _request;
 
-    private final URLEncoder _encoder;
+    private final Response _response;
 
     private final ComponentClassResolver _componentClassResolver;
 
@@ -59,13 +61,13 @@ public class LinkFactoryImpl implements LinkFactory
         void handle(T result, List context);
     }
 
-    public LinkFactoryImpl(ContextPathSource contextPathSource, URLEncoder encoder,
+    public LinkFactoryImpl(Request request, Response encoder,
             ComponentClassResolver componentClassResolver,
             ComponentInvocationMap componentInvocationMap, RequestPageCache pageCache,
             TypeCoercer typeCoercer)
     {
-        _contextPathSource = contextPathSource;
-        _encoder = encoder;
+        _request = request;
+        _response = encoder;
         _componentClassResolver = componentClassResolver;
         _componentInvocationMap = componentInvocationMap;
         _pageCache = pageCache;
@@ -130,7 +132,7 @@ public class LinkFactoryImpl implements LinkFactory
         ComponentInvocation invocation = new ComponentInvocation(target, contextStrings,
                 activationContext);
 
-        Link link = new LinkImpl(_encoder, _contextPathSource.getContextPath(), invocation, forForm);
+        Link link = new LinkImpl(_response, _request.getContextPath(), invocation, forForm);
 
         // Now see if the page has an activation context.
 
@@ -148,15 +150,13 @@ public class LinkFactoryImpl implements LinkFactory
 
     private void addActivationContextToLink(Link link, String[] activationContext)
     {
-        if (activationContext.length == 0)
-            return;
+        if (activationContext.length == 0) return;
 
         StringBuilder builder = new StringBuilder();
 
         for (int i = 0; i < activationContext.length; i++)
         {
-            if (i > 0)
-                builder.append("/");
+            if (i > 0) builder.append("/");
 
             builder.append(TapestryInternalUtils.urlEncode(activationContext[i]));
         }
@@ -178,7 +178,7 @@ public class LinkFactoryImpl implements LinkFactory
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
         ComponentInvocation invocation = new ComponentInvocation(target, context, null);
 
-        Link link = new LinkImpl(_encoder, _contextPathSource.getContextPath(), invocation, false);
+        Link link = new LinkImpl(_response, _request.getContextPath(), invocation, false);
 
         _componentInvocationMap.store(link, invocation);
 
@@ -218,8 +218,7 @@ public class LinkFactoryImpl implements LinkFactory
 
     private String[] toContextStrings(Object[] context)
     {
-        if (context == null)
-            return new String[0];
+        if (context == null) return new String[0];
 
         String[] result = new String[context.length];
 

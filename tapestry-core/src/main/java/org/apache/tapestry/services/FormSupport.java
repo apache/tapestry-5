@@ -16,11 +16,10 @@ package org.apache.tapestry.services;
 
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.test.pagelevel.PageTester;
 
 /**
  * Services provided by an enclosing Form control component to the various form element components
- * it encloses.
+ * it encloses. Implement {@link ClientElement}, to share the id of the enclosing form.
  * 
  * @author Howard M. Lewis Ship
  */
@@ -50,15 +49,4 @@ public interface FormSupport extends ClientElement
      * @param command
      */
     void defer(Runnable command);
-
-    /**
-     * Returns the name for the given parameter, or null if not found. For a multi-valued parameter,
-     * returns the first value. Components should make use of this interface, rather than
-     * {@link Request#getParameters(String)}, to stay compatible with {@link PageTester}.
-     * 
-     * @param name
-     *            of parameter to retrieve
-     * @return the parameter value, or null
-     */
-    String getParameterValue(String name);
 }

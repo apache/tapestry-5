@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.test.pagelevel.PageTester;
+import org.apache.tapestry.test.PageTester;
 
 /**
  * Used by the {@link PageTester} to map {@link Element}s (pulled from the rendered
@@ -36,7 +36,7 @@ public interface ComponentInvocationMap
     /** Stores a connection between a particular link and an invocation of a component. */
     void store(Link link, ComponentInvocation invocation);
 
-    /* Stores a connection between an element and the link associated with that element. */
+    /** Stores a connection between an element and the link associated with that element. */
     void store(Element element, Link link);
 
     /**
@@ -47,4 +47,15 @@ public interface ComponentInvocationMap
      * @return associcated component invocation, or null
      */
     ComponentInvocation get(Link link);
+
+    /**
+     * Returns the invocation associated with a rendered element.
+     * 
+     * @param element
+     *            extracted from the rendered {@link Document}
+     * @return the corresponding invocation
+     */
+    ComponentInvocation get(Element element);
+
+    void clear();
 }

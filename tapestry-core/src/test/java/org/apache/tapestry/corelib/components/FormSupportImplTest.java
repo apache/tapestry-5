@@ -14,9 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.internal.services.FormParameterLookup;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.FormSupport;
 import org.testng.annotations.Test;
 
 public class FormSupportImplTest extends InternalBaseTestCase
@@ -85,24 +83,4 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         verify();
     }
-
-    @Test
-    public void get_parameter_value()
-    {
-        String name = "param";
-        String value = "zaphod";
-
-        FormParameterLookup lookup = mockFormParameterLookup();
-
-        train_getParameter(lookup, name, value);
-
-        replay();
-
-        FormSupport support = new FormSupportImpl(lookup);
-
-        assertSame(support.getParameterValue(name), value);
-
-        verify();
-    }
-
 }

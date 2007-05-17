@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,36 @@ package org.apache.tapestry.services;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.tapestry.internal.services.ContextPathSource;
-import org.apache.tapestry.internal.services.FormParameterLookup;
-import org.apache.tapestry.internal.services.SessionHolder;
-
 /**
  * Generic version of {@link javax.servlet.http.HttpServletRequest}, used to encapsulate the
  * Servlet API version, and to help bridge the differences between Servlet API and Porlet API.
  */
-public interface Request extends ContextPathSource, FormParameterLookup, SessionHolder
+public interface Request
 {
+    /**
+     * Gets the {@link Session}. If create is false and the session has not be created previously,
+     * returns null.
+     * 
+     * @param create
+     *            true to force the creation of the session
+     * @return the session (or null if create is false the session has not been previously created)
+     */
+    Session getSession(boolean create);
+
+    /**
+     * Returns the context path. This always starts with a "/" character and does not end with one,
+     * with the exception of servlets in the root context, which return the empty string.
+     */
+    String getContextPath();
+
     /** Returns a list of query parameter names, in alphabetical order. */
     List<String> getParameterNames();
+
+    /**
+     * Returns the query parameter value for the given name. Returns null if no such parameter is in
+     * the request. For a multi-valued parameter, returns just the first value.
+     */
+    String getParameter(String name);
 
     /**
      * Returns the parameter values for the given name. Returns null if no such parameter is in the

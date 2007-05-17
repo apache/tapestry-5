@@ -18,15 +18,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+import org.apache.tapestry.internal.test.PageTesterContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-public class ContextForPageTesterTest extends Assert
+public class PageTesterContextTest extends Assert
 {
     @Test
     public void to_URL() throws IOException
     {
-        ContextForPageTester context = new ContextForPageTester("src/test/app2");
+        PageTesterContext context = new PageTesterContext("src/test/app2");
         URL resource = context.getResource("/OpaqueResource.txt");
         InputStream stream = resource.openStream();
         stream.close();
@@ -35,7 +36,7 @@ public class ContextForPageTesterTest extends Assert
     @Test
     public void to_URL_no_file() throws IOException
     {
-        ContextForPageTester context = new ContextForPageTester("src/test/app2");
+        PageTesterContext context = new PageTesterContext("src/test/app2");
         URL resource = context.getResource("/NonExisting.txt");
         assertNull(resource);
     }
@@ -43,7 +44,7 @@ public class ContextForPageTesterTest extends Assert
     @Test
     public void to_URL_is_dir() throws IOException
     {
-        ContextForPageTester context = new ContextForPageTester("src/test");
+        PageTesterContext context = new PageTesterContext("src/test");
         URL resource = context.getResource("/app2");
         assertNull(resource);
     }

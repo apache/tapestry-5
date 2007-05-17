@@ -33,13 +33,12 @@ import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.LogSource;
 import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
 import org.apache.tapestry.ioc.ServiceDecorator;
 import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
@@ -90,14 +89,6 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     private final Map<String, ServiceLifecycle> _lifecycles = newCaseInsensitiveMap();
 
-    /**
-     * Service implementation overrides, keyed on service id. Service implementations are most
-     * useful when perfroming integration tests on services. As one service can bring in another, we
-     * have to stop at a certain "bounary" services by provide stub/ mock objects as their
-     * implementations.
-     */
-    private final Map<String, Object> _serviceOverrides = newCaseInsensitiveMap();
-
     private final ThreadCleanupHubImpl _cleanupHub;
 
     private final ClassFactory _classFactory;
@@ -131,16 +122,11 @@ public class RegistryImpl implements Registry, InternalRegistry
      *            TODO
      * @param logSource
      *            used to obtain Log instances
-     * @param serviceOverrides
-     *            overrides for service implementation (used in testing, see
-     *            {@link RegistryBuilder#addServiceOverride(String, Object)})
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory,
-            LogSource logSource, Map<String, Object> serviceOverrides)
+            LogSource logSource)
     {
         _logSource = logSource;
-
-        _serviceOverrides.putAll(serviceOverrides);
 
         for (ModuleDef def : moduleDefs)
         {
@@ -233,9 +219,6 @@ public class RegistryImpl implements Registry, InternalRegistry
         T result = checkForBuiltinService(serviceId, serviceInterface);
         if (result != null) return result;
 
-        result = checkForServiceOverrides(serviceId, serviceInterface);
-        if (result != null) return result;
-
         // Checking serviceId and serviceInterface is overkill; they have been checked and rechecked
         // all the way to here.
 
@@ -258,23 +241,6 @@ public class RegistryImpl implements Registry, InternalRegistry
         {
             throw new RuntimeException(IOCMessages.serviceWrongInterface(serviceId, _builtinTypes
                     .get(serviceId), serviceInterface));
-        }
-    }
-
-    private <T> T checkForServiceOverrides(String serviceId, Class<T> serviceInterface)
-    {
-        Object service = _serviceOverrides.get(serviceId);
-
-        if (service == null) return null;
-
-        try
-        {
-            return serviceInterface.cast(service);
-        }
-        catch (ClassCastException ex)
-        {
-            throw new RuntimeException(IOCMessages.serviceWrongInterface(serviceId, service
-                    .getClass(), serviceInterface));
         }
     }
 
@@ -563,7 +529,7 @@ public class RegistryImpl implements Registry, InternalRegistry
         return _classFactory.newClass(serviceInterface);
     }
 
-    public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider,
+    private <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider,
             ObjectLocator locator)
     {
         _lock.check();
@@ -572,14 +538,17 @@ public class RegistryImpl implements Registry, InternalRegistry
                 IOCConstants.MASTER_OBJECT_PROVIDER_SERVICE_ID,
                 ObjectProvider.class);
 
-        return masterProvider.provide(objectType, annotationProvider, locator);
+        AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider
+                : new NullAnnotationProvider();
+
+        return masterProvider.provide(objectType, effectiveProvider, locator);
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
         _lock.check();
 
-        return getObject(objectType, new NullAnnotationProvider(), this);
+        return getObject(objectType, annotationProvider, this);
     }
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)

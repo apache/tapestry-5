@@ -35,6 +35,7 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.util.EnumSelectModel;
 import org.apache.tapestry.util.EnumValueEncoder;
 
@@ -94,6 +95,9 @@ public final class Select extends AbstractField
 
     @Inject
     private Locale _locale;
+
+    @Inject
+    private Request _request;
 
     Binding defaultValue()
     {
@@ -227,7 +231,7 @@ public final class Select extends AbstractField
     @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
     {
-        String primaryKey = formSupport.getParameterValue(elementName);
+        String primaryKey = _request.getParameter(elementName);
 
         Object selectedValue = _encoder.toValue(primaryKey);
 

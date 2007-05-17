@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.PersistentFieldStrategy;
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
 /**
@@ -33,20 +34,19 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
 {
     private final String _prefix;
 
-    private final SessionHolder _sessionHolder;
+    private final Request _request;
 
-    protected AbstractSessionPersistentFieldStrategy(String prefix, SessionHolder sessionHolder)
+    protected AbstractSessionPersistentFieldStrategy(String prefix, Request request)
     {
         _prefix = prefix;
-        _sessionHolder = sessionHolder;
+        _request = request;
     }
 
     public final Collection<PersistentFieldChange> gatherFieldChanges(String pageName)
     {
-        Session session = _sessionHolder.getSession(false);
+        Session session = _request.getSession(false);
 
-        if (session == null)
-            return Collections.emptyList();
+        if (session == null) return Collections.emptyList();
 
         List<PersistentFieldChange> result = newList();
 
@@ -101,13 +101,12 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
         builder.append(pageName);
         builder.append(':');
 
-        if (componentId != null)
-            builder.append(componentId);
+        if (componentId != null) builder.append(componentId);
 
         builder.append(':');
         builder.append(fieldName);
 
-        Session session = _sessionHolder.getSession(true);
+        Session session = _request.getSession(true);
 
         session.setAttribute(builder.toString(), newValue);
     }

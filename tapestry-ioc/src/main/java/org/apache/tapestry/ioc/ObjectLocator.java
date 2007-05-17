@@ -66,7 +66,9 @@ public interface ObjectLocator
      *            the type of object to be returned
      * @param annotationProvider
      *            provides access to annotations on the field or parameter for which a value is to
-     *            be obtained, which may be utilized in selecting an appropriate object
+     *            be obtained, which may be utilized in selecting an appropriate object, use
+     *            <strong>null</strong> when annotations are not available (in which case,
+     *            selection will be based only on the object type)
      * @param <T>
      * @return the requested object
      * @see ObjectProvider

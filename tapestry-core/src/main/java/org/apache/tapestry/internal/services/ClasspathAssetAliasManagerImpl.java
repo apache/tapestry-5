@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
+import org.apache.tapestry.services.Request;
 
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
-    private final ContextPathSource _contextPathSource;
+    private final Request _request;
 
     /** Map from alias to path. */
     private final Map<String, String> _aliasToPathPrefix;
@@ -44,12 +44,11 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      * Configuration is a map of aliases (short names) to complete names. Keys and values should not
      * start with a slash, but should end with one. Example: "tapestry/" --> "org/apache/tapestry/".
      */
-    public ClasspathAssetAliasManagerImpl(@InjectService("ContextPathSource")
-    ContextPathSource contextPathSource,
+    public ClasspathAssetAliasManagerImpl(Request request,
 
     final Map<String, String> configuration)
     {
-        _contextPathSource = contextPathSource;
+        _request = request;
 
         _aliasToPathPrefix = configuration;
 
@@ -75,7 +74,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     public String toClientURL(String resourcePath)
     {
-        StringBuilder builder = new StringBuilder(_contextPathSource.getContextPath());
+        StringBuilder builder = new StringBuilder(_request.getContextPath());
         builder.append(TapestryConstants.ASSET_PATH_PREFIX);
 
         for (String pathPrefix : _sortedPathPrefixes)

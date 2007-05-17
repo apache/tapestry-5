@@ -22,6 +22,7 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry.services.Request;
 
 /**
  * Corresponds to &lt;input type="submit"&gt;, a client-side element that can force the enclosing
@@ -49,6 +50,18 @@ public final class Submit extends AbstractField
     @Inject
     private ComponentResources _resources;
 
+    @Inject
+    private Request _request;
+
+    public Submit()
+    {
+    }
+
+    Submit(Request request)
+    {
+        _request = request;
+    }
+
     void beginRender(MarkupWriter writer)
     {
         writer.element("input", "type", "submit", "name", getElementName(), "id", getClientId());
@@ -62,7 +75,7 @@ public final class Submit extends AbstractField
     @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
     {
-        String value = formSupport.getParameterValue(elementName);
+        String value = _request.getParameter(elementName);
 
         if (value == null) return;
 

@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.ApplicationStateCreator;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 import org.testng.annotations.Test;
 
@@ -26,20 +27,20 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
     @Test
     public void get_aso_already_exists()
     {
-        SessionHolder holder = newSessionHolder();
+        Request request = mockRequest();
         Session session = mockSession();
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
         String key = "aso:" + asoClass.getName();
         ApplicationStateCreator creator = mockApplicationStateCreator();
 
-        train_getSession(holder, true, session);
+        train_getSession(request, true, session);
         train_getAttribute(session, key, aso);
 
         replay();
 
         ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(
-                holder);
+                request);
 
         assertSame(strategy.get(asoClass, creator), aso);
 
@@ -50,31 +51,26 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
     @Test
     public void check_exists_does_not_create_session()
     {
-        SessionHolder holder = newSessionHolder();
+        Request request = mockRequest();
         Class asoClass = ReadOnlyBean.class;
 
-        train_getSession(holder, false, null);
+        train_getSession(request, false, null);
 
         replay();
 
         ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(
-                holder);
+                request);
 
         assertFalse(strategy.exists(asoClass));
 
         verify();
     }
 
-    private SessionHolder newSessionHolder()
-    {
-        return newMock(SessionHolder.class);
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void get_aso_needs_to_be_created()
     {
-        SessionHolder holder = newSessionHolder();
+        Request request = mockRequest();
         Session session = mockSession();
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
@@ -82,11 +78,11 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         ApplicationStateCreator creator = mockApplicationStateCreator();
 
         // First for exists()
-        train_getSession(holder, false, session);
+        train_getSession(request, false, session);
         train_getAttribute(session, key, null);
 
         // Second for get()
-        train_getSession(holder, true, session);
+        train_getSession(request, true, session);
         train_getAttribute(session, key, null);
 
         train_create(creator, aso);
@@ -94,13 +90,13 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
         session.setAttribute(key, aso);
 
         // Then for exists() after
-        train_getSession(holder, false, session);
+        train_getSession(request, false, session);
         train_getAttribute(session, key, aso);
 
         replay();
 
         ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(
-                holder);
+                request);
 
         assertFalse(strategy.exists(asoClass));
 
@@ -115,27 +111,22 @@ public class SessionApplicationStatePersistenceStrategyTest extends InternalBase
     @Test
     public void set_aso()
     {
-        SessionHolder holder = newSessionHolder();
+        Request request = mockRequest();
         Session session = mockSession();
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
         String key = "aso:" + asoClass.getName();
 
-        train_getSession(holder, true, session);
+        train_getSession(request, true, session);
         session.setAttribute(key, aso);
 
         replay();
 
         ApplicationStatePersistenceStrategy strategy = new SessionApplicationStatePersistenceStrategy(
-                holder);
+                request);
 
         strategy.set(asoClass, aso);
 
         verify();
-    }
-
-    protected final void train_getSession(SessionHolder holder, boolean create, Session session)
-    {
-        expect(holder.getSession(create)).andReturn(session);
     }
 }

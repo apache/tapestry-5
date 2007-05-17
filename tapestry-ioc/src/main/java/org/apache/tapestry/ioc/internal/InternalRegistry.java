@@ -35,36 +35,6 @@ import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 public interface InternalRegistry extends Registry, RegistryShutdownHub
 {
     /**
-     * Locates a service given a service id and the corresponding service interface type.
-     * 
-     * @param <T>
-     * @param serviceId
-     *            the unique service id (case insensitive)
-     * @param serviceInterface
-     *            the interface the service implements
-     * @return the service's proxy
-     * @throws RuntimeException
-     *             if the service does not exist (this is considered programmer error)
-     */
-    <T> T getService(String serviceId, Class<T> serviceInterface);
-
-    /**
-     * Locates a service given just a service interface. A single service must implement the service
-     * interface (which can be hard to guarantee). This is typically invoked by a module (passing
-     * itself as the third parameter), but may also be invoked by the registry itself, passing null
-     * for module.
-     * 
-     * @param <T>
-     * @param serviceInterface
-     *            the interface the service implements
-     * @return the service's proxy
-     * @throws RuntimeException
-     *             if the service does not exist (this is considered programmer error), or multiple
-     *             services implement the service interface
-     */
-    <T> T getService(Class<T> serviceInterface);
-
-    /**
      * Returns a service lifecycle by service scope name.
      * 
      * @param scope
@@ -137,21 +107,6 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
      *            the interface to be implemented by the provided class
      */
     ClassFab newClass(Class serviceInterface);
-
-    /**
-     * Provides an object by delegating to the {@link ObjectProvider MasterObjectProvider} service.
-     * 
-     * @param objectType
-     *            the expected type of object
-     * @param annotationProvider
-     *            provides access to annotations on the field or parameter for which an injected
-     *            value is to be obtained
-     * @param locator
-     *            identifies what services are visible in the context
-     * @see ObjectProvider#provide(Class, AnnotationProvider, ObjectLocator)
-     */
-    <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider,
-            ObjectLocator locator);
 
     /**
      * Given an input string that <em>may</em> contain symbols, returns the string with any and

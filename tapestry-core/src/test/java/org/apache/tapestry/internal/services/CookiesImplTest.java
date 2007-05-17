@@ -19,18 +19,13 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.tapestry.internal.services.ContextPathSource;
-import org.apache.tapestry.internal.services.CookieSink;
-import org.apache.tapestry.internal.services.CookieSource;
-import org.apache.tapestry.internal.services.CookiesImpl;
+import org.apache.tapestry.internal.test.TestableRequestImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * Tests for {@link org.apache.tapestry.services.impl.CookiesImpl}.
- * 
- * @author Howard Lewis Ship
  */
 @Test
 public class CookiesImplTest extends Assert
@@ -117,24 +112,8 @@ public class CookiesImplTest extends Assert
 
     public void test_Write_Cookie_Domain()
     {
-        final List<Cookie> cookies = CollectionFactory.newList();
-        CookiesImpl cs = new CookiesImpl(new ContextPathSource()
-        {
-
-            public String getContextPath()
-            {
-                return "/context";
-            }
-
-        }, null, new CookieSink()
-        {
-
-            public void addCookie(Cookie cookie)
-            {
-                cookies.add(cookie);
-            }
-
-        }, 1000);
+        List<Cookie> cookies = CollectionFactory.newList();
+        CookiesImpl cs = createCookiesFixture("/context", cookies);
 
         cs.writeDomainCookieValue("foo", "bar", "fobar.com", 1234);
         Cookie expectedCookie = new ComparableCookie("foo", "bar", 1234);
@@ -144,26 +123,23 @@ public class CookiesImplTest extends Assert
         assertEquals(cookies.get(0), expectedCookie);
     }
 
-    public void test_Write_Cookie_With_Max_Age()
+    private CookiesImpl createCookiesFixture(String contextPath, final List<Cookie> cookies)
     {
-        final List<Cookie> cookies = CollectionFactory.newList();
-        CookiesImpl cs = new CookiesImpl(new ContextPathSource()
+        return new CookiesImpl(new TestableRequestImpl(contextPath), null, new CookieSink()
         {
-
-            public String getContextPath()
-            {
-                return "/ctx";
-            }
-
-        }, null, new CookieSink()
-        {
-
             public void addCookie(Cookie cookie)
             {
                 cookies.add(cookie);
             }
 
         }, 1000);
+    }
+
+    public void test_Write_Cookie_With_Max_Age()
+    {
+        final List<Cookie> cookies = CollectionFactory.newList();
+        CookiesImpl cs = createCookiesFixture("/ctx", cookies);
+
         cs.writeCookieValue("foo", "bar", -1);
         Cookie expectedCookie = new ComparableCookie("foo", "bar", -1);
         expectedCookie.setPath("/ctx/");
@@ -174,23 +150,8 @@ public class CookiesImplTest extends Assert
     public void test_Write_Cookie()
     {
         final List<Cookie> cookies = CollectionFactory.newList();
-        CookiesImpl cs = new CookiesImpl(new ContextPathSource()
-        {
+        CookiesImpl cs = createCookiesFixture("/ctx", cookies);
 
-            public String getContextPath()
-            {
-                return "/ctx";
-            }
-
-        }, null, new CookieSink()
-        {
-
-            public void addCookie(Cookie cookie)
-            {
-                cookies.add(cookie);
-            }
-
-        }, 1000);
         cs.writeCookieValue("foo", "bar");
         Cookie expectedCookie = new ComparableCookie("foo", "bar", 1000);
         expectedCookie.setPath("/ctx/");
@@ -201,23 +162,8 @@ public class CookiesImplTest extends Assert
     public void test_Remove_Cookie()
     {
         final List<Cookie> cookies = CollectionFactory.newList();
-        CookiesImpl cs = new CookiesImpl(new ContextPathSource()
-        {
+        CookiesImpl cs = createCookiesFixture("/ctx", cookies);
 
-            public String getContextPath()
-            {
-                return "/ctx";
-            }
-
-        }, null, new CookieSink()
-        {
-
-            public void addCookie(Cookie cookie)
-            {
-                cookies.add(cookie);
-            }
-
-        }, 1000);
         cs.removeCookieValue("foo");
         Cookie expectedCookie = new ComparableCookie("foo", null, 0);
         expectedCookie.setPath("/ctx/");

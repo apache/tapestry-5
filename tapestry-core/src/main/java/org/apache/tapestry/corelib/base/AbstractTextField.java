@@ -31,6 +31,7 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TranslatorDefaultSource;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
@@ -83,6 +84,9 @@ public abstract class AbstractTextField extends AbstractField
 
     @Inject
     private Locale _locale;
+
+    @Inject
+    private Request _request;
 
     /**
      * Computes a default value for the "translate" parameter using {@link TranslatorDefaultSource}.
@@ -162,7 +166,7 @@ public abstract class AbstractTextField extends AbstractField
     @Override
     protected final void processSubmission(FormSupport formSupport, String elementName)
     {
-        String rawValue = formSupport.getParameterValue(elementName);
+        String rawValue = _request.getParameter(elementName);
 
         _tracker.recordInput(this, rawValue);
 

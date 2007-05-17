@@ -15,11 +15,11 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.services.FormParameterLookup;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry.services.Request;
 import org.testng.annotations.Test;
 
 public class SubmitTest extends InternalBaseTestCase
@@ -27,15 +27,16 @@ public class SubmitTest extends InternalBaseTestCase
     @Test
     public void not_trigger_of_submission()
     {
-        FormSupport support = newFormSupport();
+        FormSupport support = mockFormSupport();
+        Request request = mockRequest();
 
         String elementName = "myname";
 
-        train_getParameterValue(support, elementName, null);
+        train_getParameter(request, elementName, null);
 
         replay();
 
-        Submit submit = new Submit();
+        Submit submit = new Submit(request);
 
         submit.processSubmission(support, elementName);
 
@@ -45,17 +46,17 @@ public class SubmitTest extends InternalBaseTestCase
     @Test
     public void trigger_deferred()
     {
-        FormParameterLookup lookup = mockFormParameterLookup();
+        Request request = mockRequest();
         ComponentResources resources = mockComponentResources();
-        FormSupportImpl support = new FormSupportImpl(lookup);
+        FormSupportImpl support = new FormSupportImpl();
 
         String elementName = "myname";
 
-        train_getParameter(lookup, elementName, "login");
+        train_getParameter(request, elementName, "login");
 
         replay();
 
-        Submit submit = new Submit();
+        Submit submit = new Submit(request);
 
         submit.setup(resources, support, null);
 
@@ -75,19 +76,20 @@ public class SubmitTest extends InternalBaseTestCase
     @Test
     public void trigger_immediate()
     {
-        FormSupport support = newFormSupport();
+        FormSupport support = mockFormSupport();
         ComponentResources resources = mockComponentResources();
         Heartbeat heartbeat = new HeartbeatImpl();
+        Request request = mockRequest();
 
         String elementName = "myname";
 
-        train_getParameterValue(support, elementName, "login");
+        train_getParameter(request, elementName, "login");
 
         replay();
 
         heartbeat.begin();
 
-        Submit submit = new Submit();
+        Submit submit = new Submit(request);
 
         submit.setup(resources, support, heartbeat);
         submit.setDefer(false);
@@ -106,12 +108,7 @@ public class SubmitTest extends InternalBaseTestCase
 
     }
 
-    protected final void train_getParameterValue(FormSupport support, String name, String value)
-    {
-        expect(support.getParameterValue(name)).andReturn(value).atLeastOnce();
-    }
-
-    protected final FormSupport newFormSupport()
+    protected final FormSupport mockFormSupport()
     {
         return newMock(FormSupport.class);
     }
