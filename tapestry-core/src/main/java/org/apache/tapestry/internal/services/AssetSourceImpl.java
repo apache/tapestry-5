@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.AssetFactory;
@@ -41,8 +40,7 @@ public class AssetSourceImpl implements AssetSource
 
     private final Map<Resource, Asset> _cache = newConcurrentMap();
 
-    public AssetSourceImpl(@InjectService("ThreadLocale")
-    ThreadLocale threadLocale,
+    public AssetSourceImpl(ThreadLocale threadLocale,
 
     Map<String, AssetFactory> configuration)
     {

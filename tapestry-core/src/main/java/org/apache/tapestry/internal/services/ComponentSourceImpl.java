@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentSource;
 
@@ -25,8 +24,7 @@ public class ComponentSourceImpl implements ComponentSource
 {
     private final RequestPageCache _pageCache;
 
-    public ComponentSourceImpl(@InjectService("RequestPageCache")
-    RequestPageCache pageCache)
+    public ComponentSourceImpl(RequestPageCache pageCache)
     {
         _pageCache = pageCache;
     }
