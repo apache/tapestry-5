@@ -12,11 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test.pagelevel;
+package org.apache.tapestry.test;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
-import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
@@ -28,11 +28,16 @@ import org.apache.tapestry.internal.SingleKeySymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.internal.services.ActionLinkTarget;
 import org.apache.tapestry.internal.services.ComponentInvocation;
+import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.LocalizationSetter;
 import org.apache.tapestry.internal.services.PageLinkTarget;
+import org.apache.tapestry.internal.test.ActionLinkInvoker;
+import org.apache.tapestry.internal.test.ComponentInvoker;
+import org.apache.tapestry.internal.test.PageLinkInvoker;
+import org.apache.tapestry.internal.test.PageTesterContext;
+import org.apache.tapestry.internal.test.PageTesterModule;
+import org.apache.tapestry.internal.test.TestableRequest;
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.internal.NullAnnotationProvider;
-import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.ApplicationGlobals;
@@ -45,26 +50,23 @@ import org.apache.tapestry.services.ApplicationGlobals;
  */
 public class PageTester implements ComponentInvoker
 {
-    private Registry _registry;
+    private final Registry _registry;
 
-    private ComponentInvocationMapForPageTester _invocationMap = new ComponentInvocationMapForPageTester();
+    private final ComponentInvocationMap _invocationMap;
 
-    private FormParameterLookupForPageTester _formParameterLookup = new FormParameterLookupForPageTester();
+    private final TestableRequest _request;
 
-    private CookiesForPageTester _cookies;
-
-    // For the moment, a page tester instance works in a single session.
-    private SessionHolderForPageTester _sessionHolder = new SessionHolderForPageTester();
-
-    private StrategyRegistry<ComponentInvoker> _invokerRegistry;
+    private final StrategyRegistry<ComponentInvoker> _invokerRegistry;
 
     private Locale _preferedLanguage;
 
-    private LocalizationSetter _localizationSetter;
+    private final LocalizationSetter _localizationSetter;
 
     public static final String DEFAULT_CONTEXT_PATH = "src/main/webapp";
 
     private final String _contextPath;
+
+    private static final String DEFAULT_SUBMIT_VALUE_ATTRIBUTE = "Submit Query";
 
     /**
      * Initializes a PageTester without overriding any services and assuming that the context root
@@ -75,15 +77,6 @@ public class PageTester implements ComponentInvoker
     public PageTester(String appPackage, String appName)
     {
         this(appPackage, appName, DEFAULT_CONTEXT_PATH);
-    }
-
-    /**
-     * @see #PageTester(String, String, String, Map)
-     */
-    @SuppressWarnings("unchecked")
-    public PageTester(String appPackage, String appName, String contextPath)
-    {
-        this(appPackage, appName, contextPath, Collections.EMPTY_MAP);
     }
 
     /**
@@ -100,35 +93,32 @@ public class PageTester implements ComponentInvoker
      * @param contextPath
      *            The path to the context root so that Tapestry can find the templates (if they're
      *            put there).
-     * @param serviceOverrides
-     *            The mock implementation (value) for some services (key).
      */
-    public PageTester(String appPackage, String appName, String contextPath,
-            Map<String, Object> serviceOverrides)
+    public PageTester(String appPackage, String appName, String contextPath)
     {
         _preferedLanguage = Locale.ENGLISH;
         _contextPath = contextPath;
-        _cookies = new CookiesForPageTester();
 
         SymbolProvider provider = new SingleKeySymbolProvider(
                 InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
-        _registry = new TapestryAppInitializer(provider, appName, "test",
-                addDefaultOverrides(serviceOverrides)).getRegistry();
+        TapestryAppInitializer initializer = new TapestryAppInitializer(provider, appName,
+                PageTesterModule.TEST_MODE);
+
+        initializer.addModules(PageTesterModule.class);
+
+        _registry = initializer.getRegistry();
+
+        _request = _registry.getObject(TestableRequest.class, null);
 
         _localizationSetter = _registry.getService("LocalizationSetter", LocalizationSetter.class);
 
-        ApplicationGlobals globals = _registry.getObject(
-                ApplicationGlobals.class,
-                new NullAnnotationProvider());
+        _invocationMap = _registry.getObject(ComponentInvocationMap.class, null);
 
-        globals.store(new ContextForPageTester(_contextPath));
+        ApplicationGlobals globals = _registry.getObject(ApplicationGlobals.class, null);
 
-        buildInvokersRegistry();
-    }
+        globals.store(new PageTesterContext(_contextPath));
 
-    private void buildInvokersRegistry()
-    {
         Map<Class, ComponentInvoker> map = newMap();
         map.put(PageLinkTarget.class, new PageLinkInvoker(_registry));
         map.put(ActionLinkTarget.class, new ActionLinkInvoker(_registry, this, _invocationMap));
@@ -136,38 +126,10 @@ public class PageTester implements ComponentInvoker
         _invokerRegistry = new StrategyRegistry<ComponentInvoker>(ComponentInvoker.class, map);
     }
 
-    private Map<String, Object> addDefaultOverrides(Map<String, Object> serviceOverrides)
-    {
-
-        Map<String, Object> modifiedOverrides = newMap(serviceOverrides);
-        addDefaultOverride(modifiedOverrides, "ContextPathSource", new FooContextPathSource());
-        addDefaultOverride(modifiedOverrides, "URLEncoder", new NoOpURLEncoder());
-        addDefaultOverride(modifiedOverrides, "ComponentInvocationMap", _invocationMap);
-        addDefaultOverride(modifiedOverrides, "FormParameterLookup", _formParameterLookup);
-        addDefaultOverride(modifiedOverrides, "SessionHolder", _sessionHolder);
-        addDefaultOverride(modifiedOverrides, "CookieSource", _cookies);
-        addDefaultOverride(modifiedOverrides, "CookieSink", _cookies);
-
-        return modifiedOverrides;
-    }
-
-    private void addDefaultOverride(Map<String, Object> serviceOverrides, String serviceId,
-            Object overridingImpl)
-    {
-        if (!serviceOverrides.containsKey(serviceId))
-        {
-            serviceOverrides.put(serviceId, overridingImpl);
-        }
-
-    }
-
     /** You should call it after use */
     public void shutdown()
     {
-        if (_registry != null)
-        {
-            _registry.shutdown();
-        }
+        _registry.shutdown();
     }
 
     /**
@@ -191,16 +153,21 @@ public class PageTester implements ComponentInvoker
      */
     public Document clickLink(Element link)
     {
-        Defense.notNull(link, "link");
+        notNull(link, "link");
+
         ComponentInvocation invocation = getInvocation(link);
+
         return invoke(invocation);
     }
 
     private ComponentInvocation getInvocation(Element element)
     {
         ComponentInvocation invocation = _invocationMap.get(element);
-        if (invocation == null) { throw new IllegalArgumentException(
-                "No component invocation object is associated with the Element"); }
+
+        if (invocation == null)
+            throw new IllegalArgumentException(
+                    "No component invocation object is associated with the Element.");
+
         return invocation;
     }
 
@@ -209,8 +176,11 @@ public class PageTester implements ComponentInvoker
         // It is critical to clear the map before invoking an invocation (render a page or click a
         // link).
         _invocationMap.clear();
+
         setThreadLocale();
+
         ComponentInvoker invoker = _invokerRegistry.getByInstance(invocation.getTarget());
+
         return invoker.invoke(invocation);
     }
 
@@ -225,17 +195,22 @@ public class PageTester implements ComponentInvoker
      * 
      * @param form
      *            the form to be submitted.
-     * @param fieldValues
-     *            the field values keyed on field names.
+     * @param parameters
+     *            the query parameter name/value pairs
      * @return The DOM created. Typically you will assert against it.
      */
-    public Document submitForm(Element form, Map<String, String> fieldValues)
+    public Document submitForm(Element form, Map<String, String> parameters)
     {
-        Defense.notNull(form, "form");
-        _formParameterLookup.clear();
-        _formParameterLookup.addFieldValues(fieldValues);
+        notNull(form, "form");
+
+        _request.clear();
+
+        _request.loadParameters(parameters);
+
         addHiddenFormFields(form);
+
         ComponentInvocation invocation = getInvocation(form);
+
         return invoke(invocation);
     }
 
@@ -251,16 +226,17 @@ public class PageTester implements ComponentInvoker
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)
     {
-        final String DEFAULT_SUBMIT_VALUE_ATTRIBUTE = "Submit Query";
-        Defense.notNull(submitButton, "submitButton");
+        notNull(submitButton, "submitButton");
+
         assertIsSubmit(submitButton);
+
         Element form = getFormAncestor(submitButton);
         String value = submitButton.getAttribute("value");
-        if (value == null)
-        {
-            value = DEFAULT_SUBMIT_VALUE_ATTRIBUTE;
-        }
+
+        if (value == null) value = DEFAULT_SUBMIT_VALUE_ATTRIBUTE;
+
         fieldValues.put(submitButton.getAttribute("name"), value);
+
         return submitForm(form, fieldValues);
     }
 
@@ -269,18 +245,22 @@ public class PageTester implements ComponentInvoker
         if (element.getName().equals("input"))
         {
             String type = element.getAttribute("type");
-            if (type != null && type.equals("submit")) { return; }
+
+            if ("submit".equals(type)) return;
         }
-        throw new IllegalArgumentException("The specified element is not a submit button");
+
+        throw new IllegalArgumentException("The specified element is not a submit button.");
     }
 
     private Element getFormAncestor(Element element)
     {
         while (true)
         {
-            if (element == null) { throw new IllegalArgumentException(
-                    "The given element is not contained in a form"); }
-            if (element.getName().equalsIgnoreCase("form")) { return element; }
+            if (element == null)
+                throw new IllegalArgumentException("The given element is not contained by a form.");
+
+            if (element.getName().equalsIgnoreCase("form")) return element;
+
             element = element.getParent();
         }
     }
@@ -288,10 +268,8 @@ public class PageTester implements ComponentInvoker
     private void addHiddenFormFields(Element element)
     {
         if (isHiddenFormField(element))
-        {
-            _formParameterLookup.addFieldValue(element.getAttribute("name"), element
-                    .getAttribute("value"));
-        }
+            _request.loadParameter(element.getAttribute("name"), element.getAttribute("value"));
+
         for (Node child : element.getChildren())
         {
             if (child instanceof Element)
@@ -299,12 +277,12 @@ public class PageTester implements ComponentInvoker
                 addHiddenFormFields((Element) child);
             }
         }
-
     }
 
     private boolean isHiddenFormField(Element element)
     {
-        return element.getName().equals("input") && "hidden".equals(element.getAttribute("type"));
+        return element.getName().equalsIgnoreCase("input")
+                && "hidden".equalsIgnoreCase(element.getAttribute("type"));
     }
 
     public void setPreferedLanguage(Locale preferedLanguage)

@@ -14,13 +14,11 @@
 
 package org.apache.tapestry.ioc;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.annotations.SubModule;
@@ -44,14 +42,6 @@ public final class RegistryBuilder
 
     /** Module defs, keyed on module id. */
     final List<ModuleDef> _modules = newList();
-
-    /**
-     * Service implementation overrides, keyed on service id. Service implementations are most
-     * useful when perfroming integration tests on services. As one service can bring in another, we
-     * have to stop at a certain "boundary" services by provide stub/ mock objects as their
-     * implementations.
-     */
-    private final Map<String, Object> _serviceOverrides = newCaseInsensitiveMap();
 
     private final ClassLoader _classLoader;
 
@@ -138,8 +128,7 @@ public final class RegistryBuilder
     {
         _lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(_modules, _classFactory, _logSource,
-                _serviceOverrides);
+        RegistryImpl registry = new RegistryImpl(_modules, _classFactory, _logSource);
 
         registry.eagerLoadServices();
 
@@ -158,21 +147,5 @@ public final class RegistryBuilder
         _lock.check();
 
         return _log;
-    }
-
-    /**
-     * Adds a service override, which is used in certain testing situations to allow deeply
-     * entrenched services to be selectively overriden with alternate implementations. This is not
-     * intended for use with deployed applications, only in testing.
-     * 
-     * @param serviceId
-     *            fully qualified service id
-     * @param overridingImpl
-     *            overriding implementation of the service (the service's normal service builder
-     *            method will not be invoked)
-     */
-    public void addServiceOverride(String serviceId, Object overridingImpl)
-    {
-        _serviceOverrides.put(serviceId, overridingImpl);
     }
 }

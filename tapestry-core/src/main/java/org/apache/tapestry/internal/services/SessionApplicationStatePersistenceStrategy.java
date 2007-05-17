@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.services.ApplicationStateCreator;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
 /**
@@ -29,16 +30,16 @@ public class SessionApplicationStatePersistenceStrategy implements
 {
     static final String PREFIX = "aso:";
 
-    private final SessionHolder _sessionHolder;
+    private final Request _request;
 
-    public SessionApplicationStatePersistenceStrategy(SessionHolder sessionHolder)
+    public SessionApplicationStatePersistenceStrategy(Request request)
     {
-        _sessionHolder = sessionHolder;
+        _request = request;
     }
 
     private Session getSession()
     {
-        return _sessionHolder.getSession(true);
+        return _request.getSession(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -75,7 +76,7 @@ public class SessionApplicationStatePersistenceStrategy implements
     {
         String key = buildKey(asoClass);
 
-        Session session = _sessionHolder.getSession(false);
+        Session session = _request.getSession(false);
 
         return session != null && session.getAttribute(key) != null;
     }

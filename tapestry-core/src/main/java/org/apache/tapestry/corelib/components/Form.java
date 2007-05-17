@@ -42,7 +42,6 @@ import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.FormParameterLookup;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
@@ -54,6 +53,7 @@ import org.apache.tapestry.services.ComponentSource;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry.services.Request;
 
 /**
  * An HTML form, which will enclose other components to render out the various types of fields.
@@ -150,7 +150,7 @@ public class Form implements ClientElement, FormValidationControl
     private PageRenderSupport _pageRenderSupport;
 
     @Inject
-    private FormParameterLookup _paramLookup;
+    private Request _request;
 
     @Inject
     private ComponentSource _source;
@@ -294,7 +294,7 @@ public class Form implements ClientElement, FormValidationControl
     {
         _tracker.clear();
 
-        _formSupport = new FormSupportImpl(_paramLookup);
+        _formSupport = new FormSupportImpl();
 
         _environment.push(ValidationTracker.class, _tracker);
         _environment.push(FormSupport.class, _formSupport);
@@ -332,7 +332,7 @@ public class Form implements ClientElement, FormValidationControl
             // TODO: Ajax stuff will eventually mean there are multiple values for this parameter
             // name
 
-            String actionsBase64 = _paramLookup.getParameter(FORM_DATA);
+            String actionsBase64 = _request.getParameter(FORM_DATA);
 
             try
             {
@@ -401,7 +401,9 @@ public class Form implements ClientElement, FormValidationControl
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(java.lang.String)
      */
     public void recordError(String errorMessage)
@@ -413,8 +415,11 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = tracker;
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(org.apache.tapestry.Field, java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(org.apache.tapestry.Field,
+     *      java.lang.String)
      */
     public void recordError(Field field, String errorMessage)
     {
@@ -425,7 +430,9 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = tracker;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.tapestry.corelib.components.FormValidationControl#getHasErrors()
      */
     public boolean getHasErrors()
@@ -433,7 +440,9 @@ public class Form implements ClientElement, FormValidationControl
         return _tracker.getHasErrors();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.tapestry.corelib.components.FormValidationControl#isValid()
      */
     public boolean isValid()
@@ -448,7 +457,9 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = tracker;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.tapestry.corelib.components.FormValidationControl#clearErrors()
      */
     public void clearErrors()

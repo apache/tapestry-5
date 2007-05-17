@@ -47,7 +47,7 @@ public class ObjectLocatorImpl implements ObjectLocator
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return _registry.getObject(objectType, annotationProvider, this);
+        return _registry.getObject(objectType, annotationProvider);
     }
 
     protected InternalRegistry getRegistry()

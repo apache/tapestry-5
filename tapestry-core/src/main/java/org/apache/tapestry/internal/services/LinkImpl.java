@@ -17,13 +17,14 @@ package org.apache.tapestry.internal.services;
 import java.util.List;
 
 import org.apache.tapestry.Link;
+import org.apache.tapestry.services.Response;
 
 /**
  * Starting implementation of {@link Link}. Currently does not support query parameters.
  */
 public class LinkImpl implements Link
 {
-    private final URLEncoder _encoder;
+    private final Response _response;
 
     private final String _contextPath;
 
@@ -31,22 +32,22 @@ public class LinkImpl implements Link
 
     private final boolean _forForm;
 
-    public LinkImpl(URLEncoder encoder, String contextPath, String targetPath)
+    public LinkImpl(Response encoder, String contextPath, String targetPath)
     {
         this(encoder, contextPath, targetPath, false);
     }
 
-    public LinkImpl(URLEncoder encoder, String contextPath, String targetPath, boolean forForm)
+    public LinkImpl(Response encoder, String contextPath, String targetPath, boolean forForm)
     {
         this(encoder, contextPath, new ComponentInvocation(new OpaqueConstantTarget(targetPath),
                 new String[0], null), forForm);
     }
 
-    public LinkImpl(URLEncoder encoder, String contextPath, ComponentInvocation invocation,
+    public LinkImpl(Response encoder, String contextPath, ComponentInvocation invocation,
             boolean forForm)
     {
         _contextPath = contextPath;
-        _encoder = encoder;
+        _response = encoder;
         _invocation = invocation;
         _forForm = forForm;
     }
@@ -68,7 +69,7 @@ public class LinkImpl implements Link
 
     public String toURI()
     {
-        return _encoder.encodeURL(buildURI());
+        return _response.encodeURL(buildURI());
     }
 
     private String buildURI()
@@ -82,7 +83,7 @@ public class LinkImpl implements Link
 
     public String toRedirectURI()
     {
-        return _encoder.encodeRedirectURL(buildURI());
+        return _response.encodeRedirectURL(buildURI());
     }
 
     public ComponentInvocation getInvocation()

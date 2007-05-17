@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.apache.tapestry.ioc.IOCUtilities;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
@@ -26,7 +23,7 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.TapestryModule;
-import org.apache.tapestry.test.pagelevel.PageTester;
+import org.apache.tapestry.test.PageTester;
 
 /**
  * This class is used to build the {@link Registry}. The Registry contains
@@ -48,24 +45,16 @@ public class TapestryAppInitializer
 
     private final String _aliasMode;
 
-    private final Registry _registry;
-
     private final long _startTime;
 
-    private final long _registryCreatedTime;
+    private long _registryCreatedTime;
 
-    private final Map<String, Object> _serviceOverrides;
+    private final RegistryBuilder _builder = new RegistryBuilder();
 
     public TapestryAppInitializer(String appPackage, String appName, String aliasMode)
     {
         this(new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage),
                 appName, aliasMode);
-    }
-
-    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode,
-            ModuleDef... moduleDefs)
-    {
-        this(appProvider, appName, aliasMode, null, moduleDefs);
     }
 
     /**
@@ -81,8 +70,7 @@ public class TapestryAppInitializer
      * @param moduleDefs
      *            additional module definitions to be mixed in to those automatically located
      */
-    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode,
-            Map<String, Object> serviceOverrides, ModuleDef... moduleDefs)
+    public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode)
     {
         _appProvider = appProvider;
 
@@ -90,20 +78,14 @@ public class TapestryAppInitializer
 
         _appName = appName;
         _aliasMode = aliasMode;
-        _serviceOverrides = serviceOverrides;
 
         _startTime = System.currentTimeMillis();
 
-        _registry = createRegistry(moduleDefs);
+        IOCUtilities.addDefaultModules(_builder);
 
-        _registryCreatedTime = System.currentTimeMillis();
-    }
+        // This gets added automatically.
 
-    private Registry createRegistry(ModuleDef... moduleDefs)
-    {
-        RegistryBuilder builder = new RegistryBuilder();
-
-        builder.add(TapestryModule.class);
+        addModules(TapestryModule.class);
 
         String className = _appPackage + ".services." + InternalUtils.capitalize(_appName)
                 + "Module";
@@ -115,7 +97,8 @@ public class TapestryAppInitializer
             // if any.
 
             Class moduleClass = Thread.currentThread().getContextClassLoader().loadClass(className);
-            builder.add(moduleClass);
+
+            _builder.add(moduleClass);
         }
         catch (ClassNotFoundException ex)
         {
@@ -123,23 +106,28 @@ public class TapestryAppInitializer
             // non-trivial application will.
         }
 
-        addModules(builder);
-
-        // Add any explicitly provided module defs
-
-        for (ModuleDef def : moduleDefs)
-            builder.add(def);
-
         // Add a synthetic module that contributes symbol sources.
 
-        addSyntheticSymbolSourceModule(builder);
-
-        overrideServices(builder);
-
-        return builder.build();
+        addSyntheticSymbolSourceModule();
     }
 
-    private void addSyntheticSymbolSourceModule(RegistryBuilder builder)
+    /**
+     * Adds additional modules.
+     * 
+     * @param moduleDefs
+     */
+    public void addModules(ModuleDef... moduleDefs)
+    {
+        for (ModuleDef def : moduleDefs)
+            _builder.add(def);
+    }
+
+    public void addModules(Class... moduleBuilderClasses)
+    {
+        _builder.add(moduleBuilderClasses);
+    }
+
+    private void addSyntheticSymbolSourceModule()
     {
         ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef(
                 "ServletContext", _appProvider, "before:ApplicationDefaults");
@@ -153,38 +141,15 @@ public class TapestryAppInitializer
                 new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_NAME_SYMBOL, _appName),
                 "before:ServletContext");
 
-        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution,
+        _builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution,
                 appNameContribution));
-    }
-
-    private void overrideServices(RegistryBuilder builder)
-    {
-        if (_serviceOverrides != null)
-        {
-            for (Entry<String, Object> e : _serviceOverrides.entrySet())
-            {
-                builder.addServiceOverride(e.getKey(), e.getValue());
-            }
-        }
-    }
-
-    /**
-     * Adds additional modules to the builder. This implementation adds any modules identified by
-     * {@link IOCUtilities#addDefaultModules(RegistryBuilder)}. Most subclasses will invoke this
-     * implementation, and add additional modules to the RegistryBuilder besides.
-     * {@link org.apache.tapestry.ioc.services.TapestryIOCModule} and {@link TapestryModule} will
-     * already have been added, as will an application module if present.
-     * 
-     * @param builder
-     */
-    protected void addModules(RegistryBuilder builder)
-    {
-        IOCUtilities.addDefaultModules(builder);
     }
 
     public Registry getRegistry()
     {
-        return _registry;
+        _registryCreatedTime = System.currentTimeMillis();
+
+        return _builder.build();
     }
 
     /**

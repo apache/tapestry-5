@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,19 @@ package org.apache.tapestry.test.pagelevel;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.apache.tapestry.internal.test.PageTesterSession;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-public class SessionForPageTesterTest extends Assert
+public class PageTesterSessionTest extends Assert
 {
-    private SessionForPageTester _session;
+    private PageTesterSession _session;
 
     @BeforeMethod
     public void before()
     {
-        _session = new SessionForPageTester();
+        _session = new PageTesterSession();
     }
 
     @Test

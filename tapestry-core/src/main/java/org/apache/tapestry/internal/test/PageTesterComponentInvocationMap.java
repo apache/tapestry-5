@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.test.pagelevel;
+package org.apache.tapestry.internal.test;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
@@ -22,8 +22,14 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocation;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
+import org.apache.tapestry.internal.services.NoOpComponentInvocationMap;
+import org.apache.tapestry.test.PageTester;
 
-public class ComponentInvocationMapForPageTester implements ComponentInvocationMap
+/**
+ * This is the real implementation, used by {@link PageTester}. The typical implementation,
+ * {@link NoOpComponentInvocationMap}, is used in production as a place holder.
+ */
+public class PageTesterComponentInvocationMap implements ComponentInvocationMap
 {
     private final Map<Element, Link> _elementToLink = newMap();
 

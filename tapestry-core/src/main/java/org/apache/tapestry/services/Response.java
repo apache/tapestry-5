@@ -18,13 +18,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-import org.apache.tapestry.internal.services.URLEncoder;
-
 /**
  * API agnostic wrapper for generating a response. Bridges the gaps between the Servlet API and the
  * Portlet API.
  */
-public interface Response extends URLEncoder
+public interface Response
 {
     /**
      * Returns a PrintWriter object to which output may be sent. Invoking flush() on the writer will
@@ -97,4 +95,22 @@ public interface Response extends URLEncoder
      *            the assigned date value
      */
     void setDateHeader(String name, long date);
+
+    /**
+     * Encodes the URL, ensuring that a session id is included (if a session exists, and as
+     * necessary depending on the client browser's use of cookies).
+     * 
+     * @param URL
+     * @return the same URL or a different one with additional information to track the user session
+     */
+    String encodeURL(String URL);
+
+    /**
+     * Encodes the URL for use as a redirect, ensuring that a session id is included (if a session
+     * exists, and as necessary depending on the client browser's use of cookies).
+     * 
+     * @param URL
+     * @return the same URL or a different one with additional information to track the user session
+     */
+    String encodeRedirectURL(String URL);
 }

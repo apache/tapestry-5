@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.services.BindingFactory;
 
 /**
@@ -30,7 +31,8 @@ import org.apache.tapestry.services.BindingFactory;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Parameter {
+public @interface Parameter
+{
 
     /**
      * The name of the parameter. If not specified, the name of the parameter is derived from the
@@ -65,7 +67,7 @@ public @interface Parameter {
      * default binding prefixes are paired with specific {@link BindingFactory} implementations, and
      * used with parameters whose name reflects the binding prefix.
      */
-    String defaultPrefix() default "prop";
+    String defaultPrefix() default TapestryConstants.PROP_BINDING_PREFIX;
 
     /**
      * Used to mark a parameter as requiring earlier initialization than other parameters. This is

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
 /**
@@ -31,8 +32,8 @@ public class SessionPersistentFieldStrategy extends AbstractSessionPersistentFie
      */
     static final String PREFIX = "state:";
 
-    public SessionPersistentFieldStrategy(SessionHolder sessionHolder)
+    public SessionPersistentFieldStrategy(Request request)
     {
-        super(PREFIX, sessionHolder);
+        super(PREFIX, request);
     }
 }

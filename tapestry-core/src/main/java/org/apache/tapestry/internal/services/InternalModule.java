@@ -90,17 +90,6 @@ public final class InternalModule
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
     }
 
-    public static void contributeAlias(Configuration<AliasContribution> configuration,
-            ObjectLocator locator)
-    {
-        add(
-                configuration,
-                locator,
-                FormParameterLookup.class,
-                ContextPathSource.class,
-                URLEncoder.class);
-    }
-
     @SuppressWarnings("unchecked")
     private static void add(Configuration<AliasContribution> configuration, ObjectLocator locator,
             Class... serviceInterfaces)
@@ -177,8 +166,6 @@ public final class InternalModule
 
     private final RequestGlobals _requestGlobals;
 
-    private final ContextPathSource _contextPathSource;
-
     public InternalModule(@InjectService("ComponentInstantiatorSource")
     ComponentInstantiatorSource componentInstantiatorSource,
 
@@ -201,9 +188,6 @@ public final class InternalModule
 
     Response response,
 
-    @InjectService("ContextPathSource")
-    ContextPathSource contextPathSource,
-
     @InjectService("ThreadLocale")
     ThreadLocale threadLocale,
 
@@ -219,7 +203,6 @@ public final class InternalModule
         _response = response;
         _threadLocale = threadLocale;
         _requestGlobals = requestGlobals;
-        _contextPathSource = contextPathSource;
     }
 
     public PageTemplateLocator build(@InjectService("ContextAssetFactory")
@@ -332,12 +315,7 @@ public final class InternalModule
 
     public AssetFactory buildContextAssetFactory(ApplicationGlobals globals)
     {
-        return new ContextAssetFactory(_contextPathSource, globals.getContext());
-    }
-
-    public ContextPathSource buildContextPathSource()
-    {
-        return _request;
+        return new ContextAssetFactory(_request, globals.getContext());
     }
 
     public CookieSink buildCookieSink()
@@ -366,11 +344,6 @@ public final class InternalModule
         };
     }
 
-    public FormParameterLookup buildFormParameterLookup()
-    {
-        return _request;
-    }
-
     /**
      * Builds the PropBindingFactory as a chain of command. The terminator of the chain is
      * responsible for ordinary property names (and property paths). Contributions to the service
@@ -397,16 +370,6 @@ public final class InternalModule
     {
         configuration.add("css", "text/css");
         configuration.add("js", "text/javascript");
-    }
-
-    public SessionHolder buildSessionHolder()
-    {
-        return _request;
-    }
-
-    public URLEncoder buildURLEncoder()
-    {
-        return _response;
     }
 
     /**

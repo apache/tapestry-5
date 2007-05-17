@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry.Asset;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.Context;
+import org.apache.tapestry.services.Request;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
@@ -26,19 +27,19 @@ import org.apache.tapestry.services.Context;
  */
 public class ContextAssetFactory implements AssetFactory
 {
-    private final ContextPathSource _contextPathSource;
+    private final Request _request;
 
     private final Context _context;
 
-    public ContextAssetFactory(ContextPathSource contextPathSource, Context context)
+    public ContextAssetFactory(Request request, Context context)
     {
-        _contextPathSource = contextPathSource;
+        _request = request;
         _context = context;
     }
 
     public Asset createAsset(final Resource resource)
     {
-        final String contextPath = _contextPathSource.getContextPath() + "/" + resource.getPath();
+        final String contextPath = _request.getContextPath() + "/" + resource.getPath();
 
         return new Asset()
         {

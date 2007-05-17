@@ -752,7 +752,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(request.getSession(create)).andReturn(session);
     }
 
-    protected final void train_getSession(Request request, boolean create, Session session)
+    protected void train_getSession(Request request, boolean create, Session session)
     {
         expect(request.getSession(create)).andReturn(session);
     }

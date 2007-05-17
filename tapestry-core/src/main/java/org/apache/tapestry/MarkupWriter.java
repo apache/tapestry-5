@@ -38,7 +38,7 @@ public interface MarkupWriter
      * date). Optionally, attributes for the new element can be specified directly.
      * <p>
      * If the element is intended to be clickable or submittable in the
-     * {@link org.apache.tapestry.test.pagelevel.PageTester}, you should call
+     * {@link org.apache.tapestry.test.PageTester}, you should call
      * {@link #linkElement(String, Link, Object[])} instead.
      * 
      * @param name
