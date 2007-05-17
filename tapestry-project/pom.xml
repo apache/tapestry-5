@@ -35,6 +35,16 @@
       </roles>
       <timezone>PDT</timezone>
     </developer>
+    <developer>
+      <id>gredler</id>
+      <name>Daniel Gredler</name>
+      <email>gredler@apache.org</email>
+      <url>http://daniel.gredler.net/</url>
+      <roles>
+        <role>Newbie</role>
+      </roles>
+      <timezone>EDT</timezone>
+    </developer>
   </developers>
 
   <ciManagement>
