@@ -913,4 +913,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "Bound: [ value: the-bound-value, bound: true ]",
                 "Unbound: [ value: null, bound: false ]");
     }
+
+    @Test
+    public void client_persistence()
+    {
+        open(BASE_URL);
+        clickAndWait("link=Client Persistence Demo");
+
+        assertTextPresent("Persisted value: []", "Session: [false]");
+
+        clickAndWait("link=store string");
+
+        assertTextPresent("Persisted value: [A String]", "Session: [false]");
+    }
 }

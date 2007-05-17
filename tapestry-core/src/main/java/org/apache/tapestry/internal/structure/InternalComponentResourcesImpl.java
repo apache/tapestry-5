@@ -171,7 +171,17 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public void persistFieldChange(String fieldName, Object newValue)
     {
-        _element.persistFieldChange(this, fieldName, newValue);
+        try
+        {
+            _element.persistFieldChange(this, fieldName, newValue);
+        }
+        catch (Exception ex)
+        {
+            throw new TapestryException(StructureMessages.fieldPersistFailure(
+                    getCompleteId(),
+                    fieldName,
+                    ex), getLocation(), ex);
+        }
     }
 
     public void bindParameter(String parameterName, Binding binding)

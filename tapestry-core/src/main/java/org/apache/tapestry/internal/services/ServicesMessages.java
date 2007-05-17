@@ -378,4 +378,14 @@ class ServicesMessages
     {
         return MESSAGES.format("field-injection-error", className, fieldName, cause);
     }
+
+    static String clientStateMustBeSerializable(Object newValue)
+    {
+        return MESSAGES.format("client-state-must-be-serializable", newValue);
+    }
+
+    static String corruptClientState()
+    {
+        return MESSAGES.get("corrupt-client-state");
+    }
 }

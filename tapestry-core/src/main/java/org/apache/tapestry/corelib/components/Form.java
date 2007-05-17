@@ -42,6 +42,7 @@ import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
+import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
@@ -334,9 +335,11 @@ public class Form implements ClientElement, FormValidationControl
 
             String actionsBase64 = _request.getParameter(FORM_DATA);
 
+            ObjectInputStream ois = null;
+
             try
             {
-                ObjectInputStream ois = new Base64ObjectInputStream(actionsBase64);
+                ois = new Base64ObjectInputStream(actionsBase64);
 
                 while (true)
                 {
@@ -350,11 +353,15 @@ public class Form implements ClientElement, FormValidationControl
             }
             catch (EOFException ex)
             {
-                // Expected.
+                // Expected
             }
             catch (Exception ex)
             {
                 throw new RuntimeException(ex);
+            }
+            finally
+            {
+                TapestryInternalUtils.close(ois);
             }
 
             heartbeat.end();

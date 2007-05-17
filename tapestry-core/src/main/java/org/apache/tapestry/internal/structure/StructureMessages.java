@@ -95,4 +95,9 @@ class StructureMessages
     {
         return MESSAGES.format("duplicate-block", component.getCompleteId(), blockId);
     }
+
+    static String fieldPersistFailure(String componentId, String fieldName, Throwable cause)
+    {
+        return MESSAGES.format("field-persist-failure", componentId, fieldName, cause);
+    }
 }

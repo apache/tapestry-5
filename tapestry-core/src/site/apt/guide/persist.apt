@@ -33,15 +33,14 @@ Persistence Strategies
 
   The value for each field is the <strategy> used to store the field between requests.
   
-  Currently, only the default value, "session", is supported. Other implementations, that store
-  the value on the client, are forthcoming.
-  
 * session strategy
 
   The session strategy stores field changes into the session; the session is created as necessary.
   
   A suitably long session attribute name is used; it incorporates the
   name of the page, the nested component id, and the name of the field.
+  
+  Session strategy is the default strategy used unless otherwise overridden.
   
 * flash strategy
 
@@ -51,6 +50,23 @@ Persistence Strategies
   
   The flash is typically used to store temporary messages that should only be displayed to the user
   once.
+  
+* client stategy
+
+  The field is persisted onto the client; you will see an additional query parameter in each URL
+  (or an extra hidden field in each form).
+  
+  Client persistence is somewhat expensive.  It can bloat the size of the rendered pages by adding hundreds
+  of characters to each link. There is extra processing on each request to de-serialize the 
+  values encoded into the query parameter.
+  
+  Client persistence does not scale very well; as more information is stored into the query parameter, its
+  length can become problematic. In many cases, web browsers, firewalls or other servers may silently
+  truncate the URL which will break the application.
+  
+  Use client persistence with care, and store a minimal amount of data.  Try to store the identity (that is,
+  primary key) of an object, rather than the object itself.
+ 
   
 Persistence Search
 
