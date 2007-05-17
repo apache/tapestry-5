@@ -24,7 +24,7 @@ What is Tapestry?
  HiveMind, Spring and Hibernate.
  
  It's more than what you <can> do with Tapestry ... it's also <how> you do it!  Tapestry is a vastly productive environment.
- Java developer's love it because they can make <Java code> changes and see them immediately ... no redeploy, no restart! And it's blazingly fast to boot
+ Java developers love it because they can make <Java code> changes and see them immediately ... no redeploy, no restart! And it's blazingly fast to boot
  (even when files change). Designers
  love it because Tapestry templates are so close to ordinary HTML, without all the cruft and confusion seen in JavaServer Pages. Managers love it because
  it makes it easy for large teams to work together, and because they know important features (including localization) are baked right in. Once you work
@@ -147,7 +147,7 @@ About Snapshots and Releases
   <<Documentation on this site usually refers to the latest snapshot ... that is, it is usually ahead of the last official release. In some cases,
   it is written as if the snapshot release is stable; if documentation refers to version 5.0.x and that doesn't work, try 5.0.x-SNAPSHOT.>>
     
-Principal 1 -- Static Structure, Dynamic Behavior
+Principle 1 -- Static Structure, Dynamic Behavior
 
   Tapestry is designed to be extremely scalable in several dimensions:
   
