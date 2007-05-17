@@ -16,7 +16,6 @@ package org.apache.tapestry.internal.services;
 
 import java.util.Locale;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.PersistentLocale;
 
@@ -29,8 +28,7 @@ public class PersistentLocaleImpl implements PersistentLocale
 
     private Cookies _cookieSource;
 
-    public PersistentLocaleImpl(@InjectService("Cookies")
-    Cookies cookieSource)
+    public PersistentLocaleImpl(Cookies cookieSource)
     {
         _cookieSource = cookieSource;
     }
@@ -43,6 +41,7 @@ public class PersistentLocaleImpl implements PersistentLocale
     public Locale get()
     {
         String localeCookieValue = getCookieValue();
+
         return localeCookieValue != null ? new Locale(localeCookieValue) : null;
     }
 

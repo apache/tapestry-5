@@ -611,10 +611,7 @@ public final class TapestryModule
      * this filter.
      */
     public static void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-            @InjectService("Context")
-            Context context,
-
-            final RequestExceptionHandler exceptionHandler)
+            Context context, final RequestExceptionHandler exceptionHandler)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -825,34 +822,26 @@ public final class TapestryModule
 
     private final ClassFactory _componentClassFactory;
 
-    public TapestryModule(@InjectService("PipelineBuilder")
-    PipelineBuilder pipelineBuilder,
+    public TapestryModule(PipelineBuilder pipelineBuilder,
 
-    @InjectService("PropertyShadowBuilder")
     PropertyShadowBuilder shadowBuilder,
 
     RequestGlobals requestGlobals,
 
     ApplicationGlobals applicationGlobals,
 
-    @InjectService("ChainBuilder")
     ChainBuilder chainBuilder,
 
-    @InjectService("RequestPageCache")
     RequestPageCache requestPageCache,
 
-    @InjectService("PageResponseRenderer")
     PageResponseRenderer pageResponseRenderer,
 
     Environment environment,
 
-    @InjectService("StrategyBuilder")
     StrategyBuilder strategyBuilder,
 
-    @InjectService("ComponentInstantiatorSource")
     ComponentInstantiatorSource componentInstantiatorSource,
 
-    @InjectService("LinkFactory")
     LinkFactory linkFactory,
 
     PropertyAccess propertyAccess,
@@ -875,8 +864,7 @@ public final class TapestryModule
         _componentClassFactory = componentClassFactory;
     }
 
-    public Context build(@InjectService("ApplicationGlobals")
-    ApplicationGlobals globals)
+    public Context build(ApplicationGlobals globals)
     {
         return _shadowBuilder.build(globals, "context", Context.class);
     }
@@ -898,7 +886,6 @@ public final class TapestryModule
      * "org/apache/tapestry/internal/ValidationMessages".
      */
     public ValidationMessagesSource build(Collection<String> configuration,
-            @InjectService("UpdateListenerHub")
             UpdateListenerHub updateListenerHub,
 
             @InjectService("ClasspathAssetFactory")
@@ -1113,8 +1100,8 @@ public final class TapestryModule
         return service;
     }
 
-    public ObjectRenderer build(@InjectService("StrategyBuilder")
-    StrategyBuilder strategyBuilder, Map<Class, ObjectRenderer> configuration)
+    public ObjectRenderer build(StrategyBuilder strategyBuilder,
+            Map<Class, ObjectRenderer> configuration)
     {
         StrategyRegistry<ObjectRenderer> registry = StrategyRegistry.newInstance(
                 ObjectRenderer.class,

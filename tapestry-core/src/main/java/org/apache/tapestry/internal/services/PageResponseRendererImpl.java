@@ -19,7 +19,6 @@ import java.io.PrintWriter;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Response;
 
@@ -29,11 +28,8 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
     private final MarkupWriterFactory _markupWriterFactory;
 
-    public PageResponseRendererImpl(@InjectService("MarkupWriterFactory")
-    MarkupWriterFactory markupWriterFactory,
-
-    @InjectService("PageMarkupRenderer")
-    PageMarkupRenderer markupRenderer)
+    public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory,
+            PageMarkupRenderer markupRenderer)
     {
         _markupWriterFactory = markupWriterFactory;
         _markupRenderer = markupRenderer;

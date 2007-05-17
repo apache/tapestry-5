@@ -166,32 +166,12 @@ public final class InternalModule
 
     private final RequestGlobals _requestGlobals;
 
-    public InternalModule(@InjectService("ComponentInstantiatorSource")
-    ComponentInstantiatorSource componentInstantiatorSource,
-
-    @InjectService("UpdateListenerHub")
-    UpdateListenerHub updateListenerHub,
-
-    @InjectService("ThreadCleanupHub")
-    ThreadCleanupHub threadCleanupHub,
-
-    @InjectService("ComponentTemplateSource")
-    ComponentTemplateSource componentTemplateSource,
-
-    @InjectService("ComponentClassResolver")
-    ComponentClassResolver componentClassResolver,
-
-    @InjectService("ChainBuilder")
-    ChainBuilder chainBuilder,
-
-    Request request,
-
-    Response response,
-
-    @InjectService("ThreadLocale")
-    ThreadLocale threadLocale,
-
-    RequestGlobals requestGlobals)
+    public InternalModule(ComponentInstantiatorSource componentInstantiatorSource,
+            UpdateListenerHub updateListenerHub, ThreadCleanupHub threadCleanupHub,
+            ComponentTemplateSource componentTemplateSource,
+            ComponentClassResolver componentClassResolver, ChainBuilder chainBuilder,
+            Request request, Response response, ThreadLocale threadLocale,
+            RequestGlobals requestGlobals)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _updateListenerHub = updateListenerHub;
@@ -290,9 +270,7 @@ public final class InternalModule
         return service;
     }
 
-    public ComponentTemplateSource build(@InjectService("TemplateParser")
-    TemplateParser parser, @InjectService("PageTemplateLocator")
-    PageTemplateLocator locator)
+    public ComponentTemplateSource build(TemplateParser parser, PageTemplateLocator locator)
     {
         ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator);
 
@@ -301,8 +279,7 @@ public final class InternalModule
         return service;
     }
 
-    public AssetFactory buildClasspathAssetFactory(@InjectService("ResourceCache")
-    ResourceCache resourceCache,
+    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
 
     ClasspathAssetAliasManager aliasManager)
     {
@@ -545,14 +522,12 @@ public final class InternalModule
      * Adds a filter that checks for updates to classes and other resources. It is ordered before:*.
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-            @InjectService("RequestGlobals")
-            final RequestGlobals requestGlobals,
+            RequestGlobals requestGlobals,
 
             // @Inject not needed because its a long, not a String
             @Symbol("tapestry.file-check-interval")
             long checkInterval,
 
-            @InjectService("LocalizationSetter")
             LocalizationSetter localizationSetter)
     {
         configuration.add("CheckForUpdates", new CheckForUpdatesFilter(_updateListenerHub,
