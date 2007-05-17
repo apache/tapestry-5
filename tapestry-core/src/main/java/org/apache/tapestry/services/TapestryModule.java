@@ -256,15 +256,15 @@ public final class TapestryModule
      * A few of the built in services overlap in terms of service interface so we make contributions
      * to the Alias service to disambiguate. This ensures that a bare parameter (without an
      * InjectService annotation) will chose the correct value without being further qualified.
-     * <ul>
-     * <li>{@link ComponentEventResultProcessor}: the master ComponentEventResultProcessor service
+     * <dl>
+     * <dt>{@link ComponentEventResultProcessor} <dd> the master ComponentEventResultProcessor service
      * (rather than one of the other services that exist to handle a specific type of result)</li>
-     * <li>{@link ObjectRenderer}: the master ObjectRenderer service (rather than the one of the
+     * <dt>{@link ObjectRenderer} <dd> the master ObjectRenderer service (rather than the one of the
      * other services that renders a specific type of object)</li>
-     * <li>{@link ClassFactory}: the <em>ComponentClassFactory</em> (which will be recreated if
+     * <dt>{@link ClassFactory} <dd> the <em>ComponentClassFactory</em> (which will be recreated if
      * the component class loader is recreated, on a change to a component class)
-     * <li>{@link DataTypeAnalyzer}: the <em>DefaultDataTypeAnalyzer</em> service
-     * </ul>
+     * <dt>{@link DataTypeAnalyzer} <dd> the <em>DefaultDataTypeAnalyzer</em> service
+     * </dl>
      */
     public static void contributeAlias(Configuration<AliasContribution> configuration,
             ObjectLocator locator,
@@ -1394,15 +1394,27 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the "session" strategy.
+     * Contributes several strategies:
+     * <dl>
+     * <dt>session
+     * <dd>Values are stored in the {@link Session}
+     * <dt>flash
+     * <dd>Values are stored in the {@link Session}, until the next request (for the page)
+     * <dt>client
+     * <dd>Values are encoded into URLs (or hidden form fields)
+     * </dl>
      */
     public void contributePersistentFieldManager(
             MappedConfiguration<String, PersistentFieldStrategy> configuration,
 
-            Request request)
+            Request request,
+
+            @InjectService("ClientPersistentFieldStrategy")
+            PersistentFieldStrategy clientStrategy)
     {
         configuration.add("session", new SessionPersistentFieldStrategy(request));
         configuration.add("flash", new FlashPersistentFieldStrategy(request));
+        configuration.add("client", clientStrategy);
     }
 
     public void contributeValidationMessagesSource(Configuration<String> configuration)

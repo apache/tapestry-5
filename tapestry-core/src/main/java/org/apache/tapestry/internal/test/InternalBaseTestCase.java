@@ -489,11 +489,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(factory.createPageLink(page)).andReturn(link);
     }
 
-    protected final void train_getParameter(Request request, String elementName, String value)
-    {
-        expect(request.getParameter(elementName)).andReturn(value).atLeastOnce();
-    }
-
     protected final void train_isLoaded(InternalComponentResources resources, boolean isLoaded)
     {
         expect(resources.isLoaded()).andReturn(isLoaded);

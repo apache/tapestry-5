@@ -32,10 +32,8 @@ import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.internal.bindings.PropBindingFactory;
 import org.apache.tapestry.internal.util.IntegerRange;
-import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
@@ -43,14 +41,12 @@ import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.AliasContribution;
 import org.apache.tapestry.services.ApplicationGlobals;
 import org.apache.tapestry.services.ApplicationInitializer;
 import org.apache.tapestry.services.ApplicationInitializerFilter;
@@ -61,6 +57,7 @@ import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentMessagesSource;
 import org.apache.tapestry.services.Context;
 import org.apache.tapestry.services.ObjectRenderer;
+import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.apache.tapestry.services.PropertyConduitSource;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestExceptionHandler;
@@ -88,22 +85,7 @@ public final class InternalModule
         binder.bind(RequestExceptionHandler.class, DefaultRequestExceptionHandler.class);
         binder.bind(PageLinkHandler.class, PageLinkHandlerImpl.class);
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void add(Configuration<AliasContribution> configuration, ObjectLocator locator,
-            Class... serviceInterfaces)
-    {
-        for (Class serviceInterface : serviceInterfaces)
-        {
-            String name = serviceInterface.getName();
-            String serviceId = InternalUtils.lastTerm(name);
-
-            AliasContribution contribution = AliasContribution.create(serviceInterface, locator
-                    .getService(serviceId, serviceInterface));
-
-            configuration.add(contribution);
-        }
+        binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);
     }
 
     public static void contributeTemplateParser(MappedConfiguration<String, URL> configuration)
@@ -534,5 +516,16 @@ public final class InternalModule
                 checkInterval), "before:*");
 
         configuration.add("Localization", new LocalizationFilter(localizationSetter));
+    }
+
+    public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkFactory linkFactory,
+            ServiceResources resources)
+    {
+        ClientPersistentFieldStrategy service = resources
+                .autobuild(ClientPersistentFieldStrategy.class);
+
+        linkFactory.addListener(service);
+
+        return service;
     }
 }

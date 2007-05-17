@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.Defense;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+
 import org.apache.tapestry.services.PersistentFieldChange;
 
 public class PersistentFieldChangeImpl implements PersistentFieldChange
@@ -28,8 +30,8 @@ public class PersistentFieldChangeImpl implements PersistentFieldChange
     public PersistentFieldChangeImpl(final String componentId, final String fieldName,
             final Object value)
     {
-        Defense.notNull(componentId, "componentId");
-        Defense.notBlank(fieldName, "fieldName");
+        notNull(componentId, "componentId");
+        notBlank(fieldName, "fieldName");
 
         _componentId = componentId;
         _fieldName = fieldName;

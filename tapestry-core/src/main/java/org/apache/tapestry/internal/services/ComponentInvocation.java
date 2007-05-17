@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 
 import java.util.List;
 import java.util.Map;
@@ -65,8 +66,7 @@ public class ComponentInvocation
     public String buildURI(boolean isForm)
     {
         String path = getPath();
-        if (isForm || _parameters == null)
-            return path;
+        if (isForm || _parameters == null) return path;
 
         StringBuilder builder = new StringBuilder();
 
@@ -124,8 +124,10 @@ public class ComponentInvocation
 
     public void addParameter(String parameterName, String value)
     {
-        if (_parameters == null)
-            _parameters = newMap();
+        notBlank(parameterName, "parameterName");
+        notBlank(value, "value");
+
+        if (_parameters == null) _parameters = newMap();
 
         if (_parameters.containsKey(parameterName))
             throw new IllegalArgumentException(ServicesMessages.parameterNameMustBeUnique(
