@@ -90,10 +90,31 @@ public class TapestryFilter implements Filter
                 "HttpServletRequestHandler",
                 HttpServletRequestHandler.class);
 
+        init(_registry);
+
         long toFinish = System.currentTimeMillis();
 
         _log.info(format("Startup time: %,d ms to build IoC Registry, %,d ms overall.", toRegistry
                 - start, toFinish - start));
+    }
+
+    protected final FilterConfig getFilterConfig()
+    {
+        return _config;
+    }
+
+    /**
+     * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any
+     * additional initialization to occur. This implementation does nothing, and my be overriden in
+     * subclasses.
+     * 
+     * @param registry
+     *            from which services may be extracted
+     * @throws ServletException
+     */
+    protected void init(Registry registry) throws ServletException
+    {
+
     }
 
     /**
@@ -124,13 +145,24 @@ public class TapestryFilter implements Filter
 
     /** Shuts down and discards the registry. */
     public final void destroy()
-
     {
         _registry.shutdown();
 
         _registry = null;
         _config = null;
         _handler = null;
+    }
+
+    /**
+     * Invoked from {@link #destroy()} to allow subclasses to add additional shutdown logic to the
+     * filter. The Registry will be shutdown after this call. This implementation does nothing, and
+     * may be overridden in subclasses.
+     * 
+     * @param registry
+     */
+    protected void destroy(Registry registry)
+    {
+
     }
 
 }
