@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.internal.parser.AttributeToken;
@@ -26,6 +27,7 @@ import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
 import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.services.BindingSource;
 
 /**
  * Used by the {@link org.apache.tapestry.internal.services.PageLoader} to create page elements
@@ -36,11 +38,21 @@ public interface PageElementFactory
 
     PageElement newStartElement(StartElementToken token);
 
-    PageElement newAttributeElement(AttributeToken token);
+    PageElement newAttributeElement(ComponentResources componentResources, AttributeToken token);
 
     PageElement newEndElement();
 
     PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token);
+
+    /**
+     * Creates a new binding as with
+     * {@link BindingSource#newBinding(String, ComponentResources, ComponentResources, String, String, Location)}.
+     * However, if the binding contains an expansion (i.e., <code>${...}</code>), then a binding
+     * that returns the fully expanded expression will be returned.
+     */
+    Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
+            ComponentResources embeddedComponentResources, String defaultBindingPrefix,
+            String expression, Location location);
 
     /**
      * Creates a new component and adds it to the page and to its container.

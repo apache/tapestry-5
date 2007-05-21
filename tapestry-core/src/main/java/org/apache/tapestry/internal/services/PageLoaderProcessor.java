@@ -79,8 +79,6 @@ class PageLoaderProcessor
 
     private boolean _dtdAdded;
 
-    private final BindingSource _bindingSource;
-
     private final Stack<BodyPageElement> _bodyPageElementStack = newStack();
 
     // You can use a stack as a queue
@@ -113,12 +111,11 @@ class PageLoaderProcessor
     private final ComponentTemplateSource _templateSource;
 
     public PageLoaderProcessor(ComponentTemplateSource templateSource,
-            PageElementFactory pageElementFactory, BindingSource bindingSource,
-            LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
+            PageElementFactory pageElementFactory, LinkFactory linkFactory,
+            PersistentFieldManager persistentFieldManager)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
-        _bindingSource = bindingSource;
         _linkFactory = linkFactory;
         _persistentFieldManager = persistentFieldManager;
     }
@@ -244,8 +241,8 @@ class PageLoaderProcessor
             return new InheritedBinding(description, existing, location);
         }
 
-        return _bindingSource.newBinding(
-                "parameter " + name,
+        return _pageElementFactory.newBinding(
+                name,
                 loadingComponent.getComponentResources(),
                 component.getComponentResources(),
                 defaultBindingPrefix,
@@ -295,7 +292,8 @@ class PageLoaderProcessor
             return;
         }
 
-        PageElement element = _pageElementFactory.newAttributeElement(token);
+        PageElement element = _pageElementFactory.newAttributeElement(_loadingElement
+                .getComponentResources(), token);
 
         addToBody(element);
     }

@@ -28,7 +28,6 @@ import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
-import org.apache.tapestry.services.BindingSource;
 import org.testng.annotations.Test;
 
 public class PageLoaderImplTest extends InternalBaseTestCase
@@ -44,7 +43,6 @@ public class PageLoaderImplTest extends InternalBaseTestCase
     {
         ComponentTemplateSource templateSource = mockComponentTemplateSource();
         PageElementFactory elementFactory = mockPageElementFactory();
-        BindingSource bindingSource = mockBindingSource();
         ComponentPageElement rootElement = mockComponentPageElement();
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentModel model = mockComponentModel();
@@ -76,8 +74,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, bindingSource, null,
-                null);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null);
 
         loader.loadPage(PAGE_CLASS_NAME, LOCALE);
 
@@ -89,7 +86,6 @@ public class PageLoaderImplTest extends InternalBaseTestCase
     {
         ComponentTemplateSource templateSource = mockComponentTemplateSource();
         PageElementFactory elementFactory = mockPageElementFactory();
-        BindingSource bindingSource = mockBindingSource();
         ComponentPageElement rootElement = mockComponentPageElement();
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentModel model = mockComponentModel();
@@ -163,8 +159,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, bindingSource, null,
-                null);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null);
 
         loader.loadPage(PAGE_CLASS_NAME, LOCALE);
 

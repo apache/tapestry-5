@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.MarkupModel;
 import org.apache.tapestry.dom.XMLMarkupModel;
@@ -24,8 +25,12 @@ import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.PageElement;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.RenderQueue;
+import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
 
 public class PageElementFactoryImplTest extends InternalBaseTestCase
@@ -70,7 +75,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
         AttributeToken token = new AttributeToken("name", "value", l);
 
-        PageElement element = factory.newAttributeElement(token);
+        PageElement element = factory.newAttributeElement(null, token);
 
         writer.element("root");
 
@@ -78,7 +83,6 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         verify();
 
-        assertEquals(element.toString(), "Attribute[name=value]");
         assertEquals(writer.toString(), "<root name=\"value\"/>");
     }
 
@@ -159,7 +163,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ComponentClassResolver resolver = mockComponentClassResolver();
         RenderQueue queue = mockRenderQueue();
-        ComponentPageElement component = newMock(ComponentPageElement.class);
+        ComponentPageElement component = mockComponentPageElement();
         MarkupWriter writer = newMock(MarkupWriter.class);
 
         component.enqueueBeforeRenderBody(queue);
@@ -171,6 +175,40 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         PageElement element = factory.newRenderBodyElement(component);
 
         element.render(writer, queue);
+
+        verify();
+    }
+
+    @Test
+    public void unclosed_attribute_expression()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        TypeCoercer typeCoercer = mockTypeCoercer();
+        BindingSource bindingSource = mockBindingSource();
+        ComponentMessagesSource messagesSource = newMock(ComponentMessagesSource.class);
+        ComponentResources resources = mockComponentResources();
+        Location location = mockLocation();
+
+        AttributeToken token = new AttributeToken("fred", "${flintstone", location);
+
+        replay();
+
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer,
+                bindingSource, messagesSource);
+
+        try
+        {
+            factory.newAttributeElement(resources, token);
+            unreachable();
+        }
+        catch (TapestryException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Attribute expression \'${flintstone\' is missing a closing brace.");
+            assertSame(ex.getLocation(), location);
+        }
 
         verify();
     }

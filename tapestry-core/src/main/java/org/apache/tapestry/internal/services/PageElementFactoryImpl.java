@@ -14,17 +14,20 @@
 
 package org.apache.tapestry.internal.services;
 
+import static org.apache.tapestry.TapestryConstants.PROP_BINDING_PREFIX;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+
+import java.util.List;
+
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.parser.AttributeToken;
 import org.apache.tapestry.internal.parser.CommentToken;
 import org.apache.tapestry.internal.parser.DTDToken;
 import org.apache.tapestry.internal.parser.ExpansionToken;
 import org.apache.tapestry.internal.parser.StartElementToken;
 import org.apache.tapestry.internal.parser.TextToken;
-import org.apache.tapestry.internal.structure.AttributePageElement;
 import org.apache.tapestry.internal.structure.CommentPageElement;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.ComponentPageElementImpl;
@@ -55,6 +58,23 @@ public class PageElementFactoryImpl implements PageElementFactory
     private final BindingSource _bindingSource;
 
     private final ComponentMessagesSource _messagesSource;
+
+    private static final String EXPANSION_START = "${";
+
+    private static class LiteralStringProvider implements StringProvider
+    {
+        private final String _string;
+
+        LiteralStringProvider(String string)
+        {
+            _string = string;
+        }
+
+        public String provideString()
+        {
+            return _string;
+        }
+    }
 
     public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
             ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
@@ -97,9 +117,109 @@ public class PageElementFactoryImpl implements PageElementFactory
         return _endElement;
     }
 
-    public PageElement newAttributeElement(AttributeToken token)
+    public PageElement newAttributeElement(ComponentResources componentResources,
+            final AttributeToken token)
     {
-        return new AttributePageElement(token.getName(), token.getValue());
+        final StringProvider provider = parseAttributeExpansionExpression(
+                token.getValue(),
+                componentResources,
+                token.getLocation());
+
+        final String name = token.getName();
+
+        return new PageElement()
+        {
+            public void render(MarkupWriter writer, RenderQueue queue)
+            {
+                writer.attributes(name, provider.provideString());
+            }
+        };
+    }
+
+    private StringProvider parseAttributeExpansionExpression(String expression,
+            ComponentResources resources, final Location location)
+    {
+        final List<StringProvider> providers = newList();
+
+        int startx = 0;
+
+        while (true)
+        {
+            int expansionx = expression.indexOf(EXPANSION_START, startx);
+
+            // No more expansions, add in the rest of the string as a literal.
+
+            if (expansionx < 0)
+            {
+                if (startx < expression.length())
+                    providers.add(new LiteralStringProvider(expression.substring(startx)));
+                break;
+            }
+
+            // Add in a literal string chunk for the characters between the last expansion and
+            // this expansion.
+
+            if (startx != expansionx)
+                providers.add(new LiteralStringProvider(expression.substring(startx, expansionx)));
+
+            int endx = expression.indexOf("}", expansionx);
+
+            if (endx < 0)
+                throw new TapestryException(ServicesMessages
+                        .unclosedAttributeExpression(expression), location, null);
+
+            String expansion = expression.substring(expansionx + 2, endx);
+
+            final Binding binding = _bindingSource.newBinding(
+                    "attribute expansion",
+                    resources,
+                    resources,
+                    PROP_BINDING_PREFIX,
+                    expansion,
+                    location);
+
+            final StringProvider provider = new StringProvider()
+            {
+                public String provideString()
+                {
+                    try
+                    {
+                        Object raw = binding.get();
+
+                        return _typeCoercer.coerce(raw, String.class);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TapestryException(ex.getMessage(), location, ex);
+                    }
+                }
+            };
+
+            providers.add(provider);
+
+            // Restart the search after '}'
+
+            startx = endx + 1;
+        }
+
+        // Simplify the typical case, where the entire attribute is just a single expansion:
+
+        if (providers.size() == 1) return providers.get(0);
+
+        return new StringProvider()
+        {
+
+            public String provideString()
+            {
+                StringBuilder builder = new StringBuilder();
+
+                for (StringProvider provider : providers)
+                    builder.append(provider.provideString());
+
+                return builder.toString();
+            }
+        };
+
     }
 
     public PageElement newExpansionElement(ComponentResources componentResources,
@@ -109,7 +229,7 @@ public class PageElementFactoryImpl implements PageElementFactory
                 "expansion",
                 componentResources,
                 componentResources,
-                TapestryConstants.PROP_BINDING_PREFIX,
+                PROP_BINDING_PREFIX,
                 token.getExpression(),
                 token.getLocation());
 
@@ -255,5 +375,29 @@ public class PageElementFactoryImpl implements PageElementFactory
     public PageElement newDTDElement(DTDToken token)
     {
         return new DTDPageElement(token.getName(), token.getPublicId(), token.getSystemId());
+    }
+
+    public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
+            ComponentResources embeddedComponentResources, String defaultBindingPrefix,
+            String expression, Location location)
+    {
+
+        if (expression.contains(EXPANSION_START))
+        {
+            StringProvider provider = parseAttributeExpansionExpression(
+                    expression,
+                    loadingComponentResources,
+                    location);
+
+            return new AttributeExpansionBinding(provider, location);
+        }
+
+        return _bindingSource.newBinding(
+                "parameter " + parameterName,
+                loadingComponentResources,
+                embeddedComponentResources,
+                defaultBindingPrefix,
+                expression,
+                location);
     }
 }
