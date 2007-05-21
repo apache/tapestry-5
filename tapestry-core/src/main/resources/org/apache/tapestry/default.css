@@ -271,7 +271,7 @@ TD.t-location-line
 {
   width: 40px;
   text-align: right;
-  padding: none;
+  padding: 0px;
   background-color: #E1E1E1;
   padding-right: 3px; 
   border-right: 1px solid black;
@@ -292,4 +292,51 @@ TD.t-location-current
 TD.t-location-content-first
 {
   border-top: 1px solid black;
+}
+
+DIV.t-palette {
+  display: inline;
+}
+
+DIV.t-palette SELECT {
+  margin-bottom: 2px;
+}
+
+DIV.t-palette-title {
+  color: white;
+  background-color: #809FFF;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 3px;
+  display: block;
+}
+
+
+DIV.t-palette-available {
+  float: left;
+}
+
+DIV.t-palette-controls { 
+    margin: 0px 5px;
+	width: 64px;
+	float: left;
+	text-align: center;
+}
+
+DIV.t-palette-controls BUTTON { 
+  width: 64px;
+}
+
+DIV.t-palette-controls BUTTON[disabled] IMG  {
+  filter: alpha(opacity=25);
+  -moz-opacity: .25;
+}
+
+DIV.t-palette-selected {
+  float: left;
+  clear: right;
+}
+
+DIV.t-palette-spacer {
+  clear: left;
 }

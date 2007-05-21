@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.Locale;
 import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.PersistentFieldManager;
 
 public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoader,
@@ -29,19 +28,17 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
 
     private final PageElementFactory _pageElementFactory;
 
-    private final BindingSource _bindingSource;
-
     private final LinkFactory _linkFactory;
 
     private final PersistentFieldManager _persistentFieldManager;
 
     public PageLoaderImpl(ComponentTemplateSource templateSource,
-            PageElementFactory pageElementFactory, BindingSource bindingSource,
-            LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
+            PageElementFactory pageElementFactory, LinkFactory linkFactory,
+            PersistentFieldManager persistentFieldManager)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
-        _bindingSource = bindingSource;
+
         _linkFactory = linkFactory;
         _persistentFieldManager = persistentFieldManager;
     }
@@ -57,7 +54,7 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
         // effort to pool them for reuse, but not too likely.
 
         PageLoaderProcessor processor = new PageLoaderProcessor(_templateSource,
-                _pageElementFactory, _bindingSource, _linkFactory, _persistentFieldManager);
+                _pageElementFactory, _linkFactory, _persistentFieldManager);
 
         return processor.loadPage(pageClassName, locale);
     }

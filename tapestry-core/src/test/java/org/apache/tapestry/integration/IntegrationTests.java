@@ -563,7 +563,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void bean_editor()
     {
-        String submitButton = "//input[@id='submit']";
+        String submitButton = "//input[@type='submit']";
 
         open(BASE_URL);
         clickAndWait("link=BeanEditor Demo");
@@ -582,7 +582,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Check override of the submit label
 
-        assertText("//input[@id='submit']/@value", "Register");
+        assertText("//input[@type='submit']/@value", "Register");
 
         type("firstName", "a");
         type("lastName", "b");
@@ -819,7 +819,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Notice: click, not click and wait.
 
-        click("submit");
+        click("//input[@type='submit']");
 
         assertTextSeries(
                 "//li[%d]",
@@ -831,14 +831,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
         type("birthYear", "1000");
-        click("submit");
+        click("//input[@type='submit']");
 
         assertText("//li", "Year of Birth requires a value of at least 1900.");
 
         type("birthYear", "1966");
         click("citizen");
 
-        clickAndWait("submit");
+        clickAndWait("//input[@type='submit']");
 
         assertTextPresent("First Name: [Howard]");
     }
@@ -925,5 +925,24 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=store string");
 
         assertTextPresent("Persisted value: [A String]", "Session: [false]");
+    }
+
+    @Test
+    public void attribute_expansions()
+    {
+        open(BASE_URL);
+        clickAndWait("link=Attribute Expansions Demo");
+
+        assertText("//div[@id='mixed-expansion']/@style", "color: blue;");
+        assertText("//div[@id='single']/@class", "red");
+        assertText("//div[@id='consecutive']/@class", "goober-red");
+        assertText("//div[@id='trailer']/@class", "goober-green");
+        assertText(
+                "//div[@id='formal']/text()",
+                "ALERT-expansions work inside formal component parameters as well");
+
+        // An unrelated test, but fills in a bunch of minor gaps.
+
+        assertSourcePresent("<!-- A comment! -->");
     }
 }

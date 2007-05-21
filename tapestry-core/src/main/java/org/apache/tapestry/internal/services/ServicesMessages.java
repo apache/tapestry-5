@@ -388,4 +388,9 @@ class ServicesMessages
     {
         return MESSAGES.get("corrupt-client-state");
     }
+
+    static String unclosedAttributeExpression(String expression)
+    {
+        return MESSAGES.format("unclosed-attribute-expression", expression);
+    }
 }

@@ -136,37 +136,4 @@ public class MyTest extends Assert
 
   To unit test a component, just create a test page containing that component. Then 
   unit test that page.
-  
-* Providing mock implementations for your service layer
 
-  Your page typically will invoke your business logic and will ultimately reach
-  the database. In unit testing, it is highly recommended that you not invoke
-  them as you're unit testing the UI (page). To do that, you should put 
-  your transaction control code, business logic and etc into Tapestry IoC
-  services. Then you should override their implementations using mock objects:
-
-+---+
-public class MyTest extends Assert
-{
-    @Test
-    public void test1()
-    {
-        String appPackage = "org.example.app";
-        String appName = "LocaleApp";
-        Map<String, Object> serviceOverrides = new HashMap<String, Object>();
-        Service1 service1Mock = new Service1() {
-            public Object transform(Object input) {
-                //assert against the input and return some mock value
-            }
-        }
-        Service2 service2Mock = new Service2() {
-            public void perform(Object cmd) {
-                //assert against the cmd
-            }
-        }
-        serviceOverrides.put("Service1", service1Mock);
-        serviceOverrides.put("Service2", service2Mock);
-        PageTester tester = new PageTester(appPackage, appName, "src/main/webapp", serviceOverrides);
-    }
-}
-+---+

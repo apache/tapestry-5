@@ -13,6 +13,11 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * Template expansions are now allowed inside attributes.
+  
+  * Applications may optionally provide a global message catalog (which is searched when a page or component message catalog
+    can not directly provide a localized message).
+  
   * Explicit \<!DOCTYPE\> declarations inside page and component templates will now be forwarded through to the client
     web browser.
     

@@ -163,8 +163,15 @@ Expansions
   Here, <<<$\{userId}>>> is the expansion.  In this example, the userId property of the 
   component is extracted, converted to a string, and streamed into the output.  
  
-  Expansions may only occur in ordinary template text; they are not allowed inside
-  attributes, or inside CDATA sections.
+  Expansions are allowed inside text, and inside attributes of ordinary elements, and component elements.  For example:
+  
++---+
+  <img src="${request.contextPath}/images/catalog/product_${productId}"/>
++---+
+
+  In this hypothetical example, the component class is providing a request property and a productId property, and these are being
+  used inside the template to assemble the src attribute of the \<img\> element.  This is component-like behavior without
+  actual components.
   
   Under the covers, expansions are the same as
   {{{parameters.html}parameter bindings}}.  The default
