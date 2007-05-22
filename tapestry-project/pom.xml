@@ -249,8 +249,15 @@
   </reporting>
   <repositories>
     <repository>
-      <id>tapestrys</id>
+      <id>tapestry</id>
       <url>http://people.apache.org/~hlship/tapestry-repository/</url>
+    </repository>
+    <repository>
+      <id>tapestry-snapshot</id>
+      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
     </repository>
     <repository>
       <id>codehaus.snapshots</id>
@@ -265,7 +272,7 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>tapestrys</id>
+      <id>tapestry</id>
       <url>http://people.apache.org/~hlship/tapestry-repository</url>
     </pluginRepository>
     <!-- I believe a version of the surefire plugin lives here. -->
@@ -307,8 +314,8 @@
       <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository</url>
     </repository>
     <snapshotRepository>
-      <id>tapestry</id>
-      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-repository</url>
+      <id>tapestry-snapshot</id>
+      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository</url>
     </snapshotRepository>
   </distributionManagement>
 

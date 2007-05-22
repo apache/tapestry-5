@@ -94,6 +94,11 @@ What's changed since Tapestry 4?
   
 New and Noteworthy
 
+  Applications can now have a central message catalog; pages and components can override messages
+  from the central catalog.
+  
+  The BeanEditForm component can now create the object is edits.
+
   The {{{tapestry-spring/}tapestry-spring}} module has also been simplified, to make
   Spring beans look like Tapestry IoC services. It's all now quite seamless.
 
