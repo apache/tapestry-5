@@ -58,6 +58,7 @@ import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry.internal.beaneditor.ValidateAnnotationConstraintGenerator;
+import org.apache.tapestry.internal.bindings.AssetBindingFactory;
 import org.apache.tapestry.internal.bindings.BlockBindingFactory;
 import org.apache.tapestry.internal.bindings.ComponentBindingFactory;
 import org.apache.tapestry.internal.bindings.LiteralBindingFactory;
@@ -257,13 +258,17 @@ public final class TapestryModule
      * to the Alias service to disambiguate. This ensures that a bare parameter (without an
      * InjectService annotation) will chose the correct value without being further qualified.
      * <dl>
-     * <dt>{@link ComponentEventResultProcessor} <dd> the master ComponentEventResultProcessor service
-     * (rather than one of the other services that exist to handle a specific type of result)</li>
-     * <dt>{@link ObjectRenderer} <dd> the master ObjectRenderer service (rather than the one of the
-     * other services that renders a specific type of object)</li>
-     * <dt>{@link ClassFactory} <dd> the <em>ComponentClassFactory</em> (which will be recreated if
-     * the component class loader is recreated, on a change to a component class)
-     * <dt>{@link DataTypeAnalyzer} <dd> the <em>DefaultDataTypeAnalyzer</em> service
+     * <dt>{@link ComponentEventResultProcessor}
+     * <dd> the master ComponentEventResultProcessor service (rather than one of the other services
+     * that exist to handle a specific type of result)</li>
+     * <dt>{@link ObjectRenderer}
+     * <dd> the master ObjectRenderer service (rather than the one of the other services that
+     * renders a specific type of object)</li>
+     * <dt>{@link ClassFactory}
+     * <dd> the <em>ComponentClassFactory</em> (which will be recreated if the component class
+     * loader is recreated, on a change to a component class)
+     * <dt>{@link DataTypeAnalyzer}
+     * <dd> the <em>DefaultDataTypeAnalyzer</em> service
      * </dl>
      */
     public static void contributeAlias(Configuration<AliasContribution> configuration,
@@ -308,11 +313,13 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the factory for serveral built-in binding prefixes ("literal", prop", "block",
-     * "component" "message", "validate", "translate").
+     * Contributes the factory for serveral built-in binding prefixes ("asset", "literal", prop",
+     * "block", "component" "message", "validate", "translate").
      */
     public static void contributeBindingSource(
             MappedConfiguration<String, BindingFactory> configuration,
+
+            AssetSource assetSource,
 
             @InjectService("PropBindingFactory")
             BindingFactory propBindingFactory,
@@ -328,6 +335,7 @@ public final class TapestryModule
         configuration.add("validate", new ValidateBindingFactory(fieldValidatorSource));
         configuration.add("translate", new TranslateBindingFactory(translatorSource));
         configuration.add("block", new BlockBindingFactory());
+        configuration.add("asset", new AssetBindingFactory(assetSource));
     }
 
     public static void contributeClasspathAssetAliasManager(

@@ -14,34 +14,34 @@
 
 package org.apache.tapestry.util;
 
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+
 import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.ioc.internal.util.Defense;
 
 /**
  * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client
  * side value (the "primary key").
  */
-public class EnumValueEncoder implements ValueEncoder<Enum>
+public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 {
-    private final Class<Enum> _enumType;
+    private final Class<E> _enumType;
 
-    public EnumValueEncoder(final Class<Enum> enumType)
+    public EnumValueEncoder(final Class<E> enumType)
     {
-        Defense.notNull(enumType, "enumType");
+        notNull(enumType, "enumType");
 
         _enumType = enumType;
     }
 
-    public String toClient(Enum value)
+    public String toClient(E value)
     {
         return value.name();
     }
 
     @SuppressWarnings("unchecked")
-    public Enum toValue(String clientValue)
+    public E toValue(String clientValue)
     {
-        if (clientValue == null)
-            return null;
+        if (clientValue == null) return null;
 
         return Enum.valueOf(_enumType, clientValue);
     }
