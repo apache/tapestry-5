@@ -14,17 +14,15 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.SelectModel;
+import org.apache.tapestry.SelectModelVisitor;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.ValueEncoder;
@@ -33,6 +31,7 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
@@ -45,9 +44,32 @@ import org.apache.tapestry.util.EnumValueEncoder;
  */
 public final class Select extends AbstractField
 {
-    /** The value to read or update. */
-    @Parameter(required = true, principal = true)
-    private Object _value;
+    private class Renderer extends SelectModelRenderer
+    {
+
+        public Renderer(MarkupWriter writer)
+        {
+            super(writer, getEncoder());
+        }
+
+        @Override
+        protected boolean isOptionSelected(OptionModel optionModel)
+        {
+            Object value = optionModel.getValue();
+
+            return isOptionValueSelected(value);
+        }
+    }
+
+    private boolean isOptionValueSelected(Object value)
+    {
+        return value == _value || (value != null && value.equals(_value));
+    }
+
+    private ValueEncoder getEncoder()
+    {
+        return _encoder;
+    }
 
     /**
      * The default encoder encodes strings, passing them to the client and back unchanged.
@@ -70,8 +92,13 @@ public final class Select extends AbstractField
         }
     };
 
-    // Maybe this should default to property "<componentId>Model"?
+    @Inject
+    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
 
+    @Inject
+    private Locale _locale;
+
+    // Maybe this should default to property "<componentId>Model"?
     /**
      * The model used to identify the option groups and options to be presented to the user. This
      * can be generated automatically for Enum types.
@@ -79,48 +106,54 @@ public final class Select extends AbstractField
     @Parameter(required = true)
     private SelectModel _model;
 
+    @Inject
+    private Request _request;
+
+    @Inject
+    private ComponentResources _resources;
+
+    @Environmental
+    private ValidationTracker _tracker;
+
     /** Performs input validation on the value supplied by the user in the form submission. */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> _validate = NOOP_VALIDATOR;
 
-    @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
+    /** The value to read or update. */
+    @Parameter(required = true, principal = true)
+    private Object _value;
 
-    @Environmental
-    private ValidationTracker _tracker;
-
-    @Inject
-    private ComponentResources _resources;
-
-    @Inject
-    private Locale _locale;
-
-    @Inject
-    private Request _request;
-
-    Binding defaultValue()
+    @Override
+    protected void processSubmission(FormSupport formSupport, String elementName)
     {
-        return createDefaultParameterBinding("value");
+        String primaryKey = _request.getParameter(elementName);
+
+        Object selectedValue = _encoder.toValue(primaryKey);
+
+        try
+        {
+            _validate.validate(selectedValue);
+
+            _value = selectedValue;
+        }
+        catch (ValidationException ex)
+        {
+            _tracker.recordError(this, ex.getMessage());
+            return;
+        }
     }
 
-    /**
-     * Computes a default value for the "validate" parameter using
-     * {@link FieldValidatorDefaultSource}.
-     */
-    FieldValidator defaultValidate()
+    void afterRender(MarkupWriter writer)
     {
-        Class type = _resources.getBoundType("value");
+        writer.end();
+    }
 
-        if (type == null) return null;
+    void beginRender(MarkupWriter writer)
+    {
+        writer.element("select", "name", getElementName(), "id", getClientId());
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(
-                this,
-                _resources.getId(),
-                _resources.getContainerMessages(),
-                _locale,
-                type,
-                _resources.getAnnotationProvider("value"));
+        // Disabled, informals via mixins
     }
 
     @SuppressWarnings("unchecked")
@@ -148,115 +181,47 @@ public final class Select extends AbstractField
         return null;
     }
 
-    void beginRender(MarkupWriter writer)
+    /**
+     * Computes a default value for the "validate" parameter using
+     * {@link FieldValidatorDefaultSource}.
+     */
+    FieldValidator defaultValidate()
     {
-        writer.element("select", "name", getElementName(), "id", getClientId());
+        Class type = _resources.getBoundType("value");
 
-        // Disabled, informals via mixins
+        if (type == null) return null;
+
+        return _fieldValidatorDefaultSource.createDefaultValidator(
+                this,
+                _resources.getId(),
+                _resources.getContainerMessages(),
+                _locale,
+                type,
+                _resources.getAnnotationProvider("value"));
+    }
+
+    Binding defaultValue()
+    {
+        return createDefaultParameterBinding("value");
     }
 
     @BeforeRenderTemplate
     void options(MarkupWriter writer)
     {
-        if (_model.getOptionGroups() != null)
-        {
-            for (OptionGroupModel group : _model.getOptionGroups())
-            {
-                writeOptionGroup(writer, group);
-            }
-        }
+        SelectModelVisitor renderer = new Renderer(writer);
 
-        writeOptions(writer, _model.getOptions());
-    }
-
-    private void writeOptionGroup(MarkupWriter writer, OptionGroupModel model)
-    {
-        writer.element("optgroup", "label", model.getLabel());
-
-        writeDisabled(writer, model.isDisabled());
-        writeAttributes(writer, model.getAttributes());
-
-        writeOptions(writer, model.getOptions());
-
-        writer.end(); // optgroup
-    }
-
-    @SuppressWarnings("unchecked")
-    private void writeOptions(MarkupWriter writer, List<OptionModel> optionModels)
-    {
-        if (optionModels == null) return;
-
-        for (OptionModel model : optionModels)
-        {
-            Object optionValue = model.getValue();
-
-            String clientValue = _encoder.toClient(optionValue);
-
-            writer.element("option", "value", clientValue);
-
-            if (isOptionValueSelected(optionValue)) writer.attributes("selected", "selected");
-
-            writeDisabled(writer, model.isDisabled());
-            writeAttributes(writer, model.getAttributes());
-
-            writer.write(model.getLabel());
-
-            writer.end(); // option
-        }
-    }
-
-    boolean isOptionValueSelected(Object optionValue)
-    {
-        return _value == optionValue || (_value != null && _value.equals(optionValue));
-    }
-
-    private void writeDisabled(MarkupWriter writer, boolean disabled)
-    {
-        if (disabled) writer.attributes("disabled", "disabled");
-    }
-
-    private void writeAttributes(MarkupWriter writer, Map<String, String> attributes)
-    {
-        if (attributes == null) return;
-
-        for (Map.Entry<String, String> e : attributes.entrySet())
-            writer.attributes(e.getKey(), e.getValue());
-    }
-
-    void afterRender(MarkupWriter writer)
-    {
-        writer.end();
-    }
-
-    @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
-    {
-        String primaryKey = _request.getParameter(elementName);
-
-        Object selectedValue = _encoder.toValue(primaryKey);
-
-        try
-        {
-            _validate.validate(selectedValue);
-
-            _value = selectedValue;
-        }
-        catch (ValidationException ex)
-        {
-            _tracker.recordError(this, ex.getMessage());
-            return;
-        }
+        _model.visit(renderer);
     }
 
     // For testing.
 
-    void setValue(Object value)
-    {
-        _value = value;
-    }
-
     void setModel(SelectModel model)
     {
         _model = model;
+    }
+
+    void setValue(Object value)
+    {
+        _value = value;
     }
 }

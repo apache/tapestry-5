@@ -41,4 +41,10 @@ public interface SelectModel
      * @return the ungrouped options, or null
      */
     List<OptionModel> getOptions();
+
+    /**
+     * Allows access to all the {@link OptionGroupModel}s and {@link OptionModel}s within the
+     * SelectModel.
+     */
+    void visit(SelectModelVisitor visitor);
 }

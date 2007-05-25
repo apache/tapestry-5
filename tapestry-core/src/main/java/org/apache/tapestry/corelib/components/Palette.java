@@ -31,12 +31,14 @@ import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.Renderable;
 import org.apache.tapestry.SelectModel;
+import org.apache.tapestry.SelectModelVisitor;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
@@ -56,6 +58,10 @@ import org.apache.tapestry.services.Request;
  * DIV.t-palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
+ * 
+ * <p>
+ * Option groups within the {@link SelectModel} will be rendered, but are not supported by the many
+ * browsers, and are not fully handled on the client side.
  */
 public class Palette extends AbstractField
 {
@@ -79,22 +85,29 @@ public class Palette extends AbstractField
 
             writeDisabled(writer, isDisabled());
 
-            for (Renderable r : _availableOptions)
-                r.render(writer);
+            for (Runnable r : _availableOptions)
+                r.run();
 
             writer.end();
         }
     }
 
-    private final class OptionGroupEnd implements Renderable
+    private final class OptionGroupEnd implements Runnable
     {
-        public void render(MarkupWriter writer)
+        private final OptionGroupModel _model;
+
+        private OptionGroupEnd(OptionGroupModel model)
         {
-            writer.end();
+            _model = model;
+        }
+
+        public void run()
+        {
+            _renderer.endOptionGroup(_model);
         }
     }
 
-    private final class OptionGroupStart implements Renderable
+    private final class OptionGroupStart implements Runnable
     {
         private final OptionGroupModel _model;
 
@@ -103,16 +116,13 @@ public class Palette extends AbstractField
             _model = model;
         }
 
-        public void render(MarkupWriter writer)
+        public void run()
         {
-            writer.element("optgroup", "label", _model.getLabel());
-            writeDisabled(writer, _model.isDisabled());
-
-            writeAttributes(writer, _model.getAttributes());
+            _renderer.beginOptionGroup(_model);
         }
     }
 
-    private final class RenderOption implements Renderable
+    private final class RenderOption implements Runnable
     {
         private final OptionModel _model;
 
@@ -121,9 +131,9 @@ public class Palette extends AbstractField
             _model = model;
         }
 
-        public void render(MarkupWriter writer)
+        public void run()
         {
-            renderOption(writer, _model);
+            _renderer.option(_model);
         }
     }
 
@@ -131,8 +141,6 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            // TODO: Support disabled parameter
-
             writer.element(
                     "select",
                     "id",
@@ -150,14 +158,15 @@ public class Palette extends AbstractField
             {
                 OptionModel model = _valueToOptionModel.get(value);
 
-                renderOption(writer, model);
+                _renderer.option(model);
             }
 
             writer.end();
         }
     }
 
-    private List<Renderable> _availableOptions;
+    /** List of Runnable commands to render the available options. */
+    private List<Runnable> _availableOptions;
 
     /**
      * The image to use for the deselect button (the default is a left pointing arrow).
@@ -165,9 +174,15 @@ public class Palette extends AbstractField
     @Parameter(value = "asset:deselect.png")
     private Asset _deselect;
 
+    /**
+     * Encoder used to translate between server-side objects and client-side strings.
+     */
     @Parameter(required = true)
     private ValueEncoder<Object> _encoder;
 
+    /**
+     * Model used to define the values and labels used when rendering.
+     */
     @Parameter(required = true)
     private SelectModel _model;
 
@@ -187,11 +202,15 @@ public class Palette extends AbstractField
     @Path("palette.js")
     private Asset _paletteLibrary;
 
+    /** Used to include scripting code in the rendered page. */
     @Environmental
     private PageRenderSupport _renderSupport;
 
+    /** Needed to access query parameters when processing form submission. */
     @Inject
     private Request _request;
+
+    private SelectModelRenderer _renderer;
 
     /**
      * The image to use for the select button (the default is a right pointing arrow).
@@ -208,6 +227,17 @@ public class Palette extends AbstractField
     @Parameter(required = true)
     private List<Object> _selected;
 
+    /**
+     * If true, then additional buttons are provided on the client-side to allow for re-ordering of
+     * the values.
+     */
+    @Parameter("false")
+    private boolean _reorder;
+
+    /**
+     * Used during rendering to identify the options corresponding to selected values (from the
+     * selected parameter), in the order they should be displayed on the page.
+     */
     private List<OptionModel> _selectedOptions;
 
     private Map<Object, OptionModel> _valueToOptionModel;
@@ -218,9 +248,13 @@ public class Palette extends AbstractField
     @Parameter(value = "10")
     private int _size;
 
+    /**
+     * Defaults the selected parameter to a container property whose name matches this component's
+     * id.
+     */
     final Binding defaultSelected()
     {
-        return createDefaultParameterBinding("value");
+        return createDefaultParameterBinding("selected");
     }
 
     public Renderable getAvailableRenderer()
@@ -308,7 +342,7 @@ public class Palette extends AbstractField
 
         _renderSupport.addScriptLink(_paletteLibrary);
 
-        _renderSupport.addScript("new Tapestry.Palette('%s');", clientId);
+        _renderSupport.addScript("new Tapestry.Palette('%s', %s);", clientId, _reorder);
 
         writer.element(
                 "input",
@@ -328,73 +362,47 @@ public class Palette extends AbstractField
         return false;
     }
 
-    void renderOption(MarkupWriter writer, OptionModel model)
-    {
-        String clientValue = _encoder.toClient(model.getValue());
-
-        writer.element("option", "value", clientValue);
-
-        writeDisabled(writer, model.isDisabled());
-
-        writeAttributes(writer, model.getAttributes());
-
-        writer.write(model.getLabel());
-        writer.end();
-    }
-
     @SuppressWarnings("unchecked")
-    void setupRender()
+    void setupRender(MarkupWriter writer)
     {
         _valueToOptionModel = newMap();
         _availableOptions = newList();
         _selectedOptions = newList();
+        _renderer = new SelectModelRenderer(writer, _encoder);
 
-        Set selectedSet = newSet(getSelected());
+        final Set selectedSet = newSet(getSelected());
 
-        SelectModel model = _model;
-
-        if (model.getOptionGroups() != null)
+        SelectModelVisitor visitor = new SelectModelVisitor()
         {
-            for (final OptionGroupModel groupModel : model.getOptionGroups())
+            public void beginOptionGroup(OptionGroupModel groupModel)
             {
                 _availableOptions.add(new OptionGroupStart(groupModel));
-
-                prerender(groupModel.getOptions(), selectedSet);
-
-                _availableOptions.add(new OptionGroupEnd());
             }
-        }
 
-        prerender(_model.getOptions(), selectedSet);
-    }
-
-    private void prerender(List<OptionModel> options, Set<Object> selectedSet)
-    {
-        if (options == null) return;
-
-        for (final OptionModel model : options)
-        {
-            Object value = model.getValue();
-
-            boolean isSelected = selectedSet.contains(value);
-
-            if (isSelected)
+            public void endOptionGroup(OptionGroupModel groupModel)
             {
-                _selectedOptions.add(model);
-                _valueToOptionModel.put(value, model);
-                continue;
+                _availableOptions.add(new OptionGroupEnd(groupModel));
             }
 
-            _availableOptions.add(new RenderOption(model));
-        }
-    }
+            public void option(OptionModel optionModel)
+            {
+                Object value = optionModel.getValue();
 
-    private void writeAttributes(MarkupWriter writer, Map<String, String> attributes)
-    {
-        if (attributes == null) return;
+                boolean isSelected = selectedSet.contains(value);
 
-        for (Map.Entry<String, String> e : attributes.entrySet())
-            writer.attributes(e.getKey(), e.getValue());
+                if (isSelected)
+                {
+                    _selectedOptions.add(optionModel);
+                    _valueToOptionModel.put(value, optionModel);
+                    return;
+                }
+
+                _availableOptions.add(new RenderOption(optionModel));
+            }
+
+        };
+
+        _model.visit(visitor);
     }
 
     // Avoids a strange Javassist bytecode error, c'est lavie!
@@ -408,5 +416,10 @@ public class Palette extends AbstractField
         if (_selected == null) return Collections.emptyList();
 
         return _selected;
+    }
+
+    public boolean getReorder()
+    {
+        return _reorder;
     }
 }

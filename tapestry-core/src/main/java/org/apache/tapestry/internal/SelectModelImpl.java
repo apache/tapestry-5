@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
+import org.apache.tapestry.util.AbstractSelectModel;
 
-public final class SelectModelImpl implements SelectModel
+public final class SelectModelImpl extends AbstractSelectModel
 {
     private final List<OptionGroupModel> _optionGroups;
 
