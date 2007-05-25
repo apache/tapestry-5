@@ -924,20 +924,26 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      */
     private void invoke(boolean reverse, ComponentCallback callback)
     {
-        // Optimization: In the most general case (just the one component, no mixins)
-        // invoke the callback on the component and be done ... no iterators, no nothing.
+        try
+        { // Optimization: In the most general case (just the one component, no mixins)
+            // invoke the callback on the component and be done ... no iterators, no nothing.
 
-        if (_components == null)
-        {
-            callback.run(_coreComponent);
-            return;
+            if (_components == null)
+            {
+                callback.run(_coreComponent);
+                return;
+            }
+
+            Iterator<Component> i = reverse ? InternalUtils.reverseIterator(_components)
+                    : _components.iterator();
+
+            while (i.hasNext())
+                callback.run(i.next());
         }
-
-        Iterator<Component> i = reverse ? InternalUtils.reverseIterator(_components) : _components
-                .iterator();
-
-        while (i.hasNext())
-            callback.run(i.next());
+        catch (Exception ex)
+        {
+            throw new TapestryException(ex.getMessage(), getLocation(), ex);
+        }
     }
 
     public boolean isLoaded()

@@ -64,8 +64,14 @@ public class DocumentScriptBuilderImpl implements DocumentScriptBuilder
             Element e = body.element("script", "type", "text/javascript", "language", "javascript");
             e.raw("\n<!--\n");
 
+            // This assumes that Prototype is available.
+            
+            e.text("Event.observe(window, \"load\", function() {\n");
+            
             e.text(_scriptBlock.toString());
 
+            e.text("});\n");
+            
             e.raw("// -->\n");
         }
 

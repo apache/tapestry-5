@@ -13,6 +13,10 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * Palette component for sophisticated multiple-property selection and ordering.
+  
+  * New "asset:" binding prefix to allow asset files to be bound to parameters.
+  
   * Template expansions are now allowed inside attributes.
   
   * Applications may optionally provide a global message catalog (which is searched when a page or component message catalog

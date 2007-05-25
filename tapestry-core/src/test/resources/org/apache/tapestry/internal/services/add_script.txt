@@ -1,6 +1,8 @@
 <html><body><p>Ready to be updated with scripts.</p><script language="javascript" type="text/javascript">
 <!--
+Event.observe(window, "load", function() {
 doSomething();
 doSomethingElse();
+});
 // -->
 </script></body></html>

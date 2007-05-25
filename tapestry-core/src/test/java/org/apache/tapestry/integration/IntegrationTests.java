@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  * my system, Skype is listening on localhost:80.
  */
 @Test(timeOut = 50000, sequential = true, groups =
-{ "integration" }, enabled = true)
+{ "integration" })
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     @Test
@@ -944,5 +944,47 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // An unrelated test, but fills in a bunch of minor gaps.
 
         assertSourcePresent("<!-- A comment! -->");
+    }
+
+    @Test
+    public void palette_component()
+    {
+        open(BASE_URL);
+        clickAndWait("link=Palette Demo");
+
+        addSelection("languages:avail", "label=Haskell");
+        addSelection("languages:avail", "label=Javascript");
+        click("languages:select");
+
+        clickAndWait("//input[@type='submit']");
+        assertTextPresent("Selected Languages: [HASKELL, JAVASCRIPT]");
+
+        addSelection("languages", "label=Javascript");
+        click("languages:deselect");
+
+        addSelection("languages:avail", "label=Perl");
+        removeSelection("languages:avail", "label=Javascript");
+        addSelection("languages:avail", "label=Erlang");
+        addSelection("languages:avail", "label=Java");
+        addSelection("languages:avail", "label=Lisp");
+        addSelection("languages:avail", "label=Ml");
+        addSelection("languages:avail", "label=Python");
+        addSelection("languages:avail", "label=Ruby");
+
+        click("languages:select");
+
+        removeSelection("languages", "label=Perl");
+        removeSelection("languages", "label=Erlang");
+        removeSelection("languages", "label=Java");
+        removeSelection("languages", "label=Lisp");
+        removeSelection("languages", "label=Ml");
+        removeSelection("languages", "label=Python");
+
+        for (int i = 0; i < 7; i++)
+            click("languages:up");
+
+        clickAndWait("//input[@type='submit']");
+
+        assertTextPresent("Selected Languages: [RUBY, HASKELL, PERL, ERLANG, JAVA, LISP, ML, PYTHON]");
     }
 }

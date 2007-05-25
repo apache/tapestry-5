@@ -48,8 +48,6 @@ var Tapestry = {
         }     
       });
 
-// window.alert("result = " + event.result);
-
 	  // On a failure result, display the error div.
 	  
 	  if (form.errorDiv) {
@@ -184,7 +182,6 @@ Tapestry.FormEvent.prototype = {
 Tapestry.FieldEventManager.prototype = {
 
   initialize : function(field) {
-  
     $(field).fieldEventManager = this;
   
     this.validators = [ ];
@@ -204,7 +201,6 @@ Tapestry.FieldEventManager.prototype = {
   // any subsequent validators for that field are skipped.
   
   addValidator : function(acceptBlank, validator) {
-  
     this.validators.push([ acceptBlank, validator]);
   },
 
@@ -249,15 +245,12 @@ Tapestry.FieldEventManager.prototype = {
   	    this.label.addClassName("t-error");
   	}
   	
-  	if (this.icon) {
-  	  if (event.error && ! this.icon.visible()) {
-  	    new Effect.Appear(this.icon);
-	  }
-	  else if (! event.error && this.icon.visible()) {
-		this.icon.hide();
-      }
-  	}
-  	
+  	if (! this.icon) return;
+  
+   	if (event.error && ! this.icon.visible()) { new Effect.Appear(this.icon); }
+   	else if (! event.error && this.icon.visible()) { this.icon.hide(); }
   }
 };
+
+
  

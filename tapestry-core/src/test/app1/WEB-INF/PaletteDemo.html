@@ -1,0 +1,21 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <style>
+    DIV.t-palette SELECT { width: 300px; }
+  </style>
+
+  <h1>Palette Demo</h1>
+
+
+  <t:form>
+    <div class="t-beaneditor">
+      <t:palette t:id="languages" model="languageModel" encoder="languageEncoder"/>
+      <br/>
+      <input type="submit"/>
+    </div>
+  </t:form>
+  
+  <p>
+    Selected Languages: ${languages}
+  </p>
+</html>
