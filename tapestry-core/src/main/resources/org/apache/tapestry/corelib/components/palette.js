@@ -2,10 +2,10 @@ Tapestry.Palette = Class.create();
 
 Tapestry.Palette.prototype = {
 
-  // TODO: Make Move Up/Move Down optional (via a subclass?)
-  initialize : function(id) {
-    // The two selects:
-    
+  initialize : function(id, reorder) {
+    this.reorder = reorder;
+    // The SELECT elements
+
 	  this.avail = $(id + ":avail");
 	  this.selected = $(id);
 	  
@@ -14,11 +14,14 @@ Tapestry.Palette.prototype = {
 	  // Seperator used for values in the hidden field.
 	  this.sep = ";";
 	  
-	  // The four BUTTON elements:
+	  // The BUTTON elements
 	  this.select = $(id + ":select");
 	  this.deselect = $(id + ":deselect");
-	  this.up = $(id + ":up");
-	  this.down = $(id + ":down");
+	  
+	  if (this.reorder) {
+	    this.up = $(id + ":up");
+	    this.down = $(id + ":down");
+	  }
 	  
 	  this.bindEvents();   
   },  
@@ -31,13 +34,15 @@ Tapestry.Palette.prototype = {
     var selectClicked = this.selectClicked.bindAsEventListener(this);
     Event.observe(this.select, "click", selectClicked);
     Event.observe(this.avail, "dblclick", selectClicked);
-          
+    
     var deselectClicked = this.deselectClicked.bindAsEventListener(this);      
     Event.observe(this.deselect, "click", deselectClicked);
     Event.observe(this.selected, "dblclick", deselectClicked);
-    
-    Event.observe(this.up, "click", this.moveUpClicked.bindAsEventListener(this));
-    Event.observe(this.down, "click", this.moveDownClicked.bindAsEventListener(this));
+        
+    if (this.reorder) {          
+      Event.observe(this.up, "click", this.moveUpClicked.bindAsEventListener(this));
+      Event.observe(this.down, "click", this.moveDownClicked.bindAsEventListener(this));
+    }
   },
   
   updateButtons: function() {
@@ -46,8 +51,11 @@ Tapestry.Palette.prototype = {
     var nothingSelected = this.selected.selectedIndex < 0;
     
     this.deselect.disabled = nothingSelected;
-    this.up.disabled = nothingSelected || this.allSelectionsAtTop();
-    this.down.disabled = nothingSelected || this.allSelectionsAtBottom();
+    
+    if (this.reorder) {
+      this.up.disabled = nothingSelected || this.allSelectionsAtTop();
+      this.down.disabled = nothingSelected || this.allSelectionsAtBottom();
+    }
   },  
   
   indexOfLastSelection : function(select) {

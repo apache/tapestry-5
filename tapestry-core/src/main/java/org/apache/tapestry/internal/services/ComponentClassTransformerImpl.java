@@ -28,6 +28,7 @@ import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LogSource;
 import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.internal.TransformationException;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -75,8 +76,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         // Component classes must be public
 
-        if (!Modifier.isPublic(ctClass.getModifiers()))
-            return;
+        if (!Modifier.isPublic(ctClass.getModifiers())) return;
 
         try
         {
@@ -84,8 +84,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
             CtConstructor ctor = ctClass.getConstructor("()V");
 
-            if (!Modifier.isPublic(ctor.getModifiers()))
-                return;
+            if (!Modifier.isPublic(ctor.getModifiers())) return;
         }
         catch (NotFoundException ex)
         {
@@ -128,12 +127,18 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
                 : new InternalClassTransformationImpl(ctClass, parentTransformation, classLoader,
                         log, model);
 
-        _workerChain.transform(transformation, model);
+        try
+        {
+            _workerChain.transform(transformation, model);
 
-        transformation.finish();
+            transformation.finish();
+        }
+        catch (Throwable ex)
+        {
+            throw new TransformationException(transformation, ex);
+        }
 
-        if (log.isDebugEnabled())
-            log.debug("Finished class transformation: " + transformation);
+        if (log.isDebugEnabled()) log.debug("Finished class transformation: " + transformation);
 
         _nameToClassTransformation.put(classname, transformation);
         _nameToComponentModel.put(classname, model);
@@ -148,6 +153,13 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         if (ct == null)
             throw new RuntimeException(ServicesMessages.classNotTransformed(className));
 
-        return ct.createInstantiator(componentClass);
+        try
+        {
+            return ct.createInstantiator(componentClass);
+        }
+        catch (Throwable ex)
+        {
+            throw new TransformationException(ct, ex);
+        }
     }
 }

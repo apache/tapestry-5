@@ -180,6 +180,7 @@ import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry.ioc.services.StrategyBuilder;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.ThreadLocale;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderCommand;
@@ -1322,7 +1323,9 @@ public final class TapestryModule
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
     @InjectService("LocationRenderer")
-    ObjectRenderer locationRenderer)
+    ObjectRenderer locationRenderer,
+
+    final TypeCoercer typeCoercer)
     {
         configuration.add(Object.class, new ObjectRenderer()
         {
@@ -1335,6 +1338,18 @@ public final class TapestryModule
         configuration.add(Request.class, new RequestRenderer());
 
         configuration.add(Location.class, locationRenderer);
+
+        ObjectRenderer preformatted = new ObjectRenderer<Object>()
+        {
+            public void render(Object object, MarkupWriter writer)
+            {
+                writer.element("pre");
+                writer.write(typeCoercer.coerce(object, String.class));
+                writer.end();
+            }
+        };
+
+        configuration.add(ClassTransformation.class, preformatted);
     }
 
     public void contributePageRenderInitializer(

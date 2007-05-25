@@ -15,17 +15,16 @@
 package org.apache.tapestry.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.io.Serializable;
 import java.util.List;
 
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.internal.OptionModelImpl;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.Defense;
 
 /**
  * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum
@@ -37,7 +36,7 @@ import org.apache.tapestry.ioc.internal.util.Defense;
  * <li>As a user-presentable version of the name, i.e., "Local Variable".
  * </ul>
  */
-public final class EnumSelectModel implements SelectModel, Serializable
+public final class EnumSelectModel extends AbstractSelectModel implements Serializable
 {
     private static final long serialVersionUID = -3590412082766899684L;
 
@@ -50,8 +49,8 @@ public final class EnumSelectModel implements SelectModel, Serializable
 
     public <T extends Enum> EnumSelectModel(Class<T> enumClass, Messages messages, T[] values)
     {
-        Defense.notNull(enumClass, "enumClass");
-        Defense.notNull(messages, "messages");
+        notNull(enumClass, "enumClass");
+        notNull(messages, "messages");
 
         String prefix = TapestryInternalUtils.lastTerm(enumClass.getName());
 
