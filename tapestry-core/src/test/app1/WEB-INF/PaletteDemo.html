@@ -8,14 +8,23 @@
 
 
   <t:form>
+    <div>
+      <t:checkbox t:id="reorder" label="Enable Reorder"/>
+      <t:label for="reorder"/>
+    </div>
+
     <div class="t-beaneditor">
-      <t:palette t:id="languages" model="languageModel" reorder="true" encoder="languageEncoder"/>
+
+
+      <t:palette t:id="languages" model="languageModel" reorder="reorder" encoder="languageEncoder"/>
       <br/>
       <input type="submit"/>
     </div>
   </t:form>
+
+  <p> Selected Languages: ${languages} </p>
   
   <p>
-    Selected Languages: ${languages}
+    [ <t:actionlink t:id="reset">reset</t:actionlink> ]
   </p>
 </html>

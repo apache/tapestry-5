@@ -2,7 +2,7 @@ Tapestry.Palette = Class.create();
 
 Tapestry.Palette.prototype = {
 
-  initialize : function(id, reorder) {
+  initialize : function(id, reorder, naturalOrder) {
     this.reorder = reorder;
     // The SELECT elements
 
@@ -23,6 +23,10 @@ Tapestry.Palette.prototype = {
 	    this.down = $(id + ":down");
 	  }
 	  
+	  this.valueToOrderIndex = {};
+	  
+	  naturalOrder.split(this.sep).each(function (value, i) { this.valueToOrderIndex[value] = i; }.bind(this));
+    
 	  this.bindEvents();   
   },  
 
@@ -83,23 +87,23 @@ Tapestry.Palette.prototype = {
   },
   
   selectClicked : function(event) {
-     this.transferOptions(this.avail, this.selected);
+     this.transferOptions(this.avail, this.selected, this.reorder);
   },
   
   deselectClicked : function(event) {
-     this.transferOptions(this.selected, this.avail);
+     this.transferOptions(this.selected, this.avail, false);
   }, 
   
-  transferOptions : function (from, to) {
-    
+  transferOptions : function (from, to, atEnd) {
+    // from: SELECT to move option(s) from (those that are selected)
+    // to: SELECT to add option(s) to
+    // atEnd : if true, add at end, otherwise by natural sort order
     var toOptions = $A(to.options);
-    var lastSelected = this.indexOfLastSelection(to);
-    var before = lastSelected < 0 ? null : toOptions[toOptions.indexOf(lastSelected) + 1];
-    
+     
     toOptions.each(function(option) { option.selected = false; });
         
     var movers = this.removeSelectedOptions(from);
-    this.moveOptions(movers, to, before);
+    this.moveOptions(movers, to, atEnd);
     
   },
   
@@ -116,8 +120,8 @@ Tapestry.Palette.prototype = {
 
     var before = pos < 0 ? this.selected.options[0] : this.selected.options[pos];
  
-    this.moveOptions(movers, this.selected, before);
-    
+    this.reorderSelected(movers, before);
+   
     Event.stop(event);
   },
   
@@ -136,11 +140,26 @@ Tapestry.Palette.prototype = {
     return movers;
   },
   
-  moveOptions : function(movers, to, before) {
-    movers.each(function(option) { to.add(option, before); }.bind(this));
+  moveOptions : function(movers, to, atEnd) {
+  
+    movers.each(function(option) { this.moveOption(option, to, atEnd); }.bind(this));
     
     this.updateHidden();  
     this.updateButtons();
+  },
+  
+  moveOption : function(option, to, atEnd) {
+    var before = null;
+    
+    if (!atEnd) {
+      var optionOrder = this.valueToOrderIndex[option.value]; 
+      var candidate = $A(to.options).find(function (o) {
+            return this.valueToOrderIndex[o.value] > optionOrder;
+            }.bind(this));
+      if (candidate) before = candidate;
+    }
+  
+    to.add(option, before);
   },
   
   moveDownClicked : function(event) {
@@ -148,10 +167,18 @@ Tapestry.Palette.prototype = {
     var lastPos = lastSelected.index;
     var before = this.selected.options[lastPos + 2];
         
-    this.moveOptions(this.removeSelectedOptions(this.selected), this.selected, before);
+    // TODO: needs to be "reorder options"
+    this.reorderSelected(this.removeSelectedOptions(this.selected), before);
     
     Event.stop(event);
-  }
+  },
+  
+  reorderSelected : function(movers,  before) {
+    movers.each(function(option) { this.selected.add(option, before); }.bind(this));
+    
+    this.updateHidden();  
+    this.updateButtons();
+  },  
 };
 
 

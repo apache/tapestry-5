@@ -951,6 +951,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
         clickAndWait("link=Palette Demo");
+        clickAndWait("link=reset");
 
         addSelection("languages:avail", "label=Haskell");
         addSelection("languages:avail", "label=Javascript");
@@ -972,19 +973,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         addSelection("languages:avail", "label=Ruby");
 
         click("languages:select");
+        
+        clickAndWait("//input[@type='submit']");
+        
+        assertTextPresent("[ERLANG, HASKELL, JAVA, LISP, ML, PERL, PYTHON, RUBY]");
+  
+        check("reorder");
+        clickAndWait("//input[@type='submit']");
+        
+        addSelection("languages", "label=Ruby");
 
-        removeSelection("languages", "label=Perl");
-        removeSelection("languages", "label=Erlang");
-        removeSelection("languages", "label=Java");
-        removeSelection("languages", "label=Lisp");
-        removeSelection("languages", "label=Ml");
-        removeSelection("languages", "label=Python");
-
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < 6; i++)
             click("languages:up");
 
+        removeSelection("languages", "label=Ruby");
+        addSelection("languages", "label=Perl");
+
+        click("languages:down");
+        
         clickAndWait("//input[@type='submit']");
 
-        assertTextPresent("Selected Languages: [RUBY, HASKELL, PERL, ERLANG, JAVA, LISP, ML, PYTHON]");
+        assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
 }
