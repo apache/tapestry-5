@@ -822,11 +822,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _page;
     }
 
-    public Component getEmbeddedComponent(String embeddedId)
-    {
-        return getEmbeddedElement(embeddedId).getComponent();
-    }
-
     public ComponentPageElement getEmbeddedElement(String embeddedId)
     {
         ComponentPageElement embeddedElement = InternalUtils.get(_children, embeddedId
