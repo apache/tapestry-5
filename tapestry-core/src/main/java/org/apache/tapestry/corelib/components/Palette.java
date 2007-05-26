@@ -49,15 +49,31 @@ import org.apache.tapestry.services.Request;
  * right is "selected". Elements can be moved between the lists by clicking a button, or double
  * clicking an option (and eventually, via drag and drop).
  * <p>
+ * The items in the available list are kept ordered as per {@link SelectModel} order. When items are
+ * moved from the selected list to the available list, they items are inserted back into their
+ * proper positions.
+ * <p>
+ * The Palette may operate in normal or re-orderable mode, controlled by the reorder parameter.
+ * <p>
+ * In normal mode, the items in the selected list are kept in the same "natural" order as the items
+ * in the available list.
+ * <p>
+ * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In addition,
+ * two extra buttons appear to move items up and down within the selected list.
+ * <p>
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the
  * columns, etc. By default, the &lt;select&gt; element's widths are driven by the length of the
- * longest &lt;option&gt;, and it is common to override this:
+ * longest &lt;option&gt;, and it is common to override this to a fixed value:
  * 
  * <pre>
  * &lt;style&gt;
  * DIV.t-palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
+ * 
+ * <p>
+ * This ensures that the two columns are the same width, and that the column widths don't change
+ * as items move back and forth.
  * 
  * <p>
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by the many
@@ -338,11 +354,24 @@ public class Palette extends AbstractField
             sep = ";";
         }
 
+        StringBuilder naturalOrder = new StringBuilder();
+        sep = "";
+        for (String value : _naturalOrder)
+        {
+            naturalOrder.append(sep);
+            naturalOrder.append(value);
+            sep = ";";
+        }
+
         String clientId = getClientId();
 
         _renderSupport.addScriptLink(_paletteLibrary);
 
-        _renderSupport.addScript("new Tapestry.Palette('%s', %s);", clientId, _reorder);
+        _renderSupport.addScript(
+                "new Tapestry.Palette('%s', %s, '%s');",
+                clientId,
+                _reorder,
+                naturalOrder);
 
         writer.element(
                 "input",
@@ -357,10 +386,14 @@ public class Palette extends AbstractField
         writer.end();
     }
 
+    /** Prevent the body from rendering. */
     boolean beforeRenderBody()
     {
         return false;
     }
+
+    /** The natural order of elements, in terms of their client ids. */
+    private List<String> _naturalOrder;
 
     @SuppressWarnings("unchecked")
     void setupRender(MarkupWriter writer)
@@ -368,6 +401,7 @@ public class Palette extends AbstractField
         _valueToOptionModel = newMap();
         _availableOptions = newList();
         _selectedOptions = newList();
+        _naturalOrder = newList();
         _renderer = new SelectModelRenderer(writer, _encoder);
 
         final Set selectedSet = newSet(getSelected());
@@ -390,6 +424,10 @@ public class Palette extends AbstractField
 
                 boolean isSelected = selectedSet.contains(value);
 
+                String clientValue = toClient(value);
+
+                _naturalOrder.add(clientValue);
+
                 if (isSelected)
                 {
                     _selectedOptions.add(optionModel);
@@ -409,6 +447,11 @@ public class Palette extends AbstractField
     int getSize()
     {
         return _size;
+    }
+
+    String toClient(Object value)
+    {
+        return _encoder.toClient(value);
     }
 
     List<Object> getSelected()

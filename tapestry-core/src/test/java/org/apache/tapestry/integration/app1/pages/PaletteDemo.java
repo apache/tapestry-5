@@ -33,6 +33,19 @@ public class PaletteDemo
     @Persist
     private List<ProgrammingLanguage> _languages;
 
+    @Persist
+    private boolean _reorder;
+
+    public boolean isReorder()
+    {
+        return _reorder;
+    }
+
+    public void setReorder(boolean reorder)
+    {
+        _reorder = reorder;
+    }
+
     public List<ProgrammingLanguage> getLanguages()
     {
         return _languages;
@@ -52,5 +65,11 @@ public class PaletteDemo
     public ValueEncoder getLanguageEncoder()
     {
         return new EnumValueEncoder(ProgrammingLanguage.class);
+    }
+
+    void onActionFromReset()
+    {
+        _reorder = false;
+        _languages = null;
     }
 }
