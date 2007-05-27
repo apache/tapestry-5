@@ -878,11 +878,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _nestedId;
     }
 
-    public Component getPage()
-    {
-        return _page.getRootComponent();
-    }
-
     public boolean handleEvent(ComponentEvent event)
     {
         // Simple case: no mixins
