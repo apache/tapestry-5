@@ -342,10 +342,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Block getBlockParameter(String parameterName)
     {
-        if (_bindings == null) return null;
+        // Is allowed explicitly to not exist and be informal, otherwise the
+        // component in question would just use @Parameter.
 
-        if (_bindings.containsKey(parameterName))
-            return (Block) _bindings.get(parameterName).get();
+        if (getBinding(parameterName) != null) return readParameter(parameterName, Block.class);
 
         return null;
     }
