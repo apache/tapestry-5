@@ -17,12 +17,12 @@
 
 <suite name="Tapestry Core" parallel="tests" thread-count="10" annotations="1.5" verbose="2">
   <parameter name="tapestry.integration-webapp" value="src/test/app1"/>
-  <test name="Tapestry Integration">
+  <test name="Integration Tests">
     <packages>
-      <package name="org.apache.tapestry.integration"/>      
-    </packages>    
+      <package name="org.apache.tapestry.integration"/>
+    </packages>
   </test>
-  <test name="Tapestry Core">
+  <test name="Public APIs">
     <packages>
       <package name="org.apache.tapestry"/>
       <package name="org.apache.tapestry.integration.pagelevel"/>
@@ -35,6 +35,10 @@
       <package name="org.apache.tapestry.runtime"/>
       <package name="org.apache.tapestry.translator"/>
       <package name="org.apache.tapestry.validator"/>
+    </packages>
+  </test>
+  <test name="Internal APIs">
+    <packages>
       <package name="org.apache.internal"/>
       <package name="org.apache.tapestry.internal"/>
       <package name="org.apache.tapestry.internal.beaneditor"/>
