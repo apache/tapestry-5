@@ -20,7 +20,7 @@ import org.testng.annotations.Test;
 
 public class CodeEqTest extends Assert
 {
-    @Test(dataProvider = "stripValues")
+    @Test(enabled = false, dataProvider = "stripValues")
     public void strip(String input, String expected)
     {
         assertEquals(CodeEq.strip(input), expected);
@@ -38,7 +38,7 @@ public class CodeEqTest extends Assert
                         "{bar(); baz(); if (gnip()){gnop();}}" } };
     }
 
-    @Test
+    @Test(enabled = false)
     public void to_string()
     {
         CodeEq eq = new CodeEq("{ foo(); bar(); baz(); }");
@@ -50,7 +50,7 @@ public class CodeEqTest extends Assert
         assertEquals(buffer.toString(), "codeEq({foo(); bar(); baz();})");
     }
 
-    @Test(dataProvider = "matchValues")
+    @Test(enabled = false, dataProvider = "matchValues")
     public void matches(String pattern, String parameter, boolean matches)
     {
         CodeEq ceq = new CodeEq(pattern);
