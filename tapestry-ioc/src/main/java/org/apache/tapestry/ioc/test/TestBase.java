@@ -26,10 +26,13 @@ import org.testng.annotations.AfterMethod;
  * Extends from {@link org.testng.Assert} to bring in all the public static assert methods without
  * requiring extra imports.
  * <p>
- * Provides common mock factory and mock trainer methods. A single <em>standard</em> mock control
- * is used for all mock objects. Standard mocks do not care about the exact order in which methods
- * are invoked, though they are as rigourous as strict mocks when checking that parameters are the
- * correct values.
+ * Provides a common mock factory method, {@link #newMock(Class)}. A single <em>standard</em>
+ * mock control is used for all mock objects. Standard mocks do not care about the exact order in
+ * which methods are invoked, though they are as rigourous as strict mocks when checking that
+ * parameters are the correct values.
+ * <p>
+ * This base class is created with the intention of use within a TestNG test suite; if using JUnit,
+ * you can get the same functionality using {@link MockTester}.
  * <p>
  * This class is thread safe (it uses a thread local to store the mock control). In theory, this
  * should allow TestNG to execute tests in parallel. Unfortunately, as of this writing (TestNG 5.1
@@ -37,6 +40,7 @@ import org.testng.annotations.AfterMethod;
  * some tests are dropped, and so Tapestry does not make use of TestNG parallel execution.
  * 
  * @see EasyMock#createControl()
+ * @see MockTester
  */
 public class TestBase extends Assert
 {
@@ -49,14 +53,14 @@ public class TestBase extends Assert
         }
     }
 
-    private final ThreadLocalControl _localControl = new ThreadLocalControl();
+    private final MockTester _tester = new MockTester();
 
     /**
      * Returns the {@link IMocksControl} for this thread.
      */
     protected final IMocksControl getMocksControl()
     {
-        return _localControl.get();
+        return _tester.getMocksControl();
     }
 
     /**
@@ -65,7 +69,7 @@ public class TestBase extends Assert
     @AfterMethod(alwaysRun = true)
     public final void discardMockControl()
     {
-        _localControl.remove();
+        _tester.cleanup();
     }
 
     /**
@@ -80,39 +84,37 @@ public class TestBase extends Assert
      */
     protected final <T> T newMock(Class<T> mockClass)
     {
-        return getMocksControl().createMock(mockClass);
+        return _tester.newMock(mockClass);
     }
 
     /**
-     * Replay's each mock object created by {@link #newMock(Class)}.
+     * Switches each mock object created by {@link #newMock(Class)} into replay mode (out of the
+     * initial training mode).
      */
     protected final void replay()
     {
-        getMocksControl().replay();
+        _tester.replay();
     }
 
     /**
-     * Verifies each created mock object, then resets the mock for additional training.
+     * Verifies that all trained methods have been invoked on all mock objects (created by
+     * {@link #newMock(Class)}, then switches each mock object back to training mode.
      */
     protected final void verify()
     {
-        IMocksControl control = getMocksControl();
-
-        control.verify();
-        control.reset();
+        _tester.verify();
     }
 
     /**
-     * Trains a mock object to throw an exception (for the most recent method call). Generally,
-     * using {@link #expect(Object)}.andThrow() is preferred, but that doesn't work for void
-     * methods.
+     * Convienience for {@link EasyMock#expectLastCall()} with
+     * {@link IExpectationSetters#andThrow(Throwable)}.
      * 
      * @param throwable
-     *            the exception to be thrown by the most recent method call on the mock
+     *            the exception to be thrown by the most recent method call on any mock
      */
     protected final void setThrowable(Throwable throwable)
     {
-        getMocksControl().andThrow(throwable);
+        EasyMock.expectLastCall().andThrow(throwable);
     }
 
     /**
@@ -125,13 +127,17 @@ public class TestBase extends Assert
         fail("This code should not be reachable.");
     }
 
+    /**
+     * Convienience for {@link EasyMock#expect(Object)}.
+     * 
+     * @param <T>
+     * @param value
+     * @return expectation setter, for setting return value, etc.
+     */
     @SuppressWarnings("unchecked")
     protected final <T> IExpectationSetters<T> expect(T value)
     {
-        // value will have been evaluated, we can then return the control to string together
-        // andReturn() or etc. calls
-
-        return getMocksControl();
+        return EasyMock.expect(value);
     }
 
     /**
