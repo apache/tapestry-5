@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -183,13 +184,28 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertEquals(options.size(), 3);
 
         assertEquals(options.get(0).getLabel(), "A");
-        assertEquals(options.get(0).getValue(), "1");
+        assertEquals(options.get(0).getValue(), 1);
 
         assertEquals(options.get(1).getLabel(), "");
-        assertEquals(options.get(1).getValue(), "2");
+        assertEquals(options.get(1).getValue(), 2);
 
         assertEquals(options.get(2).getLabel(), "C");
-        assertEquals(options.get(2).getValue(), "3");
+        assertEquals(options.get(2).getValue(), 3);
+    }
+
+    @Test
+    public void null_map_key_is_null_option_value()
+    {
+
+        Map<Integer, String> map = new HashMap<Integer, String>();
+        map.put(null, "Label");
+
+        List<OptionModel> options = TapestryInternalUtils.toOptionModels(map);
+
+        assertEquals(options.size(), 1);
+
+        assertEquals(options.get(0).getLabel(), "Label");
+        assertEquals(options.get(0).getValue(), null);
     }
 
     @Test
