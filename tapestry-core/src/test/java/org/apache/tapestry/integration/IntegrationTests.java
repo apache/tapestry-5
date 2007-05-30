@@ -35,22 +35,6 @@ import org.testng.annotations.Test;
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     @Test
-    public void any_component()
-    {
-        open(BASE_URL);
-
-        clickAndWait("link=AnyDemo");
-
-        assertSourcePresent(
-                "<span class=\"title\">Page Title</span>",
-                "<div class=\"heading\">Heading</div>",
-                "<h2 class=\"section\">Section</h2>",
-                "<li id=\"item\">Item (item)</li>",
-                "<li id=\"item_0\">Item (item_0)</li>",
-                "<li id=\"item_1\">Item (item_1)</li>");
-    }
-
-    @Test
     public void assets() throws Exception
     {
         open(BASE_URL);
