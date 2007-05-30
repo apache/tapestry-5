@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -183,12 +184,11 @@ public class TapestryInternalUtils
      */
     public static OptionModel toOptionModel(Map.Entry input)
     {
-        Defense.notNull(input, "input");
+        notNull(input, "input");
 
-        String value = (input.getKey() != null ? String.valueOf(input.getKey()) : "");
-        String label = (input.getValue() != null ? String.valueOf(input.getValue()) : "");
+        String label = input.getValue() != null ? String.valueOf(input.getValue()) : "";
 
-        return new OptionModelImpl(label, false, value);
+        return new OptionModelImpl(label, false, input.getKey());
     }
 
     /**
