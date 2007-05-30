@@ -14,17 +14,17 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.Block;
+import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.corelib.components.Any;
 
 public class RenderComponentDemo
 {
     @Persist
     private boolean _enabled;
 
-    @Component
-    private Any _optional;
+    @Inject
+    private Block _optional;
 
     public boolean isEnabled()
     {

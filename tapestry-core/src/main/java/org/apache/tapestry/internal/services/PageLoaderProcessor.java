@@ -609,17 +609,9 @@ class PageLoaderProcessor
         }
 
         if (isBlank(embeddedType) && isBlank(embeddedComponentClassName))
-        {
-            // non-null means its invisible instrumentation; the Any component
-            // will mimic the actual element, w/ body and informal parameters.
-
-            if (elementName != null)
-                embeddedType = "Any";
-            else
-                throw new TapestryException(ServicesMessages.noTypeForEmbeddedComponent(
-                        embeddedId,
-                        _loadingComponentModel.getComponentClassName()), token, null);
-        }
+            throw new TapestryException(ServicesMessages.noTypeForEmbeddedComponent(
+                    embeddedId,
+                    _loadingComponentModel.getComponentClassName()), token, null);
 
         ComponentPageElement newComponent = _pageElementFactory.newComponentElement(
                 _page,

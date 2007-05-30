@@ -124,7 +124,7 @@ Event Handler Method Convention Names
   }
 +---+  
   
-  If you event type is named "onAny", it will receive all types of events. This is rarely what you want!
+  If you method is named "onAnyEvent", it will be invoked for all types of events. This is rarely what you want!
     
   Note from Howard: I've found that I prefer the naming convention approach, and reserve the annotation just for situations that don't otherwise fit.  
   
