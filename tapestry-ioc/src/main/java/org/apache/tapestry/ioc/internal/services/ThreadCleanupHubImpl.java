@@ -22,9 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 
-/**
- * 
- */
 public class ThreadCleanupHubImpl implements ThreadCleanupHub
 {
     private static class ListHolder extends ThreadLocal<List<ThreadCleanupListener>>
