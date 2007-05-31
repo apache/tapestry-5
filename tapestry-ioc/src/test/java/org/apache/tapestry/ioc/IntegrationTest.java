@@ -319,18 +319,15 @@ public class IntegrationTest extends IOCInternalTestCase
     @Test
     public void eager_service_loading()
     {
+        Registry r = buildRegistry(EagerLoadModule.class);
+
         assertFalse(
                 EagerLoadModule._eagerLoadDidHappen,
                 "EagerLoadModule is not in correct initial state.");
 
-        Registry r = buildRegistry(EagerLoadModule.class);
-
-        // Prevents warning: r is never read
-        assertNotNull(r);
+        r.eagerLoadServices();
 
         assertTrue(EagerLoadModule._eagerLoadDidHappen);
-
-        r = null;
     }
 
     @Test

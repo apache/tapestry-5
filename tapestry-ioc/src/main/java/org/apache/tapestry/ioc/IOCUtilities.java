@@ -37,7 +37,7 @@ public final class IOCUtilities
      * Construct a default registry, including modules identify via the Tapestry-Module-Classes
      * Manifest entry.
      * 
-     * @return constructed Registry
+     * @return constructed Registry, after eager loading of services
      */
     public static Registry buildDefaultRegistry()
     {
@@ -45,7 +45,11 @@ public final class IOCUtilities
 
         addDefaultModules(builder);
 
-        return builder.build();
+        Registry registry = builder.build();
+
+        registry.eagerLoadServices();
+
+        return registry;
     }
 
     /**
