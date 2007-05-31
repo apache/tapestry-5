@@ -113,6 +113,8 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         _registry = builder.build();
 
         // _registry.getService(Alias.class).setMode("servlet");
+
+        _registry.eagerLoadServices();
     }
 
     @AfterSuite
@@ -127,6 +129,11 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     public final void cleanupThread()
     {
         _registry.cleanupThread();
+    }
+
+    public void eagerLoadServices()
+    {
+        _registry.eagerLoadServices();
     }
 
     public final <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)

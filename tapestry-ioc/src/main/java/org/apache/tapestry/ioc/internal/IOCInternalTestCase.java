@@ -68,12 +68,19 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return _registry.autobuild(clazz);
     }
 
+    public final void eagerLoadServices()
+    {
+        _registry.eagerLoadServices();
+    }
+
     @BeforeSuite
     public final void setup_registry()
     {
         RegistryBuilder builder = new RegistryBuilder();
 
         _registry = builder.build();
+
+        _registry.eagerLoadServices();
 
         _classFactory = _registry.getService(ClassFactory.class);
     }

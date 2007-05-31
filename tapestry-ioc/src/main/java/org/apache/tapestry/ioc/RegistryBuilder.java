@@ -130,8 +130,6 @@ public final class RegistryBuilder
 
         RegistryImpl registry = new RegistryImpl(_modules, _classFactory, _logSource);
 
-        registry.eagerLoadServices();
-
         return new RegistryWrapper(registry);
     }
 

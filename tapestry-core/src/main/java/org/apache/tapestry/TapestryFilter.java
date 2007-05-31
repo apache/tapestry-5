@@ -58,7 +58,6 @@ public class TapestryFilter implements Filter
      * defined by the <code>tapestry.app-package</code> context init parameter and the application
      * name is the capitalization of the filter name (as specified in web.xml).
      */
-
     public final void init(FilterConfig filterConfig) throws ServletException
     {
         _config = filterConfig;
@@ -85,6 +84,8 @@ public class TapestryFilter implements Filter
                 ServletApplicationInitializer.class);
 
         ai.initializeApplication(filterConfig.getServletContext());
+        
+        _registry.eagerLoadServices();
 
         _handler = _registry.getService(
                 "HttpServletRequestHandler",

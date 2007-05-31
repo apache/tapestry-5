@@ -63,4 +63,9 @@ public class RegistryWrapper implements Registry
         return _registry.autobuild(clazz);
     }
 
+    public void eagerLoadServices()
+    {
+        _registry.eagerLoadServices();
+    }
+
 }

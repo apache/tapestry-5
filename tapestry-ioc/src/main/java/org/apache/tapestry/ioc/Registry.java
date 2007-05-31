@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.ioc;
 
+import org.apache.tapestry.ioc.annotations.EagerLoad;
+
 /**
  * Public access to the IoC service registry.
  */
@@ -37,4 +39,9 @@ public interface Registry extends ObjectLocator
      * @see org.apache.tapestry.ioc.services.RegistryShutdownListener
      */
     void shutdown();
+
+    /**
+     * Invoked to eagerly load services marked with the {@link EagerLoad} annotation.
+     */
+    void eagerLoadServices();
 }

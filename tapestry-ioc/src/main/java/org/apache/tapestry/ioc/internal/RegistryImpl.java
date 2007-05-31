@@ -76,6 +76,8 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     private final OneShotLock _lock = new OneShotLock();
 
+    private final OneShotLock _eagerLoadLock = new OneShotLock();
+
     private final Map<String, Object> _builtinServices = newCaseInsensitiveMap();
 
     private final Map<String, Class> _builtinTypes = newCaseInsensitiveMap();
@@ -180,8 +182,12 @@ public class RegistryImpl implements Registry, InternalRegistry
      */
     public void eagerLoadServices()
     {
+        _eagerLoadLock.lock();
+
         for (Module m : _modules)
             m.eagerLoadServices();
+
+        cleanupThread();
     }
 
     public Log logForService(String serviceId)
