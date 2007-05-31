@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package org.apache.tapestry.ioc.services;
  * Event hub used to identify when the end of thread cleanup (i.e., end of request cleanup in a
  * typical web application) should occur. Tapestry IoC has any number of objects that need to know
  * when this event occurs, so that they can clean up any per-thread/per-request state.
- * 
- * 
  */
 public interface ThreadCleanupHub
 {
@@ -32,4 +30,9 @@ public interface ThreadCleanupHub
      *            to add
      */
     void addThreadCleanupListener(ThreadCleanupListener listener);
+
+    /**
+     * Immediately performs a cleanup of the thread, notifying all listeners.
+     */
+    void cleanup();
 }
