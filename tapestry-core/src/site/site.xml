@@ -63,6 +63,7 @@ This is probably useful but it drives me crazy whenever I reload a page.
             <item name="Component Parameters" href="guide/parameters.html"/>
             <item name="Page Navigation" href="guide/pagenav.html"/>
             <item name="Input Validation" href="guide/validation.html"/>
+            <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
             <item name="Component Events" href="guide/event.html"/>
             <item name="Page Lifecycle" href="guide/lifecycle.html"/>
             <item name="Component Mixins" href="guide/mixins.html"/>

@@ -21,9 +21,9 @@ import org.apache.tapestry.integration.app1.data.RegistrationData;
 
 public class BeanEditorDemo
 {
-    @Component(parameters =
-    { "clientValidation=clientValidation", "object=registrationData" })
-    private BeanEditForm _edit;
+    @Component(id = "registrationData", parameters =
+    { "clientValidation=clientValidation" })
+    private BeanEditForm _form;
 
     @ApplicationState
     private RegistrationData _data;
@@ -41,7 +41,7 @@ public class BeanEditorDemo
     void onActionFromClear()
     {
         _data = null;
-        _edit.clearErrors();
+        _form.clearErrors();
     }
 
     public boolean getClientValidation()

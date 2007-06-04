@@ -16,15 +16,14 @@ package org.apache.tapestry.corelib.components;
 
 import java.util.Locale;
 
+import org.apache.tapestry.Binding;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.FormValidationControl;
-import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.Translator;
-import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
@@ -33,11 +32,13 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.services.BeanBlockSource;
+import org.apache.tapestry.services.PropertyEditContext;
 import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
+import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.TranslatorDefaultSource;
-import org.apache.tapestry.util.EnumSelectModel;
-import org.apache.tapestry.util.EnumValueEncoder;
 
 /**
  * A component that creates an entire form editting the properties of a particular bean. Inspired by
@@ -90,33 +91,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Inject
     private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
 
-    @Inject
-    private Block _text;
-
-    @Inject
-    private Block _enum;
-
-    @Inject
-    private Block _checkbox;
-
     @Component(parameters = "clientValidation=clientValidation")
     private Form _form;
-
-    @Component(parameters =
-    { "value=valueForProperty", "label=prop:propertyEditModel.label",
-            "encoder=valueEncoderForProperty", "model=selectModelForProperty",
-            "validate=prop:validateForProperty", "clientId=prop:propertyName" })
-    private Select _select;
-
-    @Component(parameters =
-    { "value=valueForProperty", "label=prop:propertyEditModel.label",
-            "translate=prop:translateForProperty", "validate=prop:validateForProperty",
-            "clientId=prop:propertyName" })
-    private TextField _textField;
-
-    @Component(parameters =
-    { "value=valueForProperty", "label=prop:propertyEditModel.label", "clientId=prop:propertyName" })
-    private Checkbox _checkboxField;
 
     @Inject
     private Messages _messages;
@@ -140,7 +116,24 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     private Block _blockForProperty;
 
-    private Field _fieldForProperty;
+    @Inject
+    private DefaultComponentParameterBindingSource _defaultBindingSource;
+
+    @Inject
+    private Environment _environment;
+
+    @Inject
+    private BeanBlockSource _beanBlockSource;
+
+    private boolean _mustPopBeanEditContext;
+
+    /**
+     * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
+     */
+    Binding defaultObject()
+    {
+        return _defaultBindingSource.createDefaultBinding("object", _resources);
+    }
 
     public BeanModel getModel()
     {
@@ -159,7 +152,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         _propertyEditModel = _model.get(propertyName);
 
         _blockForProperty = null;
-        _fieldForProperty = null;
 
         Block override = _resources.getBlockParameter(_propertyEditModel.getId());
 
@@ -171,32 +163,74 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
         String dataType = _propertyEditModel.getDataType();
 
-        if (dataType.equals("text"))
+        try
         {
-            _blockForProperty = _text;
-            _fieldForProperty = _textField;
-            return;
+            _blockForProperty = _beanBlockSource.getEditBlock(dataType);
         }
-
-        if (dataType.equals("enum"))
+        catch (RuntimeException ex)
         {
-            _blockForProperty = _enum;
-            _fieldForProperty = _select;
-            return;
-        }
+            String message = _messages.format("block-error", _propertyName, dataType, _object, ex);
 
-        if (dataType.equals("checkbox"))
-        {
-            _blockForProperty = _checkbox;
-            _fieldForProperty = _checkboxField;
-            return;
+            throw new TapestryException(message, _resources.getLocation(), ex);
         }
-
-        throw new IllegalArgumentException(_messages.format("no-editor", dataType, propertyName));
     }
 
     boolean onPrepareFromForm()
     {
+        PropertyEditContext context = new PropertyEditContext()
+        {
+            public Messages getContainerMessages()
+            {
+                return getResources().getContainerMessages();
+            }
+
+            public String getLabel()
+            {
+                return getPropertyEditModel().getLabel();
+            }
+
+            public String getPropertyId()
+            {
+                return getPropertyEditModel().getId();
+            }
+
+            public Class getPropertyType()
+            {
+                return getPropertyEditModel().getPropertyType();
+            }
+
+            public Object getPropertyValue()
+            {
+                return getPropertyEditModel().getConduit().get(getObject());
+            }
+
+            public Translator getTranslator()
+            {
+                return _translatorDefaultSource.find(getPropertyEditModel().getPropertyType());
+            }
+
+            public FieldValidator getValidator(Field field)
+            {
+                return _fieldValidatorDefaultSource.createDefaultValidator(
+                        field,
+                        _propertyName,
+                        _resources.getContainerMessages(),
+                        _locale,
+                        _propertyEditModel.getPropertyType(),
+                        _propertyEditModel.getConduit());
+            }
+
+            public void setPropertyValue(Object value)
+            {
+                getPropertyEditModel().getConduit().set(getObject(), value);
+            }
+        };
+
+        _environment.push(PropertyEditContext.class, context);
+        // Depending on whether we're rendering or processing the form submission we'll have two
+        // different places to clean up the Environment.
+        _mustPopBeanEditContext = true;
+
         // Fire a new prepare event to be consumed by the container. This is the container's
         // chance to ensure that there's an object to edit.
 
@@ -222,10 +256,31 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         return true; // abort the form's prepare event
     }
 
-    void inject(ComponentResources resources, BeanModelSource modelSource)
+    private void cleanupBeanEditContext()
+    {
+        if (_mustPopBeanEditContext)
+        {
+            _environment.pop(PropertyEditContext.class);
+            _mustPopBeanEditContext = false;
+        }
+    }
+
+    void onSubmit()
+    {
+        cleanupBeanEditContext();
+    }
+
+    void afterRender()
+    {
+        cleanupBeanEditContext();
+    }
+
+    /** Used for testing. */
+    void inject(ComponentResources resources, BeanModelSource modelSource, Environment environment)
     {
         _resources = resources;
         _modelSource = modelSource;
+        _environment = environment;
     }
 
     Object getObject()
@@ -250,55 +305,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         }
     }
 
-    public Translator getTranslateForProperty()
-    {
-        return _translatorDefaultSource.find(_propertyEditModel.getPropertyType());
-    }
-
-    public FieldValidator getValidateForProperty()
-    {
-        return _fieldValidatorDefaultSource.createDefaultValidator(
-                _fieldForProperty,
-                _propertyName,
-                _resources.getContainerMessages(),
-                _locale,
-                _propertyEditModel.getPropertyType(),
-                _propertyEditModel.getConduit());
-    }
-
-    public PropertyModel getPropertyEditModel()
-    {
-        return _propertyEditModel;
-    }
-
     public Block getBlockForProperty()
     {
         return _blockForProperty;
-    }
-
-    public Object getValueForProperty()
-    {
-        return _propertyEditModel.getConduit().get(_object);
-    }
-
-    public void setValueForProperty(Object value)
-    {
-        _propertyEditModel.getConduit().set(_object, value);
-    }
-
-    /** Provide a value encoder for an enum type. */
-    @SuppressWarnings("unchecked")
-    public ValueEncoder getValueEncoderForProperty()
-    {
-        return new EnumValueEncoder(_propertyEditModel.getPropertyType());
-    }
-
-    /** Provide a select mode for an enum type. */
-    @SuppressWarnings("unchecked")
-    public SelectModel getSelectModelForProperty()
-    {
-        return new EnumSelectModel(_propertyEditModel.getPropertyType(), _resources
-                .getContainerMessages());
     }
 
     /** Returns the client id of the embedded form. */
@@ -340,6 +349,16 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public void recordError(String errorMessage)
     {
         _form.recordError(errorMessage);
+    }
+
+    private ComponentResources getResources()
+    {
+        return _resources;
+    }
+
+    private PropertyModel getPropertyEditModel()
+    {
+        return _propertyEditModel;
     }
 
 }
