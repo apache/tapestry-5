@@ -393,4 +393,14 @@ class ServicesMessages
     {
         return MESSAGES.format("unclosed-attribute-expression", expression);
     }
+
+    static String noDisplayForDataType(String datatype)
+    {
+        return MESSAGES.format("no-display-for-data-type", datatype);
+    }
+    
+    static String noEditForDataType(String datatype)
+    {
+        return MESSAGES.format("no-edit-for-data-type", datatype);
+    }
 }

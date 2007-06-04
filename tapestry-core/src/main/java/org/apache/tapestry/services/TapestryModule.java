@@ -77,6 +77,7 @@ import org.apache.tapestry.internal.services.ApplicationStateWorker;
 import org.apache.tapestry.internal.services.AssetDispatcher;
 import org.apache.tapestry.internal.services.AssetInjectionProvider;
 import org.apache.tapestry.internal.services.AssetSourceImpl;
+import org.apache.tapestry.internal.services.BeanBlockSourceImpl;
 import org.apache.tapestry.internal.services.BeanModelSourceImpl;
 import org.apache.tapestry.internal.services.BindingSourceImpl;
 import org.apache.tapestry.internal.services.ClasspathAssetAliasManagerImpl;
@@ -224,6 +225,7 @@ public final class TapestryModule
         binder.bind(EnvironmentalShadowBuilder.class, EnvironmentalShadowBuilderImpl.class);
         binder.bind(ComponentSource.class, ComponentSourceImpl.class);
         binder.bind(BeanModelSource.class, BeanModelSourceImpl.class);
+        binder.bind(BeanBlockSource.class, BeanBlockSourceImpl.class);
     }
 
     public static MarkupWriterFactory build(final ComponentInvocationMap componentInvocationMap)
@@ -533,6 +535,28 @@ public final class TapestryModule
         configuration.add(Number.class, "text");
         configuration.add(Enum.class, "enum");
         configuration.add(Boolean.class, "checkbox");
+    }
+
+    public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)
+    {
+        addEditBlock(configuration, "text", "text");
+        addEditBlock(configuration, "enum", "enum");
+        addEditBlock(configuration, "checkbox", "checkbox");
+
+        addDisplayBlock(configuration, "enum", "enum");
+    }
+
+    private static void addEditBlock(Configuration<BeanBlockContribution> configuration,
+            String dataType, String blockId)
+    {
+        configuration.add(new BeanBlockContribution(dataType, "PropertyEditBlocks", blockId, true));
+    }
+
+    private static void addDisplayBlock(Configuration<BeanBlockContribution> configuration,
+            String dataType, String blockId)
+    {
+        configuration.add(new BeanBlockContribution(dataType, "PropertyDisplayBlocks", blockId,
+                false));
     }
 
     /**

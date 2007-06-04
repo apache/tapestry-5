@@ -28,7 +28,6 @@ import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LogSource;
 import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.TransformationException;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;

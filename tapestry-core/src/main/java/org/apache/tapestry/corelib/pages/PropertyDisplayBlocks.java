@@ -12,9 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration.app1.data;
+package org.apache.tapestry.corelib.pages;
 
-public enum ProgrammingLanguage
+import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.services.PropertyDisplayContext;
+
+public class PropertyDisplayBlocks
 {
-    ADA, ASSEMBLY, C, ERLANG, HASKELL, JAVA, JAVASCRIPT, LISP, ML, PERL, PYTHON, RUBY, SCALA, SCHEME
+    @Environmental
+    private PropertyDisplayContext _context;
+
+    public String getConvertedEnumValue()
+    {
+        Enum value = (Enum) _context.getPropertyValue();
+
+        if (value == null) return null;
+
+        return TapestryInternalUtils.getLabelForEnum(_context.getContainerMessages(), value);
+    }
 }

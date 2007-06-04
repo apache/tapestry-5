@@ -27,6 +27,18 @@ import org.apache.tapestry.ioc.Messages;
  */
 public interface FieldValidatorDefaultSource
 {
+    /**
+     * Analyzes the property type and property annotations to determine the default set of
+     * validations for the property, which are wrapped to form a {@link FieldValidator} for a field.
+     * 
+     * @param field
+     * @param overrideId
+     * @param overrideMessages
+     * @param locale
+     * @param propertyType
+     * @param propertyAnnotations
+     * @return
+     */
     FieldValidator createDefaultValidator(Field field, String overrideId,
             Messages overrideMessages, Locale locale, Class propertyType,
             AnnotationProvider propertyAnnotations);

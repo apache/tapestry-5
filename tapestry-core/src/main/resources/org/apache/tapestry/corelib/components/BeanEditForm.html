@@ -2,7 +2,7 @@
     <t:errors/>
 
     <div class="t-beaneditor">
-        <div class="t-beaneditor-row" t:type="Loop" t:source="model.propertyNames"
+        <div class="t-beaneditor-row" t:type="loop" t:source="model.propertyNames"
             t:value="propertyName">
             <t:delegate to="blockForProperty"/>
         </div>
@@ -10,19 +10,5 @@
             <input type="submit" value="${submitLabel}"/>
         </div>
     </div>
-    
-    <t:block id="text">
-        <label t:type="Label" for="textField"/>
-        <input t:id="textField"/>
-    </t:block>
 
-    <t:block id="enum">
-        <t:label for="select"/>
-        <input t:id="select"/>
-    </t:block>
-    
-    <t:block id="checkbox">
-        <t:label for="checkboxField"/>
-        <input t:id="checkboxField"/>
-    </t:block>
 </form>

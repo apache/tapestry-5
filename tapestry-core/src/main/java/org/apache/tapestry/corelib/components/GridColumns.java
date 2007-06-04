@@ -129,5 +129,5 @@ public class GridColumns
     public String getCellClass()
     {
         return _columnModel.getId() + "-header";
-    }
+    }    
 }

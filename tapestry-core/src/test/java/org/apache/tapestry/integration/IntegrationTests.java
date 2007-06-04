@@ -40,14 +40,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         open(BASE_URL);
         clickAndWait("link=AssetDemo");
 
-        assertText("//img[@id='img']/@src", "/images/tapestry_banner.gif");
+        assertText("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
 
         // This doesn't prove that the image shows up in the client browser (it does, but
         // it could just as easily be a broken image). Haven't figured out how Selenium
         // allows this to be verified. Note that the path below represents some aliasing
         // of the raw classpath resource path.
 
-        assertText("//img[@id='img_0']/@src", "/assets/app1/pages/tapestry-button.png");
+        assertText("//img[@id='button']/@src", "/assets/app1/pages/tapestry-button.png");
 
         // Read the byte stream for the asset and compare to the real copy.
 
@@ -655,8 +655,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText("//img[@id='img']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
-        assertText("//img[@id='img']/@alt", "[Asc]");
+        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText("//img[@id='rating:sort']/@alt", "[Asc]");
 
         assertTextSeries(
                 "//tr[22]/td[%d]",
@@ -672,15 +672,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText("//img[@id='img']/@src", "/assets/tapestry/corelib/components/sort-desc.png");
-        assertText("//img[@id='img']/@alt", "[Desc]");
+        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-desc.png");
+        assertText("//img[@id='rating:sort']/@alt", "[Desc]");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "Hey Blondie", "Out from Out Where");
 
         clickAndWait("link=Title");
 
-        assertText("//img[@id='img']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
-        assertText("//img[@id='img']/@alt", "[Asc]");
+        assertText("//img[@id='title:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
 

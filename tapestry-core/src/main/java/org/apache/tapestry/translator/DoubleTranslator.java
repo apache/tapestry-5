@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 public class DoubleTranslator implements Translator<Double>
 {
     /**
-     * Parses blank values to null, otherwise parses the client value to a long
+     * Parses blank values to null, otherwise parses the client value to a double
      * 
      * @throws ValidationException
      *             if the clientValue can not be parsed

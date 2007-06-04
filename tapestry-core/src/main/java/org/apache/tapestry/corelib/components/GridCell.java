@@ -20,7 +20,10 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.services.BeanBlockSource;
+import org.apache.tapestry.services.Environment;
+import org.apache.tapestry.services.PropertyDisplayContext;
 
 /**
  * Part of {@link Grid} that renders a single data cell. GridCell is used inside a pair of loops;
@@ -49,17 +52,46 @@ public class GridCell
     @Inject
     private ComponentResources _gridCellResources;
 
+    @Inject
+    private BeanBlockSource _beanBlockSource;
+
+    @Inject
+    private Environment _environment;
+
+    private boolean _mustPopEnvironment;
+
     Object beginRender(MarkupWriter writer)
     {
         Block override = _resources.getBlockParameter(_model.getId() + "Cell");
 
-        if (override != null)
-            return override;
+        if (override != null) return override;
 
-        Block builtin = _gridCellResources.findBlock(_model.getDataType());
+        String datatype = _model.getDataType();
 
-        if (builtin != null)
-            return builtin;
+        if (_beanBlockSource.hasDisplayBlock(datatype))
+        {
+            PropertyDisplayContext context = new PropertyDisplayContext()
+            {
+                public Messages getContainerMessages()
+                {
+                    return GridCell.this.getContainerMessages();
+                }
+
+                public Object getPropertyValue()
+                {
+                    return readPropertyForRow();
+                }
+            };
+
+            _environment.push(PropertyDisplayContext.class, context);
+            _mustPopEnvironment = true;
+
+            return _beanBlockSource.getDisplayBlock(datatype);
+        }
+
+        Block block = _gridCellResources.findBlock(datatype);
+
+        if (block != null) return block;
 
         Object value = _model.getConduit().get(_row);
 
@@ -76,6 +108,16 @@ public class GridCell
         return false;
     }
 
+    private Object readPropertyForRow()
+    {
+        return _model.getConduit().get(_row);
+    }
+
+    private Messages getContainerMessages()
+    {
+        return _resources.getMessages();
+    }
+
     /*
      * When rendering a Block instead of a literal value, the template will start to render but its
      * is effectively just some whitespace and we want to skip it entirely.
@@ -85,13 +127,12 @@ public class GridCell
         return false;
     }
 
-    public String getConvertedEnumValue()
+    void afterRender()
     {
-        Enum value = (Enum) _model.getConduit().get(_row);
-
-        if (value == null)
-            return null;
-
-        return TapestryInternalUtils.getLabelForEnum(_resources.getMessages(), value);
+        if (_mustPopEnvironment)
+        {
+            _environment.pop(PropertyDisplayContext.class);
+            _mustPopEnvironment = false;
+        }
     }
 }

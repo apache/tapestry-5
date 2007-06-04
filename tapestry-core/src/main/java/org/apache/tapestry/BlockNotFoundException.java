@@ -18,7 +18,7 @@ import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Exception thrown when a a {@link Block} is requested but not found.
+ * Exception thrown when a {@link Block} is requested but not found.
  */
 public class BlockNotFoundException extends RuntimeException implements Locatable
 {
