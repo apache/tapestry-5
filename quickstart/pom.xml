@@ -4,7 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tapestry</groupId>
   <artifactId>quickstart</artifactId>
-  <version>5.0.5-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
   <parent>
     <groupId>org.apache.tapestry</groupId>

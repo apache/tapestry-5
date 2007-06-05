@@ -32,7 +32,7 @@ $opts = OptionParser.new do |opts|
   opts.on("-o", "--offline", "Execute Maven in offline mode") { $offline = true }
   
   opts.on("-V", "--archetype-version VERSION", "Version of the Tapestry quickstart archetype") do |value|
-    $archtypeVersion = value
+    $archetypeVersion = value
   end
   
   opts.on("-h", "--help", "Help for this command") do

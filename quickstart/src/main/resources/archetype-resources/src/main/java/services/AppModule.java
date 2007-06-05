@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
+import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
@@ -13,10 +14,21 @@ import org.apache.tapestry.services.Response;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
- * configure and extend Tapestry, or to place your own services.
+ * configure and extend Tapestry, or to place your own service definitions.
  */
 public class AppModule
 {
+    public static void bind(ServiceBinder binder)
+    {
+        // binder.bind(MyServiceInterface.class, MyServiceImpl.class);
+        
+        // Make bind() calls on the binder object to define most IoC services.
+        // Use service builder methods (example below) when the implementation
+        // is provided inline, or requires more initialization than simply
+        // invoking the constructor.
+    }
+    
+    
     public static void contributeApplicationDefaults(
             MappedConfiguration<String, String> configuration)
     {
@@ -31,11 +43,22 @@ public class AppModule
     
 
     /**
-     * This is a service definition, the service will be named TimingFilter. The interface,
+     * This is a service definition, the service will be named "TimingFilter". The interface,
      * RequestFilter, is used within the RequestHandler service pipeline, which is built from the
      * RequestHandler service configuration. Tapestry IoC is responsible for passing in an
      * appropriate Log instance. Requests for static resources are handled at a higher level, so
      * this filter will only be invoked for Tapestry related requests.
+     * 
+     * <p>
+     * Service builder methods are useful when the implementation is inline as an inner class
+     * (as here) or require some other kind of special initialization. In most cases,
+     * use the static bind() method instead. 
+     * 
+     * <p>
+     * If this method was named "build", then the service id would be taken from the 
+     * service interface and would be "RequestFilter".  Since Tapestry already defines
+     * a service named "RequestFilter" we use an explicit service id that we can reference
+     * inside the contribution method.
      */    
     public RequestFilter buildTimingFilter(final Log log)
     {
