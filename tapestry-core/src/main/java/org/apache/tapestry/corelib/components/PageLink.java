@@ -16,6 +16,7 @@ package org.apache.tapestry.corelib.components;
 
 import java.util.List;
 
+import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
@@ -36,7 +37,7 @@ import org.apache.tapestry.annotations.SupportsInformalParameters;
  * manipulated by the page.
  */
 @SupportsInformalParameters
-public class PageLink
+public class PageLink implements ClientElement
 {
     /** The logical name of the page to link to. */
     @Parameter(required = true, defaultPrefix = "literal")
@@ -47,6 +48,8 @@ public class PageLink
 
     @Environmental
     private PageRenderSupport _support;
+
+    private String _clientId;
 
     /**
      * If provided, this is the activation context for the target page (the information will be
@@ -60,13 +63,13 @@ public class PageLink
 
     void beginRender(MarkupWriter writer)
     {
-        String clientId = _support.allocateClientId(_resources.getId());
+        _clientId = _support.allocateClientId(_resources.getId());
 
         Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
 
         Link link = _resources.createPageLink(_page, activationContext);
 
-        writer.element("a", "href", link, "id", clientId);
+        writer.element("a", "href", link, "id", _clientId);
 
         _resources.renderInformalParameters(writer);
     }
@@ -75,4 +78,10 @@ public class PageLink
     {
         writer.end(); // <a>
     }
+
+    public String getClientId()
+    {
+        return _clientId;
+    }
+
 }
