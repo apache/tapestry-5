@@ -18,22 +18,21 @@ import static org.apache.tapestry.TapestryConstants.ACTION_EVENT;
 
 import java.util.List;
 
+import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Inject;
-import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
-import org.apache.tapestry.corelib.mixins.RenderInformals;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.
  */
 @SupportsInformalParameters
-public class ActionLink
+public class ActionLink implements ClientElement
 {
     /**
      * The context for the link (optional parameter). This list of values will be converted into
@@ -46,10 +45,6 @@ public class ActionLink
     @Inject
     private ComponentResources _resources;
 
-    @SuppressWarnings("unused")
-    @Mixin
-    private RenderInformals _renderInformals;
-
     @Environmental
     private PageRenderSupport _support;
 
@@ -60,17 +55,19 @@ public class ActionLink
     @Parameter("false")
     private boolean _disabled;
 
+    private String _clientId;
+
     void beginRender(MarkupWriter writer)
     {
         if (_disabled) return;
 
-        String clientId = _support.allocateClientId(_resources.getId());
+        _clientId = _support.allocateClientId(_resources.getId());
 
         Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
 
         Link link = _resources.createActionLink(ACTION_EVENT, false, contextArray);
 
-        writer.element("a", "href", link, "id", clientId);
+        writer.element("a", "href", link, "id", _clientId);
 
         _resources.renderInformalParameters(writer);
     }
@@ -80,5 +77,10 @@ public class ActionLink
         if (_disabled) return;
 
         writer.end(); // <a>
+    }
+
+    public String getClientId()
+    {
+        return _clientId;
     }
 }
