@@ -19,8 +19,8 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurr
 import java.net.URL;
 import java.util.Map;
 
-import org.apache.tapestry.events.UpdateListener;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.ResourceDigestGenerator;

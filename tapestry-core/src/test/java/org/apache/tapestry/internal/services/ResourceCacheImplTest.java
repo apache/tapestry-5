@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.ResourceDigestGenerator;

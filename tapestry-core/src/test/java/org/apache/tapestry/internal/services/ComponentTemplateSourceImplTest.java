@@ -21,8 +21,8 @@ import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;

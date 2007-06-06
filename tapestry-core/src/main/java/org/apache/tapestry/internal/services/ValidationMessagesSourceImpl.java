@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.tapestry.events.UpdateListener;
+import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.services.ClassFactory;
  * component class name. This will involve transforming the component's class before it is loaded.
  * <p>
  * In addition, a source acts as an event hub for
- * {@link org.apache.tapestry.events.InvalidationListener}s, so that any information derived from
+ * {@link org.apache.tapestry.internal.events.InvalidationListener}s, so that any information derived from
  * loaded classes can be discarded and rebuilt when classes change.
  * <p>
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire

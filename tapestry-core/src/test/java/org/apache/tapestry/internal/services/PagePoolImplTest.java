@@ -19,7 +19,7 @@ import static org.easymock.EasyMock.contains;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.internal.services.ThreadLocaleImpl;

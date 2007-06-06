@@ -19,7 +19,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseIns
 import java.util.Map;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.MetaDataLocator;

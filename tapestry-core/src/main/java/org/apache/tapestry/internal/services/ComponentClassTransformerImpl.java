@@ -24,7 +24,7 @@ import javassist.CtConstructor;
 import javassist.NotFoundException;
 
 import org.apache.commons.logging.Log;
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LogSource;
 import org.apache.tapestry.ioc.Resource;

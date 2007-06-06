@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import javassist.NotFoundException;
 import javassist.Translator;
 
 import org.apache.commons.logging.Log;
-import org.apache.tapestry.events.UpdateListener;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;

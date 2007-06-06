@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -110,15 +110,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> findBundleProperties(MessagesBundle bundle, Locale locale)
     {
-        if (bundle == null)
-            return _emptyMap;
+        if (bundle == null) return _emptyMap;
 
         MultiKey key = new MultiKey(bundle.getId(), locale);
 
         Map<String, String> existing = _cookedProperties.get(key);
 
-        if (existing != null)
-            return existing;
+        if (existing != null) return existing;
 
         // What would be cool is if we could maintain a cache of bundle id + locale -->
         // Resource. That would optimize quite a bit of this; may need to use an alternative to
@@ -167,8 +165,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> extend(Map<String, String> base, Map<String, String> rawProperties)
     {
-        if (rawProperties.isEmpty())
-            return base;
+        if (rawProperties.isEmpty()) return base;
 
         // Make a copy of the base Map
 
@@ -202,8 +199,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     {
         URL url = resource.toURL();
 
-        if (url == null)
-            return _emptyMap;
+        if (url == null) return _emptyMap;
 
         _tracker.add(url);
 

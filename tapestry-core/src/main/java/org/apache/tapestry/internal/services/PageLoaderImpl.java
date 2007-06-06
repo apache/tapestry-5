@@ -16,8 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import java.util.Locale;
 
-import org.apache.tapestry.events.InvalidationListener;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.PersistentFieldManager;
 

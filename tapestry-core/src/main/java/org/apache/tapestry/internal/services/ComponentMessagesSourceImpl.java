@@ -16,8 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import java.util.Locale;
 
-import org.apache.tapestry.events.InvalidationListener;
-import org.apache.tapestry.events.UpdateListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
+import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
