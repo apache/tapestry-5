@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,11 +18,8 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadS
 
 import java.util.List;
 
-import org.apache.tapestry.events.UpdateListener;
+import org.apache.tapestry.internal.events.UpdateListener;
 
-/**
- * 
- */
 public class UpdateListenerHubImpl implements UpdateListenerHub
 {
     private final List<UpdateListener> _listeners = newThreadSafeList();

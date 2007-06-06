@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,13 +18,11 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadS
 
 import java.util.List;
 
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
- * {@link org.apache.tapestry.events.InvalidationListener}s.
- * 
- * 
+ * {@link org.apache.tapestry.internal.events.InvalidationListener}s.
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {

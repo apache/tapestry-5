@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.services;
 import java.util.Map;
 
 import org.apache.tapestry.Translator;
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.TranslatorDefaultSource;
 

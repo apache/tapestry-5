@@ -22,9 +22,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tapestry.events.UpdateListener;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
+import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.parser.TemplateToken;
 import org.apache.tapestry.internal.util.MultiKey;

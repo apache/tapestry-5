@@ -19,7 +19,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurr
 import java.util.Map;
 
 import org.apache.tapestry.Asset;
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.services.AssetFactory;

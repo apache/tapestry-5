@@ -24,7 +24,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.events.InvalidationListener;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.services.ClassFab;
