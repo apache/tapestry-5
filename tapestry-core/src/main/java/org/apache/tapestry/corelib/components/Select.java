@@ -49,7 +49,7 @@ public final class Select extends AbstractField
 
         public Renderer(MarkupWriter writer)
         {
-            super(writer, getEncoder());
+            super(writer, _encoder);
         }
 
         @Override
@@ -57,18 +57,8 @@ public final class Select extends AbstractField
         {
             Object value = optionModel.getValue();
 
-            return isOptionValueSelected(value);
+            return value == _value || (value != null && value.equals(_value));
         }
-    }
-
-    private boolean isOptionValueSelected(Object value)
-    {
-        return value == _value || (value != null && value.equals(_value));
-    }
-
-    private ValueEncoder getEncoder()
-    {
-        return _encoder;
     }
 
     /**

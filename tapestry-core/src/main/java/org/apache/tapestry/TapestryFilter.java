@@ -84,7 +84,7 @@ public class TapestryFilter implements Filter
                 ServletApplicationInitializer.class);
 
         ai.initializeApplication(filterConfig.getServletContext());
-        
+
         _registry.eagerLoadServices();
 
         _handler = _registry.getService(
@@ -147,6 +147,8 @@ public class TapestryFilter implements Filter
     /** Shuts down and discards the registry. */
     public final void destroy()
     {
+        destroy(_registry);
+
         _registry.shutdown();
 
         _registry = null;

@@ -1358,7 +1358,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void replaceReadAccess(String fieldName, String methodName)
     {
-        String body = String.format("$_ = %s();", methodName);
+        // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
+        // $0 is valid even inside a static method.
+
+        String body = String.format("$_ = $0.%s();", methodName);
 
         if (_fieldReadTransforms == null) _fieldReadTransforms = newMap();
 
@@ -1371,7 +1374,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void replaceWriteAccess(String fieldName, String methodName)
     {
-        String body = String.format("%s($1);", methodName);
+        // Explicitly reference $0 (aka "this") because of TAPESTRY-1511.
+        // $0 is valid even inside a static method.
+
+        String body = String.format("$0.%s($1);", methodName);
 
         if (_fieldWriteTransforms == null) _fieldWriteTransforms = newMap();
 
@@ -1406,6 +1412,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
     }
 
+    static final int SYNTHETIC = 0x00001000;
+
     private void replaceFieldAccess()
     {
         // Provide empty maps here, to make the code in the inner class a tad
@@ -1429,8 +1437,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                         : _fieldWriteTransforms;
 
                 String body = transformMap.get(access.getFieldName());
+                if (body == null) return;
 
-                if (body != null) access.replace(body);
+                access.replace(body);
             }
         };
 
