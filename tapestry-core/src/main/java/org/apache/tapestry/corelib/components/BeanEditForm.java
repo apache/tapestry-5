@@ -181,32 +181,32 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         {
             public Messages getContainerMessages()
             {
-                return getResources().getContainerMessages();
+                return _resources.getContainerMessages();
             }
 
             public String getLabel()
             {
-                return getPropertyEditModel().getLabel();
+                return _propertyEditModel.getLabel();
             }
 
             public String getPropertyId()
             {
-                return getPropertyEditModel().getId();
+                return _propertyEditModel.getId();
             }
 
             public Class getPropertyType()
             {
-                return getPropertyEditModel().getPropertyType();
+                return _propertyEditModel.getPropertyType();
             }
 
             public Object getPropertyValue()
             {
-                return getPropertyEditModel().getConduit().get(getObject());
+                return _propertyEditModel.getConduit().get(getObject());
             }
 
             public Translator getTranslator()
             {
-                return _translatorDefaultSource.find(getPropertyEditModel().getPropertyType());
+                return _translatorDefaultSource.find(_propertyEditModel.getPropertyType());
             }
 
             public FieldValidator getValidator(Field field)
@@ -222,7 +222,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
             public void setPropertyValue(Object value)
             {
-                getPropertyEditModel().getConduit().set(getObject(), value);
+                _propertyEditModel.getConduit().set(getObject(), value);
             }
         };
 
@@ -349,16 +349,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public void recordError(String errorMessage)
     {
         _form.recordError(errorMessage);
-    }
-
-    private ComponentResources getResources()
-    {
-        return _resources;
-    }
-
-    private PropertyModel getPropertyEditModel()
-    {
-        return _propertyEditModel;
     }
 
 }
