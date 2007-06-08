@@ -1,6 +1,6 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-  <h1> Tapestry 5 Integration Application 1</h1>
+  <h1>Tapestry 5 Integration Application 1</h1>
 
   <table>
     <tr>
@@ -93,9 +93,6 @@
             <a t:type="PageLink" page="gridenumdemo">Grid Enum Demo</a> -- handling of enum types in
             the Grid </li>
           <li>
-            <a t:type="ActionLink" t:id="textStreamResponse">Text Stream Response</a> -- component
-            event that directly returns a stream of character (rather than a redirect) </li>
-          <li>
             <a t:type="PageLink" page="protected">Protected Page</a> -- Demonstrate result of
             non-void return from a page's activate method. </li>
           <li>
@@ -110,14 +107,8 @@
           <li>
             <a t:type="pagelink" page="ValidBeanEditorDemo">Client Validation Demo</a> --BeanEditor
             with validation enabled </li>
-
           <li>
             <a href="recursivedemo">Recursive Demo</a> -- check for handling of recursive components </li>
-
-          <li>
-            <t:actionlink t:id="badreturntype">BadReturnType Demo</t:actionlink> -- Error report due
-            to event handler method returning unacceptible return value (an Integer) </li>
-
           <li>
             <t:pagelink page="renderabledemo">Renderable Demo</t:pagelink> -- Shows that render
             phase methods can return a Renderable object </li>
@@ -135,6 +126,10 @@
             expansions inside attributes of ordinary elements </li>
           <li>
             <t:pagelink page="PaletteDemo">Palette Demo</t:pagelink> -- multiple selection component
+          </li>
+          <li>
+            <t:pagelink page="ReturnTypes">Return Types</t:pagelink> -- Tests various event handler
+            return types
           </li>
         </ul>
       </td>
