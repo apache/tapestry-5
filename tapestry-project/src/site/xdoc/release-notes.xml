@@ -16,9 +16,6 @@
         use HTML entities in templates</li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1264">TAPESTRY-1264</a>] - Can't
         specify DOCTYPE in template</li>
-      <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1294">TAPESTRY-1294</a>] -
-        localization problem: the data sumitted from form can't display correctly in non english,
-        such as chinese.</li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1317">TAPESTRY-1317</a>] -
         Service contributors are not case insensitive with respect to the service id.</li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1333">TAPESTRY-1333</a>] - Cannot
