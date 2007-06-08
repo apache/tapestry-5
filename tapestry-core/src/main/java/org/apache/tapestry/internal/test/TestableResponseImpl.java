@@ -64,6 +64,16 @@ public class TestableResponseImpl implements Response
         nyi("setDateHeader");
     }
 
+    public void setHeader(String name, String value)
+    {
+        nyi("setHeader");
+    }
+
+    public void setIntHeader(String name, int value)
+    {
+        nyi("setIntHeader");
+    }
+
     public String encodeRedirectURL(String URL)
     {
         return URL;

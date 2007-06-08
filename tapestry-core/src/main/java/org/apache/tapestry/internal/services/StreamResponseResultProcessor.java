@@ -40,6 +40,7 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
                 OutputStream os = null;
                 InputStream is = null;
 
+                streamResponse.prepareResponse(response);
                 try
                 {
                     is = new BufferedInputStream(streamResponse.getStream());

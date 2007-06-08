@@ -87,4 +87,16 @@ public class ResponseImpl implements Response
         _response.setDateHeader(name, date);
     }
 
+    public void setHeader(String name, String value)
+    {
+        _response.setHeader(name,value);
+    }
+
+    public void setIntHeader(String name, int value)
+    {
+        _response.setIntHeader(name, value);
+    }
+
+
+
 }

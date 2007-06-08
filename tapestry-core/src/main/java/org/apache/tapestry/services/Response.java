@@ -66,7 +66,7 @@ public interface Response
      * 
      * @param sc
      *            the error status code
-     * @param msg
+     * @param message
      *            the descriptive message
      * @exception IOException
      *                If an input or output exception occurs
@@ -95,6 +95,26 @@ public interface Response
      *            the assigned date value
      */
     void setDateHeader(String name, long date);
+
+    /**
+     * Sets a response header with the given name and value. If the header had already been set,
+     * the new value overwrites the previous one.
+     * @param name
+     *            the name of the header to set
+     * @param value
+     *            the assigned value
+     */
+    void setHeader(String name, String value);
+
+    /**
+     * Sets a response header with the given name and integer value. If the header had already been set,
+     * the new value overwrites the previous one.
+     * @param name
+     *            the name of the header to set
+     * @param value
+     *            the assigned integer value
+     */
+    void setIntHeader(String name, int value);
 
     /**
      * Encodes the URL, ensuring that a session id is included (if a session exists, and as

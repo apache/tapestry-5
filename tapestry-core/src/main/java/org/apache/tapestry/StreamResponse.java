@@ -14,6 +14,8 @@
 
 package org.apache.tapestry;
 
+import org.apache.tapestry.services.Response;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,4 +36,13 @@ public interface StreamResponse
      * {@link BufferedInputStream} for efficiency.
      */
     InputStream getStream() throws IOException;
+
+
+    /**
+     * Prepare response before it is sent to the client.
+     * This is the place to set any response headers (e.g. content-disposition)
+     * @param response Response that will be sent.
+     */
+    void prepareResponse(Response response);
+
 }
