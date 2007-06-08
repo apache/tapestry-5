@@ -80,6 +80,7 @@ import org.apache.tapestry.internal.services.AssetSourceImpl;
 import org.apache.tapestry.internal.services.BeanBlockSourceImpl;
 import org.apache.tapestry.internal.services.BeanModelSourceImpl;
 import org.apache.tapestry.internal.services.BindingSourceImpl;
+import org.apache.tapestry.internal.services.ClassResultProcessor;
 import org.apache.tapestry.internal.services.ClasspathAssetAliasManagerImpl;
 import org.apache.tapestry.internal.services.CommonResourcesInjectionProvider;
 import org.apache.tapestry.internal.services.ComponentActionDispatcher;
@@ -1262,7 +1263,7 @@ public final class TapestryModule
     public void contributeComponentEventResultProcessor(
             @InjectService("ComponentInstanceResultProcessor")
             ComponentEventResultProcessor componentInstanceProcessor,
-
+            ComponentClassResolver componentClassResolver,
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
         configuration.add(
@@ -1288,6 +1289,8 @@ public final class TapestryModule
         });
 
         configuration.add(String.class, new StringResultProcessor(_requestPageCache, _linkFactory));
+
+        configuration.add(Class.class, new ClassResultProcessor(componentClassResolver, _requestPageCache, _linkFactory));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
