@@ -14,23 +14,10 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.util.TextStreamResponse;
-
 /**
  * Have to start somewhere!
  */
 public class Start
 {
-    Object onActionFromTextStreamResponse()
-    {
-        String text = "<html><body>Success!</body></html>";
-
-        return new TextStreamResponse("text/html", text);
-    }
-
-    Object onActionFromBadReturnType()
-    {
-        // What is Tapestry supposed to do with this? Let's see than Exception Report page.
-        return 20;
-    }
+    // Empty.
 }

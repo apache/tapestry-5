@@ -711,16 +711,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
-    public void stream_response() throws Exception
-    {
-        open(BASE_URL);
-
-        clickAndWait("link=Text Stream Response");
-
-        assertText("//body", "Success!");
-    }
-
-    @Test
     public void null_grid() throws Exception
     {
         open(BASE_URL);
@@ -837,18 +827,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "An unexpected application exception has occurred.",
                 "The template for component org.apache.tapestry.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
                 "This component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
-    }
-
-    @Test
-    public void check_handling_of_unexpected_type_from_component_event_handler_method()
-    {
-        open(BASE_URL);
-        clickAndWait("link=BadReturnType Demo");
-
-        assertTextPresent(
-                "An unexpected application exception has occurred.",
-                "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
-
     }
 
     @Test
@@ -979,4 +957,44 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
+
+    @Test
+    public void event_handler_return_types() {
+
+        open(BASE_URL);
+        assertTextPresent("Tapestry 5 Integration Application 1");
+
+        clickAndWait("link=Return Types");
+        assertTextPresent("Return Type Tests");
+
+        clickAndWait("link=null");
+        assertTextPresent("Return Type Tests");
+
+        clickAndWait("link=string");
+        assertTextPresent("Tapestry 5 Integration Application 1");
+        goBack();
+
+        clickAndWait("link=class");
+        assertTextPresent("Tapestry 5 Integration Application 1");
+        goBack();
+
+        clickAndWait("link=page");
+        assertTextPresent("Tapestry 5 Integration Application 1");
+        goBack();
+
+        clickAndWait("link=link");
+        assertTextPresent("Tapestry 5 Integration Application 1");
+        goBack();
+
+        clickAndWait("link=stream");
+        assertTextPresent("Success!");
+        goBack();
+
+        clickAndWait("link=bad");
+        assertTextPresent(
+                "An unexpected application exception has occurred.",
+                "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
+
+    }
+
 }
