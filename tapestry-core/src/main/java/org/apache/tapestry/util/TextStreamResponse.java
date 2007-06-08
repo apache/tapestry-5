@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.tapestry.StreamResponse;
+import org.apache.tapestry.services.Response;
 
 public class TextStreamResponse implements StreamResponse
 {
@@ -46,6 +47,11 @@ public class TextStreamResponse implements StreamResponse
     public InputStream getStream() throws IOException
     {
         return new ByteArrayInputStream(_text.getBytes());
+    }
+
+    public void prepareResponse(Response response)
+    {
+        // No-op by default.
     }
 
 }
