@@ -45,15 +45,22 @@ Action Requests
   are transitory, meaningful only while the application is actively engaged, and not meant to be used in later sessions.
   
 * String response
-
+  
   When a string is returned, it is expected to be the logical name of a page (as opposed to the page's
   fully qualified class name).  As elsewhere, the name of the page is case insensitive.
   
   Again, a render request URL will be constructed and sent to the client as a redirect.
   
+* Class response
+  
+  When a class is returned, it is expected to be a page class. Returning a page class from an event handler is safer for refactoring
+  than returning a page name.
+  
+  As with other response types, a render request URL will be constructed and sent to the client as a redirect.
+  
 * Page response
-
-  You may also return an instance of a page, rather than the name of a page.
+  
+  You may also return an instance of a page, rather than the name or class of a page.
   
   A page may be injected via the {{{../apidocs/org/apache/tapestry/annotations/InjectPage.html}InjectPage}} annotation.  
   

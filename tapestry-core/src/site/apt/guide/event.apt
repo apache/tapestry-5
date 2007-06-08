@@ -107,7 +107,7 @@ Component Events
   
   You should qualify exactly which component(s) you wish to recieve events from.
   
-Event Handler Method Convention Names  
+Event Handler Method Convention Names
   
   As an alternative to the use of annotations, you may name your events in a specific fashion, and Tapestry will invoke your methods just as if
   they were annotated.  
@@ -127,6 +127,10 @@ Event Handler Method Convention Names
   If you method is named "onAnyEvent", it will be invoked for all types of events. This is rarely what you want!
     
   Note from Howard: I've found that I prefer the naming convention approach, and reserve the annotation just for situations that don't otherwise fit.  
+  
+Event Handler Method Return Values
+  
+  For page navigation events, the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
   
 Event Context
 
@@ -154,8 +158,4 @@ Event Bubbling
 
   The event will bubble up the hierarchy, until it is aborted. The event is aborted
   when an event handler method returns a non-null value.
-  
-  For page navigation events, the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
 
-    
-   
