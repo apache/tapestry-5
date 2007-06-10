@@ -973,22 +973,27 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=string");
         assertTextPresent("Tapestry 5 Integration Application 1");
         goBack();
+        waitForPageToLoad();
 
         clickAndWait("link=class");
         assertTextPresent("Tapestry 5 Integration Application 1");
         goBack();
+        waitForPageToLoad();
 
         clickAndWait("link=page");
         assertTextPresent("Tapestry 5 Integration Application 1");
         goBack();
+        waitForPageToLoad();
 
         clickAndWait("link=link");
         assertTextPresent("Tapestry 5 Integration Application 1");
         goBack();
+        waitForPageToLoad();
 
         clickAndWait("link=stream");
         assertTextPresent("Success!");
         goBack();
+        waitForPageToLoad();
 
         clickAndWait("link=bad");
         assertTextPresent(
