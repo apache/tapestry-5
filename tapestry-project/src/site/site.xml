@@ -28,8 +28,7 @@
       <item name="Screencasts" href="screencast.html"/>
       <item name="Tapestry for Struts Developers" href="struts.html"/>
       <item name="Download" href="http://tapestry.apache.org/download.html"/>
-      <item name="Tapestry 5 Tutorial" href="t5-tutorial.pdf"/>
-      <item name="Release Notes" href="release-notes.html"/>
+       <item name="Release Notes" href="release-notes.html"/>
     </menu>
 
     <menu name="Tapestry 5 Modules">
@@ -38,6 +37,10 @@
       <item name="tapestry-ioc" href="tapestry-ioc"/>
       <item name="tapestry-spring" href="tapestry-spring"/>
       <item name="tapestry-test" href="tapestry-test/"/>
+    </menu>
+    
+    <menu name="Tapestry Tutorials">
+      <item name="Tutorial #1" href="tapestry-tutorial1/"/>
     </menu>
 
     <menu name="Tapestry 5 Maven Support">
