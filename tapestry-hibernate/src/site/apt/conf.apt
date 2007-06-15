@@ -29,11 +29,10 @@ Configuring Hibernate
   Example:
   
 +----+
-  @Contribute("tapestry.hibernate.HibernateSessionSource")
-  public void contributeEntityPackages(Configuration<String> configuration)
-  {
-    configuration.add("org.example.myapp.domain");
-  }
+public void contributeHibernateSessionSource(Configuration<String> configuration)
+{
+  configuration.add("org.example.myapp.domain");
+} 
 +----+
 
   You may add as many packages in this manner as you wish. This option is most often used when the entities themselves are contained in a library included
