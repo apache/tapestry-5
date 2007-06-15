@@ -40,7 +40,7 @@
     </menu>
     
     <menu name="Tapestry Tutorials">
-      <item name="Tutorial #1" href="tapestry-tutorial1/"/>
+      <item name="Tutorial #1" href="tutorial1/"/>
     </menu>
 
     <menu name="Tapestry 5 Maven Support">

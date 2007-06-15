@@ -21,8 +21,8 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-project </connection>
-    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/tapestry-project </url>
+    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/ </connection>
+    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/ </url>
   </scm>
   <developers>
     <developer>
