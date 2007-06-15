@@ -22,7 +22,7 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 import org.testng.annotations.Test;
 
-public class WebRequestImplTest extends InternalBaseTestCase
+public class RequestImplTest extends InternalBaseTestCase
 {
     @Test
     public void get_session_doesnt_exist()

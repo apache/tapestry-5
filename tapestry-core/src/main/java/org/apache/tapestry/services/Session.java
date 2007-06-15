@@ -41,4 +41,26 @@ public interface Session
 
     /** Sets the value of an attribute. If the value is null, then the attribute is deleted. */
     void setAttribute(String name, Object value);
+
+    /**
+     * Returns the maximum time interval, in seconds, that the servlet container will keep this
+     * session open between client accesses. After this interval, the servlet container will
+     * invalidate the session. The maximum time interval can be set with the setMaxInactiveInterval
+     * method. A negative time indicates the session should never timeout.
+     */
+    int getMaxInactiveInterval();
+
+    /**
+     * Specifies the time, in seconds, between client requests before the servlet container will
+     * invalidate this session. A negative time indicates the session should never timeout.
+     */
+    void setMaxInactiveInterval(int seconds);
+
+    /**
+     * Invalidates this session then unbinds any objects bound to it.
+     * 
+     * @throws IllegalStateException
+     *             if this method is called on an already invalidated session
+     */
+    void invalidate();
 }

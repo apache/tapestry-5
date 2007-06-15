@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class SessionImpl implements Session
 {
     private final HttpSession _session;
 
-    public SessionImpl(final HttpSession session)
+    public SessionImpl(HttpSession session)
     {
         _session = session;
     }
@@ -61,13 +61,27 @@ public class SessionImpl implements Session
         {
             String name = (String) e.nextElement();
 
-            if (name.startsWith(prefix))
-                result.add(name);
+            if (name.startsWith(prefix)) result.add(name);
         }
 
         Collections.sort(result);
 
         return result;
+    }
+
+    public int getMaxInactiveInterval()
+    {
+        return _session.getMaxInactiveInterval();
+    }
+
+    public void invalidate()
+    {
+        _session.invalidate();
+    }
+
+    public void setMaxInactiveInterval(int seconds)
+    {
+        _session.setMaxInactiveInterval(seconds);
     }
 
 }
