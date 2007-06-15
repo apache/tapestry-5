@@ -24,7 +24,7 @@ import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Session;
 import org.testng.annotations.Test;
 
-public class WebSessionImplTest extends InternalBaseTestCase
+public class SessionImplTest extends InternalBaseTestCase
 {
     @Test
     public void get_attribute_names()
@@ -56,6 +56,56 @@ public class WebSessionImplTest extends InternalBaseTestCase
         Session session = new SessionImpl(hs);
 
         assertEquals(session.getAttributeNames("f"), Arrays.asList("fanny", "fred"));
+
+        verify();
+    }
+
+    @Test
+    public void invalidate()
+    {
+        HttpSession hs = mockHttpSession();
+
+        hs.invalidate();
+
+        replay();
+
+        Session session = new SessionImpl(hs);
+
+        session.invalidate();
+
+        verify();
+    }
+
+    @Test
+    public void set_max_inactive()
+    {
+        HttpSession hs = mockHttpSession();
+        int seconds = 999;
+
+        hs.setMaxInactiveInterval(seconds);
+
+        replay();
+
+        Session session = new SessionImpl(hs);
+
+        session.setMaxInactiveInterval(seconds);
+
+        verify();
+    }
+
+    @Test
+    public void get_max_inactive()
+    {
+        HttpSession hs = mockHttpSession();
+        int seconds = 999;
+
+        expect(hs.getMaxInactiveInterval()).andReturn(seconds);
+
+        replay();
+
+        Session session = new SessionImpl(hs);
+
+        assertEquals(session.getMaxInactiveInterval(), seconds);
 
         verify();
     }

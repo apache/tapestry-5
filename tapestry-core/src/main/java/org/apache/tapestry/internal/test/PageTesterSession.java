@@ -60,4 +60,27 @@ public class PageTesterSession implements Session
 
     }
 
+    private void nyi(String name)
+    {
+        throw new IllegalStateException(String.format("%s.%s() is not yet implemented.", getClass()
+                .getName(), name));
+    }
+
+    public int getMaxInactiveInterval()
+    {
+        nyi("getMaxInativeInterval");
+
+        return 0;
+    }
+
+    public void invalidate()
+    {
+        nyi("invalidate");
+    }
+
+    public void setMaxInactiveInterval(int seconds)
+    {
+        nyi("setMaxInactiveInterval");
+    }
+
 }
