@@ -159,7 +159,7 @@ mvn jetty:run
 ----
 
  The goal in Tapestry is for component templates, such as Start.html, to look as much as possibly like ordinary, static
- HTML files. <By static, we man unchanging, as opposed to a dynamically generated Tapestry page.>  In fact, the expectation
+ HTML files. <By static, we mean unchanging, as opposed to a dynamically generated Tapestry page.>  In fact, the expectation
  is that in many cases, the templates will start as static HTML files, created by a web developer and then be
  <instrumented> to act as live Tapestry pages.
  
@@ -290,6 +290,8 @@ public class Start
   
   Now that we have our basic application set up, and ready to run (or debug) directly inside Eclipse, we can start working on implementing our
   Hi/Lo game in earnest.
+  
+===
   
   {{{hilo.html}Continue on to chapter 3: Implementing The Hi/Lo Game}}
  
