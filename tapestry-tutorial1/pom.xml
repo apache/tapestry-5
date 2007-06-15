@@ -4,7 +4,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tutorial1</artifactId>
-  <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>Tapestry 5 Tutorial</name>
   <description>Introductory topics in Tapestry application development.</description>
@@ -12,6 +11,19 @@
     <name>Apache Software Foundation</name>
     <url>http://www.apache.org</url>
   </organization>
+
+  <scm>
+    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/tapestry-tutorial1/ </connection>
+    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/tapestry-tutorial1/ </url>
+  </scm>
+  
+  <parent>
+    <groupId>org.apache.tapestry</groupId>
+    <artifactId>tapestry-project</artifactId>
+    <version>5.0.5-SNAPSHOT</version>
+    <relativePath>../tapestry-project/pom.xml</relativePath>
+  </parent>
+  
   <dependencies>
     <dependency>
       <groupId>org.apache.tapestry</groupId>
@@ -98,26 +110,9 @@
       </plugin>
     </plugins>
   </reporting>
-  <repositories>
-    <repository>
-      <id>codehaus.snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-    </repository>
-    <!-- For access to the selenium JARs. -->
-    <repository>
-      <id>openqa</id>
-      <name>OpenQA Maven Repository</name>
-      <url>http://maven.openqa.org/</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <!-- A necessary version of the surefire plugin, 2.8-SNAPSHOT, lives here. -->
-    <pluginRepository>
-      <id>howardlewisship.com</id>
-      <url>http://howardlewisship.com/repository</url>
-    </pluginRepository>
-  </pluginRepositories>
+
   <properties>
     <tapestry-release-version>5.0.5-SNAPSHOT</tapestry-release-version>
   </properties>
+  
 </project>
