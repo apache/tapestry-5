@@ -22,7 +22,7 @@ Tapestry Tutorial: Introduction
   The traditional approaches thrust something most unwanted in your face: multithreaded coding. Remember back to Object Oriented Programming 101 where an object was defined as a bundle of data and operations on that data?
   You have to unlearn that lesson as soon as you build a web application, because web applications are multi-threaded. 
   An application server could be handling dozens or hundreds of requests from individual users, each in their own thread, and each sharing the exact same objects.  
-  Suddenly, you can't store data inside an object (a servlet or a Struts Action) because whatever data your store for one user will be instantly overwritten by some other user.
+  Suddenly, you can't store data inside an object (a servlet or a Struts Action) because whatever data you store for one user will be instantly overwritten by some other user.
 
   Worse, your objects each have one operation: doGet() or doPost().
 
@@ -33,7 +33,7 @@ Tapestry Tutorial: Introduction
 
   Tapestry uses a very different model: a structured, organized world of pages, and components within pages. Everything has a very specific name (that you provide). 
   Once you know the name of a page, you know the location of the Java class for that page, the location of the template for that page, and the total structure of the page. 
-  Tapestry knows all this as well, and can make things just work.
+  Tapestry knows all this as well, and can make things <<just work>>.
 
   As well see in the following chapters, Tapestry lets you code in terms of your objects. You'll barely see any Tapestry classes, outside of a few Java annotations. 
   If you have information to store, store it as fields of your classes, not inside the HttpServletRequest or HttpSession. 

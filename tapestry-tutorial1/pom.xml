@@ -1,101 +1,103 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.apache.tapestry</groupId>
-    <artifactId>tutorial1</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <packaging>war</packaging>
-    <name>Tapestry 5 Tutorial</name>
-    <description>Introductory topics in Tapestry application development.</description>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-core</artifactId>
-            <version>${tapestry-release-version}</version>
-        </dependency>
-        
-        <!-- This can be removed if not desired. Tapestry uses commons-logging, not Log4J explicitly.
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.tapestry</groupId>
+  <artifactId>tutorial1</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+  <name>Tapestry 5 Tutorial</name>
+  <description>Introductory topics in Tapestry application development.</description>
+  <organization>
+    <name>Apache Software Foundation</name>
+    <url>http://www.apache.org</url>
+  </organization>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.tapestry</groupId>
+      <artifactId>tapestry-core</artifactId>
+      <version>${tapestry-release-version}</version>
+    </dependency>
+
+    <!-- This can be removed if not desired. Tapestry uses commons-logging, not Log4J explicitly.
              However, if Log4J is not on the classpath, commons-logging tends to use its own internal
              logging which is not very configurable.  This project includes a log4j.properties file
              to configure output. -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.9</version>
-        </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.9</version>
+    </dependency>
 
-        <!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests)
+    <!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests)
              will fail, preventing Maven from packaging the WAR. Tapestry includes a large number
              of testing facilities designed for use with TestNG (http://testng.org/), so it's recommended. -->
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <version>5.1</version>
-            <classifier>jdk15</classifier>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>5.1</version>
+      <classifier>jdk15</classifier>
+      <scope>test</scope>
+    </dependency>
 
-    </dependencies>
-    <build>
-        <finalName>tapestry-tutorial1</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
-                    <optimize>true</optimize>
-                </configuration>
-            </plugin>
+  </dependencies>
+  <build>
+    <finalName>tapestry-tutorial1</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <optimize>true</optimize>
+        </configuration>
+      </plugin>
 
-            <!-- Run the application using "mvn jetty:run" -->
-            <plugin>
-                <groupId>org.mortbay.jetty</groupId>
-                <artifactId>maven-jetty-plugin</artifactId>
-                <configuration>
-                    <!-- Log to the console. -->
-                    <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
-                        <!-- This doesn't do anything for Jetty, but is a workaround for a Maven bug
+      <!-- Run the application using "mvn jetty:run" -->
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <configuration>
+          <!-- Log to the console. -->
+          <requestLog implementation="org.mortbay.jetty.NCSARequestLog">
+            <!-- This doesn't do anything for Jetty, but is a workaround for a Maven bug
                              that prevents the requestLog from being set. -->
-                        <append>true</append>
-                    </requestLog>
-                </configuration>
-            </plugin>
+            <append>true</append>
+          </requestLog>
+        </configuration>
+      </plugin>
 
 
-            <!-- This changes the WAR file packaging so that what would normally go into WEB-INF/classes
+      <!-- This changes the WAR file packaging so that what would normally go into WEB-INF/classes
              is instead packaged as WEB-INF/lib/tutorial1.jar.  This is necessary for Tapestry
              to be able to search for page and component classes at startup. Only
              certain application servers require this configuration, please see the documentation
              at the Tapestry 5 project page (http://tapestry.apache.org/tapestry5/). -->
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <configuration>
-                    <archiveClasses>true</archiveClasses>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
-    <reporting>
-        
-        <!-- Adds a report detailing the components, mixins and base classes defined by this module. -->        
-        <plugins>
-            <plugin>
-                <groupId>org.apache.tapestry</groupId>
-                <artifactId>tapestry-component-report</artifactId>
-                <version>${tapestry-release-version}</version>
-                <configuration>
-                    <rootPackage>org.apache.tapestry.tutorial</rootPackage>
-                </configuration>
-            </plugin>
-        </plugins>
-    </reporting>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <configuration>
+          <archiveClasses>true</archiveClasses>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  <reporting>
 
+    <!-- Adds a report detailing the components, mixins and base classes defined by this module. -->
+    <plugins>
+      <plugin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>tapestry-component-report</artifactId>
+        <version>${tapestry-release-version}</version>
+        <configuration>
+          <rootPackage>org.apache.tapestry.tutorial</rootPackage>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
   <repositories>
     <repository>
       <id>codehaus.snapshots</id>
@@ -108,7 +110,6 @@
       <url>http://maven.openqa.org/</url>
     </repository>
   </repositories>
-  
   <pluginRepositories>
     <!-- A necessary version of the surefire plugin, 2.8-SNAPSHOT, lives here. -->
     <pluginRepository>
@@ -116,9 +117,7 @@
       <url>http://howardlewisship.com/repository</url>
     </pluginRepository>
   </pluginRepositories>
-  
-
-    <properties>
-        <tapestry-release-version>5.0.5-SNAPSHOT</tapestry-release-version>
-    </properties>
+  <properties>
+    <tapestry-release-version>5.0.5-SNAPSHOT</tapestry-release-version>
+  </properties>
 </project>

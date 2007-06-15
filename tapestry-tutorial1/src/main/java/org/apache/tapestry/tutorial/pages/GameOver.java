@@ -14,23 +14,20 @@
 
 package org.apache.tapestry.tutorial.pages;
 
-import java.util.Random;
+import org.apache.tapestry.annotations.Persist;
 
-import org.apache.tapestry.annotations.InjectPage;
-
-public class Start
+public class GameOver
 {
-  private final Random _random = new Random();
+  @Persist
+  private int _count;
 
-  @InjectPage
-  private Guess _guess;
-
-  Object onAction()
+  public int getCount()
   {
-    int target = _random.nextInt(10) + 1;
+    return _count;
+  }
 
-    _guess.setup(target);
-
-    return _guess;
+  void setup(int count)
+  {
+    _count = count;
   }
 }
