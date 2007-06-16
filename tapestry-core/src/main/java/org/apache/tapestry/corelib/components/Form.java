@@ -161,6 +161,8 @@ public class Form implements ClientElement, FormValidationControl
 
     private FormSupportImpl _formSupport;
 
+    private Element _form;
+
     private Element _div;
 
     @Inject
@@ -225,7 +227,11 @@ public class Form implements ClientElement, FormValidationControl
         _resources.triggerEvent(PREPARE, contextArray, null);
 
         Link link = _resources.createActionLink(TapestryConstants.ACTION_EVENT, true, contextArray);
-        writer.element("form", "name", _name, "id", _name, "method", "post", "action", link);
+
+        // Save the form element for later, in case we want to write an encoding type attribute.
+
+        _form = writer
+                .element("form", "name", _name, "id", _name, "method", "post", "action", link);
 
         _resources.renderInformalParameters(writer);
 
@@ -257,6 +263,10 @@ public class Form implements ClientElement, FormValidationControl
         _environment.peek(Heartbeat.class).end();
 
         _formSupport.executeDeferred();
+
+        String encodingType = _formSupport.getEncodingType();
+
+        if (encodingType != null) _form.forceAttributes("enctype", encodingType);
 
         writer.end(); // form
 

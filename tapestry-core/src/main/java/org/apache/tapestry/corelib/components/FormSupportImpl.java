@@ -16,6 +16,7 @@ package org.apache.tapestry.corelib.components;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.cast;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.io.IOException;
@@ -43,6 +44,8 @@ class FormSupportImpl implements FormSupport
     private final ObjectOutputStream _actions;
 
     private List<Runnable> _commands;
+
+    private String _encodingType;
 
     /** Constructor used when processing a form submission. */
     public FormSupportImpl()
@@ -112,4 +115,22 @@ class FormSupportImpl implements FormSupport
     {
         return _clientId;
     }
+
+    String getEncodingType()
+    {
+        return _encodingType;
+    }
+
+    public void setEncodingType(String encodingType)
+    {
+        notBlank(encodingType, "encodingType");
+
+        if (_encodingType != null && !_encodingType.equals(encodingType))
+            throw new IllegalStateException(ComponentMessages.conflictingEncodingType(
+                    _encodingType,
+                    encodingType));
+
+        _encodingType = encodingType;
+    }
+
 }
