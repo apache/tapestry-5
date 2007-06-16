@@ -24,13 +24,38 @@ import java.util.Map;
 
 /**
  * Given a (growing) set of URLs, can periodically check to see if any of the underlying resources
- * has changed.
+ * has changed. This class is capable of using either millisecond-level granularity or second-level
+ * granularity. Millisecond-level granularity is used by default. Second-level granularity is
+ * provided for compatibility with browsers vis-a-vis resource caching -- that's how granular they
+ * get with their "If-Modified-Since", "Last-Modified" and "Expires" headers.
  */
 public class URLChangeTracker
 {
     private static final long FILE_DOES_NOT_EXIST_TIMESTAMP = -1l;
 
     private final Map<File, Long> _fileToTimestamp = newConcurrentMap();
+
+    private boolean _granularitySeconds;
+
+    /**
+     * Creates a new URL change tracker with millisecond-level granularity.
+     */
+    public URLChangeTracker()
+    {
+        this(false);
+    }
+
+    /**
+     * Creates a new URL change tracker, using either millisecond-level granularity or second-level
+     * granularity.
+     * 
+     * @param granularitySeconds
+     *            whether or not to use second-level granularity
+     */
+    public URLChangeTracker(boolean granularitySeconds)
+    {
+        _granularitySeconds = granularitySeconds;
+    }
 
     /**
      * Stores a new URL into the tracker, or returns the previous time stamp for a previously added
@@ -42,8 +67,7 @@ public class URLChangeTracker
      */
     public long add(URL url)
     {
-        if (!url.getProtocol().equals("file"))
-            return 0;
+        if (!url.getProtocol().equals("file")) return 0;
 
         try
         {
@@ -90,8 +114,7 @@ public class URLChangeTracker
             long newTimestamp = readTimestamp(entry.getKey());
             long current = entry.getValue();
 
-            if (current == newTimestamp)
-                continue;
+            if (current == newTimestamp) continue;
 
             result = true;
             entry.setValue(newTimestamp);
@@ -100,12 +123,17 @@ public class URLChangeTracker
         return result;
     }
 
+    /**
+     * Returns the time that the specified file was last modified, possibly rounded down to the
+     * nearest second.
+     */
     private long readTimestamp(File file)
     {
-        if (!file.exists())
-            return FILE_DOES_NOT_EXIST_TIMESTAMP;
+        if (!file.exists()) return FILE_DOES_NOT_EXIST_TIMESTAMP;
 
-        return file.lastModified();
+        long timestamp = file.lastModified();
+        if (_granularitySeconds) timestamp -= timestamp % 1000;
+        return timestamp;
     }
 
     /**
@@ -125,4 +153,5 @@ public class URLChangeTracker
     {
         return _fileToTimestamp.size();
     }
+
 }

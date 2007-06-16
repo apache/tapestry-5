@@ -82,10 +82,14 @@ public class AssetDispatcher implements Dispatcher
         }
 
         long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE_HEADER);
-        if (ifModifiedSince > 0 && ifModifiedSince >= _resourceCache.getTimeModified(resource))
+        if (ifModifiedSince > 0)
         {
-            response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
-            return true;
+            long modified = _resourceCache.getTimeModified(resource);
+            if (ifModifiedSince >= modified)
+            {
+                response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
+                return true;
+            }
         }
 
         _streamer.streamResource(resource);

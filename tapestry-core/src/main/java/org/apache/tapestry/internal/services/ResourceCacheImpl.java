@@ -65,13 +65,8 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
 
     public ResourceCacheImpl(final ResourceDigestGenerator digestGenerator)
     {
-        this(digestGenerator, new URLChangeTracker());
-    }
-
-    ResourceCacheImpl(final ResourceDigestGenerator digestGenerator, URLChangeTracker tracker)
-    {
         _digestGenerator = digestGenerator;
-        _tracker = tracker;
+        _tracker = new URLChangeTracker(true);
     }
 
     public void checkForUpdates()
