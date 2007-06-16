@@ -47,6 +47,8 @@ Where To Go
 *---+---+
 | {{{tapestry-test/index.html}tapestry-test}} |  Tapestry test utilities. |
 *---+---+
+| {{{tapestry-upload/index.html}tapestry-upload}} |  Tapestry file upload component. |
+*---+---+
  
   Or, you can start with the {{{screencast.html}screencasts}}, which give you a better idea about how Tapestry fits together.
 
@@ -93,39 +95,38 @@ What's changed since Tapestry 4?
   []
   
 New and Noteworthy
-
-  Applications can now have a central message catalog; pages and components can override messages
-  from the central catalog.
-  
-  The BeanEditForm component can now create the object is edits.
-
-  The {{{tapestry-spring/}tapestry-spring}} module has also been simplified, to make
+ 
+  * A file upload form component has been added, in a new library: {{{tapestry-upload/}tapestry-upload}}. 
+ 
+  * The {{{tapestry-spring/}tapestry-spring}} module has also been simplified, to make
   Spring beans look like Tapestry IoC services. It's all now quite seamless.
 
-  The {{{tapestry-ioc/}tapestry-ioc}} module has been simplified, removing the concept
+  * The {{{tapestry-ioc/}tapestry-ioc}} module has been simplified, removing the concept
   of module ids and namespaces, as well as private services, and borrowing a lot of cool
   ideas from {{{http://code.google.com/p/google-guice/}Guice}}. The goal is to make the container
   all but invisible.
 
-  Work has been started on {{{http://hibernate.org}Hibernate}} integration in the
+  * Work has been started on {{{http://hibernate.org}Hibernate}} integration in the
   new {{{tapestry-hibernate/}tapestry-hibernate}} module.
 
-  A few simple utility classes for building integration tests (on top of 
+  * A few simple utility classes for building integration tests (on top of 
   {{{http://www.openqa.org/selenium/}Selenium}}) have been split out as a new module: 
   {{{tapestry-test/}tapestry-test}}.
     
-  A  module for integrating Tapestry 5 with {{{http://springframework.org/}Spring}} has been
+  * A  module for integrating Tapestry 5 with {{{http://springframework.org/}Spring}} has been
   added: {{{tapestry-spring/}tapestry-spring}}.
 
-  A Maven plugin to generate documentation about components and parameters has been added:
+  * A Maven plugin to generate documentation about components and parameters has been added:
   {{{tapestry-component-report/}tapestry-component-report}}.
  
-  {{{http://www.formos.com}Formos}} has donated hardware and bandwith to support the Tapestry project, starting
+  * {{{http://www.formos.com}Formos}} has donated hardware and bandwith to support the Tapestry project, starting
   with a {{{http://tapestry.formos.com/bamboo}continuous integration site}} running on
   {{{http://www.atlassian.com/software/bamboo/}Bamboo}}.  And thanks to Atlassian for donating
   the Bamboo license.
 
-  Howard Lewis Ship has begun work on a {{{t5-tutorial.pdf}Tapestry 5 Tutorial}} [PDF].  
+  * Howard Lewis Ship has begun work on a {{{tutorial1/}Tapestry 5 Tutorial}}. 
+  
+  [] 
     
 About Snapshots and Releases
 
