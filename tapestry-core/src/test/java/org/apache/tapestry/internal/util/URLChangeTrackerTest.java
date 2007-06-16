@@ -133,20 +133,15 @@ public class URLChangeTrackerTest extends TapestryTestCase
         URL url = f.toURL();
 
         touch(f);
-        long timestamp = t.add(url);
-        assertEquals(0, timestamp % 1000);
-        assertFalse(t.containsChanges());
-
-        touch(f);
-        timestamp = t.add(url);
-        assertEquals(0, timestamp % 1000);
+        long timestamp1 = t.add(url);
+        assertEquals(0, timestamp1 % 1000);
         assertFalse(t.containsChanges());
 
         Thread.sleep(1500);
 
         touch(f);
-        timestamp = t.add(url);
-        assertEquals(0, timestamp % 1000);
+        long timestamp2 = t.add(url);
+        assertEquals(0, timestamp2 % 1000);
         assertTrue(t.containsChanges());
     }
 
