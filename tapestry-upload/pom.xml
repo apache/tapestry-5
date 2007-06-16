@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-upload</artifactId>
-    <name>Tapestry-File Upload Library</name>
+    <name>Tapestry File Upload Component Library</name>
     <packaging>jar</packaging>
-    <description>Provides a file upload component for Tapestry.</description>
+    <description>Provides a file upload component for Tapestry, based on Jakarta commons-fileupload.</description>
     <parent>
       <groupId>org.apache.tapestry</groupId>
       <artifactId>tapestry-project</artifactId>
