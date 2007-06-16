@@ -27,7 +27,7 @@ public class MaxTest extends InternalBaseTestCase
     {
         Field field = mockField();
         MessageFormatter formatter = mockMessageFormatter();
-        Long constraint = 50l;
+        Long constraint = 50L;
 
         replay();
 

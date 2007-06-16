@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class URLChangeTracker
 {
-    private static final long FILE_DOES_NOT_EXIST_TIMESTAMP = -1l;
+    private static final long FILE_DOES_NOT_EXIST_TIMESTAMP = -1L;
 
     private final Map<File, Long> _fileToTimestamp = newConcurrentMap();
 
