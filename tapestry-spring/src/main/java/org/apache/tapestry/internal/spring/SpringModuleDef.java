@@ -1,4 +1,20 @@
+// Copyright 2007 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package org.apache.tapestry.internal.spring;
+
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 
 import java.util.Collections;
 import java.util.Map;
@@ -11,12 +27,12 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
 
 /**
- * A wrapper that converts a Spring {@link WebApplicationContext} into a set of service definitions,
+ * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions,
  * compatible with Tapestry 5 IoC, for the beans defined in the context, as well as the context
  * itself.
  */
@@ -24,11 +40,11 @@ public class SpringModuleDef implements ModuleDef
 {
     private static final String CONTEXT_SERVICE_ID = WebApplicationContext.class.getSimpleName();
 
-    private final WebApplicationContext _context;
+    private final ApplicationContext _context;
 
-    private final Map<String, ServiceDef> _serviceDefs = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, ServiceDef> _serviceDefs = newCaseInsensitiveMap();
 
-    public SpringModuleDef(final WebApplicationContext context)
+    public SpringModuleDef(final ApplicationContext context)
     {
         _context = context;
 
