@@ -79,6 +79,7 @@
     <module>../tapestry-core</module>
     <module>../tapestry-spring</module>
     <module>../tapestry-hibernate</module>
+    <module>../tapestry-upload</module>
     
     <!-- Temporarily removed until the project is named correctly and set up with a trunk, etc. 
 			<module>../tapestry-Workbench</module>

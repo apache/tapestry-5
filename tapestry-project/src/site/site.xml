@@ -37,6 +37,7 @@
       <item name="tapestry-ioc" href="tapestry-ioc"/>
       <item name="tapestry-spring" href="tapestry-spring"/>
       <item name="tapestry-test" href="tapestry-test/"/>
+      <item name="tapestry-upload" href="tapestry-upload"/>
     </menu>
     
     <menu name="Tapestry Tutorials">
