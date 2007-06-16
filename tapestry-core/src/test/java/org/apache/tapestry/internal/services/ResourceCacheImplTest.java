@@ -40,6 +40,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
         Resource r = mockResource();
 
         long lastUpdated = f.lastModified();
+        lastUpdated -= lastUpdated % 1000;
 
         train_getPath(r, PATH);
         train_toURL(r, url);
@@ -90,6 +91,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
         Resource r = mockResource();
 
         long lastUpdated = f.lastModified();
+        lastUpdated -= lastUpdated % 1000;
 
         train_getPath(r, PATH);
         train_toURL(r, url);
@@ -118,6 +120,7 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
         Resource r = mockResource();
 
         long lastUpdated = f.lastModified();
+        lastUpdated -= lastUpdated % 1000;
 
         train_getPath(r, PATH);
         train_toURL(r, url);
@@ -140,9 +143,11 @@ public class ResourceCacheImplTest extends InternalBaseTestCase
 
         verify();
 
+        Thread.sleep(1500);
         touch(f);
 
         lastUpdated = f.lastModified();
+        lastUpdated -= lastUpdated % 1000;
 
         String expectedDigest = "FREDBARNEY";
 
