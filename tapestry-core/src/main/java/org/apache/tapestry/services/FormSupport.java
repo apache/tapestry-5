@@ -49,4 +49,14 @@ public interface FormSupport extends ClientElement
      * @param command
      */
     void defer(Runnable command);
+
+    /**
+     * Sets the encoding type for the Form. This should only be set once, and if
+     * 
+     * @param encodingType
+     *            MIME type indicating type of encoding for the form
+     * @throws IllegalStateException
+     *             if the encoding type has already been set to a value different than the supplied
+     */
+    void setEncodingType(String encodingType);
 }

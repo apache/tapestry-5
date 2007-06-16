@@ -37,4 +37,9 @@ final class ComponentMessages
         return MESSAGES.format("failure-instantitating-object", ClassFabUtils
                 .toJavaClassName(objectType), componentId, cause);
     }
+
+    static String conflictingEncodingType(String existing, String conflicting)
+    {
+        return MESSAGES.format("conflicting-encoding-type", existing, conflicting);
+    }
 }

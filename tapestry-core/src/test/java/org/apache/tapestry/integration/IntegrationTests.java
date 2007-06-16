@@ -1021,4 +1021,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Currently on page: GridDemo");
     }
 
+    @Test
+    public void form_encoding_type()
+    {
+        open(BASE_URL);
+
+        clickAndWait("link=Form Encoding Type");
+
+        assertText("//form/@enctype", "x-override");
+    }
+
 }

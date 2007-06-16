@@ -83,4 +83,50 @@ public class FormSupportImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void set_encoding_type()
+    {
+        FormSupportImpl support = new FormSupportImpl();
+
+        String encodingType = "foo/bar";
+
+        support.setEncodingType(encodingType);
+
+        assertSame(support.getEncodingType(), encodingType);
+    }
+
+    @Test
+    public void set_encoding_type_to_same_value_is_allowed()
+    {
+        FormSupportImpl support = new FormSupportImpl();
+
+        String encodingType = "foo/bar";
+
+        support.setEncodingType(encodingType);
+        support.setEncodingType(new String(encodingType));
+
+        assertEquals(support.getEncodingType(), encodingType);
+    }
+
+    @Test
+    public void set_encoding_type_conflict()
+    {
+
+        FormSupportImpl support = new FormSupportImpl();
+
+        support.setEncodingType("foo");
+        try
+        {
+            support.setEncodingType("bar");
+            unreachable();
+        }
+        catch (IllegalStateException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Encoding type of form has already been set to \'foo\' and may not be changed to \'bar\'.");
+        }
+
+    }
 }
