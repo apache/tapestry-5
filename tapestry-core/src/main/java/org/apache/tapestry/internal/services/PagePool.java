@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,20 +18,18 @@ import org.apache.tapestry.internal.structure.Page;
 
 /**
  * Provides access to pages, creating them as necessary, and pooling them between requests.
- * 
- * 
  */
 public interface PagePool
 {
     /**
-     * Obtains a page instance from the pool via a page name. A page instance is created if no such
-     * page is currently available.
+     * Obtains a page instance from the pool via a logical page name. A page instance is created if
+     * no such page is currently available.
      * 
-     * @param pageName
-     *            identifies the page name, as a fully qualified class name
+     * @param logicalPageName
+     *            logical name used to identify the page
      * @return a page instance
      */
-    Page checkout(String pageName);
+    Page checkout(String logicalPageName);
 
     /**
      * @param page

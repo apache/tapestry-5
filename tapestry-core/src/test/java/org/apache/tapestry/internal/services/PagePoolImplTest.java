@@ -14,20 +14,22 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.contains;
-
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
-import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.internal.services.ThreadLocaleImpl;
 import org.apache.tapestry.ioc.services.ThreadLocale;
+import org.apache.tapestry.services.ComponentClassResolver;
+import org.easymock.EasyMock;
 import org.testng.annotations.Test;
 
 public class PagePoolImplTest extends InternalBaseTestCase
 {
+    private static final String INPUT_PAGE_NAME = "mypage";
+
+    private static final String LOGICAL_PAGE_NAME = "MyPage";
+
     private static final String PAGE_NAME = "com.foo.pages.MyPage";
 
     // This will change once we start supporting application localization.
@@ -40,16 +42,20 @@ public class PagePoolImplTest extends InternalBaseTestCase
         PageLoader loader = mockPageLoader();
         Page page = mockPage();
         ThreadLocale tl = mockThreadLocale();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Log log = mockLog();
+
+        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
         train_getLocale(tl, _locale);
 
-        train_loadPage(loader, PAGE_NAME, _locale, page);
+        train_loadPage(loader, LOGICAL_PAGE_NAME, _locale, page);
 
         replay();
 
-        PagePool pool = new PagePoolImpl(null, loader, tl);
+        PagePool pool = new PagePoolImpl(log, loader, tl, resolver);
 
-        assertSame(page, pool.checkout(PAGE_NAME));
+        assertSame(page, pool.checkout(INPUT_PAGE_NAME));
 
         verify();
     }
@@ -57,73 +63,52 @@ public class PagePoolImplTest extends InternalBaseTestCase
     @Test
     public void checkout_when_page_list_is_empty()
     {
-        final Page page1 = new NoOpPage(PAGE_NAME, _locale);
-        final Page page2 = new NoOpPage(PAGE_NAME, _locale);
+        Page page1 = mockPage();
+        Page page2 = mockPage();
+        PageLoader loader = mockPageLoader();
+        Log log = mockLog();
+        ThreadLocale tl = mockThreadLocale();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
-        PageLoader loader = new PageLoader()
-        {
+        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
-            public void addInvalidationListener(InvalidationListener listener)
-            {
+        train_getLocale(tl, _locale);
 
-            }
+        train_loadPage(loader, LOGICAL_PAGE_NAME, _locale, page1);
 
-            public Page loadPage(String pageClassName, Locale locale)
-            {
-                if (pageClassName.equals(PAGE_NAME))
-                {
-                    return page2;
-                }
-                return null;
-            }
+        replay();
 
-        };
-        ThreadLocale threadLocale = new ThreadLocaleImpl();
-        threadLocale.setLocale(_locale);
-        PagePool pool = new PagePoolImpl(null, loader, threadLocale);
-        pool.release(page1);
-        assertSame(page1, pool.checkout(PAGE_NAME));
-        // Now the list is empty, but not null.
-        assertSame(page2, pool.checkout(PAGE_NAME));
-    }
+        PagePool pool = new PagePoolImpl(log, loader, tl, resolver);
 
-    // This should move up to IOCTestCase
+        assertSame(pool.checkout(INPUT_PAGE_NAME), page1);
 
-    protected final void train_detached(Page page, boolean dirty)
-    {
-        expect(page.detached()).andReturn(dirty);
-    }
+        verify();
 
-    @Test
-    public void release_last_in_first_out()
-    {
-        final Page page1 = new NoOpPage(PAGE_NAME, _locale);
-        final Page page2 = new NoOpPage(PAGE_NAME, _locale);
+        train_detached(page1, false);
+        train_getLogicalName(page1, LOGICAL_PAGE_NAME);
+        train_getLocale(page1, _locale);
 
-        PageLoader loader = new PageLoader()
-        {
-
-            public void addInvalidationListener(InvalidationListener listener)
-            {
-
-            }
-
-            public Page loadPage(String pageClassName, Locale locale)
-            {
-                fail();
-                return null;
-            }
-
-        };
-        ThreadLocale threadLocale = new ThreadLocaleImpl();
-        threadLocale.setLocale(_locale);
-        PagePool pool = new PagePoolImpl(null, loader, threadLocale);
+        replay();
 
         pool.release(page1);
-        pool.release(page2);
 
-        assertSame(page2, pool.checkout(PAGE_NAME));
-        assertSame(page1, pool.checkout(PAGE_NAME));
+        verify();
+
+        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
+        train_getLocale(tl, _locale);
+
+        train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
+        train_getLocale(tl, _locale);
+
+        train_loadPage(loader, LOGICAL_PAGE_NAME, _locale, page2);
+
+        replay();
+
+        assertSame(pool.checkout(INPUT_PAGE_NAME), page1);
+        assertSame(pool.checkout(INPUT_PAGE_NAME), page2);
+
+        verify();
+
     }
 
     @Test
@@ -135,53 +120,17 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         train_detached(page, true);
 
-        log.error(contains("is dirty, and will be discarded"));
+        log.error(EasyMock.contains("is dirty, and will be discarded"));
 
-        // The fact that we don't ask the page for its name is our clue that it is not being cached.
+        // The fact that we don't ask
+        // the page for its name is our clue that it is not being cached.
 
         replay();
 
-        PagePool pool = new PagePoolImpl(log, loader, null);
+        PagePool pool = new PagePoolImpl(log, loader, null, null);
 
         pool.release(page);
 
         verify();
-    }
-
-    @Test
-    public void diff_locales()
-    {
-        final Page germanPage = new NoOpPage("p1", Locale.GERMAN);
-        final Page frenchPage = new NoOpPage("p1", Locale.FRENCH);
-
-        PageLoader loader = new PageLoader()
-        {
-
-            public void addInvalidationListener(InvalidationListener listener)
-            {
-
-            }
-
-            public Page loadPage(String pageClassName, Locale locale)
-            {
-                if (pageClassName.equals("p1"))
-                {
-                    return locale.equals(Locale.GERMAN) ? germanPage
-                            : locale.equals(Locale.FRENCH) ? frenchPage : null;
-                }
-                return null;
-            }
-
-        };
-        ThreadLocale threadLocale = new ThreadLocaleImpl();
-        PagePool pool = new PagePoolImpl(null, loader, threadLocale);
-        threadLocale.setLocale(Locale.GERMAN);
-        Page page = pool.checkout("p1");
-        assertSame(page, germanPage);
-        pool.release(page);
-        threadLocale.setLocale(Locale.FRENCH);
-        page = pool.checkout("p1");
-        assertSame(page, frenchPage);
-        pool.release(page);
     }
 }

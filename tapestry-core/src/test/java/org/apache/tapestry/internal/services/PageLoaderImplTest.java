@@ -23,15 +23,19 @@ import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.parser.EndElementToken;
 import org.apache.tapestry.internal.parser.StartComponentToken;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
+import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
+import org.apache.tapestry.services.ComponentClassResolver;
 import org.testng.annotations.Test;
 
 public class PageLoaderImplTest extends InternalBaseTestCase
 {
+    private static final String LOGICAL_PAGE_NAME = "Bar";
+
     private static final String PAGE_CLASS_NAME = "foo.page.Bar";
 
     private static final String CHILD_CLASS_NAME = "foo.component.Baz";
@@ -48,6 +52,9 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentTemplate template = mockComponentTemplate();
         Log log = mockLog();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+
+        train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
 
         train_newRootComponentElement(elementFactory, PAGE_CLASS_NAME, rootElement);
 
@@ -74,9 +81,11 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
 
-        loader.loadPage(PAGE_CLASS_NAME, LOCALE);
+        Page page = loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
+
+        assertSame(page.getLogicalName(), LOGICAL_PAGE_NAME);
 
         verify();
     }
@@ -98,7 +107,9 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         Location l = mockLocation();
         PageElement body = mockPageElement();
         ComponentTemplate childTemplate = mockComponentTemplate();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
+        train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
         train_newRootComponentElement(elementFactory, PAGE_CLASS_NAME, rootElement);
 
         train_getComponentResources(rootElement, resources);
@@ -159,9 +170,9 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null);
+        PageLoader loader = new PageLoaderImpl(templateSource, elementFactory, null, null, resolver);
 
-        loader.loadPage(PAGE_CLASS_NAME, LOCALE);
+        loader.loadPage(LOGICAL_PAGE_NAME, LOCALE);
 
         verify();
     }

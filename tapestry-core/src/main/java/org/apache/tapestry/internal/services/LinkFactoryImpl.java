@@ -118,9 +118,8 @@ public class LinkFactoryImpl implements LinkFactory
         notBlank(action, "action");
 
         Page containingPage = component.getContainingPage();
-        String pageName = containingPage.getName();
 
-        String logicalPageName = _componentClassResolver.resolvePageClassNameToPageName(pageName);
+        String logicalPageName = containingPage.getLogicalName();
 
         ActionLinkTarget target = new ActionLinkTarget(action, logicalPageName, component
                 .getNestedId());
@@ -169,8 +168,7 @@ public class LinkFactoryImpl implements LinkFactory
     {
         notNull(page, "page");
 
-        String pageName = page.getName();
-        String logicalPageName = _componentClassResolver.resolvePageClassNameToPageName(pageName);
+        String logicalPageName = page.getLogicalName();
 
         String[] context = activationContext.length != 0 ? toContextStrings(activationContext)
                 : collectActivationContextForPage(page);

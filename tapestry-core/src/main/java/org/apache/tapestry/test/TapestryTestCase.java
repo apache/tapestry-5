@@ -975,4 +975,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(request.getParameter(elementName)).andReturn(value).atLeastOnce();
     }
 
+    protected final void train_getPageName(ComponentResourcesCommon resources, String pageName)
+    {
+        expect(resources.getPageName()).andReturn(pageName).atLeastOnce();
+    }
+
 }

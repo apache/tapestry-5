@@ -15,28 +15,23 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 
 import java.util.Map;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.MetaDataLocator;
 
 public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListener
 {
     private final Map<String, Map<String, String>> _defaultsByFolder = newCaseInsensitiveMap();
 
-    private final Map<String, String> _cache = CollectionFactory.newConcurrentMap();
+    private final Map<String, String> _cache = newConcurrentMap();
 
-    private final ComponentClassResolver _componentClassResolver;
-
-    public MetaDataLocatorImpl(ComponentClassResolver componentClassResolver,
-            Map<String, String> configuration)
+    public MetaDataLocatorImpl(Map<String, String> configuration)
     {
-        _componentClassResolver = componentClassResolver;
-
         loadDefaults(configuration);
     }
 
@@ -73,11 +68,10 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
     {
         // The component's complete id should be sufficient as locale-specific
         // values don't enter into this.
-        
+
         String cacheKey = resources.getCompleteId() + "/" + key;
 
-        if (_cache.containsKey(cacheKey))
-            return _cache.get(cacheKey);
+        if (_cache.containsKey(cacheKey)) return _cache.get(cacheKey);
 
         String result = locate(key, resources);
 
@@ -94,13 +88,11 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         {
             String value = cursor.getComponentModel().getMeta(key);
 
-            if (value != null)
-                return value;
+            if (value != null) return value;
 
             ComponentResources next = cursor.getContainerResources();
 
-            if (next == null)
-                return locateInDefaults(key, cursor);
+            if (next == null) return locateInDefaults(key, cursor);
 
             cursor = next;
         }
@@ -108,9 +100,7 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
     private String locateInDefaults(String key, ComponentResources pageResources)
     {
-        String pageClassName = pageResources.getCompleteId();
-
-        String logicalName = _componentClassResolver.resolvePageClassNameToPageName(pageClassName);
+        String logicalName = pageResources.getPageName();
 
         // We're going to peel this apart, slash by slash. Thus for
         // "mylib/myfolder/mysubfolder/MyPage" we'll be checking: "mylib/myfolder/mysubfolder",
@@ -126,11 +116,9 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
             Map<String, String> forFolder = _defaultsByFolder.get(folderKey);
 
-            if (forFolder != null && forFolder.containsKey(key))
-                return forFolder.get(key);
+            if (forFolder != null && forFolder.containsKey(key)) return forFolder.get(key);
 
-            if (lastSlashx < 0)
-                break;
+            if (lastSlashx < 0) break;
 
             path = path.substring(0, lastSlashx);
         }

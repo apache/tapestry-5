@@ -32,7 +32,7 @@ import org.apache.tapestry.services.PersistentFieldManager;
 
 public class PageImpl implements Page
 {
-    private final String _name;
+    private final String _logicalPageName;
 
     private final Locale _locale;
 
@@ -52,10 +52,10 @@ public class PageImpl implements Page
      */
     private PersistentFieldBundle _fieldBundle;
 
-    public PageImpl(String name, Locale locale, LinkFactory linkFactory,
+    public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
             PersistentFieldManager persistentFieldManager)
     {
-        _name = name;
+        _logicalPageName = logicalPageName;
         _locale = locale;
         _linkFactory = linkFactory;
         _persistentFieldManager = persistentFieldManager;
@@ -64,7 +64,7 @@ public class PageImpl implements Page
     @Override
     public String toString()
     {
-        return String.format("Page[%s %s]", _name, _locale);
+        return String.format("Page[%s %s]", _logicalPageName, _locale);
     }
 
     public ComponentPageElement getComponentElementByNestedId(String nestedId)
@@ -84,11 +84,6 @@ public class PageImpl implements Page
         }
 
         return element;
-    }
-
-    public String getName()
-    {
-        return _name;
     }
 
     public Locale getLocale()
@@ -146,8 +141,7 @@ public class PageImpl implements Page
 
     public void attached()
     {
-        if (_dirtyCount != 0)
-            throw new IllegalStateException(StructureMessages.pageIsDirty(this));
+        if (_dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
 
         for (PageLifecycleListener listener : _listeners)
             listener.containingPageDidAttach();
@@ -171,13 +165,13 @@ public class PageImpl implements Page
 
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)
     {
-        _persistentFieldManager.postChange(_name, resources, fieldName, newValue);
+        _persistentFieldManager.postChange(_logicalPageName, resources, fieldName, newValue);
     }
 
     public Object getFieldChange(ComponentPageElement element, String fieldName)
     {
         if (_fieldBundle == null)
-            _fieldBundle = _persistentFieldManager.gatherChanges(_name);
+            _fieldBundle = _persistentFieldManager.gatherChanges(_logicalPageName);
 
         return _fieldBundle.getValue(element.getNestedId(), fieldName);
     }
@@ -191,5 +185,9 @@ public class PageImpl implements Page
     {
         _dirtyCount++;
     }
- 
+
+    public String getLogicalName()
+    {
+        return _logicalPageName;
+    }
 }

@@ -375,10 +375,10 @@ class PageLoaderProcessor
     }
 
     /**
-     * As currently implemented, this should be invoked just once and then the instance should be
-     * discarded.
+     * As currently implemented, this should be invoked just once and then the PageLoaderProcessor
+     * instance should be discarded.
      */
-    public Page loadPage(String pageClassName, Locale locale)
+    public Page loadPage(String logicalPageName, String pageClassName, Locale locale)
     {
         // Ensure that loadPage() may only be invoked once.
 
@@ -386,7 +386,7 @@ class PageLoaderProcessor
 
         _locale = locale;
 
-        _page = new PageImpl(pageClassName, _locale, _linkFactory, _persistentFieldManager);
+        _page = new PageImpl(logicalPageName, _locale, _linkFactory, _persistentFieldManager);
 
         loadRootComponent(pageClassName);
 

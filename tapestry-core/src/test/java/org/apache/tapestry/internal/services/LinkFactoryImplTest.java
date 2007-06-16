@@ -42,8 +42,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
     private static final String PAGE_LOGICAL_NAME = "sub/MyPage";
 
-    private static final String PAGE_CLASS_NAME = "foo.pages.sub.MyPage";
-
     private TypeCoercer _typeCoercer;
 
     @BeforeClass
@@ -62,7 +60,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     public void action_link_root_context_no_ids()
     {
         testActionLink(
-                PAGE_CLASS_NAME,
                 "",
                 PAGE_LOGICAL_NAME,
                 "foo.bar",
@@ -75,7 +72,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     public void action_link_root_context_with_ids()
     {
         testActionLink(
-                PAGE_CLASS_NAME,
                 "",
                 PAGE_LOGICAL_NAME,
                 "foo.bar",
@@ -89,7 +85,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     public void action_link_with_default_action()
     {
         testActionLink(
-                PAGE_CLASS_NAME,
                 "",
                 PAGE_LOGICAL_NAME,
                 "foo.bar",
@@ -103,7 +98,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     public void page_level_event_always_includes_action()
     {
         testActionLink(
-                PAGE_CLASS_NAME,
                 "",
                 PAGE_LOGICAL_NAME,
                 "",
@@ -117,7 +111,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     public void action_link_named_context_no_ids()
     {
         testActionLink(
-                PAGE_CLASS_NAME,
                 "/fred",
                 PAGE_LOGICAL_NAME,
                 "foo.bar",
@@ -137,8 +130,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
 
-        train_getName(page, PAGE_CLASS_NAME);
-        train_resolvePageClassNameToPageName(resolver, PAGE_CLASS_NAME, PAGE_LOGICAL_NAME);
+        train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
 
         train_getRootElement(page, rootElement);
@@ -184,8 +176,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
 
-        train_getName(page, PAGE_CLASS_NAME);
-        train_resolvePageClassNameToPageName(resolver, PAGE_CLASS_NAME, PAGE_LOGICAL_NAME);
+        train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
 
         Holder<Link> holder = new Holder<Link>();
@@ -233,8 +224,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_get(cache, PAGE_LOGICAL_NAME, page);
 
-        train_getName(page, PAGE_CLASS_NAME);
-        train_resolvePageClassNameToPageName(resolver, PAGE_CLASS_NAME, PAGE_LOGICAL_NAME);
+        train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
 
         train_getRootElement(page, rootElement);
@@ -346,8 +336,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     }
 
     @SuppressWarnings("unchecked")
-    private void testActionLink(String pageClassName, String contextPath, String logicalPageName,
-            String nestedId, String eventName, String expectedURI, Object... context)
+    private void testActionLink(String contextPath, String logicalPageName, String nestedId,
+            String eventName, String expectedURI, Object... context)
     {
         Request request = mockRequest();
         Response response = mockResponse();
@@ -362,8 +352,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         final Holder<Link> holder = new Holder<Link>();
 
         train_getContainingPage(element, page);
-        train_getName(page, pageClassName);
-        train_resolvePageClassNameToPageName(resolver, pageClassName, logicalPageName);
+        train_getLogicalName(page, logicalPageName);
         train_getContextPath(request, contextPath);
         train_getNestedId(element, nestedId);
 

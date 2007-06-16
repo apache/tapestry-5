@@ -25,6 +25,7 @@ import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ThreadLocale;
+import org.apache.tapestry.services.ComponentClassResolver;
 
 /**
  * A very naive implementation just to get us past the start line.
@@ -40,27 +41,33 @@ public class PagePoolImpl implements PagePool, InvalidationListener
 
     private final ThreadLocale _threadLocale;
 
+    private final ComponentClassResolver _resolver;
+
     private final Map<PageLocator, List<Page>> _pool = newMap();
 
-    public PagePoolImpl(Log log, PageLoader pageLoader, ThreadLocale threadLocale)
+    public PagePoolImpl(Log log, PageLoader pageLoader, ThreadLocale threadLocale,
+            ComponentClassResolver resolver)
     {
         _log = log;
         _pageLoader = pageLoader;
         _threadLocale = threadLocale;
+        _resolver = resolver;
     }
 
-    public synchronized Page checkout(String pageName)
+    public synchronized Page checkout(String logicalPageName)
     {
+        String canonicalPageName = _resolver.canonicalizePageName(logicalPageName);
+
         Locale locale = _threadLocale.getLocale();
-        List<Page> pages = _pool.get(new PageLocator(pageName, locale));
+        List<Page> pages = _pool.get(new PageLocator(canonicalPageName, locale));
 
         // When we load a page, we load it in the active locale, whatever that is.
         // Even if the locale later changes, we keep the version we originally got.
         // This is not as bad in T5 as in T4, since a seperate request will
         // render the response (and will have a chance to get the page in a different locale).
 
-        if (pages == null || pages.isEmpty())
-            return _pageLoader.loadPage(pageName, locale);
+        if (pages == null || pages.isEmpty()) 
+            return _pageLoader.loadPage(canonicalPageName, locale);
 
         // Remove and return the last page in the pool.
 
@@ -77,7 +84,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener
             return;
         }
 
-        PageLocator locator = new PageLocator(page.getName(), page.getLocale());
+        PageLocator locator = new PageLocator(page.getLogicalName(), page.getLocale());
         List<Page> pages = _pool.get(locator);
 
         if (pages == null)

@@ -16,40 +16,29 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.ComponentClassResolver;
 import org.testng.annotations.Test;
 
 public class RequestPageCacheImplTest extends InternalBaseTestCase
 {
     private static final String PAGE_NAME = "MyPage";
 
-    private static final String PAGE_CLASS_NAME = "com.foo.pages.MyPage";
-
     @Test
     public void get_is_cached()
     {
-        ComponentClassResolver resolver = mockComponentClassResolver();
         PagePool pool = mockPagePool();
         Page page = mockPage();
 
-        train_resolvePageNameToClassName(resolver, PAGE_NAME, PAGE_CLASS_NAME);
-
-        expect(pool.checkout(PAGE_CLASS_NAME)).andReturn(page);
+        expect(pool.checkout(PAGE_NAME)).andReturn(page);
 
         page.attached();
 
         replay();
 
-        RequestPageCacheImpl cache = new RequestPageCacheImpl(resolver, pool);
+        RequestPageCacheImpl cache = new RequestPageCacheImpl(pool);
 
         assertSame(cache.get(PAGE_NAME), page);
 
         verify();
-
-        // Asking for a page always resolves the name to a class (fortunately,
-        // this is cached by resolver).
-
-        train_resolvePageNameToClassName(resolver, PAGE_NAME, PAGE_CLASS_NAME);
 
         replay();
 
@@ -67,37 +56,5 @@ public class RequestPageCacheImplTest extends InternalBaseTestCase
         cache.threadDidCleanup();
 
         verify();
-    }
-
-    @Test
-    public void page_does_not_exist()
-    {
-        ComponentClassResolver resolver = mockComponentClassResolver();
-        PagePool pool = mockPagePool();
-
-        train_resolvePageNameToClassName(resolver, PAGE_NAME, null);
-
-        replay();
-
-        try
-        {
-            RequestPageCacheImpl cache = new RequestPageCacheImpl(resolver, pool);
-
-            cache.get(PAGE_NAME);
-
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertEquals(ex.getMessage(), "Page 'MyPage' is not defined by this application.");
-        }
-
-        verify();
-    }
-
-    protected final void train_resolvePageNameToClassName(ComponentClassResolver resolver,
-            String pageName, String className)
-    {
-        expect(resolver.resolvePageNameToClassName(pageName)).andReturn(className);
     }
 }

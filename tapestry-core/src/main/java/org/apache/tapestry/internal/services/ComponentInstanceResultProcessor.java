@@ -44,21 +44,15 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
-        {
             _log.warn(ServicesMessages.componentInstanceIsNotAPage(
                     methodDescription,
                     component,
                     value));
 
-            resources = resources.getPage().getComponentResources();
-        }
-
         // We have all these layers and layers between us and the page instance, but its easy to
         // extract the page class name and quickly re-resolve that to the page instance.
 
-        String pageClassName = resources.getCompleteId();
-
-        Page page = _requestPageCache.getByClassName(pageClassName);
+        Page page = _requestPageCache.get(resources.getPageName());
 
         Link link = _linkFactory.createPageLink(page);
 

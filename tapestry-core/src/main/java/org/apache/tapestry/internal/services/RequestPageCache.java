@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,23 +26,12 @@ public interface RequestPageCache
      * Gets the page via its page name, in the current locale. The page name is resolved to a class
      * name, which is used to obtain the page (from the page pool).
      * 
-     * @param pageName
+     * @param logicalPageName
      *            the name of the page to retrieve (this is the logical page name, not the fully
      *            qualified class name)
      * @return a page instance reserved for this request
      * @throws IllegalArgumentException
      *             if the name can not be resolved to a page instance
      */
-    Page get(String pageName);
-
-    /**
-     * Gets the page via its fully qualified class name, in the current locale.
-     * 
-     * @param pageName
-     *            fully qualified class name
-     * @return a page instance reserved for this request
-     * @throws IllegalArgumentException
-     *             if the name can not be resolved to a page instance
-     */
-    Page getByClassName(String className);
+    Page get(String logicalPageName);
 }

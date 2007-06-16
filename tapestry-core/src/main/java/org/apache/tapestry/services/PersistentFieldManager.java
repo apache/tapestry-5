@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public interface PersistentFieldManager
      * Posts a change of a persistent property.
      * 
      * @param pageName
-     *            the name of the page containing the component
+     *            the logical name of the page containing the component
      * @param resources
      *            the resources for the component or mixin (used to determine the persistence
      *            strategy)
@@ -42,7 +42,7 @@ public interface PersistentFieldManager
      * session and request) and gathers them together into a bundle.
      * 
      * @param pageName
-     *            the name of the page to gather changes for
+     *            the logical name of the page to gather changes for
      * @return a bundle identifying all such changes
      */
     PersistentFieldBundle gatherChanges(String pageName);

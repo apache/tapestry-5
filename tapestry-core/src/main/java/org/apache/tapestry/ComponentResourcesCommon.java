@@ -151,4 +151,11 @@ public interface ComponentResourcesCommon extends Locatable
      */
     Block findBlock(String blockId);
 
+    /**
+     * Returns the <em>logical</em> name of the page containing this component. This is the short
+     * name (it often appears in URLs)
+     * 
+     * @return the logical name of the page which contains this component
+     */
+    String getPageName();
 }

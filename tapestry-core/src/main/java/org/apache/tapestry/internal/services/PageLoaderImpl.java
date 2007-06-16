@@ -19,6 +19,7 @@ import java.util.Locale;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.PersistentFieldManager;
 
 public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoader,
@@ -32,23 +33,20 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
 
     private final PersistentFieldManager _persistentFieldManager;
 
+    private final ComponentClassResolver _resolver;
+
     public PageLoaderImpl(ComponentTemplateSource templateSource,
             PageElementFactory pageElementFactory, LinkFactory linkFactory,
-            PersistentFieldManager persistentFieldManager)
+            PersistentFieldManager persistentFieldManager, ComponentClassResolver resolver)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
-
         _linkFactory = linkFactory;
         _persistentFieldManager = persistentFieldManager;
+        _resolver = resolver;
     }
 
-    /**
-     * For the moment, this service is a singleton. However, only a single page can be built at one
-     * time. The coming rework will shift the loc al variables to a secondary process object and
-     * allow the loader to work in parallel.
-     */
-    public Page loadPage(String pageClassName, Locale locale)
+    public Page loadPage(String logicalPageName, Locale locale)
     {
         // For the moment, the processors are used once and discarded. Perhaps it is worth the
         // effort to pool them for reuse, but not too likely.
@@ -56,7 +54,9 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
         PageLoaderProcessor processor = new PageLoaderProcessor(_templateSource,
                 _pageElementFactory, _linkFactory, _persistentFieldManager);
 
-        return processor.loadPage(pageClassName, locale);
+        String pageClassName = _resolver.resolvePageNameToClassName(logicalPageName);
+
+        return processor.loadPage(logicalPageName, pageClassName, locale);
     }
 
     /**
