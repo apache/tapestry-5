@@ -198,11 +198,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(loader.loadPage(pageName, locale)).andReturn(page);
     }
 
-    protected final void train_getName(Page page, String name)
-    {
-        expect(page.getName()).andReturn(name).atLeastOnce();
-    }
-
     protected final PagePool mockPagePool()
     {
         return newMock(PagePool.class);
@@ -382,12 +377,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return ins;
     }
 
-    protected final void train_getByClassName(RequestPageCache cache, String pageClassName,
-            Page page)
-    {
-        expect(cache.getByClassName(pageClassName)).andReturn(page).atLeastOnce();
-    }
-
     protected final RequestPageCache mockRequestPageCache()
     {
         return newMock(RequestPageCache.class);
@@ -554,5 +543,33 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final DocumentScriptBuilder mockDocumentScriptBuilder()
     {
         return newMock(DocumentScriptBuilder.class);
+    }
+
+    protected final void train_canonicalizePageName(ComponentClassResolver resolver,
+            String pageName, String canonicalized)
+    {
+        expect(resolver.canonicalizePageName(pageName)).andReturn(canonicalized);
+    }
+
+    protected final void train_getLogicalName(Page page, String logicalName)
+    {
+        expect(page.getLogicalName()).andReturn(logicalName).atLeastOnce();
+    }
+
+    protected final void train_resolvePageNameToClassName(ComponentClassResolver resolver,
+            String pageName, String pageClassName)
+    {
+        expect(resolver.resolvePageNameToClassName(pageName)).andReturn(pageClassName)
+                .atLeastOnce();
+    }
+
+    protected final void train_getLocale(Page page, Locale locale)
+    {
+        expect(page.getLocale()).andReturn(locale).atLeastOnce();
+    }
+
+    protected final void train_detached(Page page, boolean dirty)
+    {
+        expect(page.detached()).andReturn(dirty);
     }
 }

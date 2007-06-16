@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,57 +14,47 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 
 import java.util.Map;
 
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
-import org.apache.tapestry.services.ComponentClassResolver;
 
 public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupListener
 {
-    private final ComponentClassResolver _resolver;
-
     private final PagePool _pagePool;
 
     /**
-     * Keyed on fully qualified page class name.
+     * Keyed on logical page name (case insensitive).
      */
-    private final Map<String, Page> _cache = newMap();
+    private final Map<String, Page> _cache = newCaseInsensitiveMap();
 
-    public RequestPageCacheImpl(ComponentClassResolver resolver, PagePool pagePool)
+    public RequestPageCacheImpl(PagePool pagePool)
     {
-        _resolver = resolver;
         _pagePool = pagePool;
     }
 
-    public Page get(String pageName)
+    public Page get(String logicalPageName)
     {
-        String className = _resolver.resolvePageNameToClassName(pageName);
-
-        if (className == null)
-            throw new IllegalArgumentException(ServicesMessages.pageDoesNotExist(pageName));
-
-        return getByClassName(className);
-    }
-
-    public Page getByClassName(String className)
-    {
-        Page page = _cache.get(className);
+        Page page = _cache.get(logicalPageName);
 
         if (page == null)
         {
-            page = _pagePool.checkout(className);
+            page = _pagePool.checkout(logicalPageName);
 
             page.attached();
 
-            _cache.put(className, page);
+            _cache.put(logicalPageName, page);
         }
 
         return page;
     }
 
+    /**
+     * At the end of the request, when the thread cleanup event occurs, release any pages attached
+     * to the request back to the page pool.
+     */
     public void threadDidCleanup()
     {
         for (Page p : _cache.values())

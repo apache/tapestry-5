@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,19 +36,6 @@ public interface ComponentSource
      * @see ComponentResourcesCommon#getCompleteId()
      */
     Component getComponent(String componentId);
-
-    /**
-     * Gets a page given its class.
-     * 
-     * @param <T>
-     *            the type of the page
-     * @param pageClass
-     *            the class of the page's root component
-     * @return the root component of the page
-     * @throws IllegalArgumentException
-     *             if the page can not be found
-     */
-    <T> T getPage(Class<T> pageClass);
 
     /**
      * Returns the page identified by its logical page name. A logical page name is the short form

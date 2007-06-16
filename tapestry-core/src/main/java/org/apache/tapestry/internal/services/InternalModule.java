@@ -202,9 +202,9 @@ public final class InternalModule
     }
 
     public PagePool build(Log log, PageLoader pageLoader,
-            ComponentMessagesSource componentMessagesSource)
+            ComponentMessagesSource componentMessagesSource, ComponentClassResolver resolver)
     {
-        PagePoolImpl service = new PagePoolImpl(log, pageLoader, _threadLocale);
+        PagePoolImpl service = new PagePoolImpl(log, pageLoader, _threadLocale, resolver);
 
         // This covers invalidations due to changes to classes
 
@@ -236,7 +236,7 @@ public final class InternalModule
     @Scope(PERTHREAD_SCOPE)
     public RequestPageCache build(PagePool pagePool)
     {
-        RequestPageCacheImpl service = new RequestPageCacheImpl(_componentClassResolver, pagePool);
+        RequestPageCacheImpl service = new RequestPageCacheImpl(pagePool);
 
         _threadCleanupHub.addThreadCleanupListener(service);
 

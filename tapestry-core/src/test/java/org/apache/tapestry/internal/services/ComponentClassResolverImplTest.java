@@ -68,6 +68,28 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void canonicalize_existing_page_name()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+
+        train_for_app_packages(source);
+
+        String className = APP_ROOT_PACKAGE + ".pages.SimplePage";
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        ComponentClassResolver resolver = create(source, locator);
+
+        assertEquals(resolver.canonicalizePageName("simplepage"), "SimplePage");
+
+        verify();
+
+    }
+
+    @Test
     public void page_name_in_subfolder()
     {
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
@@ -420,6 +442,39 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void page_name_to_canonicalize_does_not_exist()
+    {
+
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+
+        train_for_packages(source, CORE_ROOT_PACKAGE);
+        train_for_app_packages(source);
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", APP_ROOT_PACKAGE
+                + ".pages.Start");
+
+        replay();
+
+        ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
+                CORE_ROOT_PACKAGE));
+
+        try
+        {
+            resolver.canonicalizePageName("MissingPage");
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Unable to resolve page \'MissingPage\' to a known page name. Available page names: Start.");
+        }
+
+        verify();
+    }
+
+    @Test
     public void class_name_not_in_a_pages_package()
     {
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
@@ -629,7 +684,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
 
         verify();
-
     }
 
     private void train_for_app_packages(ComponentInstantiatorSource source)

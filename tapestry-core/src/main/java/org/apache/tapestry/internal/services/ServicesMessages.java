@@ -165,11 +165,6 @@ class ServicesMessages
         return MESSAGES.format("context-index-out-of-range", methodDescription);
     }
 
-    static String pageDoesNotExist(String pageName)
-    {
-        return MESSAGES.format("page-does-not-exist", pageName);
-    }
-
     static String pageNameUnresolved(String pageClassName)
     {
         return MESSAGES.format("page-name-unresolved", pageClassName);
@@ -196,6 +191,12 @@ class ServicesMessages
     static String couldNotResolvePageName(String pageName, Collection<String> pageNames)
     {
         return MESSAGES.format("could-not-resolve-page-name", pageName, InternalUtils
+                .joinSorted(pageNames));
+    }
+    
+    static String couldNotCanonicalizePageName(String pageName, Collection<String> pageNames)
+    {
+        return MESSAGES.format("could-not-canonicalize-page-name", pageName, InternalUtils
                 .joinSorted(pageNames));
     }
 
@@ -398,7 +399,7 @@ class ServicesMessages
     {
         return MESSAGES.format("no-display-for-data-type", datatype);
     }
-    
+
     static String noEditForDataType(String datatype)
     {
         return MESSAGES.format("no-edit-for-data-type", datatype);

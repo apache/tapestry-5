@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.internal.bindings.DefaultComponent;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -24,7 +23,7 @@ import org.testng.annotations.Test;
 
 public class ComponentSourceImplTest extends InternalBaseTestCase
 {
-    private static final String PAGE_NAME = "foo.pages.Bar";
+    private static final String PAGE_NAME = "Bar";
 
     private static final String NESTED_ELEMENT_ID = "zip.zoom";
 
@@ -35,7 +34,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
         Page page = mockPage();
         Component component = mockComponent();
 
-        train_getByClassName(cache, PAGE_NAME, page);
+        train_get(cache, PAGE_NAME, page);
 
         train_getRootComponent(page, component);
 
@@ -56,7 +55,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
         ComponentPageElement element = mockComponentPageElement();
         Component component = mockComponent();
 
-        train_getByClassName(cache, PAGE_NAME, page);
+        train_get(cache, PAGE_NAME, page);
 
         train_getComponentElementByNestedId(page, NESTED_ELEMENT_ID, element);
 
@@ -92,21 +91,6 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
     @Test
     public void get_page_by_class()
-    {
-        RequestPageCache cache = mockRequestPageCache();
-        Page page = mockPage();
-        Component component = new DefaultComponent();
-
-        train_getByClassName(cache, DefaultComponent.class.getName(), page);
-        train_getRootComponent(page, component);
-
-        replay();
-
-        ComponentSource source = new ComponentSourceImpl(cache);
-
-        assertSame(source.getPage(DefaultComponent.class), component);
-
-        verify();
-    }
+    {}
 
 }

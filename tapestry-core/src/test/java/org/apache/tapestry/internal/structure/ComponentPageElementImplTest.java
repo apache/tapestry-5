@@ -32,13 +32,13 @@ import org.testng.annotations.Test;
 
 public class ComponentPageElementImplTest extends InternalBaseTestCase
 {
-    public static final String PAGE_NAME = "org.test.pages.Foo";
+    public static final String PAGE_NAME = "Foo";
 
     private Page newPage(String pageName)
     {
         Page page = mockPage();
 
-        train_getName(page, pageName);
+        train_getLogicalName(page, pageName);
 
         return page;
     }
@@ -156,7 +156,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Component org.test.pages.Foo already contains a block with id \'MyBlock\'. Block ids must be unique (excluding case, which is ignored).");
+                    "Component Foo already contains a block with id \'MyBlock\'. Block ids must be unique (excluding case, which is ignored).");
         }
 
         verify();
@@ -233,7 +233,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         train_getComponentResources(container, containerResources);
 
         train_getNestedId(container, null);
-        train_getName(page, "foo.pages.MyPage");
+        train_getLogicalName(page, "MyPage");
 
         train_getParameterNames(model, "wilma", "barney", "fred");
         train_getParameterModel(model, "wilma", pmodel);

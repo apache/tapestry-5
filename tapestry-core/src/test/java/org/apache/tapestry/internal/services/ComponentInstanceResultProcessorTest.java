@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
 
 public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
 {
-    private static final String PAGE_NAME = "foo.bar.Zoop";
+    private static final String PAGE_NAME = "Zoop";
 
     private static final String METHOD_DESCRIPTION = "foo.bar.Baz.biff()";
 
@@ -48,8 +48,8 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_getComponentResources(result, resources);
         train_getContainer(resources, null);
 
-        train_getCompleteId(resources, PAGE_NAME);
-        train_getByClassName(cache, PAGE_NAME, page);
+        train_getPageName(resources, PAGE_NAME);
+        train_get(cache, PAGE_NAME, page);
 
         train_createPageLink(factory, page, link);
         train_toRedirectURI(link, LINK_URI);
@@ -70,12 +70,12 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
     @Test
     public void warning_for_component_is_not_root_component() throws Exception
     {
-        Component child = mockComponent();
+        Component value = mockComponent();
         Component source = mockComponent();
         Component root = mockComponent();
-        Component container = mockComponent();
+        Component containerResources = mockComponent();
         ComponentResources rootResources = mockComponentResources();
-        ComponentResources childResources = mockComponentResources();
+        ComponentResources valueResources = mockComponentResources();
         ComponentResources sourceResources = mockComponentResources();
         Log log = mockLog();
         RequestPageCache cache = mockRequestPageCache();
@@ -84,23 +84,19 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         Response response = mockResponse();
         Link link = mockLink();
 
-        train_getComponentResources(child, childResources);
+        train_getComponentResources(value, valueResources);
 
-        train_getContainer(childResources, container);
-
+        train_getContainer(valueResources, containerResources);
         train_getComponentResources(source, sourceResources);
 
         train_getCompleteId(sourceResources, PAGE_NAME + ":source");
-        train_getCompleteId(childResources, PAGE_NAME + ":child");
-
-        train_getPage(childResources, root);
-        train_getComponentResources(root, rootResources);
-
-        train_getCompleteId(rootResources, PAGE_NAME);
-        train_getByClassName(cache, PAGE_NAME, page);
+        train_getCompleteId(valueResources, PAGE_NAME + ":child");
 
         log
-                .warn("Method foo.bar.Baz.biff() (for component foo.bar.Zoop:source) returned component foo.bar.Zoop:child, which is not a page component. The page containing the component will render the client response.");
+                .warn("Method foo.bar.Baz.biff() (for component Zoop:source) returned component Zoop:child, which is not a page component. The page containing the component will render the client response.");
+
+        train_getPageName(valueResources, PAGE_NAME);
+        train_get(cache, PAGE_NAME, page);
 
         train_createPageLink(factory, page, link);
         train_toRedirectURI(link, LINK_URI);
@@ -112,7 +108,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(
                 cache, factory, log);
 
-        processor.processComponentEvent(child, source, METHOD_DESCRIPTION).sendClientResponse(
+        processor.processComponentEvent(value, source, METHOD_DESCRIPTION).sendClientResponse(
                 response);
 
         verify();

@@ -28,7 +28,7 @@ public class PageImplTest extends InternalBaseTestCase
 {
     private final Locale _locale = Locale.ENGLISH;
 
-    private static final String PAGE_NAME = "org.foo.pages.MyPage";
+    private static final String LOGICAL_PAGE_NAME = "MyPage";
 
     @Test
     public void accessor_methods()
@@ -37,15 +37,15 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, _locale, null, null);
 
         assertNull(page.getRootElement());
 
         page.setRootElement(root);
 
-        assertEquals(page.getName(), PAGE_NAME);
         assertSame(page.getLocale(), _locale);
         assertSame(page.getRootElement(), root);
+        assertSame(page.getLogicalName(), LOGICAL_PAGE_NAME);
 
         verify();
     }
@@ -61,7 +61,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(null, _locale, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -81,7 +81,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(null, _locale, null, null);
 
         page.addLifecycleListener(listener);
 
@@ -115,7 +115,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(null, _locale, null, null);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -144,7 +144,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(null, _locale, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -170,7 +170,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, _locale, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -187,7 +187,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, _locale, null, null);
 
         page.setRootElement(root);
 

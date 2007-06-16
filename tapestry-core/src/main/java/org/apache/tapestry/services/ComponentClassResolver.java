@@ -40,13 +40,13 @@ public interface ComponentClassResolver
      * Converts a logical page name (such as might be encoded into a URL) into a fully qualified
      * class name. The case of the page name is irrelevant.
      * 
-     * @param pageName
+     * @param logicalPageName
      *            logical page name
      * @return fully qualified class name for the page
      * @throws IllegalArgumentException
      *             if the name does not match a known page class
      */
-    String resolvePageNameToClassName(String pageName);
+    String resolvePageNameToClassName(String logicalPageName);
 
     /**
      * For a particular path, determines if the path is a logical page name. The check is case
@@ -70,6 +70,15 @@ public interface ComponentClassResolver
      *             if the name can not be resolved
      */
     String resolvePageClassNameToPageName(String pageClassName);
+
+    /**
+     * Returns the canonical form of a logical page name. The canonical form uses character case
+     * matching the underlying class name.
+     * 
+     * @throws IllegalArgumentException
+     *             if the page name does not match a logical page name
+     */
+    String canonicalizePageName(String pageName);
 
     /**
      * Converts a component type (a logical component name such as might be used inside a template

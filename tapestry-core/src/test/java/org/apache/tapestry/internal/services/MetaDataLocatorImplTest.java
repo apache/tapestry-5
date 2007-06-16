@@ -33,7 +33,6 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
-        ComponentClassResolver resolver = mockComponentClassResolver();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -47,7 +46,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(resolver, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
 
         assertSame(locator.findMeta(key, resources), value);
 
@@ -88,7 +87,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(resolver, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
 
         assertSame(locator.findMeta(key, resources), value);
 
@@ -100,24 +99,25 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
-        ComponentClassResolver resolver = mockComponentClassResolver();
 
         String key = "foo.bar";
         String value = "zaphod";
-        String completeId = "foo.Bar";
+        String completeId = "Bar";
+        String logicalPageName = completeId;
 
         train_getCompleteId(resources, completeId);
         train_getComponentModel(resources, model);
         train_getMeta(model, key, null);
         train_getContainerResources(resources, null);
-        train_resolvePageClassNameToPageName(resolver, completeId, "foo/Bar");
+
+        train_getPageName(resources, logicalPageName);
 
         replay();
 
         Map<String, String> configuration = newMap();
         configuration.put(key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(resolver, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
 
         assertSame(locator.findMeta(key, resources), value);
 
@@ -139,7 +139,6 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
-        ComponentClassResolver resolver = mockComponentClassResolver();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -149,14 +148,15 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         train_getComponentModel(resources, model);
         train_getMeta(model, key, null);
         train_getContainerResources(resources, null);
-        train_resolvePageClassNameToPageName(resolver, completeId, "foo/Bar");
+
+        train_getPageName(resources, "foo/Bar");
 
         replay();
 
         Map<String, String> configuration = newMap();
         configuration.put(key.toUpperCase(), value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(resolver, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
 
         assertSame(locator.findMeta(key, resources), value);
 
@@ -188,7 +188,8 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         train_getComponentModel(resources, model);
         train_getMeta(model, key, null);
         train_getContainerResources(resources, null);
-        train_resolvePageClassNameToPageName(resolver, completeId, "foo/Bar");
+
+        train_getPageName(resources, "foo/Bar");
 
         replay();
 
@@ -196,7 +197,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         configuration.put(key, "xxx");
         configuration.put("foo:" + key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(resolver, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
 
         assertSame(locator.findMeta(key, resources), value);
 
@@ -218,7 +219,6 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
-        ComponentClassResolver resolver = mockComponentClassResolver();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -232,7 +232,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(resolver, configuration);
+        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(configuration);
 
         assertSame(locator.findMeta(key, resources), value);
 

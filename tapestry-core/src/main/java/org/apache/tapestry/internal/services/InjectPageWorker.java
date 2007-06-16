@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.MethodSignature;
 
@@ -35,17 +36,19 @@ public class InjectPageWorker implements ComponentClassTransformWorker
 {
     private final RequestPageCache _requestPageCache;
 
-    public InjectPageWorker(final RequestPageCache requestPageCache)
+    private final ComponentClassResolver _resolver;
+
+    public InjectPageWorker(RequestPageCache requestPageCache, ComponentClassResolver resolver)
     {
         _requestPageCache = requestPageCache;
+        _resolver = resolver;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         List<String> names = transformation.findFieldsWithAnnotation(InjectPage.class);
 
-        if (names.isEmpty())
-            return;
+        if (names.isEmpty()) return;
 
         String cacheFieldName = transformation.addInjectedField(
                 RequestPageCache.class,
@@ -67,20 +70,20 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         String fieldType = transformation.getFieldType(fieldName);
         String methodName = transformation.newMemberName("read_inject_page", fieldName);
 
+        String injectedPageName = InternalUtils.isBlank(pageName) ? _resolver
+                .resolvePageClassNameToPageName(fieldType) : pageName;
+
         MethodSignature sig = new MethodSignature(Modifier.PRIVATE, fieldType, methodName, null,
                 null);
 
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
 
-        builder.add("%s page = %s.", Page.class.getName(), cacheFieldName);
-
-        if (InternalUtils.isBlank(pageName))
-            builder.add("getByClassName(\"%s\")", fieldType);
-        else
-            builder.add("get(\"%s\")", pageName);
-
-        builder.addln(";");
+        builder.add(
+                "%s page = %s.get(\"%s\");",
+                Page.class.getName(),
+                cacheFieldName,
+                injectedPageName);
 
         builder.addln("return (%s) page.getRootElement().getComponent();", fieldType);
 

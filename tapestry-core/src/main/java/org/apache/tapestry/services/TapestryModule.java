@@ -433,7 +433,7 @@ public final class TapestryModule
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
-        configuration.add("InjectPage", new InjectPageWorker(requestPageCache));
+        configuration.add("InjectPage", new InjectPageWorker(requestPageCache, resolver));
         configuration.add("InjectComponent", new InjectComponentWorker());
         configuration.add("RenderCommand", new RenderCommandWorker());
 

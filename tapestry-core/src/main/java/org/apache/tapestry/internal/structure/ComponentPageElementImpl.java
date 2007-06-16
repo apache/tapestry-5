@@ -550,7 +550,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         _coreComponent = _coreResources.getComponent();
 
-        String pageName = _page.getName();
+        String pageName = _page.getLogicalName();
 
         // A page (really, the root component of a page) does not have a container.
 
@@ -571,7 +571,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             if (parentNestedId == null)
             {
                 _nestedId = caselessId;
-                _completeId = _page.getName() + ":" + caselessId;
+                _completeId = pageName + ":" + caselessId;
             }
             else
             {
@@ -1113,4 +1113,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         return null;
     }
+
+    public String getPageName()
+    {
+        return _page.getLogicalName();
+    }
+
 }

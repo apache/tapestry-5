@@ -360,4 +360,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _componentModel.getBaseResource();
     }
 
+    public String getPageName()
+    {
+        return _element.getPageName();
+    }
+
 }

@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentSource;
@@ -35,28 +33,17 @@ public class ComponentSourceImpl implements ComponentSource
 
         if (colonx < 0)
         {
-            Page page = _pageCache.getByClassName(componentId);
+            Page page = _pageCache.get(componentId);
 
             return page.getRootComponent();
         }
 
         String pageName = componentId.substring(0, colonx);
 
-        Page page = _pageCache.getByClassName(pageName);
+        Page page = _pageCache.get(pageName);
         String nestedId = componentId.substring(colonx + 1);
 
         return page.getComponentElementByNestedId(nestedId).getComponent();
-    }
-
-    public <T> T getPage(Class<T> pageClass)
-    {
-        notNull(pageClass, "pageClass");
-
-        Page page = _pageCache.getByClassName(pageClass.getName());
-
-        Component root = page.getRootComponent();
-
-        return pageClass.cast(root);
     }
 
     public Component getPage(String pageName)

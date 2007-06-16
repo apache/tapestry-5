@@ -106,7 +106,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         open(BASE_URL);
         clickAndWait("link=ParameterDefault");
 
-        assertTextPresent("Echo component default: [org.apache.tapestry.integration.app1.pages.ParameterDefault:echo]");
+        assertTextPresent("Echo component default: [ParameterDefault:echo]");
     }
 
     @Test
@@ -174,7 +174,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // And exception message:
 
-        assertTextPresent("Component org.apache.tapestry.integration.app1.pages.InjectComponentMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
+        assertTextPresent("Component InjectComponentMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
     }
 
     @Test
@@ -188,7 +188,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("<Proxy for Request(org.apache.tapestry.services.Request)>");
 
         // This is a test for an annonymous @Inject and ComponentResourcesInjectionProvider
-        assertTextPresent("ComponentResources[org.apache.tapestry.integration.app1.pages.InjectDemo]");
+        assertTextPresent("ComponentResources[InjectDemo]");
 
         // Another test, DefaultInjectionProvider
         assertTextPresent("<Proxy for BindingSource(org.apache.tapestry.services.BindingSource)>");
@@ -655,7 +655,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText(
+                "//img[@id='rating:sort']/@src",
+                "/assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='rating:sort']/@alt", "[Asc]");
 
         assertTextSeries(
@@ -672,14 +674,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-desc.png");
+        assertText(
+                "//img[@id='rating:sort']/@src",
+                "/assets/tapestry/corelib/components/sort-desc.png");
         assertText("//img[@id='rating:sort']/@alt", "[Desc]");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "Hey Blondie", "Out from Out Where");
 
         clickAndWait("link=Title");
 
-        assertText("//img[@id='title:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText(
+                "//img[@id='title:sort']/@src",
+                "/assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -935,14 +941,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         addSelection("languages:avail", "label=Ruby");
 
         click("languages:select");
-        
+
         clickAndWait("//input[@type='submit']");
-        
+
         assertTextPresent("[ERLANG, HASKELL, JAVA, LISP, ML, PERL, PYTHON, RUBY]");
-  
+
         check("reorder");
         clickAndWait("//input[@type='submit']");
-        
+
         addSelection("languages", "label=Ruby");
 
         for (int i = 0; i < 6; i++)
@@ -952,14 +958,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         addSelection("languages", "label=Perl");
 
         click("languages:down");
-        
+
         clickAndWait("//input[@type='submit']");
 
         assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
 
     @Test
-    public void event_handler_return_types() {
+    public void event_handler_return_types()
+    {
 
         open(BASE_URL);
         assertTextPresent("Tapestry 5 Integration Application 1");
@@ -1000,6 +1007,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "An unexpected application exception has occurred.",
                 "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
 
+    }
+
+    @Test
+    public void access_to_page_name()
+    {
+        open(BASE_URL);
+
+        assertTextPresent("Currently on page: Start");
+
+        clickAndWait("link=Grid Demo");
+
+        assertTextPresent("Currently on page: GridDemo");
     }
 
 }

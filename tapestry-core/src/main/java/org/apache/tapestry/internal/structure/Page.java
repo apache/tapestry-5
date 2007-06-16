@@ -37,11 +37,9 @@ import org.apache.tapestry.runtime.PageLifecycleListener;
 public interface Page
 {
     /**
-     * Returns the name of the page, which is the fully qualifed class name of the page's
-     * <em>root component</em>. The name is unique within the application, though it is combined
-     * with the locale to select and pool page instances.
+     * Returns the short, logical name for the page.
      */
-    String getName();
+    String getLogicalName();
 
     /**
      * The locale for which the page is localized. This is set when the page is created and does not
