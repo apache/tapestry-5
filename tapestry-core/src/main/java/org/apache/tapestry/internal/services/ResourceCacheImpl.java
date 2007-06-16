@@ -34,7 +34,7 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
 
     private final Map<Resource, Cached> _cache = newConcurrentMap();
 
-    final static long MISSING_RESOURCE_TIME_MODIFIED = -1l;
+    final static long MISSING_RESOURCE_TIME_MODIFIED = -1L;
 
     private class Cached
     {

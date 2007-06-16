@@ -36,7 +36,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     // One year, in milliseconds
 
-    final static long EXPIRE_DELTA = 31536000000l;
+    final static long EXPIRE_DELTA = 31536000000L;
 
     public ResourceStreamerImpl(final Response response, Map<String, String> configuration)
     {
