@@ -16,8 +16,6 @@ package org.apache.tapestry.upload.components;
 
 import static org.easymock.EasyMock.expectLastCall;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.MarkupWriter;
@@ -25,7 +23,6 @@ import org.apache.tapestry.ValidationDecorator;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.apache.tapestry.upload.services.MultipartDecoder;
@@ -246,11 +243,6 @@ public class UploadTest extends TapestryTestCase
     protected final MultipartDecoder mockMultipartDecoder()
     {
         return newMock(MultipartDecoder.class);
-    }
-
-    protected final DefaultComponentParameterBindingSource newDefaultComponentParameterBindingSource()
-    {
-        return newMock(DefaultComponentParameterBindingSource.class);
     }
 
     private void setValidationDecorator(Upload component, ValidationDecorator decorator)
