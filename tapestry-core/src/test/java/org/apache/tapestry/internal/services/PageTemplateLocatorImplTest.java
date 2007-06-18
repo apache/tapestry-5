@@ -70,6 +70,41 @@ public class PageTemplateLocatorImplTest extends InternalBaseTestCase
         verify();
     }
 
+    /**
+     * Because of how Tapestry maps class names to logical page names, part of the name may be have
+     * been stripped off and we want to make sure we get it back.
+     */
+    @Test
+    public void uses_simple_class_name_in_folders()
+    {
+        ComponentModel model = mockComponentModel();
+        Resource root = mockResource();
+        Resource withExtension = mockResource();
+        Resource forLocale = mockResource();
+        Locale locale = Locale.FRENCH;
+        String className = "myapp.pages.foo.CreateFoo";
+
+        ComponentClassResolver resolver = mockComponentClassResolver();
+
+        train_getComponentClassName(model, className);
+
+        // Notice: foo/Create not foo/CreateFoo; we're simulating how the redundancy gets stripped
+        // out of the class name.
+        train_resolvePageClassNameToPageName(resolver, className, "foo/Create");
+
+        // Abnd here's where we're showing that PTLI stitches it back together.
+        train_forFile(root, "WEB-INF/foo/CreateFoo.html", withExtension);
+        train_forLocale(withExtension, locale, forLocale);
+
+        replay();
+
+        PageTemplateLocator locator = new PageTemplateLocatorImpl(root, resolver);
+
+        assertSame(locator.findPageTemplateResource(model, locale), forLocale);
+
+        verify();
+    }
+
     @Test
     public void template_not_found()
     {
