@@ -14,24 +14,22 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.ValueEncoder;
 
 /**
- * An assistant to components that wish to generate a binding matching the name of a property of
- * their container, should such a property exist.
+ * A source for value encoders based on a property type.
  */
-public interface DefaultComponentParameterBindingSource
+public interface ValueEncoderSource
 {
     /**
-     * Checks to see if the container of the component contains a property matching the component's
-     * id. If so, a binding for that property is returned.
+     * Creates a value encoder based on the <em>type</em> of the named parameter.
      * 
      * @param parameterName
-     *            the name of the parameter
-     * @param componentResources
-     *            the resources of the component for which a binding is needed
-     * @return the binding, or null if the container does not have a matching property
+     *            the name of the parameter whose type is used to locate a PKE factory
+     * @param resources
+     *            the resources of the component, from which parameter and its type are extracted
+     * @return the value encoder
      */
-    Binding createDefaultBinding(String parameterName, ComponentResources componentResources);
+    ValueEncoder createEncoder(String parameterName, ComponentResources resources);
 }

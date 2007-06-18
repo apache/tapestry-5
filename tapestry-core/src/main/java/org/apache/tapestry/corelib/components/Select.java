@@ -35,12 +35,20 @@ import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.ValueEncoderFactory;
+import org.apache.tapestry.services.ValueEncoderSource;
 import org.apache.tapestry.util.EnumSelectModel;
-import org.apache.tapestry.util.EnumValueEncoder;
 
 /**
  * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side.
  * An validation decorations will go around the entire &lt;select&gt; element.
+ * <p>
+ * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to
+ * convert between server-side values and client-side strings. In many cases, a {@link ValueEncoder}
+ * can be generated automatically from the type of the value parameter. The
+ * {@link ValueEncoderSource} service provides an encoder in these situations; it can be overriden
+ * by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into
+ * the service's configuration.
  */
 public final class Select extends AbstractField
 {
@@ -62,25 +70,13 @@ public final class Select extends AbstractField
     }
 
     /**
-     * The default encoder encodes strings, passing them to the client and back unchanged.
+     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to
+     * create client-side string values for the different options.
+     * 
+     * @see ValueEncoderSource
      */
     @Parameter
-    private ValueEncoder _encoder = new ValueEncoder<String>()
-    {
-        public String toClient(String value)
-        {
-            return value;
-        }
-
-        public String toValue(String primaryKey)
-        {
-            // We don't do a conversion here, so it stays a String. When that String is assigned to
-            // _value, it will be coerced to the appropriate type (if possible) or an exception
-            // will be thrown.
-
-            return primaryKey;
-        }
-    };
+    private ValueEncoder _encoder;
 
     @Inject
     private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
@@ -113,6 +109,9 @@ public final class Select extends AbstractField
     /** The value to read or update. */
     @Parameter(required = true, principal = true)
     private Object _value;
+
+    @Inject
+    private ValueEncoderSource _valueEncoderSource;
 
     @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
@@ -149,13 +148,7 @@ public final class Select extends AbstractField
     @SuppressWarnings("unchecked")
     ValueEncoder defaultEncoder()
     {
-        Class valueType = _resources.getBoundType("value");
-
-        if (valueType == null) return null;
-
-        if (Enum.class.isAssignableFrom(valueType)) return new EnumValueEncoder(valueType);
-
-        return null;
+        return _valueEncoderSource.createEncoder("value", _resources);
     }
 
     @SuppressWarnings("unchecked")
@@ -213,5 +206,10 @@ public final class Select extends AbstractField
     void setValue(Object value)
     {
         _value = value;
+    }
+
+    void setValueEncoder(ValueEncoder encoder)
+    {
+        _encoder = encoder;
     }
 }

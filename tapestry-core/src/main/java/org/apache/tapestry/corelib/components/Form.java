@@ -47,6 +47,7 @@ import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry.internal.util.Holder;
+import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
@@ -186,6 +187,11 @@ public class Form implements ClientElement, FormValidationControl
     @Mixin
     private RenderInformals _renderInformals;
 
+    @Inject
+    private ComponentEventResultProcessor _eventResultProcessor;
+
+    private String _name;
+
     public ValidationTracker getDefaultTracker()
     {
         if (_defaultTracker == null) _defaultTracker = new ValidationTrackerImpl();
@@ -295,11 +301,6 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = _environment.pop(ValidationTracker.class);
     }
 
-    @Inject
-    private ComponentEventResultProcessor _eventResultProcessor;
-
-    private String _name;
-
     @SuppressWarnings("unchecked")
     Object onAction(Object[] context)
     {
@@ -347,6 +348,8 @@ public class Form implements ClientElement, FormValidationControl
 
             ObjectInputStream ois = null;
 
+            Component component = null;
+
             try
             {
                 ois = new Base64ObjectInputStream(actionsBase64);
@@ -356,9 +359,11 @@ public class Form implements ClientElement, FormValidationControl
                     String componentId = ois.readUTF();
                     ComponentAction action = (ComponentAction) ois.readObject();
 
-                    Component component = _source.getComponent(componentId);
+                    component = _source.getComponent(componentId);
 
                     action.execute(component);
+
+                    component = null;
                 }
             }
             catch (EOFException ex)
@@ -367,7 +372,7 @@ public class Form implements ClientElement, FormValidationControl
             }
             catch (Exception ex)
             {
-                throw new RuntimeException(ex);
+                throw new TapestryException(ex.getMessage(), component, ex);
             }
             finally
             {
@@ -412,17 +417,11 @@ public class Form implements ClientElement, FormValidationControl
         }
         finally
         {
-
             _environment.pop(Heartbeat.class);
             _environment.pop(FormSupport.class);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(java.lang.String)
-     */
     public void recordError(String errorMessage)
     {
         ValidationTracker tracker = _tracker;
@@ -432,12 +431,6 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = tracker;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.tapestry.corelib.components.FormValidationControl#recordError(org.apache.tapestry.Field,
-     *      java.lang.String)
-     */
     public void recordError(Field field, String errorMessage)
     {
         ValidationTracker tracker = _tracker;
@@ -447,21 +440,11 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = tracker;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.tapestry.corelib.components.FormValidationControl#getHasErrors()
-     */
     public boolean getHasErrors()
     {
         return _tracker.getHasErrors();
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.tapestry.corelib.components.FormValidationControl#isValid()
-     */
     public boolean isValid()
     {
         return !_tracker.getHasErrors();
@@ -474,11 +457,6 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = tracker;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.tapestry.corelib.components.FormValidationControl#clearErrors()
-     */
     public void clearErrors()
     {
         _tracker.clear();
@@ -491,5 +469,4 @@ public class Form implements ClientElement, FormValidationControl
     {
         return _name;
     }
-
 }

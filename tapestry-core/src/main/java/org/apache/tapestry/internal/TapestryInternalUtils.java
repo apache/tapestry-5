@@ -473,4 +473,22 @@ public class TapestryInternalUtils
             throw new RuntimeException(ex);
         }
     }
+
+    /**
+     * Determines if the two values are equal. They are equal if they are the exact same value
+     * (including if they are both null). Otherwise standard equals() comparison is used.
+     * 
+     * @param <T>
+     * @param left
+     * @param right
+     * @return
+     */
+    public static <T> boolean isEqual(T left, T right)
+    {
+        if (left == right) return true;
+
+        if (left == null) return right == null;
+
+        return left.equals(right);
+    }
 }

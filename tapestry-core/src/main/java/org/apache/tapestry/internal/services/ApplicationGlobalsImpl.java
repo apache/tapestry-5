@@ -25,8 +25,6 @@ public class ApplicationGlobalsImpl implements ApplicationGlobals
 
     private Context _context;
 
-    private String _applicationRootPackage;
-
     public void store(ServletContext context)
     {
         _servletContext = context;
@@ -45,15 +43,5 @@ public class ApplicationGlobalsImpl implements ApplicationGlobals
     public void store(Context context)
     {
         _context = context;
-    }
-
-    public String getApplicationRootPackage()
-    {
-        return _applicationRootPackage;
-    }
-
-    public void store(String applicationRootPackage)
-    {
-        _applicationRootPackage = applicationRootPackage;
     }
 }

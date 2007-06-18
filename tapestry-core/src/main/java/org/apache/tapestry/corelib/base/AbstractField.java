@@ -35,9 +35,7 @@ import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
+import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
 
 /**
@@ -143,19 +141,11 @@ public abstract class AbstractField implements Field
     private ComponentResources _resources;
 
     @Inject
-    private DefaultComponentParameterBindingSource _defaultBindingSource;
+    private ComponentDefaultProvider _defaultProvider;
 
     final String defaultLabel()
     {
-        Messages containerMessages = _resources.getContainer().getComponentResources()
-                .getMessages();
-
-        String componentId = _resources.getId();
-
-        String key = componentId + "-label";
-
-        return containerMessages.contains(key) ? containerMessages.get(key) : TapestryInternalUtils
-                .toUserPresentable(componentId);
+        return _defaultProvider.defaultLabel(_resources);
     }
 
     public final String getLabel()
@@ -219,7 +209,7 @@ public abstract class AbstractField implements Field
      */
     protected final Binding createDefaultParameterBinding(String parameterName)
     {
-        return _defaultBindingSource.createDefaultBinding(parameterName, _resources);
+        return _defaultProvider.defaultBinding(parameterName, _resources);
     }
 
     /**

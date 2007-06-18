@@ -32,12 +32,12 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.BeanBlockSource;
-import org.apache.tapestry.services.PropertyEditContext;
 import org.apache.tapestry.services.BeanModelSource;
-import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
+import org.apache.tapestry.services.PropertyEditContext;
 import org.apache.tapestry.services.TranslatorDefaultSource;
 
 /**
@@ -117,13 +117,13 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private Block _blockForProperty;
 
     @Inject
-    private DefaultComponentParameterBindingSource _defaultBindingSource;
-
-    @Inject
     private Environment _environment;
 
     @Inject
     private BeanBlockSource _beanBlockSource;
+
+    @Inject
+    private ComponentDefaultProvider _defaultProvider;
 
     private boolean _mustPopBeanEditContext;
 
@@ -132,7 +132,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     Binding defaultObject()
     {
-        return _defaultBindingSource.createDefaultBinding("object", _resources);
+        return _defaultProvider.defaultBinding("object", _resources);
     }
 
     public BeanModel getModel()
