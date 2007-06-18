@@ -434,4 +434,33 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         assertEquals(sorted, Arrays.asList("first", "second"));
     }
+
+    @Test
+    public void null_equals_null()
+    {
+        assertTrue(TapestryInternalUtils.isEqual(null, null));
+    }
+
+    @Test
+    public void non_null_never_equals_null()
+    {
+        assertFalse(TapestryInternalUtils.isEqual(this, null));
+    }
+
+    @Test
+    public void same_is_equal()
+    {
+        assertTrue(TapestryInternalUtils.isEqual(this, this));
+    }
+
+    @Test
+    public void is_equal_with_objects()
+    {
+        String left = "left";
+        String right = "right";
+
+        assertFalse(TapestryInternalUtils.isEqual(left, right));
+        assertTrue(TapestryInternalUtils.isEqual(left, new String(left)));
+    }
+
 }

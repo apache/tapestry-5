@@ -25,7 +25,8 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentSource;
 
 /**
- * Operations shared by {@link ComponentResources} and {@link ComponentPageElement}.
+ * Operations shared by the public {@link ComponentResources} interface and
+ * {@link ComponentPageElement} interface (on the internal side).
  */
 public interface ComponentResourcesCommon extends Locatable
 {
@@ -40,7 +41,6 @@ public interface ComponentResourcesCommon extends Locatable
      * periods. In addition, nested ids are always all lower case. I.e., "foo.bar.baz". Returns null
      * for a page.
      */
-
     String getNestedId();
 
     /**
@@ -71,7 +71,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns a string consisting of the fully qualified class name of the containing page, and the
      * {@link #getNestedId() nested id} of this component, separated by a colon. I.e.,
-     * "com.foo.pages.MyPage:foo.bar.baz". For a page, returns just the page class name.
+     * "MyPage:foo.bar.baz". For a page, returns just the page's logical name.
      * <p>
      * This value is often used to obtain an equivalent component instance in a later request.
      * 
@@ -124,7 +124,7 @@ public interface ComponentResourcesCommon extends Locatable
 
     /**
      * Returns the name of element that represents the component in its template, or null if the
-     * element was provided by a &lt;comp&gt; element.
+     * element was a component type (in the Tapestry namespace).
      * 
      * @return the element name
      */

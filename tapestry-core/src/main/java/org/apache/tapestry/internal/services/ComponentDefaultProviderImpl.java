@@ -12,31 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
 
-public class DefaultComponentParameterBindingSourceImpl implements
-        DefaultComponentParameterBindingSource
+public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {
     private final PropertyAccess _propertyAccess;
 
     private final BindingSource _bindingSource;
 
-    public DefaultComponentParameterBindingSourceImpl(PropertyAccess propertyAccess,
-            BindingSource bindingSource)
+    public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource)
     {
         _propertyAccess = propertyAccess;
         _bindingSource = bindingSource;
     }
 
-    public Binding createDefaultBinding(String parameterName, ComponentResources componentResources)
+    public String defaultLabel(ComponentResources resources)
+    {
+        String componentId = resources.getId();
+        String key = componentId + "-label";
+
+        Messages containerMessages = resources.getContainerResources().getMessages();
+
+        if (containerMessages.contains(key)) return containerMessages.get(key);
+
+        return TapestryInternalUtils.toUserPresentable(componentId);
+    }
+
+    public Binding defaultBinding(String parameterName, ComponentResources componentResources)
     {
         String componentId = componentResources.getId();
 
@@ -57,5 +69,4 @@ public class DefaultComponentParameterBindingSourceImpl implements
                 TapestryConstants.PROP_BINDING_PREFIX,
                 componentId);
     }
-
 }

@@ -19,6 +19,10 @@ import org.apache.tapestry.corelib.components.Select;
 /**
  * Used by {@link Select} (and similar components) to encode server side values into client-side
  * strings, and back.
+ * <p>
+ * Most often a custom implementation is needed for entity type objects, where the
+ * {@link #toClient(Object)} method extracts a primary key, and the {@link #toValue(String)}
+ * re-acquires the corresponding entity object.
  * 
  * @see SelectModel
  */

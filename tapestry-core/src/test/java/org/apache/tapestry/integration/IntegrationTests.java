@@ -1031,4 +1031,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("//form/@enctype", "x-override");
     }
 
+    @Test
+    public void radio_button_and_group()
+    {
+        open(BASE_URL);
+
+        String update = "//input[@type='submit']";
+
+        clickAndWait("link=RadioDemo");
+
+        click("//label[.='Accounting']");
+
+        clickAndWait(update);
+
+        assertTextPresent("Selected department: ACCOUNTING");
+
+        click("//label[.='Sales And Marketing']");
+
+        clickAndWait(update);
+
+        assertTextPresent("Selected department: SALES_AND_MARKETING");
+    }
 }

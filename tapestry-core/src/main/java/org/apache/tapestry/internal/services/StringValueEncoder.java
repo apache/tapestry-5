@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry.internal.services;
 
-import javax.servlet.ServletContext;
+import org.apache.tapestry.ValueEncoder;
 
 /**
- * Stores global information about the application and its environment.
+ * Passes the string value from the server to the client and vice-versa without any translation.
  */
-public interface ApplicationGlobals
+public class StringValueEncoder implements ValueEncoder<String>
 {
-    void store(ServletContext context);
+    public String toClient(String value)
+    {
+        return value;
+    }
 
-    ServletContext getServletContext();
-
-    void store(Context context);
-
-    Context getContext();
+    public String toValue(String clientValue)
+    {
+        return clientValue;
+    }
 }

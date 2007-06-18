@@ -13,6 +13,8 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * A Radio button component has been added.
+  
   * A file upload form component has been added (in a new library: {{{../tapestry-upload/}tapestry-upload}}). 
   
   * The BeanEditForm component can now create the object is edits.

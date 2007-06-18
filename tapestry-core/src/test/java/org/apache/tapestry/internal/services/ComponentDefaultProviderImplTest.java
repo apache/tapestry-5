@@ -12,24 +12,75 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.structure;
+package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
-import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-public class DefaultComponentParameterBindingSourceImplTest extends TapestryTestCase
+public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 {
     @Test
-    public void no_matching_property()
+    public void default_label_key_exists()
+    {
+        ComponentResources resources = mockComponentResources();
+        ComponentResources container = mockComponentResources();
+        Messages messages = mockMessages();
+
+        String componentId = "myfield";
+        String key = componentId + "-label";
+        String message = "My Lovely Field";
+
+        train_getId(resources, componentId);
+        train_getContainerResources(resources, container);
+        train_getMessages(container, messages);
+        train_contains(messages, key, true);
+        train_get(messages, key, message);
+
+        replay();
+
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null);
+
+        assertSame(provider.defaultLabel(resources), message);
+
+        verify();
+    }
+
+    @Test
+    public void default_label_key_missing()
+    {
+        ComponentResources resources = mockComponentResources();
+        ComponentResources container = mockComponentResources();
+        Messages messages = mockMessages();
+
+        String componentId = "myField";
+        String key = componentId + "-label";
+
+        train_getId(resources, componentId);
+        train_getContainerResources(resources, container);
+        train_getMessages(container, messages);
+        train_contains(messages, key, false);
+
+        replay();
+
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null);
+
+        assertEquals(provider.defaultLabel(resources), "My Field");
+
+        verify();
+    }
+
+    @Test
+    public void no_matching_property_for_default()
     {
         String parameterName = "myparam";
 
@@ -49,16 +100,15 @@ public class DefaultComponentParameterBindingSourceImplTest extends TapestryTest
 
         replay();
 
-        DefaultComponentParameterBindingSource source = new DefaultComponentParameterBindingSourceImpl(
-                access, bindingSource);
+        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource);
 
-        assertNull(source.createDefaultBinding(parameterName, resources));
+        assertNull(source.defaultBinding(parameterName, resources));
 
         verify();
     }
 
     @Test
-    public void property_exists()
+    public void default_property_exists()
     {
         String parameterName = "myparam";
 
@@ -91,10 +141,9 @@ public class DefaultComponentParameterBindingSourceImplTest extends TapestryTest
 
         replay();
 
-        DefaultComponentParameterBindingSource source = new DefaultComponentParameterBindingSourceImpl(
-                access, bindingSource);
+        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource);
 
-        assertSame(source.createDefaultBinding(parameterName, resources), binding);
+        assertSame(source.defaultBinding(parameterName, resources), binding);
 
         verify();
     }

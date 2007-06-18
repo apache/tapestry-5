@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry.internal.services;
 
-import javax.servlet.ServletContext;
+import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.services.ValueEncoderFactory;
+import org.apache.tapestry.util.EnumValueEncoder;
 
 /**
- * Stores global information about the application and its environment.
+ * Factory that provides a configured instance of {@link EnumValueEncoder}.
+ * 
+ * @param <E>
  */
-public interface ApplicationGlobals
+public class EnumValueEncoderFactory<E extends Enum<E>> implements ValueEncoderFactory<E>
 {
-    void store(ServletContext context);
-
-    ServletContext getServletContext();
-
-    void store(Context context);
-
-    Context getContext();
+    public ValueEncoder<E> create(Class<E> type)
+    {
+        return new EnumValueEncoder<E>(type);
+    }
 }

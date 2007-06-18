@@ -33,6 +33,7 @@ import org.apache.tapestry.internal.OptionModelImpl;
 import org.apache.tapestry.internal.SelectModelImpl;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.services.MarkupWriterImpl;
+import org.apache.tapestry.internal.services.StringValueEncoder;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
@@ -43,6 +44,7 @@ import org.testng.annotations.Test;
  */
 public class SelectTest extends InternalBaseTestCase
 {
+
     @Test
     public void empty_model()
     {
@@ -65,8 +67,7 @@ public class SelectTest extends InternalBaseTestCase
         {
             int length = reader.read(buffer);
 
-            if (length < 0)
-                break;
+            if (length < 0) break;
 
             builder.append(buffer, 0, length);
         }
@@ -85,6 +86,7 @@ public class SelectTest extends InternalBaseTestCase
         Select select = new Select();
 
         select.setModel(new SelectModelImpl(null, options));
+        select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
@@ -109,6 +111,7 @@ public class SelectTest extends InternalBaseTestCase
         Select select = new Select();
 
         select.setModel(new SelectModelImpl(null, options));
+        select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
@@ -133,6 +136,7 @@ public class SelectTest extends InternalBaseTestCase
         Select select = new Select();
 
         select.setModel(new SelectModelImpl(null, options));
+        select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
@@ -150,8 +154,8 @@ public class SelectTest extends InternalBaseTestCase
     @Test
     public void option_groups() throws Exception
     {
-        OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false, TapestryInternalUtils
-                .toOptionModels("Fred,Barney"));
+        OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
+                TapestryInternalUtils.toOptionModels("Fred,Barney"));
         OptionGroupModel wives = new OptionGroupModelImpl("Wives", true, TapestryInternalUtils
                 .toOptionModels("Wilma,Betty"));
         List<OptionGroupModel> groupModels = CollectionFactory.newList(husbands, wives);
@@ -159,6 +163,7 @@ public class SelectTest extends InternalBaseTestCase
         Select select = new Select();
 
         select.setModel(new SelectModelImpl(groupModels, null));
+        select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
@@ -175,13 +180,14 @@ public class SelectTest extends InternalBaseTestCase
     @Test
     public void option_groups_precede_ungroup_options() throws Exception
     {
-        OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false, TapestryInternalUtils
-                .toOptionModels("Fred,Barney"));
+        OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
+                TapestryInternalUtils.toOptionModels("Fred,Barney"));
 
         Select select = new Select();
 
-        select.setModel(new SelectModelImpl(Collections.singletonList(husbands), TapestryInternalUtils
-                .toOptionModels("Wilma,Betty")));
+        select.setModel(new SelectModelImpl(Collections.singletonList(husbands),
+                TapestryInternalUtils.toOptionModels("Wilma,Betty")));
+        select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
@@ -200,12 +206,13 @@ public class SelectTest extends InternalBaseTestCase
     {
         Map<String, String> attributes = Collections.singletonMap("class", "pixie");
 
-        OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false, TapestryInternalUtils
-                .toOptionModels("Fred,Barney"), attributes);
+        OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
+                TapestryInternalUtils.toOptionModels("Fred,Barney"), attributes);
 
         Select select = new Select();
 
         select.setModel(new SelectModelImpl(Collections.singletonList(husbands), null));
+        select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);

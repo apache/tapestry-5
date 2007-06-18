@@ -85,6 +85,7 @@ import org.apache.tapestry.internal.services.ClasspathAssetAliasManagerImpl;
 import org.apache.tapestry.internal.services.CommonResourcesInjectionProvider;
 import org.apache.tapestry.internal.services.ComponentActionDispatcher;
 import org.apache.tapestry.internal.services.ComponentClassResolverImpl;
+import org.apache.tapestry.internal.services.ComponentDefaultProviderImpl;
 import org.apache.tapestry.internal.services.ComponentInstanceResultProcessor;
 import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
@@ -99,12 +100,14 @@ import org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer;
 import org.apache.tapestry.internal.services.DefaultValidationDelegateCommand;
 import org.apache.tapestry.internal.services.DocumentScriptBuilder;
 import org.apache.tapestry.internal.services.DocumentScriptBuilderImpl;
+import org.apache.tapestry.internal.services.EnumValueEncoderFactory;
 import org.apache.tapestry.internal.services.EnvironmentImpl;
 import org.apache.tapestry.internal.services.EnvironmentalShadowBuilderImpl;
 import org.apache.tapestry.internal.services.EnvironmentalWorker;
 import org.apache.tapestry.internal.services.FieldValidatorDefaultSourceImpl;
 import org.apache.tapestry.internal.services.FieldValidatorSourceImpl;
 import org.apache.tapestry.internal.services.FlashPersistentFieldStrategy;
+import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.services.InjectBlockWorker;
 import org.apache.tapestry.internal.services.InjectComponentWorker;
@@ -130,6 +133,8 @@ import org.apache.tapestry.internal.services.PageResponseRenderer;
 import org.apache.tapestry.internal.services.ParameterWorker;
 import org.apache.tapestry.internal.services.PersistWorker;
 import org.apache.tapestry.internal.services.PersistentFieldManagerImpl;
+import org.apache.tapestry.internal.services.StringValueEncoder;
+import org.apache.tapestry.internal.services.ValueEncoderSourceImpl;
 import org.apache.tapestry.internal.services.PropertyConduitSourceImpl;
 import org.apache.tapestry.internal.services.RenderCommandWorker;
 import org.apache.tapestry.internal.services.RequestGlobalsImpl;
@@ -155,7 +160,6 @@ import org.apache.tapestry.internal.services.UnclaimedFieldWorker;
 import org.apache.tapestry.internal.services.UpdateListenerHub;
 import org.apache.tapestry.internal.services.ValidationConstraintGeneratorImpl;
 import org.apache.tapestry.internal.services.ValidationMessagesSourceImpl;
-import org.apache.tapestry.internal.structure.DefaultComponentParameterBindingSourceImpl;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
@@ -176,6 +180,7 @@ import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.Coercion;
 import org.apache.tapestry.ioc.services.CoercionTuple;
+import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
@@ -227,6 +232,7 @@ public final class TapestryModule
         binder.bind(ComponentSource.class, ComponentSourceImpl.class);
         binder.bind(BeanModelSource.class, BeanModelSourceImpl.class);
         binder.bind(BeanBlockSource.class, BeanBlockSourceImpl.class);
+        binder.bind(ComponentDefaultProvider.class, ComponentDefaultProviderImpl.class);
     }
 
     public static MarkupWriterFactory build(final ComponentInvocationMap componentInvocationMap)
@@ -1182,12 +1188,6 @@ public final class TapestryModule
         return new ComponentInstanceResultProcessor(_requestPageCache, _linkFactory, log);
     }
 
-    public DefaultComponentParameterBindingSource buildDefaultComponentParameterBindingSource(
-            BindingSource bindingSource)
-    {
-        return new DefaultComponentParameterBindingSourceImpl(_propertyAccess, bindingSource);
-    }
-
     /**
      * Ordered contributions to the MasterDispatcher service allow different URL matching strategies
      * to occur.
@@ -1290,7 +1290,8 @@ public final class TapestryModule
 
         configuration.add(String.class, new StringResultProcessor(_requestPageCache, _linkFactory));
 
-        configuration.add(Class.class, new ClassResultProcessor(componentClassResolver, _requestPageCache, _linkFactory));
+        configuration.add(Class.class, new ClassResultProcessor(componentClassResolver,
+                _requestPageCache, _linkFactory));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
@@ -1470,5 +1471,31 @@ public final class TapestryModule
     public void contributeValidationMessagesSource(Configuration<String> configuration)
     {
         configuration.add("org/apache/tapestry/internal/ValidationMessages");
+    }
+
+    public ValueEncoderSource build(Map<Class, ValueEncoderFactory> configuration)
+    {
+        ValueEncoderSourceImpl service = new ValueEncoderSourceImpl(configuration);
+
+        _componentInstantiatorSource.addInvalidationListener(service);
+
+        return service;
+    }
+
+    /**
+     * Contributes {@link ValueEncoderFactory}s for types:
+     * <ul>
+     * <li>String
+     * <li>Enum
+     * </ul>
+     * 
+     * @param configuration
+     */
+    @SuppressWarnings("unchecked")
+    public static void contributeValueEncoderSource(
+            MappedConfiguration<Class, ValueEncoderFactory> configuration)
+    {
+        configuration.add(String.class, new GenericValueEncoderFactory(new StringValueEncoder()));
+        configuration.add(Enum.class, new EnumValueEncoderFactory());
     }
 }

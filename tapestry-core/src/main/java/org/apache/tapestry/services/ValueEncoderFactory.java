@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,18 +14,9 @@
 
 package org.apache.tapestry.services;
 
-import javax.servlet.ServletContext;
+import org.apache.tapestry.ValueEncoder;
 
-/**
- * Stores global information about the application and its environment.
- */
-public interface ApplicationGlobals
+public interface ValueEncoderFactory<V>
 {
-    void store(ServletContext context);
-
-    ServletContext getServletContext();
-
-    void store(Context context);
-
-    Context getContext();
+    ValueEncoder<V> create(Class<V> type);
 }

@@ -23,7 +23,7 @@ import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.DefaultComponentParameterBindingSource;
+import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 
 /**
  * A component for formatting output. If the component is represented in the template using an
@@ -52,14 +52,14 @@ public class Output
     private String _elementName;
 
     @Inject
-    private DefaultComponentParameterBindingSource _defaultBindingSource;
+    private ComponentDefaultProvider _defaultProvider;
 
     @Inject
     private ComponentResources _resources;
 
     Binding defaultValue()
     {
-        return _defaultBindingSource.createDefaultBinding("value", _resources);
+        return _defaultProvider.defaultBinding("value", _resources);
     }
 
     boolean beginRender(MarkupWriter writer)
@@ -77,8 +77,7 @@ public class Output
 
             writer.write(formatted);
 
-            if (_elementName != null)
-                writer.end();
+            if (_elementName != null) writer.end();
         }
 
         return false;
