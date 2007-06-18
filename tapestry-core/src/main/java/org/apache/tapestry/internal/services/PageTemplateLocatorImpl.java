@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentClassResolver;
 
@@ -41,10 +42,21 @@ public class PageTemplateLocatorImpl implements PageTemplateLocator
 
         // A bit of a hack, but should work.
 
-        if (!className.contains(".pages."))
-            return null;
+        if (!className.contains(".pages.")) return null;
 
         String logicalName = _resolver.resolvePageClassNameToPageName(className);
+
+        int slashx = logicalName.lastIndexOf('/');
+
+        if (slashx > 0)
+        {
+            // However, the logical name isn't quite what we want. It may have been somewhat
+            // trimmed.
+
+            String simpleClassName = InternalUtils.lastTerm(className);
+
+            logicalName = logicalName.substring(0, slashx + 1) + simpleClassName;
+        }
 
         String path = format("WEB-INF/%s.%s", logicalName, InternalConstants.TEMPLATE_EXTENSION);
 
