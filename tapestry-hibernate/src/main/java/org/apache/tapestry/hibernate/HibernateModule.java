@@ -16,16 +16,18 @@ package org.apache.tapestry.hibernate;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.hibernate.HibernateSessionManagerImpl;
 import org.apache.tapestry.internal.hibernate.HibernateSessionSourceImpl;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.services.AliasContribution;
-import org.apache.tapestry.services.ApplicationGlobals;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -41,9 +43,12 @@ public class HibernateModule
      * scanned for annotated entity classes.
      */
     public static void contributeHibernateSessionSource(Configuration<String> configuration,
-            ApplicationGlobals globals)
+
+    @Inject
+    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+    String appRootPackage)
     {
-        configuration.add(globals.getApplicationRootPackage() + ".entities");
+        configuration.add(appRootPackage + ".entities");
     }
 
     /**
