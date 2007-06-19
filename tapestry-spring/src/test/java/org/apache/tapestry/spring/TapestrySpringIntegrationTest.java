@@ -19,6 +19,11 @@ import org.testng.annotations.Test;
 
 public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
 {
+    public TapestrySpringIntegrationTest()
+    {
+        super("src/test/webapp");
+    }
+    
     @Test
     public void integration_test() throws Exception
     {

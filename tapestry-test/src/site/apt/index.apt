@@ -24,26 +24,14 @@ Usage and Configuration
   as a copy of Selenium Server. It also implements the
   {{{http://release.openqa.org/selenium-remote-control/0.9.0/doc/java/}Selenium}} interface.
   
-  You must inform the suite about the location of your web application.  This is done inside your TestNG configuration file:
+  You must inform the suite about the location of your web application. The default location is 
+  <<<src/main/webapp>>> (as this is the default directory for storing a web application when building
+  using Maven).  This can be changed by provided a public constructor for your test suite.
   
-+---+
-<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite name="My Tapestry Application" parallel="false" thread-count="10" annotations="1.5" verbose="2">
-  <test name="Integration Tests">
-    <parameter name="tapestry.integration-webapp" value="src/main/webapp"/>
-    <packages>
-      <package name="org.example.myapp"/>
-    </packages>
-  </test>
-</suite>
-+---+
-
-  The \<parameter\> element is the necessary part. This will usually be src/main/webapp.
-  
-  The other part is to create a unit test suite.  Here's an example from one of the Tapestry modules:
+  Here's an example from one of the Tapestry modules:
   
      
-+---+
+----
 package org.apache.tapestry.spring;
 
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
@@ -51,18 +39,31 @@ import org.testng.annotations.Test;
 
 public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
 {
-  @Test
-  public void integration_test() throws Exception
-  {
-    open(BASE_URL);
+    public TapestrySpringIntegrationTest()
+    {
+        super("src/test/webapp");
+    }
+    
+    @Test
+    public void integration_test() throws Exception
+    {
+        open(BASE_URL);
 
-    type("input", "paris in the springtime");
-    clickAndWait("//input[@value='Convert']");
+        type("input", "paris in the springtime");
+        clickAndWait("//input[@value='Convert']");
 
-    assertFieldValue("input", "PARIS IN THE SPRINGTIME");
-  }
+        assertFieldValue("input", "PARIS IN THE SPRINGTIME");
+    }
+
+    @Test
+    public void access_to_spring_context() throws Exception
+    {
+        open(BASE_URL);
+
+        assertTextPresent("[upcase]");
+    }
 }
-+---+
+----
 
   This is a very simple example, and demonstrates a mix of Selenium methods (such as open() and type()) and
   methods added by the AbstractIntegrationTestSuite base class (clickAndWait() and assertFieldValue()).
@@ -70,6 +71,6 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
   Of course, a real integration test would contain many methods, and may need to single thread their execution, or
   even specify an execution order.
   
-  In addition, the base class extends the normal exception reporting; when a failure occurs inside Selenium server,
+  In addition, the AbstractIntegrationTestSuite base class extends the normal exception reporting provided by Selenium; when a failure occurs inside Selenium server,
   a more detailed message, including the current page's HTML source, is reported to System.err.
     

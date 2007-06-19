@@ -16,7 +16,6 @@
 -->
 
 <suite name="Tapestry Core" parallel="tests" thread-count="5" annotations="1.5" verbose="0">
-  <parameter name="tapestry.integration-webapp" value="src/test/app1"/>
   <test name="Integration Tests">
     <packages>
       <package name="org.apache.tapestry.integration"/>

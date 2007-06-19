@@ -34,6 +34,11 @@ import org.testng.annotations.Test;
 { "integration" })
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
+    public IntegrationTests()
+    {
+        super("src/test/app1");
+    }
+
     @Test
     public void assets() throws Exception
     {

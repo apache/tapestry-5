@@ -17,8 +17,7 @@
 
 <suite name="Tapesty Spring Integration" parallel="false" thread-count="10" annotations="1.5" verbose="2">
   <test name="Tapestry Spring Integration">
-    <parameter name="tapestry.integration-webapp" value="src/test/webapp"/>
-    <packages>
+     <packages>
       <package name="org.apache.tapestry.spring"/>
     </packages>
   </test>
