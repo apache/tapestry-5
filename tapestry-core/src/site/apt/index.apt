@@ -17,7 +17,7 @@ New And Of Note
   
   * A file upload form component has been added (in a new library: {{{../tapestry-upload/}tapestry-upload}}). 
   
-  * The BeanEditForm component can now create the object is edits.
+  * The BeanEditForm component can now create the object it edits.
   
   * Palette component for sophisticated multiple-property selection and ordering.
   
