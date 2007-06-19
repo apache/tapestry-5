@@ -293,8 +293,99 @@ public class CreateAddress
   
 [address-v2.png] Create address form with fields in proper order
 
+* Customizing labels
 
-   
-
+  Tapestry makes it pretty easy to customize the labels used on the fields.  It's just a matter of creating a <message catalog> for the page.
   
+  In Tapestry, every page and component may have its own message catalog.  This is a standard Java properties file, and it is named the same
+  as the page or component class, with a ".properties" extension.  A message catalog consists of a series of lines, each line is a message key and a message value
+  seperated with an equals sign.
+  
+  All it takes is to create a message entry with a particular name:  the name of the property suffixed with "-label". As elsewhere, Tapestry is forgiving of case.
+  
+  <<src/main/resources/org/apache/tapestry/tutorial/pages/address/CreateAddress.properties:>>
+  
+----
+street1-label=Street 1
+street2-label=Street 2
+email-label=E-Mail
+zip-label=Zip Code
+phone-label=Phone Number
+----
+
+  Since this is a <new> file (and not a change to an existing file), you will have to restart Jetty to force Tapestry to pick up the change.
+  
+[address-v3.png] Create Address form with field labels corrected
+  
+  However, things are getting a little crowded in the form.  That too is easy to fix: we can just provide our own overriding
+  Cascading Style Sheet (CSS) rules.  Tapestry has automatically injected a built-in CSS style sheet to provide the fonts and colors in the page, we
+  just need to tweak it a bit.  Add the following to CreateAddress.html:
+  
+----
+<style>
+  DIV.t-beaneditor LABEL { 
+    width: 200px;
+  }
+</style>
+----    
+
+  The "t-beaneditor" CSS class refers to a \<div\> element around the \<label\> element.  Tapestry's style classes are all prefixed with "t-" (for "Tapestry") so that
+  they don't conflict with anything your own web designers may decide to use.  In any case, this CSS rule forces the label to be 200 pixels wide (rather than
+  the default, which is 10% of the overall page width).
+  
+[address-v4.png] Corrected width on labels
+
+   We can also customize the options in the drop down list.  All we have to do is added entries to the message catalog matching the enum names to the desired labels.
+   Update CreateAddress.properties and add:
+   
+----
+MR=Mr.
+MRS=Mrs.
+DR=Dr.
+----
+
+  Notice that we don't have to include an option for MISS, because that is converted to "Miss" anyway.  You might just want to include it for
+  clarity ... the point is, each option label is searched for seperately.
+
+  Lastly, the default label on the submit button is "Create/Update" (BeanEditForm doesn't know how it is being used). Let's change that to "Create Address".
+  
+  That button is a component within the BeanEditForm component. It's not a property, so we can't just put a message into the 
+  message catalog, the way we can with the fields.  Fortunately, the BeanEditForm component includes a parameter expressly for
+  re-labelling the button. Simply change the CreateAddress component template:
+  
+----
+  <t:beaneditform submitlabel="Create Address" object="address"/>
+----
+
+  The default for the submitlabel parameter is "Create/Update", but here we're overriding that default to a specific value.
+
+  The final result shows the reformatting and relabeling:
+  
+[address-v5.png] Create Address form with proper labels
+
+  Before continuing on to validation, a side note about message catalogs. 
+  Message catalogs are not just for re-labeling fields and options; we'll see in later chapters how message catalogs are used in the context of
+  localization and internationalization. 
+  
+  Instead of putting the label for the submit button directly inside the template, we're going to provide a reference to the label; the actual
+  label will go in the message catalog. 
+  
+  In Tapestry, when binding a parameter, the value you provide may include a prefix.  The prefix guides Tapestry in how to interpret the rest of the
+  the parameter value ... is it the name of a property?  The id of a component? A message key?
+  
+  Here we want to reference a message from the catalog, so we use the "message:" prefix:
+  
+----
+  <t:beaneditform submitlabel="message:submit-label" object="address"/>
+----
+
+  And then define the submit-label key in the message catalog:
+  
+---
+submit-label=Create Address
+----
+
+  At then end of the day, the exact same HTML is sent to the client, regardless of whether you include the label text directly in the template,
+  or indirectly in the message catalog. In the long term, the latter approach will work better if you chose to internationalize your application.
+   
   
