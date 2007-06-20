@@ -27,7 +27,7 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
 
 /**
- * Allows for a number of annonymous injections based on the type of field that is to be injected.
+ * Allows for a number of anonymous injections based on the type of field that is to be injected.
  */
 public class CommonResourcesInjectionProvider implements InjectionProvider
 {

@@ -59,8 +59,9 @@ public interface Page
      */
     ComponentPageElement getRootElement();
 
-    /** The root component of the page. A convienience over ivoking getRootElement().getComponent(). */
-
+    /**
+     * The root component of the page. A convenience over invoking getRootElement().getComponent().
+     */
     Component getRootComponent();
 
     /**

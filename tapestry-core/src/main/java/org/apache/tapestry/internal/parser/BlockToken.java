@@ -26,7 +26,7 @@ public class BlockToken extends TemplateToken
 
     /**
      * @param id
-     *            the id of the block, or null for an annonymous block
+     *            the id of the block, or null for an anonymous block
      * @param location
      *            of the block element
      */

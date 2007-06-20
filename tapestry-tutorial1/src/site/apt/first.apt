@@ -191,7 +191,7 @@ mvn jetty:run
   operating systems (such as Windows) and not on others (Mac OS X, Linux, and most others). This can be really vexing, as it is common to develop on Windows and deploy on Linux or
   Solaris, so be careful about case in this one area.>
   
-  Clicking the link in the web browser sends a requst to re-render the page; the template and Java object are
+  Clicking the link in the web browser sends a request to re-render the page; the template and Java object are
   re-used to generate the HTML sent to the browser, which results in the updated time showing up in the web browser.
   
   The final piece of the puzzle is the Java class for the page.  Tapestry has very specific rules for where page classes go.  Remember the package name (configured inside web.xml)?  Tapestry adds a
@@ -239,7 +239,7 @@ public class Start
   into a string, and that string is mixed into the stream of markup sent to the client. <We'll often talk about the "client" and we don't mean
   the people you send your invoices to: we're talking about the client web browser. Of course, in a world of web spiders and other
   screen scrapers, there's no guarantee that the thing on the other end of the HTTP pipe is really a web browser. You'll often see low-level HTML
-  and HTTP documentation talk about the "user agent".>  Likewise, the PageLink component is dynamic, in that it genrates a URL that is
+  and HTTP documentation talk about the "user agent".>  Likewise, the PageLink component is dynamic, in that it generates a URL that is
   (potentially) different every time.
   
   Tapestry follows the rules defined by Sun's JavaBeans specification: a property name of currentTime maps to two methods: getCurrentTime() and setCurrentTime(). If you omit one of the other of these
@@ -248,7 +248,7 @@ public class Start
   Tapestry does go one step further: it ignores case when matching properties inside the expansion to properties of the page. In the template we could say
   <<<$\{currenttime}>>> or <<<$\{CurrentTime}>>> or any variation, and Tapestry will <still> invoke the getCurrentTime() method.
   
-  In the next chapter, we'll start to build a simple hi-lo guessing game, but we've got one more tsk before then, plus a magic trick.
+  In the next chapter, we'll start to build a simple hi-lo guessing game, but we've got one more task before then, plus a magic trick.
   
   The task is to set up Jetty to run our application directly out of our Eclipse workspace. This is a great way to develop web applications,
   since we don't want to have to use Maven to compile and run the application ... or worse yet, use Maven to package and deploy the application. That's for later, when
@@ -268,7 +268,7 @@ public class Start
   
   In addition, we've set up the context as "/tutorial1", which matches what our eventual WAR file, tutorial1.war, would be deployed as inside an application server.
   
-  Once you click Run, Jetty will start up and lauch (it should take about two seconds).
+  Once you click Run, Jetty will start up and launch (it should take about two seconds).
   
   You may now start the application with the URL {{{http://localhost:8080/tutorial1/}http://localhost:8080/tutorial1/}}.
   

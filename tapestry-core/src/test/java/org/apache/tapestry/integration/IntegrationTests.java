@@ -192,7 +192,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // This is a test for a named @Inject:
         assertTextPresent("<Proxy for Request(org.apache.tapestry.services.Request)>");
 
-        // This is a test for an annonymous @Inject and ComponentResourcesInjectionProvider
+        // This is a test for an anonymous @Inject and ComponentResourcesInjectionProvider
         assertTextPresent("ComponentResources[InjectDemo]");
 
         // Another test, DefaultInjectionProvider

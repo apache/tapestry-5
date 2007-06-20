@@ -129,7 +129,7 @@ Tapestry Elements
   A block is a container of a portion of the component template. A block does not normally render; any component or contents you put inside
   a block will not ordinarily be rendered.  However, by injected the block, you can have precise control over when and if the content renders.   
   
-  A block may be annonymous, or it may have an id (specified with the id attribute).  Non-annonmyous blocks may be 
+  A block may be anonymous, or it may have an id (specified with the id attribute).  Non-anonymous blocks may be 
   {{{inject.html}injected}} into the component.
   
 * \<parameter\>
