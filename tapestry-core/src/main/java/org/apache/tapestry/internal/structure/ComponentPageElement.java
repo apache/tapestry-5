@@ -60,7 +60,7 @@ public interface ComponentPageElement extends ComponentResourcesCommon,
     void addToTemplate(PageElement element);
 
     /**
-     * Used during the contruction of a page to add a non-annonymous Block to the component.
+     * Used during the contruction of a page to add a non-anonymous Block to the component.
      * 
      * @see ComponentResourcesCommon#getBlock(String)
      */
