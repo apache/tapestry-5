@@ -127,7 +127,10 @@ public class ClassFactoryImpl implements ClassFactory
         // TODO: Is it worth caching this? Probably not as it usually is only
         // invoked perhaps at startup and in the event of errors.
 
-        CtClass ctClass = _classSource.getCtClass(method.getDeclaringClass());
+        Class declaringClass = method.getDeclaringClass();
+        Class effectiveClass = importClass(declaringClass);
+
+        CtClass ctClass = _classSource.getCtClass(effectiveClass);
 
         StringBuilder builder = new StringBuilder("(");
 
