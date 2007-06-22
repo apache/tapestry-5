@@ -95,7 +95,7 @@ Configuring Tapestry
     
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
-    to use a different version of the script.taculo.us library. Tapestry's default version is 1.7.0 (including Prototype 1.5.0).
+    to use a different version of the script.aculo.us library. Tapestry's default version is 1.7.0 (including Prototype 1.5.0).
 
   [tapestry.supported-locales]
     A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
