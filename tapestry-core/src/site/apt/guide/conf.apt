@@ -94,7 +94,7 @@ Configuring Tapestry
     The default is 1000 (one second),  and is usually overridden with a higher value in production (say, between one and five minutes).
     
   [tapestry.scriptaculous]
-    The path to the embedded copy of {{{http://script.taculo.us}script.taculo.us}} packaged with Tapestry. This value may be overridden
+    The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
     to use a different version of the script.taculo.us library. Tapestry's default version is 1.7.0 (including Prototype 1.5.0).
 
   [tapestry.supported-locales]
