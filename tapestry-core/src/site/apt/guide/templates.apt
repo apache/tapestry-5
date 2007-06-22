@@ -41,18 +41,39 @@ Template Localization
   catalog: the effective locale is inserted into the name of the file.  Thus a German users will see the content
   generated from <<<MyPage_de.html>>> and French users will see content generated from <<<MyPage_fr.html>>>.  When no
   specific localization is available, the default location (<<<MyPage.html>>>) is used.  
-  
+
 Template Inheritance
 
   If a component does not have a template, but extends from a component class that does have
   a template, then the parent class' template will be used by the child component.
-  
+
   This allows a component to extend from a base class but not have to duplicate the base class' template.
-    
+
+Template Doctypes
+
+  As mentioned above, component templates are well-formed XML documents. This means that if you want to use any
+  {{{http://www.w3.org/TR/html401/sgml/entities.html}HTML entities}} (such as &amp; &nbsp; &lt; &gt; or &copy;),
+  you must use an {{{http://www.w3.org/QA/2002/04/valid-dtd-list.html}HTML or XHTML doctype}} in your template. Unfortunately,
+  HTML DTDs aren't valid XML DTDs, causing problems for XML parsers. The result is that you cannot use HTML doctypes in
+  component templates -- you must use XHTML doctypes.
+
+  If you do choose to use XHTML doctypes in your templates, they will be passed
+  on to the client in the resultant (X)HTML. Note that if your pages are composed of multiple components, each with a template, and
+  each template contains a doctype declaration, only the first doctype encountered by the template parser will be passed on to the
+  client. The following two doctypes are the most common XHTML doctypes:
+
++----+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
++----+
+
 Tapestry Namespace
 
   Component templates should include the Tapestry namespace, defining it in the root element of the template.
-    
+
 +----+
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <head>
@@ -62,11 +83,11 @@ Tapestry Namespace
         <h1>Hello World</h1>
     </body>
 </html>
-+---+  
++---+
 
   This defines the namespace using the standard prefix, "t:".  The examples on this page all assume the use of the standard 
   prefix.
-  
+
 Tapestry Elements
 
   Tapestry elements are elements defined using the Tapestry namespace prefix.
@@ -105,7 +126,7 @@ Tapestry Elements
   My Page Specific Content
 
 </t:layout>
-+---+    
++---+
    
    When the page renders, the page's template and the Border component's template
    are merged together:
@@ -119,7 +140,7 @@ Tapestry Elements
     My Page Specific Content
   </body>
 </html>
-+---+   
++---+
    
    Tapestry 4 users will recognize the \<body\> element as a replacement for the
    RenderBody component.
