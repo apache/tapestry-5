@@ -34,10 +34,9 @@ import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ObjectCreator;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
@@ -215,8 +214,6 @@ public class ModuleImpl implements Module
 
         try
         {
-            ServiceLifecycle lifecycle = _registry.getServiceLifecycle(def.getServiceScope());
-
             ServiceBuilderResources resources = new ServiceResourcesImpl(_registry, this, def,
                     _classFactory, log);
 
@@ -233,7 +230,8 @@ public class ModuleImpl implements Module
 
             if (!serviceInterface.isInterface()) return creator.createObject();
 
-            creator = new LifecycleWrappedServiceCreator(lifecycle, resources, creator);
+            creator = new LifecycleWrappedServiceCreator(_registry, def.getServiceScope(),
+                    resources, creator);
 
             // Don't allow the core IOC services services to be decorated.
 

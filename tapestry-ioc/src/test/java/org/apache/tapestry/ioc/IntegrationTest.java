@@ -219,14 +219,17 @@ public class IntegrationTest extends IOCInternalTestCase
 
         try
         {
-            r.getService("UnknownScope", Runnable.class);
+            Runnable runnable = r.getService("UnknownScope", Runnable.class);
+
+            runnable.run();
+
             unreachable();
         }
         catch (Exception ex)
         {
             assertMessageContains(
                     ex,
-                    "Error building service proxy for service 'UnknownScope'",
+                    "Exception constructing service 'UnknownScope'",
                     "Unknown service scope 'magic'");
         }
     }

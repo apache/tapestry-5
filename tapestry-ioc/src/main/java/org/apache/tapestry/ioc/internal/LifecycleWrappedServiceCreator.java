@@ -26,16 +26,19 @@ import org.apache.tapestry.ioc.ServiceResources;
  */
 public class LifecycleWrappedServiceCreator implements ObjectCreator
 {
-    private final ServiceLifecycle _lifecycle;
+    private final InternalRegistry _registry;
+
+    private final String _serviceScope;
 
     private final ServiceResources _resources;
 
     private final ObjectCreator _creator;
 
-    public LifecycleWrappedServiceCreator(ServiceLifecycle lifecycle, ServiceResources resources,
-            ObjectCreator creator)
+    public LifecycleWrappedServiceCreator(InternalRegistry registry, String serviceScope,
+            ServiceResources resources, ObjectCreator creator)
     {
-        _lifecycle = lifecycle;
+        _registry = registry;
+        _serviceScope = serviceScope;
         _resources = resources;
         _creator = creator;
     }
@@ -46,7 +49,9 @@ public class LifecycleWrappedServiceCreator implements ObjectCreator
      */
     public Object createObject()
     {
-        return _lifecycle.createService(_resources, _creator);
+        ServiceLifecycle lifecycle = _registry.getServiceLifecycle(_serviceScope);
+
+        return lifecycle.createService(_resources, _creator);
     }
 
 }
