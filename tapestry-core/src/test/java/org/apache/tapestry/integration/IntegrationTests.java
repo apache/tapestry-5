@@ -103,6 +103,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("[Block barney.]");
 
+        // TAPESETRY-1583
+        
+        assertTextPresent("before it is defined: [Block wilma].");
     }
 
     @Test
