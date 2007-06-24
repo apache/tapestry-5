@@ -51,7 +51,6 @@ import org.apache.tapestry.annotations.Service;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
-import org.apache.tapestry.dom.DefaultMarkupModel;
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.internal.InternalConstants;
@@ -67,7 +66,6 @@ import org.apache.tapestry.internal.bindings.TranslateBindingFactory;
 import org.apache.tapestry.internal.bindings.ValidateBindingFactory;
 import org.apache.tapestry.internal.grid.ListGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
-import org.apache.tapestry.internal.services.ActionLinkHandler;
 import org.apache.tapestry.internal.services.AliasImpl;
 import org.apache.tapestry.internal.services.AliasManagerImpl;
 import org.apache.tapestry.internal.services.ApplicationGlobalsImpl;
@@ -84,11 +82,11 @@ import org.apache.tapestry.internal.services.ClassResultProcessor;
 import org.apache.tapestry.internal.services.ClasspathAssetAliasManagerImpl;
 import org.apache.tapestry.internal.services.CommonResourcesInjectionProvider;
 import org.apache.tapestry.internal.services.ComponentActionDispatcher;
+import org.apache.tapestry.internal.services.ComponentActionRequestHandlerImpl;
 import org.apache.tapestry.internal.services.ComponentClassResolverImpl;
 import org.apache.tapestry.internal.services.ComponentDefaultProviderImpl;
 import org.apache.tapestry.internal.services.ComponentInstanceResultProcessor;
 import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.ComponentLifecycleMethodWorker;
 import org.apache.tapestry.internal.services.ComponentMessagesSourceImpl;
 import org.apache.tapestry.internal.services.ComponentResourcesInjectionProvider;
@@ -118,7 +116,7 @@ import org.apache.tapestry.internal.services.InjectWorker;
 import org.apache.tapestry.internal.services.InternalModule;
 import org.apache.tapestry.internal.services.LinkActionResponseGenerator;
 import org.apache.tapestry.internal.services.LinkFactory;
-import org.apache.tapestry.internal.services.MarkupWriterImpl;
+import org.apache.tapestry.internal.services.MarkupWriterFactoryImpl;
 import org.apache.tapestry.internal.services.MetaDataLocatorImpl;
 import org.apache.tapestry.internal.services.MetaWorker;
 import org.apache.tapestry.internal.services.MixinAfterWorker;
@@ -126,15 +124,13 @@ import org.apache.tapestry.internal.services.MixinWorker;
 import org.apache.tapestry.internal.services.ObjectComponentEventResultProcessor;
 import org.apache.tapestry.internal.services.OnEventWorker;
 import org.apache.tapestry.internal.services.PageLifecycleAnnotationWorker;
-import org.apache.tapestry.internal.services.PageLinkHandler;
 import org.apache.tapestry.internal.services.PageRenderDispatcher;
+import org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl;
 import org.apache.tapestry.internal.services.PageRenderSupportImpl;
 import org.apache.tapestry.internal.services.PageResponseRenderer;
 import org.apache.tapestry.internal.services.ParameterWorker;
 import org.apache.tapestry.internal.services.PersistWorker;
 import org.apache.tapestry.internal.services.PersistentFieldManagerImpl;
-import org.apache.tapestry.internal.services.StringValueEncoder;
-import org.apache.tapestry.internal.services.ValueEncoderSourceImpl;
 import org.apache.tapestry.internal.services.PropertyConduitSourceImpl;
 import org.apache.tapestry.internal.services.RenderCommandWorker;
 import org.apache.tapestry.internal.services.RequestGlobalsImpl;
@@ -153,6 +149,7 @@ import org.apache.tapestry.internal.services.SessionPersistentFieldStrategy;
 import org.apache.tapestry.internal.services.StaticFilesFilter;
 import org.apache.tapestry.internal.services.StreamResponseResultProcessor;
 import org.apache.tapestry.internal.services.StringResultProcessor;
+import org.apache.tapestry.internal.services.StringValueEncoder;
 import org.apache.tapestry.internal.services.SupportsInformalParametersWorker;
 import org.apache.tapestry.internal.services.TranslatorDefaultSourceImpl;
 import org.apache.tapestry.internal.services.TranslatorSourceImpl;
@@ -160,6 +157,7 @@ import org.apache.tapestry.internal.services.UnclaimedFieldWorker;
 import org.apache.tapestry.internal.services.UpdateListenerHub;
 import org.apache.tapestry.internal.services.ValidationConstraintGeneratorImpl;
 import org.apache.tapestry.internal.services.ValidationMessagesSourceImpl;
+import org.apache.tapestry.internal.services.ValueEncoderSourceImpl;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
@@ -180,7 +178,6 @@ import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.Coercion;
 import org.apache.tapestry.ioc.services.CoercionTuple;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
@@ -233,18 +230,7 @@ public final class TapestryModule
         binder.bind(BeanModelSource.class, BeanModelSourceImpl.class);
         binder.bind(BeanBlockSource.class, BeanBlockSourceImpl.class);
         binder.bind(ComponentDefaultProvider.class, ComponentDefaultProviderImpl.class);
-    }
-
-    public static MarkupWriterFactory build(final ComponentInvocationMap componentInvocationMap)
-    {
-        // Temporary ...
-        return new MarkupWriterFactory()
-        {
-            public MarkupWriter newMarkupWriter()
-            {
-                return new MarkupWriterImpl(new DefaultMarkupModel(), componentInvocationMap);
-            }
-        };
+        binder.bind(MarkupWriterFactory.class, MarkupWriterFactoryImpl.class);
     }
 
     public static Alias build(Log log,
@@ -1306,9 +1292,9 @@ public final class TapestryModule
 
     ResourceStreamer streamer,
 
-    PageLinkHandler pageLinkHandler,
+    PageRenderRequestHandler pageRenderRequestHandler,
 
-    ActionLinkHandler actionLinkHandler,
+    ComponentActionRequestHandler componentActionRequestHandler,
 
     ComponentClassResolver componentClassResolver,
 
@@ -1318,7 +1304,7 @@ public final class TapestryModule
         // Looks for the root path and renders the start page
 
         configuration.add("RootPath", new RootPathDispatcher(componentClassResolver,
-                pageLinkHandler, _pageResponseRenderer, startPageName), "before:Asset");
+                pageRenderRequestHandler, _pageResponseRenderer, startPageName), "before:Asset");
 
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.
@@ -1329,19 +1315,33 @@ public final class TapestryModule
                 "before:PageRender");
 
         configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver,
-                pageLinkHandler, _pageResponseRenderer));
+                pageRenderRequestHandler));
 
-        configuration.add(
-                "ComponentAction",
-                new ComponentActionDispatcher(actionLinkHandler),
-                "after:PageRender");
+        configuration.add("ComponentAction", new ComponentActionDispatcher(
+                componentActionRequestHandler), "after:PageRender");
     }
 
+    /**
+     * Contributes meta data defaults:
+     * <dl>
+     * <dt>{@link PersistentFieldManagerImpl#META_KEY}
+     * <dd>{@link PersistentFieldManagerImpl#DEFAULT_STRATEGY}
+     * <dt>{@link TapestryConstants#RESPONSE_CONTENT_TYPE}
+     * <dd>text/html
+     * <dt>{@link TapestryConstants#RESPONSE_ENCODING}
+     * <dd>UTF-8
+     * </dl>
+     * 
+     * @param configuration
+     */
     public void contributeMetaDataLocator(MappedConfiguration<String, String> configuration)
     {
         configuration.add(
                 PersistentFieldManagerImpl.META_KEY,
                 PersistentFieldManagerImpl.DEFAULT_STRATEGY);
+
+        configuration.add(TapestryConstants.RESPONSE_CONTENT_TYPE, "text/html");
+        configuration.add(TapestryConstants.RESPONSE_ENCODING, "UTF-8");
     }
 
     /**
@@ -1498,4 +1498,27 @@ public final class TapestryModule
         configuration.add(String.class, new GenericValueEncoderFactory(new StringValueEncoder()));
         configuration.add(Enum.class, new EnumValueEncoderFactory());
     }
+
+    public PageRenderRequestHandler buildPageRenderRequestHandler(
+            List<PageRenderRequestFilter> configuration, Log log, ServiceResources resources)
+    {
+        return _pipelineBuilder.build(
+                log,
+                PageRenderRequestHandler.class,
+                PageRenderRequestFilter.class,
+                configuration,
+                resources.autobuild(PageRenderRequestHandlerImpl.class));
+    }
+
+    public ComponentActionRequestHandler buildComponentActionRequestHandler(
+            List<ComponentActionRequestFilter> configuration, Log log, ServiceResources resources)
+    {
+        return _pipelineBuilder.build(
+                log,
+                ComponentActionRequestHandler.class,
+                ComponentActionRequestFilter.class,
+                configuration,
+                resources.autobuild(ComponentActionRequestHandlerImpl.class));
+    }
+    
 }

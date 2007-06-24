@@ -14,15 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
-import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.internal.services.ComponentInvocation;
-import org.apache.tapestry.internal.services.PageLinkHandler;
-import org.apache.tapestry.internal.services.PageMarkupRenderer;
-import org.apache.tapestry.internal.services.PageRenderer;
-import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.internal.services.InvocationTarget;
+import org.apache.tapestry.internal.services.PageLinkTarget;
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.services.MarkupWriterFactory;
+import org.apache.tapestry.services.PageRenderRequestHandler;
 
 /**
  * Simulates a click on a page link.
@@ -31,18 +28,15 @@ public class PageLinkInvoker implements ComponentInvoker
 {
     private final Registry _registry;
 
-    private final PageLinkHandler _pageLinkHandler;
+    private final PageRenderRequestHandler _pageRenderRequestHandler;
 
-    private final PageMarkupRenderer _renderer;
-
-    private final MarkupWriterFactory _writerFactory;
+    private final TestableMarkupWriterFactory _markupWriterFactory;
 
     public PageLinkInvoker(Registry registry)
     {
         _registry = registry;
-        _pageLinkHandler = _registry.getService(PageLinkHandler.class);
-        _renderer = _registry.getService(PageMarkupRenderer.class);
-        _writerFactory = _registry.getService(MarkupWriterFactory.class);
+        _pageRenderRequestHandler = _registry.getService(PageRenderRequestHandler.class);
+        _markupWriterFactory = _registry.getService(TestableMarkupWriterFactory.class);
     }
 
     /**
@@ -56,19 +50,13 @@ public class PageLinkInvoker implements ComponentInvoker
     {
         try
         {
-            final MarkupWriter writer = _writerFactory.newMarkupWriter();
+            InvocationTarget target = invocation.getTarget();
 
-            _pageLinkHandler.handle(invocation, new PageRenderer()
-            {
+            PageLinkTarget pageLinkTarget = (PageLinkTarget) target;
 
-                public void renderPage(Page page)
-                {
-                    _renderer.renderPageMarkup(page, writer);
-                }
+            _pageRenderRequestHandler.handle(pageLinkTarget.getPageName(), invocation.getContext());
 
-            });
-
-            return writer.getDocument();
+            return _markupWriterFactory.getLatestMarkupWriter().getDocument();
         }
         finally
         {

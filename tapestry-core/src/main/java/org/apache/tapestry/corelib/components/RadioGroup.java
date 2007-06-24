@@ -23,7 +23,7 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;

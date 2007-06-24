@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.cast;
+import java.io.IOException;
 
 import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.TapestryConstants;
@@ -23,42 +23,36 @@ import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.apache.tapestry.services.PageRenderRequestHandler;
+import org.apache.tapestry.services.Response;
 
 /**
  * Handles a PageLink as specified by a PageLinkPathSource by activating and then rendering the
  * page.
  */
-public class PageLinkHandlerImpl implements PageLinkHandler
+public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 {
     private final RequestPageCache _cache;
 
     private final ComponentEventResultProcessor _resultProcessor;
 
-    public PageLinkHandlerImpl(RequestPageCache cache, ComponentEventResultProcessor resultProcessor)
+    private final PageResponseRenderer _pageResponseRenderer;
+
+    private final Response _response;
+
+    public PageRenderRequestHandlerImpl(RequestPageCache cache,
+            ComponentEventResultProcessor resultProcessor,
+            PageResponseRenderer pageResponseRenderer, Response response)
     {
         _cache = cache;
         _resultProcessor = resultProcessor;
+        _pageResponseRenderer = pageResponseRenderer;
+        _response = response;
     }
 
-    public ActionResponseGenerator handle(String logicalPageName, String[] context,
-            PageRenderer renderer)
+    public ActionResponseGenerator handle(String logicalPageName, String[] context)
     {
-        PageLinkTarget target = new PageLinkTarget(logicalPageName);
-        ComponentInvocation invocation = new ComponentInvocation(target,  context, context);
-
-        return handle(invocation, renderer);
-    }
-
-    public ActionResponseGenerator handle(ComponentInvocation invocation, PageRenderer renderer)
-    {
-        InvocationTarget target = invocation.getTarget();
-        // I really don't like this cast; there must be a way to get rid of it?
-        PageLinkTarget pageLinkTarget = cast(target, PageLinkTarget.class, "target");
-        Page page = _cache.get(pageLinkTarget.getPageName());
-
-        // Fire a notification so that the page can set itself up for the given context.
-
-        // This duplicates some code from ActionLinkHandlerImpl.
+        Page page = _cache.get(logicalPageName);
 
         final Holder<ActionResponseGenerator> holder = new Holder<ActionResponseGenerator>();
 
@@ -78,15 +72,18 @@ public class PageLinkHandlerImpl implements PageLinkHandler
             }
         };
 
-        page.getRootElement().triggerEvent(
-                TapestryConstants.ACTIVATE_EVENT,
-                invocation.getContext(),
-                handler);
+        page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, context, handler);
 
-        if (holder.hasValue())
-            return holder.get();
+        if (holder.hasValue()) return holder.get();
 
-        renderer.renderPage(page);
+        try
+        {
+            _pageResponseRenderer.renderPageResponse(page, _response);
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
 
         return null;
     }

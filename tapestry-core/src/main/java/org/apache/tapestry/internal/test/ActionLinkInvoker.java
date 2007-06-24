@@ -16,12 +16,15 @@ package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.internal.services.ActionLinkHandler;
+import org.apache.tapestry.internal.services.ActionLinkTarget;
 import org.apache.tapestry.internal.services.ComponentInvocation;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
+import org.apache.tapestry.internal.services.InvocationTarget;
 import org.apache.tapestry.internal.services.LinkActionResponseGenerator;
 import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.ActionResponseGenerator;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
 
 /**
  * Simulates a click on an action link.
@@ -32,7 +35,7 @@ public class ActionLinkInvoker implements ComponentInvoker
 
     private final ComponentInvoker _followupInvoker;
 
-    private final ActionLinkHandler _actionLinkHandler;
+    private final ComponentActionRequestHandler _componentActionRequestHandler;
 
     private final ComponentInvocationMap _componentInvocationMap;
 
@@ -41,7 +44,7 @@ public class ActionLinkInvoker implements ComponentInvoker
     {
         _registry = registry;
         _followupInvoker = followupInvoker;
-        _actionLinkHandler = _registry.getService("ActionLinkHandler", ActionLinkHandler.class);
+        _componentActionRequestHandler = _registry.getService("ComponentActionRequestHandler", ComponentActionRequestHandler.class);
         _componentInvocationMap = componentInvocationMap;
 
     }
@@ -82,9 +85,16 @@ public class ActionLinkInvoker implements ComponentInvoker
     {
         try
         {
-            // Bypass most of the Tapestry stack, to get right in there.
+            InvocationTarget target = invocation.getTarget();
 
-            return _actionLinkHandler.handle(invocation);
+            ActionLinkTarget actionLinkTarget = Defense.cast(
+                    target,
+                    ActionLinkTarget.class,
+                    "target");
+
+            return _componentActionRequestHandler.handle(actionLinkTarget.getPageName(), actionLinkTarget
+                    .getComponentNestedId(), actionLinkTarget.getEventType(), invocation
+                    .getContext(), invocation.getActivationContext());
         }
         finally
         {

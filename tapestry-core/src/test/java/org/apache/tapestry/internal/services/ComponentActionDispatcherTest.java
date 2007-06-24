@@ -23,6 +23,7 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.ActionResponseGenerator;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
 import org.apache.tapestry.services.Dispatcher;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
@@ -33,7 +34,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void no_dot_or_colon_in_path() throws Exception
     {
-        ActionLinkHandler handler = newActionLinkHandler();
+        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -48,9 +49,9 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         verify();
     }
 
-    protected final ActionLinkHandler newActionLinkHandler()
+    protected final ComponentActionRequestHandler newComponentActionRequestHandler()
     {
-        return newMock(ActionLinkHandler.class);
+        return newMock(ComponentActionRequestHandler.class);
     }
 
     @Test
@@ -125,7 +126,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void page_activation_context_in_request() throws Exception
     {
-        ActionLinkHandler handler = newActionLinkHandler();
+        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ActionResponseGenerator generator = newMock(ActionResponseGenerator.class);
@@ -157,7 +158,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     private void test(String requestPath, String logicalPageName, String nestedComponentId,
             String eventType, String... context) throws IOException
     {
-        ActionLinkHandler handler = newActionLinkHandler();
+        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ActionResponseGenerator generator = newMock(ActionResponseGenerator.class);

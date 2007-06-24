@@ -35,7 +35,7 @@ import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
 
 /**

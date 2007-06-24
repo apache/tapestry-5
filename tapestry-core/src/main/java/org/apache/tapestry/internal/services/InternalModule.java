@@ -47,12 +47,15 @@ import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ApplicationGlobals;
 import org.apache.tapestry.services.ApplicationInitializer;
 import org.apache.tapestry.services.ApplicationInitializerFilter;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
+import org.apache.tapestry.services.ComponentActionRequestFilter;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentMessagesSource;
 import org.apache.tapestry.services.Context;
@@ -64,7 +67,6 @@ import org.apache.tapestry.services.RequestExceptionHandler;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.ResourceDigestGenerator;
-import org.apache.tapestry.services.Response;
 
 public final class InternalModule
 {
@@ -80,12 +82,11 @@ public final class InternalModule
         binder.bind(LinkFactory.class, LinkFactoryImpl.class);
         binder.bind(LocalizationSetter.class, LocalizationSetterImpl.class);
         binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);
-        binder.bind(ActionLinkHandler.class, ActionLinkHandlerImpl.class);
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(RequestExceptionHandler.class, DefaultRequestExceptionHandler.class);
-        binder.bind(PageLinkHandler.class, PageLinkHandlerImpl.class);
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
         binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);
+        binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
     }
 
     public static void contributeTemplateParser(MappedConfiguration<String, URL> configuration)
@@ -136,13 +137,9 @@ public final class InternalModule
 
     private final ThreadCleanupHub _threadCleanupHub;
 
-    private final ComponentClassResolver _componentClassResolver;
-
     private final ChainBuilder _chainBuilder;
 
     private final Request _request;
-
-    private final Response _response;
 
     private final ThreadLocale _threadLocale;
 
@@ -150,19 +147,15 @@ public final class InternalModule
 
     public InternalModule(ComponentInstantiatorSource componentInstantiatorSource,
             UpdateListenerHub updateListenerHub, ThreadCleanupHub threadCleanupHub,
-            ComponentTemplateSource componentTemplateSource,
-            ComponentClassResolver componentClassResolver, ChainBuilder chainBuilder,
-            Request request, Response response, ThreadLocale threadLocale,
-            RequestGlobals requestGlobals)
+            ComponentTemplateSource componentTemplateSource, ChainBuilder chainBuilder,
+            Request request, ThreadLocale threadLocale, RequestGlobals requestGlobals)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _updateListenerHub = updateListenerHub;
         _threadCleanupHub = threadCleanupHub;
         _componentTemplateSource = componentTemplateSource;
-        _componentClassResolver = componentClassResolver;
         _chainBuilder = chainBuilder;
         _request = request;
-        _response = response;
         _threadLocale = threadLocale;
         _requestGlobals = requestGlobals;
     }
@@ -527,5 +520,30 @@ public final class InternalModule
         linkFactory.addListener(service);
 
         return service;
+    }
+
+    public static void contributeComponentActionRequestHandler(
+            OrderedConfiguration<ComponentActionRequestFilter> configuration,
+            final RequestEncodingInitializer encodingInitializer)
+    {
+        ComponentActionRequestFilter filter = new ComponentActionRequestFilter()
+        {
+            public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
+                    String eventType, String[] context, String[] activationContext,
+                    ComponentActionRequestHandler handler)
+            {
+                encodingInitializer.initializeRequestEncoding(logicalPageName);
+
+                return handler.handle(
+                        logicalPageName,
+                        nestedComponentId,
+                        eventType,
+                        context,
+                        activationContext);
+            }
+
+        };
+
+        configuration.add("SetRequestEncoding", filter, "before:*");
     }
 }

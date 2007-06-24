@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.internal.util;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 /**
  * An object that holds some type of other object. This is useful for communicating information from
- * an inner class (used as a closure) to the containing method.
+ * an inner class (used as a closure) to the containing method. This is similar to
+ * {@link AtomicReference}, except that it is simpler but <strong>not</strong> thread safe.
  * 
  * @param <T>
  */

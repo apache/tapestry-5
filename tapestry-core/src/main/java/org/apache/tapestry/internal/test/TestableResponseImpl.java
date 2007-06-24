@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -39,9 +40,9 @@ public class TestableResponseImpl implements Response
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
-        nyi("getPrintWriter");
-
-        return null;
+        // Welll, the output isn't accessible, but I guess we see that it could be generated from
+        // the DOM.
+        return new PrintWriter(new ByteArrayOutputStream());
     }
 
     public void sendError(int sc, String message) throws IOException

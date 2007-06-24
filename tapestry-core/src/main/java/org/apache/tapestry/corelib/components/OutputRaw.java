@@ -19,7 +19,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**
  * Used to output raw markup to the client. Unlike, say, an expansion, the output from OutputRaw is

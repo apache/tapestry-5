@@ -26,6 +26,7 @@ import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Dispatcher;
+import org.apache.tapestry.services.PageRenderRequestHandler;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 import org.testng.annotations.Test;
@@ -38,7 +39,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
         PageResponseRenderer renderer = mockPageResponseRenderer();
         RequestPageCache cache = mockRequestPageCache();
-        PageLinkHandler handler = new PageLinkHandlerImpl(cache, null);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, null, null, null);
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -48,7 +49,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, renderer);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
         assertFalse(d.dispatch(request, response));
 
@@ -61,7 +62,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
         PageResponseRenderer renderer = mockPageResponseRenderer();
-        PageLinkHandler handler = newMock(PageLinkHandler.class);
+        PageRenderRequestHandler handler = newMock(PageRenderRequestHandler.class);
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -69,7 +70,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, renderer);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
         assertFalse(d.dispatch(request, response));
 
@@ -119,9 +120,9 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageLinkHandler handler = new PageLinkHandlerImpl(cache, processor);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, renderer);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
         assertTrue(d.dispatch(request, response));
 
@@ -167,9 +168,9 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageLinkHandler handler = new PageLinkHandlerImpl(cache, processor);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, renderer);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
         assertTrue(d.dispatch(request, response));
 

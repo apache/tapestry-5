@@ -91,7 +91,7 @@ page-title=Votre Compte
 greeting=Bienvenue en arriere
 +----+
     
-    Programattically, you may inject your component message catalog into your class, as an instance of the Messages interface:
+    Programatically, you may inject your component message catalog into your class, as an instance of the Messages interface:
     
 +----+
   @Inject
@@ -153,5 +153,18 @@ Changing the Locale
   Tapestry does not yet support changing the locale, but that will be available shortly.  The intent is to mimic Tapestry 4 behavior: store a cookie
   on the client to provide the default for the locale on the next visit, and store a locale name in the session (if a session exists).  <<TODO: I believe
   this has been implemented by Kent.>>
+  
+Output Content Type and Charset
+
+  When Tapestry renders a page, the very first step is to determine the output content type and charset.  
+  
+  This information is obtained from meta data on the page itself.  Meta data is specified using the
+  {{{../apidocs/org/apache/tapestry/annotations/Meta.html}Meta}} annotation.  
+  
+  First, the response content type is obtained via meta-data key "tapestry.response-content-type".  This value defaults to "text/html".
+  
+  Next, the encoding is obtained via meta-data key "tapestry.response-encoding".  This value defaults to "UTF-8".  This is only necessary if
+  the content type does not provide a charset parameter (i.e., "text/html;charset=ISO-8559-1").  The encoding becomes the charset.
+  
   
   

@@ -129,4 +129,8 @@ public class TestableRequestImpl implements TestableRequest
         return _session;
     }
 
+    public void setEncoding(String requestEncoding)
+    {
+    }
+
 }

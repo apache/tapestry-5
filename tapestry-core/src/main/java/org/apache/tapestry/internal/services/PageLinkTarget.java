@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 /**
  * It represents a component invocation target for a page link. It is passed to an
- * {@link org.apache.tapestry.internal.services.ActionLinkHandler} by both the
+ * {@link org.apache.tapestry.services.ComponentActionRequestHandler} by both the
  * {@link org.apache.tapestry.test.PageTester} and the real Tapestry code
  * {@link org.apache.tapestry.internal.services.PageRenderDispatcher} in order to invoke a page
  * link.

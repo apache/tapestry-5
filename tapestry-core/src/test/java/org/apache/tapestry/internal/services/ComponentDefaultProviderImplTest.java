@@ -20,11 +20,11 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.testng.annotations.Test;
 
 public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
