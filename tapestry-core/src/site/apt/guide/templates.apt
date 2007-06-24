@@ -33,6 +33,11 @@ Template Location
   The location is based on the logical name of the page, in the previous example, the template
   would be <<<MyPage.html>>> in the root folder of the web application.
   
+  In certain cases, Tapestry will simplify the the logical name of a page. For example, the page class
+  org.example.pages.address.CreateAddress will be given a logical name of "address/Create" (the redundant "Address"
+  is removed as a suffix). However, this only affects how the page is referenced in URLs; the template file
+  will still be CreateAddress.html, whether on the classpath, or as WEB-INF/address/CreateAddress.html.
+  
   A template on the classpath takes precendence over a file in the web application context.
   
 Template Localization
