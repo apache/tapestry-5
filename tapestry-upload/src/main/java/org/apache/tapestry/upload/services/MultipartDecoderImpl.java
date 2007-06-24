@@ -40,11 +40,12 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 
     private final int _repositoryThreshold;
 
-    private final long _maxRequestSize ;
+    private final long _maxRequestSize;
 
     private final long _maxFileSize;
 
-    public MultipartDecoderImpl(String repositoryLocation, int repositoryThreshold, long maxRequestSize, long maxFileSize)
+    public MultipartDecoderImpl(String repositoryLocation, int repositoryThreshold,
+            long maxRequestSize, long maxFileSize)
     {
         _repositoryLocation = repositoryLocation;
         _repositoryThreshold = repositoryThreshold;
@@ -61,6 +62,7 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
     {
         // String encoding = request.getCharacterEncoding();
         List<FileItem> fileItems = parseRequest(request);
+
         return processFileItems(request, fileItems);
     }
 

@@ -16,12 +16,15 @@ package org.apache.tapestry.upload.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+
+import org.apache.tapestry.services.Dispatcher;
 
 /**
  * Wrapper for HttpServletRequest that overrides the parameter methods of the wrapped request. i.e.
@@ -84,5 +87,17 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
         ParameterValue value = _parameters.get(name);
 
         return value == null ? ParameterValue.NULL : value;
+    }
+
+    /**
+     * Ignores any attempt to set the character encoding. Tapestry attempts to set the encoding
+     * <em>after</em> the page name has been identified by the correct {@link Dispatcher}, and
+     * that's too late from the perspective of the Servlet API as HttpServlet.getInputStream() will
+     * already have been called.
+     */
+    @Override
+    public void setCharacterEncoding(String enc) throws UnsupportedEncodingException
+    {
+
     }
 }
