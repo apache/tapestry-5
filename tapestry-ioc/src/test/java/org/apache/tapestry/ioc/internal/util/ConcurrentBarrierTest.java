@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class ConcurrentBarrierTest extends TestBase
             }
         };
 
-        runOperation(operation);
+        runOperationAndCheckCounter(operation);
     }
 
     @Test
@@ -61,7 +61,7 @@ public class ConcurrentBarrierTest extends TestBase
             }
         };
 
-        runOperation(operation);
+        runOperationAndCheckCounter(operation);
     }
 
     @Test(enabled = true)
@@ -77,7 +77,7 @@ public class ConcurrentBarrierTest extends TestBase
             }
         };
 
-        runOperation(operation);
+        runOperationAndCheckCounter(operation);
     }
 
     @Test(enabled = true)
@@ -94,7 +94,7 @@ public class ConcurrentBarrierTest extends TestBase
             }
         };
 
-        runOperation(operation);
+        runOperationAndCheckCounter(operation);
     }
 
     /**
@@ -106,13 +106,97 @@ public class ConcurrentBarrierTest extends TestBase
     {
         Runnable operation = new ConcurrentTargetWrapper(_target);
 
-        runOperation(operation);
+        runOperationAndCheckCounter(operation);
     }
 
-    private void runOperation(Runnable operation) throws InterruptedException
+    @Test
+    public void read_lock_then_try_write_lock() throws Exception
     {
-        // System.out.println("** Start synchronization");
+        Runnable operation = new Runnable()
+        {
+            public void run()
+            {
+                _target.tryIncrementCounter();
+            }
+        };
 
+        runOperationAndCheckCounter(operation);
+    }
+
+    @Test
+    public void read_lock_inside_try_write_lock() throws Exception
+    {
+        Runnable operation = new Runnable()
+        {
+            public void run()
+            {
+                // Gets a write lock, then a read lock.
+                _target.tryIncrementCounterHard();
+            }
+        };
+
+        runOperationAndCheckCounter(operation);
+    }
+
+    @Test(enabled = true)
+    public void try_write_lock_inside_read_lock() throws Exception
+    {
+        Runnable operation = new Runnable()
+        {
+            public void run()
+            {
+                // A read lock method that upgrades to a write lock
+
+                _target.tryIncrementIfNonNegative();
+            }
+        };
+
+        runOperationAndCheckCounter(operation);
+    }
+
+
+    @Test(enabled = true)
+    public void write_lock_timeout_inside_read_lock() throws Exception
+    {
+        final Runnable operation = new Runnable()
+        {
+            public void run()
+            {
+                // A read lock method that upgrades to a write lock
+
+                _target.tryIncrementIfNonNegative();
+            }
+        };
+
+        _target.withRead( new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
+                    runOperation(operation);
+                }
+                catch (InterruptedException e)
+                {
+                }
+            }
+        });
+        assertEquals(_target.getCounter(), 0);
+
+    }
+
+
+
+    private void runOperationAndCheckCounter(Runnable operation) throws InterruptedException
+    {
+        runOperation(operation);
+
+        assertEquals(_target.getCounter(), THREAD_COUNT);
+    }
+
+    private void runOperation(Runnable operation)
+          throws InterruptedException
+    {
         List<Thread> threads = newList();
         List<Thread> running = newList();
 
@@ -133,10 +217,6 @@ public class ConcurrentBarrierTest extends TestBase
 
         for (Thread t : running)
             t.join();
-
-        assertEquals(_target.getCounter(), THREAD_COUNT);
-
-        // System.out.println("** End synchronization");
     }
 
     private void startThreads(List<Thread> threads, List<Thread> running)
