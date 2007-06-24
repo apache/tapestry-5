@@ -14,18 +14,35 @@
 
 package org.apache.tapestry.internal.bindings;
 
-import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.services.BindingFactory;
 
-/** Accesses a named block from the container. The block must exist. */
-public class BlockBindingFactory implements BindingFactory
+public class BlockBinding extends AbstractBinding
 {
-    public Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String expression, Location location)
+    private final String _description;
+
+    private final ComponentResources _component;
+
+    private final String _blockId;
+
+    public BlockBinding(final String description, final ComponentResources component,
+            final String blockId, Location location)
     {
-        return new BlockBinding(description, container, expression, location);
+        super(location);
+
+        _description = description;
+        _component = component;
+        _blockId = blockId;
     }
 
+    public Object get()
+    {
+        return _component.getBlock(_blockId);
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("BlockBinding[%s: %s]", _description, _blockId);
+    }
 }
