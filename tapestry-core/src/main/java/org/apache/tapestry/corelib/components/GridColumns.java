@@ -63,6 +63,9 @@ public class GridColumns
     @Inject @Path("sort-desc.png")
     private Asset _descendingAsset;
     
+    @Inject @Path("sortable.png")
+    private Asset _sortableAsset;
+    
     @Inject
     private Messages _messages;
 
@@ -101,12 +104,15 @@ public class GridColumns
     
     public Asset getIcon()
     {
-        return _sortAscending ? _ascendingAsset : _descendingAsset;
+        if (isActiveSortColumn())
+            return _sortAscending ? _ascendingAsset : _descendingAsset;
+        
+        return _sortableAsset;
     }
 
     public String getIconLabel()
     {
-        String key = _sortAscending ? "ascending" : "descending";
+        String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending" ) : "sortable";
         
         return _messages.get(key);
     }
