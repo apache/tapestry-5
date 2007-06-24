@@ -16,6 +16,8 @@ package org.apache.tapestry.ioc.internal.util;
 
 import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 
+import java.util.concurrent.TimeUnit;
+
 public class ConcurrentTarget
 {
     private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
@@ -107,5 +109,44 @@ public class ConcurrentTarget
                 _counter = getCounter() + 1;
             }
         });
+    }
+
+    public void tryIncrementCounter()
+    {
+        _barrier.tryWithWrite(new Runnable()
+        {
+            public void run()
+            {
+                _counter++;
+            }
+        },20, TimeUnit.MILLISECONDS);
+    }
+
+    public void tryIncrementCounterHard()
+    {
+        _barrier.tryWithWrite(new Runnable()
+        {
+            public void run()
+            {
+                _counter = getCounter() + 1;
+            }
+        },20,TimeUnit.MILLISECONDS);
+    }
+
+    public void tryIncrementIfNonNegative()
+    {
+        _barrier.withRead(new Runnable()
+        {
+            public void run()
+            {
+                if (_counter >= 0)
+                    tryIncrementCounter();
+            }
+        });
+    }
+
+
+    public void withRead(Runnable runnable ) {
+        _barrier.withRead(runnable);        
     }
 }

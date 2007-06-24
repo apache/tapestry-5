@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal.util;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
+import java.util.concurrent.TimeUnit;
 
 /**
  * A barrier used to execute code in a context where it is guarded by read/write locks. In addition,
@@ -123,14 +123,7 @@ public class ConcurrentBarrier
      */
     public <T> T withWrite(Invokable<T> invokable)
     {
-        boolean readLockedAtEntry = _threadHasReadLock.get();
-
-        if (readLockedAtEntry)
-        {
-            _lock.readLock().unlock();
-
-            _threadHasReadLock.set(false);
-        }
+        boolean readLockedAtEntry = releaseReadLock();
 
         _lock.writeLock().lock();
 
@@ -141,17 +134,34 @@ public class ConcurrentBarrier
         finally
         {
             _lock.writeLock().unlock();
+            restoreReadLock(readLockedAtEntry);
+        }
+    }
 
-            if (readLockedAtEntry)
-            {
-                _lock.readLock().lock();
+    private boolean releaseReadLock()
+    {
+        boolean readLockedAtEntry = _threadHasReadLock.get();
 
-                _threadHasReadLock.set(true);
-            }
-            else
-            {
-                _threadHasReadLock.remove();
-            }
+        if (readLockedAtEntry)
+        {
+            _lock.readLock().unlock();
+
+            _threadHasReadLock.set(false);
+        }
+        return readLockedAtEntry;
+    }
+
+    private void restoreReadLock(boolean readLockedAtEntry)
+    {
+        if (readLockedAtEntry)
+        {
+            _lock.readLock().lock();
+
+            _threadHasReadLock.set(true);
+        }
+        else
+        {
+            _threadHasReadLock.remove();
         }
     }
 
@@ -173,4 +183,51 @@ public class ConcurrentBarrier
 
         withWrite(invokable);
     }
+
+    /**
+     * Try to aquire the exclusive write lock and invoke the Runnable. If the write lock is obtained
+     * within the specfied timeout, then this method behaves as {@link #withWrite(Runnable)} and
+     * will return true. If the write lock is not obtained within the timeout then the runnable is
+     * never invoked and the method will return false.
+     * 
+     * @param runnable
+     *            Runnable object to execute inside the write lock.
+     * @param timeout
+     *            Time to wait for write lock.
+     * @param timeoutUnit
+     *            Units of timeout.
+     * @return true if lock was obtained & runnabled executed. False otherwise.
+     */
+    public boolean tryWithWrite(final Runnable runnable, long timeout, TimeUnit timeoutUnit)
+    {
+        boolean readLockedAtEntry = releaseReadLock();
+
+        boolean obtainedLock = false;
+
+        try
+        {
+            try
+            {
+                obtainedLock = _lock.writeLock().tryLock(timeout, timeoutUnit);
+
+                if (obtainedLock) runnable.run();
+
+            }
+            catch (InterruptedException e)
+            {
+                obtainedLock = false;
+            }
+            finally
+            {
+                if (obtainedLock) _lock.writeLock().unlock();
+            }
+        }
+        finally
+        {
+            restoreReadLock(readLockedAtEntry);
+        }
+
+        return obtainedLock;
+    }
+
 }
