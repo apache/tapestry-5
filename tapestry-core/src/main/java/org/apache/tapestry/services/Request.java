@@ -92,4 +92,13 @@ public interface Request
 
     /** Returns the named header as a string, or null if not found. */
     String getHeader(String name);
+
+    /**
+     * Sets the encoding of the request, which must occur before any parameters for the request are
+     * read.
+     * 
+     * @param requestEncoding
+     *            charset used when parsing parameters
+     */
+    void setEncoding(String requestEncoding);
 }

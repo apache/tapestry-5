@@ -20,12 +20,12 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ActionResponseGenerator;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
-public class ActionLinkHandlerImpl implements ActionLinkHandler
+public class ComponentActionRequestHandlerImpl implements ComponentActionRequestHandler
 {
     private final ComponentEventResultProcessor _resultProcessor;
 
@@ -33,7 +33,7 @@ public class ActionLinkHandlerImpl implements ActionLinkHandler
 
     private final LinkFactory _linkFactory;
 
-    public ActionLinkHandlerImpl(ComponentEventResultProcessor resultProcessor,
+    public ComponentActionRequestHandlerImpl(ComponentEventResultProcessor resultProcessor,
             RequestPageCache cache, LinkFactory linkFactory)
     {
         _resultProcessor = resultProcessor;
@@ -44,29 +44,11 @@ public class ActionLinkHandlerImpl implements ActionLinkHandler
     public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
             String eventType, String[] context, String[] activationContext)
     {
-        ActionLinkTarget actionLinkTarget = new ActionLinkTarget(eventType, logicalPageName,
-                nestedComponentId);
-
-        ComponentInvocation invocation = new ComponentInvocation(actionLinkTarget, context,
-                activationContext);
-
-        return handle(invocation);
-    }
-
-    public ActionResponseGenerator handle(ComponentInvocation invocation)
-    {
-        InvocationTarget target = invocation.getTarget();
-        // TODO: Not too happy about needing this cast; can the method be moved up to
-        // InvocationTarget or ComponentInvocation?
-        ActionLinkTarget actionLinkTarget = Defense.cast(target, ActionLinkTarget.class, "target");
-
-        Page page = _cache.get(actionLinkTarget.getPageName());
+        Page page = _cache.get(logicalPageName);
 
         // This is the active page, until we know better.
 
-        String nestedId = actionLinkTarget.getComponentNestedId();
-
-        ComponentPageElement element = page.getComponentElementByNestedId(nestedId);
+        ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
 
         final Holder<ActionResponseGenerator> holder = new Holder<ActionResponseGenerator>();
 
@@ -91,13 +73,12 @@ public class ActionLinkHandlerImpl implements ActionLinkHandler
 
         page.getRootElement().triggerEvent(
                 TapestryConstants.ACTIVATE_EVENT,
-                invocation.getActivationContext(),
+                activationContext,
                 handler);
 
-        if (holder.hasValue())
-            return holder.get();
+        if (holder.hasValue()) return holder.get();
 
-        element.triggerEvent(actionLinkTarget.getEventType(), invocation.getContext(), handler);
+        element.triggerEvent(eventType, context, handler);
 
         ActionResponseGenerator result = holder.get();
 

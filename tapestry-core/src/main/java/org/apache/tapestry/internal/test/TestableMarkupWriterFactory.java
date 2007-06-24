@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.internal.test;
 
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.services.MarkupWriterFactory;
 
 /**
- * Callback interface, responsible for writing a full page markup response. This acts as a wrapper
- * around {@link PageResponseRenderer} and {@link Response}.
+ * Extension of {@link MarkupWriterFactory} that tracks the most recently created markup writer so
+ * that it can be accessed after the page has rendered.
  */
-public interface PageRenderer
+public interface TestableMarkupWriterFactory extends MarkupWriterFactory
 {
-    void renderPage(Page page);
+    /** Returns the most recently created markup writer. */
+    MarkupWriter getLatestMarkupWriter();
 }

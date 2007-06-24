@@ -46,6 +46,20 @@ public final class TapestryConstants
     /** Binding expression prefix used to bind to a property of the component. */
     public static final String PROP_BINDING_PREFIX = "prop";
 
+    /**
+     * Meta data key applied to pages that sets the response content type. A factory default
+     * provides the value "text/html" when not overridden.
+     */
+    public static final String RESPONSE_CONTENT_TYPE = "tapestry.response-content-type";
+
+    /**
+     * Meta data key applied to pages that sets the response encoding. A factory default provides
+     * the value "UTF-8" when not overriden. Content type may also be specified in the
+     * {@link #RESPONSE_CONTENT_TYPE content type} as parameter "charset", i.e.,
+     * "text/html;charset=UTF-8".
+     */
+    public static final String RESPONSE_ENCODING = "tapestry.response-encoding";
+
     private TapestryConstants()
     {
     }

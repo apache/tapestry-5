@@ -12,16 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
-
-import org.apache.tapestry.services.ActionResponseGenerator;
+package org.apache.tapestry.services;
 
 /**
  * Handles a invocation related to rendering out a pages complete content.
- * <p>
- * TODO: This should be called RenderLinkHandler.
+ * 
+ * @see PageRenderRequestFilter
  */
-public interface PageLinkHandler
+public interface PageRenderRequestHandler
 {
     /**
      * Invoked to activate and render a page. The return value of the event handler method(s) for
@@ -31,20 +29,7 @@ public interface PageLinkHandler
      *            the logical name of the page to activate and render
      * @param context
      *            context data, supplied by the page at render time, extracted from the render URL
-     * @param renderer
-     *            callback responsible for rendering the page
      * @return an action response generator, or null if the page simply rendered
      */
-    ActionResponseGenerator handle(String logicalPageName, String[] context, PageRenderer renderer);
-
-    /**
-     * Invoked to handle the particular invocation. Triggers the activate event on the page; the
-     * event handler may return a value, in which case, this method will return a corresponding
-     * {@link ActionResponseGenerator}.
-     * 
-     * @param invocation
-     * @param renderer
-     * @return an action response generator, or null if the page simply rendered
-     */
-    ActionResponseGenerator handle(ComponentInvocation invocation, PageRenderer renderer);
+    ActionResponseGenerator handle(String logicalPageName, String[] context);
 }

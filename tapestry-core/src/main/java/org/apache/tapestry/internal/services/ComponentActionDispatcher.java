@@ -20,6 +20,7 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.services.ActionResponseGenerator;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
 import org.apache.tapestry.services.Dispatcher;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
@@ -30,13 +31,13 @@ import org.apache.tapestry.services.Response;
  */
 public class ComponentActionDispatcher implements Dispatcher
 {
-    private final ActionLinkHandler _actionLinkHandler;
+    private final ComponentActionRequestHandler _componentActionRequestHandler;
 
     private final String[] _emptyString = new String[0];
 
-    public ComponentActionDispatcher(ActionLinkHandler actionLinkHandler)
+    public ComponentActionDispatcher(ComponentActionRequestHandler componentActionRequestHandler)
     {
-        _actionLinkHandler = actionLinkHandler;
+        _componentActionRequestHandler = componentActionRequestHandler;
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -112,7 +113,7 @@ public class ComponentActionDispatcher implements Dispatcher
         String[] activationContext = activationContextValue == null ? _emptyString
                 : decodeContext(activationContextValue);
 
-        ActionResponseGenerator responseGenerator = _actionLinkHandler.handle(
+        ActionResponseGenerator responseGenerator = _componentActionRequestHandler.handle(
                 logicalPageName,
                 nestedComponentId,
                 eventType,

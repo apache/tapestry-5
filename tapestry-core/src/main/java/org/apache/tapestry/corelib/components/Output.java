@@ -23,7 +23,7 @@ import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**
  * A component for formatting output. If the component is represented in the template using an

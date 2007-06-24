@@ -19,10 +19,10 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {

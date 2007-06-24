@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,15 +14,17 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.Response;
-
 /**
- * Service responsible for writing a full page markup response.
+ * Determines the reuest encoding for the given page and applies that to the request, so that
+ * parameters may be properly decoded.
  */
-public interface PageResponseRenderer
+public interface RequestEncodingInitializer
 {
-    void renderPageResponse(Page page, Response response) throws IOException;
+    /**
+     * Initializes the request encoding to match the encoding defined for the page.
+     * 
+     * @param pageName
+     *            logical name of the page
+     */
+    void initializeRequestEncoding(String pageName);
 }

@@ -17,10 +17,10 @@ package org.apache.tapestry.internal.services;
 import java.io.IOException;
 
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Dispatcher;
+import org.apache.tapestry.services.PageRenderRequestHandler;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
@@ -34,17 +34,13 @@ public class PageRenderDispatcher implements Dispatcher
 {
     private final ComponentClassResolver _componentClassResolver;
 
-    private final PageLinkHandler _handler;
-
-    private final PageResponseRenderer _renderer;
+    private final PageRenderRequestHandler _handler;
 
     public PageRenderDispatcher(ComponentClassResolver componentClassResolver,
-            PageLinkHandler handler, PageResponseRenderer renderer)
+            PageRenderRequestHandler handler)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;
-        _renderer = renderer;
-
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -73,25 +69,7 @@ public class PageRenderDispatcher implements Dispatcher
                 String[] context = atEnd ? new String[0] : convertActivationContext(path
                         .substring(nextslashx + 1));
 
-                PageRenderer renderer = new PageRenderer()
-                {
-                    public void renderPage(Page page)
-                    {
-                        try
-                        {
-                            _renderer.renderPageResponse(page, response);
-                        }
-                        catch (IOException ex)
-                        {
-                            new RuntimeException(ex);
-                        }
-                    }
-                };
-
-                ActionResponseGenerator responseGenerator = _handler.handle(
-                        pageName,
-                        context,
-                        renderer);
+                ActionResponseGenerator responseGenerator = _handler.handle(pageName, context);
 
                 if (responseGenerator != null) responseGenerator.sendClientResponse(response);
 

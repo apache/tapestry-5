@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.MetaDataLocator;
 import org.testng.annotations.Test;
 
@@ -70,7 +69,6 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         ComponentResources containerResources = mockComponentResources();
         ComponentModel model = mockComponentModel();
         ComponentModel containerModel = mockComponentModel();
-        ComponentClassResolver resolver = mockComponentClassResolver();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -178,7 +176,6 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
-        ComponentClassResolver resolver = mockComponentClassResolver();
 
         String key = "foo.bar";
         String value = "zaphod";

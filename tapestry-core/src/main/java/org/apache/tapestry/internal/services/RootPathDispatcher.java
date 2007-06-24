@@ -16,9 +16,9 @@ package org.apache.tapestry.internal.services;
 
 import java.io.IOException;
 
-import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Dispatcher;
+import org.apache.tapestry.services.PageRenderRequestHandler;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
@@ -30,7 +30,7 @@ public class RootPathDispatcher implements Dispatcher
 {
     private final ComponentClassResolver _componentClassResolver;
 
-    private final PageLinkHandler _handler;
+    private final PageRenderRequestHandler _handler;
 
     private final PageResponseRenderer _renderer;
 
@@ -39,7 +39,7 @@ public class RootPathDispatcher implements Dispatcher
     private final String[] _emptyContext = new String[0];
 
     public RootPathDispatcher(final ComponentClassResolver componentClassResolver,
-            final PageLinkHandler handler, final PageResponseRenderer renderer,
+            final PageRenderRequestHandler handler, final PageResponseRenderer renderer,
             final String startPageName)
     {
         _componentClassResolver = componentClassResolver;
@@ -52,28 +52,11 @@ public class RootPathDispatcher implements Dispatcher
     {
         // Only match the root path
 
-        if (!request.getPath().equals("/"))
-            return false;
+        if (!request.getPath().equals("/")) return false;
 
         if (_componentClassResolver.isPageName(_startPageName))
         {
-            PageRenderer renderer = new PageRenderer()
-            {
-                public void renderPage(Page page)
-                {
-                    try
-                    {
-                        _renderer.renderPageResponse(page, response);
-                    }
-                    catch (IOException ex)
-                    {
-                        new RuntimeException(ex);
-                    }
-
-                }
-            };
-
-            _handler.handle(_startPageName, _emptyContext, renderer);
+            _handler.handle(_startPageName, _emptyContext);
 
             return true;
         }

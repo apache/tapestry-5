@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Locale;
 
@@ -87,6 +88,18 @@ public class RequestImpl implements Request
     public long getDateHeader(String name)
     {
         return _request.getDateHeader(name);
+    }
+
+    public void setEncoding(String requestEncoding)
+    {
+        try
+        {
+            _request.setCharacterEncoding(requestEncoding);
+        }
+        catch (UnsupportedEncodingException ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 
 }

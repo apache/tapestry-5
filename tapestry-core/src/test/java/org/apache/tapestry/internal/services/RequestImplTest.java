@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -58,5 +60,48 @@ public class RequestImplTest extends InternalBaseTestCase
         assertEquals(session.getAttribute("foo"), "bar");
 
         verify();
+    }
+
+    @Test
+    public void set_encoding_success() throws Exception
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        String encoding = "the-encoding";
+
+        sr.setCharacterEncoding(encoding);
+
+        replay();
+
+        new RequestImpl(sr).setEncoding(encoding);
+
+        verify();
+    }
+
+    @Test
+    public void set_encoding_failure() throws Exception
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        String encoding = "the-encoding";
+        UnsupportedEncodingException exception = new UnsupportedEncodingException("Oops.");
+
+        sr.setCharacterEncoding(encoding);
+        getMocksControl().andThrow(exception);
+
+        replay();
+
+        try
+        {
+            new RequestImpl(sr).setEncoding(encoding);
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertSame(ex.getCause(), exception);
+        }
+
+        verify();
+
     }
 }

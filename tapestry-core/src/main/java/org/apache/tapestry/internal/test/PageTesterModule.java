@@ -21,6 +21,7 @@ import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.services.AliasContribution;
+import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 import org.apache.tapestry.test.PageTester;
@@ -36,6 +37,7 @@ public class PageTesterModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(TestableRequest.class, TestableRequestImpl.class);
+        binder.bind(TestableMarkupWriterFactory.class, TestableMarkupWriterFactoryImpl.class);
     }
 
     public static void contributeAlias(Configuration<AliasContribution> configuration,
@@ -45,6 +47,7 @@ public class PageTesterModule
         add(configuration, Response.class, new TestableResponseImpl());
 
         add(configuration, locator, Request.class, "TestableRequest");
+        add(configuration, locator, MarkupWriterFactory.class, "TestableMarkupWriterFactory");
 
         TestableCookieSinkSource cookies = new TestableCookieSinkSource();
 

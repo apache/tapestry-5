@@ -27,7 +27,7 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.ioc.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**
  * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate
