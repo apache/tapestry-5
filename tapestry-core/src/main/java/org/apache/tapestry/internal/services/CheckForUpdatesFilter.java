@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
@@ -35,6 +36,8 @@ public class CheckForUpdatesFilter implements RequestFilter
     private long _lastCheck = 0;
 
     private final long _checkInterval;
+
+    private final long _updateTimeout;
 
     private final UpdateListenerHub _updateListenerHub;
 
@@ -65,11 +68,14 @@ public class CheckForUpdatesFilter implements RequestFilter
      *            invoked, at intervals, to spur the process of detecting changes
      * @param checkInterval
      *            interval, in milliseconds, between checks
+     * @param updateTimeout
+     *            time, in  milliseconds, to wait to obtain update lock.
      */
-    public CheckForUpdatesFilter(UpdateListenerHub updateListenerHub, long checkInterval)
+    public CheckForUpdatesFilter(UpdateListenerHub updateListenerHub, long checkInterval, long updateTimeout)
     {
         _updateListenerHub = updateListenerHub;
         _checkInterval = checkInterval;
+        _updateTimeout = updateTimeout;
     }
 
     public boolean service(final Request request, final Response response,
@@ -82,7 +88,7 @@ public class CheckForUpdatesFilter implements RequestFilter
             public Boolean invoke()
             {
                 if (System.currentTimeMillis() - _lastCheck >= _checkInterval)
-                    _barrier.withWrite(_checker);
+                    _barrier.tryWithWrite(_checker, _updateTimeout, TimeUnit.MILLISECONDS);
 
                 // And, now, back to code within the read lock.
                 

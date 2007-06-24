@@ -114,6 +114,7 @@ public final class InternalModule
         // one second to make a change, save it, and switch back to the browser.
 
         configuration.add("tapestry.file-check-interval", "1000"); // 1 second
+        configuration.add("tapestry.file-check-update-timeout", "50"); // 50 milliseconds
         configuration.add("tapestry.supported-locales", "en");
         configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
 
@@ -503,10 +504,13 @@ public final class InternalModule
             @Symbol("tapestry.file-check-interval")
             long checkInterval,
 
+            @Symbol("tapestry.file-check-update-timeout")
+            long updateTimeout,
+
             LocalizationSetter localizationSetter)
     {
         configuration.add("CheckForUpdates", new CheckForUpdatesFilter(_updateListenerHub,
-                checkInterval), "before:*");
+                checkInterval, updateTimeout), "before:*");
 
         configuration.add("Localization", new LocalizationFilter(localizationSetter));
     }
