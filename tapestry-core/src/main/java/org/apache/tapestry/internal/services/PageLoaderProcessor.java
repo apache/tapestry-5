@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
@@ -21,7 +22,6 @@ import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
@@ -48,7 +48,6 @@ import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
 import org.apache.tapestry.internal.structure.PageImpl;
 import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
@@ -439,8 +438,11 @@ class PageLoaderProcessor
 
         Log log = _loadingComponentModel.getLog();
 
-        Set<String> embeddedIds = CollectionFactory.newSet(_loadingComponentModel
-                .getEmbeddedComponentIds());
+        // Don't have a case-insensitive Set, so we'll make due with a Map
+        Map<String, Boolean> embeddedIds = newCaseInsensitiveMap();
+
+        for (String id : _loadingComponentModel.getEmbeddedComponentIds())
+            embeddedIds.put(id, true);
 
         _idAllocator.clear();
 
@@ -452,7 +454,7 @@ class PageLoaderProcessor
 
         if (!embeddedIds.isEmpty())
             log.error(ServicesMessages.embeddedComponentsNotInTemplate(
-                    embeddedIds,
+                    embeddedIds.keySet(),
                     componentClassName));
 
         _addAttributesAsComponentBindings = false;
