@@ -785,9 +785,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _page.createActionLink(this, action, forForm, context);
     }
 
-    public Link createPageLink(String pageName, Object... context)
+    public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return _page.createPageLink(pageName, context);
+        return _page.createPageLink(pageName, override, context);
     }
 
     public void enqueueBeforeRenderBody(RenderQueue queue)

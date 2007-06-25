@@ -67,7 +67,10 @@ public class PageLink implements ClientElement
 
         Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
 
-        Link link = _resources.createPageLink(_page, activationContext);
+        Link link = _resources.createPageLink(
+                _page,
+                _resources.isBound("context"),
+                activationContext);
 
         writer.element("a", "href", link, "id", _clientId);
 

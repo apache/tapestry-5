@@ -43,7 +43,7 @@ public class StringResultProcessor implements ComponentEventResultProcessor<Stri
     {
         Page page = _requestPageCache.get(value);
 
-        Link link = _linkFactory.createPageLink(page);
+        Link link = _linkFactory.createPageLink(page, false);
 
         return new LinkActionResponseGenerator(link);
     }

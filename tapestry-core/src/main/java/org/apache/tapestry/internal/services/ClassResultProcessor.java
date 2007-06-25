@@ -49,7 +49,7 @@ public class ClassResultProcessor implements ComponentEventResultProcessor<Class
         String className = value.getName();
         String pageName = _resolver.resolvePageClassNameToPageName(className);
         Page page = _requestPageCache.get(pageName);
-        Link link = _linkFactory.createPageLink(page);
+        Link link = _linkFactory.createPageLink(page, false);
         return new LinkActionResponseGenerator(link);
     }
 

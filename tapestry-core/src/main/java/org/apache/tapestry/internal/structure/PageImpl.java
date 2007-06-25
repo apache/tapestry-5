@@ -158,9 +158,9 @@ public class PageImpl implements Page
         return _linkFactory.createActionLink(element, action, forForm, context);
     }
 
-    public Link createPageLink(String pageName, Object... context)
+    public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return _linkFactory.createPageLink(pageName, context);
+        return _linkFactory.createPageLink(pageName, override, context);
     }
 
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)

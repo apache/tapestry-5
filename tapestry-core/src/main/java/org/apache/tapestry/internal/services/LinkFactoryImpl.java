@@ -164,13 +164,15 @@ public class LinkFactoryImpl implements LinkFactory
 
     }
 
-    public Link createPageLink(final Page page, Object... activationContext)
+    public Link createPageLink(final Page page, boolean override, Object... activationContext)
     {
         notNull(page, "page");
 
         String logicalPageName = page.getLogicalName();
 
-        String[] context = activationContext.length != 0 ? toContextStrings(activationContext)
+        // When override is true, we use the activation context even if empty.
+
+        String[] context = (override || activationContext.length != 0) ? toContextStrings(activationContext)
                 : collectActivationContextForPage(page);
 
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
@@ -226,11 +228,11 @@ public class LinkFactoryImpl implements LinkFactory
         return result;
     }
 
-    public Link createPageLink(String pageName, Object... context)
+    public Link createPageLink(String pageName, boolean override, Object... context)
     {
         // This verifies that the page name is valid.
         Page page = _pageCache.get(pageName);
 
-        return createPageLink(page, context);
+        return createPageLink(page, override, context);
     }
 }

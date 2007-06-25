@@ -84,7 +84,7 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
 
         if (result == null)
         {
-            Link link = _linkFactory.createPageLink(page);
+            Link link = _linkFactory.createPageLink(page, false);
 
             result = new LinkActionResponseGenerator(link);
         }

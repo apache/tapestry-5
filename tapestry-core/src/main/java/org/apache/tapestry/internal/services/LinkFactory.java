@@ -47,26 +47,41 @@ public interface LinkFactory
      * Creates a render link for the page. If an activation context is supplied then that context is
      * built into the URI. If no activation context is supplied, then the activation context is
      * obtained from the page itself, by triggering a passivate event on its root component.
+     * <p>
+     * When the activationContext is an empty array, the targetted page is checked to see if it can
+     * provide an activation context. This is accomplished by triggering a "passivate" event on the
+     * targetted page. If the override parameter is true, this will not occur (even when the
+     * activation context is empty).
      * 
      * @param page
      *            the page to which a link should be created
+     * @param override
+     *            if true, then the provided activation context is always used even if empty
      * @param activationContext
      *            the activation context for the page
      * @return
      */
-    Link createPageLink(Page page, Object... activationContext);
+    Link createPageLink(Page page, boolean override, Object... activationContext);
 
     /**
-     * As with {@link #createPageLink(Page, Object[])}, but the page is specified by logical name,
-     * rather than as an instance.
+     * As with {@link #createPageLink(Page, boolean, Object[])}, but the page is specified by
+     * logical name, rather than as an instance.
      * 
      * @param page
      *            the logical name of the page to generate a link to
+     * @param override
+     *            if true, then the provided activation context is always used even if empty
      * @param context
      *            activation context for the page
      * @return
      */
-    Link createPageLink(String page, Object... context);
+    Link createPageLink(String page, boolean override, Object... context);
 
+    /**
+     * Adds a listener, to be notified any time an action or render link is created; this allows the
+     * listener to modify the link (by adding additional query parameters to the link).
+     * 
+     * @param listener
+     */
     void addListener(LinkFactoryListener listener);
 }

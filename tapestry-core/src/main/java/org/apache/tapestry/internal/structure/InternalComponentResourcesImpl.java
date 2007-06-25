@@ -117,9 +117,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _element.createActionLink(action, forForm, context);
     }
 
-    public Link createPageLink(String pageName, Object... context)
+    public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return _element.createPageLink(pageName, context);
+        return _element.createPageLink(pageName, override, context);
     }
 
     public String getCompleteId()

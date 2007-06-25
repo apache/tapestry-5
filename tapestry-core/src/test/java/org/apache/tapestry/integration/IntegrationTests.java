@@ -765,6 +765,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextSeries("//li[%d]", 1, "betty", "wilma");
         assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent");
     }
+    
+    @Test
+    public void page_link_with_explicit_empty_context()
+    {
+        open(BASE_URL);
+
+        clickAndWait("link=Kicker");
+
+        clickAndWait("actionlink");
+   
+        assertTextSeries("//li[%d]", 1, "betty", "wilma");
+        
+        clickAndWait("nocontext");
+        
+        assertTextPresent("No activation context.");
+    }
 
     @Test
     public void page_link_with_explicit_activation_context()
