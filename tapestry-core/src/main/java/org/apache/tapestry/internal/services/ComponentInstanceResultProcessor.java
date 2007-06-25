@@ -54,7 +54,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
 
         Page page = _requestPageCache.get(resources.getPageName());
 
-        Link link = _linkFactory.createPageLink(page);
+        Link link = _linkFactory.createPageLink(page, false);
 
         return new LinkActionResponseGenerator(link);
     }

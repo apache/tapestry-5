@@ -154,7 +154,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 _typeCoercer);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(page);
+        Link link = factory.createPageLink(page, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -199,7 +199,51 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 _typeCoercer);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(page, "biff", "bazz");
+        Link link = factory.createPageLink(page, false, "biff", "bazz");
+
+        assertEquals(link.toRedirectURI(), ENCODED);
+
+        // Make sure the link was passed to the LinkFactoryListener
+
+        assertSame(link, holder.get());
+
+        verify();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void page_link_using_empty_activation_context_and_override()
+    {
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Page page = mockPage();
+        LinkFactoryListener listener = mockLinkFactoryListener();
+        ComponentInvocationMap map = mockComponentInvocationMap();
+
+        train_getLogicalName(page, PAGE_LOGICAL_NAME);
+        train_getContextPath(request, "/barney");
+
+        Holder<Link> holder = new Holder<Link>();
+
+        IAnswer<Void> createdPageLinkAnswer = newAnswerForCreatedLink(holder);
+
+        listener.createdPageLink(isA(Link.class));
+        getMocksControl().andAnswer(createdPageLinkAnswer);
+
+        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase(), ENCODED);
+
+        // This needs to be refactored a bit to be more testable.
+
+        map.store(isA(Link.class), isA(ComponentInvocation.class));
+
+        replay();
+
+        LinkFactory factory = new LinkFactoryImpl(request, response, resolver, map, null,
+                _typeCoercer);
+        factory.addListener(listener);
+
+        Link link = factory.createPageLink(page, true);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 
@@ -249,7 +293,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 _typeCoercer);
         factory.addListener(listener);
 
-        Link link = factory.createPageLink(PAGE_LOGICAL_NAME);
+        Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
 
         assertEquals(link.toRedirectURI(), ENCODED);
 

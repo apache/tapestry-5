@@ -129,11 +129,13 @@ public interface Page
      * 
      * @param pageName
      *            the logical name of the page
-     * @param contxt
+     * @param override
+     *            if true, the provided context is used even if empty
+     * @param context
      *            optional activation context for the page (if not provided, it is generated from
      *            the page itself)
      */
-    Link createPageLink(String pageName, Object... context);
+    Link createPageLink(String pageName, boolean override, Object... context);
 
     /**
      * Posts a change to a persistent field.

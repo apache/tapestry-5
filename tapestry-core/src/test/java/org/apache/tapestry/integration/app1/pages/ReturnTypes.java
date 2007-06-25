@@ -55,7 +55,7 @@ public class ReturnTypes
 
     Object onActionFromLinkReturnValue()
     {
-        return _resources.createPageLink("start");
+        return _resources.createPageLink("start", false);
     }
 
     Object onActionFromStreamReturnValue()

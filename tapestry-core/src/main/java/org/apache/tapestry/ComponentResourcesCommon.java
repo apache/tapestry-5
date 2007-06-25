@@ -62,11 +62,14 @@ public interface ComponentResourcesCommon extends Locatable
      * 
      * @param pageName
      *            the logical name of the page to link to
+     * @param override
+     *            if true, the context is used even if empty (normally, the target page is allowed
+     *            to passivate, providing a context, when the provided context is empty)
      * @param context
      *            the activation context for the page. If omitted, the activation context is
      *            obtained from the target paget
      */
-    Link createPageLink(String pageName, Object... context);
+    Link createPageLink(String pageName, boolean override, Object... context);
 
     /**
      * Returns a string consisting of the fully qualified class name of the containing page, and the

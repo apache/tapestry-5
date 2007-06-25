@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Link;
 
 /** Listener interface for objects that need to be notified about newly created links. */
-
 public interface LinkFactoryListener
 {
     /**
