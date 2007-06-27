@@ -1,5 +1,7 @@
 package org.apache.tapestry.tutorial.data;
 
+import org.apache.tapestry.beaneditor.Validate;
+
 public class Address
 {
   private Honorific _honorific;
@@ -27,6 +29,7 @@ public class Address
     return _honorific;
   }
 
+  @Validate("required")
   public String getFirstName()
   {
     return _firstName;
@@ -37,6 +40,7 @@ public class Address
     return _lastName;
   }
 
+  @Validate("required")
   public String getStreet1()
   {
     return _street1;
@@ -47,16 +51,19 @@ public class Address
     return _street2;
   }
 
+  @Validate("required")
   public String getCity()
   {
     return _city;
   }
 
+  @Validate("required")
   public String getState()
   {
     return _state;
   }
 
+  @Validate("required,regexp")
   public String getZip()
   {
     return _zip;
