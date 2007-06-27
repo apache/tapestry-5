@@ -143,7 +143,7 @@ public class Address
 }
 ----
 
-  It's just a collection of getter and setter methods.  We also need to define the enum type, Salutation:
+  It's just a collection of getter and setter methods.  We also need to define the enum type, Honorific:
   
   <<src/main/java/org/apache/tapestry/tutorial/data/Honorific.java:>>
   
@@ -206,10 +206,11 @@ public class CreateAddress
 }
 ----
    
-   So ... why is the class named "CreateAddress" and not simply "Create"?  Actually, we could have, and it would work.  Tapestry noticed the redundancy in the
+   So ... why is the class named "CreateAddress" and not simply "Create"?  Actually, we could have named it "Create", and 
+   the application would still work, but the longer <class> name is equally valid.  Tapestry noticed the redundancy in the
    class name:  <<<org.apache.tapestry.tutorial1.pages.>>><address><<<.Create>>><Address> and just stripped it out.
    
-   Eventually, your application will probably have more entities:  perhaps you'll have a "create/User" page and a "create/Payment" page and a "create/Account" page.
+   Eventually, your application will probably have more entities:  perhaps you'll have a "user/Create" page and a "payment/Create" page and an "account/Create" page.
    Now, you <could> have a bunch of different classes named <<<Create>>> spread across a number of different packages.  That's legal Java, but it isn't ideal.  You may find yourself
    accidentally editting the Java code for creating an Account when your really want to be editting the code for creating a Payment.
    
@@ -247,7 +248,7 @@ public class CreateAddress
    
 [address-v1.png] Initial version of the create address form
 
-  Tapestry's done quite a bit of work here.  It's created a form that includes a field for each property.  Further, it's seen that the
+  Tapestry's done quite a bit of work here.  Its created a form that includes a field for each property.  Further, its seen that the
   honorific property is an enumerated type, and presented that as a drop-down list.
   
   In addition, Tapestry has converted the property names ("city", "email", "firstName") to user presentable labels ("City", "Email", "First Name").
@@ -335,7 +336,7 @@ phone-label=Phone Number
   
 [address-v4.png] Corrected width on labels
 
-   We can also customize the options in the drop down list.  All we have to do is added entries to the message catalog matching the enum names to the desired labels.
+   We can also customize the options in the drop down list.  All we have to do is add some more entries to the message catalog matching the enum names to the desired labels.
    Update CreateAddress.properties and add:
    
 ----
@@ -345,7 +346,7 @@ DR=Dr.
 ----
 
   Notice that we don't have to include an option for MISS, because that is converted to "Miss" anyway.  You might just want to include it for
-  clarity ... the point is, each option label is searched for seperately.
+  consistencie's sake ... the point is, each option label is searched for seperately.
 
   Lastly, the default label on the submit button is "Create/Update" (BeanEditForm doesn't know how it is being used). Let's change that to "Create Address".
   
@@ -371,7 +372,8 @@ DR=Dr.
   label will go in the message catalog. 
   
   In Tapestry, when binding a parameter, the value you provide may include a prefix.  The prefix guides Tapestry in how to interpret the rest of the
-  the parameter value ... is it the name of a property?  The id of a component? A message key?
+  the parameter value ... is it the name of a property?  The id of a component? A message key?  Most fields have a default prefix, usually "prop:" that
+  is used when you fail to provide one (this helps to make the templates as terse as possible).
   
   Here we want to reference a message from the catalog, so we use the "message:" prefix:
   
@@ -386,6 +388,94 @@ submit-label=Create Address
 ----
 
   At then end of the day, the exact same HTML is sent to the client, regardless of whether you include the label text directly in the template,
-  or indirectly in the message catalog. In the long term, the latter approach will work better if you chose to internationalize your application.
+  or indirectly in the message catalog. In the long term, the latter approach will work better if you later chose to internationalize your application.
    
+*  Adding Validation
+
+  Before we worry about storing the Address object, we should make sure that the user provides reasonable values. For example,several of the fields should be required,
+  and phone numbers and email address have specific formats.
   
+  The BeanEditForm checks for a Tapestry-specific annotation, @Validate, on the getter <or> setter method of each property.   
+
+  Update the getter methods for the lastName, firstName, street1, city, state and zip fields, 
+  adding a @Validate annotation to each:
+  
+----
+  @Validate("required")
+  public String getFirstName()
+  {
+    return _firstName;
+  }
+----
+
+  What is that string, "required"?  That's how you specify the desired validation.  It is a series of names that identify what type of validation is desired.
+  A number of validators are built in, such as "required", "minLength" and "maxLength".  As elsewhere, Tapestry is case insensitive.  
+  
+  You can apply multiple validations, by seperating the validator names with commas.  Some validators can be configured (with an equals sign). Thus you might say "required,minLength=5" for
+  a field that must be specified, and must be at least five characters long.
+  
+  Restart the application, and refresh your browser, then hit the submit button.
+    
+[address-v6.png] Form with client side validations visible
+
+  What this picture doesn't show is that the validation occurred entirely <on the client side>, using JavaScript. Look what's happened: a summary of <all> the
+  errors in the form has scrolled down at the top of the form, and each form in error has been highlighted (it's a bit subtle) and marked with a red "X".  Further, the label
+  for each of the fields has also been highlighted in red, to even more clearly identify what's in error.  The cursor has also been moved to the first field
+  that's in error.
+  
+  Again, all of this validation occured entirely on the client side, no request was sent to the server.  However, once all the errors are corrected, and the form does submit,
+  all validations are performed on the server side as well (just in
+  case the client has JavaScript disabled).
+
+  So ... how about some more interesting validation than just "required or not".  Tapestry has built in support for validating based on field length and several variations
+  of field value, including regular expressons.  Zip codes are pretty easy to express as a regular expression.
+  
+----
+  @Validate("required,regexp=\\d{5}(-\\d{4})?")
+  public String getZip()
+  {
+    return _zip;
+  }    
+----
+
+  Let's give it a try; restart the application and enter an "abc" for the zip code.
+  
+[address-v7.png] Regexp validation
+
+  That's the right behavior, but it's the wrong message.  Fortunately, it's easy to customize validation messages.  All we need to know is the name of the
+  property ("zip") and the name of the validator ("regexp").  We can then put an entry into the CreateAddress message catalog:
+  
+----
+zip-regexp-message=Zip Codes are five or nine digits.  Example: 02134 or 90125-1655.
+----
+
+  Refresh the page and submit again:
+  
+[address-v8.png] Regexp validation with corrected message
+
+  This trick isn't limited to just the regexp validator, it works equally well with <any> validator.
+  
+  Let's go one step further.  Turns out, we can move the
+  regexp pattern to the message catalog as well.  If you only provide the name of the validator in the @Validator annotation, Tapestry will search the containing
+  page's message catalog of the constraint value, as well as the validation message.  The constraint value for the regexp validator is the regular expression to match against.
+  
+----
+  @Validate("required,regexp")
+  public String getZip()
+  {
+    return _zip;
+  }
+----
+
+  Now, just put the value into the CreateAddress message catalog:
+  
+----
+zip-regexp=\\d{5}(-\\d{4})?
+zip-regexp-message=Zip Codes are five or nine digits.  Example: 02134 or 90125-1655.
+----
+
+  After a restart you'll see the ... the same behavior.  But when we start creating more complicated regular expressions, it'll be much, much nicer
+  to put them in the message catalog rather than inside the annotation value.  And inside the message catalog, you can change and tweak the regular expressions
+  without having to restart the application each time.
+ 
+ 
