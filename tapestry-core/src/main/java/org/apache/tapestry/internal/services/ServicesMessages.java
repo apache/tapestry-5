@@ -35,10 +35,6 @@ class ServicesMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(ServicesMessages.class);
 
-    private ServicesMessages()
-    {
-    }
-
     static final String duplicateContribution(Object conflict, Class contributionType,
             Object existing)
     {
@@ -193,7 +189,7 @@ class ServicesMessages
         return MESSAGES.format("could-not-resolve-page-name", pageName, InternalUtils
                 .joinSorted(pageNames));
     }
-    
+
     static String couldNotCanonicalizePageName(String pageName, Collection<String> pageNames)
     {
         return MESSAGES.format("could-not-canonicalize-page-name", pageName, InternalUtils
@@ -403,5 +399,10 @@ class ServicesMessages
     static String noEditForDataType(String datatype)
     {
         return MESSAGES.format("no-edit-for-data-type", datatype);
+    }
+
+    static String missingValidatorConstraint(String validatorType, Class type)
+    {
+        return MESSAGES.format("missing-validator-constraint", validatorType, type.getName());
     }
 }

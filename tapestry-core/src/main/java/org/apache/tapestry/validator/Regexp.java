@@ -16,6 +16,9 @@ package org.apache.tapestry.validator;
 
 import static org.apache.tapestry.TapestryUtils.quote;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
@@ -23,16 +26,16 @@ import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 
-public final class MaxLength implements Validator<Integer, String>
+public class Regexp implements Validator<Pattern, String>
 {
-    public Class<Integer> getConstraintType()
+    public Class<Pattern> getConstraintType()
     {
-        return Integer.class;
+        return Pattern.class;
     }
 
     public String getMessageKey()
     {
-        return "maximum-string-length";
+        return "regexp";
     }
 
     public Class<String> getValueType()
@@ -45,28 +48,31 @@ public final class MaxLength implements Validator<Integer, String>
         return false;
     }
 
-    public void validate(Field field, Integer constraintValue, MessageFormatter formatter,
+    private String buildMessage(MessageFormatter formatter, Field field, Pattern constraintValue)
+    {
+        return formatter.format(constraintValue.toString(), field.getLabel());
+    }
+
+    public void render(Field field, Pattern constraintValue, MessageFormatter formatter,
+            MarkupWriter writer, PageRenderSupport pageRenderSupport)
+    {
+        String clientPattern = Pattern.quote(constraintValue.pattern());
+
+        pageRenderSupport.addScript(
+                "Tapestry.Field.regexp('%s', %s, %s);",
+                field.getClientId(),
+                quote(clientPattern),
+                quote(buildMessage(formatter, field, constraintValue)));
+
+    }
+
+    public void validate(Field field, Pattern constraintValue, MessageFormatter formatter,
             String value) throws ValidationException
     {
-        if (value.length() > constraintValue)
+        Matcher matcher = constraintValue.matcher(value);
+
+        if (!matcher.matches())
             throw new ValidationException(buildMessage(formatter, field, constraintValue));
     }
 
-    private String buildMessage(MessageFormatter formatter, Field field, Integer constraintValue)
-    {
-        return formatter.format(constraintValue, field.getLabel());
-    }
-
-    public void render(Field field, Integer constraintValue, MessageFormatter formatter,
-            MarkupWriter writer, PageRenderSupport pageRenderSupport)
-    {
-        // TODO: write a maxlength attribute into the element?  But that's only for
-        // textfield, not for textarea.
-        
-        pageRenderSupport.addScript(
-                "Tapestry.Field.maxlength('%s', %d, %s);",
-                field.getClientId(),
-                constraintValue,
-                quote(buildMessage(formatter, field, constraintValue)));
-    }
 }

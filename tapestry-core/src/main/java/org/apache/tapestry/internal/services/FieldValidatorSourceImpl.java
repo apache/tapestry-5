@@ -90,7 +90,27 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                     validatorType,
                     InternalUtils.sortedKeys(_validators)));
 
-        Object coercedConstraintValue = coerceConstraintValue(constraintValue, validator
+        // I just have this thing about always treating parameters as finals, so
+        // we introduce a second variable to treat a mutable.
+
+        String finalConstraintValue = constraintValue;
+
+        // If no constraint was provided, check to see if it is available via a localized message
+        // key. This is really handy for complex validations such as patterns.
+
+        if (finalConstraintValue == null && validator.getConstraintType() != null)
+        {
+            String key = overrideId + "-" + validatorType;
+
+            if (overrideMessages.contains(key))
+                finalConstraintValue = overrideMessages.get(key);
+            else
+                throw new IllegalArgumentException(ServicesMessages.missingValidatorConstraint(
+                        validatorType,
+                        validator.getConstraintType()));
+        }
+
+        Object coercedConstraintValue = coerceConstraintValue(finalConstraintValue, validator
                 .getConstraintType());
 
         MessageFormatter formatter = findMessageFormatter(
@@ -108,7 +128,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
             Locale locale, String validatorType, Validator validator)
     {
 
-        String overrideKey = overrideId + "-" + validatorType;
+        String overrideKey = overrideId + "-" + validatorType + "-message";
 
         if (overrideMessages.contains(overrideKey))
             return overrideMessages.getFormatter(overrideKey);

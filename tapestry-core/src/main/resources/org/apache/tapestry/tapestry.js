@@ -150,6 +150,13 @@ Tapestry.Field = {
       if (value > maxValue)
         event.recordError(message);
     });
+  },
+  
+  regexp : function(field, pattern, message) {
+    Tapestry.addValidator(field, false, function(value, event) {
+      if (! new Pattern(pattern).matches(value))
+        event.recordError(message);
+    });
   }  
 };
 

@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -197,6 +198,7 @@ import org.apache.tapestry.validator.Max;
 import org.apache.tapestry.validator.MaxLength;
 import org.apache.tapestry.validator.Min;
 import org.apache.tapestry.validator.MinLength;
+import org.apache.tapestry.validator.Regexp;
 import org.apache.tapestry.validator.Required;
 
 /**
@@ -560,6 +562,7 @@ public final class TapestryModule
      * <li>maxlength</li>
      * <li>min</li>
      * <li>max</li>
+     * <li>regexp</li>
      * </ul>
      */
     public static void contributeFieldValidatorSource(
@@ -570,6 +573,7 @@ public final class TapestryModule
         configuration.add("maxlength", new MaxLength());
         configuration.add("min", new Min());
         configuration.add("max", new Max());
+        configuration.add("regexp", new Regexp());
     }
 
     /**
@@ -775,6 +779,15 @@ public final class TapestryModule
                 return TapestryInternalUtils.toSelectModel(input);
             }
         });
+
+        add(configuration, String.class, Pattern.class, new Coercion<String, Pattern>()
+        {
+            public Pattern coerce(String input)
+            {
+                return Pattern.compile(input);
+            }
+        });
+
     }
 
     /**
@@ -1520,5 +1533,5 @@ public final class TapestryModule
                 configuration,
                 resources.autobuild(ComponentActionRequestHandlerImpl.class));
     }
-    
+
 }

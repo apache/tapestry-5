@@ -104,7 +104,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("[Block barney.]");
 
         // TAPESETRY-1583
-        
+
         assertTextPresent("before it is defined: [Block wilma].");
     }
 
@@ -765,7 +765,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextSeries("//li[%d]", 1, "betty", "wilma");
         assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent");
     }
-    
+
     @Test
     public void page_link_with_explicit_empty_context()
     {
@@ -774,11 +774,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=Kicker");
 
         clickAndWait("actionlink");
-   
+
         assertTextSeries("//li[%d]", 1, "betty", "wilma");
-        
+
         clickAndWait("nocontext");
-        
+
         assertTextPresent("No activation context.");
     }
 
@@ -1060,9 +1060,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        String update = "//input[@type='submit']";
-
         clickAndWait("link=RadioDemo");
+
+        String update = "//input[@type='submit']";
 
         click("//label[.='Accounting']");
 
@@ -1075,5 +1075,33 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(update);
 
         assertTextPresent("Selected department: SALES_AND_MARKETING");
+    }
+
+    @Test
+    public void regexp_validator()
+    {
+        open(BASE_URL);
+
+        clickAndWait("link=Regexp Demo");
+
+        String update = "//input[@type='submit']";
+
+        type("zipCode", "abc");
+
+        clickAndWait(update);
+
+        assertTextPresent("A zip code consists of five or nine digits, eg: 02134 or 90125-4472.");
+
+        type("zipCode", "12345");
+
+        clickAndWait(update);
+
+        assertTextPresent("Zip code: [12345]");
+
+        type("zipCode", "12345-9876");
+
+        clickAndWait(update);
+
+        assertTextPresent("Zip code: [12345-9876]");
     }
 }
