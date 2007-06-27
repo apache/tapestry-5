@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.PropertyConduit;
@@ -461,6 +462,18 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         assertFalse(TapestryInternalUtils.isEqual(left, right));
         assertTrue(TapestryInternalUtils.isEqual(left, new String(left)));
+    }
+
+    @Test
+    public void type_coersion_string_to_pattern()
+    {
+        TypeCoercer coercer = getObject(TypeCoercer.class, null);
+
+        String input = "\\s+";
+
+        Pattern pattern = coercer.coerce(input, Pattern.class);
+
+        assertEquals(pattern.toString(), input);
     }
 
 }

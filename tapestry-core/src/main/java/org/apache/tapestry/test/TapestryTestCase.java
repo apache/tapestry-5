@@ -599,7 +599,7 @@ public abstract class TapestryTestCase extends IOCTestCase
 
     protected <C, T> void train_getConstraintType(Validator<C, T> validator, Class<C> constraintType)
     {
-        expect(validator.getConstraintType()).andReturn(constraintType);
+        expect(validator.getConstraintType()).andReturn(constraintType).atLeastOnce();
     }
 
     protected final void train_getContainer(ComponentResources resources, Component container)
