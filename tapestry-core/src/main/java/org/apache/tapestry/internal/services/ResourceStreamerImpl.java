@@ -34,10 +34,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
     private final int _bufferSize = 1000;
 
-    // One year, in milliseconds
-
-    final static long EXPIRE_DELTA = 31536000000L;
-
     public ResourceStreamerImpl(final Response response, Map<String, String> configuration)
     {
         _response = response;
@@ -60,7 +56,6 @@ public class ResourceStreamerImpl implements ResourceStreamer
         long lastModified = connection.getLastModified();
 
         _response.setDateHeader("Last-Modified", lastModified);
-        _response.setDateHeader("Expires", lastModified + EXPIRE_DELTA);
 
         String contentType = connection.getContentType();
 
