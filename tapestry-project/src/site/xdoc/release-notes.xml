@@ -7,7 +7,6 @@
     <h1> Release Notes - Tapestry - Version 5.0.5 </h1>
 
 
-
     <h2> Bug </h2>
     <ul>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1294">TAPESTRY-1294</a>] -
@@ -48,16 +47,12 @@
         in template causes exception in SAX Parser. </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1504">TAPESTRY-1504</a>] - When a
         Map is converted to a SelectModel, the keys are converted unnecessarily to strings </li>
-      <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1508">TAPESTRY-1508</a>] - NPE on
-        console after using StreamResponse with image/jpeg via jfreecharts </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1511">TAPESTRY-1511</a>] -
         VerifyError when using inner classes inside components </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1528">TAPESTRY-1528</a>] - No way
         to cleanup the thread without access to the Registry </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1537">TAPESTRY-1537</a>] -
         Release notes for 5.0.4 claim that TAPESTRY-1294 is fixed, which it isn't </li>
-      <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1546">TAPESTRY-1546</a>] - No
-        equivilent for @Component(inheritInformalParameters=true) </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1559">TAPESTRY-1559</a>] -
         application package initializer removed while merging svn </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1562">TAPESTRY-1562</a>] -
@@ -77,9 +72,6 @@
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1596">TAPESTRY-1596</a>] -
         Contributing a service to the Alias service configuration fails if the service uses a
         non-standard scope, such as perthread </li>
-      <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1602">TAPESTRY-1602</a>] -
-        Returning false from setupRender() reports a &quot;no root element&quot; error in
-        the logs </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1614">TAPESTRY-1614</a>] - No
         &quot;expires&quot; header should be set in asset download requests, as that can
         confuse the browser, preventing changes versions of assets from being downloaded </li>
@@ -108,8 +100,6 @@
         mock-control managing logic in TestBase so that it can be used in a JUnit test suite </li>
       <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1572">TAPESTRY-1572</a>] -
         AbstractIntegrationTestSuite should mark setup() and cleanup() as alwaysRun </li>
-      <li>[<a href="https://issues.apache.org/jira/browse/TAPESTRY-1612">TAPESTRY-1612</a>] - Allow
-        access to the PageTester registry </li>
     </ul>
 
     <h2> New Feature </h2>
