@@ -15,16 +15,26 @@
 package org.apache.tapestry;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class TapestryUtilsTest extends Assert
 {
-    @Test
-    public void string_quoting()
+    @Test(dataProvider = "string_quoting_input")
+    public void string_quoting(String input, String expected)
     {
-        assertEquals(
-                TapestryUtils.quote("Suzy said: \"It's not the proper time\"."),
-                "'Suzy said: \\\"It\\'s not the proper time\\\".'");
+        assertEquals(TapestryUtils.quote(input), expected);
+    }
 
+    @DataProvider(name = "string_quoting_input")
+    public Object[][] inputs()
+    {
+        return new Object[][]
+        {
+                { "Suzy said: \"It's not the proper time\".",
+                        "'Suzy said: \\\"It\\'s not the proper time\\\".'" },
+                { "regexp: \\d{4}", "'regexp: \\\\d{4}'" },
+
+        };
     }
 }

@@ -1088,7 +1088,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         type("zipCode", "abc");
 
-        clickAndWait(update);
+        click(update); // but don't wait
 
         assertTextPresent("A zip code consists of five or nine digits, eg: 02134 or 90125-4472.");
 

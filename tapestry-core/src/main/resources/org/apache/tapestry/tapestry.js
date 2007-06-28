@@ -153,8 +153,11 @@ Tapestry.Field = {
   },
   
   regexp : function(field, pattern, message) {
+    var regexp = new RegExp(pattern);
+      
     Tapestry.addValidator(field, false, function(value, event) {
-      if (! new Pattern(pattern).matches(value))
+    
+      if (! regexp.test(value))
         event.recordError(message);
     });
   }  
