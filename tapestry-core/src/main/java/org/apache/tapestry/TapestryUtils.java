@@ -19,19 +19,44 @@ package org.apache.tapestry;
  */
 public class TapestryUtils
 {
+    private static final char APOS = '\'';
+
+    private static final char QUOTE = '"';
+
+    private static final char SLASH = '\\';
 
     /**
      * Quotes the provided value as a JavaScript string literal. The input value is surrounded by
-     * single quotes and any interior single or double quotes are escaped (a preceding backslash is
-     * added).
+     * single quotes and any interior backslash, single or double quotes are escaped (a preceding
+     * backslash is added).
      * 
      * @param text
      * @return quoted text
      */
     public static String quote(String text)
     {
-        // TODO: Lots more, and maybe use a regexp?
-        
-        return "'" + text.replace("'", "\\'").replace("\"", "\\\"") + "'";
+        StringBuilder result = new StringBuilder(text.length() * 2);
+
+        result.append(APOS);
+
+        for (char ch : text.toCharArray())
+        {
+            switch (ch)
+            {
+                case APOS:
+                case QUOTE:
+                case SLASH:
+
+                    result.append(SLASH);
+
+                default:
+                    result.append(ch);
+                    break;
+            }
+        }
+
+        result.append(APOS);
+
+        return result.toString();
     }
 }

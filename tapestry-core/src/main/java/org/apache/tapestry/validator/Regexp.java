@@ -56,12 +56,10 @@ public class Regexp implements Validator<Pattern, String>
     public void render(Field field, Pattern constraintValue, MessageFormatter formatter,
             MarkupWriter writer, PageRenderSupport pageRenderSupport)
     {
-        String clientPattern = Pattern.quote(constraintValue.pattern());
-
         pageRenderSupport.addScript(
                 "Tapestry.Field.regexp('%s', %s, %s);",
                 field.getClientId(),
-                quote(clientPattern),
+                quote(constraintValue.pattern()),
                 quote(buildMessage(formatter, field, constraintValue)));
 
     }
