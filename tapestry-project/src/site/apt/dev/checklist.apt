@@ -68,14 +68,13 @@ Build and Deploy Site
   
 Build and Deploy Artifacts
 
-  From tapestry-project, execute <<<mvn deploy>>>
+  From tapestry-project, execute <<<mvn gpg:sign deploy>>>
   
-  This will deploy the tapestry-project POM and each of the module's JARs (including source JARs).
+  This will sign the artifacts using GPG and deploy them.  Alas, due to bugs in Maven, it has a tendency to sign the signature files (".asc") and upload those as well; we'll clean that up in a bit.
   
-  Since the version number is not longer -SNAPSHOT, it will be published to the Tapestry Snapshot Repository ({{{http://people.apache.org/~hlship/tapestry-snapshot-repository/}http://people.apache.org/~hlship/tapestry-snapshot-repository/}}).
+  Since the version number is not longer -SNAPSHOT, each file
+  will be published to the Tapestry Snapshot Repository ({{{http://people.apache.org/~hlship/tapestry-snapshot-repository/}http://people.apache.org/~hlship/tapestry-snapshot-repository/}}).
   Once the vote on the release is approved, the files will be moved from there to the Apache Ibiblio Sync directory, and from there to the world.
-  
-  In addition, the Tapestry project site will be updated with all the new documentation.
   
   This takes 10 - 15 minutes. There's a whole lot of FTP-ing and SSH-ing going on.  Maven tends to run the test suites repeatedly, which is a
   bummer (that tapestry-core suite starts up Firefox and Selenium and takes about a minute to run each time).
@@ -84,9 +83,52 @@ Binary / Source Distributions
 
   An Ant script is used to build traditional binary and source distributions.  It requires Ant <<1.7.0>>.
   
-  From the tapestry-project directory,    
+  From the tapestry-project directory,  execute <<<ant>>>.
+  
+----
+$ ant
+Buildfile: build.xml
+
+assemble:
+     [echo] *** Building distribution for project version 5.0.5 ***
+     [echo] Building binary distribution
+      [zip] Building zip: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-bin-5.0.5.zip
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-bin-5.0.5.tar.gz
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-bin-5.0.5.tar.bz2
+     [echo] Building source distribution
+      [zip] Building zip: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-src-5.0.5.zip
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-src-5.0.5.tar.gz
+      [tar] Building tar: /Users/Howard/Documents/workspace/tapestry-project/target/dist/tapestry-src-5.0.5.tar.bz2
+     [echo] Generating MD5 Checksums
+     [echo] *** Please sign the distributions using GPG before uploading the files. ***
+
+BUILD SUCCESSFUL
+Total time: 6 minutes 0 seconds
+----
+
+  Now, sign the distribution, using <<<for i in target/dist/*.zip target/dist/*.gz target/dist/*.bz2; do echo $i; gpg --armor --detach-sig $i; done>>>
+  
+  (I set this up as an alias).  You'll be prompted for your GPG password six times (sorry!).
+  
+  Finally, copy the distros up to the tapestry-releases directory, with <<<scp target/dist/* hlship@people.apache.org:public_html/tapestry-releases>>>.
+  
+  (I set this up as an alias, too).
   
   
+Cleaning up
+
+  Alas, Maven leaves a bit of junk behind to be cleaned up.
+  
+  You must login to people.apache.org and perform a couple of cleanups.  Starting in <<<~hlship/public_html>>>, you must execute:
+  
+  <<<find tapestry-ibiblio-rsynch-repository -name \*.asc.\* | xargs rm>>>>
+  
+  This deletes lots of excess GnuPG signature files that were inadventently created and uploaded.
+  
+  And, of course, permissions are never quite right:
+  
+  <<<chmod -R ug+w tapestry-ibiblio-rsynch-repository/ tapestry-releases/>>>
+       
 Commit Changes
 
   Commit changes to tapestry-project and all modules.
