@@ -478,4 +478,14 @@ zip-regexp-message=Zip Codes are five or nine digits.  Example: 02134 or 90125-1
   to put them in the message catalog rather than inside the annotation value.  And inside the message catalog, you can change and tweak the regular expressions
   without having to restart the application each time.
  
- 
+  We could go a bit further here, adding more regular expression validation for
+  phone numbers and e-mail addresses. We're also far from done in terms of 
+  further customizations of the BeanEditForm component.
+  
+  By now you are likely curious about what happens <after> the form submits
+  succesfully (without validation errors), so that's what we'll focus on next.
+  
+====
+
+  {{{forms2.html}Continue on to Chapter 5: Forms in Tapestry, Part Two}}
+  
