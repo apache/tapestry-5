@@ -14,19 +14,37 @@ Preparation
   
 Bumping the Version Number
 
-  At this point, the version number of the tapestry-project POM is 5.0.x-SNAPSHOT.  Likewise,
-  each module has the same snapshot release number.
+  At this point, the version number of the tapestry-project POM is 5.0.x-SNAPSHOT. 
+  Modules inherit their version number from the tapestry-project POM version number.
   
   The first step is to bump up those numbers to the final release value.
   
   * Edit tapestry-project/pom.xml, and change the \<version\> value (at the top of the file).  Change it from <<<5.0.x-SNAPSHOT>>> to <<<5.0.x>>>.
   
-  * In each module, change the pom.xml \<version>\ field <<twice>>: once for the version of the module, once for the version of the parent.
+  * In each module, change the <parent> pom.xml \<version>\ field to point to the new tapestry-project POM version (<<<5.0.x>>>).
   
-  * The version number is mentioned in quickstart/src/site/apt/index.apt, change it there.
+  	 * quickstart
+  	 
+		* The version number is also mentioned in <<quickstart/src/site/apt/index.apt>>, change it there.
   
-  * Finally, quickstart/src/main/resources/archetype-resources/pom.xml contains a copy of the version number, <<at the bottom>> of the file.
-  
+		* <<quickstart/src/main/resources/archetype-resources/pom.xml>> contains a copy of the version number, <<at the bottom>> of the file.
+  	 
+  	 * tapestry-component-report
+  	 
+  	 * tapestry-core
+  	 
+  	 * tapestry-hibernate
+     
+  	 * tapestry-ioc
+  	 
+  	 * tapestry-spring
+  	 
+  	 * tapestry-test
+  	 
+  	 * tapestry-tutorial1
+  	 
+  	 []
+    
   * From tapestry-project, execute <<<mvn clean install>>>; this should take a couple of minutes.
   
 Generate the Release Notes
@@ -41,21 +59,32 @@ Generate the Release Notes
   
   Wrap the title ("Release Notes - Tapestry - Version 5.0.x") inside an \<h1\> element.
   
-Build and Deploy
+Build and Deploy Site
 
-  From tapestry-project, execute <<<mvn site site:deploy deploy>>>
+  From tapestry-project, execute <<<mvn site site:deploy>>>
   
-  This will build the project site and each of the module sites.
+  This will build the project site and each of the module sites.  The sites go to a server that is periodically copied over to the live server; it can take up to an hour
+  for changes to show up.
   
-  It will deploy the tapestry-project POM and each of the module's JARs (including source JARs).
+Build and Deploy Artifacts
+
+  From tapestry-project, execute <<<mvn deploy>>>
   
-  Since the version number is not longer -SNAPSHOT, it will be published to the Apache Maven 2 / Ibiblio Rsync repository.
-  That means that in a few hours, all of the files will be available from Maven's default central repository.
+  This will deploy the tapestry-project POM and each of the module's JARs (including source JARs).
+  
+  Since the version number is not longer -SNAPSHOT, it will be published to the Tapestry Snapshot Repository ({{{http://people.apache.org/~hlship/tapestry-snapshot-repository/}http://people.apache.org/~hlship/tapestry-snapshot-repository/}}).
+  Once the vote on the release is approved, the files will be moved from there to the Apache Ibiblio Sync directory, and from there to the world.
   
   In addition, the Tapestry project site will be updated with all the new documentation.
   
   This takes 10 - 15 minutes. There's a whole lot of FTP-ing and SSH-ing going on.  Maven tends to run the test suites repeatedly, which is a
   bummer (that tapestry-core suite starts up Firefox and Selenium and takes about a minute to run each time).
+  
+Binary / Source Distributions
+
+  An Ant script is used to build traditional binary and source distributions.  It requires Ant <<1.7.0>>.
+  
+  From the tapestry-project directory,    
   
   
 Commit Changes
@@ -66,12 +95,12 @@ Tag In Subversion
 
   For tapestry-project and each module, you must tag the release.
   
-  You do this with SVN, copying the trunk folder (in each module) to tags/releases/5.0.x.  The SVN tags/releases folder must
+  You do this with SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
   already exist, the specific folder must not.
 
   I do this from Eclipse, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
     
-  <<<copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/quickstart/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/quickstart/tags/releases/5.0.3>>>
+  <<<copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
     
 Add The Next Release to JIRA
 
