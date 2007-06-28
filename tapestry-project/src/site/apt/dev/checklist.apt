@@ -155,27 +155,36 @@ Add The Next Release to JIRA
   
   While you're there, use the <<Release>> option for the previous release; this ensures that any existing bugs are not marked as pending for the release,
   and sets the date of release in JIRA.
-  
-Binary Distributions
 
-    Next we have to put together the binary distribution. This applys the the main modules, but not the Maven support (since by definition, Maven users will acquire 
-    those files from the Maven repository).  Currently this is: tapestry-ioc, tapestry-core, tapestry-hibernate, tapestry-spring and tapestry-test.
-    
-    I use a couple of shell aliases to help:
-    
-+---+
-alias gatherdist='for i in tapestry-ioc tapestry-core tapestry-test tapestry-spring tapestry-hibernate ; do  echo $i; cp ../$i/target/*.gz ../$i/target/*.bz2 ../$i/target/*.zip target ; done'
-alias scpdist='scp target/*.zip target/*.gz target/*.bz2 target/*.asc target/*.md5 hlship@people.apache.org:/www/www.apache.org/dist/tapestry/'
-alias signdist='for i in target/*.zip target/*.gz target/*.bz2; do echo $i; gpg --armor --detach-sig $i; md5 -r $i > $i.md5; done'
-+---+
-           
-    Gather the files to be distributed together.  From the tapestry-project folder, execute <<<gatherdist>>>.  This uses the Maven assembly:assemlby goal to build distributions (binary and
-    source archives in .zip, .tar.gz, and .tar.bz2 formats).
+Run the vote
 
-  Next, sign the distributions using <<signdist>>>.  You will have to type in you GnuPG pass phrase <for each file> (sorry! --- I copy it to the clipboard and paste it the
-  dozen or so times).  This creates a .asc and a .md5 for  each distribution file.
+	Send a "[VOTE] Tapestry Release 5.0.x" message onto the dev@tapestry.apache.org mailing list.
+	
+----
+I've created and uploaded a release of Tapestry 5.0.x, ready to be voted upon.
+
+The files are uploaded to:
+
+http://people.apache.org/~hlship/tapestry-releases/
+
+and a Maven repository:
+
+http://people.apache.org/~hlship/tapestry-ibiblio-rsynch-repository/
+
+Please examine these files to determine if a new preview release, 5.0.x, is ready.
+
+'ve also created a 5.0.x tag in Subversion:
+
+http://svn.apache.org/viewvc/tapestry/tapestry5/tags/releases/5.0.x/
+
+On a successful vote, I'll move the files from these directories to the proper distribution directories.
+
+Vote will run for three days; on success I'll move the voted artifacts into place and send out appropriate notifications. 
+----
+
+On success: roll it out!
   
-  Next, copy the distributions to the Apache site using <<scpdist>>.
+	<To be written up>  
   
 Wait 24 Hours
 
