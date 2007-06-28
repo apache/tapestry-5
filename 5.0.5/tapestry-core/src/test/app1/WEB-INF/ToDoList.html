@@ -1,0 +1,36 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <h1>ToDo List</h1>
+    
+    <form t:id="form">
+        
+        <t:errors/>
+        
+        <table class="t-data-table">
+            <tr>
+                <th> Title </th>
+                <th> Reorder </th>
+            </tr>
+            <tr t:type="Loop" source="items" value="item" encoder="encoder">
+                <td>
+                    <input t:type="TextField" t:id="title" value="item.title" size="30"
+                        validate="required"/>
+                </td>
+                <td> NOT YET </td>            
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="submit" value="Update ToDos"/>
+                    <input t:type="Submit" t:id="addNew" value="Add new ToDo"/>
+                </td>
+            </tr>
+            
+        </table>
+    </form>
+    
+    
+    <p>
+        <a t:type="ActionLink" t:id="reset">reset the database</a>
+    </p>
+    
+</html>

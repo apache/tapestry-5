@@ -1,0 +1,14 @@
+<form t:id="form" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <t:errors/>
+
+    <div class="t-beaneditor">
+        <div class="t-beaneditor-row" t:type="loop" t:source="model.propertyNames"
+            t:value="propertyName">
+            <t:delegate to="blockForProperty"/>
+        </div>
+        <div class="t-beaneditor-row">
+            <input type="submit" value="${submitLabel}"/>
+        </div>
+    </div>
+
+</form>

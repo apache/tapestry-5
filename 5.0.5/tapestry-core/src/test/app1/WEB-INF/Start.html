@@ -1,0 +1,146 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>Tapestry 5 Integration Application 1</h1>
+
+  <table>
+    <tr>
+      <td>
+        <ul>
+          <li>
+            <a t:type="PageLink" page="MerryChristmas">Count Page</a>
+          </li>
+          <li>
+            <a t:type="PageLink" page="InjectDemo">Inject Demo</a>
+          </li>
+          <li>
+            <a t:type="PageLink" page="Countdown">Countdown Page</a>
+          </li>
+          <li>
+            <a t:type="PageLink" page="ParameterConflict">Template Overriden by Class Page</a>
+          </li>
+          <li>
+            <a t:type="PageLink" page="EnvironmentalDemo">Environmental Annotation Useage</a>
+          </li>
+          <li>
+            <a t:type="PageLink" page="expansion">Expansion Page</a>
+          </li>
+          <li>
+            <a href="BadTemplate">BadTemplate Page</a> -- More exception reporting </li>
+          <li>
+            <a t:type="PageLink" page="ActionPage">Action Page</a> -- tests fixture for ActionLink
+            component </li>
+          <li>
+            <a t:type="PageLink" page="InstanceMixin">InstanceMixin</a> -- Mixin added to particular
+            component instance </li>
+          <li>
+            <a t:type="PageLink" page="RenderPhaseOrder">RenderPhaseOrder</a> -- Order of operations
+            when invoking render phase methods </li>
+          <li><a t:type="PageLink" page="SimpleForm">SimpleForm</a> -- first pass at writing Form
+            and TextField components </li>
+          <li>
+            <a t:type="PageLink" page="NumberSelect">NumberSelect</a> -- passivate/activate page
+            context demo </li>
+          <li>
+            <a t:type="PageLink" page="Localization">Localization</a> -- accessing localized
+            messages from the component catalog </li>
+          <li>
+            <a t:type="PageLink" page="AssetDemo">AssetDemo</a> -- declaring an using Assets </li>
+          <li>
+            <a t:type="PageLink" page="ExpansionSubclass">ExpansionSubclass</a> -- components can
+            inherit templates from base classes </li>
+          <li>
+            <a href="InjectComponentMismatch">InjectComponentMismatch</a> -- check error reporting
+            when @InjectComponent doesn't match the actual field type </li>
+
+          <li>
+            <a t:type="PageLink" page="ParameterDefault">ParameterDefault</a> -- defaulter methods
+            for component parameters </li>
+          <li>
+            <a t:type="PageLink" page="ValidForm">ValidForm</a> -- server-side input validation</li>
+          <li>
+            <a t:type="PageLink" page="PasswordFieldDemo">PasswordFieldDemo</a> -- test for the
+            PasswordField component </li>
+          <li>
+            <a t:type="PageLink" page="RenderComponentDemo">RenderComponentDemo</a> -- components
+            that "nominate" other components to render </li>
+          <li>
+            <a t:type="PageLink" page="BlockDemo">BlockDemo</a> -- use of blocks to control
+            rendering </li>
+          <li>
+            <a t:type="PageLink" page="ToDoListVolatile">ToDo List (Volatile)</a> -- Loops and
+            Submit inside Form, volatile mode </li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+
+          <li>
+            <a t:type="PageLink" page="ToDoList">ToDo List</a> -- Loops and Submit inside Form using
+            a primary key encoder </li>
+          <li>
+            <a t:type="PageLink" page="FlashDemo">FlashDemo</a> -- demonstrate "flash" persistence </li>
+          <li>
+            <a t:type="PageLink" page="beaneditordemo">BeanEditor Demo</a> -- demonstrate the
+            BeanEditor mega-component </li>
+          <li>
+            <a t:type="PageLink" page="pageloadeddemo">PageLoaded Demo</a> -- shows that page
+            lifecycle methods are invoked </li>
+          <li>
+            <a t:type="PageLink" page="griddemo">Grid Demo</a> -- default Grid component </li>
+          <li>
+            <a t:type="PageLink" page="nullgrid">Null Grid</a> -- handling of null source for Grid </li>
+          <li>
+            <a t:type="PageLink" page="gridenumdemo">Grid Enum Demo</a> -- handling of enum types in
+            the Grid </li>
+          <li>
+            <a t:type="PageLink" page="protected">Protected Page</a> -- Demonstrate result of
+            non-void return from a page's activate method. </li>
+          <li>
+            <a t:type="PageLink" page="kicker">Kicker</a> -- demos complex page and component
+            context in links </li>
+          <li>
+            <a t:type="PageLink" page="simpletrackgriddemo">SimpleTrack Grid Demo</a> -- customizing
+            the model for a Grid around an interface </li>
+          <li>
+            <a t:type="PageLink" page="pagelinkcontext">PageLink Context Demo</a> -- passing
+            explicit context in a page render link </li>
+          <li>
+            <a t:type="pagelink" page="ValidBeanEditorDemo">Client Validation Demo</a> --BeanEditor
+            with validation enabled </li>
+          <li>
+            <a href="recursivedemo">Recursive Demo</a> -- check for handling of recursive components </li>
+          <li>
+            <t:pagelink page="renderabledemo">Renderable Demo</t:pagelink> -- Shows that render
+            phase methods can return a Renderable object </li>
+          <li>
+            <t:pagelink page="eventhandlerdemo" context="'clear'">EventHandler Demo</t:pagelink> --
+            Tests for event handling method order and matching </li>
+          <li>
+            <t:pagelink page="inheritedbindingsdemo">Inherited Bindings Demo</t:pagelink> -- Tests
+            for components that inherit bindings from containing components </li>
+          <li>
+            <t:pagelink page="ClientPersistenceDemo">Client Persistence Demo</t:pagelink> --
+            component field values persisted on the client side </li>
+          <li>
+            <t:pagelink page="attributeExpansionsDemo">Attribute Expansions Demo</t:pagelink> -- use
+            expansions inside attributes of ordinary elements </li>
+          <li>
+            <t:pagelink page="PaletteDemo">Palette Demo</t:pagelink> -- multiple selection component </li>
+          <li>
+            <t:pagelink page="ReturnTypes">Return Types</t:pagelink> -- Tests various event handler
+            return types </li>
+          <li>
+            <t:pagelink page="FormEncodingType">Form Encoding Type</t:pagelink> -- Test ability to
+            set an encoding type for a Form </li>
+          <li>
+            <t:pagelink page="RadioDemo">RadioDemo</t:pagelink> -- Use of the RadioGroup and Radio
+            components. </li>
+          <li>
+            <t:pagelink page="RegexpDemo">Regexp Demo</t:pagelink> -- Use of the Regexp validator
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+</html>
