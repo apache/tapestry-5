@@ -86,7 +86,7 @@
 			<zipfileset prefix="quickstart" dir="../quickstart" includes="${sources}"/>
 			<zipfileset prefix="tapestry-component-report" dir="../tapestry-component-report" includes="${sources}"/>
 			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload" includes="${sources}"/>
-			<zipfileset prefix="taepstry-tutorial1" dir="../taepstry-tutorial1" includes="${sources}"/>
+			<zipfileset prefix="tapestry-tutorial1" dir="../tapestry-tutorial1" includes="${sources}"/>
 			
 		</zip>
 		
