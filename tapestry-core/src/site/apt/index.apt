@@ -13,13 +13,17 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * Validator constraint values may now be specified in the component message catalog, rather than in the @Validation annotation (or validation compnent parameter). 
+  
+  * A new validator, regexp, has been added.
+  
   * A Radio button component has been added.
   
   * A file upload form component has been added (in a new library: {{{../tapestry-upload/}tapestry-upload}}). 
   
   * The BeanEditForm component can now create the object it edits.
   
-  * Palette component for sophisticated multiple-property selection and ordering.
+  * Added the Palette component for sophisticated multiple-property selection and ordering.
   
   * New "asset:" binding prefix to allow asset files to be bound to parameters.
   
