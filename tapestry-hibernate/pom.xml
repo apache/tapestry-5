@@ -4,14 +4,13 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-hibernate</artifactId>
-  <version>5.0.5-SNAPSHOT</version>
   <name>Tapestry/Hibernate Integration Library</name>
   <description>Provides support for simple CRUD applications built ontop of Tapestry and Hibernate</description>
   <packaging>jar</packaging>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5-SNAPSHOT</version>
+    <version>5.0.5</version>
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
   <inceptionYear>2007</inceptionYear>

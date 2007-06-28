@@ -7,12 +7,11 @@
   <artifactId>tapestry-spring</artifactId>
   <name>Tapestry/Spring Integration Library</name>
   <packaging>jar</packaging>
-  <version>5.0.5-SNAPSHOT</version>
   <description>Provides integration of Tapestry with the Spring IoC container.</description>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5-SNAPSHOT</version>
+    <version>5.0.5</version>
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
 

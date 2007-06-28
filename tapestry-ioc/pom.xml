@@ -5,12 +5,11 @@
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-ioc</artifactId>
   <packaging>jar</packaging>
-  <version>5.0.5-SNAPSHOT</version>
   <!-- This should change to tapestry-project -->
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5-SNAPSHOT</version>
+    <version>5.0.5</version>
     <relativePath>../tapestry-project/pom.xml</relativePath>
   </parent>
   <name>Tapestry Inversion of Control Container</name>

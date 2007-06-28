@@ -51,6 +51,12 @@
 			<zipfileset prefix="tapestry-test" dir="../tapestry-test" includes="${licenses}" />
 			<zipfileset prefix="tapestry-test" dir="../tapestry-test/target" includes="*.jar" />
 
+			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload" includes="${licenses}" />
+			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload/target" includes="*.jar" />
+
+			<zipfileset prefix="tapestry-tutorial1" dir="../tapestry-tutorial1" includes="${licenses}" />
+			<zipfileset prefix="tapestry-tutorial1" dir="../tapestry-tutorial1/target" includes="*.war" />
+			
 		</zip>
 		
 		<!-- Build the other formats from the .zip -->
@@ -79,6 +85,8 @@
 			<zipfileset prefix="tapestry-project" dir="." includes="${sources}"/>
 			<zipfileset prefix="quickstart" dir="../quickstart" includes="${sources}"/>
 			<zipfileset prefix="tapestry-component-report" dir="../tapestry-component-report" includes="${sources}"/>
+			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload" includes="${sources}"/>
+			<zipfileset prefix="taepstry-tutorial1" dir="../taepstry-tutorial1" includes="${sources}"/>
 			
 		</zip>
 		

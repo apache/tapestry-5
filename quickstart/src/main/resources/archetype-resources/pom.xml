@@ -134,6 +134,6 @@
   
 
     <properties>
-        <tapestry-release-version>5.0.5-SNAPSHOT</tapestry-release-version>
+        <tapestry-release-version>5.0.5</tapestry-release-version>
     </properties>
 </project>
