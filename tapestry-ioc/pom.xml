@@ -9,8 +9,7 @@
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5</version>
-    <relativePath>../tapestry-project/pom.xml</relativePath>
+    <version>5.0.6-SNAPSHOT</version>
   </parent>
   <name>Tapestry Inversion of Control Container</name>
   <inceptionYear>2006</inceptionYear>
@@ -19,8 +18,6 @@
     <dependency>
       <groupId>jboss</groupId>
       <artifactId>javassist</artifactId>
-      <!-- Override parent pom -->
-      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>commons-logging</groupId>

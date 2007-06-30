@@ -8,8 +8,7 @@
    <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5</version>
-    <relativePath>../tapestry-project/pom.xml</relativePath>
+     <version>5.0.6-SNAPSHOT</version>
   </parent>
   <name>Tapestry Core Library</name>
   <inceptionYear>2006</inceptionYear>
@@ -27,10 +26,6 @@
     </dependency>
     <!-- This should be a transitive dependency from tapestry-ioc, but for some reason,
              it needs to be explicitly listed. -->
-    <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-    </dependency>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
