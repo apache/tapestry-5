@@ -20,8 +20,7 @@
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5</version>
-    <relativePath>../tapestry-project/pom.xml</relativePath>
+    <version>5.0.6-SNAPSHOT</version>
   </parent>
   
   <dependencies>
@@ -112,7 +111,7 @@
   </reporting>
 
   <properties>
-    <tapestry-release-version>5.0.5-SNAPSHOT</tapestry-release-version>
+    <tapestry-release-version>5.0.6-SNAPSHOT</tapestry-release-version>
   </properties>
   
 </project>

@@ -11,8 +11,7 @@
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
-    <version>5.0.5</version>
-    <relativePath>../tapestry-project/pom.xml</relativePath>
+    <version>5.0.6-SNAPSHOT</version>
   </parent>
 
   <inceptionYear>2007</inceptionYear>
