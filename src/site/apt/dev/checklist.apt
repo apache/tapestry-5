@@ -184,7 +184,29 @@ Vote will run for three days; on success I'll move the voted artifacts into plac
 
 On success: roll it out!
   
-	<To be written up>  
+	You need to ssh to people.apache.org.
+	
+----
+> cd ~hlship/public_html/tapestry-releases/
+> chmod 664 *
+> mv * /www/www.apache.org/dist/tapestry/
+> rm /www/www.apache.org/dist/tapestry/*-5.0.4*
+----
+
+  Adjust the last line to remove the previous release.  Only the current release should be in the dist folder.
+  
+  The Maven artifacts are a little trickier, since there's the whole Maven folder hiearchy to deal with.
+  
+----
+> cd ~hlship/public_html/tapestry-ibiblio-rsynch-repository/
+> tar cf - * | ( cd /www/people.apache.org/repo/m2-ibiblio-rsync-repository && tar xvf - )
+----
+
+  This is an old hack for merging one directory into another.
+  
+  The aritfacts copied to m2-ibiblio-rsync-repository will (eventually) by copied to the central Maven ibiblio repository, where they will be
+  visible to every Maven user.
+  
   
 Wait 24 Hours
 
@@ -198,6 +220,8 @@ Update the Downloads Page
  	to the old version number.
  	
  	After making the changes, and checking it in to Subversion, you can build and deploy the site.
+ 	
+ 	After deployment, it takes up to an hour for the changes to be visible.
   
 Advance the Version Numbers
 
