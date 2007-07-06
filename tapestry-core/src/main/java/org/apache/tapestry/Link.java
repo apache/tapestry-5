@@ -21,8 +21,8 @@ import org.apache.tapestry.services.Dispatcher;
 
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link
- * is in two parts: a path portion and a set of query parameters. A request for a link will
- * ultimately be recognized by a {@link Dispatcher}.
+ * is in three parts: a path portion, an optional anchor, and a set of query parameters. A request
+ * for a link will ultimately be recognized by a {@link Dispatcher}.
  * <p>
  * Query parameter values are kept separate from the path portion to support encoding those values
  * into hidden form fields (where appropriate).
@@ -30,19 +30,20 @@ import org.apache.tapestry.services.Dispatcher;
 public interface Link
 {
     /**
-     * The names of any additional query parameters for the URI. Query parameters store less regular
-     * or less often used values that can not be expressed in the path. They also are used to store,
-     * or link to, persistent state.
+     * Returns the names of any additional query parameters for the URI. Query parameters store less
+     * regular or less often used values that can not be expressed in the path. They also are used
+     * to store, or link to, persistent state.
      * 
      * @return list of query parameter names, is alphabetical order
      */
     List<String> getParameterNames();
 
     /**
-     * Returns the value of a specifically named query parameter, or null if no such query parameter
-     * is stored in the link.
+     * Returns the value of a specifically named query parameter, or <tt>null</tt> if no such
+     * query parameter is stored in the link.
+     * 
+     * @return the value of the named parameter
      */
-
     String getParameterValue(String name);
 
     /**
@@ -66,6 +67,25 @@ public interface Link
      */
     String toURI();
 
-    /** Returns the link as a redirect URI. The URI includes any query parameters. */
+    /**
+     * Returns the link as a redirect URI. The URI includes any query parameters.
+     */
     String toRedirectURI();
+
+    /**
+     * Returns the link anchor. If this link does not have an anchor, this method returns
+     * <tt>null</tt>.
+     * 
+     * @return the link anchor
+     */
+    String getAnchor();
+
+    /**
+     * Sets the link anchor. Null and empty anchors will be ignored when building the link URI.
+     * 
+     * @param anchor
+     *            the link anchor
+     */
+    void setAnchor(String anchor);
+
 }
