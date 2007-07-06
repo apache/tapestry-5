@@ -123,4 +123,60 @@ public class LinkImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void url_with_anchor()
+    {
+        url_with_anchor("wilma", "/foo/bar#wilma");
+    }
+
+    @Test
+    public void url_with_null_anchor()
+    {
+        url_with_anchor(null, "/foo/bar");
+    }
+
+    @Test
+    public void url_with_empty_anchor()
+    {
+        url_with_anchor("", "/foo/bar");
+    }
+
+    private void url_with_anchor(String anchor, String url)
+    {
+        Response response = mockResponse();
+
+        train_encodeURL(response, url, ENCODED);
+
+        replay();
+
+        Link link = new LinkImpl(response, "/foo", "bar");
+
+        link.setAnchor(anchor);
+
+        assertEquals(link.toURI(), ENCODED);
+
+        verify();
+    }
+
+    @Test
+    public void url_with_anchor_and_parameters()
+    {
+        Response response = mockResponse();
+
+        train_encodeURL(response, "/foo/bar?barney=rubble&fred=flintstone#wilma", ENCODED);
+
+        replay();
+
+        Link link = new LinkImpl(response, "/foo", "bar");
+
+        link.addParameter("fred", "flintstone");
+        link.addParameter("barney", "rubble");
+        link.setAnchor("wilma");
+
+        assertEquals(link.toURI(), ENCODED);
+
+        verify();
+    }
+
 }

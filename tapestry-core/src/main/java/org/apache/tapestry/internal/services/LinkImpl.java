@@ -20,7 +20,7 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.services.Response;
 
 /**
- * Starting implementation of {@link Link}. Currently does not support query parameters.
+ * Default implementation of {@link Link}.
  */
 public class LinkImpl implements Link
 {
@@ -31,6 +31,8 @@ public class LinkImpl implements Link
     private final ComponentInvocation _invocation;
 
     private final boolean _forForm;
+
+    private String _anchor;
 
     public LinkImpl(Response encoder, String contextPath, String targetPath)
     {
@@ -78,12 +80,27 @@ public class LinkImpl implements Link
         builder.append(_contextPath);
         builder.append("/");
         builder.append(_invocation.buildURI(_forForm));
+        if (_anchor != null && _anchor.length() > 0)
+        {
+            builder.append("#");
+            builder.append(_anchor);
+        }
         return builder.toString();
     }
 
     public String toRedirectURI()
     {
         return _response.encodeRedirectURL(buildURI());
+    }
+
+    public String getAnchor()
+    {
+        return _anchor;
+    }
+
+    public void setAnchor(String anchor)
+    {
+        _anchor = anchor;
     }
 
     public ComponentInvocation getInvocation()
