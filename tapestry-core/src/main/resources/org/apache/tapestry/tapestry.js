@@ -70,9 +70,11 @@ var Tapestry = {
         if (field.focus) field.focus();
         if (field.select) field.select();
         
-        form.firstError = false;
+        form.firstError = false;       
       }    
       
+      field.decorateForValidationError(event, message);
+ 
       if (form.errorList)
      	new Insertion.Bottom(form.errorList, "<li>" + message + "</li>");
       
@@ -113,6 +115,19 @@ var Tapestry = {
   }
     
 };
+
+// New methods added to Element.
+
+Tapestry.ElementAdditions = {
+  // This is added to all Elements, but really only applys to form control elements. This method is invoked
+  // when a validation error is associated with a field. This gives the field a chance to decorate itself, its label
+  // and its icon.  
+  decorateForValidationError : function (element, event, message) {
+    $(element).fieldEventManager.addDecorations(event, message);
+  }
+};
+
+Element.addMethods(Tapestry.ElementAdditions);
 
 // Collection of field based functions related to validation.
 
@@ -192,7 +207,9 @@ Tapestry.FormEvent.prototype = {
 Tapestry.FieldEventManager.prototype = {
 
   initialize : function(field) {
-    $(field).fieldEventManager = this;
+    this.field = $(field);
+    
+    field.fieldEventManager = this;
   
     this.validators = [ ];
    
@@ -213,6 +230,38 @@ Tapestry.FieldEventManager.prototype = {
   addValidator : function(acceptBlank, validator) {
     this.validators.push([ acceptBlank, validator]);
   },
+
+  // Removes decorations on the field and label (the "t-error" CSS class) and makes the icon
+  // invisible.  A field that has special decoration needs will override this method.
+  
+  removeDecorations : function(event) {
+    this.field.removeClassName("t-error");
+    
+    if (this.label)
+      this.label.removeClassName("t-error");
+      
+    if (this.icon)
+     this.icon.hide();
+  },
+  
+  // Adds decorations to the field (including label and icon if present).
+  // event - the validation event
+  // message - error message
+  
+  addDecorations : function(event, message) {
+    
+    this.field.addClassName("t-error");
+    
+    if (this.label)
+      this.label.addClassName("t-error");
+      
+    if (this.icon) {
+      if (! this.icon.visible())
+        new Effect.Appear(this.icon);
+    }
+    
+  },
+  
 
   // Invoked from the Form's onsubmit event handler. Gets the fields value and invokes
   // each validator (unless the value is blank) until a validator returns false. Validators
@@ -248,17 +297,8 @@ Tapestry.FieldEventManager.prototype = {
   	  }  	
   	});
   	
-  	if (event.error) {
-  	  event.field.addClassName("t-error");
-  	
-  	  if (this.label)
-  	    this.label.addClassName("t-error");
-  	}
-  	
-  	if (! this.icon) return;
-  
-   	if (event.error && ! this.icon.visible()) { new Effect.Appear(this.icon); }
-   	else if (! event.error && this.icon.visible()) { this.icon.hide(); }
+  	if (! event.error)
+  	  this.removeDecorations(event);
   }
 };
 

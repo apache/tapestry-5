@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.test;
 
-import static java.lang.String.format;
-
 import org.openqa.selenium.server.SeleniumServer;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -57,7 +55,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
 
     // This is likely to be a problem, since may want to test with a context path, rather than as
     // root.
-    public static final String BASE_URL = format("http://localhost:%d/", JETTY_PORT);
+    public static final String BASE_URL = String.format("http://localhost:%d/", JETTY_PORT);
 
     private final String _webappRoot;
 
@@ -157,7 +155,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     {
         for (int i = 0; i < values.length; i++)
         {
-            String id = format(idFormat, startIndex + i);
+            String id = String.format(idFormat, startIndex + i);
 
             assertText(id, values[i]);
         }
