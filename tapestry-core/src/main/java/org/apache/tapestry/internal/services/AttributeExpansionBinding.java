@@ -37,4 +37,11 @@ public class AttributeExpansionBinding extends AbstractBinding
         return _provider.provideString();
     }
 
+    /** Returns false. Expansions reference properties that may change arbitrarily. */
+    @Override
+    public boolean isInvariant()
+    {
+        return false;
+    }
+
 }
