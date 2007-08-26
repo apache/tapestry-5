@@ -95,6 +95,8 @@ What's changed since Tapestry 4?
   []
   
 New and Noteworthy
+
+  * Logging in Tapestry is now implemented on top of {{{http://www.slf4j.org/docs.html}Simple Logging Facade for Java}}.
  
   * A file upload form component has been added, in a new library: {{{tapestry-upload/}tapestry-upload}}. 
  

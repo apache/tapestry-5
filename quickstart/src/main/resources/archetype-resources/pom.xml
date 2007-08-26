@@ -14,16 +14,6 @@
             <version>${tapestry-release-version}</version>
         </dependency>
         
-        <!-- This can be removed if not desired. Tapestry uses commons-logging, not Log4J explicitly.
-             However, if Log4J is not on the classpath, commons-logging tends to use its own internal
-             logging which is not very configurable.  This project includes a log4j.properties file
-             to configure output. -->
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.9</version>
-        </dependency>
-
         <!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests)
              will fail, preventing Maven from packaging the WAR. Tapestry includes a large number
              of testing facilities designed for use with TestNG (http://testng.org/), so it's recommended. -->
