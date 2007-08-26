@@ -70,7 +70,7 @@ Configuring Tapestry for other Logging Toolkits
 
   This pulls out the log4j support normally included with Tapestry, and replaces it with the SLF4J library that wraps around JDK 1.4 logging.  
 
-  In all likelyhood, you'll replace <em>tapestry-ioc</em> with <em>tapestry-core</em> (assuming you are building a web application using Tapestry, rather than using Tapestry IoC as part of some other
+  In all likelyhood, you'll replace <tapestry-ioc> with <tapestry-core> (assuming you are building a web application using Tapestry, rather than using Tapestry IoC as part of some other
   application).  And, of course, version numbers change all the time!
       
   
