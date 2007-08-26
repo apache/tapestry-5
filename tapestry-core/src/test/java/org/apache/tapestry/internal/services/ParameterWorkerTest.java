@@ -19,7 +19,6 @@ import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalComponentResources;
@@ -29,6 +28,7 @@ import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
@@ -488,7 +488,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         Component component = setupForIntegrationTest(
                 resources,
-                mockLog(),
+                mockLogger(),
                 DefaultParameterComponent.class.getName(),
                 model,
                 source,
@@ -533,7 +533,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         Component component = setupForIntegrationTest(
                 resources,
-                mockLog(),
+                mockLogger(),
                 DefaultParameterBindingMethodComponent.class.getName(),
                 model,
                 source,
@@ -583,14 +583,14 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         return setupForIntegrationTest(
                 resources,
-                mockLog(),
+                mockLogger(),
                 ParameterComponent.class.getName(),
                 model,
                 mockBindingSource(),
                 phaseTwoTraining);
     }
 
-    private Component setupForIntegrationTest(InternalComponentResources resources, Log log,
+    private Component setupForIntegrationTest(InternalComponentResources resources, Logger logger,
             String componentClassName, MutableComponentModel model, BindingSource source,
             Runnable phaseTwoTraining) throws Exception
     {
@@ -604,7 +604,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         CtClass ctClass = pool.get(componentClassName);
         InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         replay();
 

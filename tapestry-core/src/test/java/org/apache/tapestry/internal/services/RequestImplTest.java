@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 public class RequestImplTest extends InternalBaseTestCase
@@ -102,6 +103,32 @@ public class RequestImplTest extends InternalBaseTestCase
         }
 
         verify();
+    }
 
+    @Test(dataProvider = "xhr_inputs")
+    public void is_xhr_request(String headerValue, boolean expected)
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        expect(sr.getHeader(RequestImpl.REQUESTED_WITH_HEADER)).andReturn(headerValue);
+
+        replay();
+
+        Request request = new RequestImpl(sr);
+
+        assertEquals(request.isXHR(), expected);
+
+        verify();
+    }
+
+    @DataProvider(name = "xhr_inputs")
+    public Object[][] xhr_inputs()
+    {
+        return new Object[][]
+        {
+        { null, false },
+        { "", false },
+        { "some other value", false },
+        { "XmlHttpRequest", true } };
     }
 }

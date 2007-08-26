@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import java.util.zip.DataFormatException;
 
 import javassist.CtClass;
 
-import org.apache.commons.logging.LogFactory;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.internal.services.LoggingDecoratorImplTest.ToStringService;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 public class ClassFabImplTest extends IOCTestCase
@@ -67,7 +67,7 @@ public class ClassFabImplTest extends IOCTestCase
     {
         CtClass ctClass = _source.newClass(className, superClass);
 
-        return new ClassFabImpl(_source, ctClass, LogFactory.getLog("ClassFab"));
+        return new ClassFabImpl(_source, ctClass, LoggerFactory.getLogger("ClassFab"));
     }
 
     @Test

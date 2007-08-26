@@ -21,12 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.ServiceBuilderResources}. We just have one
@@ -40,18 +40,18 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 {
     private final ServiceDef _serviceDef;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final ClassFactory _classFactory;
 
     public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef serviceDef,
-            ClassFactory classFactory, Log log)
+            ClassFactory classFactory, Logger logger)
     {
         super(registry, module);
 
         _serviceDef = serviceDef;
         _classFactory = classFactory;
-        _log = log;
+        _logger = logger;
     }
 
     public String getServiceId()
@@ -64,9 +64,9 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return _serviceDef.getServiceInterface();
     }
 
-    public Log getServiceLog()
+    public Logger getLogger()
     {
-        return _log;
+        return _logger;
     }
 
     public <T> Collection<T> getUnorderedConfiguration(Class<T> valueType)
@@ -80,7 +80,8 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     private void logConfiguration(Collection configuration)
     {
-        if (_log.isDebugEnabled()) _log.debug(IOCMessages.constructedConfiguration(configuration));
+        if (_logger.isDebugEnabled())
+            _logger.debug(IOCMessages.constructedConfiguration(configuration));
     }
 
     public <T> List<T> getOrderedConfiguration(Class<T> valueType)
@@ -96,7 +97,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     {
         Map<K, V> result = getRegistry().getMappedConfiguration(_serviceDef, keyType, valueType);
 
-        if (_log.isDebugEnabled()) _log.debug(IOCMessages.constructedConfiguration(result));
+        if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.constructedConfiguration(result));
 
         return result;
     }

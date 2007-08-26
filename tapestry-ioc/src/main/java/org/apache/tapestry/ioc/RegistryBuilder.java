@@ -20,7 +20,6 @@ import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.annotations.SubModule;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.DefaultModuleDefImpl;
@@ -31,6 +30,7 @@ import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
+import org.slf4j.Logger;
 
 /**
  * Used to construct the IoC {@link org.apache.tapestry.ioc.Registry}. This class is <em>not</em>
@@ -45,7 +45,7 @@ public final class RegistryBuilder
 
     private final ClassLoader _classLoader;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final LogSource _logSource;
 
@@ -65,12 +65,12 @@ public final class RegistryBuilder
     {
         _classLoader = classLoader;
         _logSource = logSource;
-        _log = logSource.getLog(RegistryBuilder.class);
+        _logger = logSource.getLogger(RegistryBuilder.class);
 
         // Make the ClassFactory appear to be a service inside TapestryIOCModule, even before that
         // module exists.
 
-        Log classFactoryLog = logSource.getLog(TapestryIOCModule.class.getName() + ".ClassFactory");
+        Logger classFactoryLog = logSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
 
         _classFactory = new ClassFactoryImpl(_classLoader, classFactoryLog);
 
@@ -96,7 +96,7 @@ public final class RegistryBuilder
         {
             Class c = queue.remove(0);
 
-            ModuleDef def = new DefaultModuleDefImpl(c, _log, _classFactory);
+            ModuleDef def = new DefaultModuleDefImpl(c, _logger, _classFactory);
             add(def);
 
             SubModule annotation = ((AnnotatedElement) c).getAnnotation(SubModule.class);
@@ -140,10 +140,10 @@ public final class RegistryBuilder
         return _classLoader;
     }
 
-    public Log getLog()
+    public Logger getLogger()
     {
         _lock.check();
 
-        return _log;
+        return _logger;
     }
 }

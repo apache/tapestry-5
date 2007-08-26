@@ -16,10 +16,10 @@ package org.apache.tapestry.ioc.internal;
 
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ModuleBuilderSource;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ServiceDecoratorImplTest extends IOCInternalTestCase
@@ -49,16 +49,16 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         Method m = findMethod(fixture, "decoratorReturnsInterceptor");
 
         ServiceResources resources = mockServiceResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         fixture._expectedDelegate = mockFieService();
         fixture._interceptorToReturn = mockFieService();
         ModuleBuilderSource source = newSource(fixture);
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
-        log.debug(IOCMessages.invokingMethod(InternalUtils.asString(m, getClassFactory())));
+        logger.debug(IOCMessages.invokingMethod(InternalUtils.asString(m, getClassFactory())));
 
         replay();
 
@@ -81,12 +81,12 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         ModuleBuilderSource source = newSource(fixture);
         ServiceResources resources = mockServiceResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Object delegate = mockFieService();
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -108,21 +108,21 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         ModuleBuilderSource source = newSource(fixture);
         ServiceResources resources = mockServiceResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         fixture._expectedDelegate = mockFieService();
         fixture._interceptorToReturn = newMock(FoeService.class);
 
         Method m = findMethod(fixture, "decoratorUntyped");
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
-        log.warn(IOCMessages.decoratorReturnedWrongType(
+        logger.warn(IOCMessages.decoratorReturnedWrongType(
                 m,
                 SERVICE_ID,
                 fixture._interceptorToReturn,
-                FieService.class), null);
+                FieService.class));
 
         replay();
 
@@ -142,13 +142,13 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceDecoratorFixture fixture = new ServiceDecoratorFixture();
         ModuleBuilderSource source = newSource(fixture);
         ServiceResources resources = mockServiceResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Object delegate = mockFieService();
         fixture._exception = new RuntimeException("Ouch!");
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -180,13 +180,13 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         return newMock(FieService.class);
     }
 
-    private void trainForConstructor(ServiceResources resources, Log log)
+    private void trainForConstructor(ServiceResources resources, Logger logger)
     {
         train_getServiceId(resources, SERVICE_ID);
 
         train_getServiceInterface(resources, FieService.class);
 
-        train_getServiceLog(resources, log);
+        train_getLogger(resources, logger);
     }
 
 }

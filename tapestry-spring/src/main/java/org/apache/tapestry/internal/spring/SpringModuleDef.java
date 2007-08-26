@@ -149,7 +149,7 @@ public class SpringModuleDef implements ModuleDef
         return Collections.emptySet();
     }
 
-    public String getLogName()
+    public String getLoggerName()
     {
         return "Spring";
     }

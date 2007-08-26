@@ -21,7 +21,6 @@ import static org.easymock.EasyMock.contains;
 import java.lang.reflect.Method;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AutobuildModule;
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.ObjectCreator;
@@ -35,6 +34,7 @@ import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -60,13 +60,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         String className = SimpleModule.class.getName();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(SimpleModule.class, log, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(SimpleModule.class, logger, _classFactory);
 
         assertEquals(md.toString(), "ModuleDef[" + className + " Barney, Fred, Wilma]");
 
@@ -107,11 +107,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void default_service_id_from_return_type()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(DefaultServiceIdModule.class, log, null);
+        ModuleDef def = new DefaultModuleDefImpl(DefaultServiceIdModule.class, logger, null);
 
         assertEquals(def.getServiceIds().size(), 1);
 
@@ -132,15 +132,15 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         String expectedMethod = InternalUtils.asString(ServiceIdConflictMethodModule.class
                 .getMethod("buildFred", Object.class), _classFactory);
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(buildMethodConflict(conflictMethodString, expectedMethod), null);
+        logger.warn(buildMethodConflict(conflictMethodString, expectedMethod));
 
         replay();
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, log,
+        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger,
                 _classFactory);
 
         Set<String> ids = md.getServiceIds();
@@ -168,13 +168,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         Method m = VoidBuilderMethodModule.class.getMethod("buildNull");
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(IOCMessages.buildMethodWrongReturnType(m), null);
+        logger.warn(IOCMessages.buildMethodWrongReturnType(m));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(VoidBuilderMethodModule.class, log, null);
+        ModuleDef md = new DefaultModuleDefImpl(VoidBuilderMethodModule.class, logger, null);
 
         assertTrue(md.getServiceIds().isEmpty());
 
@@ -186,13 +186,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         Method m = BuilderMethodModule.class.getMethod("buildStringArray");
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(IOCMessages.buildMethodWrongReturnType(m), null);
+        logger.warn(IOCMessages.buildMethodWrongReturnType(m));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(BuilderMethodModule.class, log, null);
+        ModuleDef md = new DefaultModuleDefImpl(BuilderMethodModule.class, logger, null);
 
         assertTrue(md.getServiceIds().isEmpty());
 
@@ -210,13 +210,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         Method m = moduleClass.getMethod(methodName, Object.class);
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(IOCMessages.decoratorMethodWrongReturnType(m), null);
+        logger.warn(IOCMessages.decoratorMethodWrongReturnType(m));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, log, null);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
 
         assertTrue(md.getDecoratorDefs().isEmpty());
 
@@ -241,13 +241,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         Class moduleClass = NoDelegateDecoratorMethodModule.class;
         Method m = moduleClass.getMethod("decorateNoDelegate");
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(IOCMessages.decoratorMethodNeedsDelegateParameter(m), null);
+        logger.warn(IOCMessages.decoratorMethodNeedsDelegateParameter(m));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, log, null);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
 
         assertTrue(md.getDecoratorDefs().isEmpty());
 
@@ -281,11 +281,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     private void attemptConfigurationMethod(Class moduleClass, String expectedServiceId,
             String expectedMethodSignature)
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, log, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, _classFactory);
 
         Set<ContributionDef> defs = md.getContributionDefs();
 
@@ -311,12 +311,12 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         Class moduleClass = TooManyContributionParametersModule.class;
         Method m = findMethod(moduleClass, "contributeTooMany");
 
-        Log log = mockLog();
-        log.warn(IOCMessages.tooManyContributionParameters(m));
+        Logger logger = mockLogger();
+        logger.warn(IOCMessages.tooManyContributionParameters(m));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, log, null);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
 
         assertTrue(md.getContributionDefs().isEmpty());
 
@@ -329,12 +329,12 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         Class moduleClass = NoUsableContributionParameterModule.class;
         Method m = findMethod(moduleClass, "contributeNoParameter");
 
-        Log log = mockLog();
-        log.warn(IOCMessages.noContributionParameter(m));
+        Logger logger = mockLogger();
+        logger.warn(IOCMessages.noContributionParameter(m));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, log, null);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, null);
 
         assertTrue(md.getContributionDefs().isEmpty());
 
@@ -344,11 +344,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void simple_binder_method()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(AutobuildModule.class, log, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(AutobuildModule.class, logger, _classFactory);
 
         ServiceDef sd = md.getServiceDef("StringHolder");
 
@@ -363,11 +363,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void bind_service_with_all_options()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(ComplexAutobuildModule.class, log, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(ComplexAutobuildModule.class, logger, _classFactory);
 
         ServiceDef sd = md.getServiceDef("SH");
 
@@ -382,13 +382,14 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void attempt_to_bind_a_service_with_no_public_constructor()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         try
         {
-            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, log, _classFactory);
+            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger,
+                    _classFactory);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -404,15 +405,16 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void instance_method_bind_is_ignored()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.error(and(
+        logger.error(and(
                 contains(NonStaticBindMethodModule.class.getName()),
                 contains("but is an instance method")));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, log, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger,
+                _classFactory);
 
         // Prove that the bind method was not invoke
 
@@ -424,18 +426,18 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void multiple_constructors_on_autobuild_service_implementation()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ServiceBuilderResources resources = mockServiceBuilderResources();
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
         // The point is, we're choosing the constructor with the largest number of parameters.
 
-        log
+        logger
                 .debug(contains("Invoking constructor org.apache.tapestry.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
 
         train_getServiceId(resources, "StringHolder");
-        train_getServiceLog(resources, log);
+        train_getLogger(resources, logger);
         train_getServiceInterface(resources, StringHolder.class);
         train_getService(
                 resources,
@@ -446,7 +448,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class,
-                log, _classFactory);
+                logger, _classFactory);
 
         ServiceDef sd = def.getServiceDef("StringHolder");
 
@@ -465,13 +467,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void exception_from_inside_bind_method()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         try
         {
-            new DefaultModuleDefImpl(ExceptionInBindMethod.class, log, _classFactory);
+            new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, _classFactory);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -489,11 +491,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void autoload_service_is_eager_load_via_annotation()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, log,
+        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger,
                 _classFactory);
 
         ServiceDef sd = md.getServiceDef("Runnable");

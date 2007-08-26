@@ -48,8 +48,8 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
                     _resources,
                     getParameterDefaultsWithConfigurations());
 
-            if (_log.isDebugEnabled())
-                _log.debug(IOCMessages.invokingConstructor(_creatorDescription));
+            if (_logger.isDebugEnabled())
+                _logger.debug(IOCMessages.invokingConstructor(_creatorDescription));
 
             return _constructor.newInstance(parameters);
         }

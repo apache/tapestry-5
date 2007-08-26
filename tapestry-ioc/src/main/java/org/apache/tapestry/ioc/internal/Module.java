@@ -101,7 +101,7 @@ public interface Module extends ModuleBuilderSource
      * Returns the name used to obtain a logger for the module. Services within the module suffix
      * this with a period and the service id.
      * 
-     * @return module log name
+     * @return module logger name
      */
-    String getLogName();
+    String getLoggerName();
 }

@@ -70,7 +70,8 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
                     _resources,
                     getParameterDefaultsWithConfigurations());
 
-            if (_log.isDebugEnabled()) _log.debug(IOCMessages.invokingMethod(_creatorDescription));
+            if (_logger.isDebugEnabled())
+                _logger.debug(IOCMessages.invokingMethod(_creatorDescription));
 
             result = _builderMethod.invoke(moduleBuilder, parameters);
         }

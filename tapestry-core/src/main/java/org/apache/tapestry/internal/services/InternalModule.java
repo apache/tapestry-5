@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
@@ -67,6 +66,7 @@ import org.apache.tapestry.services.RequestExceptionHandler;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.ResourceDigestGenerator;
+import org.slf4j.Logger;
 
 public final class InternalModule
 {
@@ -175,10 +175,10 @@ public final class InternalModule
 
     ComponentClassTransformer transformer,
 
-    Log log)
+    Logger logger)
     {
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(classFactory
-                .getClassLoader(), transformer, log);
+                .getClassLoader(), transformer, logger);
 
         _updateListenerHub.addUpdateListener(source);
 
@@ -195,10 +195,10 @@ public final class InternalModule
         return transformer;
     }
 
-    public PagePool build(Log log, PageLoader pageLoader,
+    public PagePool build(Logger logger, PageLoader pageLoader,
             ComponentMessagesSource componentMessagesSource, ComponentClassResolver resolver)
     {
-        PagePoolImpl service = new PagePoolImpl(log, pageLoader, _threadLocale, resolver);
+        PagePoolImpl service = new PagePoolImpl(logger, pageLoader, _threadLocale, resolver);
 
         // This covers invalidations due to changes to classes
 
@@ -549,5 +549,7 @@ public final class InternalModule
         };
 
         configuration.add("SetRequestEncoding", filter, "before:*");
+        
+        configuration.add("Ajax", new AjaxFilter());
     }
 }

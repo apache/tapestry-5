@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.services.LoggingDecorator;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import org.xml.sax.SAXParseException;
@@ -51,20 +51,20 @@ public class LoggingDecoratorImplTest extends IOCTestCase
     @Test
     public void void_method()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Runnable delegate = mockRunnable();
 
-        train_isDebugEnabled(log, true);
-        log.debug("[ENTER] run()");
+        train_isDebugEnabled(logger, true);
+        logger.debug("[ENTER] run()");
 
         delegate.run();
 
-        log.debug("[ EXIT] run");
+        logger.debug("[ EXIT] run");
 
         replay();
 
         LoggingDecorator ld = newLoggingDecorator();
-        Runnable interceptor = ld.build(Runnable.class, delegate, "foo.Bar", log);
+        Runnable interceptor = ld.build(Runnable.class, delegate, "foo.Bar", logger);
 
         interceptor.run();
 
@@ -84,23 +84,23 @@ public class LoggingDecoratorImplTest extends IOCTestCase
     public void method_throws_runtime_exception()
     {
         Throwable t = new RuntimeException("From delegate.");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Runnable delegate = mockRunnable();
 
-        train_isDebugEnabled(log, true);
-        log.debug("[ENTER] run()");
+        train_isDebugEnabled(logger, true);
+        logger.debug("[ENTER] run()");
 
         delegate.run();
         setThrowable(t);
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
-        log.debug("[ FAIL] run -- " + t.getClass().getName(), t);
+        logger.debug("[ FAIL] run -- " + t.getClass().getName(), t);
 
         replay();
 
         LoggingDecorator ld = newLoggingDecorator();
-        Runnable interceptor = ld.build(Runnable.class, delegate, "foo.Bar", log);
+        Runnable interceptor = ld.build(Runnable.class, delegate, "foo.Bar", logger);
 
         try
         {
@@ -119,23 +119,24 @@ public class LoggingDecoratorImplTest extends IOCTestCase
     public void method_throws_checked_exception() throws Exception
     {
         Throwable t = new SAXParseException("From delegate.", null);
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionService delegate = newMock(ExceptionService.class);
 
-        train_isDebugEnabled(log, true);
-        log.debug("[ENTER] parse()");
+        train_isDebugEnabled(logger, true);
+        logger.debug("[ENTER] parse()");
 
         delegate.parse();
         setThrowable(t);
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
-        log.debug("[ FAIL] parse -- " + t.getClass().getName(), t);
+        logger.debug("[ FAIL] parse -- " + t.getClass().getName(), t);
 
         replay();
 
         LoggingDecorator ld = newLoggingDecorator();
-        ExceptionService interceptor = ld.build(ExceptionService.class, delegate, "foo.Bar", log);
+        ExceptionService interceptor = ld
+                .build(ExceptionService.class, delegate, "foo.Bar", logger);
 
         try
         {
@@ -153,7 +154,7 @@ public class LoggingDecoratorImplTest extends IOCTestCase
     @Test
     public void object_parameter_and_return_type()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         UpcaseService delegate = new UpcaseService()
         {
             public String upcase(String input)
@@ -162,15 +163,15 @@ public class LoggingDecoratorImplTest extends IOCTestCase
             }
         };
 
-        train_isDebugEnabled(log, true);
-        log.debug("[ENTER] upcase(\"barney\")");
+        train_isDebugEnabled(logger, true);
+        logger.debug("[ENTER] upcase(\"barney\")");
 
-        log.debug("[ EXIT] upcase [\"BARNEY\"]");
+        logger.debug("[ EXIT] upcase [\"BARNEY\"]");
 
         replay();
 
         LoggingDecorator ld = newLoggingDecorator();
-        UpcaseService interceptor = ld.build(UpcaseService.class, delegate, "foo.Bar", log);
+        UpcaseService interceptor = ld.build(UpcaseService.class, delegate, "foo.Bar", logger);
 
         assertEquals(interceptor.upcase("barney"), "BARNEY");
 
@@ -180,7 +181,7 @@ public class LoggingDecoratorImplTest extends IOCTestCase
     @Test
     public void primitive_parameter_and_return_type()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         AdderService delegate = new AdderService()
         {
             public long add(long operand1, long operand2)
@@ -189,15 +190,15 @@ public class LoggingDecoratorImplTest extends IOCTestCase
             }
         };
 
-        train_isDebugEnabled(log, true);
-        log.debug("[ENTER] add(6, 13)");
+        train_isDebugEnabled(logger, true);
+        logger.debug("[ENTER] add(6, 13)");
 
-        log.debug("[ EXIT] add [19]");
+        logger.debug("[ EXIT] add [19]");
 
         replay();
 
         LoggingDecorator ld = newLoggingDecorator();
-        AdderService interceptor = ld.build(AdderService.class, delegate, "foo.Bar", log);
+        AdderService interceptor = ld.build(AdderService.class, delegate, "foo.Bar", logger);
 
         assertEquals(interceptor.add(6, 13), 19);
 
@@ -207,7 +208,7 @@ public class LoggingDecoratorImplTest extends IOCTestCase
     @Test
     public void to_string_method_in_service_interface_is_delegated()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ToStringService delegate = new ToStringService()
         {
             @Override
@@ -217,15 +218,15 @@ public class LoggingDecoratorImplTest extends IOCTestCase
             }
         };
 
-        train_isDebugEnabled(log, true);
-        log.debug("[ENTER] toString()");
+        train_isDebugEnabled(logger, true);
+        logger.debug("[ENTER] toString()");
 
-        log.debug("[ EXIT] toString [\"FROM DELEGATE\"]");
+        logger.debug("[ EXIT] toString [\"FROM DELEGATE\"]");
 
         replay();
 
         LoggingDecorator ld = newLoggingDecorator();
-        ToStringService interceptor = ld.build(ToStringService.class, delegate, "foo.Bar", log);
+        ToStringService interceptor = ld.build(ToStringService.class, delegate, "foo.Bar", logger);
 
         assertEquals(interceptor.toString(), "FROM DELEGATE");
 

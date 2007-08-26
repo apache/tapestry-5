@@ -21,11 +21,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.IdMatcher;
 import org.apache.tapestry.ioc.Orderable;
 import org.apache.tapestry.ioc.internal.IdMatcherImpl;
 import org.apache.tapestry.ioc.internal.OrIdMatcher;
+import org.slf4j.Logger;
 
 /**
  * Used to order objects into an "execution" order. Each object must have a unique id. It may
@@ -35,7 +35,7 @@ public class Orderer<T>
 {
     private final OneShotLock _lock = new OneShotLock();
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final List<Orderable> _orderables = newList();
 
@@ -75,9 +75,9 @@ public class Orderer<T>
         }
     };
 
-    public Orderer(Log log)
+    public Orderer(Logger logger)
     {
-        _log = log;
+        _logger = logger;
     }
 
     /**
@@ -93,7 +93,7 @@ public class Orderer<T>
 
         if (_orderablesById.containsKey(id))
         {
-            _log.warn(UtilMessages.duplicateOrderer(id), null);
+            _logger.warn(UtilMessages.duplicateOrderer(id));
             return;
         }
 
@@ -143,7 +143,7 @@ public class Orderer<T>
 
     private void initializeGraph()
     {
-        _trailer = new DependencyNode<T>(_log, new Orderable<T>("*-trailer-*", null));
+        _trailer = new DependencyNode<T>(_logger, new Orderable<T>("*-trailer-*", null));
 
         addNodes();
 
@@ -154,7 +154,7 @@ public class Orderer<T>
     {
         for (Orderable<T> orderable : _orderables)
         {
-            DependencyNode<T> node = new DependencyNode<T>(_log, orderable);
+            DependencyNode<T> node = new DependencyNode<T>(_logger, orderable);
 
             _dependencyNodesById.put(orderable.getId(), node);
 
@@ -194,7 +194,7 @@ public class Orderer<T>
 
         if (linker == null)
         {
-            _log.warn(UtilMessages.constraintFormat(constraint, sourceId));
+            _logger.warn(UtilMessages.constraintFormat(constraint, sourceId));
             return;
         }
 

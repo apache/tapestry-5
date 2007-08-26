@@ -346,7 +346,7 @@ Injecting Resources
   
   * java.lang.String: unique id for the service
     
-  * org.apache.commons.logging.Log: to which service logging can occur
+  * {{{http://www.slf4j.org/api/org/slf4j/Logger.html}org.slf5j.Logger}}: logger for the service
   
   * java.lang.Class: service interface implemented by the service to be constructed
   

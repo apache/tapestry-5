@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import org.slf4j.Logger;
 
 /**
  * Decorator for {@link org.apache.tapestry.ioc.ObjectCreator} that ensures the service is only
@@ -31,15 +31,16 @@ public class RecursiveServiceCreationCheckWrapper implements ObjectCreator
 
     private final ObjectCreator _delegate;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private boolean _locked;
 
-    public RecursiveServiceCreationCheckWrapper(ServiceDef serviceDef, ObjectCreator delegate, Log log)
+    public RecursiveServiceCreationCheckWrapper(ServiceDef serviceDef, ObjectCreator delegate,
+            Logger logger)
     {
         _serviceDef = serviceDef;
         _delegate = delegate;
-        _log = log;
+        _logger = logger;
     }
 
     /**
@@ -61,7 +62,7 @@ public class RecursiveServiceCreationCheckWrapper implements ObjectCreator
         }
         catch (RuntimeException ex)
         {
-            _log.error(IOCMessages.serviceConstructionFailed(_serviceDef, ex), ex);
+            _logger.error(IOCMessages.serviceConstructionFailed(_serviceDef, ex), ex);
 
             // Release the lock on failure; the service is now in an unknown state, but we may
             // be able to continue from here.

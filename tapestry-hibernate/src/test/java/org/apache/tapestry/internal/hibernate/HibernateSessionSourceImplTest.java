@@ -16,17 +16,18 @@ package org.apache.tapestry.internal.hibernate;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tapestry.hibernate.HibernateSessionSource;
 import org.apache.tapestry.internal.services.ClassNameLocatorImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.test.TapestryTestCase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 public class HibernateSessionSourceImplTest extends TapestryTestCase
 {
-    private final Log _log = LogFactory.getLog("tapestry.hibernate.HibernateSessionSourceTest");
+    private final Logger _log = LoggerFactory
+            .getLogger("tapestry.hibernate.HibernateSessionSourceTest");
 
     @Test
     public void startup_without_packages()

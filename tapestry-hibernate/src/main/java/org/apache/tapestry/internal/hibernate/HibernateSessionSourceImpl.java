@@ -16,19 +16,19 @@ package org.apache.tapestry.internal.hibernate;
 
 import java.util.Collection;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.hibernate.HibernateSessionSource;
 import org.apache.tapestry.internal.services.ClassNameLocator;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.slf4j.Logger;
 
 public class HibernateSessionSourceImpl implements HibernateSessionSource
 {
     private SessionFactory _sessionFactory;
 
-    public HibernateSessionSourceImpl(Log log, Collection<String> packageNames,
+    public HibernateSessionSourceImpl(Logger logger, Collection<String> packageNames,
 
     @InjectService("ClassNameLocator")
     ClassNameLocator classNameLocator)
@@ -67,10 +67,13 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
 
         long factoryCreated = System.currentTimeMillis();
 
-        log.info(HibernateMessages.startupTiming(configurationComplete - startTime, factoryCreated
-                - startTime));
+        logger.info(HibernateMessages.startupTiming(
+                configurationComplete - startTime,
+                factoryCreated - startTime));
 
-        log.info(HibernateMessages.entityCatalog(_sessionFactory.getAllClassMetadata().keySet()));
+        logger
+                .info(HibernateMessages.entityCatalog(_sessionFactory.getAllClassMetadata()
+                        .keySet()));
 
     }
 

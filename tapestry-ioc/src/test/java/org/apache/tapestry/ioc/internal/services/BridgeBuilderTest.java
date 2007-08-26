@@ -16,9 +16,9 @@ package org.apache.tapestry.ioc.internal.services;
 
 import java.io.Serializable;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class BridgeBuilderTest extends IOCInternalTestCase
@@ -28,12 +28,12 @@ public class BridgeBuilderTest extends IOCInternalTestCase
     @Test
     public void standard_interface_and_filter()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         BridgeBuilder<StandardService, StandardFilter> bb = new BridgeBuilder<StandardService, StandardFilter>(
-                log, StandardService.class, StandardFilter.class, _classFactory);
+                logger, StandardService.class, StandardFilter.class, _classFactory);
 
         StandardFilter sf = new StandardFilter()
         {
@@ -71,12 +71,12 @@ public class BridgeBuilderTest extends IOCInternalTestCase
     @Test
     public void toString_part_of_service_interface()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         BridgeBuilder<ToStringService, ToStringFilter> bb = new BridgeBuilder<ToStringService, ToStringFilter>(
-                log, ToStringService.class, ToStringFilter.class, _classFactory);
+                logger, ToStringService.class, ToStringFilter.class, _classFactory);
 
         ToStringFilter f = new ToStringFilter()
         {
@@ -105,19 +105,17 @@ public class BridgeBuilderTest extends IOCInternalTestCase
     @Test
     public void service_interface_method_not_matched_in_filter_interface()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExtraServiceMethod next = newMock(ExtraServiceMethod.class);
         Serializable filter = newMock(Serializable.class);
 
-        log
-                .error(
-                        "Method void extraServiceMethod() has no match in filter interface java.io.Serializable.",
-                        null);
+        logger
+                .error("Method void extraServiceMethod() has no match in filter interface java.io.Serializable.");
 
         replay();
 
         BridgeBuilder<ExtraServiceMethod, Serializable> bb = new BridgeBuilder<ExtraServiceMethod, Serializable>(
-                log, ExtraServiceMethod.class, Serializable.class, _classFactory);
+                logger, ExtraServiceMethod.class, Serializable.class, _classFactory);
 
         ExtraServiceMethod esm = bb.instantiateBridge(next, filter);
 
@@ -139,21 +137,19 @@ public class BridgeBuilderTest extends IOCInternalTestCase
     @Test
     public void filter_interface_contains_extra_methods()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Serializable next = newMock(Serializable.class);
         ExtraFilterMethod filter = newMock(ExtraFilterMethod.class);
 
-        log
-                .error(
-                        "Method void extraFilterMethod() of filter interface "
-                                + "org.apache.tapestry.ioc.internal.services.ExtraFilterMethod does not have a matching method "
-                                + "in java.io.Serializable.",
-                        null);
+        logger
+                .error("Method void extraFilterMethod() of filter interface "
+                        + "org.apache.tapestry.ioc.internal.services.ExtraFilterMethod does not have a matching method "
+                        + "in java.io.Serializable.");
 
         replay();
 
         BridgeBuilder<Serializable, ExtraFilterMethod> bb = new BridgeBuilder<Serializable, ExtraFilterMethod>(
-                log, Serializable.class, ExtraFilterMethod.class, _classFactory);
+                logger, Serializable.class, ExtraFilterMethod.class, _classFactory);
 
         assertNotNull(bb.instantiateBridge(next, filter));
 
@@ -163,12 +159,12 @@ public class BridgeBuilderTest extends IOCInternalTestCase
     @Test
     public void service_parameter_in_middle_of_filter_method()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         BridgeBuilder<MiddleService, MiddleFilter> bb = new BridgeBuilder<MiddleService, MiddleFilter>(
-                log, MiddleService.class, MiddleFilter.class, _classFactory);
+                logger, MiddleService.class, MiddleFilter.class, _classFactory);
 
         MiddleFilter mf = new MiddleFilter()
         {

@@ -25,9 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 /**
  * Provides access to random data that can be used when populating a test database with "reasonable"
  * data. The majority of this is access to random words from an american english dictionary, which
@@ -35,8 +32,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public final class RandomDataSource
 {
-    private final Log _log = LogFactory.getLog(getClass());
-
     private final Random _random = new Random(System.currentTimeMillis());
 
     private final List<String> _words = new ArrayList<String>();
@@ -49,12 +44,12 @@ public final class RandomDataSource
         for (int i = 0; i < 3; i++)
             readWords("american." + i);
 
-        _log.info(format("Dictionary contains %d words", _words.size()));
+        System.out.printf("Dictionary contains %d words\n", _words.size());
     }
 
     private void readWords(String name)
     {
-        _log.info("Reading " + name + " ...");
+        System.out.println("Reading " + name + " ...");
 
         int count = 0;
 
@@ -85,7 +80,7 @@ public final class RandomDataSource
             throw new RuntimeException(format("Error reading '%s': %s", name + ex.getMessage()), ex);
         }
 
-        _log.info(format("... %d words", count));
+        System.out.printf("... %d words\n", count);
     }
 
     public boolean maybe(int percent)

@@ -23,9 +23,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.util.Stack;
+import org.slf4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -39,7 +39,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class MusicLibraryParser
 {
-    private final Log _log;
+    private final Logger _logger;
 
     private static final int STATE_START = 0;
 
@@ -67,11 +67,9 @@ public class MusicLibraryParser
 
         void addContent(char buffer[], int start, int length)
         {
-            if (_ignoreCharacterData)
-                return;
+            if (_ignoreCharacterData) return;
 
-            if (_buffer == null)
-                _buffer = new StringBuilder(length);
+            if (_buffer == null) _buffer = new StringBuilder(length);
 
             _buffer.append(buffer, start, length);
         }
@@ -351,14 +349,14 @@ public class MusicLibraryParser
         }
     }
 
-    public MusicLibraryParser(final Log log)
+    public MusicLibraryParser(final Logger logger)
     {
-        _log = log;
+        _logger = logger;
     }
 
     public List<Track> parseTracks(URL resource)
     {
-        _log.info(format("Parsing music library %s", resource));
+        _logger.info(format("Parsing music library %s", resource));
 
         long start = System.currentTimeMillis();
 
@@ -383,7 +381,7 @@ public class MusicLibraryParser
         List<Track> result = handler.getTracks();
         long elapsed = System.currentTimeMillis() - start;
 
-        _log.info(format("Parsed %d tracks in %d ms", result.size(), elapsed));
+        _logger.info(format("Parsed %d tracks in %d ms", result.size(), elapsed));
 
         return result;
     }

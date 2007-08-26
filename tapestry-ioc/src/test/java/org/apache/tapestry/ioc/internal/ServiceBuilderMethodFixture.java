@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Value;
+import org.slf4j.Logger;
 import org.testng.Assert;
 
 /**
@@ -38,7 +38,7 @@ public class ServiceBuilderMethodFixture extends Assert
 
     Class _expectedServiceInterface;
 
-    Log _expectedLog;
+    Logger _expectedLogger;
 
     FoeService _expectedFoe;
 
@@ -99,12 +99,12 @@ public class ServiceBuilderMethodFixture extends Assert
     }
 
     public FieService build_args(String serviceId, ServiceResources resources,
-            Class serviceInterface, Log log)
+            Class serviceInterface, Logger log)
     {
         assertEquals(serviceId, _expectedServiceId);
         assertSame(resources, _expectedServiceResources);
         assertSame(serviceInterface, _expectedServiceInterface);
-        assertSame(log, _expectedLog);
+        assertSame(log, _expectedLogger);
 
         return _fie;
     }

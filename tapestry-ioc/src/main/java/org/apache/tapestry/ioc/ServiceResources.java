@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Contains resources that may be provided to a service when it initializes, which includes other
@@ -30,10 +30,10 @@ public interface ServiceResources extends ObjectLocator
     Class getServiceInterface();
 
     /**
-     * Returns a Log object appropriate for logging messages. This includes debug level messages
-     * about the creation and configuration of the underlying service, as well as debug, warning, or
-     * error level messages from the service itself. Often service interceptors will make use of the
-     * service's log.
+     * Returns a Logger appropriate for logging messages. This includes debug level messages about
+     * the creation and configuration of the underlying service, as well as debug, warning, or error
+     * level messages from the service itself. Often service interceptors will make use of the
+     * service's logger.
      */
-    Log getServiceLog();
+    Logger getLogger();
 }

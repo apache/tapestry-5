@@ -19,10 +19,35 @@
       <groupId>jboss</groupId>
       <artifactId>javassist</artifactId>
     </dependency>
+
+    
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.4.3</version>
     </dependency>
+    
+    <!-- 0.00001% of applications will need to override this dependency to not use Log4J. -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.4.3</version>
+      <exclusions>
+        <!-- Exclude log4j to make sure we use the latest Log4J version. -->
+        <exclusion>
+          <artifactId>log4j</artifactId>
+          <groupId>log4j</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.14</version>
+    </dependency>
+    
+
     <!-- Override parent pom: needed at compile time. -->
     <dependency>
       <groupId>org.easymock</groupId>
@@ -38,10 +63,6 @@
       <version>5.1</version>
       <classifier>jdk15</classifier>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
     </dependency>
   </dependencies>
   <build>

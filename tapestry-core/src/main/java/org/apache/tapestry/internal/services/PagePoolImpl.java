@@ -20,12 +20,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.ComponentClassResolver;
+import org.slf4j.Logger;
 
 /**
  * A very naive implementation just to get us past the start line.
@@ -35,7 +35,7 @@ import org.apache.tapestry.services.ComponentClassResolver;
  */
 public class PagePoolImpl implements PagePool, InvalidationListener
 {
-    private final Log _log;
+    private final Logger _logger;
 
     private final PageLoader _pageLoader;
 
@@ -45,10 +45,10 @@ public class PagePoolImpl implements PagePool, InvalidationListener
 
     private final Map<PageLocator, List<Page>> _pool = newMap();
 
-    public PagePoolImpl(Log log, PageLoader pageLoader, ThreadLocale threadLocale,
+    public PagePoolImpl(Logger logger, PageLoader pageLoader, ThreadLocale threadLocale,
             ComponentClassResolver resolver)
     {
-        _log = log;
+        _logger = logger;
         _pageLoader = pageLoader;
         _threadLocale = threadLocale;
         _resolver = resolver;
@@ -66,7 +66,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener
         // This is not as bad in T5 as in T4, since a seperate request will
         // render the response (and will have a chance to get the page in a different locale).
 
-        if (pages == null || pages.isEmpty()) 
+        if (pages == null || pages.isEmpty())
             return _pageLoader.loadPage(canonicalPageName, locale);
 
         // Remove and return the last page in the pool.
@@ -80,7 +80,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener
 
         if (dirty)
         {
-            _log.error(ServicesMessages.pageIsDirty(page));
+            _logger.error(ServicesMessages.pageIsDirty(page));
             return;
         }
 

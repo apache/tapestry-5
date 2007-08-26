@@ -16,11 +16,11 @@ package org.apache.tapestry.model;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.annotations.MixinAfter;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.Resource;
+import org.slf4j.Logger;
 
 /**
  * Defines a component in terms of its capabilities, parameters, sub-components, etc. During
@@ -65,7 +65,7 @@ public interface ComponentModel
     String getFieldPersistenceStrategy(String fieldName);
 
     /** Returns object that will be used to log warnings and errors related to this component. */
-    Log getLog();
+    Logger getLogger();
 
     /** Returns a list of the class names of mixins that are part of the component's implementation. */
     List<String> getMixinClassNames();

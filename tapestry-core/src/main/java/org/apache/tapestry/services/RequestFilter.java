@@ -19,9 +19,6 @@ import java.io.IOException;
 /**
  * Filter interface for {@link org.apache.tapestry.services.RequestHandler}. Implementations of
  * this interface may be contributed into the tapestry.RequestHandler service configuration.
- * 
- * @see TapestryModule#buildRequestHandler(org.apache.commons.logging.Log, java.util.List,
- *      Dispatcher)
  */
 public interface RequestFilter
 {

@@ -31,7 +31,7 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
     {
         _pageRenderInitializer.setup(writer);
 
-        RenderQueueImpl queue = new RenderQueueImpl(page.getLog());
+        RenderQueueImpl queue = new RenderQueueImpl(page.getLogger());
 
         queue.push(page.getRootElement());
 

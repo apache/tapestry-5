@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.parser.EndElementToken;
@@ -30,6 +29,7 @@ import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.services.ComponentClassResolver;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class PageLoaderImplTest extends InternalBaseTestCase
@@ -51,7 +51,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentModel model = mockComponentModel();
         ComponentTemplate template = mockComponentTemplate();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
@@ -67,13 +67,13 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_isMissing(template, false);
 
-        train_getLog(model, log);
+        train_getLogger(model, logger);
 
         train_getEmbeddedIds(model, "foo", "bar", "baz");
 
         train_getComponentIds(template, "baz", "biff");
 
-        log.error(ServicesMessages.embeddedComponentsNotInTemplate(
+        logger.error(ServicesMessages.embeddedComponentsNotInTemplate(
                 Arrays.asList("foo", "bar"),
                 PAGE_CLASS_NAME));
 
@@ -100,7 +100,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentModel childModel = mockComponentModel();
         ComponentTemplate template = mockComponentTemplate();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         EmbeddedComponentModel emodel = mockEmbeddedComponentModel();
         ComponentPageElement childElement = mockComponentPageElement();
         InternalComponentResources childResources = mockInternalComponentResources();
@@ -121,7 +121,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_isMissing(template, false);
 
-        train_getLog(model, log);
+        train_getLogger(model, logger);
 
         train_getEmbeddedIds(model, "foo");
 
@@ -138,7 +138,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_getMixinClassNames(emodel);
 
-        log.error(ServicesMessages.compTypeConflict("foo", "Fred", "Barney"));
+        logger.error(ServicesMessages.compTypeConflict("foo", "Fred", "Barney"));
 
         train_getComponentClassName(emodel, "foo.components.Barney");
 

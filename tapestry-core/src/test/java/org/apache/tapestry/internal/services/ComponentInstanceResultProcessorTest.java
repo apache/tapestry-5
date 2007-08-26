@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.structure.Page;
@@ -22,6 +21,7 @@ import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
@@ -38,7 +38,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         Component result = mockComponent();
         Component source = mockComponent();
         ComponentResources resources = mockComponentResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
         LinkFactory factory = mockLinkFactory();
@@ -59,7 +59,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         replay();
 
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(
-                cache, factory, log);
+                cache, factory, logger);
 
         processor.processComponentEvent(result, source, METHOD_DESCRIPTION).sendClientResponse(
                 response);
@@ -72,12 +72,10 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
     {
         Component value = mockComponent();
         Component source = mockComponent();
-        Component root = mockComponent();
         Component containerResources = mockComponent();
-        ComponentResources rootResources = mockComponentResources();
         ComponentResources valueResources = mockComponentResources();
         ComponentResources sourceResources = mockComponentResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
         LinkFactory factory = mockLinkFactory();
@@ -92,7 +90,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_getCompleteId(sourceResources, PAGE_NAME + ":source");
         train_getCompleteId(valueResources, PAGE_NAME + ":child");
 
-        log
+        logger
                 .warn("Method foo.bar.Baz.biff() (for component Zoop:source) returned component Zoop:child, which is not a page component. The page containing the component will render the client response.");
 
         train_getPageName(valueResources, PAGE_NAME);
@@ -106,7 +104,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         replay();
 
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(
-                cache, factory, log);
+                cache, factory, logger);
 
         processor.processComponentEvent(value, source, METHOD_DESCRIPTION).sendClientResponse(
                 response);

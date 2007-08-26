@@ -19,10 +19,10 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -56,7 +56,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
     @Test
     public void pipeline_with_filters()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
@@ -93,7 +93,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
         };
 
         StandardService pipeline = _builder.build(
-                log,
+                logger,
                 StandardService.class,
                 StandardFilter.class,
                 Arrays.asList(subtracter, multiplier, adder),
@@ -109,7 +109,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
     @Test
     public void pipeline_without_filters_is_terminator()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         StandardService terminator = newMock(StandardService.class);
 
         replay();
@@ -117,7 +117,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
         List<StandardFilter> filters = newList();
 
         StandardService pipeline = _builder.build(
-                log,
+                logger,
                 StandardService.class,
                 StandardFilter.class,
                 filters,
@@ -131,14 +131,14 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
     @Test
     public void pipeline_with_default_terminator()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         List<StandardFilter> filters = newList();
 
         StandardService pipeline = _builder.build(
-                log,
+                logger,
                 StandardService.class,
                 StandardFilter.class,
                 filters);

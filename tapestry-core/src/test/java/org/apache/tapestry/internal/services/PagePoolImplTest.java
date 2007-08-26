@@ -14,14 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
+import static org.easymock.EasyMock.contains;
+
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.ComponentClassResolver;
-import org.easymock.EasyMock;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class PagePoolImplTest extends InternalBaseTestCase
@@ -29,8 +30,6 @@ public class PagePoolImplTest extends InternalBaseTestCase
     private static final String INPUT_PAGE_NAME = "mypage";
 
     private static final String LOGICAL_PAGE_NAME = "MyPage";
-
-    private static final String PAGE_NAME = "com.foo.pages.MyPage";
 
     // This will change once we start supporting application localization.
 
@@ -43,7 +42,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
         Page page = mockPage();
         ThreadLocale tl = mockThreadLocale();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
@@ -53,7 +52,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(log, loader, tl, resolver);
+        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver);
 
         assertSame(page, pool.checkout(INPUT_PAGE_NAME));
 
@@ -66,7 +65,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
         Page page1 = mockPage();
         Page page2 = mockPage();
         PageLoader loader = mockPageLoader();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ThreadLocale tl = mockThreadLocale();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
@@ -78,7 +77,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(log, loader, tl, resolver);
+        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver);
 
         assertSame(pool.checkout(INPUT_PAGE_NAME), page1);
 
@@ -116,18 +115,18 @@ public class PagePoolImplTest extends InternalBaseTestCase
     {
         PageLoader loader = mockPageLoader();
         Page page = mockPage();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         train_detached(page, true);
 
-        log.error(EasyMock.contains("is dirty, and will be discarded"));
+        logger.error(contains("is dirty, and will be discarded"));
 
         // The fact that we don't ask
         // the page for its name is our clue that it is not being cached.
 
         replay();
 
-        PagePool pool = new PagePoolImpl(log, loader, null, null);
+        PagePool pool = new PagePoolImpl(logger, loader, null, null);
 
         pool.release(page);
 

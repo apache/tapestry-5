@@ -19,7 +19,6 @@ import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -29,6 +28,7 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ApplicationStateManager;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
@@ -67,7 +67,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     public void field_read_and_write() throws Exception
     {
         ApplicationStateManager manager = newApplicationStateManager();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         MutableComponentModel model = mockMutableComponentModel();
         InternalComponentResources resources = mockInternalComponentResources();
 
@@ -84,7 +84,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         CtClass ctClass = pool.get(componentClassName);
         InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         replay();
 

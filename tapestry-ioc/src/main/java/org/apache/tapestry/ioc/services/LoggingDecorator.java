@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.services;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Service that can create a logging interceptor that wraps around a service implementation (or
@@ -35,10 +35,10 @@ public interface LoggingDecorator
      *            existing object to be wrapped
      * @param serviceId
      *            id of service
-     * @param serviceLog
+     * @param logger
      *            log used for debug level logging messages by the interceptor
      * @return a new object implementing the interface that can be used in place of the delegate,
      *         providing logging behavior around each method call on the service interface
      */
-    <T> T build(Class<T> serviceInterface, T delegate, String serviceId, Log serviceLog);
+    <T> T build(Class<T> serviceInterface, T delegate, String serviceId, Logger logger);
 }

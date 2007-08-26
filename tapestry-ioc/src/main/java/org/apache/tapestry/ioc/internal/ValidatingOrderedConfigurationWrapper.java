@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 
 /**
  * Implements validation of values provided to an
@@ -33,18 +33,18 @@ public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfigur
 
     private final ContributionDef _contributionDef;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final Class _expectedType;
 
     private final OrderedConfiguration<T> _delegate;
 
     public ValidatingOrderedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-            Log log, Class expectedType, OrderedConfiguration<T> delegate)
+            Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
     {
         _serviceId = serviceId;
         _contributionDef = contributionDef;
-        _log = log;
+        _logger = logger;
         _expectedType = expectedType;
         _delegate = delegate;
     }
@@ -58,7 +58,7 @@ public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfigur
     {
         if (object == null || _expectedType.isInstance(object)) return object;
 
-        _log.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, object
+        _logger.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, object
                 .getClass(), _expectedType));
 
         return null;

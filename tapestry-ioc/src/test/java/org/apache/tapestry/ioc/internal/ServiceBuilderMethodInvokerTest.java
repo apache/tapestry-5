@@ -23,10 +23,10 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.slf4j.Logger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -41,15 +41,15 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._fie = mockFieService();
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -63,11 +63,11 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         verify();
     }
 
-    private void trainForConstructor(ServiceBuilderResources resources, Log log)
+    private void trainForConstructor(ServiceBuilderResources resources, Logger logger)
     {
         train_getServiceId(resources, SERVICE_ID);
 
-        train_getServiceLog(resources, log);
+        train_getLogger(resources, logger);
 
         train_getServiceInterface(resources, FieService.class);
     }
@@ -79,22 +79,22 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         Method method = findMethod(fixture, "build_args");
         ServiceBuilderResources resources = mockServiceBuilderResources();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._expectedServiceId = SERVICE_ID;
         fixture._expectedServiceInterface = FieService.class;
         fixture._expectedServiceResources = resources;
-        fixture._expectedLog = log;
+        fixture._expectedLogger = logger;
 
         fixture._fie = mockFieService();
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
-        log.debug(IOCMessages.invokingMethod(CREATOR_DESCRIPTION));
+        logger.debug(IOCMessages.invokingMethod(CREATOR_DESCRIPTION));
 
         replay();
 
@@ -114,19 +114,19 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         Method method = findMethod(fixture, "build_with_forced_injection");
         ServiceBuilderResources resources = mockServiceBuilderResources();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._expectedString = "Injected";
 
         fixture._fie = mockFieService();
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
-        log.debug(IOCMessages.invokingMethod(CREATOR_DESCRIPTION));
+        logger.debug(IOCMessages.invokingMethod(CREATOR_DESCRIPTION));
 
         // This simulates what the real stack does when it sees @Value("Injected")
 
@@ -149,18 +149,18 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._fie = mockFieService();
         fixture._expectedFoe = newFoe();
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
         train_getService(resources, "Foe", FoeService.class, fixture._expectedFoe);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -180,19 +180,19 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._fie = mockFieService();
         List<Runnable> result = newMock(List.class);
         fixture._expectedConfiguration = result;
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
         expect(resources.getOrderedConfiguration(Runnable.class)).andReturn(result);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -213,19 +213,19 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._fie = mockFieService();
         Collection<Runnable> result = newMock(Collection.class);
         fixture._expectedConfiguration = result;
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
         expect(resources.getUnorderedConfiguration(Runnable.class)).andReturn(result);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -249,15 +249,15 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         Method method = findMethod(fixture, "build_noargs");
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -282,15 +282,15 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     {
         ServiceBuilderMethodFixture fixture = new ServiceBuilderMethodFixture();
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         Method method = findMethod(fixture, "build_fail");
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
@@ -321,19 +321,19 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         Method method = findMethod(fixture, "build_auto");
 
         ServiceBuilderResources resources = mockServiceBuilderResources();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         fixture._fie = mockFieService();
         fixture._expectedFoe = mockFoeService();
 
-        trainForConstructor(resources, log);
+        trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
         expect(resources.getObject(eq(FoeService.class), isA(AnnotationProvider.class))).andReturn(
                 fixture._expectedFoe);
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 

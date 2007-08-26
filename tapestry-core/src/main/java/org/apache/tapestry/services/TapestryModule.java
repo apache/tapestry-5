@@ -26,7 +26,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
@@ -200,6 +199,7 @@ import org.apache.tapestry.validator.Min;
 import org.apache.tapestry.validator.MinLength;
 import org.apache.tapestry.validator.Regexp;
 import org.apache.tapestry.validator.Required;
+import org.slf4j.Logger;
 
 /**
  * The root module for Tapestry.
@@ -235,7 +235,7 @@ public final class TapestryModule
         binder.bind(MarkupWriterFactory.class, MarkupWriterFactoryImpl.class);
     }
 
-    public static Alias build(Log log,
+    public static Alias build(Logger logger,
 
     @Inject
     @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
@@ -246,7 +246,7 @@ public final class TapestryModule
 
     Collection<AliasContribution> configuration)
     {
-        AliasManager manager = new AliasManagerImpl(log, configuration);
+        AliasManager manager = new AliasManagerImpl(logger, configuration);
 
         return new AliasImpl(manager, mode, overridesManager);
     }
@@ -304,10 +304,10 @@ public final class TapestryModule
      * A companion service to {@linkplain #build(Log, AliasManager, Collection) the Alias service}
      * whose configuration contribution define spot overrides to specific services.
      */
-    public static AliasManager buildAliasOverrides(Log log,
+    public static AliasManager buildAliasOverrides(Logger logger,
             Collection<AliasContribution> configuration)
     {
-        return new AliasManagerImpl(log, configuration);
+        return new AliasManagerImpl(logger, configuration);
     }
 
     /**
@@ -1011,7 +1011,8 @@ public final class TapestryModule
     }
 
     /** Initializes the application. */
-    public ApplicationInitializer build(Log log, List<ApplicationInitializerFilter> configuration)
+    public ApplicationInitializer build(Logger logger,
+            List<ApplicationInitializerFilter> configuration)
     {
         ApplicationInitializer terminator = new ApplicationInitializer()
         {
@@ -1022,17 +1023,18 @@ public final class TapestryModule
         };
 
         return _pipelineBuilder.build(
-                log,
+                logger,
                 ApplicationInitializer.class,
                 ApplicationInitializerFilter.class,
                 configuration,
                 terminator);
     }
 
-    public HttpServletRequestHandler build(Log log, List<HttpServletRequestFilter> configuration,
+    public HttpServletRequestHandler build(Logger logger,
+            List<HttpServletRequestFilter> configuration,
 
-    @InjectService("RequestHandler")
-    final RequestHandler handler)
+            @InjectService("RequestHandler")
+            final RequestHandler handler)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandler()
         {
@@ -1046,14 +1048,14 @@ public final class TapestryModule
         };
 
         return _pipelineBuilder.build(
-                log,
+                logger,
                 HttpServletRequestHandler.class,
                 HttpServletRequestFilter.class,
                 configuration,
                 terminator);
     }
 
-    public RequestHandler build(Log log, List<RequestFilter> configuration,
+    public RequestHandler build(Logger logger, List<RequestFilter> configuration,
             @InjectService("MasterDispatcher")
             final Dispatcher masterDispatcher)
     {
@@ -1068,14 +1070,14 @@ public final class TapestryModule
         };
 
         return _pipelineBuilder.build(
-                log,
+                logger,
                 RequestHandler.class,
                 RequestFilter.class,
                 configuration,
                 terminator);
     }
 
-    public ServletApplicationInitializer build(Log log,
+    public ServletApplicationInitializer build(Logger logger,
             List<ServletApplicationInitializerFilter> configuration,
             @InjectService("ApplicationInitializer")
             final ApplicationInitializer initializer)
@@ -1093,7 +1095,7 @@ public final class TapestryModule
         };
 
         return _pipelineBuilder.build(
-                log,
+                logger,
                 ServletApplicationInitializer.class,
                 ServletApplicationInitializerFilter.class,
                 configuration,
@@ -1182,9 +1184,9 @@ public final class TapestryModule
                 ClassFactory.class);
     }
 
-    public ComponentEventResultProcessor buildComponentInstanceResultProcessor(Log log)
+    public ComponentEventResultProcessor buildComponentInstanceResultProcessor(Logger logger)
     {
-        return new ComponentInstanceResultProcessor(_requestPageCache, _linkFactory, log);
+        return new ComponentInstanceResultProcessor(_requestPageCache, _linkFactory, logger);
     }
 
     /**
@@ -1513,10 +1515,10 @@ public final class TapestryModule
     }
 
     public PageRenderRequestHandler buildPageRenderRequestHandler(
-            List<PageRenderRequestFilter> configuration, Log log, ServiceResources resources)
+            List<PageRenderRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
         return _pipelineBuilder.build(
-                log,
+                logger,
                 PageRenderRequestHandler.class,
                 PageRenderRequestFilter.class,
                 configuration,
@@ -1524,10 +1526,11 @@ public final class TapestryModule
     }
 
     public ComponentActionRequestHandler buildComponentActionRequestHandler(
-            List<ComponentActionRequestFilter> configuration, Log log, ServiceResources resources)
+            List<ComponentActionRequestFilter> configuration, Logger logger,
+            ServiceResources resources)
     {
         return _pipelineBuilder.build(
-                log,
+                logger,
                 ComponentActionRequestHandler.class,
                 ComponentActionRequestFilter.class,
                 configuration,

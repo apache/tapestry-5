@@ -55,7 +55,7 @@ public class SyntheticModuleDef implements ModuleDef
     }
 
     /** Returns "SyntheticModule". */
-    public String getLogName()
+    public String getLoggerName()
     {
         return "SyntheticModule";
     }

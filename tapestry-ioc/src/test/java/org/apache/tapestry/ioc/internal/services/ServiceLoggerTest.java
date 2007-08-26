@@ -16,23 +16,23 @@ package org.apache.tapestry.ioc.internal.services;
 
 import java.util.Arrays;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ServiceLoggerTest extends IOCTestCase
 {
     private void try_entry(String methodName, String expected, Object... arguments)
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
-        log.debug("[ENTER] " + expected);
+        logger.debug("[ENTER] " + expected);
 
         replay();
 
-        new ServiceLogger(log, tracker).entry(methodName, arguments);
+        new ServiceLogger(logger, tracker).entry(methodName, arguments);
 
         verify();
 
@@ -45,14 +45,14 @@ public class ServiceLoggerTest extends IOCTestCase
 
     private void try_exit(String methodName, String expected, Object result)
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
-        log.debug("[ EXIT] " + expected);
+        logger.debug("[ EXIT] " + expected);
 
         replay();
 
-        new ServiceLogger(log, tracker).exit(methodName, result);
+        new ServiceLogger(logger, tracker).exit(methodName, result);
 
         verify();
     }
@@ -80,14 +80,14 @@ public class ServiceLoggerTest extends IOCTestCase
     @Test
     public void void_exit_test()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
-        log.debug("[ EXIT] wilma");
+        logger.debug("[ EXIT] wilma");
 
         replay();
 
-        new ServiceLogger(log, tracker).voidExit("wilma");
+        new ServiceLogger(logger, tracker).voidExit("wilma");
 
         verify();
     }
@@ -95,20 +95,20 @@ public class ServiceLoggerTest extends IOCTestCase
     @Test
     public void fail_test_exception_not_already_logged()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
         RuntimeException t = new RuntimeException("Ouch!");
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
         train_exceptionLogged(tracker, t, false);
 
-        log.debug("[ FAIL] wilma -- " + t.getClass().getName(), t);
+        logger.debug("[ FAIL] wilma -- " + t.getClass().getName(), t);
 
         replay();
 
-        new ServiceLogger(log, tracker).fail("wilma", t);
+        new ServiceLogger(logger, tracker).fail("wilma", t);
 
         verify();
     }
@@ -116,20 +116,20 @@ public class ServiceLoggerTest extends IOCTestCase
     @Test
     public void fail_test_exception_previously_logged()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
         RuntimeException t = new RuntimeException("Ouch!");
 
-        train_isDebugEnabled(log, true);
+        train_isDebugEnabled(logger, true);
 
         train_exceptionLogged(tracker, t, true);
 
-        log.debug("[ FAIL] wilma -- " + t.getClass().getName(), null);
+        logger.debug("[ FAIL] wilma -- " + t.getClass().getName(), (Throwable) null);
 
         replay();
 
-        new ServiceLogger(log, tracker).fail("wilma", t);
+        new ServiceLogger(logger, tracker).fail("wilma", t);
 
         verify();
     }
@@ -137,16 +137,16 @@ public class ServiceLoggerTest extends IOCTestCase
     @Test
     public void fail_debug_not_enabled()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
         RuntimeException t = new RuntimeException("Ouch!");
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
-        new ServiceLogger(log, tracker).fail("wilma", t);
+        new ServiceLogger(logger, tracker).fail("wilma", t);
 
         verify();
     }
@@ -159,18 +159,18 @@ public class ServiceLoggerTest extends IOCTestCase
     @Test
     public void debug_enabled()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ExceptionTracker tracker = mockExceptionTracker();
 
-        train_isDebugEnabled(log, true);
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, true);
+        train_isDebugEnabled(logger, false);
 
         replay();
 
-        ServiceLogger logger = new ServiceLogger(log, tracker);
+        ServiceLogger serviceLogger = new ServiceLogger(logger, tracker);
 
-        assertTrue(logger.isDebugEnabled());
-        assertFalse(logger.isDebugEnabled());
+        assertTrue(serviceLogger.isDebugEnabled());
+        assertFalse(serviceLogger.isDebugEnabled());
 
         verify();
     }

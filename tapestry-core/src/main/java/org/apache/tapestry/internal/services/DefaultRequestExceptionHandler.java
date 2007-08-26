@@ -16,11 +16,11 @@ package org.apache.tapestry.internal.services;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ExceptionReporter;
 import org.apache.tapestry.services.RequestExceptionHandler;
 import org.apache.tapestry.services.Response;
+import org.slf4j.Logger;
 
 /**
  * Default implementation of {@link RequestExceptionHandler} that displays the standard
@@ -34,20 +34,20 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final Response _response;
 
-    private final Log _log;
+    private final Logger _logger;
 
     public DefaultRequestExceptionHandler(RequestPageCache pageCache,
-            PageResponseRenderer renderer, Response response, Log log)
+            PageResponseRenderer renderer, Response response, Logger logger)
     {
         _pageCache = pageCache;
         _renderer = renderer;
         _response = response;
-        _log = log;
+        _logger = logger;
     }
 
     public void handleRequestException(Throwable exception) throws IOException
     {
-        _log.error(ServicesMessages.requestException(exception), exception);
+        _logger.error(ServicesMessages.requestException(exception), exception);
 
         Page page = _pageCache.get("ExceptionReport");
 

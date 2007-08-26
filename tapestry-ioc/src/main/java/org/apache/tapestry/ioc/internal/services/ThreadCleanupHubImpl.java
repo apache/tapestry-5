@@ -18,9 +18,9 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+import org.slf4j.Logger;
 
 public class ThreadCleanupHubImpl implements ThreadCleanupHub
 {
@@ -33,13 +33,13 @@ public class ThreadCleanupHubImpl implements ThreadCleanupHub
         }
     }
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final ListHolder _holder = new ListHolder();
 
-    public ThreadCleanupHubImpl(Log log)
+    public ThreadCleanupHubImpl(Logger logger)
     {
-        _log = log;
+        _logger = logger;
     }
 
     public void addThreadCleanupListener(ThreadCleanupListener listener)
@@ -69,7 +69,7 @@ public class ThreadCleanupHubImpl implements ThreadCleanupHub
             }
             catch (Exception ex)
             {
-                _log.warn(ServiceMessages.threadCleanupError(listener, ex), ex);
+                _logger.warn(ServiceMessages.threadCleanupError(listener, ex), ex);
             }
         }
 

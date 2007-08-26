@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,6 +31,10 @@ import org.apache.tapestry.services.Session;
  */
 public class RequestImpl implements Request
 {
+    static final String REQUESTED_WITH_HEADER = "X-Requested-With";
+
+    static final String XML_HTTP_REQUEST = "XmlHttpRequest";
+
     private final HttpServletRequest _request;
 
     public RequestImpl(HttpServletRequest request)
@@ -100,6 +104,11 @@ public class RequestImpl implements Request
         {
             throw new RuntimeException(ex);
         }
+    }
+
+    public boolean isXHR()
+    {
+        return XML_HTTP_REQUEST.equals(_request.getHeader(REQUESTED_WITH_HEADER));
     }
 
 }

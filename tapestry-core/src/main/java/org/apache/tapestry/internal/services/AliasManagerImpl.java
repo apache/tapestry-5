@@ -19,19 +19,19 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.services.AliasContribution;
 import org.apache.tapestry.services.AliasManager;
+import org.slf4j.Logger;
 
 public class AliasManagerImpl implements AliasManager
 {
-    private final Log _log;
+    private final Logger _logger;
 
     private final Collection<AliasContribution> _contributions;
 
-    public AliasManagerImpl(Log log, Collection<AliasContribution> contributions)
+    public AliasManagerImpl(Logger logger, Collection<AliasContribution> contributions)
     {
-        _log = log;
+        _logger = logger;
         _contributions = contributions;
     }
 
@@ -61,7 +61,7 @@ public class AliasManagerImpl implements AliasManager
 
             if (existing != null)
             {
-                _log.error(ServicesMessages.duplicateContribution(
+                _logger.error(ServicesMessages.duplicateContribution(
                         ic.getObject(),
                         contributionType,
                         existing));

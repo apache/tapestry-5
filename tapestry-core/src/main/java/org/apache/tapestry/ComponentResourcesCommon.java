@@ -16,13 +16,13 @@ package org.apache.tapestry;
 
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.internal.services.OnEventWorker;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentSource;
+import org.slf4j.Logger;
 
 /**
  * Operations shared by the public {@link ComponentResources} interface and
@@ -118,9 +118,9 @@ public interface ComponentResourcesCommon extends Locatable
      * Returns the log instance associated with the component (which is based on the component or
      * mixin's class name).
      * 
-     * @see ComponentModel#getLog()
+     * @see ComponentModel#getLogger()
      */
-    Log getLog();
+    Logger getLogger();
 
     /** Returns the locale for the page containing this component. */
     Locale getLocale();

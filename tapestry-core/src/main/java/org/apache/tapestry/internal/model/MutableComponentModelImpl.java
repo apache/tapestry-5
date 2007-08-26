@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
@@ -33,6 +32,7 @@ import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.model.MutableEmbeddedComponentModel;
 import org.apache.tapestry.model.ParameterModel;
+import org.slf4j.Logger;
 
 /**
  * Internal implementation of {@link org.apache.tapestry.model.MutableComponentModel}.
@@ -47,7 +47,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private final IdAllocator _persistentFieldNameAllocator = new IdAllocator();
 
-    private final Log _log;
+    private final Logger _logger;
 
     private Map<String, ParameterModel> _parameters;
 
@@ -64,11 +64,11 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private Map<String, String> _metaData;
 
-    public MutableComponentModelImpl(String componentClassName, Log log, Resource baseResource,
+    public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
             ComponentModel parentModel)
     {
         _componentClassName = componentClassName;
-        _log = log;
+        _logger = logger;
         _baseResource = baseResource;
         _parentModel = parentModel;
 
@@ -89,9 +89,9 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return String.format("ComponentModel[%s]", _componentClassName);
     }
 
-    public Log getLog()
+    public Logger getLogger()
     {
-        return _log;
+        return _logger;
     }
 
     public Resource getBaseResource()

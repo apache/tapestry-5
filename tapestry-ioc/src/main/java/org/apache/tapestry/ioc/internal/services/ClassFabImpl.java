@@ -30,13 +30,13 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.MethodIterator;
 import org.apache.tapestry.ioc.services.MethodSignature;
+import org.slf4j.Logger;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.services.ClassFab}. Hides, as much as possible,
@@ -64,9 +64,9 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     private final Set<MethodSignature> _addedSignatures = newSet();
 
-    public ClassFabImpl(CtClassSource source, CtClass ctClass, Log log)
+    public ClassFabImpl(CtClassSource source, CtClass ctClass, Logger logger)
     {
-        super(source, ctClass, log);
+        super(source, ctClass, logger);
     }
 
     /**

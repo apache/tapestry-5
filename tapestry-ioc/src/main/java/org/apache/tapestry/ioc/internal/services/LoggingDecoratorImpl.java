@@ -21,7 +21,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -30,6 +29,7 @@ import org.apache.tapestry.ioc.services.LoggingDecorator;
 import org.apache.tapestry.ioc.services.MethodIterator;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.util.BodyBuilder;
+import org.slf4j.Logger;
 
 public class LoggingDecoratorImpl implements LoggingDecorator
 {
@@ -46,11 +46,11 @@ public class LoggingDecoratorImpl implements LoggingDecorator
         _exceptionTracker = exceptionTracker;
     }
 
-    public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, Log serviceLog)
+    public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, Logger logger)
     {
         Class interceptorClass = createInterceptorClass(serviceInterface, serviceId);
 
-        ServiceLogger logger = new ServiceLogger(serviceLog, _exceptionTracker);
+        ServiceLogger serviceLogger = new ServiceLogger(logger, _exceptionTracker);
 
         Constructor cc = interceptorClass.getConstructors()[0];
 
@@ -59,7 +59,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
 
         try
         {
-            interceptor = cc.newInstance(delegate, logger);
+            interceptor = cc.newInstance(delegate, serviceLogger);
         }
         catch (InvocationTargetException ite)
         {

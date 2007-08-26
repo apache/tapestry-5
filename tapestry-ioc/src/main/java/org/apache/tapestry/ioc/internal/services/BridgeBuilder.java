@@ -22,11 +22,11 @@ import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodIterator;
 import org.apache.tapestry.ioc.services.MethodSignature;
+import org.slf4j.Logger;
 
 /**
  * Used by the {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to create
@@ -36,7 +36,7 @@ import org.apache.tapestry.ioc.services.MethodSignature;
  */
 class BridgeBuilder<S, F>
 {
-    private final Log _log;
+    private final Logger _logger;
 
     private final Class<S> _serviceInterface;
 
@@ -48,10 +48,10 @@ class BridgeBuilder<S, F>
 
     private Constructor _constructor;
 
-    BridgeBuilder(Log log, Class<S> serviceInterface, Class<F> filterInterface,
+    BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface,
             ClassFactory classFactory)
     {
-        _log = log;
+        _logger = logger;
         _serviceInterface = serviceInterface;
         _filterInterface = filterInterface;
 
@@ -149,9 +149,8 @@ class BridgeBuilder<S, F>
         {
             MethodSignature ms = (MethodSignature) i.next();
 
-            _log.error(
-                    ServiceMessages.extraFilterMethod(ms, _filterInterface, _serviceInterface),
-                    null);
+            _logger.error(ServiceMessages
+                    .extraFilterMethod(ms, _filterInterface, _serviceInterface));
         }
     }
 
@@ -183,7 +182,7 @@ class BridgeBuilder<S, F>
 
         String message = ServiceMessages.unmatchedServiceMethod(ms, _filterInterface);
 
-        _log.error(message, null);
+        _logger.error(message);
 
         String code = format("throw new %s(\"%s\");", RuntimeException.class.getName(), message);
 

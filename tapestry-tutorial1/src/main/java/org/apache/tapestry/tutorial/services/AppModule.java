@@ -16,7 +16,6 @@ package org.apache.tapestry.tutorial.services;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.InjectService;
@@ -24,6 +23,7 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
+import org.slf4j.Logger;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
@@ -39,10 +39,9 @@ public class AppModule
         // locales to just "en" (English). As you add localised message catalogs and other assets,
         // you can extend this list of locales (it's a comma seperated series of locale names;
         // the first locale name is the default when there's no reasonable match).
-        
+
         configuration.add("tapestry.supported-locales", "en");
     }
-    
 
     /**
      * This is a service definition, the service will be named TimingFilter. The interface,
@@ -50,8 +49,8 @@ public class AppModule
      * RequestHandler service configuration. Tapestry IoC is responsible for passing in an
      * appropriate Log instance. Requests for static resources are handled at a higher level, so
      * this filter will only be invoked for Tapestry related requests.
-     */    
-    public RequestFilter buildTimingFilter(final Log log)
+     */
+    public RequestFilter buildTimingFilter(final Logger logger)
     {
         return new RequestFilter()
         {
@@ -65,14 +64,14 @@ public class AppModule
                     // The reponsibility of a filter is to invoke the corresponding method
                     // in the handler. When you chain multiple filters together, each filter
                     // received a handler that is a bridge to the next filter.
-                    
+
                     return handler.service(request, response);
                 }
                 finally
                 {
                     long elapsed = System.currentTimeMillis() - startTime;
 
-                    log.info(String.format("Request time: %d ms", elapsed));
+                    logger.info(String.format("Request time: %d ms", elapsed));
                 }
             }
         };
@@ -90,7 +89,7 @@ public class AppModule
         // Each contribution to an ordered configuration has a name, When necessary, you may
         // set constraints to precisely control the invocation order of the contributed filter
         // within the pipeline.
-        
+
         configuration.add("Timing", filter);
     }
 }
