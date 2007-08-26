@@ -30,7 +30,6 @@ import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 import javassist.Translator;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
@@ -38,6 +37,7 @@ import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
 /**
  * A wrapper around a Javassist class loader that allows certain classes to be modified as they are
@@ -64,7 +64,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final ComponentClassTransformer _transformer;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private ClassFactory _classFactory;
 
@@ -92,11 +92,11 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     public ComponentInstantiatorSourceImpl(ClassLoader parent,
-            ComponentClassTransformer transformer, Log log)
+            ComponentClassTransformer transformer, Logger logger)
     {
         _parent = parent;
         _transformer = transformer;
-        _log = log;
+        _logger = logger;
 
         initializeService();
     }
@@ -143,14 +143,14 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             throw new RuntimeException(ex);
         }
 
-        _classFactory = new ClassFactoryImpl(_loader, _classPool, _log);
+        _classFactory = new ClassFactoryImpl(_loader, _classPool, _logger);
     }
 
     // This is called from well within a synchronized block.
     public void onLoad(ClassPool pool, String classname) throws NotFoundException,
             CannotCompileException
     {
-        _log.debug("BEGIN onLoad " + classname);
+        _logger.debug("BEGIN onLoad " + classname);
 
         // This is our chance to make changes to the CtClass before it is loaded into memory.
 
@@ -186,7 +186,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }
         finally
         {
-            _log.debug(String.format("%5s onLoad %s", diag, classname));
+            _logger.debug(String.format("%5s onLoad %s", diag, classname));
         }
     }
 

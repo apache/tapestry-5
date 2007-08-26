@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 The Apache Software Foundation
+// Copyright 2005, 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import java.util.Map;
 
 import javassist.CtClass;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
+import org.slf4j.Logger;
 
 /**
  * Base class for {@link org.apache.tapestry.ioc.internal.services.ClassFabImpl}. This code is a
@@ -36,13 +36,13 @@ public class AbstractFab
 
     private final CtClassSource _source;
 
-    private final Log _log;
+    private final Logger _logger;
 
-    public AbstractFab(CtClassSource source, CtClass ctClass, Log log)
+    public AbstractFab(CtClassSource source, CtClass ctClass, Logger logger)
     {
         _ctClass = ctClass;
         _source = source;
-        _log = log;
+        _logger = logger;
     }
 
     /**
@@ -103,7 +103,7 @@ public class AbstractFab
     {
         _lock.lock();
 
-        if (_log.isDebugEnabled()) _log.debug(String.format("Creating class from %s", this));
+        if (_logger.isDebugEnabled()) _logger.debug(String.format("Creating class from %s", this));
 
         return _source.createClass(_ctClass);
     }

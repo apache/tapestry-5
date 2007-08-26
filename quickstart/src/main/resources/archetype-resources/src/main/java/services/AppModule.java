@@ -2,7 +2,6 @@ package ${packageName}.services;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
@@ -11,6 +10,7 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
+import org.slf4j.Logger;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
@@ -60,7 +60,7 @@ public class AppModule
      * a service named "RequestFilter" we use an explicit service id that we can reference
      * inside the contribution method.
      */    
-    public RequestFilter buildTimingFilter(final Log log)
+    public RequestFilter buildTimingFilter(final Logger log)
     {
         return new RequestFilter()
         {

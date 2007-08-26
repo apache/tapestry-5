@@ -133,4 +133,10 @@ public class TestableRequestImpl implements TestableRequest
     {
     }
 
+    /** Always returns false. If you need to test Ajax functionality, you need to be using Selenium. */
+    public boolean isXHR()
+    {
+        return false;
+    }
+
 }

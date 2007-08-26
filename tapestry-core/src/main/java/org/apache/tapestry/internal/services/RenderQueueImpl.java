@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
+import org.slf4j.Logger;
 
 public class RenderQueueImpl implements RenderQueue
 {
@@ -26,11 +26,11 @@ public class RenderQueueImpl implements RenderQueue
 
     private final Stack<RenderCommand> _queue = new Stack<RenderCommand>(INITIAL_QUEUE_DEPTH);
 
-    private final Log _log;
+    private final Logger _logger;
 
-    public RenderQueueImpl(Log log)
+    public RenderQueueImpl(Logger logger)
     {
-        _log = log;
+        _logger = logger;
     }
 
     public void push(RenderCommand command)
@@ -51,8 +51,8 @@ public class RenderQueueImpl implements RenderQueue
             {
                 command = _queue.pop();
 
-                if (_log.isDebugEnabled())
-                    _log.debug(String.format("Executing: %s", command));
+                if (_logger.isDebugEnabled())
+                    _logger.debug(String.format("Executing: %s", command));
 
                 command.render(writer, this);
             }
@@ -62,7 +62,7 @@ public class RenderQueueImpl implements RenderQueue
             // This will likely leave the page in a dirty state, and it will not go back into the
             // page pool.
 
-            _log.error(ServicesMessages.renderQueueError(command, ex), ex);
+            _logger.error(ServicesMessages.renderQueueError(command, ex), ex);
 
             throw ex;
         }

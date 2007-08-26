@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.BlockNotFoundException;
@@ -53,6 +52,7 @@ import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ComponentMessagesSource;
+import org.slf4j.Logger;
 
 /**
  * Implements {@link org.apache.tapestry.internal.structure.PageElement} and
@@ -844,9 +844,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _id;
     }
 
-    public Log getLog()
+    public Logger getLogger()
     {
-        return _coreResources.getLog();
+        return _coreResources.getLogger();
     }
 
     public Component getMixinByClassName(String mixinClassName)

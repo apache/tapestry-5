@@ -18,10 +18,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.AliasContribution;
 import org.apache.tapestry.services.AliasManager;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class AliasManagerImplTest extends InternalBaseTestCase
@@ -29,7 +29,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void no_conflict()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Runnable r = mockRunnable();
 
         replay();
@@ -39,7 +39,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
                 AliasContribution.create(Runnable.class, r) };
         Collection<AliasContribution> configuration = Arrays.asList(contributions);
 
-        AliasManager manager = new AliasManagerImpl(log, configuration);
+        AliasManager manager = new AliasManagerImpl(logger, configuration);
 
         Map<Class, Object> map = manager.getAliasesForMode("foo");
 
@@ -53,10 +53,10 @@ public class AliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void first_entry_wins_on_conflict()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Runnable r = mockRunnable();
 
-        log
+        logger
                 .error("Contribution FRED-CONFLICT (for type java.lang.String) conflicts with existing contribution FRED and has been ignored.");
 
         replay();
@@ -67,7 +67,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
                 AliasContribution.create(Runnable.class, r) };
         Collection<AliasContribution> configuration = Arrays.asList(contributions);
 
-        AliasManager manager = new AliasManagerImpl(log, configuration);
+        AliasManager manager = new AliasManagerImpl(logger, configuration);
 
         Map<Class, Object> map = manager.getAliasesForMode("foo");
 
@@ -81,7 +81,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void contributions_to_other_modes_are_ignored()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Runnable r = mockRunnable();
 
         replay();
@@ -92,7 +92,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
                 AliasContribution.create(Runnable.class, r) };
         Collection<AliasContribution> configuration = Arrays.asList(contributions);
 
-        AliasManager manager = new AliasManagerImpl(log, configuration);
+        AliasManager manager = new AliasManagerImpl(logger, configuration);
 
         Map<Class, Object> map = manager.getAliasesForMode("foo");
 
@@ -106,7 +106,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
     @Test
     public void mode_specific_contribution_overrides_general_contribution()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Runnable r = mockRunnable();
 
         replay();
@@ -117,7 +117,7 @@ public class AliasManagerImplTest extends InternalBaseTestCase
                 AliasContribution.create(Runnable.class, r) };
         Collection<AliasContribution> configuration = Arrays.asList(contributions);
 
-        AliasManager manager = new AliasManagerImpl(log, configuration);
+        AliasManager manager = new AliasManagerImpl(logger, configuration);
 
         Map<Class, Object> map = manager.getAliasesForMode("BAR");
 

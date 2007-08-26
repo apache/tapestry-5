@@ -16,9 +16,9 @@ package org.apache.tapestry.ioc.internal;
 
 import java.lang.reflect.Method;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCase
@@ -27,7 +27,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     public void valid_type_long_form()
     {
         ContributionDef def = mockContributionDef();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
         Runnable contribution = mockRunnable();
 
@@ -36,7 +36,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, log, Runnable.class, configuration);
+                "Service", def, logger, Runnable.class, configuration);
 
         wrapper.add("id", contribution, "after:pre", "before:post");
 
@@ -47,7 +47,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     public void valid_type_short_form()
     {
         ContributionDef def = mockContributionDef();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
         Runnable contribution = mockRunnable();
 
@@ -56,7 +56,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, log, Runnable.class, configuration);
+                "Service", def, logger, Runnable.class, configuration);
 
         wrapper.add("id", contribution);
 
@@ -67,7 +67,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
     public void null_object_passed_through()
     {
         ContributionDef def = mockContributionDef();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
 
         configuration.add("id", null);
@@ -75,7 +75,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration<Runnable> wrapper = new ValidatingOrderedConfigurationWrapper<Runnable>(
-                "Service", def, log, Runnable.class, configuration);
+                "Service", def, logger, Runnable.class, configuration);
 
         wrapper.add("id", null);
 
@@ -89,7 +89,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         Method method = findMethod("contributeBarneyService");
 
         ContributionDef def = new ContributionDefImpl("Service", method, getClassFactory());
-        Log log = mockLog();
+        Logger log = mockLogger();
         OrderedConfiguration<Runnable> configuration = mockOrderedConfiguration();
 
         log.warn(IOCMessages.contributionWrongValueType(

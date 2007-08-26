@@ -80,7 +80,7 @@ public interface Request
      * header can't be converted to a date, the method throws an
      * <code>IllegalArgumentException</code>.
      * 
-     * @param name
+     * @param nme
      *            a <code>String</code> specifying the name of the header
      * @return a <code>long</code> value representing the date specified in the header expressed
      *         as the number of milliseconds since January 1, 1970 GMT, or -1 if the named header
@@ -101,4 +101,14 @@ public interface Request
      *            charset used when parsing parameters
      */
     void setEncoding(String requestEncoding);
+    
+    /**
+     * Returns true if the request originated on the client using XmlHttpRequest (the core of any Ajax behavior).
+     * Ajax action requests may behave quite differently than ordinary, page-based requests.  This implementation
+     * currently depends on the client side setting a header: <strong>X-Requested-With=XmlHttpRequest</strong> (this is what
+     * Prototype does).
+     * 
+     * @return true if the request has an XmlHttpRequest origin
+     */
+    boolean isXHR();
 }

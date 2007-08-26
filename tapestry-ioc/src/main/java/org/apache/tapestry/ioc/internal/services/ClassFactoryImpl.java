@@ -23,20 +23,20 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.services.ClassFactory}.
  */
 public class ClassFactoryImpl implements ClassFactory
 {
-    private final Log _log;
+    private final Logger _logger;
 
     /**
      * ClassPool shared by all modules (all CtClassSource instances).
@@ -49,7 +49,7 @@ public class ClassFactoryImpl implements ClassFactory
 
     public ClassFactoryImpl(ClassLoader classLoader)
     {
-        this(classLoader, LogFactory.getLog(ClassFactoryImpl.class));
+        this(classLoader, LoggerFactory.getLogger(ClassFactoryImpl.class));
     }
 
     public ClassFactoryImpl()
@@ -58,13 +58,13 @@ public class ClassFactoryImpl implements ClassFactory
     }
 
     /** Main constructor where a specific class loader and log is provided. */
-    public ClassFactoryImpl(ClassLoader classLoader, Log log)
+    public ClassFactoryImpl(ClassLoader classLoader, Logger log)
     {
         this(classLoader, new ClassFactoryClassPool(classLoader), log);
     }
 
     /** Special constructor used when the class pool is provided externally. */
-    public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, Log log)
+    public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, Logger logger)
     {
         _loader = classLoader;
 
@@ -72,7 +72,7 @@ public class ClassFactoryImpl implements ClassFactory
 
         _classSource = new CtClassSource(_pool, classLoader);
 
-        _log = log;
+        _logger = logger;
     }
 
     public ClassFab newClass(Class serviceInterface)
@@ -88,15 +88,15 @@ public class ClassFactoryImpl implements ClassFactory
 
     public ClassFab newClass(String name, Class superClass)
     {
-        if (_log.isDebugEnabled())
-            _log.debug(String.format("Create ClassFab for %s (extends %s)", name, superClass
+        if (_logger.isDebugEnabled())
+            _logger.debug(String.format("Create ClassFab for %s (extends %s)", name, superClass
                     .getName()));
 
         try
         {
             CtClass ctNewClass = _classSource.newClass(name, superClass);
 
-            return new ClassFabImpl(_classSource, ctNewClass, _log);
+            return new ClassFabImpl(_classSource, ctNewClass, _logger);
         }
         catch (Exception ex)
         {

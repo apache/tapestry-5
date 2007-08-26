@@ -23,7 +23,6 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LogSource;
@@ -32,6 +31,7 @@ import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.slf4j.Logger;
 
 /**
  * Implementation of {@link org.apache.tapestry.internal.services.ComponentClassTransformer}.
@@ -103,7 +103,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         String classname = ctClass.getName();
 
-        Log log = _logSource.getLog(classname);
+        Logger logger = _logSource.getLogger(classname);
 
         // If the parent class is in a controlled package, it will already have been loaded and
         // transformed (that is driven by the ComponentInstantiatorSource).
@@ -118,13 +118,13 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         ComponentModel parentModel = _nameToComponentModel.get(parentClassname);
 
-        MutableComponentModel model = new MutableComponentModelImpl(classname, log, baseResource,
-                parentModel);
+        MutableComponentModel model = new MutableComponentModelImpl(classname, logger,
+                baseResource, parentModel);
 
         InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
-                ctClass, classLoader, log, model)
+                ctClass, classLoader, logger, model)
                 : new InternalClassTransformationImpl(ctClass, parentTransformation, classLoader,
-                        log, model);
+                        logger, model);
 
         try
         {
@@ -137,7 +137,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
             throw new TransformationException(transformation, ex);
         }
 
-        if (log.isDebugEnabled()) log.debug("Finished class transformation: " + transformation);
+        if (logger.isDebugEnabled())
+            logger.debug("Finished class transformation: " + transformation);
 
         _nameToClassTransformation.put(classname, transformation);
         _nameToComponentModel.put(classname, model);

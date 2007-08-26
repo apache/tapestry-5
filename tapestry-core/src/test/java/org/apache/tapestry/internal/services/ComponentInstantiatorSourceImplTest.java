@@ -29,7 +29,6 @@ import javassist.CtNewMethod;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.SingleKeySymbolProvider;
@@ -46,6 +45,7 @@ import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.TapestryModule;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -78,12 +78,12 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     public void controlled_packages() throws Exception
     {
         ComponentClassTransformer transformer = newMock(ComponentClassTransformer.class);
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(_contextLoader,
-                transformer, log);
+                transformer, logger);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 

@@ -19,9 +19,9 @@ import static org.easymock.EasyMock.same;
 
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.PageLifecycleListener;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class PageImplTest extends InternalBaseTestCase
@@ -99,17 +99,17 @@ public class PageImplTest extends InternalBaseTestCase
     public void detach_dirty_if_listener_throws_exception()
     {
         ComponentPageElement element = mockComponentPageElement();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         PageLifecycleListener listener1 = newPageLifecycle();
         PageLifecycleListener listener2 = newPageLifecycle();
         RuntimeException t = new RuntimeException("Listener detach exception.");
 
-        train_getLog(element, log);
+        train_getLogger(element, logger);
 
         listener1.containingPageDidDetach();
         setThrowable(t);
 
-        log.error(contains("failed during page detach"), same(t));
+        logger.error(contains("failed during page detach"), same(t));
 
         listener2.containingPageDidDetach();
 
@@ -127,9 +127,9 @@ public class PageImplTest extends InternalBaseTestCase
 
     }
 
-    protected final void train_getLog(ComponentPageElement element, Log log)
+    protected final void train_getLogger(ComponentPageElement element, Logger logger)
     {
-        expect(element.getLog()).andReturn(log);
+        expect(element.getLogger()).andReturn(logger);
     }
 
     @Test

@@ -17,9 +17,9 @@ package org.apache.tapestry.ioc.internal.services;
 import static org.easymock.EasyMock.contains;
 import static org.easymock.EasyMock.same;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class RegistryShutdownHubImplTest extends IOCInternalTestCase
@@ -30,14 +30,14 @@ public class RegistryShutdownHubImplTest extends IOCInternalTestCase
     {
         RegistryShutdownListener l1 = mockListener();
         RegistryShutdownListener l2 = mockListener();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         l1.registryDidShutdown();
         l2.registryDidShutdown();
 
         replay();
 
-        RegistryShutdownHubImpl hub = new RegistryShutdownHubImpl(log);
+        RegistryShutdownHubImpl hub = new RegistryShutdownHubImpl(logger);
 
         hub.addRegistryShutdownListener(l1);
         hub.addRegistryShutdownListener(l2);
@@ -58,7 +58,7 @@ public class RegistryShutdownHubImplTest extends IOCInternalTestCase
         RegistryShutdownListener l2 = mockListener();
         RegistryShutdownListener l3 = mockListener();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         Throwable t = new RuntimeException("Shutdown failure.");
 
@@ -66,13 +66,13 @@ public class RegistryShutdownHubImplTest extends IOCInternalTestCase
         l2.registryDidShutdown();
         setThrowable(t);
 
-        log.error(contains("Shutdown failure."), same(t));
+        logger.error(contains("Shutdown failure."), same(t));
 
         l3.registryDidShutdown();
 
         replay();
 
-        RegistryShutdownHubImpl hub = new RegistryShutdownHubImpl(log);
+        RegistryShutdownHubImpl hub = new RegistryShutdownHubImpl(logger);
 
         hub.addRegistryShutdownListener(l1);
         hub.addRegistryShutdownListener(l2);

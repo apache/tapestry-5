@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class RenderQueueImplTest extends InternalBaseTestCase
@@ -35,11 +35,12 @@ public class RenderQueueImplTest extends InternalBaseTestCase
             }
         };
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
         MarkupWriter writer = mockMarkupWriter();
-        RenderQueueImpl queue = new RenderQueueImpl(log);
+        RenderQueueImpl queue = new RenderQueueImpl(logger);
 
-        expect(log.isDebugEnabled()).andReturn(false).atLeastOnce();
+        train_isDebugEnabled(logger, false);
+        train_isDebugEnabled(logger, false);
 
         command2.render(writer, queue);
 
@@ -71,16 +72,16 @@ public class RenderQueueImplTest extends InternalBaseTestCase
             }
         };
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
         MarkupWriter writer = mockMarkupWriter();
 
-        expect(log.isDebugEnabled()).andReturn(false).atLeastOnce();
+        train_isDebugEnabled(logger, false);
 
-        log.error("Render queue error in FailedCommand: Oops.", t);
+        logger.error("Render queue error in FailedCommand: Oops.", t);
 
         replay();
 
-        RenderQueueImpl queue = new RenderQueueImpl(log);
+        RenderQueueImpl queue = new RenderQueueImpl(logger);
 
         queue.push(rc);
 

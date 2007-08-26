@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.Link;
@@ -79,6 +78,7 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TapestryModule;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
@@ -324,9 +324,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(ComponentTemplateSource.class);
     }
 
-    protected final void train_getLog(ComponentModel model, Log log)
+    protected final void train_getLogger(ComponentModel model, Logger logger)
     {
-        expect(model.getLog()).andReturn(log).atLeastOnce();
+        expect(model.getLogger()).andReturn(logger).atLeastOnce();
     }
 
     protected final void train_getTokens(ComponentTemplate template, TemplateToken... tokens)

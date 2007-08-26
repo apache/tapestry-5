@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ThreadCleanupHubImplTest extends IOCTestCase
@@ -24,11 +24,11 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
     @Test
     public void no_listeners()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        new ThreadCleanupHubImpl(log).cleanup();
+        new ThreadCleanupHubImpl(logger).cleanup();
 
         verify();
     }
@@ -36,14 +36,14 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
     @Test
     public void listeners_are_one_shot()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ThreadCleanupListener listener = mockThreadCleanupListener();
 
         listener.threadDidCleanup();
 
         replay();
 
-        ThreadCleanupHubImpl hub = new ThreadCleanupHubImpl(log);
+        ThreadCleanupHubImpl hub = new ThreadCleanupHubImpl(logger);
 
         hub.addThreadCleanupListener(listener);
 
@@ -72,7 +72,7 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
     {
         final RuntimeException t = new RuntimeException("Boom!");
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         ThreadCleanupListener listener = new ThreadCleanupListener()
         {
@@ -84,11 +84,11 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
 
         };
 
-        log.warn(ServiceMessages.threadCleanupError(listener, t), t);
+        logger.warn(ServiceMessages.threadCleanupError(listener, t), t);
 
         replay();
 
-        ThreadCleanupHubImpl hub = new ThreadCleanupHubImpl(log);
+        ThreadCleanupHubImpl hub = new ThreadCleanupHubImpl(logger);
 
         hub.addThreadCleanupListener(listener);
 

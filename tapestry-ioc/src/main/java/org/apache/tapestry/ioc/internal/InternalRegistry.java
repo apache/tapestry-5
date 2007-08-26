@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.Registry;
@@ -28,6 +27,7 @@ import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
+import org.slf4j.Logger;
 
 /**
  * Internal view of the module registry, adding additional methods needed by modules.
@@ -118,11 +118,11 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     String expandSymbols(String input);
 
     /**
-     * Returns a log for the service, which consists of the Module's
-     * {@link Module#getLogName() log name} suffixed with a period and the service id.
+     * Returns a logger for the service, which consists of the Module's
+     * {@link Module#getLoggerName() log name} suffixed with a period and the service id.
      * 
      * @param serviceId
-     * @return the log instance for the service
+     * @return the logger for the service
      */
-    Log logForService(String serviceId);
+    Logger getServiceLogger(String serviceId);
 }

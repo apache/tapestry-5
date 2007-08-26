@@ -17,8 +17,8 @@ package org.apache.tapestry.services;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AnnotationProvider;
+import org.slf4j.Logger;
 
 /**
  * Contains class-specific information used when transforming an raw class into an executable class.
@@ -328,10 +328,10 @@ public interface ClassTransformation extends AnnotationProvider
     Class toClass(String type);
 
     /**
-     * Returns a log, based on the class name being transformed, to which warnings or errors
+     * Returns a logger, based on the class name being transformed, to which warnings or errors
      * concerning the class being transformed may be logged.
      */
-    Log getLog();
+    Logger getLogger();
 
     /** Returns the modifiers for the named field. */
     int getFieldModifiers(String fieldName);

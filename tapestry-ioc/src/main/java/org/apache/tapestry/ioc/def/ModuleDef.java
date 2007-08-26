@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.def;
 
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Defines the contents of a module. In the default case, this is information about the services
@@ -54,8 +54,8 @@ public interface ModuleDef
     Class getBuilderClass();
 
     /**
-     * Returns the name used to create a {@link Log} instance. This is typically the builder class
+     * Returns the name used to create a {@link Logger} instance. This is typically the builder class
      * name.
      */
-    String getLogName();
+    String getLoggerName();
 }

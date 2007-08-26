@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,9 +16,9 @@ package org.apache.tapestry.ioc.internal;
 
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 
 /**
  * Provides two forms of validation for mapped configurations:
@@ -39,7 +39,7 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
     private final ContributionDef _contributionDef;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final Class<K> _expectedKeyType;
 
@@ -50,12 +50,12 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
     private final MappedConfiguration<K, V> _delegate;
 
     public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-            Log log, Class<K> expectedKeyType, Class<V> expectedValueType,
+            Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
             Map<K, ContributionDef> keyToContributor, MappedConfiguration<K, V> delegate)
     {
         _serviceId = serviceId;
         _contributionDef = contributionDef;
-        _log = log;
+        _logger = logger;
         _expectedKeyType = expectedKeyType;
         _expectedValueType = expectedValueType;
         _keyToContributor = keyToContributor;
@@ -66,26 +66,26 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
     {
         if (key == null)
         {
-            _log.warn(IOCMessages.contributionKeyWasNull(_serviceId, _contributionDef));
+            _logger.warn(IOCMessages.contributionKeyWasNull(_serviceId, _contributionDef));
             return;
         }
 
         if (value == null)
         {
-            _log.warn(IOCMessages.contributionWasNull(_serviceId, _contributionDef));
+            _logger.warn(IOCMessages.contributionWasNull(_serviceId, _contributionDef));
             return;
         }
 
         if (!_expectedKeyType.isInstance(key))
         {
-            _log.warn(IOCMessages.contributionWrongKeyType(_serviceId, _contributionDef, key
+            _logger.warn(IOCMessages.contributionWrongKeyType(_serviceId, _contributionDef, key
                     .getClass(), _expectedKeyType));
             return;
         }
 
         if (!_expectedValueType.isInstance(value))
         {
-            _log.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, value
+            _logger.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, value
                     .getClass(), _expectedValueType));
             return;
         }
@@ -94,7 +94,10 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
 
         if (existing != null)
         {
-            _log.warn(IOCMessages.contributionDuplicateKey(_serviceId, _contributionDef, existing));
+            _logger.warn(IOCMessages.contributionDuplicateKey(
+                    _serviceId,
+                    _contributionDef,
+                    existing));
             return;
         }
 

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.services;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
  * Creates a pipeline from a service inteface and an ordered list of filters. Each filter is defined
@@ -58,7 +58,7 @@ public interface PipelineBuilder
      *            end of the pipeline
      * @return an object that encapsulates the filters and the terminator
      */
-    <S, F> S build(Log log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
+    <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
             S terminator);
 
     /**
@@ -73,6 +73,6 @@ public interface PipelineBuilder
      * @param filters
      * @return
      */
-    <S, F> S build(Log log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters);
+    <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters);
 
 }

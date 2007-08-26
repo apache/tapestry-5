@@ -58,6 +58,7 @@ Service Decoration Methods
 package org.example.myapp.services;
 
 import org.apache.tapestry.ioc.services.LoggingDecorator;
+import org.slf4j.Logger;
 
 public class MyAppModule
 {
@@ -67,12 +68,11 @@ public class MyAppModule
   }
   
   public static <T> T decorateIndexer(Class<T> serviceInterface, T delegate, 
-    String serviceId, Log serviceLog,
+    String serviceId, Logger logger,
     
-    @InjectService("LoggingDecorator")
     LoggingDecorator decorator)
   {
-    return decorator.build(serviceInterface, delegate, serviceId, serviceLog);
+    return decorator.build(serviceInterface, delegate, serviceId, logger);
   } 
 }
 +---------------------+
@@ -112,14 +112,14 @@ public class MyAppModule
 package org.example.myapp.services;
 
 import org.apache.tapestry.ioc.services.LoggingDecorator;
+import org.slf4j.Logger;
 
 public class MyAppModule
 {
-  public static Indexer build(Class serviceInterface, Log serviceLog,
-    @InjectService("LoggingDecorator")
+  public static Indexer build(Class serviceInterface, Logger logger,
     LoggingInterceptorFactory decorator)
   {
-    return decorator.build(serviceInterface, serviceLog,  new IndexerImpl());
+    return decorator.build(serviceInterface, logger,  new IndexerImpl());
   } 
 }
 +---------------------+   
@@ -142,11 +142,10 @@ Targetting Multiple Services
 +---------------------+    
   @Match("*")
   public static <T> T decorateLogging(Class<T> serviceInterface, T delegate, 
-    String serviceId, Log serviceLog,
-    @InjectService("LoggingDecorator")
+    String serviceId, Logger logger,
     LoggingDecorator decorator)
   {
-    return decorator.build(serviceInterface, delegate, serviceId, serviceLog);
+    return decorator.build(serviceInterface, delegate, serviceId, logger);
   }   
 +---------------------+  
 
@@ -188,11 +187,10 @@ Ordering of Decorators
   @Match("*")
   @Order("before:*")
   public static <T> T decorateLogging(Class<T> serviceInterface, T delegate, 
-    String serviceId, Log serviceLog,
-    @InjectService("LoggingDecorator")
+    String serviceId, Logger logger,
     LoggingDecorator decorator)
   {
-    return decorator.build(serviceInterface, delegate, serviceId, serviceLog);
+    return decorator.build(serviceInterface, delegate, serviceId, logger);
   }   
 +---------------------+     
    

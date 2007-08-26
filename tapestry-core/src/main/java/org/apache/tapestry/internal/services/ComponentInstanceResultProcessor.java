@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.slf4j.Logger;
 
 public class ComponentInstanceResultProcessor implements ComponentEventResultProcessor<Component>
 {
@@ -28,14 +28,14 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
 
     private final LinkFactory _linkFactory;
 
-    private final Log _log;
+    private final Logger _logger;
 
     public ComponentInstanceResultProcessor(final RequestPageCache requestPageCache,
-            LinkFactory linkFactory, Log log)
+            LinkFactory linkFactory, Logger logger)
     {
         _requestPageCache = requestPageCache;
         _linkFactory = linkFactory;
-        _log = log;
+        _logger = logger;
     }
 
     public ActionResponseGenerator processComponentEvent(Component value, Component component,
@@ -44,7 +44,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
-            _log.warn(ServicesMessages.componentInstanceIsNotAPage(
+            _logger.warn(ServicesMessages.componentInstanceIsNotAPage(
                     methodDescription,
                     component,
                     value));

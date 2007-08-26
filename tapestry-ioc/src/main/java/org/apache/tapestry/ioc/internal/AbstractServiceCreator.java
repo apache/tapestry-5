@@ -25,10 +25,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.ServiceResources;
+import org.slf4j.Logger;
 
 /**
  * Abstract implementation of {@link ObjectCreator} geared towards the creation of the core service
@@ -43,7 +43,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
     protected final ServiceBuilderResources _resources;
 
-    protected final Log _log;
+    protected final Logger _logger;
 
     private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
 
@@ -61,11 +61,11 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         _serviceId = resources.getServiceId();
         _resources = resources;
         _creatorDescription = creatorDescription;
-        _log = resources.getServiceLog();
+        _logger = resources.getLogger();
 
         _parameterDefaults.put(String.class, _serviceId);
         _parameterDefaults.put(ServiceResources.class, resources);
-        _parameterDefaults.put(Log.class, _log);
+        _parameterDefaults.put(Logger.class, _logger);
         _parameterDefaults.put(Class.class, resources.getServiceInterface());
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
             if (type != null)
             {
-                _log.warn(IOCMessages.tooManyConfigurationParameters(_creatorDescription));
+                _logger.warn(IOCMessages.tooManyConfigurationParameters(_creatorDescription));
                 break;
             }
 

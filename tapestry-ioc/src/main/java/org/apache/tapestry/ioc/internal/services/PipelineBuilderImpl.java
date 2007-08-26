@@ -16,11 +16,11 @@ package org.apache.tapestry.ioc.internal.services;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
+import org.slf4j.Logger;
 
 public class PipelineBuilderImpl implements PipelineBuilder
 {
@@ -37,7 +37,7 @@ public class PipelineBuilderImpl implements PipelineBuilder
         _defaultImplementationBuilder = defaultImplementationBuilder;
     }
 
-    public <S, F> S build(Log log, Class<S> serviceInterface, Class<F> filterInterface,
+    public <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface,
             List<F> filters)
     {
         S terminator = _defaultImplementationBuilder.createDefaultImplementation(serviceInterface);
@@ -45,7 +45,7 @@ public class PipelineBuilderImpl implements PipelineBuilder
         return build(log, serviceInterface, filterInterface, filters, terminator);
     }
 
-    public <S, F> S build(Log log, Class<S> serviceInterface, Class<F> filterInterface,
+    public <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface,
             List<F> filters, S terminator)
     {
         if (filters.isEmpty()) return terminator;

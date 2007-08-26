@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
@@ -27,13 +26,14 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
+import org.slf4j.Logger;
 
 /**
  * I was just dying to see how fast requests are!
  */
 public class AppModule
 {
-    public RequestFilter buildTimingFilter(final Log log)
+    public RequestFilter buildTimingFilter(final Logger log)
     {
         return new RequestFilter()
         {
@@ -91,7 +91,7 @@ public class AppModule
         return new ToDoDatabaseImpl();
     }
 
-    public MusicLibrary buildMusicLibrary(Log log)
+    public MusicLibrary buildMusicLibrary(Logger log)
     {
         URL library = getClass().getResource("iTunes.xml");
 

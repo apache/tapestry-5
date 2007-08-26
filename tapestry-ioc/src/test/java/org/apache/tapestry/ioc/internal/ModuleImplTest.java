@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
 import org.apache.tapestry.ioc.def.DecoratorDef;
@@ -30,6 +29,7 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ModuleImplTest extends IOCInternalTestCase
@@ -38,18 +38,18 @@ public class ModuleImplTest extends IOCInternalTestCase
     public void get_service_by_id_exists()
     {
         InternalRegistry registry = mockInternalRegistry();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ClassFactory factory = new ClassFactoryImpl();
 
-        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, log,
+        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger,
                 getClassFactory());
 
-        Module module = new ModuleImpl(registry, moduleDef, null, log);
+        Module module = new ModuleImpl(registry, moduleDef, null, logger);
 
-        expect(registry.logForService("Upcase")).andReturn(log);
+        expect(registry.getServiceLogger("Upcase")).andReturn(logger);
 
-        train_isDebugEnabled(log, true);
-        log.debug("Creating service 'Upcase'.");
+        train_isDebugEnabled(logger, true);
+        logger.debug("Creating service 'Upcase'.");
 
         train_getLifecycle(registry, "singleton", new SingletonServiceLifecycle());
 
@@ -57,7 +57,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         registry.addRegistryShutdownListener(isA(RegistryShutdownListener.class));
 
-        train_isDebugEnabled(log, false);
+        train_isDebugEnabled(logger, false);
 
         train_findDecoratorsForService(registry);
 
@@ -80,11 +80,11 @@ public class ModuleImplTest extends IOCInternalTestCase
     public void find_service_ids_for_interface()
     {
         InternalRegistry registry = mockInternalRegistry();
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, log, null);
+        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null);
 
-        Module module = new ModuleImpl(registry, moduleDef, null, log);
+        Module module = new ModuleImpl(registry, moduleDef, null, logger);
 
         replay();
 
@@ -106,7 +106,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         DecoratorDef def1 = mockDecoratorDef();
         DecoratorDef def2 = mockDecoratorDef();
         Set<DecoratorDef> rawDefs = newMock(Set.class);
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         ModuleDef moduleDef = mockModuleDef();
 
@@ -119,7 +119,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         replay();
 
-        Module module = new ModuleImpl(registry, moduleDef, null, log);
+        Module module = new ModuleImpl(registry, moduleDef, null, logger);
 
         Set<DecoratorDef> defs = module.findMatchingDecoratorDefs(serviceDef);
 
@@ -133,12 +133,12 @@ public class ModuleImplTest extends IOCInternalTestCase
     public void no_public_constructor_on_module_builder_class()
     {
         InternalRegistry registry = mockInternalRegistry();
-        Log log = mockLog();
-        ModuleDef def = new DefaultModuleDefImpl(PrivateConstructorModule.class, log, null);
+        Logger logger = mockLogger();
+        ModuleDef def = new DefaultModuleDefImpl(PrivateConstructorModule.class, logger, null);
 
         replay();
 
-        Module module = new ModuleImpl(registry, def, null, log);
+        Module module = new ModuleImpl(registry, def, null, logger);
 
         try
         {
@@ -161,12 +161,12 @@ public class ModuleImplTest extends IOCInternalTestCase
     public void too_many_public_constructors_on_module_builder_class()
     {
         InternalRegistry registry = mockInternalRegistry();
-        Log log = mockLog();
-        ModuleDef def = new DefaultModuleDefImpl(ExtraPublicConstructorsModule.class, log, null);
+        Logger logger = mockLogger();
+        ModuleDef def = new DefaultModuleDefImpl(ExtraPublicConstructorsModule.class, logger, null);
         ClassFactory factory = newMock(ClassFactory.class);
-        Module module = new ModuleImpl(registry, def, null, log);
+        Module module = new ModuleImpl(registry, def, null, logger);
 
-        log.warn(contains("contains more than one public constructor"));
+        logger.warn(contains("contains more than one public constructor"));
 
         train_expandSymbols(registry, "ClassFactory", "ClassFactory");
 

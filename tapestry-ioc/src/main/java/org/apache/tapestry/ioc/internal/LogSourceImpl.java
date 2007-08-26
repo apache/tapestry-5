@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,27 +14,25 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tapestry.ioc.LogSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Simple wrapper around {@link org.apache.commons.logging.LogFactory}. The concept here is that
- * Log implementations could be provided that promote warnings or errors upto thrown exceptions, for
- * people who like their IOC container extra finicky.
- * 
- * 
+ * Simple wrapper around SLF4J's LoggerFactory. The concept here is that Log implementations could
+ * be provided that promote warnings or errors upto thrown exceptions, for people who like their IOC
+ * container extra finicky. In addition, the extra layer makes things a lot easier to mock.
  */
 public class LogSourceImpl implements LogSource
 {
-    public Log getLog(Class clazz)
+    public Logger getLogger(Class clazz)
     {
-        return LogFactory.getLog(clazz);
+        return LoggerFactory.getLogger(clazz);
     }
 
-    public Log getLog(String name)
+    public Logger getLogger(String name)
     {
-        return LogFactory.getLog(name);
+        return LoggerFactory.getLogger(name);
     }
 
 }

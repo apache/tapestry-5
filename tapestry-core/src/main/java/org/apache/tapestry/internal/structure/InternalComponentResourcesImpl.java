@@ -19,7 +19,6 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseIns
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ComponentEventHandler;
@@ -38,6 +37,7 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ComponentMessagesSource;
+import org.slf4j.Logger;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
@@ -253,9 +253,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return getBinding(parameterName);
     }
 
-    public Log getLog()
+    public Logger getLogger()
     {
-        return _componentModel.getLog();
+        return _componentModel.getLogger();
     }
 
     public Component getMixinByClassName(String mixinClassName)

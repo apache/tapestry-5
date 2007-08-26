@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,36 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * 
- */
 package org.apache.tapestry.ioc.internal.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Orderable;
+import org.slf4j.Logger;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.util.Orderer} to establish backward dependencies for
- * {@link org.apache.tapestry.ioc.Orderable} objects.
+ * Used by {@link org.apache.tapestry.ioc.internal.util.Orderer} to establish backward dependencies
+ * for {@link org.apache.tapestry.ioc.Orderable} objects.
  * 
  * @param <T>
  */
 
 class DependencyNode<T>
 {
-    private final Log _log;
+    private final Logger _logger;
 
     private final Orderable<T> _orderable;
 
     private final List<DependencyNode<T>> _dependencies = newList();
 
-    DependencyNode(Log errorLog, Orderable<T> orderable)
+    DependencyNode(Logger logger, Orderable<T> orderable)
     {
-        _log = errorLog;
+        _logger = logger;
         _orderable = orderable;
     }
 
@@ -79,8 +76,7 @@ class DependencyNode<T>
     {
         if (node.isReachable(this))
         {
-            String message = UtilMessages.dependencyCycle(node, this);
-            _log.warn(message, null);
+            _logger.warn(UtilMessages.dependencyCycle(node, this));
             return;
         }
 
@@ -93,15 +89,13 @@ class DependencyNode<T>
 
     boolean isReachable(DependencyNode<T> node)
     {
-        if (this == node)
-            return true;
+        if (this == node) return true;
 
         // Quick fast pass for immediate dependencies
 
         for (DependencyNode<T> d : _dependencies)
         {
-            if (d == node)
-                return true;
+            if (d == node) return true;
         }
 
         // Slower second pass looks for
@@ -109,8 +103,7 @@ class DependencyNode<T>
 
         for (DependencyNode<T> d : _dependencies)
         {
-            if (d.isReachable(node))
-                return true;
+            if (d.isReachable(node)) return true;
         }
 
         return false;
@@ -130,8 +123,7 @@ class DependencyNode<T>
 
     private void fillOrder(List<Orderable<T>> list)
     {
-        if (list.contains(_orderable))
-            return;
+        if (list.contains(_orderable)) return;
 
         // Recusively add dependencies
 

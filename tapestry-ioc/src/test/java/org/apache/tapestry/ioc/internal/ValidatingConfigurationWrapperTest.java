@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
@@ -26,7 +26,7 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     public void valid_contribution()
     {
         ContributionDef def = mockContributionDef();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
         Runnable value = mockRunnable();
 
@@ -34,8 +34,8 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar", log, Runnable.class,
-                def, configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("foo.Bar", logger,
+                Runnable.class, def, configuration);
 
         wrapper.add(value);
 
@@ -46,17 +46,17 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void null_contribution()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
         ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeUnorderedNull"),
                 getClassFactory());
 
-        log.warn(IOCMessages.contributionWasNull("Bar", def));
+        logger.warn(IOCMessages.contributionWasNull("Bar", def));
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", log, Runnable.class, def,
-                configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
+                def, configuration);
 
         wrapper.add(null);
 
@@ -67,17 +67,18 @@ public class ValidatingConfigurationWrapperTest extends IOCInternalTestCase
     @Test
     public void wrong_type_of_contribution()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Configuration configuration = mockConfiguration();
         ContributionDef def = new ContributionDefImpl("Bar", findMethod("contributeUnorderedNull"),
                 getClassFactory());
 
-        log.warn(IOCMessages.contributionWrongValueType("Bar", def, String.class, Runnable.class));
+        logger.warn(IOCMessages
+                .contributionWrongValueType("Bar", def, String.class, Runnable.class));
 
         replay();
 
-        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", log, Runnable.class, def,
-                configuration);
+        Configuration wrapper = new ValidatingConfigurationWrapper("Bar", logger, Runnable.class,
+                def, configuration);
 
         wrapper.add("runnable");
 

@@ -17,9 +17,9 @@ package org.apache.tapestry.ioc.internal.util;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Orderable;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class OrdererTest extends IOCInternalTestCase
@@ -27,11 +27,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void no_dependencies()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY");
@@ -48,13 +48,13 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void missing_constraint_type()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(UtilMessages.constraintFormat("fred", "barney"));
+        logger.warn(UtilMessages.constraintFormat("fred", "barney"));
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY", "fred");
@@ -71,13 +71,13 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void unknown_constraint_type()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn(UtilMessages.constraintFormat("nearby:fred", "barney"));
+        logger.warn(UtilMessages.constraintFormat("nearby:fred", "barney"));
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY", "nearby:fred");
@@ -94,11 +94,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void nulls_not_included_in_result()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY");
@@ -117,11 +117,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void duplicate_id()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY");
@@ -129,7 +129,7 @@ public class OrdererTest extends IOCInternalTestCase
 
         verify();
 
-        log.warn(UtilMessages.duplicateOrderer("fred"), null);
+        logger.warn(UtilMessages.duplicateOrderer("fred"));
 
         replay();
 
@@ -151,11 +151,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void leader()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY", "before:*");
@@ -172,11 +172,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void trailer()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED");
         o.add("barney", "BARNEY", "after:*");
@@ -193,11 +193,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void prereqs()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED", "after:wilma");
         o.add("barney", "BARNEY", "after:fred,betty");
@@ -214,11 +214,11 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void pre_and_post_reqs()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED", "after:wilma");
         o.add("barney", "BARNEY", "after:fred,betty");
@@ -231,15 +231,15 @@ public class OrdererTest extends IOCInternalTestCase
 
         verify();
     }
-    
+
     @Test
     public void case_insensitivity()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED", "after:Wilma");
         o.add("barney", "BARNEY", "after:Fred,BETTY");
@@ -253,19 +253,18 @@ public class OrdererTest extends IOCInternalTestCase
         verify();
     }
 
-
     @Test
     public void dependency_cycle()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.warn("Unable to add 'barney' as a dependency of 'betty', as that forms a "
+        logger.warn("Unable to add 'barney' as a dependency of 'betty', as that forms a "
                 + "dependency cycle ('betty' depends on itself via 'barney'). "
-                + "The dependency has been ignored.", null);
+                + "The dependency has been ignored.");
 
         replay();
 
-        Orderer<String> o = new Orderer<String>(log);
+        Orderer<String> o = new Orderer<String>(logger);
 
         o.add("fred", "FRED", "after:wilma");
         o.add("barney", "BARNEY", "after:fred,betty");
@@ -296,25 +295,25 @@ public class OrdererTest extends IOCInternalTestCase
     @Test
     public void toString_DependencyNode()
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        DependencyNode<String> node1 = new DependencyNode<String>(log, new Orderable("node1",
+        DependencyNode<String> node1 = new DependencyNode<String>(logger, new Orderable("node1",
                 "NODE1"));
 
         assertEquals(node1.toString(), "[node1]");
 
-        DependencyNode<String> node2 = new DependencyNode<String>(log, new Orderable("node2",
+        DependencyNode<String> node2 = new DependencyNode<String>(logger, new Orderable("node2",
                 "NODE2"));
 
-        DependencyNode<String> node3 = new DependencyNode<String>(log, new Orderable("node3",
+        DependencyNode<String> node3 = new DependencyNode<String>(logger, new Orderable("node3",
                 "NODE3"));
 
-        DependencyNode<String> node4 = new DependencyNode<String>(log, new Orderable("node4",
+        DependencyNode<String> node4 = new DependencyNode<String>(logger, new Orderable("node4",
                 "NODE4"));
 
-        DependencyNode<String> node5 = new DependencyNode<String>(log, new Orderable("node5",
+        DependencyNode<String> node5 = new DependencyNode<String>(logger, new Orderable("node5",
                 "NODE5"));
 
         node2.addDependency(node1);

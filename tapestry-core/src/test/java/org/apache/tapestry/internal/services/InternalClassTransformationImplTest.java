@@ -32,7 +32,6 @@ import javassist.Loader;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.annotations.Meta;
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.annotations.Retain;
@@ -58,6 +57,7 @@ import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.MethodFilter;
 import org.apache.tapestry.services.MethodSignature;
+import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -121,11 +121,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void new_member_name() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         assertEquals(ct.newMemberName("fred"), "_$fred");
         assertEquals(ct.newMemberName("fred"), "_$fred_0");
@@ -150,11 +150,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void new_member_name_with_prefix() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         assertEquals(ct.newMemberName("prefix", "fred"), "_$prefix_fred");
         assertEquals(ct.newMemberName("prefix", "fred"), "_$prefix_fred_0");
@@ -169,22 +169,22 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private InternalClassTransformation createClassTransformation(Class targetClass, Log log)
+    private InternalClassTransformation createClassTransformation(Class targetClass, Logger logger)
             throws NotFoundException
     {
         CtClass ctClass = findCtClass(targetClass);
 
-        return new InternalClassTransformationImpl(ctClass, _contextClassLoader, log, null);
+        return new InternalClassTransformationImpl(ctClass, _contextClassLoader, logger, null);
     }
 
     @Test
     public void find_annotation_on_unknown_field() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         try
         {
@@ -204,11 +204,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_field_annotation() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         Retain retain = ct.getFieldAnnotation("_annotatedField", Retain.class);
 
@@ -220,11 +220,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void field_does_not_contain_requested_annotation() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         // Field with annotations, but not that annotation
         assertNull(ct.getFieldAnnotation("_annotatedField", Override.class));
@@ -238,11 +238,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_fields_with_annotation() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         List<String> fields = ct.findFieldsWithAnnotation(Retain.class);
 
@@ -255,11 +255,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_fields_of_type() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(FindFieldClass.class, log);
+        ClassTransformation ct = createClassTransformation(FindFieldClass.class, logger);
 
         checkFindFields(ct, "boolean", "_booleanValue");
         checkFindFields(ct, "int[]", "_intArrayValue");
@@ -272,11 +272,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void get_field_modifiers() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(CheckFieldType.class, log);
+        ClassTransformation ct = createClassTransformation(CheckFieldType.class, logger);
 
         assertEquals(ct.getFieldModifiers("_privateField"), Modifier.PRIVATE);
         assertEquals(ct.getFieldModifiers("_map"), Modifier.PRIVATE + Modifier.FINAL);
@@ -285,11 +285,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void get_field_exists() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(CheckFieldType.class, log);
+        ClassTransformation ct = createClassTransformation(CheckFieldType.class, logger);
 
         assertTrue(ct.isField("_privateField"));
         assertFalse(ct.isField("_doesNotExist"));
@@ -300,11 +300,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_fields_of_type_excludes_claimed_fields() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(FindFieldClass.class, log);
+        ClassTransformation ct = createClassTransformation(FindFieldClass.class, logger);
 
         ct.claimField("_booleanValue", this);
 
@@ -323,11 +323,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_fields_with_annotation_excludes_claimed_files() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         ct.claimField("_annotatedField", this);
 
@@ -341,11 +341,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void no_fields_contain_requested_annotation() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         List<String> fields = ct.findFieldsWithAnnotation(Documented.class);
 
@@ -357,11 +357,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void claim_fields() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ClaimedFields.class, log);
+        ClassTransformation ct = createClassTransformation(ClaimedFields.class, logger);
 
         List<String> unclaimed = ct.findUnclaimedFields();
 
@@ -391,11 +391,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void added_fields_are_not_listed_as_unclaimed_fields() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ClaimedFields.class, log);
+        ClassTransformation ct = createClassTransformation(ClaimedFields.class, logger);
 
         ct.addField(Modifier.PRIVATE, "int", "newField");
 
@@ -409,11 +409,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_class_annotations() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         Meta meta = ct.getAnnotation(Meta.class);
 
@@ -440,11 +440,13 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         // The Java runtime does honor @Inherited
         assertNotNull(ChildClassInheritsAnnotation.class.getAnnotation(InheritedAnnotation.class));
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ChildClassInheritsAnnotation.class, log);
+        ClassTransformation ct = createClassTransformation(
+                ChildClassInheritsAnnotation.class,
+                logger);
 
         InheritedAnnotation ia = ct.getAnnotation(InheritedAnnotation.class);
 
@@ -524,12 +526,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(TargetObject.class);
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
         // so we'll just check that.
@@ -556,12 +558,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(TargetObject.class);
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _loader, log, null);
+                _loader, logger, null);
 
         String parentFieldName = ct.addInjectedField(String.class, "_value", value);
 
@@ -579,7 +581,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass subclassCtClass = findCtClass(TargetObjectSubclass.class);
 
-        ct = new InternalClassTransformationImpl(subclassCtClass, ct, _loader, log, null);
+        ct = new InternalClassTransformationImpl(subclassCtClass, ct, _loader, logger, null);
 
         String subclassFieldName = ct.addInjectedField(String.class, "_childValue", value);
 
@@ -612,12 +614,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         CtClass ctClass = findCtClass(BasicComponent.class);
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(ctClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         _classPool.toClass(ctClass, _loader);
 
@@ -643,12 +645,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(TargetObject.class);
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         ct.addImplementedInterface(FooInterface.class);
         ct.addImplementedInterface(GetterMethodsInterface.class);
@@ -689,14 +691,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         InternalComponentResources resources = mockInternalComponentResources();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         ct.makeReadOnly("_value");
 
@@ -728,14 +730,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void removed_fields_should_not_show_up_as_unclaimed() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(RemoveFieldBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         ct.removeField("_barney");
 
@@ -749,14 +751,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         InternalComponentResources resources = mockInternalComponentResources();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         ct.extendConstructor("_value = \"from constructor\";");
 
@@ -778,14 +780,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         InternalComponentResources resources = mockInternalComponentResources();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         ct.injectField("_value", "Tapestry");
 
@@ -825,14 +827,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         InternalComponentResources resources = mockInternalComponentResources();
 
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         replaceAccessToField(ct, "foo");
         replaceAccessToField(ct, "bar");
@@ -911,11 +913,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_methods_with_annotation() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(AnnotatedPage.class, log);
+        ClassTransformation ct = createClassTransformation(AnnotatedPage.class, logger);
 
         List<MethodSignature> l = ct.findMethodsWithAnnotation(SetupRender.class);
 
@@ -939,11 +941,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_methods_using_filter() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        final ClassTransformation ct = createClassTransformation(AnnotatedPage.class, log);
+        final ClassTransformation ct = createClassTransformation(AnnotatedPage.class, logger);
 
         // Duplicates, somewhat less efficiently, the logic in find_methods_with_annotation().
 
@@ -977,11 +979,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void to_class_with_primitive_type() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(AnnotatedPage.class, log);
+        ClassTransformation ct = createClassTransformation(AnnotatedPage.class, logger);
 
         assertSame(ct.toClass("float"), Float.class);
 
@@ -991,11 +993,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void to_class_with_object_type() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(AnnotatedPage.class, log);
+        ClassTransformation ct = createClassTransformation(AnnotatedPage.class, logger);
 
         assertSame(ct.toClass("java.util.Map"), Map.class);
 
@@ -1005,16 +1007,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void non_private_fields_log_an_error() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
-        log.error(ServicesMessages.nonPrivateFields(VisibilityBean.class.getName(), Arrays.asList(
-                "_$myPackagePrivate",
-                "_$myProtected",
-                "_$myPublic")));
+        logger.error(ServicesMessages.nonPrivateFields(VisibilityBean.class.getName(), Arrays
+                .asList("_$myPackagePrivate", "_$myProtected", "_$myPublic")));
 
         replay();
 
-        InternalClassTransformation ct = createClassTransformation(VisibilityBean.class, log);
+        InternalClassTransformation ct = createClassTransformation(VisibilityBean.class, logger);
 
         List<String> names = ct.findFieldsWithAnnotation(Retain.class);
 
@@ -1039,11 +1039,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_annotation_in_method() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(EventHandlerTarget.class, log);
+        ClassTransformation ct = createClassTransformation(EventHandlerTarget.class, logger);
 
         OnEvent annotation = ct.getMethodAnnotation(new MethodSignature("handler"), OnEvent.class);
 
@@ -1058,11 +1058,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void find_annotation_in_unknown_method() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(ParentClass.class, log);
+        ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
         try
         {
@@ -1082,14 +1082,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void remove_field() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(FieldRemoval.class);
 
         InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass,
-                _contextClassLoader, log, null);
+                _contextClassLoader, logger, null);
 
         ct.removeField("_fieldToRemove");
 
@@ -1109,11 +1109,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     @Test
     public void get_method_identifier() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
 
         replay();
 
-        ClassTransformation ct = createClassTransformation(MethodIdentifier.class, log);
+        ClassTransformation ct = createClassTransformation(MethodIdentifier.class, logger);
 
         List<MethodSignature> sigs = ct.findMethodsWithAnnotation(OnEvent.class);
 

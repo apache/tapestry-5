@@ -16,11 +16,11 @@ package org.apache.tapestry.internal.structure;
 
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
+import org.slf4j.Logger;
 
 /**
  * Represents a unique page within the application. Pages are part of the <em>internal</em>
@@ -100,8 +100,11 @@ public interface Page
      */
     void addLifecycleListener(PageLifecycleListener listener);
 
-    /** Returns the log of the root component element. */
-    Log getLog();
+    /**
+     * Returns the logger of the root component element. Any logging about page construction or
+     * activity should be sent to this logger.
+     */
+    Logger getLogger();
 
     /**
      * Retrieves a component element by its nested id (a sequence of simple ids, separated by dots).

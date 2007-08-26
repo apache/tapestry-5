@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.IOCConstants;
@@ -57,6 +56,7 @@ import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
+import org.slf4j.Logger;
 
 public class RegistryImpl implements Registry, InternalRegistry
 {
@@ -132,9 +132,9 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         for (ModuleDef def : moduleDefs)
         {
-            Log log = _logSource.getLog(def.getLogName());
+            Logger logger = _logSource.getLogger(def.getLoggerName());
 
-            Module module = new ModuleImpl(this, def, classFactory, log);
+            Module module = new ModuleImpl(this, def, classFactory, logger);
 
             _modules.add(module);
 
@@ -156,15 +156,15 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, _classFactory);
 
-        Log log = logForBuiltinService(THREAD_CLEANUP_HUB_SERVICE_ID);
+        Logger logger = loggerForBuiltinService(THREAD_CLEANUP_HUB_SERVICE_ID);
 
-        _cleanupHub = new ThreadCleanupHubImpl(log);
+        _cleanupHub = new ThreadCleanupHubImpl(logger);
 
         addBuiltin(THREAD_CLEANUP_HUB_SERVICE_ID, ThreadCleanupHub.class, _cleanupHub);
 
-        log = logForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
+        logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
-        _registryShutdownHub = new RegistryShutdownHubImpl(log);
+        _registryShutdownHub = new RegistryShutdownHubImpl(logger);
 
         addBuiltin(
                 REGISTRY_SHUTDOWN_HUB_SERVICE_ID,
@@ -190,18 +190,18 @@ public class RegistryImpl implements Registry, InternalRegistry
         cleanupThread();
     }
 
-    public Log logForService(String serviceId)
+    public Logger getServiceLogger(String serviceId)
     {
         Module module = _serviceIdToModule.get(serviceId);
 
         assert module != null;
 
-        return _logSource.getLog(module.getLogName() + "." + serviceId);
+        return _logSource.getLogger(module.getLoggerName() + "." + serviceId);
     }
 
-    private Log logForBuiltinService(String serviceId)
+    private Logger loggerForBuiltinService(String serviceId)
     {
-        return _logSource.getLog(TapestryIOCModule.class + "." + serviceId);
+        return _logSource.getLogger(TapestryIOCModule.class + "." + serviceId);
     }
 
     private <T> void addBuiltin(String serviceId, Class<T> serviceInterface, T service)
@@ -294,9 +294,10 @@ public class RegistryImpl implements Registry, InternalRegistry
     {
         _lock.check();
 
-        Log log = null;
+        String serviceId = serviceDef.getServiceId();
+        Logger logger = getServiceLogger(serviceId);
 
-        final Orderer<T> orderer = new Orderer<T>(log);
+        final Orderer<T> orderer = new Orderer<T>(logger);
 
         OrderedConfiguration<T> configuration = new OrderedConfigurationToOrdererAdaptor<T>(orderer);
 
@@ -362,19 +363,19 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         if (contributions.isEmpty()) return;
 
-        Log log = logForService(serviceId);
+        Logger logger = getServiceLogger(serviceId);
 
-        boolean debug = log.isDebugEnabled();
+        boolean debug = logger.isDebugEnabled();
 
         ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory,
-                log);
+                logger);
 
         for (ContributionDef def : contributions)
         {
             MappedConfiguration<K, V> validating = new ValidatingMappedConfigurationWrapper<K, V>(
-                    serviceId, def, log, keyClass, valueType, keyToContribution, configuration);
+                    serviceId, def, logger, keyClass, valueType, keyToContribution, configuration);
 
-            if (debug) log.debug(IOCMessages.invokingMethod(def));
+            if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
             def.contribute(module, locator, validating);
         }
@@ -389,19 +390,19 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         if (contributions.isEmpty()) return;
 
-        Log log = logForService(serviceId);
+        Logger logger = getServiceLogger(serviceId);
 
-        boolean debug = log.isDebugEnabled();
+        boolean debug = logger.isDebugEnabled();
 
         ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory,
-                log);
+                logger);
 
         for (ContributionDef def : contributions)
         {
-            Configuration<T> validating = new ValidatingConfigurationWrapper<T>(serviceId, log,
+            Configuration<T> validating = new ValidatingConfigurationWrapper<T>(serviceId, logger,
                     valueType, def, configuration);
 
-            if (debug) log.debug(IOCMessages.invokingMethod(def));
+            if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
             def.contribute(module, locator, validating);
         }
@@ -415,18 +416,18 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         if (contributions.isEmpty()) return;
 
-        Log log = logForService(serviceId);
-        boolean debug = log.isDebugEnabled();
+        Logger logger = getServiceLogger(serviceId);
+        boolean debug = logger.isDebugEnabled();
 
         ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory,
-                log);
+                logger);
 
         for (ContributionDef def : contributions)
         {
             OrderedConfiguration<T> validating = new ValidatingOrderedConfigurationWrapper<T>(
-                    serviceId, def, log, valueType, configuration);
+                    serviceId, def, logger, valueType, configuration);
 
-            if (debug) log.debug(IOCMessages.invokingMethod(def));
+            if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
             def.contribute(module, locator, validating);
         }
@@ -504,9 +505,9 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         assert serviceDef != null;
 
-        Log log = logForService(serviceDef.getServiceId());
+        Logger logger = getServiceLogger(serviceDef.getServiceId());
 
-        Orderer<ServiceDecorator> orderer = new Orderer<ServiceDecorator>(log);
+        Orderer<ServiceDecorator> orderer = new Orderer<ServiceDecorator>(logger);
 
         for (Module module : _modules)
         {
@@ -515,7 +516,7 @@ public class RegistryImpl implements Registry, InternalRegistry
             if (decorators.isEmpty()) continue;
 
             ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
-                    _classFactory, log);
+                    _classFactory, logger);
 
             for (DecoratorDef dd : decorators)
             {

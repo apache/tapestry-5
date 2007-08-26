@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.internal.parser.AttributeToken;
 import org.apache.tapestry.internal.parser.BlockToken;
 import org.apache.tapestry.internal.parser.BodyToken;
@@ -48,6 +47,7 @@ import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.LocationImpl;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.slf4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.EntityResolver;
@@ -102,7 +102,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private boolean _ignoreEvents;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final Map<String, URL> _configuration;
 
@@ -114,9 +114,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             "\\$\\{\\s*(.*?)\\s*}",
             Pattern.MULTILINE);
 
-    public TemplateParserImpl(Log log, Map<String, URL> configuration)
+    public TemplateParserImpl(Logger logger, Map<String, URL> configuration)
     {
-        _log = log;
+        _logger = logger;
         _configuration = configuration;
 
         reset();
@@ -310,7 +310,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             // Limit to one logged error per infraction.
 
             if (!_insideBodyErrorLogged)
-                _log.error(ServicesMessages.contentInsideBodyNotAllowed(getCurrentLocation()));
+                _logger.error(ServicesMessages.contentInsideBodyNotAllowed(getCurrentLocation()));
 
             _insideBodyErrorLogged = true;
         }

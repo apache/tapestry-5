@@ -19,9 +19,9 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCase
@@ -32,7 +32,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void proper_key_and_value()
     {
         ContributionDef def = mockContributionDef();
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
 
@@ -44,7 +44,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, log, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate);
 
         wrapper.add(key, value);
 
@@ -58,7 +58,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     {
         ContributionDef def1 = newContributionDef("contributionPlaceholder1");
         ContributionDef def2 = newContributionDef("contributionPlaceholder2");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
 
         keyToContribution.put(Integer.class, def1);
@@ -68,12 +68,12 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         Class key = Integer.class;
         Runnable value = mockRunnable();
 
-        log.warn(IOCMessages.contributionDuplicateKey(SERVICE_ID, def2, def1));
+        logger.warn(IOCMessages.contributionDuplicateKey(SERVICE_ID, def2, def1));
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def2, log, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def2, logger, Class.class, Runnable.class, keyToContribution, delegate);
 
         wrapper.add(key, value);
 
@@ -86,17 +86,17 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void null_key()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
         Runnable value = mockRunnable();
 
-        log.warn(IOCMessages.contributionKeyWasNull(SERVICE_ID, def));
+        logger.warn(IOCMessages.contributionKeyWasNull(SERVICE_ID, def));
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, log, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate);
 
         wrapper.add(null, value);
 
@@ -108,17 +108,18 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void wrong_key_type()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Map<?, ContributionDef> keyToContribution = newMap();
         MappedConfiguration delegate = mockMappedConfiguration();
         Runnable value = mockRunnable();
 
-        log.warn(IOCMessages.contributionWrongKeyType(SERVICE_ID, def, String.class, Class.class));
+        logger.warn(IOCMessages
+                .contributionWrongKeyType(SERVICE_ID, def, String.class, Class.class));
 
         replay();
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
-                log, Class.class, Runnable.class, keyToContribution, delegate);
+                logger, Class.class, Runnable.class, keyToContribution, delegate);
 
         wrapper.add("java.util.List", value);
 
@@ -130,11 +131,11 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void wrong_value_type()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Map<?, ContributionDef> keyToContribution = newMap();
         MappedConfiguration delegate = mockMappedConfiguration();
 
-        log.warn(IOCMessages.contributionWrongValueType(
+        logger.warn(IOCMessages.contributionWrongValueType(
                 SERVICE_ID,
                 def,
                 String.class,
@@ -143,7 +144,7 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
-                log, Class.class, Runnable.class, keyToContribution, delegate);
+                logger, Class.class, Runnable.class, keyToContribution, delegate);
 
         wrapper.add(List.class, "do something");
 
@@ -154,16 +155,16 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
     public void null_value()
     {
         ContributionDef def = newContributionDef("contributionPlaceholder1");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         Map<Class, ContributionDef> keyToContribution = newMap();
         MappedConfiguration<Class, Runnable> delegate = mockMappedConfiguration();
 
-        log.warn(IOCMessages.contributionWasNull(SERVICE_ID, def));
+        logger.warn(IOCMessages.contributionWasNull(SERVICE_ID, def));
 
         replay();
 
         MappedConfiguration<Class, Runnable> wrapper = new ValidatingMappedConfigurationWrapper<Class, Runnable>(
-                SERVICE_ID, def, log, Class.class, Runnable.class, keyToContribution, delegate);
+                SERVICE_ID, def, logger, Class.class, Runnable.class, keyToContribution, delegate);
 
         wrapper.add(Integer.class, null);
 

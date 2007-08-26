@@ -21,7 +21,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
@@ -46,6 +45,7 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.slf4j.Logger;
 
 /** Add factory and trainer methods for the public interfaces of Tapestry IOC. */
 public class IOCTestCase extends TestBase
@@ -122,9 +122,9 @@ public class IOCTestCase extends TestBase
         return newMock(Location.class);
     }
 
-    protected final Log mockLog()
+    protected final Logger mockLogger()
     {
-        return newMock(Log.class);
+        return newMock(Logger.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -279,9 +279,9 @@ public class IOCTestCase extends TestBase
         expect(threadLocale.getLocale()).andReturn(locale);
     }
 
-    protected final void train_getLog(LogSource source, String serviceId, Log log)
+    protected final void train_getLogger(LogSource source, String serviceId, Logger logger)
     {
-        expect(source.getLog(serviceId)).andReturn(log).atLeastOnce();
+        expect(source.getLogger(serviceId)).andReturn(logger).atLeastOnce();
     }
 
     protected final void train_getMessageFormatter(Messages messages, String key,
@@ -329,13 +329,13 @@ public class IOCTestCase extends TestBase
         expect(resources.getServiceInterface()).andReturn(serviceInterface).atLeastOnce();
     }
 
-    protected final void train_getServiceLog(ServiceResources resources, Log log)
+    protected final void train_getLogger(ServiceResources resources, Logger log)
     {
-        expect(resources.getServiceLog()).andReturn(log).atLeastOnce();
+        expect(resources.getLogger()).andReturn(log).atLeastOnce();
 
     }
 
-    protected final void train_isDebugEnabled(Log log, boolean debugEnabled)
+    protected final void train_isDebugEnabled(Logger log, boolean debugEnabled)
     {
         expect(log.isDebugEnabled()).andReturn(debugEnabled);
     }

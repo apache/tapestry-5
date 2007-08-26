@@ -32,7 +32,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.MappedConfiguration;
@@ -50,6 +49,7 @@ import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
 /**
  * Starting from the Class for a module builder, identifies all the services (service builder
@@ -69,7 +69,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     private final Class _builderClass;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final ClassFactory _classFactory;
 
@@ -93,21 +93,21 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     /**
      * @param builderClass
      *            the class that is responsible for building services, etc.
-     * @param log
+     * @param logger
      * @param classFactory
      *            TODO
      */
-    public DefaultModuleDefImpl(Class builderClass, Log log, ClassFactory classFactory)
+    public DefaultModuleDefImpl(Class builderClass, Logger logger, ClassFactory classFactory)
     {
         _builderClass = builderClass;
-        _log = log;
+        _logger = logger;
         _classFactory = classFactory;
 
         grind();
         bind();
     }
 
-    /** Identified the module builder class and a list of service ids within the module. */
+    /** Identifies the module builder class and a list of service ids within the module. */
     @Override
     public String toString()
     {
@@ -183,7 +183,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         Class returnType = method.getReturnType();
         if (!returnType.equals(void.class))
-            _log.warn(IOCMessages.contributionWrongReturnType(method));
+            _logger.warn(IOCMessages.contributionWrongReturnType(method));
 
         ConfigurationType type = null;
 
@@ -196,7 +196,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             {
                 if (type != null)
                 {
-                    _log.warn(IOCMessages.tooManyContributionParameters(method));
+                    _logger.warn(IOCMessages.tooManyContributionParameters(method));
                     return;
                 }
 
@@ -206,7 +206,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         if (type == null)
         {
-            _log.warn(IOCMessages.noContributionParameter(method));
+            _logger.warn(IOCMessages.noContributionParameter(method));
             return;
         }
 
@@ -227,13 +227,13 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         if (returnType.isPrimitive() || returnType.isArray())
         {
-            _log.warn(decoratorMethodWrongReturnType(method), null);
+            _logger.warn(decoratorMethodWrongReturnType(method));
             return;
         }
 
         if (!methodContainsObjectParameter(method))
         {
-            _log.warn(IOCMessages.decoratorMethodNeedsDelegateParameter(method), null);
+            _logger.warn(IOCMessages.decoratorMethodNeedsDelegateParameter(method));
             return;
         }
 
@@ -292,7 +292,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         if (returnType.isPrimitive() || returnType.isArray())
         {
-            _log.warn(buildMethodWrongReturnType(method), null);
+            _logger.warn(buildMethodWrongReturnType(method));
             return;
         }
 
@@ -326,7 +326,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         if (existing != null)
         {
-            _log.warn(buildMethodConflict(serviceDef.toString(), existing.toString()), null);
+            _logger.warn(buildMethodConflict(serviceDef.toString(), existing.toString()));
             return;
         }
 
@@ -350,7 +350,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         return _contributionDefs;
     }
 
-    public String getLogName()
+    public String getLoggerName()
     {
         return _builderClass.getName();
     }
@@ -367,7 +367,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
             if (!Modifier.isStatic(bindMethod.getModifiers()))
             {
-                _log.error(IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(
+                _logger.error(IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(
                         bindMethod,
                         _classFactory)));
 

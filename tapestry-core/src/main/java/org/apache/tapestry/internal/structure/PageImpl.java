@@ -20,7 +20,6 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.services.LinkFactory;
@@ -29,6 +28,7 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.services.PersistentFieldBundle;
 import org.apache.tapestry.services.PersistentFieldManager;
+import org.slf4j.Logger;
 
 public class PageImpl implements Page
 {
@@ -123,7 +123,7 @@ public class PageImpl implements Page
             }
             catch (RuntimeException ex)
             {
-                getLog().error(StructureMessages.detachFailure(listener, ex), ex);
+                getLogger().error(StructureMessages.detachFailure(listener, ex), ex);
                 result = true;
             }
         }
@@ -147,9 +147,9 @@ public class PageImpl implements Page
             listener.containingPageDidAttach();
     }
 
-    public Log getLog()
+    public Logger getLogger()
     {
-        return _rootElement.getLog();
+        return _rootElement.getLogger();
     }
 
     public Link createActionLink(ComponentPageElement element, String action, boolean forForm,

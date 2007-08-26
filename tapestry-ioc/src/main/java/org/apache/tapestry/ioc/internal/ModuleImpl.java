@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
@@ -48,6 +47,7 @@ import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
+import org.slf4j.Logger;
 
 public class ModuleImpl implements Module
 {
@@ -57,7 +57,7 @@ public class ModuleImpl implements Module
 
     private final ClassFactory _classFactory;
 
-    private final Log _log;
+    private final Logger _logger;
 
     // Guarded by MUTEX
     private Object _moduleBuilder;
@@ -75,12 +75,12 @@ public class ModuleImpl implements Module
     private boolean _insideConstructor;
 
     public ModuleImpl(InternalRegistry registry, ModuleDef moduleDef, ClassFactory classFactory,
-            Log log)
+            Logger logger)
     {
         _registry = registry;
         _moduleDef = moduleDef;
         _classFactory = classFactory;
-        _log = log;
+        _logger = logger;
     }
 
     /** Keyed on fully qualified service id; values are instantiated services (proxies). */
@@ -208,14 +208,14 @@ public class ModuleImpl implements Module
     {
         String serviceId = def.getServiceId();
 
-        Log log = _registry.logForService(serviceId);
+        Logger logger = _registry.getServiceLogger(serviceId);
 
-        if (log.isDebugEnabled()) log.debug(IOCMessages.creatingService(serviceId));
+        if (logger.isDebugEnabled()) logger.debug(IOCMessages.creatingService(serviceId));
 
         try
         {
             ServiceBuilderResources resources = new ServiceResourcesImpl(_registry, this, def,
-                    _classFactory, log);
+                    _classFactory, logger);
 
             // Build up a stack of operations that will be needed to realize the service
             // (by the proxy, at a later date).
@@ -240,7 +240,7 @@ public class ModuleImpl implements Module
 
             // Add a wrapper that checks for recursion.
 
-            creator = new RecursiveServiceCreationCheckWrapper(def, creator, log);
+            creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
 
             JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(creator, serviceId);
 
@@ -300,7 +300,7 @@ public class ModuleImpl implements Module
 
             Arrays.sort(constructors, comparator);
 
-            _log.warn(IOCMessages.tooManyPublicConstructors(builderClass, constructors[0]));
+            _logger.warn(IOCMessages.tooManyPublicConstructors(builderClass, constructors[0]));
         }
 
         Constructor constructor = constructors[0];
@@ -313,7 +313,7 @@ public class ModuleImpl implements Module
         ObjectLocator locator = new ObjectLocatorImpl(_registry, this);
         Map<Class, Object> parameterDefaults = newMap();
 
-        parameterDefaults.put(Log.class, _log);
+        parameterDefaults.put(Logger.class, _logger);
         parameterDefaults.put(ObjectLocator.class, locator);
 
         Throwable fail = null;
@@ -415,9 +415,9 @@ public class ModuleImpl implements Module
         return _moduleDef.getServiceDef(serviceId);
     }
 
-    public String getLogName()
+    public String getLoggerName()
     {
-        return _moduleDef.getLogName();
+        return _moduleDef.getLoggerName();
     }
 
 }

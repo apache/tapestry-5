@@ -17,11 +17,9 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 
 /**
- * Service interface for the tapestry.RequestHandler pipeline service.
+ * Service interface for the RequestHandler pipeline service.
  * 
  * @see RequestFilter
- * @see TapestryModule#buildRequestHandler(org.apache.commons.logging.Log, java.util.List,
- *      Dispatcher)
  */
 
 public interface RequestHandler

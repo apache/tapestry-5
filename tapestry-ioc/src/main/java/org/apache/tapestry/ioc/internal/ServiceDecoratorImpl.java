@@ -20,12 +20,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ModuleBuilderSource;
 import org.apache.tapestry.ioc.ServiceDecorator;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
 /**
  * A wrapper around a decorator method.
@@ -38,7 +38,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
     private final Map<Class, Object> _parameterDefaults = newMap();
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final ServiceResources _resources;
 
@@ -56,12 +56,12 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         _moduleBuilderSource = moduleBuilderSource;
         _resources = resources;
         _serviceInterface = resources.getServiceInterface();
-        _log = resources.getServiceLog();
+        _logger = resources.getLogger();
         _classFactory = classFactory;
 
         _parameterDefaults.put(String.class, _serviceId);
         _parameterDefaults.put(ServiceResources.class, resources);
-        _parameterDefaults.put(Log.class, _log);
+        _parameterDefaults.put(Logger.class, _logger);
         _parameterDefaults.put(Class.class, _serviceInterface);
 
     }
@@ -78,7 +78,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         Map<Class, Object> parameterDefaults = newMap(_parameterDefaults);
         parameterDefaults.put(Object.class, delegate);
 
-        if (_log.isDebugEnabled()) _log.debug(IOCMessages.invokingMethod(methodId()));
+        if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.invokingMethod(methodId()));
 
         Object result = null;
         Throwable failure = null;
@@ -113,11 +113,11 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
         if (result != null && !_serviceInterface.isInstance(result))
         {
-            _log.warn(IOCMessages.decoratorReturnedWrongType(
+            _logger.warn(IOCMessages.decoratorReturnedWrongType(
                     _decoratorMethod,
                     _serviceId,
                     result,
-                    _serviceInterface), null);
+                    _serviceInterface));
 
             // Change the result to null so that we won't use the interceptor,
             // and so that ClassCastExceptions don't occur later down the pipeline.

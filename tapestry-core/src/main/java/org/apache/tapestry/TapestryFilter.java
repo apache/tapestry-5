@@ -28,8 +28,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
 import org.apache.tapestry.internal.ServletContextSymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.ioc.Registry;
@@ -37,6 +36,8 @@ import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.HttpServletRequestHandler;
 import org.apache.tapestry.services.ServletApplicationInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The TapestryFilter is responsible for intercepting all requests into the web application. It
@@ -45,7 +46,7 @@ import org.apache.tapestry.services.ServletApplicationInitializer;
  */
 public class TapestryFilter implements Filter
 {
-    private final Log _log = LogFactory.getLog(TapestryFilter.class);
+    private final Logger _logger = LoggerFactory.getLogger(TapestryFilter.class);
 
     private FilterConfig _config;
 
@@ -95,7 +96,7 @@ public class TapestryFilter implements Filter
 
         long toFinish = System.currentTimeMillis();
 
-        _log.info(format("Startup time: %,d ms to build IoC Registry, %,d ms overall.", toRegistry
+        _logger.info(format("Startup time: %,d ms to build IoC Registry, %,d ms overall.", toRegistry
                 - start, toFinish - start));
     }
 

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.tapestry.ioc.LogSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 public class LogSourceImplTest extends IOCInternalTestCase
@@ -26,9 +26,9 @@ public class LogSourceImplTest extends IOCInternalTestCase
     {
         Class clazz = getClass();
 
-        Log expected = LogFactory.getLog(clazz);
+        Logger expected = LoggerFactory.getLogger(clazz);
         LogSource logSource = new LogSourceImpl();
-        Log actual = logSource.getLog(clazz);
+        Logger actual = logSource.getLogger(clazz);
 
         assertSame(actual, expected);
     }
@@ -38,9 +38,9 @@ public class LogSourceImplTest extends IOCInternalTestCase
     {
         String name = "foo.Bar";
 
-        Log expected = LogFactory.getLog(name);
+        Logger expected = LoggerFactory.getLogger(name);
         LogSource logSource = new LogSourceImpl();
-        Log actual = logSource.getLog(name);
+        Logger actual = logSource.getLogger(name);
 
         assertSame(actual, expected);
 

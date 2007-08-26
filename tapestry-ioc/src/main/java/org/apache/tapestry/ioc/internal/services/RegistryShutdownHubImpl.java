@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,22 +18,22 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadS
 
 import java.util.List;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import org.slf4j.Logger;
 
 public class RegistryShutdownHubImpl implements RegistryShutdownHub
 {
     private final OneShotLock _lock = new OneShotLock();
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final List<RegistryShutdownListener> _listeners = newThreadSafeList();
 
-    public RegistryShutdownHubImpl(Log log)
+    public RegistryShutdownHubImpl(Logger logger)
     {
-        _log = log;
+        _logger = logger;
     }
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)
@@ -62,7 +62,7 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
             }
             catch (Exception ex)
             {
-                _log.error(ServiceMessages.shutdownListenerError(l, ex), ex);
+                _logger.error(ServiceMessages.shutdownListenerError(l, ex), ex);
             }
         }
 

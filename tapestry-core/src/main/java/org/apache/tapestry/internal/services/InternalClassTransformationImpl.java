@@ -43,7 +43,6 @@ import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.util.MultiKey;
@@ -56,6 +55,7 @@ import org.apache.tapestry.services.FieldFilter;
 import org.apache.tapestry.services.MethodFilter;
 import org.apache.tapestry.services.MethodSignature;
 import org.apache.tapestry.services.TransformUtils;
+import org.slf4j.Logger;
 
 /**
  * Implementation of the {@link org.apache.tapestry.internal.services.InternalClassTransformation}
@@ -67,7 +67,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final CtClass _ctClass;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final InternalClassTransformation _parentTransformation;
 
@@ -126,7 +126,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * This is a constructor for the root class, the class that directly contains the ComponentClass
      * annotation.
      */
-    public InternalClassTransformationImpl(CtClass ctClass, ClassLoader loader, Log log,
+    public InternalClassTransformationImpl(CtClass ctClass, ClassLoader loader, Logger logger,
             ComponentModel componentModel)
     {
         _ctClass = ctClass;
@@ -137,7 +137,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         _idAllocator = new IdAllocator();
 
-        _log = log;
+        _logger = logger;
 
         preloadMemberNames();
 
@@ -158,13 +158,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     public InternalClassTransformationImpl(CtClass ctClass,
-            InternalClassTransformation parentTransformation, ClassLoader loader, Log log,
+            InternalClassTransformation parentTransformation, ClassLoader loader, Logger logger,
             ComponentModel componentModel)
     {
         _ctClass = ctClass;
         _classPool = _ctClass.getClassPool();
         _loader = loader;
-        _log = log;
+        _logger = logger;
         _parentTransformation = parentTransformation;
         _componentModel = componentModel;
 
@@ -259,7 +259,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             Collections.sort(names);
 
-            _log.error(ServicesMessages.nonPrivateFields(getClassName(), names));
+            _logger.error(ServicesMessages.nonPrivateFields(getClassName(), names));
         }
     }
 
@@ -1476,9 +1476,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return _ctClass.getName();
     }
 
-    public Log getLog()
+    public Logger getLogger()
     {
-        return _log;
+        return _logger;
     }
 
     public void extendConstructor(String statement)

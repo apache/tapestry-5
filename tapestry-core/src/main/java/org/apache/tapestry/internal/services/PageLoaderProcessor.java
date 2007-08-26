@@ -23,7 +23,6 @@ import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
@@ -56,6 +55,7 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.PersistentFieldManager;
+import org.slf4j.Logger;
 
 /**
  * Contains all the work-state related to the {@link PageLoaderImpl}.
@@ -436,7 +436,7 @@ class PageLoaderProcessor
 
         // Pre-allocate ids to avoid later name collisions.
 
-        Log log = _loadingComponentModel.getLog();
+        Logger logger = _loadingComponentModel.getLogger();
 
         // Don't have a case-insensitive Set, so we'll make due with a Map
         Map<String, Boolean> embeddedIds = newCaseInsensitiveMap();
@@ -453,7 +453,7 @@ class PageLoaderProcessor
         }
 
         if (!embeddedIds.isEmpty())
-            log.error(ServicesMessages.embeddedComponentsNotInTemplate(
+            logger.error(ServicesMessages.embeddedComponentsNotInTemplate(
                     embeddedIds.keySet(),
                     componentClassName));
 
@@ -602,7 +602,7 @@ class PageLoaderProcessor
 
             if (isNonBlank(modelType) && embeddedType != null)
             {
-                Log log = _loadingComponentModel.getLog();
+                Logger log = _loadingComponentModel.getLogger();
                 log.error(ServicesMessages.compTypeConflict(embeddedId, embeddedType, modelType));
             }
 

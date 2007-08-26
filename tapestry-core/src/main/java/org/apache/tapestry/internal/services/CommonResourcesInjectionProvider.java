@@ -19,12 +19,12 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
+import org.slf4j.Logger;
 
 /**
  * Allows for a number of anonymous injections based on the type of field that is to be injected.
@@ -37,7 +37,7 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
     {
         add(Messages.class, "getMessages");
         add(Locale.class, "getLocale");
-        add(Log.class, "getLog");
+        add(Logger.class, "getLogger");
         add(String.class, "getCompleteId");
     }
 

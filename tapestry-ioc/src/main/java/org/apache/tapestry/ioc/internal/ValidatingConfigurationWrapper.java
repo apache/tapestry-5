@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.def.ContributionDef;
+import org.slf4j.Logger;
 
 /**
  * Performs some validation before delegating to another Configuration.
@@ -27,7 +27,7 @@ public class ValidatingConfigurationWrapper<T> implements Configuration<T>
 
     private final ContributionDef _contributionDef;
 
-    private final Log _log;
+    private final Logger _logger;
 
     private final Configuration<T> _delegate;
 
@@ -35,11 +35,11 @@ public class ValidatingConfigurationWrapper<T> implements Configuration<T>
 
     // Need a strategy for determing the right order for this mass of parameters!
 
-    public ValidatingConfigurationWrapper(String serviceId, Log log, Class expectedType,
+    public ValidatingConfigurationWrapper(String serviceId, Logger logger, Class expectedType,
             ContributionDef contributionDef, Configuration<T> delegate)
     {
         _serviceId = serviceId;
-        _log = log;
+        _logger = logger;
         _expectedType = expectedType;
         _contributionDef = contributionDef;
         _delegate = delegate;
@@ -49,7 +49,7 @@ public class ValidatingConfigurationWrapper<T> implements Configuration<T>
     {
         if (object == null)
         {
-            _log.warn(IOCMessages.contributionWasNull(_serviceId, _contributionDef));
+            _logger.warn(IOCMessages.contributionWasNull(_serviceId, _contributionDef));
             return;
         }
 
@@ -57,8 +57,11 @@ public class ValidatingConfigurationWrapper<T> implements Configuration<T>
 
         if (!_expectedType.isInstance(object))
         {
-            _log.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, object
-                    .getClass(), _expectedType));
+            _logger.warn(IOCMessages.contributionWrongValueType(
+                    _serviceId,
+                    _contributionDef,
+                    object.getClass(),
+                    _expectedType));
             return;
         }
 

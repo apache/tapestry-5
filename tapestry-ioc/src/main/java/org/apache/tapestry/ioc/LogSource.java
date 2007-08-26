@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,19 +14,17 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.commons.logging.Log;
+import org.slf4j.Logger;
 
 /**
- * A wrapper around commons-logging's LogFactory that exists to allow particular projects to "hook"
- * the creation of Log instances.
- * 
- * 
+ * A wrapper around SLF4J's LoggerFactory that exists to allow particular projects to "hook" the
+ * creation of Loggeer instances.
  */
 public interface LogSource
 {
     /** Creates or retrieves a log based on Class. This is rarely used in Tapestry IOC. */
-    Log getLog(Class clazz);
+    Logger getLogger(Class clazz);
 
     /** Creates or retrieves a log based on name. Typically, the name will be a service id. */
-    Log getLog(String name);
+    Logger getLogger(String name);
 }

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
 public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCase
@@ -27,7 +27,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
     @Test
     public void ensure_only_called_once() throws Exception
     {
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ObjectCreatorSource source = mockObjectCreatorSource();
         ObjectCreator delegate = mockObjectCreator();
         Object service = new Object();
@@ -40,7 +40,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
 
         replay();
 
-        ObjectCreator wrapper = new RecursiveServiceCreationCheckWrapper(def, delegate, log);
+        ObjectCreator wrapper = new RecursiveServiceCreationCheckWrapper(def, delegate, logger);
 
         assertSame(wrapper.createObject(), service);
 
@@ -65,7 +65,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
     public void reporting_of_construction_failure() throws Exception
     {
         RuntimeException failure = new RuntimeException("Just cranky.");
-        Log log = mockLog();
+        Logger logger = mockLogger();
         ObjectCreatorSource source = mockObjectCreatorSource();
         ObjectCreator delegate = mockObjectCreator();
         Object service = new Object();
@@ -74,11 +74,11 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
 
         expect(delegate.createObject()).andThrow(failure);
 
-        log.error("Construction of service Bar failed: Just cranky.", failure);
+        logger.error("Construction of service Bar failed: Just cranky.", failure);
 
         replay();
 
-        ObjectCreator wrapper = new RecursiveServiceCreationCheckWrapper(def, delegate, log);
+        ObjectCreator wrapper = new RecursiveServiceCreationCheckWrapper(def, delegate, logger);
 
         try
         {
