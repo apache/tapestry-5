@@ -61,6 +61,7 @@
             <item name="Object Providers" href="provider.html"/>
             <item name="Ordering" href="order.html"/>
             <item name="Logging" href="logging.html"/>
+            <item name="Startup" href="startup.html"/>
         </menu>
         
         <menu name="Service Builders">

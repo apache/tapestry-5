@@ -41,7 +41,8 @@ public interface Registry extends ObjectLocator
     void shutdown();
 
     /**
-     * Invoked to eagerly load services marked with the {@link EagerLoad} annotation.
+     * Invoked to eagerly load services marked with the {@link EagerLoad} annotation, and to execute
+     * all contributions to the Startup service.
      */
-    void eagerLoadServices();
+    void performRegistryStartup();
 }

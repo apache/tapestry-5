@@ -62,7 +62,7 @@ Action Requests
   
   You may also return an instance of a page, rather than the name or class of a page.
   
-  A page may be injected via the {{{../apidocs/org/apache/tapestry/annotations/InjectPage.html}InjectPage}} annotation.  
+  A page may be injected via the {{{../../apidocs/org/apache/tapestry/annotations/InjectPage.html}InjectPage}} annotation.  
   
   Often, you will configure the page in some way before returning the page (examples below).
   
@@ -71,15 +71,15 @@ Action Requests
 * Link response
 
   An event handler method may return a 
-  {{{../apidocs/org/apache/tapestry/Link.html}Link}} instance directly.  The Link is converted into a URL and a client redirect to that URL is sent to the client.
+  {{{../../apidocs/org/apache/tapestry/Link.html}Link}} instance directly.  The Link is converted into a URL and a client redirect to that URL is sent to the client.
   
-  The {{{../apidocs/org/apache/tapestry/ComponentResources.html}ComponentResources}} object that is injected into your pages (and components) has methods
+  The {{{../../apidocs/org/apache/tapestry/ComponentResources.html}ComponentResources}} object that is injected into your pages (and components) has methods
   for creating action and page links (they are actually defined in
-  {{{../apidocs/org/apache/tapestry/ComponentResourcesCommon.html}ComponentResourcesCommon}}).
+  {{{../../apidocs/org/apache/tapestry/ComponentResourcesCommon.html}ComponentResourcesCommon}}).
   
 * Stream response
 
-  An event handler can also return a {{{../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}} object, which encapsulates a stream to
+  An event handler can also return a {{{../../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}} object, which encapsulates a stream to
   be sent directly to the client browser.  This is useful for compnents that want to, say, generate an image or PDF and provide it to the client.
   
 * Object response

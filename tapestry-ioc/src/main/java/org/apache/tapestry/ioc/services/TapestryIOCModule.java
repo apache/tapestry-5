@@ -44,6 +44,7 @@ import org.apache.tapestry.ioc.internal.services.PerThreadServiceLifecycle;
 import org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl;
 import org.apache.tapestry.ioc.internal.services.PropertyAccessImpl;
 import org.apache.tapestry.ioc.internal.services.PropertyShadowBuilderImpl;
+import org.apache.tapestry.ioc.internal.services.RegistryStartup;
 import org.apache.tapestry.ioc.internal.services.StrategyBuilderImpl;
 import org.apache.tapestry.ioc.internal.services.SymbolObjectProvider;
 import org.apache.tapestry.ioc.internal.services.SymbolSourceImpl;
@@ -73,6 +74,7 @@ public final class TapestryIOCModule
         binder.bind(SymbolSource.class, SymbolSourceImpl.class);
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults");
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults");
+        binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
     }
 
     /**

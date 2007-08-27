@@ -73,28 +73,6 @@
   <reporting>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <!--
-                    <tags>
-                        <tag>
-                            <name>todo</name>
-                            <!- - Should be a combinaition of the letters Xaoptcmf - ->
-                            <placement>a</placement>
-                            <head>To do something:</head>
-                        </tag>
-                    </tags> -->
-          <linksource>true</linksource>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
-            <link>http://tapestry.apache.org/tapestry5/tapestry-ioc/apidocs/</link>
-          </links>
-          <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
         <version>${cobertura-plugin-version}</version>

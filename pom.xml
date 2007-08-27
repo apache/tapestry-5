@@ -242,6 +242,32 @@
           </reportSet>
         </reportSets>
       </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <!-- Had a classloader problem with version 2.0.3 -->
+        <!--        <version>2.0</version> -->
+        <configuration>
+          <!--
+            <tags>
+            <tag>
+            <name>todo</name>
+            <!- - Should be a combinaison of the letters Xaoptcmf - ->
+            <placement>a</placement>
+            <head>To do something:</head>
+            </tag>
+            </tags> -->
+          <linksource>true</linksource>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
+            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+          </links>
+          <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
+          <aggregate>true</aggregate>
+        </configuration>
+      </plugin>
     </plugins>
   </reporting>
   <repositories>

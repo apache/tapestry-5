@@ -86,7 +86,7 @@ public class TapestryFilter implements Filter
 
         ai.initializeApplication(filterConfig.getServletContext());
 
-        _registry.eagerLoadServices();
+        _registry.performRegistryStartup();
 
         _handler = _registry.getService(
                 "HttpServletRequestHandler",

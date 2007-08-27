@@ -328,7 +328,7 @@ public class IntegrationTest extends IOCInternalTestCase
                 EagerLoadModule._eagerLoadDidHappen,
                 "EagerLoadModule is not in correct initial state.");
 
-        r.eagerLoadServices();
+        r.performRegistryStartup();
 
         assertTrue(EagerLoadModule._eagerLoadDidHappen);
     }
@@ -360,11 +360,11 @@ public class IntegrationTest extends IOCInternalTestCase
     {
         Registry r = buildRegistry(ExceptionInConstructorModule.class);
 
-        Runnable runnable = r.getService(Runnable.class);
+        Pingable pingable = r.getService(Pingable.class);
 
         try
         {
-            runnable.run();
+            pingable.ping();
             unreachable();
         }
         catch (RuntimeException ex)
@@ -373,7 +373,7 @@ public class IntegrationTest extends IOCInternalTestCase
                     ex,
                     "Error invoking constructor",
                     "ExceptionInConstructorServiceImpl() (at ExceptionInConstructorServiceImpl.java",
-                    "for service 'Runnable'",
+                    "for service 'Pingable'",
                     "Yes, we have no tomatoes.");
         }
     }
@@ -428,13 +428,13 @@ public class IntegrationTest extends IOCInternalTestCase
 
         // We can get the proxy.
 
-        Runnable runnable = r.getService(Runnable.class);
+        Pingable pingable = r.getService(Pingable.class);
 
         try
         {
             // But it fails at realization
 
-            runnable.run();
+            pingable.ping();
 
             unreachable();
         }
@@ -442,7 +442,7 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(
                     ex,
-                    "Class org.apache.tapestry.ioc.UnbuildableRunnable does not contain a public constructor needed to autobuild.");
+                    "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
 
             // Like to check that the message includes the source location
 
@@ -458,7 +458,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
         try
         {
-            r.autobuild(UnbuildableRunnable.class);
+            r.autobuild(UnbuildablePingable.class);
 
             unreachable();
         }
@@ -466,7 +466,7 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(
                     ex,
-                    "Class org.apache.tapestry.ioc.UnbuildableRunnable does not contain a public constructor needed to autobuild.");
+                    "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
         }
     }
 
@@ -536,14 +536,14 @@ public class IntegrationTest extends IOCInternalTestCase
 
         try
         {
-            r.getService(Runnable.class);
+            r.getService(Pingable.class);
             unreachable();
         }
         catch (RuntimeException ex)
         {
             assertEquals(
                     ex.getMessage(),
-                    "Service interface java.lang.Runnable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
+                    "Service interface org.apache.tapestry.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
         }
     }
 

@@ -17,11 +17,11 @@ Form Input and Validation
 Form component
 
   The core of Tapestry's form support is the
-  {{{../apidocs/org/apache/tapestry/corelib/components/Form.html}Form}} component.  The Form component encloses (wraps around) all the
+  {{{../../apidocs/org/apache/tapestry/corelib/components/Form.html}Form}} component.  The Form component encloses (wraps around) all the
   other <field components>  such as
-  {{{../apidocs/org/apache/tapestry/corelib/components/TextField.html}TextField}},
-  {{{../apidocs/org/apache/tapestry/corelib/components/TextArea.html}TextArea}},
-  {{{../apidocs/org/apache/tapestry/corelib/components/Checkbox.html}Checkbox}}, etc.
+  {{{../../apidocs/org/apache/tapestry/corelib/components/TextField.html}TextField}},
+  {{{../../apidocs/org/apache/tapestry/corelib/components/TextArea.html}TextArea}},
+  {{{../../apidocs/org/apache/tapestry/corelib/components/Checkbox.html}Checkbox}}, etc.
   
   The Form component generates a number of {{{event.html}component events}} that
   you may provide event handler methods for.
@@ -55,7 +55,7 @@ Form component
 Tracking Validation Errors
 
   Associated with the Form is an
-  {{{../apidocs/org/apache/tapestry/ValidationTracker.html}ValidationTracker}}
+  {{{../../apidocs/org/apache/tapestry/ValidationTracker.html}ValidationTracker}}
   that tracks all the provided user input and validation errors for every field in the
   form.  The tracker can be provided to the Form via the Form's tracker parameter,
   but this is rarely necessary.
@@ -65,7 +65,7 @@ Tracking Validation Errors
   
   In your own logic, it is possible to record your own errors.  Form includes
   two different versions of method <<<recordError()>>>, one of which specifies a 
-  {{{../apidocs/org/apache/tapestry/Field.html}Field}} (an interface implemented by
+  {{{../../apidocs/org/apache/tapestry/Field.html}Field}} (an interface implemented by
   all form element components), and one of which is for "global" errors, unassociated
   with any particular field.
   
@@ -133,7 +133,7 @@ public class Login
 	Because of the the fact that a form submission is <two> requests (the submission itself, then a re-render of the page),
 	it is necessary to make the value stored in the _userName field persist between the two requests. This would be necessary
 	for the _password field as well, except that the 
-	{{{../apidocs/org/apache/tapestry/corelib/components/PasswordField.html}PasswordField}} component never renders a value.
+	{{{../../apidocs/org/apache/tapestry/corelib/components/PasswordField.html}PasswordField}} component never renders a value.
 	
 	Note that the onSuccess() method is not public; event handler methods can have any visibility, even private.  Package private
 	(that is, no modifier) is the typical use, as it allows the component to be tested, from a test case class in the same package.
@@ -178,11 +178,11 @@ Configuring Fields and Labels
   responsibility, not yours).
   
   The 
-  {{{../apidocs/org/apache/tapestry/corelib/components/Errors.html}Errors}} component must be placed inside a Form, it outputs
+  {{{../../apidocs/org/apache/tapestry/corelib/components/Errors.html}Errors}} component must be placed inside a Form, it outputs
   all of the errors for all the fields within the Form as a single list. It uses some simple styling to make the result more presentable.
   
   Each field component, such as the TextField, is paired with a
-  {{{../apidocs/org/apache/tapestry/corelib/components/Label.html}Label}} component.  The Label will render out
+  {{{../../apidocs/org/apache/tapestry/corelib/components/Label.html}Label}} component.  The Label will render out
   a \<label\> element connected to the field. This is very important for useability, especially for users with
   visual disabilities. It also means you can click on the label text to move the cursor to the corresponding field.
   

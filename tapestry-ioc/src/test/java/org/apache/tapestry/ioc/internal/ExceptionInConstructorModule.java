@@ -14,12 +14,13 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.Pingable;
 import org.apache.tapestry.ioc.ServiceBinder;
 
 public class ExceptionInConstructorModule
 {
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(Runnable.class, ExceptionInConstructorServiceImpl.class);
+        binder.bind(Pingable.class, ExceptionInConstructorServiceImpl.class);
     }
 }

@@ -12,14 +12,14 @@ Assets
   
   Tapestry will also make files stored <on the classpath>, with your Java class files, visible to the web browser.
   
-  Assets are exposed to your code as instances of the {{{../apidocs/org/apache/tapestry/Asset.html}Asset}} interface.
+  Assets are exposed to your code as instances of the {{{../../apidocs/org/apache/tapestry/Asset.html}Asset}} interface.
   
 Injecting Assets
 
   Components learn about assets via injection.  The 
   {{{inject.html}Inject}} annotation allows Assets to be injected into components as read-only properties.  The path to
   the resource is specified using the
-  {{{../apidocs/org/apache/tapestry/annotations/Path.html}Path}} annotation.
+  {{{../../apidocs/org/apache/tapestry/annotations/Path.html}Path}} annotation.
   
 +----+
   @Inject
@@ -74,7 +74,7 @@ New Asset Domains
 
   If you wish to create new domains for assets, for example to allow assets to be stored on the file system or in a database,
   you may define a new
-  {{{../apidocs/org/apache/tapestry/services/AssetFactory.html}AssetFactory}}
+  {{{../../apidocs/org/apache/tapestry/services/AssetFactory.html}AssetFactory}}
   and contribute it to the tapestry.AssetSource service configuration.  
   
 Simplified Paths

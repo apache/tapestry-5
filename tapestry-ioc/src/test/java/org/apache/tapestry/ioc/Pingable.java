@@ -12,20 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc.internal;
+package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.Pingable;
-
-public class ExceptionInConstructorServiceImpl implements Pingable
+/** Interface used as a stand-in for testing for more complicated services. */
+public interface Pingable
 {
-
-    public ExceptionInConstructorServiceImpl()
-    {
-        throw new RuntimeException("Yes, we have no tomatoes.");
-    }
-
-    public void ping()
-    {
-    }
-
+    void ping();
 }

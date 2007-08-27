@@ -68,9 +68,9 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return _registry.autobuild(clazz);
     }
 
-    public final void eagerLoadServices()
+    public final void performRegistryStartup()
     {
-        _registry.eagerLoadServices();
+        _registry.performRegistryStartup();
     }
 
     @BeforeSuite
@@ -80,7 +80,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
 
         _registry = builder.build();
 
-        _registry.eagerLoadServices();
+        _registry.performRegistryStartup();
 
         _classFactory = _registry.getService(ClassFactory.class);
     }
