@@ -21,8 +21,8 @@ public class ServiceBuilderAutobuilderModule
         return resources.autobuild(StringHolderImpl.class);
     }
 
-    public Runnable buildRunnable(ServiceResources resources)
+    public Pingable buildPingable(ServiceResources resources)
     {
-        return resources.autobuild(UnbuildableRunnable.class);
+        return resources.autobuild(UnbuildablePingable.class);
     }
 }

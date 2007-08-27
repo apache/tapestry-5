@@ -10,7 +10,7 @@ Unit testing pages or components
 * Setting up a driving environment
 
   In order to unit test a page, you'll need to create an instance of 
-  {{{../apidocs/org/apache/tapestry/test/pagelevel/PageTester.html}PageTester}}.
+  {{{../../apidocs/org/apache/tapestry/test/pagelevel/PageTester.html}PageTester}}.
   It acts as both the browser and the servlet container so that you can
   use it to drive your page. As it is not a real servlet container, you need 
   to tell it the same information as you would in web.xml:
@@ -42,7 +42,7 @@ public class MyTest extends Assert
 
   To test if a page renders properly (optionally with context), you can tell
   the PageTester to render it and then assert against the 
-   {{{../apidocs/org/apache/tapestry/dom/Document.html}DOM Document}} returned.
+   {{{../../apidocs/org/apache/tapestry/dom/Document.html}DOM Document}} returned.
   
   Here is an example. Let's assuming the page being tested is named "MyPage"
   and it should return a page containing an HTML element whose id is "id1" 
@@ -129,7 +129,7 @@ public class MyTest extends Assert
 +---+
 
   To submit a form by clicking a submit button, call the
-  {{{../apidocs/org/apache/tapestry/test/pagelevel/PageTester.html#clickSubmit(org.apache.tapestry.dom.Element, java.util.Map)}clickSubmit()}} 
+  {{{../../apidocs/org/apache/tapestry/test/pagelevel/PageTester.html#clickSubmit(org.apache.tapestry.dom.Element, java.util.Map)}clickSubmit()}} 
   method instead.
 
 * Unit testing a component

@@ -47,7 +47,7 @@ public class HelloWorld
 +----+  
   
   This component's only job is to write out a fixed message. The
-  {{{../apidocs/org/apache/tapestry/annotations/BeginRender.html}BeginRender}} annotation is
+  {{{../../apidocs/org/apache/tapestry/annotations/BeginRender.html}BeginRender}} annotation is
   a type of <{{{rendering.html}component lifecycle annotation}}>, a method annotation that instructs
   Tapestry when and under what circumstances to invoke methods of your class.
  
@@ -150,7 +150,7 @@ Transient Instance Variables
   
   If you have a variable that can keep its value between requests and you would like
   to defeat that reset logic, then you should attach a
-  {{{../apidocs/org/apache/tapestry/annotations/Retain.html}Retain}} annotation to the field.  You should take
+  {{{../../apidocs/org/apache/tapestry/annotations/Retain.html}Retain}} annotation to the field.  You should take
   care that no client-specific data is stored into such a field, since on a later request
   the same page <instance> may be used for a different user. Likewise, on a later request for the <same> user,
   a <different> page instance may be used.
@@ -186,7 +186,7 @@ Persistent Fields
   
   You can define the type of component inside template, or you can create an instance variable for the component
   and use the
-  {{{../apidocs/org/apache/tapestry/annotations/Component.html}Component}} annotation to define the component type
+  {{{../../apidocs/org/apache/tapestry/annotations/Component.html}Component}} annotation to define the component type
   and parameters. 
   
   Example:

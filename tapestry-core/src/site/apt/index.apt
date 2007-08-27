@@ -59,7 +59,7 @@ New And Of Note
     methods return true (or void) to progress down the default path, and return false to either skip stages or return to earlier 
     stages. This may break some existing code.
   
-  * Component event handlers may now return a {{{apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}
+  * Component event handlers may now return a {{{../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}
     to directly send a stream to the client web browser (this is intended for components that need to render
     images, PDF, or other non-page oriented content).
   

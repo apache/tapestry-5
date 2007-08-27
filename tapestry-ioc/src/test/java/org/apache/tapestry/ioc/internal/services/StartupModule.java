@@ -12,19 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.ioc;
+package org.apache.tapestry.ioc.internal.services;
 
-/**
- * Used to test failure to autobuild a service because of a lack of a public constructor.
- */
-public class UnbuildableRunnable implements Runnable
+import org.apache.tapestry.ioc.OrderedConfiguration;
+
+public class StartupModule
 {
-    private UnbuildableRunnable()
-    {
-    }
+    public static boolean _startupInvoked;
 
-    public void run()
+    public static void contributeRegistryStartup(OrderedConfiguration<Runnable> configuration)
     {
-    }
+        Runnable r = new Runnable()
+        {
+            public void run()
+            {
+                _startupInvoked = true;
+            }
+        };
 
+        configuration.add("Contribution", r);
+    }
 }

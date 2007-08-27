@@ -16,12 +16,12 @@ package org.apache.tapestry.ioc;
 
 public class DuplicateServiceTypeModule
 {
-    public Runnable buildFred()
+    public Pingable buildFred()
     {
         return null;
     }
 
-    public Runnable buildBarney()
+    public Pingable buildBarney()
     {
         return null;
     }

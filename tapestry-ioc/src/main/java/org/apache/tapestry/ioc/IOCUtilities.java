@@ -47,7 +47,7 @@ public final class IOCUtilities
 
         Registry registry = builder.build();
 
-        registry.eagerLoadServices();
+        registry.performRegistryStartup();
 
         return registry;
     }

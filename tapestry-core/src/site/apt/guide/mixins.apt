@@ -44,13 +44,13 @@ Instance Mixins
   in the {{{templates.html}component template}} with the mixins attribute of the
   \<comp\> element.  This is a comma-separated list of mixin names.
   
-  Alternately, when the {{{../apidocs/org/apache/tapestry/annotations/Component.html}Component annotation}}
+  Alternately, when the {{{../../apidocs/org/apache/tapestry/annotations/Component.html}Component annotation}}
   is used to define the component type, you may specify the mixins in two ways:
   
-  * The {{{../apidocs/org/apache/tapestry/annotations/Mixins.html}Mixins annotation}} allows a list
+  * The {{{../../apidocs/org/apache/tapestry/annotations/Mixins.html}Mixins annotation}} allows a list
     of mixin names to be specified.
     
-  * The {{{../apidocs/org/apache/tapestry/annotations/MixinClasses.html}MixinClasses annotation}}
+  * The {{{../../apidocs/org/apache/tapestry/annotations/MixinClasses.html}MixinClasses annotation}}
     allows a set of mixin class to be specified directly.
     
   []
@@ -74,7 +74,7 @@ Instance Mixins
 Implementation Mixins
 
   Implementation mixins, mixins which apply to all isntances of a component, are added using the
-  {{{../apidocs/org/apache/tapestry/annotations/Mixin.html}Mixin annotation}}. This annotation
+  {{{../../apidocs/org/apache/tapestry/annotations/Mixin.html}Mixin annotation}}. This annotation
   defines a field that will containg the mixin instance.
   
 +---+
@@ -131,6 +131,6 @@ Render Phase Ordering
   is reversed.
   
   Exception: Mixins whose class is annotated with
-  {{{../apidocs/org/apache/tapestry/annotations/MixinAfter.html}MixinAfter}} are ordered
+  {{{../../apidocs/org/apache/tapestry/annotations/MixinAfter.html}MixinAfter}} are ordered
   <after> the component, not before.  
   

@@ -180,12 +180,14 @@ public class RegistryImpl implements Registry, InternalRegistry
      * RegistryImpl constructor. Moving eager loading of services out to its own method should
      * ensure thread safety.
      */
-    public void eagerLoadServices()
+    public void performRegistryStartup()
     {
         _eagerLoadLock.lock();
 
         for (Module m : _modules)
             m.eagerLoadServices();
+
+        getService("RegistryStartup", Runnable.class).run();
 
         cleanupThread();
     }

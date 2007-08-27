@@ -131,13 +131,13 @@ public class Count
   often contain ... more components! That means that many different components will
   be in different phases of their own state machine.
     
-* {{{../apidocs/org/apache/tapestry/annotations/SetupRender.html}SetupRender}}
+* {{{../../apidocs/org/apache/tapestry/annotations/SetupRender.html}SetupRender}}
 
   This is where you can perform any one-time per-render setup for your component.
   This is a good place to read component parameters and use them to set temporary instance
   variables.
   
-* {{{../apidocs/org/apache/tapestry/annotations/BeginRender.html}BeginRender}}
+* {{{../../apidocs/org/apache/tapestry/annotations/BeginRender.html}BeginRender}}
 
   For components that render a tag, the start tag is should be rendered here (the close tag
   should be rendered inside the AfterRender phase). The component
@@ -157,13 +157,13 @@ public class Count
   this phase, but the template (if present) or body (if no template is present, but
   the component has a body) will be rendered.
   
-* {{{../apidocs/org/apache/tapestry/annotations/BeforeRenderTemplate.html}BeforeRenderTemplate}}
+* {{{../../apidocs/org/apache/tapestry/annotations/BeforeRenderTemplate.html}BeforeRenderTemplate}}
 
   This phase exists to allow a component to decorate
   its template (creating markup around the template generated markup), or to allow a component
   to skip its template.
   
-* {{{../apidocs/org/apache/tapestry/annotations/BeforeRenderBody.html}BeforeRenderBody}}
+* {{{../../apidocs/org/apache/tapestry/annotations/BeforeRenderBody.html}BeforeRenderBody}}
 
   Phase associated with a component's body (the portion of its container's template that
   the component occupies).  The BeforeRenderBody phase allows the component the ability
@@ -174,12 +174,12 @@ public class Count
   is reached, or automatically if the component has no template (but the component does
   have a body).
 
-* {{{../apidocs/org/apache/tapestry/annotations/AfterRenderBody.html}AfterRenderBody}}
+* {{{../../apidocs/org/apache/tapestry/annotations/AfterRenderBody.html}AfterRenderBody}}
 
   Phase that is executed after the body is rendered; this only occurs for components with a 
   body.
   
-* {{{../apidocs/org/apache/tapestry/annotations/AfterRender.html}AfterRender}}
+* {{{../../apidocs/org/apache/tapestry/annotations/AfterRender.html}AfterRender}}
   
   This phase complements BeginRender, and is often used to render the close tag
   that matches the start tag rendered in the BeginRender phase.  In any case, the
@@ -189,7 +189,7 @@ public class Count
   If no methods are annotated with AfterRender, then no special output occurs, and the
   CleanupRender phase is triggered.
    
-* {{{../apidocs/org/apache/tapestry/annotations/CleanupRender.html}CleanupRender}}
+* {{{../../apidocs/org/apache/tapestry/annotations/CleanupRender.html}CleanupRender}}
   
   The counterpart to SetupRender, this allows final cleanups to occur.
   
@@ -292,7 +292,7 @@ Method Conflicts and Ordering
   The order in which the mixins execute is not defined at this time.
   
   Exception: Mixins whose class is annotated with
-  {{{../apidocs/org/apache/tapestry/annotations/MixinAfter.html}MixinAfter}} are ordered
+  {{{../../apidocs/org/apache/tapestry/annotations/MixinAfter.html}MixinAfter}} are ordered
   <after> the component, not before.
   
 * Parents before Child

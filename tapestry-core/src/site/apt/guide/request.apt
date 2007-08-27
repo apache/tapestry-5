@@ -19,27 +19,27 @@ Tapestry Filter
   functions.
   
   When it receives a request, the TapestryFilter obtains the
-  {{{../apidocs/org/apache/tapestry/services/HttpServletRequestHandler.html}HttpServletRequestHandler}} 
+  {{{../../apidocs/org/apache/tapestry/services/HttpServletRequestHandler.html}HttpServletRequestHandler}} 
   service, and invokes its service() method. 
     
 HttpServletRequestHandler Pipeline
 
   This pipeline performs initial processing of the request. It can be extended
   by contributing a
-  {{{../apidocs/org/apache/tapestry/services/HttpServletRequestFilter.html}HttpServletRequestFilter}} into
+  {{{../../apidocs/org/apache/tapestry/services/HttpServletRequestFilter.html}HttpServletRequestFilter}} into
   the HttpServletRequestHandler service's configuration.'
   
   Tapestry does not contribute any filters into this pipeline of its own
   
   The terminator for the pipeline does two things:
   
-  * It stores the request and response into the {{{../apidocs/org/apache/tapestry/services/RequestGlobals.html}RequestGlobals}}
+  * It stores the request and response into the {{{../../apidocs/org/apache/tapestry/services/RequestGlobals.html}RequestGlobals}}
     service. This is a threaded service that stores per-thread/per-request information.
     
   * It wraps the request and response as a
-    {{{../apidocs/org/apache/tapestry/services/Request.html}Request}} and
-    {{{../apidocs/org/apache/tapestry/services/Response.html}Response}}, and passes them into the
-    {{{../apidocs/org/apache/tapestry/services/RequestHandler.html}RequestHandler}} pipeline.
+    {{{../../apidocs/org/apache/tapestry/services/Request.html}Request}} and
+    {{{../../apidocs/org/apache/tapestry/services/Response.html}Response}}, and passes them into the
+    {{{../../apidocs/org/apache/tapestry/services/RequestHandler.html}RequestHandler}} pipeline.
  
   []
      
@@ -60,15 +60,15 @@ RequestHandler Pipeline
      the request, so that the servlet container can handle the reuest normally.
    
    * ErrorFilter catches uncaught exceptions from the lower levels of Tapestry and presents the exception report page.
-     This involves the {{{../apidocs/org/apache/tapestry/services/RequestExceptionHandler.html}alias:RequestExceptionHandler}} service,
+     This involves the {{{../../apidocs/org/apache/tapestry/services/RequestExceptionHandler.html}alias:RequestExceptionHandler}} service,
      which is responsible for initializing and rendering the
-     {{{../apidocs/org/apache/tapestry/corelib/pages/ExceptionReport.html}core/ExceptionReport}} page. 
+     {{{../../apidocs/org/apache/tapestry/corelib/pages/ExceptionReport.html}core/ExceptionReport}} page. 
     
     
    []
       
    The terminator for this pipeline stores the Request and the Response into RequestGlobals, then requests that the
-   {{{../apidocs/org/apache/tapestry/services/Dispatcher.html}MasterDispatcher}} service figure out how to
+   {{{../../apidocs/org/apache/tapestry/services/Dispatcher.html}MasterDispatcher}} service figure out how to
    handle the request (if it is, indeed, a Tapestry request).
    
 Master Dispatcher Service
