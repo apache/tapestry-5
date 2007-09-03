@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.corelib.components;
 
+import java.util.List;
+
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
@@ -51,8 +53,7 @@ public class Errors
         // TODO: Would be nice if there was a Location to report ... can we add a Location property
         // to ComponentResources?
 
-        if (_tracker == null)
-            throw new RuntimeException(ComponentMessages.encloseErrorsInForm());
+        if (_tracker == null) throw new RuntimeException(ComponentMessages.encloseErrorsInForm());
 
         String cssClass = _tracker.getHasErrors() ? _class : _class + " t-invisible";
 
@@ -63,16 +64,25 @@ public class Errors
         writer.write(_banner);
         writer.end();
 
-        writer.element("ul");
+        List<String> errors = _tracker.getErrors();
 
-        for (String message : _tracker.getErrors())
+        if (!errors.isEmpty())
         {
-            writer.element("li");
-            writer.write(message);
-            writer.end();
+            // Only write out the <UL> if it will contain <LI> elements. An empty <UL> is not
+            // valid XHTML.
+
+            writer.element("ul");
+
+            for (String message : errors)
+            {
+                writer.element("li");
+                writer.write(message);
+                writer.end();
+            }
+
+            writer.end(); // ul
         }
 
-        writer.end(); // ul
         writer.end(); // div
 
     }

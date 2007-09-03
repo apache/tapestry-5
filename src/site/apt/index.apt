@@ -145,10 +145,10 @@ About Snapshots and Releases
   for 5.0.3-SNAPSHOT.  Maven keys off the -SNAPSHOT suffix and handles the dependency specially. It knows that snapshot releases can change frequently,
   so it will keep checking (at least once a day, maybe more often) to see if there's an updated version of the snapshot.
   
-  Snapshots don't go in the central Maven repository (that's reserved for full releases). Instead, they  go into the Apache snapshots repository
-  at {{{http://people.apache.org/repo/m2-snapshot-repository/}http://people.apache.org/repo/m2-snapshot-repository/}}.
+  Snapshots don't go in the central Maven repository (that's reserved for full releases). Instead, they  go into the Tapestry snapshots repository
+  at {{{http://people.apache.org/~hlship/tapestry-snapshot-repository}http://people.apache.org/~hlship/tapestry-snapshot-repository}}.
   
-  To access this repository, you may add <<<-DremoteRepositories=http://people.apache.org/repo/m2-snapshot-repository/>>> to the command line when
+  To access this repository, you may add <<<-DremoteRepositories=http://people.apache.org/~hlship/tapestry-snapshot-repository>>> to the command line when
   running Maven.
   
   Your best bet is to use the {{{quickstart/}quickstart Maven archetype}} to create your initial Tapestry project; it generates a full project
@@ -199,11 +199,11 @@ Principle 1 -- Static Structure, Dynamic Behavior
   
 Public vs. Internal
 
-  An issue plaguing previous versions of Tapestry 4 was the lack of a clear deliniator
+  An issue plaguing previous versions of Tapestry 4 (and earlier) was the lack of a clear delineator
   between private, internal APIs and public, external APIs.  The fact that your code would extend
   from base objects but that many of the methods on those base objects were "off limits"
   further confused the issue. This has been identified as a key factor in the
-  "steep learning curve of Tapestry" myth.
+  "steep learning curve of Tapestry" meme.
   
   With the clean slate of Tapestry 5, we are being much more ruthless about internal vs. external.
   
