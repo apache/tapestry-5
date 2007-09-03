@@ -12,6 +12,10 @@
     <version>5.0.6-SNAPSHOT</version>
   </parent>
   <name>Tapestry Inversion of Control Container</name>
+  <description>
+    A code-centric, high-performance, simple Inversion of Control
+    container.
+  </description>
   <inceptionYear>2006</inceptionYear>
 
   <dependencies>
@@ -20,13 +24,13 @@
       <artifactId>javassist</artifactId>
     </dependency>
 
-    
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <version>1.4.3</version>
     </dependency>
-    
+
     <!-- 0.00001% of applications will need to override this dependency to not use Log4J. -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -40,13 +44,13 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
       <version>1.2.14</version>
     </dependency>
-    
+
 
     <!-- Override parent pom: needed at compile time. -->
     <dependency>
@@ -59,7 +63,7 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <!-- Looks like if you override scope, you have to provide version (and classifier) as well.
-                Or perhaps this has something to do with classifier. -->
+        Or perhaps this has something to do with classifier. -->
       <version>5.1</version>
       <classifier>jdk15</classifier>
       <scope>provided</scope>
@@ -80,7 +84,7 @@
         <artifactId>maven-assembly-plugin</artifactId>
       </plugin>
       <!-- This gets the plugin to clean up the cobertura.ser file left
-                in the root directory. -->
+        in the root directory. -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>
@@ -98,6 +102,18 @@
   </build>
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>dependencies</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>

@@ -5,7 +5,10 @@
   <groupId>org.apache.tapestry</groupId>
   <artifactId>tapestry-hibernate</artifactId>
   <name>Tapestry/Hibernate Integration Library</name>
-  <description>Provides support for simple CRUD applications built ontop of Tapestry and Hibernate</description>
+  <description>
+    Provides support for simple CRUD applications built on top of
+    Tapestry and Hibernate
+  </description>
   <packaging>jar</packaging>
   <parent>
     <groupId>org.apache.tapestry</groupId>
@@ -47,10 +50,10 @@
     <!-- Provided -->
 
     <!-- The Hibernate dependencies are provided; which gives the final application
-         the ability to choose the appropriate version.  Further, in many cases
-         (such as JBoss deployment), they are, in fact, provided by the
-         container.  For a Tomcat deployment, you're more likely to include
-         the hibernate JARs and dependencies inside the WAR. -->
+      the ability to choose the appropriate version.  Further, in many cases
+      (such as JBoss deployment), they are, in fact, provided by the
+      container.  For a Tomcat deployment, you're more likely to include
+      the hibernate JARs and dependencies inside the WAR. -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
@@ -63,7 +66,7 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <dependency>
       <groupId>geronimo-spec</groupId>
       <artifactId>geronimo-spec-jta</artifactId>
@@ -72,7 +75,7 @@
     </dependency>
 
     <!-- The annotations should be compatible with the 3.2.2.ga release of the
-         core package. -->
+      core package. -->
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
@@ -125,7 +128,9 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Tapestry-Module-Classes>org.apache.tapestry.hibernate.HibernateModule</Tapestry-Module-Classes>
+              <Tapestry-Module-Classes>
+                org.apache.tapestry.hibernate.HibernateModule
+              </Tapestry-Module-Classes>
             </manifestEntries>
           </archive>
         </configuration>
@@ -145,15 +150,27 @@
         <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>dependencies</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
 
       <!--      <plugin>
         <groupId>org.apache.tapestry</groupId>
         <artifactId>tapestry-component-report</artifactId>
         <version>5.0.2</version>
         <configuration>
-          <rootPackage>org.apache.tapestry.corelib</rootPackage>
+        <rootPackage>org.apache.tapestry.corelib</rootPackage>
         </configuration>
-      </plugin>-->
+        </plugin>-->
     </plugins>
   </reporting>
 </project>
