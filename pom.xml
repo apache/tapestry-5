@@ -235,6 +235,32 @@
         </plugins>
       </build>
     </profile>
+    <!--  Only enable Javadoc as part of the output site when the release profile is active. -->
+    <profile>
+      <id>release</id>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <configuration>
+              <linksource>true</linksource>
+              <links>
+                <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+                <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
+                <link>
+                  http://jakarta.apache.org/commons/logging/apidocs/
+                </link>
+              </links>
+              <stylesheetfile>
+                ${basedir}/src/site/resources/css/jdstyle.css
+              </stylesheetfile>
+              <aggregate>true</aggregate>
+            </configuration>
+          </plugin>
+        </plugins>
+      </reporting>
+    </profile>
   </profiles>
   <reporting>
     <plugins>
@@ -254,22 +280,6 @@
           </reportSet>
         </reportSets>
       </plugin>
-
-      <!--       
-        <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-        <linksource>true</linksource>
-        <links>
-        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-        <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
-        <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
-        </links>
-        <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
-        <aggregate>true</aggregate>
-        </configuration>
-        </plugin> -->
     </plugins>
   </reporting>
   <repositories>

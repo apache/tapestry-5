@@ -295,7 +295,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(PropertyConduit.class);
     }
 
-    protected final PropertyModel mockPropertyEditModel()
+    protected final PropertyModel mockPropertyModel()
     {
         return newMock(PropertyModel.class);
     }

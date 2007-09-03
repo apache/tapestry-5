@@ -58,6 +58,7 @@ import org.apache.tapestry.services.TranslatorDefaultSource;
  * 
  * @see BeanModel
  * @see BeanModelSource
+ * @see PropertyEditor
  */
 @SupportsInformalParameters
 public class BeanEditForm implements ClientElement, FormValidationControl
@@ -67,7 +68,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String _submitLabel;
 
     /**
-     * The object to be editted by the BeanEditor. This will be read when the component renders and
+     * The object to be edited by the BeanEditor. This will be read when the component renders and
      * updated when the form for the component is submitted. Typically, the container will listen
      * for a "prepare" event, in order to ensure that a non-null value is ready to be read or
      * updated.
@@ -76,7 +77,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private Object _object;
 
     /** If true, the default, then the embedded Form component will use client-side validation. */
-    @Parameter("true")
+    @SuppressWarnings("unused")
+    @Parameter
     private boolean _clientValidation;
 
     @Inject
@@ -85,23 +87,11 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Inject
     private BeanModelSource _modelSource;
 
-    @Inject
-    private TranslatorDefaultSource _translatorDefaultSource;
-
-    @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
-
-    @Component(parameters = "clientValidation=clientValidation")
+    @Component(parameters = "clientValidation=inherit:clientValidation")
     private Form _form;
 
-    @Inject
-    private Messages _messages;
-
-    @Inject
-    private Locale _locale;
-
     /**
-     * The model that identifies the parameters to be editted, their order, and every other aspect.
+     * The model that identifies the parameters to be edited, their order, and every other aspect.
      * If not specified, a default bean model will be created from the type of the object bound to
      * the object parameter.
      */
@@ -112,20 +102,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
     private String _propertyName;
 
-    private PropertyModel _propertyEditModel;
-
-    private Block _blockForProperty;
-
-    @Inject
-    private Environment _environment;
-
-    @Inject
-    private BeanBlockSource _beanBlockSource;
-
     @Inject
     private ComponentDefaultProvider _defaultProvider;
-
-    private boolean _mustPopBeanEditContext;
 
     /**
      * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
@@ -149,88 +127,10 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     {
         _propertyName = propertyName;
 
-        _propertyEditModel = _model.get(propertyName);
-
-        _blockForProperty = null;
-
-        Block override = _resources.getBlockParameter(_propertyEditModel.getId());
-
-        if (override != null)
-        {
-            _blockForProperty = override;
-            return;
-        }
-
-        String dataType = _propertyEditModel.getDataType();
-
-        try
-        {
-            _blockForProperty = _beanBlockSource.getEditBlock(dataType);
-        }
-        catch (RuntimeException ex)
-        {
-            String message = _messages.format("block-error", _propertyName, dataType, _object, ex);
-
-            throw new TapestryException(message, _resources.getLocation(), ex);
-        }
     }
 
     boolean onPrepareFromForm()
     {
-        PropertyEditContext context = new PropertyEditContext()
-        {
-            public Messages getContainerMessages()
-            {
-                return _resources.getContainerMessages();
-            }
-
-            public String getLabel()
-            {
-                return _propertyEditModel.getLabel();
-            }
-
-            public String getPropertyId()
-            {
-                return _propertyEditModel.getId();
-            }
-
-            public Class getPropertyType()
-            {
-                return _propertyEditModel.getPropertyType();
-            }
-
-            public Object getPropertyValue()
-            {
-                return _propertyEditModel.getConduit().get(getObject());
-            }
-
-            public Translator getTranslator()
-            {
-                return _translatorDefaultSource.find(_propertyEditModel.getPropertyType());
-            }
-
-            public FieldValidator getValidator(Field field)
-            {
-                return _fieldValidatorDefaultSource.createDefaultValidator(
-                        field,
-                        _propertyName,
-                        _resources.getContainerMessages(),
-                        _locale,
-                        _propertyEditModel.getPropertyType(),
-                        _propertyEditModel.getConduit());
-            }
-
-            public void setPropertyValue(Object value)
-            {
-                _propertyEditModel.getConduit().set(getObject(), value);
-            }
-        };
-
-        _environment.push(PropertyEditContext.class, context);
-        // Depending on whether we're rendering or processing the form submission we'll have two
-        // different places to clean up the Environment.
-        _mustPopBeanEditContext = true;
-
         // Fire a new prepare event to be consumed by the container. This is the container's
         // chance to ensure that there's an object to edit.
 
@@ -239,7 +139,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         // Now check to see if the value is null.
 
         // The only problem here is that if the bound property is backed by a persistent field, it
-        // is assigned (and stored to the session, and propogated around the cluster) first,
+        // is assigned (and stored to the session, and propagated around the cluster) first,
         // before values are assigned.
 
         if (_object == null) _object = createDefaultObject();
@@ -253,37 +153,19 @@ public class BeanEditForm implements ClientElement, FormValidationControl
             _model = _modelSource.create(beanType, true, _resources.getContainerResources());
         }
 
-        return true; // abort the form's prepare event
-    }
-
-    private void cleanupBeanEditContext()
-    {
-        if (_mustPopBeanEditContext)
-        {
-            _environment.pop(PropertyEditContext.class);
-            _mustPopBeanEditContext = false;
-        }
-    }
-
-    void onSubmit()
-    {
-        cleanupBeanEditContext();
-    }
-
-    void afterRender()
-    {
-        cleanupBeanEditContext();
+        // Abort the form's prepare event, as we've already sent a prepare on its behalf.
+        return true;
     }
 
     /** Used for testing. */
-    void inject(ComponentResources resources, BeanModelSource modelSource, Environment environment)
+    void inject(ComponentResources resources, BeanModelSource modelSource)
     {
         _resources = resources;
         _modelSource = modelSource;
-        _environment = environment;
     }
 
-    Object getObject()
+    /** Returns the object being edited. */
+    public Object getObject()
     {
         return _object;
     }
@@ -305,11 +187,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         }
     }
 
-    public Block getBlockForProperty()
-    {
-        return _blockForProperty;
-    }
-
     /** Returns the client id of the embedded form. */
     public String getClientId()
     {
@@ -319,11 +196,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public String getSubmitLabel()
     {
         return _submitLabel;
-    }
-
-    public boolean getClientValidation()
-    {
-        return _clientValidation;
     }
 
     public void clearErrors()

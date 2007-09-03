@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.SelectModel;
@@ -35,6 +36,7 @@ import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -476,4 +478,23 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertEquals(pattern.toString(), input);
     }
 
+    @Test
+    public void type_coersion_from_component_resources_aware_to_component_resources()
+    {
+        ComponentResourcesAware input = newMock(ComponentResourcesAware.class);
+        ComponentResources resources = mockComponentResources();
+
+        expect(input.getComponentResources()).andReturn(resources);
+
+        TypeCoercer coercer = getObject(TypeCoercer.class, null);
+
+        replay();
+
+        ComponentResources actual = coercer.coerce(input, ComponentResources.class);
+
+        assertSame(actual, resources);
+
+        verify();
+
+    }
 }
