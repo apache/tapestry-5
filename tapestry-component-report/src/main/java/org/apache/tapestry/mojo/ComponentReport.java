@@ -36,7 +36,6 @@ import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
-import org.apache.tapestry.ioc.IOCUtilities;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
@@ -147,10 +146,10 @@ public class ComponentReport extends AbstractMavenReport
 
             sink.listItem();
 
-            // Something is convertin the name attribute of the anchors to lower case, so
+            // Something is converting the name attribute of the anchors to lower case, so
             // we'll follow suit.
 
-            sink.link("#" + className.toLowerCase());
+            sink.link("#" + fixup(className));
             sink.text(simpleName);
             sink.link_();
 
@@ -164,6 +163,12 @@ public class ComponentReport extends AbstractMavenReport
             writeClassDescription(descriptions, sink, className);
         }
 
+    }
+
+    /** Convert to lower case, remove all period characters. */
+    private String fixup(String input)
+    {
+        return input.toLowerCase().replaceAll("\\.", "");
     }
 
     private void writeClassDescription(Map<String, ClassDescription> descriptions, Sink sink,
@@ -193,7 +198,7 @@ public class ComponentReport extends AbstractMavenReport
         sink.section2();
 
         sink.sectionTitle2();
-        sink.anchor(className);
+        sink.anchor(fixup(className));
         sink.text(className);
         sink.anchor_();
 
@@ -224,7 +229,7 @@ public class ComponentReport extends AbstractMavenReport
 
             for (String name : parents)
             {
-                sink.link("#" + name.toLowerCase());
+                sink.link("#" + fixup(name));
                 sink.text(name);
                 sink.link_();
 
