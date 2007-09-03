@@ -75,7 +75,7 @@ Configuring ASOs
   Contributions to the tapestry.ApplicationStateManager are used to configure an ASO.  From you application's module:
   
 +----+
-  public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateConfiguration> configuration)
+  public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)
   {
     ApplicationStateCreator<MyState> creator = new ApplicationStateCreator<MyState>()
     {
