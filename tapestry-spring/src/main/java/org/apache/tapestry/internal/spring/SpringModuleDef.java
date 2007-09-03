@@ -57,6 +57,11 @@ public class SpringModuleDef implements ModuleDef
                     return _context.getBean(beanName);
                 }
 
+                private Class getBeanType()
+                {
+                    return _context.getType(beanName);
+                }
+
                 public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
                 {
                     return new ObjectCreator()
@@ -75,7 +80,7 @@ public class SpringModuleDef implements ModuleDef
 
                 public Class getServiceInterface()
                 {
-                    return getBean().getClass();
+                    return getBeanType();
                 }
 
                 public String getServiceScope()
