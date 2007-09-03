@@ -7,7 +7,10 @@
   <artifactId>tapestry-upload</artifactId>
   <name>Tapestry File Upload Component Library</name>
   <packaging>jar</packaging>
-  <description>Provides a file upload component for Tapestry, based on Jakarta commons-fileupload.</description>
+  <description>
+    Provides a file upload component for Tapestry, based on Jakarta
+    commons-fileupload.
+  </description>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
@@ -83,16 +86,29 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <Tapestry-Module-Classes>org.apache.tapestry.upload.services.UploadModule</Tapestry-Module-Classes>
+              <Tapestry-Module-Classes>
+                org.apache.tapestry.upload.services.UploadModule
+              </Tapestry-Module-Classes>
             </manifestEntries>
           </archive>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>dependencies</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>cobertura-maven-plugin</artifactId>

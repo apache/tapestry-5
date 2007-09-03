@@ -9,6 +9,10 @@
   <name>Tapestry 5 Project</name>
   <inceptionYear>2006</inceptionYear>
   <url>http://tapestry.apache.org/tapestry5/</url>
+  <issueManagement>
+    <system>Jira</system>
+    <url>https://issues.apache.org/jira/browse/TAPESTRY</url>
+  </issueManagement>
   <licenses>
     <license>
       <name>Apache Software License 2.0</name>
@@ -21,8 +25,10 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/ </connection>
-    <url> http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/ </url>
+    <connection>
+      scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/
+    </connection>
+    <url>http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/</url>
   </scm>
   <developers>
     <developer>
@@ -56,20 +62,26 @@
     <mailingList>
       <name>Tapestry User List</name>
       <subscribe>users-subscribe@tapestry.apache.org</subscribe>
-      <unsubscribe> users-unsubscribe@tapestry.apache.org </unsubscribe>
-      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-users/ </archive>
+      <unsubscribe>users-unsubscribe@tapestry.apache.org</unsubscribe>
+      <archive>
+        http://mail-archives.apache.org/mod_mbox/tapestry-users/
+      </archive>
     </mailingList>
     <mailingList>
       <name>Tapestry Developer List</name>
       <subscribe>dev-subscribe@tapestry.apache.org</subscribe>
-      <unsubscribe> dev-unsubscribe@tapestry.apache.org </unsubscribe>
-      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-dev/ </archive>
+      <unsubscribe>dev-unsubscribe@tapestry.apache.org</unsubscribe>
+      <archive>
+        http://mail-archives.apache.org/mod_mbox/tapestry-dev/
+      </archive>
     </mailingList>
     <mailingList>
       <name>Tapestry Commits List</name>
       <subscribe>commits-subscribe@tapestry.apache.org</subscribe>
-      <unsubscribe> commits-unsubscribe@tapestry.apache.org </unsubscribe>
-      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-commits/ </archive>
+      <unsubscribe>commits-unsubscribe@tapestry.apache.org</unsubscribe>
+      <archive>
+        http://mail-archives.apache.org/mod_mbox/tapestry-commits/
+      </archive>
     </mailingList>
   </mailingLists>
 
@@ -77,42 +89,42 @@
     <module>tapestry-test</module>
     <module>tapestry-ioc</module>
     <module>tapestry-core</module>
-    
+
 
     <module>tapestry-spring</module>
     <module>tapestry-hibernate</module>
     <module>tapestry-upload</module>
-   
+
 
     <!-- Now we're getting into the archetypes. -->
     <module>quickstart</module>
     <!-- And the Maven plugin. -->
     <module>tapestry-component-report</module>
-    
+
     <!-- Tutorials -->
-    
+
     <module>tapestry-tutorial1</module>
-    
+
   </modules>
   <dependencyManagement>
     <dependencies>
 
-      
+
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>servlet-api</artifactId>
         <version>2.4</version>
         <scope>provided</scope>
       </dependency>
-      
+
       <dependency>
         <groupId>jboss</groupId>
         <artifactId>javassist</artifactId>
         <version>3.4.ga</version>
       </dependency>
-      
 
-      
+
+
       <dependency>
         <groupId>org.easymock</groupId>
         <artifactId>easymock</artifactId>
@@ -192,7 +204,7 @@
           <version>2.3</version>
           <configuration>
             <suiteXmlFiles>
-              <suiteXmlFile> src/test/conf/testng.xml </suiteXmlFile>
+              <suiteXmlFile>src/test/conf/testng.xml</suiteXmlFile>
             </suiteXmlFiles>
             <argLine>-Xmx500m</argLine>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
@@ -228,46 +240,36 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId> maven-project-info-reports-plugin </artifactId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
         <reportSets>
           <reportSet>
             <reports>
-              <report>dependencies</report>
               <report>license</report>
               <report>scm</report>
               <report>project-team</report>
               <report>mailing-list</report>
               <report>cim</report>
+              <report>issue-tracking</report>
             </reports>
           </reportSet>
         </reportSets>
       </plugin>
-      
-      <plugin>
+
+      <!--       
+        <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <!-- Had a classloader problem with version 2.0.3 -->
-        <!--        <version>2.0</version> -->
         <configuration>
-          <!--
-            <tags>
-            <tag>
-            <name>todo</name>
-            <!- - Should be a combinaison of the letters Xaoptcmf - ->
-            <placement>a</placement>
-            <head>To do something:</head>
-            </tag>
-            </tags> -->
-          <linksource>true</linksource>
-          <links>
-            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
-          </links>
-          <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
-          <aggregate>true</aggregate>
+        <linksource>true</linksource>
+        <links>
+        <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+        <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
+        <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
+        </links>
+        <stylesheetfile>${basedir}/src/site/resources/css/jdstyle.css</stylesheetfile>
+        <aggregate>true</aggregate>
         </configuration>
-      </plugin>
+        </plugin> -->
     </plugins>
   </reporting>
   <repositories>
@@ -277,7 +279,9 @@
     </repository>
     <repository>
       <id>tapestry-snapshot</id>
-      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository</url>
+      <url>
+        http://people.apache.org/~hlship/tapestry-snapshot-repository
+      </url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -311,34 +315,40 @@
   </pluginRepositories>
 
   <!-- Be sure to have the following in your ~/.m2/settings.xml
-		
-		<servers>
-		<server> <id>tapestry</id> <username>hlship</username>  </server>
-		</servers>
-		
-		Adjust for your personal apache.org user name. Otherwise (especially on Windows),
-		Maven and ssh trip over the user name when remote logging in.
-		
-		The <id> element below is used to rendevous with server data from settings.xml
-		in order to determine meta-information such as remote username. 
-		
-		Don't put your password in settings.xml; just upload to apache.org your
-		public key and make sure to ssh-add before invoking Maven.
-		
-	-->
+    
+    <servers>
+    <server> <id>tapestry</id> <username>hlship</username>  </server>
+    </servers>
+    
+    Adjust for your personal apache.org user name. Otherwise (especially on Windows),
+    Maven and ssh trip over the user name when remote logging in.
+    
+    The <id> element below is used to rendevous with server data from settings.xml
+    in order to determine meta-information such as remote username. 
+    
+    Don't put your password in settings.xml; just upload to apache.org your
+    public key and make sure to ssh-add before invoking Maven.
+    
+  -->
 
   <distributionManagement>
     <site>
       <id>tapestry</id>
-      <url>scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/ </url>
+      <url>
+        scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/
+      </url>
     </site>
     <repository>
       <id>tapestry</id>
-      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository</url>
+      <url>
+        scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository
+      </url>
     </repository>
     <snapshotRepository>
       <id>tapestry-snapshot</id>
-      <url>scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository</url>
+      <url>
+        scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository
+      </url>
     </snapshotRepository>
   </distributionManagement>
 

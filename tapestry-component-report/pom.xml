@@ -6,8 +6,10 @@
   <artifactId>tapestry-component-report</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Tapestry Component Parameters Report</name>
-  <description>Generates component parameter documentation for Tapestry components, mixins (and base
-    classes)</description>
+  <description>
+    Generates component parameter documentation for Tapestry components,
+    mixins (and base classes)
+  </description>
   <parent>
     <groupId>org.apache.tapestry</groupId>
     <artifactId>tapestry-project</artifactId>
@@ -108,6 +110,18 @@
     <plugins>
       <plugin>
         <artifactId>maven-plugin-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>summary</report>
+              <report>dependencies</report>
+            </reports>
+          </reportSet>
+        </reportSets>
       </plugin>
     </plugins>
   </reporting>
