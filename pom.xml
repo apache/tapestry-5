@@ -273,11 +273,11 @@
   <repositories>
     <repository>
       <id>tapestry</id>
-      <url>http://people.apache.org/~hlship/tapestry-repository/</url>
+      <url>http://people.apache.org/~hlship/tapestry-repository</url>
     </repository>
     <repository>
       <id>tapestry-snapshot</id>
-      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository/</url>
+      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>

@@ -20,23 +20,28 @@ var Tapestry = {
     form.errorDiv = $(form.id + ':errors');
     
     if (form.errorDiv) {
-      form.errorList = form.errorDiv.getElementsBySelector("UL").first();
-      
       Tapestry.hideInvisible(form.errorDiv);
+      
+   	    form.errorList = form.errorDiv.getElementsBySelector("ul").first();
+		if (! form.errorList) {
+		  // create it now
+		  form.errorList = document.createElement("ul");
+		  form.errorDiv.appendChild(form.errorList);     
+   	    }      
 	}
     
     // This can probably be cleaned up with bind() ...
     
     form.onsubmit = function() {
-      var event = new Tapestry.FormEvent(form);
-
+      var event = new Tapestry.FormEvent(form);      
+       
       form.firstError = true;
   
   	  if (form.errorList) {
-  	    form.errorList.innerHTML = '';
+		form.errorList.innerHTML = "";
   	  }
 
-	  // Locaate elements that have an event manager (and therefore, validations)
+	  // Locate elements that have an event manager (and therefore, validations)
 	  // and let those validations execute, which may result in calls to recordError().
 	  
       form.getElements().each(function(element) { 
