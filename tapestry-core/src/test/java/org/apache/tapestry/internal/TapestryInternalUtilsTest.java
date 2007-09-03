@@ -216,7 +216,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         OptionModel model = TapestryInternalUtils.toOptionModel(object);
 
         assertEquals(model.getLabel(), "27");
-        assertEquals(model.getValue(), "27");
+        assertEquals(model.getValue(), object);
     }
 
     @Test
@@ -235,7 +235,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertEquals(options.get(0).getValue(), "A");
 
         assertEquals(options.get(1).getLabel(), "");
-        assertEquals(options.get(1).getValue(), "");
+        assertEquals(options.get(1).getValue(), null);
 
         assertEquals(options.get(2).getLabel(), "C");
         assertEquals(options.get(2).getValue(), "C");

@@ -233,9 +233,9 @@ public class TapestryInternalUtils
      */
     public static OptionModel toOptionModel(Object input)
     {
-        String value = (input != null ? String.valueOf(input) : "");
+        String label = (input != null ? String.valueOf(input) : "");
 
-        return new OptionModelImpl(value, false, value);
+        return new OptionModelImpl(label, false, input);
     }
 
     /**
