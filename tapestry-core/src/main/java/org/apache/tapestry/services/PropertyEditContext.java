@@ -24,7 +24,7 @@ import org.apache.tapestry.corelib.components.Label;
 import org.apache.tapestry.ioc.Messages;
 
 /**
- * Defines a context for editting a property of a bean via {@link BeanEditForm}. This value is made
+ * Defines a context for editing a property of a bean via {@link BeanEditForm}. This value is made
  * available to blocks via the {@link Environmental} annotation.
  * 
  * @see BeanBlockSource
@@ -32,13 +32,13 @@ import org.apache.tapestry.ioc.Messages;
 public interface PropertyEditContext
 {
     /**
-     * Returns the current value of the property being editted (the context encapsulates the object
+     * Returns the current value of the property being edited (the context encapsulates the object
      * containing the property).
      */
     Object getPropertyValue();
 
     /**
-     * Updates the value of the property being editted (the context encapsulates the object
+     * Updates the value of the property being edited (the context encapsulates the object
      * containing the property).
      * 
      * @param value
@@ -74,7 +74,7 @@ public interface PropertyEditContext
     String getPropertyId();
 
     /**
-     * Returns the type of the property being editted.
+     * Returns the type of the property being edited.
      */
     Class getPropertyType();
 

@@ -2,9 +2,9 @@
     <t:errors/>
 
     <div class="t-beaneditor">
-        <div class="t-beaneditor-row" t:type="loop" t:source="model.propertyNames"
+        <div class="t-beaneditor-row" t:type="loop" t:source="model.propertyNames" t:volatile="true"
             t:value="propertyName">
-            <t:delegate to="blockForProperty"/>
+            <t:propertyEditor property="propertyName" object="object" model="model" overrides="this"/>
         </div>
         <div class="t-beaneditor-row">
             <input type="submit" value="${submitLabel}"/>

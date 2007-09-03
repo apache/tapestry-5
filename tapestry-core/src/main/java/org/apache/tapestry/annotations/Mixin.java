@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Defines an <em>implementation</em> mixin for a comopnent.
+ * Defines an <em>implementation</em> mixin for a component.
  */
 @Target(FIELD)
 @Documented
@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
 public @interface Mixin {
 
     /**
-     * Defines the type of mixin, using a logical mixin name. This value takes precendence over the
+     * Defines the type of mixin, using a logical mixin name. This value takes precedence over the
      * type of field (to which the annotation is attached). In such cases, it is presumed that the
      * field's type is an interface implemented by the actual mixin. The default value (the empty
      * string) directs Tapestry to use the field type as the mixin class to instantiate and attach

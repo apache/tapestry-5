@@ -26,7 +26,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
 import org.apache.tapestry.Asset;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
@@ -187,6 +189,7 @@ import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.translator.DoubleTranslator;
 import org.apache.tapestry.translator.IntegerTranslator;
@@ -726,6 +729,7 @@ public final class TapestryModule
      * <li>null to {@link GridDataSource}
      * <li>String to {@link GridPagerPosition}
      * <li>List to {@link SelectModel}
+     * <li>{@link ComponentResourcesAware} (typically, a component) to {@link ComponentResources}
      * </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
@@ -788,6 +792,18 @@ public final class TapestryModule
             }
         });
 
+        add(
+                configuration,
+                ComponentResourcesAware.class,
+                ComponentResources.class,
+                new Coercion<ComponentResourcesAware, ComponentResources>()
+                {
+
+                    public ComponentResources coerce(ComponentResourcesAware input)
+                    {
+                        return input.getComponentResources();
+                    }
+                });
     }
 
     /**

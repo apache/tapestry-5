@@ -37,11 +37,8 @@ public class BeanEditFormTest extends TapestryTestCase
         ComponentResources containerResources = mockComponentResources();
         BeanModelSource source = mockBeanModelSource();
         BeanModel model = mockBeanModel();
-        Environment environment = mockEnvironment();
 
         expect(resources.triggerEvent(Form.PREPARE, null, null)).andReturn(false);
-
-        train_push(environment, PropertyEditContext.class);
 
         train_getBoundType(resources, RegistrationData.class);
 
@@ -53,7 +50,7 @@ public class BeanEditFormTest extends TapestryTestCase
 
         BeanEditForm component = new BeanEditForm();
 
-        component.inject(resources, source, environment);
+        component.inject(resources, source);
 
         assertTrue(component.onPrepareFromForm());
 
@@ -70,11 +67,8 @@ public class BeanEditFormTest extends TapestryTestCase
     {
         ComponentResources resources = mockComponentResources();
         Location l = mockLocation();
-        Environment environment = mockEnvironment();
 
         expect(resources.triggerEvent(Form.PREPARE, null, null)).andReturn(false);
-
-        train_push(environment, PropertyEditContext.class);
 
         train_getBoundType(resources, Runnable.class);
 
@@ -86,7 +80,7 @@ public class BeanEditFormTest extends TapestryTestCase
 
         BeanEditForm component = new BeanEditForm();
 
-        component.inject(resources, null, environment);
+        component.inject(resources, null);
 
         try
         {

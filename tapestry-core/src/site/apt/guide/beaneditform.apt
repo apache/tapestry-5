@@ -6,7 +6,7 @@ Using the BeanEditForm Component
 
   Tapestry includes a powerful component capable of generating a complete create/edit user interface for a typical JavaBean, BeanEditForm.
   
-  BeanEditForm analyzes the the properties of the bean, locating just those properties that are readable and writeable. It filters down
+  BeanEditForm analyzes the the properties of the bean, locating just those properties that are readable and writable. It filters down
   to properties whose type is mapped to a known editor (this is described in more detail below).
   
   The default ordering for properties is in the order in which the <getter methods> for the properties are defined.
@@ -26,11 +26,13 @@ Using the BeanEditForm Component
   
   []
   
-  Resolving a property type to an editor type involves a search up the inheritance hiearchy: thus the super-type of Integer, Long, BigDecimal, etc. is
+  Resolving a property type to an editor type involves a search up the inheritance hierarchy: thus the super-type of Integer, Long, BigDecimal, etc. is
   Number, which uses a text field for data entry.
+  
+  The list of supported property types is extensible (this is documented below).
     
     
-* Automatic Creation
+* Automatic Object Creation
 
   When a page is rendered, the BeanEditForm component will read its object parameter as the JavaBean to edit (with the current properties
   of the JavaBean becoming the defaults for the various fields).  Likewise, when the form is submitted by the user, the object parameter
@@ -47,14 +49,14 @@ Using the BeanEditForm Component
   
 * Non-Visual Properties
 
-  In some cases, a property may be updatable and of a supported type for editting, but should not be presented to the user for editting: for example,
+  In some cases, a property may be updatable and of a supported type for editing, but should not be presented to the user for editing: for example,
   a property that holds the primary key of a database entity. In such a case, the
   {{{../../apidocs/org/apache/tapestry/beaneditor/NonVisual.html}NonVisual}} annotation may be applied to the property (either the getter
   or the setter method). 
     
 * Default Validation
 
-  Default validation for fields is primarly determined by property type.
+  Default validation for fields is primary determined by property type.
   
   If desired, additional validation may be specified using the 
   {{{../../apidocs/org/apache/tapestry/beaneditor/Validate.html}Validate}} annotation.
@@ -66,12 +68,12 @@ Using the BeanEditForm Component
   
 * Default Label
 
-  Tapestry will attempt to provide a reasonable default label for each field, based on the property name being editted.  The property name
+  Tapestry will attempt to provide a reasonable default label for each field, based on the property name being emitted.  The property name
   is capitalized, and spaces are added before case changes, thus property "name" becomes label "Name" and property "streetAddress" becomes label
-  "Street Adresss".  
+  "Street Address".  
   
   BeanEditForm also searches for a label for the field in the containing component's message catalog.  The message key is the property name suffixed with "-label".
-  If such a label is found, it takes precendence.
+  If such a label is found, it takes precedence.
   
 Property Editor Overrides
 
