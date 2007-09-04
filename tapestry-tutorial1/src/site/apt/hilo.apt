@@ -280,7 +280,7 @@ public class Start
   <p>Make a guess between one and ten:</p>
   
     <t:loop source="1..10" value="guess">
-      <t:actionlink t:id="guess" context="guess">${guess}</t:actionlink>
+      <t:actionlink t:id="link" context="guess">${guess}</t:actionlink>
     </t:loop>
 
   </body>
@@ -341,10 +341,24 @@ public class Start
     return null;
   }
 ---  
+
+
+  
   
   Here's the big news: Tapestry will convert the number from the URL back into
   an integer automatically, so that it can pass it in to this method as a parameter.
   We can then compare the guess from the user to the secret target number.
+  
+
+  We need to update the Guess page to actually display the message; this is done by adding the following:
+  
+---
+  <p>${message}</p>
+---
+
+  This is truly bare bones and, when message is null, will output an empty \<p\> element.  A real application
+  would dress this up a bit more (using CSS and the like to make it prettier).
+  
   
   We do need a basic GameOver page.
   
