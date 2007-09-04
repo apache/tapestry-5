@@ -43,9 +43,9 @@ public class MyPage
 Check for Creation
 
   Scalable web applications do not create the server-side session needlessly. If you can avoid creating the session, especially on first
-  access to your web application, you will be able to handle an order of magnatude more users. So, if you can avoid creating the ASO, you should do so.
+  access to your web application, you will be able to handle an order of magnitude more users. So, if you can avoid creating the ASO, you should do so.
   
-  But how to avoid creating it?  Simply checkng ("_myState != null") will force the creation of the ASO and the session to store it in.
+  But how to avoid creating it?  Simply checking ("_myState != null") will force the creation of the ASO and the session to store it in.
   
   Instead, create a second field:
   
