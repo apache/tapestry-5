@@ -142,7 +142,9 @@ public final class Select extends AbstractField
     {
         writer.element("select", "name", getElementName(), "id", getClientId());
 
-        // Disabled, informals via mixins
+        _resources.renderInformalParameters(writer);
+        
+        // Disabled via mixin
     }
 
     @SuppressWarnings("unchecked")
