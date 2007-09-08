@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.dom;
 
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 
@@ -326,39 +325,44 @@ public class DOMTest extends InternalBaseTestCase
 
         assertEquals(root.toString(), "<fred><em>&lt;&nbsp;&gt;</em></fred>");
     }
-    
+
     @Test
-    public void dtd_with_markup() 
+    public void dtd_with_markup()
     {
         Document d = new Document(new XMLMarkupModel());
         Element root = d.newRootElement("prime");
         root.element("slag");
         d.dtd("prime", "-//TF", "tf");
         String expected = "<!DOCTYPE prime PUBLIC \"-//TF\" \"tf\"><prime><slag/></prime>";
-        assertEquals(d.toString(),expected);
+        assertEquals(d.toString(), expected);
     }
-    
+
     @Test
-    public void dtd_with_nullids() {
+    public void dtd_with_nullids()
+    {
         Document d = new Document(new XMLMarkupModel());
         d.newRootElement("prime");
         d.dtd("prime", null, null);
-        assertEquals
-        (
-            d.toString(),
-            "<prime/>"
-        );
+        assertEquals(d.toString(), "<prime/>");
         d.dtd("prime", "-//TF", null);
-        assertEquals(
-            d.toString(),
-            "<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>"
-        );
-        
+        assertEquals(d.toString(), "<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>");
+
         d.dtd("prime", null, "tf");
-        assertEquals
-        (
-            d.toString(),
-            "<!DOCTYPE prime SYSTEM \"tf\"><prime/>"
-        );
+        assertEquals(d.toString(), "<!DOCTYPE prime SYSTEM \"tf\"><prime/>");
+    }
+
+    @Test
+    public void markup_characters_inside_attributes_are_escaped()
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        Element root = d.newRootElement("prime");
+
+        root.attribute("alpha-only", "abcdef");
+        root.attribute("entities", "\"<>&");
+
+        assertEquals(
+                root.toString(),
+                "<prime alpha-only=\"abcdef\" entities=\"&quot;&lt;&gt;&amp;\"/>");
     }
 }
