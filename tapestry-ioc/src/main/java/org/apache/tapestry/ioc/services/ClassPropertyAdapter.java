@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.List;
  * <p>
  * Only provides access to <em>simple</em> properties. Indexed properties are ignored.
  * <p>
- * When acessing properties by name, the case of the name is ignored.
+ * When accessing properties by name, the case of the name is ignored.
  */
 public interface ClassPropertyAdapter
 {
