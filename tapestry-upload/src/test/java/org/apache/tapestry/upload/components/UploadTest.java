@@ -16,6 +16,7 @@ package org.apache.tapestry.upload.components;
 
 import static org.easymock.EasyMock.expectLastCall;
 
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.MarkupWriter;
@@ -44,12 +45,15 @@ public class UploadTest extends TapestryTestCase
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
         FormSupport formSupport = mockFormSupport();
+        ComponentResources resources = mockComponentResources();
 
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
 
+        resources.renderInformalParameters(writer);
+
         replay();
 
-        Upload component = new Upload();
+        Upload component = new Upload(null, null, null, null, resources);
 
         setValidationDecorator(component, new StubValidationDecorator());
 
@@ -82,7 +86,10 @@ public class UploadTest extends TapestryTestCase
     @Test
     public void validation_decorator_invoked_inside_begin_render() throws Exception
     {
-        Upload component = new Upload();
+        getMocksControl().checkOrder(true);
+        
+        ComponentResources resources = mockComponentResources();
+        Upload component = new Upload(null, null, null, null, resources);
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
 
@@ -94,6 +101,7 @@ public class UploadTest extends TapestryTestCase
 
         setValidationDecorator(component, decorator);
 
+        resources.renderInformalParameters(writer);
         decorator.insideField(component);
 
         replay();
@@ -111,8 +119,11 @@ public class UploadTest extends TapestryTestCase
     @Test
     public void begin_render_invokes_field_validator() throws Exception
     {
+        getMocksControl().checkOrder(true);
+
         FieldValidator<Object> validate = mockFieldValidator();
-        Upload component = new Upload(null, validate, null, null);
+        ComponentResources resources = mockComponentResources();
+        Upload component = new Upload(null, validate, null, null, resources);
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
 
@@ -125,6 +136,7 @@ public class UploadTest extends TapestryTestCase
         setValidationDecorator(component, decorator);
 
         validate.render(writer);
+        resources.renderInformalParameters(writer);
         decorator.insideField(component);
 
         replay();
@@ -157,7 +169,7 @@ public class UploadTest extends TapestryTestCase
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
 
-        Upload component = new Upload(null, null, decoder, null);
+        Upload component = new Upload(null, null, decoder, null, null);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("foo").anyTimes();
@@ -178,7 +190,7 @@ public class UploadTest extends TapestryTestCase
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
 
-        Upload component = new Upload(null, null, decoder, null);
+        Upload component = new Upload(null, null, decoder, null, null);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("").atLeastOnce();
@@ -200,7 +212,7 @@ public class UploadTest extends TapestryTestCase
         UploadedFile uploadedFile = mockUploadedFile();
         FieldValidator<Object> validate = mockFieldValidator();
 
-        Upload component = new Upload(null, validate, decoder, null);
+        Upload component = new Upload(null, validate, decoder, null, null);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("test").atLeastOnce();
@@ -221,7 +233,7 @@ public class UploadTest extends TapestryTestCase
         FieldValidator<Object> validate = mockFieldValidator();
         ValidationTracker tracker = mockValidationTracker();
 
-        Upload component = new Upload(null, validate, decoder, tracker);
+        Upload component = new Upload(null, validate, decoder, tracker, null);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("test").atLeastOnce();

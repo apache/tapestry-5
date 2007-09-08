@@ -96,12 +96,13 @@ public class Upload extends AbstractField
 
     // For testing
     Upload(UploadedFile value, FieldValidator<Object> validate, MultipartDecoder decoder,
-            ValidationTracker tracker)
+            ValidationTracker tracker, ComponentResources resources)
     {
         _value = value;
         if (validate != null) _validate = validate;
         _decoder = decoder;
         _tracker = tracker;
+        _resources = resources;
     }
 
     protected void processSubmission(FormSupport formSupport, String elementName)
