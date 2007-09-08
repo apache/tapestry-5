@@ -39,8 +39,9 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         MarkupWriter writer = mockMarkupWriter();
         RenderQueueImpl queue = new RenderQueueImpl(logger);
 
-        train_isDebugEnabled(logger, false);
-        train_isDebugEnabled(logger, false);
+        // There's only one check for trace enabled now.
+
+        train_isTraceEnabled(logger, false);
 
         command2.render(writer, queue);
 
@@ -75,7 +76,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
         MarkupWriter writer = mockMarkupWriter();
 
-        train_isDebugEnabled(logger, false);
+        train_isTraceEnabled(logger, false);
 
         logger.error("Render queue error in FailedCommand: Oops.", t);
 

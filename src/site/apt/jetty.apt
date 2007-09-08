@@ -14,4 +14,12 @@ Deployment Notes: Jetty
   
 * Logging
 
-  TODO: Discuss logging configuration for Jetty.
+  Tapestry, in its default configuration, requires Log4J version 1.2.12 or better
+  (it makes use of the 
+  {{{http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Logger.html#isTraceEnabled()}isTraceEnabled()}} and
+  {{http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Logger.html#trace(java.lang.Object)}trace()}} methods,
+  introduced in version 1.2.12.
+  
+  You may have to replace the version of Log4J in your Jetty's ext directory with a newer version.
+
+  

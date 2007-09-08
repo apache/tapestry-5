@@ -340,6 +340,11 @@ public class IOCTestCase extends TestBase
         expect(log.isDebugEnabled()).andReturn(debugEnabled);
     }
 
+    protected final void train_isTraceEnabled(Logger log, boolean traceEnabled)
+    {
+        expect(log.isTraceEnabled()).andReturn(traceEnabled);
+    }
+
     protected final void train_matches(DecoratorDef decoratorDef, ServiceDef serviceDef,
             boolean matches)
     {
@@ -357,7 +362,8 @@ public class IOCTestCase extends TestBase
         expect(resource.toURL()).andReturn(url).atLeastOnce();
     }
 
-    protected final <T extends Annotation> void train_getAnnotation(AnnotationProvider annotationProvider, Class<T> annotationClass, T annotation)
+    protected final <T extends Annotation> void train_getAnnotation(
+            AnnotationProvider annotationProvider, Class<T> annotationClass, T annotation)
     {
         expect(annotationProvider.getAnnotation(annotationClass)).andReturn(annotation);
     }
