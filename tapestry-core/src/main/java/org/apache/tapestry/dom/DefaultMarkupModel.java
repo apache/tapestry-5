@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Set;
 /**
  * Default implementation of {@link org.apache.tapestry.dom.MarkupModel} that is appropriate for
  * traditional HTML markup. This conforms to the SGML HTML definition, including some things that
- * are not well formed XML-style markup. Assumes that all tags are lowercase.
+ * are not well formed XML-style markup. Assumes that all tags are lower-case.
  */
 public class DefaultMarkupModel implements MarkupModel
 {
@@ -41,6 +41,16 @@ public class DefaultMarkupModel implements MarkupModel
     /** Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged. */
     public void encode(String content, StringBuilder buffer)
     {
+        encode(content, false, buffer);
+    }
+
+    public void encodeQuoted(String content, StringBuilder buffer)
+    {
+        encode(content, true, buffer);
+    }
+
+    private void encode(String content, boolean encodeQuotes, StringBuilder buffer)
+    {
         char[] array = content.toCharArray();
 
         for (char ch : array)
@@ -58,6 +68,13 @@ public class DefaultMarkupModel implements MarkupModel
                 case '&':
                     buffer.append("&amp;");
                     continue;
+
+                case '"':
+                    if (encodeQuotes)
+                    {
+                        buffer.append("&quot;");
+                        continue;
+                    }
 
                 default:
                     buffer.append(ch);

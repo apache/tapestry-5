@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,9 +27,21 @@ public interface MarkupModel
      * @param content
      *            to be filtered
      * @param buffer
-     *            to recieve the filtered content
+     *            to receive the filtered content
      */
     void encode(String content, StringBuilder buffer);
+
+    /**
+     * Encodes the characters into the buffer for use in a quoted value (that is, an attribute
+     * value), converting control characters (such as '&lt;') into corresponding entities (such as
+     * &amp;lt;). In addition, double quotes must be quoted or otherwise escaped.
+     * 
+     * @param content
+     *            to be filtered
+     * @param buffer
+     *            to receive the filtered content
+     */
+    void encodeQuoted(String content, StringBuilder buffer);
 
     /**
      * For a given element, determines how the end tag for the element should be rendered.

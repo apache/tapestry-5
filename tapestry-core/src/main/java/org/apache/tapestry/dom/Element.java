@@ -21,6 +21,7 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 
 import java.io.PrintWriter;
 import java.util.Collections;
+import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,9 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as
- * a factory for enclosed Element, Text and Comment nodes. TODO: Support for CDATA nodes. Do we need
- * Entity nodes?
+ * a factory for enclosed Element, Text and Comment nodes.
+ * <p>
+ * TODO: Support for CDATA nodes. Do we need Entity nodes?
  */
 public final class Element extends Node
 {
@@ -88,18 +90,15 @@ public final class Element extends Node
     {
         notBlank(name, "name");
 
-        if (value == null)
-            return;
+        if (value == null) return;
 
-        if (_attributes == null)
-            _attributes = newMap();
+        if (_attributes == null) _attributes = newMap();
 
-        if (!_attributes.containsKey(name))
-            _attributes.put(name, value);
+        if (!_attributes.containsKey(name)) _attributes.put(name, value);
     }
 
     /**
-     * Convienience for invoking {@link #attribute(String, String)} multiple times.
+     * Convenience for invoking {@link #attribute(String, String)} multiple times.
      * 
      * @param namesAndValues
      *            alternating attribute names and attribute values
@@ -122,8 +121,7 @@ public final class Element extends Node
      */
     public void forceAttributes(String... namesAndValues)
     {
-        if (_attributes == null)
-            _attributes = newMap();
+        if (_attributes == null) _attributes = newMap();
 
         int i = 0;
 
@@ -206,7 +204,13 @@ public final class Element extends Node
     @Override
     public void toMarkup(PrintWriter writer)
     {
-        writer.printf("<%s", _name);
+        StringBuilder buffer = new StringBuilder();
+
+        Formatter formatter = new Formatter(buffer);
+
+        formatter.format("<%s", _name);
+
+        MarkupModel markupModel = _document.getMarkupModel();
 
         if (_attributes != null)
         {
@@ -217,31 +221,32 @@ public final class Element extends Node
             {
                 String value = _attributes.get(key);
 
-                // TODO: URL encoding of attributes!
+                formatter.format(" %s=\"", key);
 
-                writer.printf(" %s=\"%s\"", key, value);
+                markupModel.encodeQuoted(value, buffer);
+
+                buffer.append('"');
             }
         }
 
-        EndTagStyle style = _document.getMarkupModel().getEndTagStyle(_name);
+        EndTagStyle style = markupModel.getEndTagStyle(_name);
 
         boolean hasChildren = hasChildren();
 
         String close = (!hasChildren && style == EndTagStyle.ABBREVIATE) ? "/>" : ">";
 
-        writer.print(close);
+        formatter.format(close);
 
-        if (hasChildren)
-            writeChildMarkup(writer);
+        writer.print(buffer.toString());
+
+        if (hasChildren) writeChildMarkup(writer);
 
         // Dangerous -- perhaps it should be an error for a tag of type OMIT to even have children!
         // We'll certainly be writing out unbalanced markup in that case.
 
-        if (style == EndTagStyle.OMIT)
-            return;
+        if (style == EndTagStyle.OMIT) return;
 
-        if (hasChildren || style == EndTagStyle.REQUIRE)
-            writer.printf("</%s>", _name);
+        if (hasChildren || style == EndTagStyle.REQUIRE) writer.printf("</%s>", _name);
     }
 
     /**
@@ -266,15 +271,13 @@ public final class Element extends Node
 
             String elementId = e.getAttribute("id");
 
-            if (id.equals(elementId))
-                return e;
+            if (id.equals(elementId)) return e;
 
             for (Node n : e.getChildren())
             {
                 Element child = n.asElement();
 
-                if (child != null)
-                    queue.addLast(child);
+                if (child != null) queue.addLast(child);
             }
         }
 
@@ -300,8 +303,7 @@ public final class Element extends Node
         {
             search = search.findChildWithElementName(name);
 
-            if (search == null)
-                break;
+            if (search == null) break;
         }
 
         return search;
@@ -313,8 +315,7 @@ public final class Element extends Node
         {
             Element child = node.asElement();
 
-            if (child != null && child.getName().equals(name))
-                return child;
+            if (child != null && child.getName().equals(name)) return child;
         }
 
         // Not found.

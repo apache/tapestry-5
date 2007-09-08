@@ -88,11 +88,12 @@ public final class Document extends Node
         if (_rootElement == null)
             throw new IllegalStateException("No root element has been defined.");
 
-        // TODO: XML declaration, plus lead-in comments, directives.
+        // TODO: lead-in comments, directives.
         if (_dtd != null)
         {
             _dtd.toMarkup(writer);
         }
+        
         _rootElement.toMarkup(writer);
     }
 

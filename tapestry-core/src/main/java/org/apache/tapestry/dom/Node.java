@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.tapestry.dom.util.PrintOutCollector;
+import org.apache.tapestry.internal.util.PrintOutCollector;
 
 /**
  * A node within the DOM.
