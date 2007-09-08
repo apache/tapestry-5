@@ -30,6 +30,7 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
@@ -133,7 +134,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         final Method readMethod = buildGetter(rootClass, classFab, expression, terms);
         final Method writeMethod = buildSetter(rootClass, classFab, expression, terms);
 
-        // A conduit is either readable or writeable, otherwise there will already have been
+        // A conduit is either readable or writable, otherwise there will already have been
         // an error about unknown method name or property name.
 
         Class propertyType = readMethod != null ? readMethod.getReturnType() : writeMethod
@@ -326,11 +327,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     {
         if (term.endsWith(PARENS)) return null;
 
-        PropertyAdapter adapter = _access.getAdapter(activeType).getPropertyAdapter(term);
+        ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
+        PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
         if (adapter == null)
-            throw new RuntimeException(ServicesMessages
-                    .noSuchProperty(activeType, term, expression));
+            throw new RuntimeException(ServicesMessages.noSuchProperty(
+                    activeType,
+                    term,
+                    expression,
+                    classAdapter.getPropertyNames()));
 
         return adapter.getWriteMethod();
     }
@@ -364,11 +369,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return method;
         }
 
-        PropertyAdapter adapter = _access.getAdapter(activeType).getPropertyAdapter(term);
+        ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
+        PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
         if (adapter == null)
-            throw new RuntimeException(ServicesMessages
-                    .noSuchProperty(activeType, term, expression));
+            throw new RuntimeException(ServicesMessages.noSuchProperty(
+                    activeType,
+                    term,
+                    expression,
+                    classAdapter.getPropertyNames()));
 
         Method m = adapter.getReadMethod();
 

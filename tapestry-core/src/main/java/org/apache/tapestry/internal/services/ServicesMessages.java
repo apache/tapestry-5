@@ -343,13 +343,15 @@ class ServicesMessages
                 propertyExpression);
     }
 
-    static String noSuchProperty(Class targetClass, String propertyName, String propertyExpression)
+    static String noSuchProperty(Class targetClass, String propertyName, String propertyExpression,
+            Collection<String> propertyNames)
     {
         return MESSAGES.format(
                 "no-such-property",
                 targetClass.getName(),
                 propertyName,
-                propertyExpression);
+                propertyExpression,
+                InternalUtils.joinSorted(propertyNames));
     }
 
     static String writeOnlyProperty(String propertyName, Class clazz, String propertyExpression)

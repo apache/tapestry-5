@@ -400,7 +400,8 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Class org.apache.tapestry.internal.bindings.StringHolder does not contain a property named \'missingProperty\' (within property expression \'stringHolder.missingProperty.terminalProperty\').");
+                    "Class org.apache.tapestry.internal.bindings.StringHolder does not contain a property named \'missingProperty\' "
+                            + "(within property expression \'stringHolder.missingProperty.terminalProperty\').  Available properties: value.");
             assertSame(ex.getLocation(), l);
         }
 
@@ -541,7 +542,9 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Class org.apache.tapestry.internal.bindings.TargetBean does not contain a property named \'missingProperty\' (within property expression \'missingProperty\').");
+                    "Class org.apache.tapestry.internal.bindings.TargetBean does not contain a property named \'missingProperty\' "
+                            + "(within property expression \'missingProperty\').  "
+                            + "Available properties: class, componentResources, intValue, objectValue, readOnly, stringHolder, writeOnly.");
             assertSame(ex.getLocation(), l);
         }
 
