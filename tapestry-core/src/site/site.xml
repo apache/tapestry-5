@@ -80,6 +80,7 @@ This is probably useful but it drives me crazy whenever I reload a page.
             <item name="DOM" href="guide/dom.html"/>
             <item name="Class Reloading" href="guide/reload.html"/>
             <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
+            <item name="Logging" href="guide/logging.html"/>
         </menu> 
                         
         <menu ref="reports"/>

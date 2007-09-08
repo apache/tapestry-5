@@ -42,6 +42,8 @@ public class RenderQueueImpl implements RenderQueue
     {
         RenderCommand command = null;
 
+        boolean traceEnabled = _logger.isTraceEnabled();
+
         // Seems to make sense to use one try/finally around the whole process, rather than
         // around each call to render() since the end result (in a failure scenario) is the same.
 
@@ -51,8 +53,7 @@ public class RenderQueueImpl implements RenderQueue
             {
                 command = _queue.pop();
 
-                if (_logger.isDebugEnabled())
-                    _logger.debug(String.format("Executing: %s", command));
+                if (traceEnabled) _logger.trace(String.format("Executing: %s", command));
 
                 command.render(writer, this);
             }
