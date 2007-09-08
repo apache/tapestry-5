@@ -43,6 +43,9 @@ public interface ValidationDecorator
 
     /**
      * Invoked at a point where the decorator may write additional attributes into the field.
+     * Generally speaking, you will want to
+     * {@linkplain ComponentResources#renderInformalParameters(MarkupWriter) render informal parameters}
+     * <strong>before</strong> invoking this method.
      * 
      * @param field
      */

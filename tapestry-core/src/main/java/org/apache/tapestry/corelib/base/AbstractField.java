@@ -32,6 +32,7 @@ import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
@@ -42,6 +43,7 @@ import org.apache.tapestry.services.FormSupport;
  * Provides initialization of the clientId and elementName properties. In addition, adds the
  * {@link RenderInformals}, {@link RenderDisabled} and {@link DiscardBody} mixins.
  */
+@SupportsInformalParameters
 public abstract class AbstractField implements Field
 {
     /**
@@ -60,10 +62,6 @@ public abstract class AbstractField implements Field
      */
     @Parameter("false")
     private boolean _disabled;
-
-    @SuppressWarnings("unused")
-    @Mixin
-    private RenderInformals _renderInformals;
 
     @SuppressWarnings("unused")
     @Mixin

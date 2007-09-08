@@ -46,7 +46,7 @@ public class Upload extends AbstractField
     private UploadedFile _value;
 
     /**
-     * The object that will peform input validation. The "validate:" binding prefix is generally
+     * The object that will perform input validation. The "validate:" binding prefix is generally
      * used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = "validate")
@@ -139,6 +139,9 @@ public class Upload extends AbstractField
         writer.element("input", "type", "file", "name", getElementName(), "id", getClientId());
 
         _validate.render(writer);
+        
+        _resources.renderInformalParameters(writer);
+        
         getValidationDecorator().insideField(this);
     }
 

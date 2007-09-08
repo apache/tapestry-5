@@ -15,6 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Binding;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
@@ -37,6 +38,9 @@ public class Checkbox extends AbstractField
     @Parameter(required = true)
     private boolean _value;
 
+    @Inject
+    private ComponentResources _resources;
+
     Binding defaultValue()
     {
         return createDefaultParameterBinding("value");
@@ -55,6 +59,8 @@ public class Checkbox extends AbstractField
                 getClientId(),
                 "checked",
                 _value ? "checked" : null);
+
+        _resources.renderInformalParameters(writer);
 
         getValidationDecorator().insideField(this);
     }
