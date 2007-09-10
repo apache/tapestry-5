@@ -545,4 +545,34 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void reorder()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        assertSame(model.getBeanType(), SimpleBean.class);
+
+        // Based on order of the getter methods (no longer alphabetical)
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+
+        // Testing a couple of things here:
+        // 1) case insensitive
+        // 2) unreferenced property names added to the end.
+        
+        model.reorder("lastname", "AGE");
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age", "firstName"));
+
+        verify();
+    }
 }

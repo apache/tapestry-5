@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.beaneditor;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
@@ -168,6 +169,32 @@ public class BeanModelImpl implements BeanModel
 
             _properties.remove(propertyName);
         }
+
+        return this;
+    }
+
+    public BeanModel reorder(String... propertyName)
+    {
+        List<String> remainingPropertyNames = newList(_propertyNames);
+        List<String> reorderedPropertyNames = newList();
+
+        for (String name : propertyName)
+        {
+            PropertyModel model = get(name);
+
+            // Get the canonical form (which may differ from name in terms of case)
+            String canonical = model.getPropertyName();
+
+            reorderedPropertyNames.add(canonical);
+
+            remainingPropertyNames.remove(canonical);
+        }
+
+        _propertyNames.clear();
+        _propertyNames.addAll(reorderedPropertyNames);
+
+        // Any unspecified names are ordered to the end. Don't want them? Remove them instead.
+        _propertyNames.addAll(remainingPropertyNames);
 
         return this;
     }

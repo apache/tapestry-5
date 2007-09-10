@@ -119,4 +119,14 @@ public interface BeanModel
      * @return the model for further modifications
      */
     BeanModel remove(String... propertyName);
+
+    /**
+     * Re-orders the properties of the model into the specified order. Existing properties that are
+     * not indicated are retained, but ordered to the end of the list.
+     * 
+     * @param propertyName
+     *            property names in order they should be displayed (case insensitive)
+     * @return the model for further modifications
+     */
+    BeanModel reorder(String... propertyName);
 }
