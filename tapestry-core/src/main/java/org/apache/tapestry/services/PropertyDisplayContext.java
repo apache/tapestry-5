@@ -35,4 +35,13 @@ public interface PropertyDisplayContext
      * the container of the {@link Grid} component.
      */
     Messages getContainerMessages();
+
+    /**
+     * Returns a string that identifies the property, usually the property name. This is used as the
+     * basis for the client-side client id.
+     */
+    String getPropertyId();
+
+    /** Returns the name of the property (which may, in fact, be a property expression). */
+    String getPropertyName();
 }

@@ -81,6 +81,14 @@ public class GridCell
                 {
                     return readPropertyForRow();
                 }
+
+                public String getPropertyId() {
+                    return _model.getId();
+                }
+
+                public String getPropertyName() {
+                    return _model.getPropertyName();
+                }
             };
 
             _environment.push(PropertyDisplayContext.class, context);
