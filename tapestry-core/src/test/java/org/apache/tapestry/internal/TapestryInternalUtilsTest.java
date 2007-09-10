@@ -29,7 +29,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -308,37 +308,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     }
 
     @Test
-    public void default_order_no_annotation()
-    {
-        PropertyConduit conduit = mockPropertyConduit();
-
-        train_getAnnotation(conduit, Order.class, null);
-
-        replay();
-
-        assertEquals(TapestryInternalUtils.defaultOrder(conduit), 0);
-
-        verify();
-    }
-
-    @Test
-    public void default_order_with_annotation()
-    {
-        PropertyConduit conduit = mockPropertyConduit();
-        Order order = newMock(Order.class);
-
-        train_getAnnotation(conduit, Order.class, order);
-
-        expect(order.value()).andReturn(99);
-
-        replay();
-
-        assertEquals(TapestryInternalUtils.defaultOrder(conduit), 99);
-
-        verify();
-    }
-
-    @Test
     public void extract_id_from_property_expression()
     {
         assertEquals(
@@ -394,7 +363,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         names.remove("class");
 
-        List<String> sorted = TapestryInternalUtils.orderProperties(adapter, _classFactory, names);
+        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, _classFactory, names);
 
         assertEquals(sorted, Arrays.asList("firstName", "lastName", "age"));
     }
@@ -408,7 +377,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         names.remove("class");
 
-        List<String> sorted = TapestryInternalUtils.orderProperties(adapter, _classFactory, names);
+        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, _classFactory, names);
 
         // Subclass properties listed after superclass properties, as desired.
 
@@ -431,11 +400,11 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         names.remove("class");
 
-        List<String> sorted = TapestryInternalUtils.orderProperties(adapter, _classFactory, names);
+        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, _classFactory, names);
 
-        // Property third has an explicit @Order
+        // Property third has an explicit @OrderBefore
 
-        assertEquals(sorted, Arrays.asList("first", "second"));
+        assertEquals(sorted, Arrays.asList("third", "first", "second"));
     }
 
     @Test

@@ -23,14 +23,15 @@ import java.lang.annotation.Target;
 
 /**
  * Placed on either a property getter or a property setter method to control the order in which the
- * properties are presented to the user. The properties will be sorted in ascending order by the
- * value. Properties with no value will be treated as though they have the value 0. When multiple
- * properties have the same order value, they will be sorted alphabetically.
+ * properties are presented to the user.
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface Order {
-    /** The sort order for this property. */
-    int value();
+public @interface OrderBefore
+{
+    /**
+     * The name of the other property. This property will be ordered before the other property.
+     */
+    String value();
 }

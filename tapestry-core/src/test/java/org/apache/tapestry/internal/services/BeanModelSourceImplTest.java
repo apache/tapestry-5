@@ -21,6 +21,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.BeanModelSource;
@@ -96,6 +97,117 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         age.getConduit().set(instance, "40");
 
         assertEquals(instance.getAge(), 40);
+
+        verify();
+    }
+
+    @Test
+    public void add_before()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+        PropertyConduit conduit = mockPropertyConduit();
+
+        Class propertyType = String.class;
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+
+        // Note the use of case insensitivity here.
+
+        PropertyModel property = model.add(
+                RelativePosition.BEFORE,
+                "lastname",
+                "middleInitial",
+                conduit);
+
+        assertEquals(model.getPropertyNames(), Arrays.asList(
+                "firstName",
+                "middleInitial",
+                "lastName",
+                "age"));
+
+        assertEquals(property.getPropertyName(), "middleInitial");
+        assertSame(property.getConduit(), conduit);
+        assertSame(property.getPropertyType(), propertyType);
+
+        verify();
+    }
+
+    @Test
+    public void add_before_using_default_conduit()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        Class propertyType = String.class;
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        model.remove("firstname");
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age"));
+
+        // Note the use of case insensitivity here.
+
+        PropertyModel property = model.add(RelativePosition.BEFORE, "lastname", "firstName");
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+
+        assertEquals(property.getPropertyName(), "firstName");
+        assertSame(property.getPropertyType(), String.class);
+
+        verify();
+    }
+
+    @Test
+    public void add_after()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+        PropertyConduit conduit = mockPropertyConduit();
+
+        Class propertyType = String.class;
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
+
+        PropertyModel property = model.add(
+                RelativePosition.AFTER,
+                "firstname",
+                "middleInitial",
+                conduit);
+
+        assertEquals(model.getPropertyNames(), Arrays.asList(
+                "firstName",
+                "middleInitial",
+                "lastName",
+                "age"));
+
+        assertEquals(property.getPropertyName(), "middleInitial");
+        assertSame(property.getConduit(), conduit);
+        assertSame(property.getPropertyType(), propertyType);
 
         verify();
     }
@@ -372,7 +484,6 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertFalse(property.isSortable());
         assertSame(property.getPropertyType(), Object.class);
         assertEquals(property.getLabel(), "Placeholder");
-        assertEquals(property.getOrder(), 0);
 
         verify();
     }

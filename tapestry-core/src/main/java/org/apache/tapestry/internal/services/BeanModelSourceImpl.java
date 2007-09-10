@@ -15,16 +15,20 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.NonVisual;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
+import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;
@@ -36,6 +40,8 @@ import org.apache.tapestry.services.PropertyConduitSource;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
+    private final LoggerSource _loggerSource;
+
     private final TypeCoercer _typeCoercer;
 
     private final PropertyAccess _propertyAccess;
@@ -46,10 +52,11 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     private final DataTypeAnalyzer _dataTypeAnalyzer;
 
-    public BeanModelSourceImpl(TypeCoercer typeCoercer, PropertyAccess propertyAccess,
-            PropertyConduitSource propertyConduitSource, ClassFactory classFactory,
-            DataTypeAnalyzer dataTypeAnalyzer)
+    public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer,
+            PropertyAccess propertyAccess, PropertyConduitSource propertyConduitSource,
+            ClassFactory classFactory, DataTypeAnalyzer dataTypeAnalyzer)
     {
+        _loggerSource = loggerSource;
         _typeCoercer = typeCoercer;
         _propertyAccess = propertyAccess;
         _propertyConduitSource = propertyConduitSource;
@@ -67,48 +74,59 @@ public class BeanModelSourceImpl implements BeanModelSource
 
         ClassPropertyAdapter adapter = _propertyAccess.getAdapter(beanClass);
 
-        BeanModel model = new BeanModelImpl(beanClass, _propertyConduitSource, _typeCoercer,
+        final BeanModel model = new BeanModelImpl(beanClass, _propertyConduitSource, _typeCoercer,
                 messages);
 
         List<String> propertyNames = newList();
 
-        for (String propertyName : adapter.getPropertyNames())
+        Map<String, Runnable> worksheet = newMap();
+
+        for (final String propertyName : adapter.getPropertyNames())
         {
             PropertyAdapter pa = adapter.getPropertyAdapter(propertyName);
 
-            if (!pa.isRead())
-                continue;
+            if (!pa.isRead()) continue;
 
-            if (pa.getAnnotation(NonVisual.class) != null)
-                continue;
+            if (pa.getAnnotation(NonVisual.class) != null) continue;
 
-            if (filterReadOnlyProperties && !pa.isUpdate())
-                continue;
+            if (filterReadOnlyProperties && !pa.isUpdate()) continue;
 
-            String dataType = _dataTypeAnalyzer.identifyDataType(pa);
+            final String dataType = _dataTypeAnalyzer.identifyDataType(pa);
 
             // If an unregistered type, then ignore the property.
 
-            if (dataType == null)
-                continue;
-
-            model.add(propertyName).dataType(dataType);
+            if (dataType == null) continue;
 
             propertyNames.add(propertyName);
+
+            // We need to defer execution of this; we want to add them in proper order, not
+            // alphabetical order.
+
+            Runnable worker = new Runnable()
+            {
+                public void run()
+                {
+                    model.add(propertyName).dataType(dataType);
+                }
+            };
+
+            worksheet.put(propertyName, worker);
         }
 
-        // Set default property order for properties that are not explicit.
+        // Determine the correct order to add the properties.
 
-        List<String> orderedNames = TapestryInternalUtils.orderProperties(
-                adapter,
-                _classFactory,
-                propertyNames);
+        List<String> orderedNames = TapestryInternalUtils.orderProperties(_loggerSource
+                .getLogger(beanClass), adapter, _classFactory, propertyNames);
 
-        for (int i = 0; i < orderedNames.size(); i++)
+        for (String propertyName : orderedNames)
         {
-            String propertyName = orderedNames.get(i);
+            Runnable r = worksheet.get(propertyName);
 
-            model.get(propertyName).order(i);
+            // This actually adds the property to the model, but we're doing it
+            // in orderedNames order, not propertyNames order (which is alphabetical).
+            // The default ordering comes from method ordering within the class.
+
+            r.run();
         }
 
         return model;

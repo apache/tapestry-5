@@ -35,8 +35,6 @@ public class PropertyModelImpl implements PropertyModel
 
     private String _label;
 
-    private int _order;
-
     private String _dataType;
 
     private boolean _sortable;
@@ -49,7 +47,6 @@ public class PropertyModelImpl implements PropertyModel
         _conduit = conduit;
 
         _id = TapestryInternalUtils.extractIdFromPropertyExpression(name);
-        _order = TapestryInternalUtils.defaultOrder(conduit);
 
         _label = TapestryInternalUtils.defaultLabel(_id, messages, name);
 
@@ -93,18 +90,6 @@ public class PropertyModelImpl implements PropertyModel
     public String getPropertyName()
     {
         return _name;
-    }
-
-    public int getOrder()
-    {
-        return _order;
-    }
-
-    public PropertyModel order(int order)
-    {
-        _order = order;
-
-        return this;
     }
 
     public BeanModel model()

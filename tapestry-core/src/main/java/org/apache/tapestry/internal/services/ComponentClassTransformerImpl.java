@@ -25,7 +25,7 @@ import javassist.NotFoundException;
 
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
-import org.apache.tapestry.ioc.LogSource;
+import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
@@ -46,14 +46,14 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ComponentClassTransformWorker _workerChain;
 
-    private final LogSource _logSource;
+    private final LoggerSource _logSource;
 
     /**
      * @param workerChain
      *            the ordered list of class transform works as a chain of command instance
      */
     public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain,
-            LogSource logSource)
+            LoggerSource logSource)
     {
         _workerChain = workerChain;
         _logSource = logSource;

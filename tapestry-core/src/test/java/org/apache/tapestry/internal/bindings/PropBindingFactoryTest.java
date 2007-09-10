@@ -16,7 +16,9 @@ package org.apache.tapestry.internal.bindings;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.annotations.BeforeRenderBody;
+import org.apache.tapestry.beaneditor.OrderAfter;
+import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.Location;
@@ -93,7 +95,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         Binding binding = _factory.newBinding("test binding", resources, null, "readOnly", l);
 
-        assertEquals(binding.getAnnotation(Order.class).value(), 100);
+        assertEquals(binding.getAnnotation(OrderBefore.class).value(), "writeOnly");
 
         verify();
     }
@@ -109,7 +111,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         Binding binding = _factory.newBinding("test binding", resources, null, "writeOnly", l);
 
-        assertEquals(binding.getAnnotation(Order.class).value(), 200);
+        assertEquals(binding.getAnnotation(OrderAfter.class).value(), "foobar");
 
         verify();
     }
@@ -125,7 +127,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         Binding binding = _factory.newBinding("test binding", resources, null, "intValue", l);
 
-        assertNull(binding.getAnnotation(Order.class));
+        assertNull(binding.getAnnotation(OrderBefore.class));
 
         verify();
     }
@@ -146,7 +148,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
                 "stringHolderMethod()",
                 l);
 
-        assertEquals(binding.getAnnotation(Order.class).value(), 300);
+        assertNotNull(binding.getAnnotation(BeforeRenderBody.class));
 
         verify();
     }
@@ -162,7 +164,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         Binding binding = _factory.newBinding("test binding", resources, null, "objectValue", l);
 
-        assertEquals(binding.getAnnotation(Order.class).value(), 1000);
+        assertEquals(binding.getAnnotation(OrderAfter.class).value(), "readOnly");
 
         verify();
     }
