@@ -14,7 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.beaneditor.OrderAfter;
+import org.apache.tapestry.beaneditor.OrderBefore;
 
 public class StoogeBean
 {
@@ -25,12 +26,13 @@ public class StoogeBean
         return _moe;
     }
 
-    @Order(100)
+    @OrderAfter("shemp")
     public int getCurly()
     {
         return _curly;
     }
 
+    @OrderBefore("moe")
     public int getLarry()
     {
         return _larry;
@@ -46,7 +48,6 @@ public class StoogeBean
         _curly = curly;
     }
 
-    @Order(-1)
     public void setLarry(int larry)
     {
         _larry = larry;

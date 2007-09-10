@@ -26,15 +26,12 @@ public interface PropertyModel
 
     /**
      * Returns the id used to access other resources (this is based on the property name, but with
-     * any excess punctiuation stripped out).
+     * any excess punctuation stripped out).
      */
     String getId();
 
     /** Returns a user-presentable label for the property. */
     String getLabel();
-
-    /** Returns the order vlaue, used to sort the properties into presentation order. */
-    int getOrder();
 
     /** Returns the type of the property. */
     Class getPropertyType();
@@ -68,12 +65,6 @@ public interface PropertyModel
      * @return the property edit model, for further changes
      */
     PropertyModel label(String label);
-
-    /**
-     * Changes the order for the property. The properties are sorted by order (and then by name for
-     * identical orders) when building the user interface.
-     */
-    PropertyModel order(int order);
 
     /** Returns the containing model, often used for "fluent" construction of the model. */
     BeanModel model();

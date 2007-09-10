@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.beaneditor.OrderBefore;
 
 public interface SimpleTrack
 {
-    @Order(100)
+    @OrderBefore("album")
     String getTitle();
 
-    @Order(200)
+    @OrderBefore("rating")
     String getAlbum();
 
-    @Order(300)
     int getRating();
 }

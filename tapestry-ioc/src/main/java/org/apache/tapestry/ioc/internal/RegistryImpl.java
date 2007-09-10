@@ -30,7 +30,7 @@ import java.util.Set;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.IOCConstants;
-import org.apache.tapestry.ioc.LogSource;
+import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
@@ -84,7 +84,7 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     private final RegistryShutdownHubImpl _registryShutdownHub;
 
-    private final LogSource _logSource;
+    private final LoggerSource _loggerSource;
 
     /** Map from service id to the Module that contains the service. */
     private final Map<String, Module> _serviceIdToModule = newCaseInsensitiveMap();
@@ -122,17 +122,17 @@ public class RegistryImpl implements Registry, InternalRegistry
      *            defines the modules (and builders, decorators, etc., within)
      * @param classFactory
      *            TODO
-     * @param logSource
-     *            used to obtain Log instances
+     * @param loggerSource
+     *            used to obtain Logger instances
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory,
-            LogSource logSource)
+            LoggerSource loggerSource)
     {
-        _logSource = logSource;
+        _loggerSource = loggerSource;
 
         for (ModuleDef def : moduleDefs)
         {
-            Logger logger = _logSource.getLogger(def.getLoggerName());
+            Logger logger = _loggerSource.getLogger(def.getLoggerName());
 
             Module module = new ModuleImpl(this, def, classFactory, logger);
 
@@ -150,7 +150,7 @@ public class RegistryImpl implements Registry, InternalRegistry
             }
         }
 
-        addBuiltin(LOG_SOURCE_SERVICE_ID, LogSource.class, _logSource);
+        addBuiltin(LOG_SOURCE_SERVICE_ID, LoggerSource.class, _loggerSource);
 
         _classFactory = classFactory;
 
@@ -198,12 +198,12 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         assert module != null;
 
-        return _logSource.getLogger(module.getLoggerName() + "." + serviceId);
+        return _loggerSource.getLogger(module.getLoggerName() + "." + serviceId);
     }
 
     private Logger loggerForBuiltinService(String serviceId)
     {
-        return _logSource.getLogger(TapestryIOCModule.class + "." + serviceId);
+        return _loggerSource.getLogger(TapestryIOCModule.class + "." + serviceId);
     }
 
     private <T> void addBuiltin(String serviceId, Class<T> serviceInterface, T service)

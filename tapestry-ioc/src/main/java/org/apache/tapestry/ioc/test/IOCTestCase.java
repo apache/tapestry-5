@@ -24,7 +24,7 @@ import java.util.Locale;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.LogSource;
+import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
@@ -279,7 +279,7 @@ public class IOCTestCase extends TestBase
         expect(threadLocale.getLocale()).andReturn(locale);
     }
 
-    protected final void train_getLogger(LogSource source, String serviceId, Logger logger)
+    protected final void train_getLogger(LoggerSource source, String serviceId, Logger logger)
     {
         expect(source.getLogger(serviceId)).andReturn(logger).atLeastOnce();
     }

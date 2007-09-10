@@ -14,7 +14,10 @@
 
 package org.apache.tapestry.internal.bindings;
 
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.annotations.BeforeRenderBody;
+import org.apache.tapestry.beaneditor.OrderAfter;
+import org.apache.tapestry.beaneditor.OrderBefore;
+import org.apache.tapestry.ioc.annotations.Symbol;
 
 public class TargetBean extends DefaultComponent
 {
@@ -31,7 +34,7 @@ public class TargetBean extends DefaultComponent
         return _stringHolder;
     }
 
-    @Order(300)
+    @BeforeRenderBody
     public StringHolder stringHolderMethod()
     {
         return _stringHolder;
@@ -52,25 +55,25 @@ public class TargetBean extends DefaultComponent
         _intValue = intValue;
     }
 
-    @Order(1000)
+    @OrderAfter("readOnly")
     public String getObjectValue()
     {
         return _objectValue;
     }
 
-    @Order(2000)
+    @OrderAfter("writeOnly")
     public void setObjectValue(String objectValue)
     {
         _objectValue = objectValue;
     }
 
-    @Order(200)
+    @OrderAfter("foobar")
     public void setWriteOnly(String value)
     {
         _writeOnly = value;
     }
 
-    @Order(100)
+    @OrderBefore("writeOnly")
     public String getReadOnly()
     {
         return "ReadOnly";

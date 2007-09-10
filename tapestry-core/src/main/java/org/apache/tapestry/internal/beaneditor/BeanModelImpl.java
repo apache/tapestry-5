@@ -15,23 +15,23 @@
 package org.apache.tapestry.internal.beaneditor;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.PropertyConduitSource;
 
-public class BeanModelImpl implements BeanModel, Comparator<PropertyModel>
+public class BeanModelImpl implements BeanModel
 {
     private final Class _beanType;
 
@@ -42,6 +42,10 @@ public class BeanModelImpl implements BeanModel, Comparator<PropertyModel>
     private final Messages _messages;
 
     private final Map<String, PropertyModel> _properties = newCaseInsensitiveMap();
+
+    // The list of property names, in desired order (generally not alphabetical order).
+
+    private final List<String> _propertyNames = CollectionFactory.newList();
 
     public BeanModelImpl(Class beanType, PropertyConduitSource propertyConduitSource,
             TypeCoercer typeCoercer, Messages messages)
@@ -59,21 +63,66 @@ public class BeanModelImpl implements BeanModel, Comparator<PropertyModel>
 
     public PropertyModel add(String propertyName)
     {
-        if (_properties.containsKey(propertyName))
-            throw new RuntimeException(BeanEditorMessages.duplicatePropertyName(
-                    _beanType,
-                    propertyName));
-
         PropertyConduit conduit = createConduit(propertyName);
 
         return add(propertyName, conduit);
     }
 
+    private void validateNewPropertyName(String propertyName)
+    {
+        notBlank(propertyName, "propertyName");
+
+        if (_properties.containsKey(propertyName))
+            throw new RuntimeException(BeanEditorMessages.duplicatePropertyName(
+                    _beanType,
+                    propertyName));
+    }
+
+    public PropertyModel add(RelativePosition position, String existingPropertyName,
+            String propertyName, PropertyConduit conduit)
+    {
+        notNull(position, "position");
+
+        validateNewPropertyName(propertyName);
+
+        // Locate the existing one.
+
+        PropertyModel existing = get(existingPropertyName);
+
+        // Use the case normalized property name.
+
+        int pos = _propertyNames.indexOf(existing.getPropertyName());
+
+        PropertyModel newModel = new PropertyModelImpl(this, propertyName, conduit, _messages);
+
+        _properties.put(propertyName, newModel);
+
+        int offset = position == RelativePosition.AFTER ? 1 : 0;
+
+        _propertyNames.add(pos + offset, propertyName);
+
+        return newModel;
+    }
+
+    public PropertyModel add(RelativePosition position, String existingPropertyName,
+            String propertyName)
+    {
+        PropertyConduit conduit = createConduit(propertyName);
+
+        return add(position, existingPropertyName, propertyName, conduit);
+    }
+
     public PropertyModel add(String propertyName, PropertyConduit conduit)
     {
+        validateNewPropertyName(propertyName);
+
         PropertyModel propertyModel = new PropertyModelImpl(this, propertyName, conduit, _messages);
 
         _properties.put(propertyName, propertyModel);
+
+        // Remember the order in which the properties were added.
+
+        _propertyNames.add(propertyName);
 
         return propertyModel;
     }
@@ -100,33 +149,25 @@ public class BeanModelImpl implements BeanModel, Comparator<PropertyModel>
 
     public List<String> getPropertyNames()
     {
-        List<PropertyModel> propertyModels = newList(_properties.values());
-
-        // Sort the list of models by their order property.
-
-        Collections.sort(propertyModels, this);
-
-        List<String> result = newList();
-
-        for (PropertyModel propertyModel : propertyModels)
-            result.add(propertyModel.getPropertyName());
-
-        return result;
-    }
-
-    public int compare(PropertyModel o1, PropertyModel o2)
-    {
-        int result = o1.getOrder() - o2.getOrder();
-
-        if (result == 0)
-            result = o1.getPropertyName().compareTo(o2.getPropertyName());
-
-        return result;
+        return CollectionFactory.newList(_propertyNames);
     }
 
     public BeanModel remove(String... propertyNames)
     {
-        _properties.keySet().removeAll(Arrays.asList(propertyNames));
+        for (String propertyName : propertyNames)
+        {
+            PropertyModel model = _properties.get(propertyName);
+
+            if (model == null) continue;
+
+            // De-referencing from the model is needed because the name provided may not be a
+            // case-exact match, so we get the normalized or canonical name from the model because
+            // that's the one in _propertyNames.
+
+            _propertyNames.remove(model.getPropertyName());
+
+            _properties.remove(propertyName);
+        }
 
         return this;
     }

@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.tapestry.ioc.annotations.SubModule;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.DefaultModuleDefImpl;
-import org.apache.tapestry.ioc.internal.LogSourceImpl;
+import org.apache.tapestry.ioc.internal.LoggerSourceImpl;
 import org.apache.tapestry.ioc.internal.RegistryImpl;
 import org.apache.tapestry.ioc.internal.RegistryWrapper;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 
 /**
  * Used to construct the IoC {@link org.apache.tapestry.ioc.Registry}. This class is <em>not</em>
- * threadsafe. The Registry, once created, <em>is</em> threadsafe.
+ * thread-safe. The Registry, once created, <em>is</em> thread-safe.
  */
 public final class RegistryBuilder
 {
@@ -47,7 +47,7 @@ public final class RegistryBuilder
 
     private final Logger _logger;
 
-    private final LogSource _logSource;
+    private final LoggerSource _loggerSource;
 
     private final ClassFactory _classFactory;
 
@@ -58,19 +58,19 @@ public final class RegistryBuilder
 
     public RegistryBuilder(ClassLoader classLoader)
     {
-        this(classLoader, new LogSourceImpl());
+        this(classLoader, new LoggerSourceImpl());
     }
 
-    public RegistryBuilder(ClassLoader classLoader, LogSource logSource)
+    public RegistryBuilder(ClassLoader classLoader, LoggerSource loggerSource)
     {
         _classLoader = classLoader;
-        _logSource = logSource;
-        _logger = logSource.getLogger(RegistryBuilder.class);
+        _loggerSource = loggerSource;
+        _logger = loggerSource.getLogger(RegistryBuilder.class);
 
         // Make the ClassFactory appear to be a service inside TapestryIOCModule, even before that
         // module exists.
 
-        Logger classFactoryLogger = logSource.getLogger(TapestryIOCModule.class.getName()
+        Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName()
                 + ".ClassFactory");
 
         _classFactory = new ClassFactoryImpl(_classLoader, classFactoryLogger);
@@ -129,7 +129,7 @@ public final class RegistryBuilder
     {
         _lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(_modules, _classFactory, _logSource);
+        RegistryImpl registry = new RegistryImpl(_modules, _classFactory, _loggerSource);
 
         return new RegistryWrapper(registry);
     }

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.tapestry.ioc.LogSource;
+import org.apache.tapestry.ioc.LoggerSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
-public class LogSourceImplTest extends IOCInternalTestCase
+public class LoggerSourceImplTest extends IOCInternalTestCase
 {
     @Test
     public void get_by_class()
@@ -27,7 +27,7 @@ public class LogSourceImplTest extends IOCInternalTestCase
         Class clazz = getClass();
 
         Logger expected = LoggerFactory.getLogger(clazz);
-        LogSource logSource = new LogSourceImpl();
+        LoggerSource logSource = new LoggerSourceImpl();
         Logger actual = logSource.getLogger(clazz);
 
         assertSame(actual, expected);
@@ -39,7 +39,7 @@ public class LogSourceImplTest extends IOCInternalTestCase
         String name = "foo.Bar";
 
         Logger expected = LoggerFactory.getLogger(name);
-        LogSource logSource = new LogSourceImpl();
+        LoggerSource logSource = new LoggerSourceImpl();
         Logger actual = logSource.getLogger(name);
 
         assertSame(actual, expected);

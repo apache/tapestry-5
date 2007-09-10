@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.tapestry.ioc.LogSource;
+import org.apache.tapestry.ioc.LoggerSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  * be provided that promote warnings or errors upto thrown exceptions, for people who like their IOC
  * container extra finicky. In addition, the extra layer makes things a lot easier to mock.
  */
-public class LogSourceImpl implements LogSource
+public class LoggerSourceImpl implements LoggerSource
 {
     public Logger getLogger(Class clazz)
     {

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.integration.app1.data;
 
+import org.apache.tapestry.beaneditor.OrderAfter;
+import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.beaneditor.Validate;
 
 public class RegistrationData
@@ -28,6 +30,19 @@ public class RegistrationData
 
     private boolean _citizen;
 
+    @OrderAfter("lastName")
+    @Validate("min=1900,max=2007")
+    public int getBirthYear()
+    {
+        return _birthYear;
+    }
+
+    @OrderBefore("citizen")
+    public Sex getSex()
+    {
+        return _sex;
+    }
+
     public String getFirstName()
     {
         return _firstName;
@@ -37,17 +52,6 @@ public class RegistrationData
     public String getLastName()
     {
         return _lastName;
-    }
-
-    @Validate("min=1900,max=2007")
-    public int getBirthYear()
-    {
-        return _birthYear;
-    }
-
-    public Sex getSex()
-    {
-        return _sex;
     }
 
     public boolean isCitizen()

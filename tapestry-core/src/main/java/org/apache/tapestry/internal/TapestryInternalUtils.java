@@ -28,16 +28,18 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.beaneditor.OrderAfter;
+import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry.ioc.internal.util.Orderer;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
+import org.slf4j.Logger;
 
 /** Shared utility methods used by various implementation classes. */
 public class TapestryInternalUtils
@@ -291,15 +293,6 @@ public class TapestryInternalUtils
         return new KeyValue(key.trim(), value.trim());
     }
 
-    public static int defaultOrder(PropertyConduit conduit)
-    {
-        if (conduit == null) return 0;
-
-        Order order = conduit.getAnnotation(Order.class);
-
-        return order == null ? 0 : order.value();
-    }
-
     /**
      * Used to convert a property expression into a key that can be used to locate various resources
      * (Blocks, messages, etc.). Strips out any punctuation characters, leaving just words
@@ -366,9 +359,9 @@ public class TapestryInternalUtils
 
     /**
      * Sorts the property names into presentation order. Filters out any properties that have an
-     * explicit {@link Order}, leaving the remainder. Estimates each propertie's position based on
-     * the relative position of the property's getter. The code assumes that all methods are
-     * readable (have a getter method).
+     * explicit {@link OrderBefore}, leaving the remainder. Estimates each propertie's position
+     * based on the relative position of the property's getter. The code assumes that all methods
+     * are readable (have a getter method).
      * 
      * @param classAdapter
      *            defines the bean that contains the properties
@@ -378,16 +371,32 @@ public class TapestryInternalUtils
      *            the initial set of property names
      * @return propertyNames filtered and sorted
      */
-    public static List<String> orderProperties(ClassPropertyAdapter classAdapter,
+    public static List<String> orderProperties(Logger logger, ClassPropertyAdapter classAdapter,
             ClassFactory classFactory, List<String> propertyNames)
     {
+
+        // Property name to a list of constraints.
+        Map<String, List<String>> constraints = CollectionFactory.newMap();
+
         List<PropertyOrder> properties = newList();
 
         for (String name : propertyNames)
         {
-            PropertyAdapter pa = classAdapter.getPropertyAdapter(name);
 
-            if (pa.getAnnotation(Order.class) != null) continue;
+            PropertyAdapter pa = classAdapter.getPropertyAdapter(name);
+            List<String> propertyConstraints = CollectionFactory.newList();
+
+            OrderBefore beforeAnnotation = pa.getAnnotation(OrderBefore.class);
+
+            if (beforeAnnotation != null)
+                propertyConstraints.add("before:" + beforeAnnotation.value());
+
+            OrderAfter afterAnnotation = pa.getAnnotation(OrderAfter.class);
+
+            if (afterAnnotation != null)
+                propertyConstraints.add("after:" + afterAnnotation.value());
+
+            if (!propertyConstraints.isEmpty()) constraints.put(name, propertyConstraints);
 
             Method readMethod = pa.getReadMethod();
 
@@ -398,12 +407,38 @@ public class TapestryInternalUtils
 
         Collections.sort(properties);
 
-        List<String> result = newList();
+        Orderer<String> orderer = new Orderer<String>(logger);
+        String prev = null;
 
         for (PropertyOrder po : properties)
-            result.add(po._propertyName);
+        {
+            String name = po._propertyName;
 
-        return result;
+            List<String> propertyConstraints = constraints.get(name);
+
+            if (propertyConstraints != null)
+            {
+
+                String[] asArray = propertyConstraints.toArray(new String[propertyConstraints
+                        .size()]);
+
+                orderer.add(name, name, asArray);
+
+                prev = name;
+
+                continue;
+            }
+
+            if (prev == null)
+                orderer.add(name, name);
+            else
+                orderer.add(name, name, "after:" + prev);
+
+            prev = name;
+        }
+
+        return orderer.getOrdered();
+
     }
 
     private static int computeDepth(Method method)

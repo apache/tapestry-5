@@ -18,9 +18,9 @@ import org.slf4j.Logger;
 
 /**
  * A wrapper around SLF4J's LoggerFactory that exists to allow particular projects to "hook" the
- * creation of Loggeer instances.
+ * creation of Logger instances.
  */
-public interface LogSource
+public interface LoggerSource
 {
     /** Creates or retrieves a log based on Class. This is rarely used in Tapestry IOC. */
     Logger getLogger(Class clazz);

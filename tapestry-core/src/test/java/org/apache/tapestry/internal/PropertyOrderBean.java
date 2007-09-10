@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal;
 
-import org.apache.tapestry.beaneditor.Order;
+import org.apache.tapestry.beaneditor.OrderBefore;
 
 public class PropertyOrderBean
 {
@@ -34,7 +34,7 @@ public class PropertyOrderBean
         return _second;
     }
 
-    @Order(-1)
+    @OrderBefore("first")
     public String getThird()
     {
         return _third;
