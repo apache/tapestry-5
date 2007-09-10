@@ -62,7 +62,7 @@ public final class MockTester
      */
     public <T> T newMock(Class<T> mockClass)
     {
-        return getMocksControl().createMock(mockClass);
+        return getMocksControl().createMock(mockClass.getSimpleName(), mockClass);
     }
 
     /**
