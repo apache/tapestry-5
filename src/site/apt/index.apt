@@ -37,6 +37,8 @@ Where To Go
  You are currently reading the Tapestry 5 project site.  Tapestry itself is broken into several modules:
  
 *---+---+
+| {{{tapestry-annotations/index.html}tapestry-annotations}} | A few Tapestry annotations that may be used with non-component classes. |
+*---+---+
 | {{{tapestry-core/index.html}tapestry-core}} | The core implementation of the Tapestry framework, including all the primary built-in components. |
 *---+---+
 | {{{tapestry-hibernate/index.html}tapestry-hibernate}} |  Integration with the {{{http://hibernate.org}Hibernate}} Object/Relational Mapping framework. |
@@ -65,6 +67,10 @@ Roadmap
   
   * Final release, Fall 2007.
   
+  
+   * ... and if you've been paying attention, you might notice that things have slipped a bit due to the realities of working on a client project
+     that doesn't use Tapestry (it isn't a web application).
+     
   []
     
 

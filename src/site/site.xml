@@ -48,12 +48,13 @@
     </menu>
 
     <menu name="Tapestry 5 Modules">
+      <item name="tapestry-annotations" href="tapestry-annotations/"/>
       <item name="tapestry-core" href="tapestry-core/"/>
       <item name="tapestry-hibernate" href="tapestry-hibernate/"/>
-      <item name="tapestry-ioc" href="tapestry-ioc"/>
-      <item name="tapestry-spring" href="tapestry-spring"/>
+      <item name="tapestry-ioc" href="tapestry-ioc/"/>
+      <item name="tapestry-spring" href="tapestry-spring/"/>
       <item name="tapestry-test" href="tapestry-test/"/>
-      <item name="tapestry-upload" href="tapestry-upload"/>
+      <item name="tapestry-upload" href="tapestry-upload/"/>
     </menu>
     
     <menu name="Tapestry Tutorials">

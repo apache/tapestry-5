@@ -23,9 +23,9 @@ import java.lang.annotation.Target;
 
 /**
  * Used to attach validation constraints directly to a property (either the getter or the setter
- * method). The annotation value is a comma seperated list of <em>validation constraints</em>,
+ * method). The annotation value is a comma separated list of <em>validation constraints</em>,
  * each one identifying a validator type (such as "required", "minlength") and optionally, a
- * constraint value. Most validators need a constraint value, which is seperated from the type by an
+ * constraint value. Most validators need a constraint value, which is separated from the type by an
  * equals size (i.e., "maxlength=30").
  */
 @Target(METHOD)

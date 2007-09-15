@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+  <classpathentry kind="src" output="bin" path="tapestry-annotations/src/main/java"/>
   <classpathentry kind="src" output="bin" path="tapestry-component-report/src/main/java"/>
   <classpathentry kind="src" output="bin" path="tapestry-core/src/main/java"/>
   <classpathentry kind="src" output="bin-test" path="tapestry-core/src/test/java"/>

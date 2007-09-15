@@ -7,6 +7,9 @@
   <packaging>pom</packaging>
   <version>5.0.6-SNAPSHOT</version>
   <name>Tapestry 5 Project</name>
+  <description>
+    Master project for the modules of Tapestry 5.
+  </description>
   <inceptionYear>2006</inceptionYear>
   <url>http://tapestry.apache.org/tapestry5/</url>
   <issueManagement>
@@ -88,6 +91,7 @@
   <modules>
     <module>tapestry-test</module>
     <module>tapestry-ioc</module>
+    <module>tapestry-annotations</module>
     <module>tapestry-core</module>
 
 
@@ -264,6 +268,15 @@
   </profiles>
   <reporting>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <aggregate>true</aggregate>
+          <maxmemory>600m</maxmemory>
+          <splitindex>true</splitindex>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
