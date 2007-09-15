@@ -503,6 +503,7 @@ class JSONTokener
      * 
      * @return " at character [myIndex] of [mySource]"
      */
+    @Override
     public String toString()
     {
         return " at character " + _index + " of " + _source;

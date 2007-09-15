@@ -105,12 +105,5 @@ public class SubmitTest extends InternalBaseTestCase
         heartbeat.end();
 
         verify();
-
     }
-
-    protected final FormSupport mockFormSupport()
-    {
-        return newMock(FormSupport.class);
-    }
-
 }

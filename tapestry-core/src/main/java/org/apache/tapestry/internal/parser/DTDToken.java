@@ -57,6 +57,7 @@ public class DTDToken extends TemplateToken
         return _systemId;
     }
 
+    @Override
     public String toString()
     {
         return String.format("DTD[name=%s; publicId=%s; systemId=%s]", _name, _publicId, _systemId);

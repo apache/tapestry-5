@@ -32,19 +32,16 @@ public class RootPathDispatcher implements Dispatcher
 
     private final PageRenderRequestHandler _handler;
 
-    private final PageResponseRenderer _renderer;
-
+ 
     private final String _startPageName;
 
     private final String[] _emptyContext = new String[0];
 
     public RootPathDispatcher(final ComponentClassResolver componentClassResolver,
-            final PageRenderRequestHandler handler, final PageResponseRenderer renderer,
-            final String startPageName)
+            final PageRenderRequestHandler handler, final String startPageName)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;
-        _renderer = renderer;
         _startPageName = startPageName;
     }
 

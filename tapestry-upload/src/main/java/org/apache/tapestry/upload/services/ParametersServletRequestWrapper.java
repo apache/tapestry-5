@@ -28,7 +28,7 @@ import org.apache.tapestry.services.Dispatcher;
 
 /**
  * Wrapper for HttpServletRequest that overrides the parameter methods of the wrapped request. i.e.
- * parameters are retreived from the wrapper rather than the real request.
+ * parameters are retrieved from the wrapper rather than the real request.
  */
 public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
 {
@@ -39,11 +39,13 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
         super(httpServletRequest);
     }
 
+    @Override
     public String getParameter(String name)
     {
         return getValueFor(name).single();
     }
 
+    @Override
     public Map<String, Object> getParameterMap()
     {
         Map<String, Object> paramMap = newMap();
@@ -58,11 +60,13 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
         return paramMap;
     }
 
+    @Override
     public Enumeration getParameterNames()
     {
         return Collections.enumeration(_parameters.keySet());
     }
 
+    @Override
     public String[] getParameterValues(String name)
     {
         return getValueFor(name).multi();

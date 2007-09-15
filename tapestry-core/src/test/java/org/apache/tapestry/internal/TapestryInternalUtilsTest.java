@@ -27,9 +27,7 @@ import java.util.regex.Pattern;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.services.ClassFactory;

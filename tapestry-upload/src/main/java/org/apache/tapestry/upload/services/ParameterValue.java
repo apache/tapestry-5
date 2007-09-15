@@ -27,11 +27,13 @@ public class ParameterValue
 
     public static final ParameterValue NULL = new ParameterValue()
     {
+        @Override
         public String single()
         {
             return null;
         }
 
+        @Override
         public String[] multi()
         {
             return null;

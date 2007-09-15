@@ -95,16 +95,19 @@ public class ComponentReport extends AbstractMavenReport
      */
     private String workDirectory;
 
+    @Override
     protected String getOutputDirectory()
     {
         return outputDirectory;
     }
 
+    @Override
     protected MavenProject getProject()
     {
         return project;
     }
 
+    @Override
     protected SiteRenderer getSiteRenderer()
     {
         return siteRenderer;
@@ -345,7 +348,7 @@ public class ComponentReport extends AbstractMavenReport
     @SuppressWarnings("unchecked")
     private String sourcePath()
     {
-        List<String> roots = (List<String>) project.getCompileSourceRoots();
+        List<String> roots = project.getCompileSourceRoots();
 
         return toArgumentPath(roots);
     }
@@ -401,7 +404,7 @@ public class ComponentReport extends AbstractMavenReport
     @SuppressWarnings("unchecked")
     private String classPath() throws MavenReportException
     {
-        List<Artifact> artifacts = (List<Artifact>) project.getCompileArtifacts();
+        List<Artifact> artifacts = project.getCompileArtifacts();
 
         return artifactsToArgumentPath(artifacts);
     }

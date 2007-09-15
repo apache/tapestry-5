@@ -240,4 +240,14 @@ public abstract class AbstractField implements Field
     {
         return _decorator;
     }
+
+    protected final void setDecorator(ValidationDecorator decorator)
+    {
+        _decorator = decorator;
+    }
+
+    protected final void setFormSupport(FormSupport formSupport)
+    {
+        _formSupport = formSupport;
+    }
 }

@@ -38,9 +38,6 @@ package org.apache.tapestry.json;
  SOFTWARE.
  */
 
-import java.io.IOException;
-import java.io.Writer;
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
@@ -414,6 +411,7 @@ public class JSONArray
      * 
      * @return a printable, displayable, transmittable representation of the array.
      */
+    @Override
     public String toString()
     {
         try
