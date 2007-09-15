@@ -3,17 +3,16 @@
 # This script is used to update the Eclipse .classpath file for the master project; it is used when
 # a module is added or removed, or when a src folder is added or removed from a module.
 #
-# It assumes the layout of each module conforms to Datatech's normal layout:
-# - src
-# - test
-# - resources
-# - test-resources
+# It assumes the layout of each module conforms to Maven's default layout:
+# - src/main/java
+# - src/test/java
+# - test/main/resources
+# - src/test/resources
 #
 # This script must be executed from the root project directory (the directory containing the master pom.xml, and containing
 # the directories for the modules).
 
 # TODO: Update the .classpath in each module
-# TODO: Generated IDEA control files as well
 
 require 'optparse'
 

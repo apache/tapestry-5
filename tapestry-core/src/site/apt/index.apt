@@ -13,6 +13,9 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * Some of the annotations that aren't used specifically with component classes have been split off into the new
+    {{{../tapestry-annotations/}tapestry-annotations}} module.
+  
   * Validator constraint values may now be specified in the component message catalog, rather than in the @Validation annotation (or validation compnent parameter). 
   
   * A new validator, regexp, has been added.
