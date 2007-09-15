@@ -28,7 +28,6 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;

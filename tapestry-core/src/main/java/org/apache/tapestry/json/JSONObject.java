@@ -38,8 +38,6 @@ package org.apache.tapestry.json;
  SOFTWARE.
  */
 
-import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 import java.util.Set;
 
@@ -115,6 +113,7 @@ public final class JSONObject
          * 
          * @return NULL.
          */
+        @Override
         protected final Object clone()
         {
             return this;
@@ -127,6 +126,7 @@ public final class JSONObject
          *            An object to test for nullness.
          * @return true if the object parameter is the JSONObject.NULL object or null.
          */
+        @Override
         public boolean equals(Object object)
         {
             return object == null || object == this;
@@ -137,6 +137,7 @@ public final class JSONObject
          * 
          * @return The string "null".
          */
+        @Override
         public String toString()
         {
             return "null";
@@ -797,6 +798,7 @@ public final class JSONObject
      *         beginning with <code>{</code>&nbsp;<small>(left brace)</small> and ending with
      *         <code>}</code>&nbsp;<small>(right brace)</small>.
      */
+    @Override
     public String toString()
     {
         boolean comma = false;

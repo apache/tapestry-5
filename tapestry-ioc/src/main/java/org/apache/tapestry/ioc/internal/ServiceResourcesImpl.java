@@ -107,6 +107,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         return getModule().getModuleBuilder();
     }
 
+    @Override
     public <T> T autobuild(Class<T> clazz)
     {
         notNull(clazz, "clazz");

@@ -14,37 +14,25 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.Locale;
-
 import org.apache.tapestry.Binding;
-import org.apache.tapestry.Block;
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.FormValidationControl;
-import org.apache.tapestry.Translator;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.BeanBlockSource;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.PropertyEditContext;
-import org.apache.tapestry.services.TranslatorDefaultSource;
 
 /**
- * A component that creates an entire form editting the properties of a particular bean. Inspired by
+ * A component that creates an entire form editing the properties of a particular bean. Inspired by
  * <a href="http://www.trailsframework.org/">Trails</a> and <a
  * href="http://beanform.sourceforge.net/">BeanForm</a> (both for Tapestry 4). Generates a simple
- * UI for editting the properties of a JavaBean, with the flavor of UI for each property (text
+ * UI for editing the properties of a JavaBean, with the flavor of UI for each property (text
  * field, checkbox, drop down list) determined from the property type, and the order and validation
  * for the properties determined from annotations on the property's getter and setter methods.
  * <p>

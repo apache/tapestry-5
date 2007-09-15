@@ -27,7 +27,6 @@ import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 import org.easymock.EasyMock;
@@ -124,7 +123,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
         LinkFactoryListener listener = mockLinkFactoryListener();
@@ -150,8 +148,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, resolver, map, null,
-                _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false);
@@ -171,7 +168,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         Page page = mockPage();
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
@@ -195,8 +191,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, resolver, map, null,
-                _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false, "biff", "bazz");
@@ -216,7 +211,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         Page page = mockPage();
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
@@ -239,8 +233,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, resolver, map, null,
-                _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, true);
@@ -259,7 +252,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
         LinkFactoryListener listener = mockLinkFactoryListener();
@@ -289,8 +281,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, resolver, map, cache,
-                _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
@@ -385,7 +376,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentClassResolver resolver = mockComponentClassResolver();
         ComponentPageElement element = mockComponentPageElement();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
@@ -414,8 +404,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, resolver, map, cache,
-                _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(element, eventName, false, context);

@@ -55,9 +55,8 @@ public class UploadTest extends TapestryTestCase
 
         Upload component = new Upload(null, null, null, null, resources);
 
-        setValidationDecorator(component, new StubValidationDecorator());
-
-        setFormSupport(component, formSupport);
+        component.injectDecorator(new StubValidationDecorator());
+        component.injectFormSupport(formSupport);
 
         component.beginRender(writer);
 
@@ -72,22 +71,11 @@ public class UploadTest extends TapestryTestCase
 
     }
 
-    protected final FormSupport mockFormSupport()
-    {
-        return newMock(FormSupport.class);
-    }
-
-    private void setFormSupport(Upload component, FormSupport formSupport)
-            throws IllegalAccessException
-    {
-        setField(component, "_formSupport", formSupport);
-    }
-
     @Test
     public void validation_decorator_invoked_inside_begin_render() throws Exception
     {
         getMocksControl().checkOrder(true);
-        
+
         ComponentResources resources = mockComponentResources();
         Upload component = new Upload(null, null, null, null, resources);
         MarkupWriter writer = createMarkupWriter();
@@ -95,11 +83,12 @@ public class UploadTest extends TapestryTestCase
 
         FormSupport formSupport = mockFormSupport();
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
-        setField(component, "_formSupport", formSupport);
+        
+        component.injectFormSupport(formSupport);
 
         ValidationDecorator decorator = mockValidationDecorator();
 
-        setValidationDecorator(component, decorator);
+        component.injectDecorator(decorator);
 
         resources.renderInformalParameters(writer);
         decorator.insideField(component);
@@ -116,6 +105,7 @@ public class UploadTest extends TapestryTestCase
         return newMock(ValidationDecorator.class);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void begin_render_invokes_field_validator() throws Exception
     {
@@ -129,11 +119,11 @@ public class UploadTest extends TapestryTestCase
 
         FormSupport formSupport = mockFormSupport();
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
-        setField(component, "_formSupport", formSupport);
+        component.injectFormSupport(formSupport);
 
         ValidationDecorator decorator = mockValidationDecorator();
 
-        setValidationDecorator(component, decorator);
+        component.injectDecorator(decorator);
 
         validate.render(writer);
         resources.renderInformalParameters(writer);
@@ -204,6 +194,7 @@ public class UploadTest extends TapestryTestCase
         assertNull(component.getValue());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void process_submission_calls_validator() throws Exception
     {
@@ -224,6 +215,7 @@ public class UploadTest extends TapestryTestCase
         verify();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void process_submission_tracks_validator_errors() throws Exception
     {
@@ -255,35 +247,5 @@ public class UploadTest extends TapestryTestCase
     protected final MultipartDecoder mockMultipartDecoder()
     {
         return newMock(MultipartDecoder.class);
-    }
-
-    private void setValidationDecorator(Upload component, ValidationDecorator decorator)
-            throws IllegalAccessException
-    {
-        setField(component, "_decorator", decorator);
-    }
-
-    private void setField(Object bean, String name, Object value) throws IllegalAccessException
-    {
-        Class clazz = bean.getClass();
-        java.lang.reflect.Field field = null;
-
-        while (field == null && clazz != null)
-        {
-            try
-            {
-                field = clazz.getDeclaredField(name);
-            }
-            catch (NoSuchFieldException e)
-            {
-                field = null;
-            }
-            clazz = clazz.getSuperclass();
-        }
-        if (field != null)
-        {
-            field.setAccessible(true);
-            field.set(bean, value);
-        }
     }
 }

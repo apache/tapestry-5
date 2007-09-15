@@ -37,7 +37,6 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     public void not_a_page_request() throws Exception
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
-        PageResponseRenderer renderer = mockPageResponseRenderer();
         RequestPageCache cache = mockRequestPageCache();
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, null, null, null);
         Request request = mockRequest();
@@ -61,7 +60,6 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     public void empty_path() throws Exception
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
-        PageResponseRenderer renderer = mockPageResponseRenderer();
         PageRenderRequestHandler handler = newMock(PageRenderRequestHandler.class);
         Request request = mockRequest();
         Response response = mockResponse();
@@ -120,7 +118,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
+                renderer, response);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -168,7 +167,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
+                renderer, response);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 

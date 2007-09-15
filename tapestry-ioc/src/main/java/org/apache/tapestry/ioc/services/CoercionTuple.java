@@ -53,6 +53,7 @@ public final class CoercionTuple<S, T>
             return _coercion.coerce(input);
         }
 
+        @Override
         public String toString()
         {
             return String.format("%s --> %s", convert(_sourceType), convert(_targetType));

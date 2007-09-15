@@ -18,12 +18,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.ServiceDecorator;
 import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;

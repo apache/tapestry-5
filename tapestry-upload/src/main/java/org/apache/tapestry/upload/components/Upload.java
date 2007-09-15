@@ -20,6 +20,7 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ValidationDecorator;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
@@ -105,6 +106,7 @@ public class Upload extends AbstractField
         _resources = resources;
     }
 
+    @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
     {
         UploadedFile uploaded = _decoder.getFileUpload(elementName);
@@ -140,9 +142,9 @@ public class Upload extends AbstractField
         writer.element("input", "type", "file", "name", getElementName(), "id", getClientId());
 
         _validate.render(writer);
-        
+
         _resources.renderInformalParameters(writer);
-        
+
         getValidationDecorator().insideField(this);
     }
 
@@ -159,5 +161,19 @@ public class Upload extends AbstractField
     Binding defaultValue()
     {
         return createDefaultParameterBinding("value");
+    }
+
+    void injectDecorator(ValidationDecorator decorator)
+    {
+        setDecorator(decorator);
+    }
+
+    void injectFormSupport(FormSupport formSupport)
+    {
+        // We have our copy ...
+        _formSupport = formSupport;
+        
+        // As does AbstractField
+        setFormSupport(formSupport);
     }
 }

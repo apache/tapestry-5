@@ -34,7 +34,6 @@ import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
@@ -43,8 +42,6 @@ public class LinkFactoryImpl implements LinkFactory
     private final Request _request;
 
     private final Response _response;
-
-    private final ComponentClassResolver _componentClassResolver;
 
     private final ComponentInvocationMap _componentInvocationMap;
 
@@ -62,13 +59,11 @@ public class LinkFactoryImpl implements LinkFactory
     }
 
     public LinkFactoryImpl(Request request, Response encoder,
-            ComponentClassResolver componentClassResolver,
-            ComponentInvocationMap componentInvocationMap, RequestPageCache pageCache,
-            TypeCoercer typeCoercer)
+            ComponentInvocationMap componentInvocationMap,
+            RequestPageCache pageCache, TypeCoercer typeCoercer)
     {
         _request = request;
         _response = encoder;
-        _componentClassResolver = componentClassResolver;
         _componentInvocationMap = componentInvocationMap;
         _pageCache = pageCache;
         _typeCoercer = typeCoercer;

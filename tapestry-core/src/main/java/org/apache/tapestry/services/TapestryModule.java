@@ -129,7 +129,6 @@ import org.apache.tapestry.internal.services.PageLifecycleAnnotationWorker;
 import org.apache.tapestry.internal.services.PageRenderDispatcher;
 import org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl;
 import org.apache.tapestry.internal.services.PageRenderSupportImpl;
-import org.apache.tapestry.internal.services.PageResponseRenderer;
 import org.apache.tapestry.internal.services.ParameterWorker;
 import org.apache.tapestry.internal.services.PersistWorker;
 import org.apache.tapestry.internal.services.PersistentFieldManagerImpl;
@@ -863,8 +862,6 @@ public final class TapestryModule
 
     private final RequestPageCache _requestPageCache;
 
-    private final PageResponseRenderer _pageResponseRenderer;
-
     private final Environment _environment;
 
     private final StrategyBuilder _strategyBuilder;
@@ -889,8 +886,6 @@ public final class TapestryModule
 
     RequestPageCache requestPageCache,
 
-    PageResponseRenderer pageResponseRenderer,
-
     Environment environment,
 
     StrategyBuilder strategyBuilder,
@@ -910,7 +905,6 @@ public final class TapestryModule
         _applicationGlobals = applicationGlobals;
         _chainBuilder = chainBuilder;
         _requestPageCache = requestPageCache;
-        _pageResponseRenderer = pageResponseRenderer;
         _environment = environment;
         _strategyBuilder = strategyBuilder;
         _componentInstantiatorSource = componentInstantiatorSource;
@@ -1335,7 +1329,7 @@ public final class TapestryModule
         // Looks for the root path and renders the start page
 
         configuration.add("RootPath", new RootPathDispatcher(componentClassResolver,
-                pageRenderRequestHandler, _pageResponseRenderer, startPageName), "before:Asset");
+                pageRenderRequestHandler, startPageName), "before:Asset");
 
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.

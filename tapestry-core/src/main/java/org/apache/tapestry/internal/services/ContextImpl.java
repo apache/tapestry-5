@@ -66,13 +66,12 @@ public class ContextImpl implements Context
         {
             String current = queue.pop();
 
-            Set<String> matches = (Set<String>) _servletContext.getResourcePaths(current);
+            Set<String> matches = _servletContext.getResourcePaths(current);
 
             // Tomcat 5.5.20 inside JBoss 4.0.2 has been observed to do this!
             // Perhaps other servers do as well.
 
-            if (matches == null)
-                continue;
+            if (matches == null) continue;
 
             for (String match : matches)
             {

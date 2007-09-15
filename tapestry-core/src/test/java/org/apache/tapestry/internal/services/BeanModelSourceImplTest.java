@@ -148,8 +148,6 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
 
-        Class propertyType = String.class;
-
         train_getMessages(resources, messages);
         stub_contains(messages, false);
 

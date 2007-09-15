@@ -82,6 +82,7 @@ import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Context;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.FieldValidatorSource;
+import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
 import org.apache.tapestry.services.InjectionProvider;
 import org.apache.tapestry.services.MethodFilter;
@@ -978,6 +979,11 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getPageName(ComponentResourcesCommon resources, String pageName)
     {
         expect(resources.getPageName()).andReturn(pageName).atLeastOnce();
+    }
+
+    protected final FormSupport mockFormSupport()
+    {
+        return newMock(FormSupport.class);
     }
 
 }
