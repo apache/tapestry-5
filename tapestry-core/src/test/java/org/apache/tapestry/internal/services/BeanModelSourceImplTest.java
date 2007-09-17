@@ -66,6 +66,10 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
+        assertEquals(
+                model.toString(),
+                "BeanModel[org.apache.tapestry.internal.services.SimpleBean properties:firstName, lastName, age]");
+
         PropertyModel age = model.get("age");
 
         assertEquals(age.getLabel(), "Age");
@@ -566,7 +570,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         // Testing a couple of things here:
         // 1) case insensitive
         // 2) unreferenced property names added to the end.
-        
+
         model.reorder("lastname", "AGE");
 
         assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age", "firstName"));

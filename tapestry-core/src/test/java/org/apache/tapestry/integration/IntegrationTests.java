@@ -599,6 +599,24 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void bean_editor_property_reorder_remove()
+    {
+        open(BASE_URL);
+        clickAndWait("link=BeanEdit Remove/Reorder");
+        clickAndWait("link=Clear Data");
+
+        // Looks like a bug in Selenium; we can see //label[1] but not //label[2].
+        // assertTextSeries("//label[%d]", 1, "Last Name", "First Name", "Sex", "U.S. Citizen");
+
+        type("firstName", "Howard");
+        type("lastName", "Lewis Ship");
+
+        clickAndWait("//input[@type=\'submit\']");
+
+        assertTextPresent("[Howard]", "[Lewis Ship]", "[0]", "[MAIL]", "[false]");
+    }
+
+    @Test
     public void pageloaded_lifecycle_method_invoked()
     {
         open(BASE_URL);
