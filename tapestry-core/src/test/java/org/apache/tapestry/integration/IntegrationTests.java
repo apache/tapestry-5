@@ -140,7 +140,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        clickAndWait("link=Environmental Annotation Useage");
+        clickAndWait("link=Environmental Annotation Usage");
 
         assertSourcePresent("[<strong>A message provided by the RenderableProvider component.</strong>]");
     }
@@ -462,7 +462,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        clickAndWait("link=Template Overriden by Class Page");
+        clickAndWait("link=Template Overridden by Class Page");
 
         assertTextPresent("Output: ClassValue");
     }
@@ -717,6 +717,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=1");
 
         assertText("//tr[1]/td[1]", "(untitled hidden track)");
+    }
+
+    @Test
+    public void grid_remove_reorder()
+    {
+        open(BASE_URL);
+        clickAndWait("link=Grid Remove/Reorder Demo");
+
+        assertTextSeries("//th[%d]", 1, "Rating", "Title", "Album", "Artist", "Genre");
     }
 
     @Test

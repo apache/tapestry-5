@@ -27,6 +27,7 @@ import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.internal.bindings.AbstractBinding;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.BeanModelSource;
@@ -92,6 +93,21 @@ public class Grid implements GridModelProvider
      */
     @Parameter
     private BeanModel _model;
+
+    /**
+     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names
+     * are case-insensitive.
+     */
+    @Parameter(defaultPrefix = "literal")
+    private String _remove;
+
+    /**
+     * A comma-separated list of property names indicating the order in which the properties should
+     * be presented. The names are case insensitive. Any properties not indicated in the list will
+     * be appended to the end of the display order.
+     */
+    @Parameter(defaultPrefix = "literal")
+    private String _reorder;
 
     /**
      * A Block to render instead of the table (and pager, etc.) when the source is empty. The
@@ -182,6 +198,10 @@ public class Grid implements GridModelProvider
     Object setupRender()
     {
         _dataSource = _typeCoercer.coerce(_source, GridDataSource.class);
+
+        if (_remove != null) BeanModelUtils.remove(_model, _remove);
+
+        if (_reorder != null) BeanModelUtils.reorder(_model, _reorder);
 
         // If there's no rows, display the empty block placeholder.
 
