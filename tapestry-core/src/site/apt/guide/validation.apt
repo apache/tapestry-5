@@ -158,7 +158,7 @@ Configuring Fields and Labels
     <body>
         <h1>Please Login</h1>
 
-        <t:form>
+        <form t:id="form">
 
             <t:errors/>
 
@@ -169,7 +169,7 @@ Configuring Fields and Labels
             <input t:type="PasswordField" t:id="password" t:validate="required,minlength=3" size="30"/>
             <br/>
             <input type="submit" value="Login"/>
-        </t:form>
+        </form>
     </body>
 </html>
 +---+
