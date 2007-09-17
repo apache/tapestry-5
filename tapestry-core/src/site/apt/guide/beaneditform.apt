@@ -94,6 +94,23 @@ Property Editor Overrides
 
   The other fields will render normally (using the built-in editors).
   
+Customizing the BeanModel
+
+  You may want to customize the BeanModel further, to remove from the form properties that should not be editable by the user,
+  and to change the order in which properties are presented within the form.
+  
+  The BeanEditForm component has two parameters for this purpose:
+  
+  * remove: A comma separated list of property names to remove from the model.
+  
+  * reorder: A comma separated list of property names indicating the desired order.
+  
+  []
+  
+  If a model has more properties that are listed in the reorder parameter, then the additional properties will be ordered at the end of the form.
+  
+  Note that these parameters <modify> the BeanModel.
+    
 Providing the BeanModel
 
   The BeanEditForm component operates in terms of a {{{../../apidocs/org/apache/tapestry/beaneditor/BeanModel.html}BeanModel}}, which describes
@@ -101,8 +118,11 @@ Providing the BeanModel
   
   Normally, the BeanEditForm automatically creates the BeanModel as needed, based on the type of object bound to its object parameter.
   
-  Alternately, the BeanModel can be supplied as the model parameter. This can be useful if certain properties should be omitted, or the order
-  of the properties needs to be changed.  The model can be created when the page is first loaded:
+  Alternately, the BeanModel can be supplied as the model parameter. This can be useful in situations where the remove and reorder parameters
+  are insufficient.  For example, if the the type of the property being edited is an interface type, it may be useful to provide
+  an explicit BeanModel around an underlying implementation class.
+  
+  The model can be created when the page is first loaded:
   
 +---+
 public class MyPage

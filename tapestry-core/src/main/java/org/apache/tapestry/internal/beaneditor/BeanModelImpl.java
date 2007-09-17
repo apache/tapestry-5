@@ -29,6 +29,7 @@ import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.PropertyConduitSource;
 
@@ -199,4 +200,25 @@ public class BeanModelImpl implements BeanModel
         return this;
     }
 
+    @Override
+    public String toString()
+    {
+        StringBuilder builder = new StringBuilder("BeanModel[");
+        builder.append(ClassFabUtils.toJavaClassName(_beanType));
+
+        builder.append(" properties:");
+        String sep = "";
+
+        for (String name : _propertyNames)
+        {
+            builder.append(sep);
+            builder.append(name);
+
+            sep = ", ";
+        }
+
+        builder.append("]");
+
+        return builder.toString();
+    }
 }

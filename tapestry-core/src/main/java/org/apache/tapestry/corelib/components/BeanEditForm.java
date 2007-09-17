@@ -24,6 +24,7 @@ import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
+import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
@@ -32,9 +33,9 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
  * A component that creates an entire form editing the properties of a particular bean. Inspired by
  * <a href="http://www.trailsframework.org/">Trails</a> and <a
  * href="http://beanform.sourceforge.net/">BeanForm</a> (both for Tapestry 4). Generates a simple
- * UI for editing the properties of a JavaBean, with the flavor of UI for each property (text
- * field, checkbox, drop down list) determined from the property type, and the order and validation
- * for the properties determined from annotations on the property's getter and setter methods.
+ * UI for editing the properties of a JavaBean, with the flavor of UI for each property (text field,
+ * checkbox, drop down list) determined from the property type, and the order and validation for the
+ * properties determined from annotations on the property's getter and setter methods.
  * <p>
  * You may add &lt;t:parameter&gt;s to the component; when the name matches (case insensitive) the
  * name of a property, then the corresponding Block is renderered, rather than any of the built in
@@ -63,6 +64,21 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @Parameter(required = true)
     private Object _object;
+
+    /**
+     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names
+     * are case-insensitive.
+     */
+    @Parameter(defaultPrefix="literal")
+    private String _remove;
+
+    /**
+     * A comma-separated list of property names indicating the order in which the properties should
+     * be presented. The names are case insensitive. Any properties not indicated in the list will
+     * be appended to the end of the display order.
+     */
+    @Parameter(defaultPrefix="literal")
+    private String _reorder;
 
     /** If true, the default, then the embedded Form component will use client-side validation. */
     @SuppressWarnings("unused")
@@ -140,6 +156,12 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
             _model = _modelSource.create(beanType, true, _resources.getContainerResources());
         }
+        
+        if (_remove != null)
+            BeanModelUtils.remove(_model, _remove);
+        
+        if (_reorder != null)
+            BeanModelUtils.reorder(_model, _reorder);
 
         // Abort the form's prepare event, as we've already sent a prepare on its behalf.
         return true;
