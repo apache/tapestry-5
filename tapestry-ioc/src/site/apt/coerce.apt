@@ -19,8 +19,10 @@ Type Coercion
   
 [images/type-coercer.png] Default Type Coercions  
 
-  There's a few special coercions related to null there; Object --\>List wraps a lone object as a singleton list, we then need
-  null --\>List to ensure that null stays null (rather than a singleton list whose lone element is a null).
+  There's a few special coercions related to null there; Object --\> List wraps a lone object as a singleton list, we then need
+  null --\> List to ensure that null stays null (rather than a singleton list whose lone element is a null).  Likewise, there's
+  a number of coercions from null to numeric types (null is coerced to zero). Several more of these are needed than you'd think, because otherwise
+  the coercer attempts to coerce through String.
   
   Tapestry can <interpolate> necessary coercions.  For example, say it is necessary to coerce a StringBuffer to an Integer; the
   TypeCoercer will chain together a series of coercions:
