@@ -180,6 +180,13 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                 { new String[]
                 { "a", "b" }, List.class, Arrays.asList("a", "b") },
 
+                { null, Long.class, 0l },
+                { null, Short.class, (short) 0 },
+                { null, Byte.class, (byte) 0 },
+                { null, BigDecimal.class, BigDecimal.ZERO },
+                { null, Float.class, 0f },
+                { null, BigInteger.class, BigInteger.ZERO },
+
                 // null to arbitrary object is still null
 
                 { null, XMLReader.class, null } };
