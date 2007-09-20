@@ -54,6 +54,17 @@
       </roles>
       <timezone>EDT</timezone>
     </developer>
+    <developer>
+    	<id>dadams</id>
+    	<name>Dan Adams</name>
+    	<email>dadams@apache.org</email>
+    	<roles>
+    		<role>Engineer</role>
+    	</roles>
+    	<timezone>EST</timezone>
+    	<organization>Interactive Factory</organization>
+    	<organizationUrl>http://ifactory.com</organizationUrl>
+    </developer>
   </developers>
 
   <ciManagement>
