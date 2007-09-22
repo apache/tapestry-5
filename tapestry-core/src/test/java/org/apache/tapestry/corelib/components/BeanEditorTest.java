@@ -15,30 +15,38 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.integration.app1.data.RegistrationData;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-public class BeanEditFormTest extends TapestryTestCase
+public class BeanEditorTest extends TapestryTestCase
 {
     @Test
     public void object_created_as_needed()
     {
         ComponentResources resources = mockComponentResources();
-
-        expect(resources.triggerEvent(Form.PREPARE, null, null)).andReturn(false);
+        ComponentResources overrides = mockComponentResources();
+        ComponentResources containerResources = mockComponentResources();
+        BeanModelSource source = mockBeanModelSource();
+        BeanModel model = mockBeanModel();
 
         train_getBoundType(resources, RegistrationData.class);
 
+        train_getContainerResources(overrides, containerResources);
+
+        train_create(source, RegistrationData.class, true, containerResources, model);
+
         replay();
 
-        BeanEditForm component = new BeanEditForm();
+        BeanEditor component = new BeanEditor();
 
-        component.inject(resources);
+        component.inject(resources, overrides, source);
 
-        component.onPrepareFromForm();
+        component.doPrepare();
 
         Object object = component.getObject();
 
@@ -54,8 +62,6 @@ public class BeanEditFormTest extends TapestryTestCase
         ComponentResources resources = mockComponentResources();
         Location l = mockLocation();
 
-        expect(resources.triggerEvent(Form.PREPARE, null, null)).andReturn(false);
-
         train_getBoundType(resources, Runnable.class);
 
         train_getCompleteId(resources, "Foo.bar");
@@ -64,13 +70,13 @@ public class BeanEditFormTest extends TapestryTestCase
 
         replay();
 
-        BeanEditForm component = new BeanEditForm();
+        BeanEditor component = new BeanEditor();
 
-        component.inject(resources);
+        component.inject(resources, null, null);
 
         try
         {
-            component.onPrepareFromForm();
+            component.doPrepare();
             unreachable();
         }
         catch (TapestryException ex)

@@ -123,7 +123,7 @@ public final class InternalModule
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
         // delete the old version folder (or keep it around). This should be more manageable than
-        // ovewriting the local copy with updates. There's also a ClasspathAliasManager
+        // overwriting the local copy with updates. There's also a ClasspathAliasManager
         // contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");

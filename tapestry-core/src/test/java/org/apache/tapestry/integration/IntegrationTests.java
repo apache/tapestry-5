@@ -42,14 +42,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void assets() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=AssetDemo");
+        start("AssetDemo");
 
         assertText("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
 
-        // This doesn't prove that the image shows up in the client browser (it does, but
+        // doesn't prove that the image shows up in the client browser (it does, but
         // it could just as easily be a broken image). Haven't figured out how Selenium
-        // allows this to be verified. Note that the path below represents some aliasing
+        // allows to be verified. Note that the path below represents some aliasing
         // of the raw classpath resource path.
 
         assertText("//img[@id='button']/@src", "/assets/app1/pages/tapestry-button.png");
@@ -72,12 +71,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void basic_parameters() throws Exception
     {
 
-        // OK ... this could be a separate test, but for efficiency, we'll mix it in here.
+        // OK ... could be a separate test, but for efficiency, we'll mix it in here.
         // It takes a while to start up Selenium RC (and a Firefox browser).
 
-        open(BASE_URL);
-
-        clickAndWait("link=Count Page");
+        start("Count Page");
 
         assertTextPresent("Ho! Ho! Ho!");
     }
@@ -88,8 +85,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void block_rendering() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=BlockDemo");
+        start("BlockDemo");
 
         assertTextPresent("[]");
 
@@ -111,8 +107,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void component_parameter_default_from_method() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=ParameterDefault");
+        start("ParameterDefault");
 
         assertTextPresent("Echo component default: [ParameterDefault:echo]");
     }
@@ -120,9 +115,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void embedded_components()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Countdown Page");
+        start("Countdown Page");
 
         assertTextPresent("regexp:\\s+5\\s+4\\s+3\\s+2\\s+1\\s+");
 
@@ -138,9 +131,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void environmental()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Environmental Annotation Usage");
+        start("Environmental Annotation Usage");
 
         assertSourcePresent("[<strong>A message provided by the RenderableProvider component.</strong>]");
     }
@@ -148,9 +139,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void exception_report()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=BadTemplate Page");
+        start("BadTemplate Page");
 
         assertTextPresent(
                 "org.apache.tapestry.ioc.internal.util.TapestryException",
@@ -162,23 +151,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void expansion()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Expansion Page");
+        start("Expansion Page");
 
         assertTextPresent("[value provided by a template expansion]");
     }
 
     /**
      * {@link InjectComponentWorker} is largely tested by the forms tests ({@link RenderDisabled}
-     * is built on it). This test is for the failure case, where a mixin class is used with the
-     * wrong type of component.
+     * is built on it). test is for the failure case, where a mixin class is used with the wrong
+     * type of component.
      */
     @Test
     public void inject_component_failure() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=InjectComponentMismatch");
+        start("InjectComponentMismatch");
 
         // And exception message:
 
@@ -188,14 +174,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void injection() throws Exception
     {
-        open(BASE_URL);
+        start("Inject Demo");
 
-        clickAndWait("link=Inject Demo");
-
-        // This is a test for a named @Inject:
+        // is a test for a named @Inject:
         assertTextPresent("<Proxy for Request(org.apache.tapestry.services.Request)>");
 
-        // This is a test for an anonymous @Inject and ComponentResourcesInjectionProvider
+        // is a test for an anonymous @Inject and ComponentResourcesInjectionProvider
         assertTextPresent("ComponentResources[InjectDemo]");
 
         // Another test, DefaultInjectionProvider
@@ -205,12 +189,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void instance_mixin()
     {
-        open(BASE_URL);
+        start("InstanceMixin");
 
         final String[] dates =
         { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
-
-        clickAndWait("link=InstanceMixin");
 
         for (String date : dates)
         {
@@ -231,8 +213,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void localization()
     {
-        open(BASE_URL);
-        clickAndWait("link=Localization");
+        start("Localization");
 
         assertTextPresent("Via injected Messages property: [Accessed via injected Messages]");
         assertTextPresent("Via message: binding prefix: [Accessed via message: binding prefix]");
@@ -247,9 +228,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void page_injection() throws Exception
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Inject Demo");
+        start("Inject Demo");
 
         clickAndWait("link=Fred");
 
@@ -268,18 +247,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void passivate_activate() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=NumberSelect");
+        start("NumberSelect");
+
         clickAndWait("link=5");
+
         assertTextPresent("You chose 5.");
     }
 
     @Test
     public void password_field()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=PasswordFieldDemo");
+        start("PasswordFieldDemo");
 
         type("userName", "howard");
         type("password", "wrong-password");
@@ -303,8 +281,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void render_phase_method_returns_a_component() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=RenderComponentDemo");
+        start("RenderComponentDemo");
 
         assertText("//span[@id='container']", "[]");
 
@@ -326,9 +303,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void render_phase_order()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=RenderPhaseOrder");
+        start("RenderPhaseOrder");
 
         assertTextPresent("[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
     }
@@ -336,11 +311,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void server_side_validation_for_textfield_and_textarea() throws Exception
     {
-        open(BASE_URL);
-        clickAndWait("link=ValidForm");
+        start("ValidForm");
+
         clickAndWait("//input[@type='submit']");
         assertTextPresent("You must provide a value for Email.");
-        // This is an overrdden validation error message:
+        // is an overridden validation error message:
         assertTextPresent("Please provide a detailed description of the incident.");
 
         // Check on decorations via the default validation decorator:
@@ -385,9 +360,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         final String YOU_CHOSE = "You chose: ";
 
-        open(BASE_URL);
-
-        clickAndWait("link=Action Page");
+        start("Action Page");
 
         assertFalse(isTextPresent(YOU_CHOSE));
 
@@ -400,15 +373,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * Tests for forms and form submissions and basic form control components. This also tests a few
+     * Tests for forms and form submissions and basic form control components. also tests a few
      * other things, such as computed default bindings and invisible instrumentation.
      */
     @Test
     public void simple_form()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=SimpleForm");
+        start("SimpleForm");
 
         assertText("//label[@id='disabled:label']", "Disabled");
         assertText("//label[@id='email:label']", "Email");
@@ -450,9 +421,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void subclass_inherits_parent_template()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=ExpansionSubclass");
+        start("ExpansionSubclass");
 
         assertTextPresent("[value provided, in the subclass, via a template expansion]");
     }
@@ -460,9 +429,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void template_overridden()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Template Overridden by Class Page");
+        start("Template Overridden by Class Page");
 
         assertTextPresent("Output: ClassValue");
     }
@@ -473,13 +440,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         test_loop_inside_form("ToDo List (Volatile)");
     }
 
-    /** This also verifies the use of meta data to set the default strategy. */
+    /** also verifies the use of meta data to set the default strategy. */
     @Test
     public void flash_persistence()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=FlashDemo");
+        start("FlashDemo");
 
         assertTextPresent("[]");
 
@@ -517,9 +482,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
     private void test_loop_inside_form(String linkLabel)
     {
-        open(BASE_URL);
+        start(linkLabel);
 
-        clickAndWait("link=" + linkLabel);
         clickAndWait("reset");
 
         assertFieldValue("title", "End World Hunger");
@@ -557,9 +521,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         String submitButton = "//input[@type='submit']";
 
-        open(BASE_URL);
-        clickAndWait("link=BeanEditor Demo");
-        clickAndWait("link=Clear Data");
+        start("BeanEditor Demo", "Clear Data");
         clickAndWait(submitButton);
 
         assertTextPresent(
@@ -601,9 +563,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void bean_editor_property_reorder_remove()
     {
-        open(BASE_URL);
-        clickAndWait("link=BeanEdit Remove/Reorder");
-        clickAndWait("link=Clear Data");
+        start("BeanEdit Remove/Reorder", "Clear Data");
 
         // Looks like a bug in Selenium; we can see //label[1] but not //label[2].
         // assertTextSeries("//label[%d]", 1, "Last Name", "First Name", "Sex", "U.S. Citizen");
@@ -619,8 +579,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void pageloaded_lifecycle_method_invoked()
     {
-        open(BASE_URL);
-        clickAndWait("link=PageLoaded Demo");
+        start("PageLoaded Demo");
 
         assertTextPresent("[pageLoaded() was invoked.]");
     }
@@ -631,8 +590,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void basic_grid()
     {
-        open(BASE_URL);
-        clickAndWait("link=Grid Demo");
+        start("Grid Demo");
 
         assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Rating");
 
@@ -722,8 +680,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void grid_remove_reorder()
     {
-        open(BASE_URL);
-        clickAndWait("link=Grid Remove/Reorder Demo");
+        start("Grid Remove/Reorder Demo");
 
         assertTextSeries("//th[%d]", 1, "Rating", "Title", "Album", "Artist", "Genre");
     }
@@ -731,8 +688,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void grid_from_explicit_interface_model()
     {
-        open(BASE_URL);
-        clickAndWait("link=SimpleTrack Grid Demo");
+        start("SimpleTrack Grid Demo");
 
         assertTextSeries("//th[%d]", 1, "Title", "Album", "Rating");
 
@@ -742,9 +698,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void grid_enum_display()
     {
-        open(BASE_URL);
-        clickAndWait("link=Grid Enum Demo");
-        clickAndWait("link=reset");
+        start("Grid Enum Demo", "reset");
 
         assertTextSeries("//tr[1]/td[%d]", 2, "End World Hunger", "Medium");
         assertTextSeries("//tr[2]/td[%d]", 2, "Develop Faster-Than-Light Travel", "High");
@@ -754,9 +708,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void null_grid() throws Exception
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Null Grid");
+        start("Null Grid");
 
         assertTextPresent("There is no data to display.");
     }
@@ -764,9 +716,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void navigation_response_from_page_activate() throws Exception
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Protected Page");
+        start("Protected Page");
 
         assertText("//h1", "Security Alert");
 
@@ -778,9 +728,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void mixed_page_activation_context_and_component_context()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Kicker");
+        start("Kicker");
 
         clickAndWait("actionlink");
 
@@ -796,9 +744,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void page_link_with_explicit_empty_context()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Kicker");
+        start("Kicker");
 
         clickAndWait("actionlink");
 
@@ -812,11 +758,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void page_link_with_explicit_activation_context()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=PageLink Context Demo");
-
-        clickAndWait("link=no context");
+        start("PageLink Context Demo", "no context");
 
         assertTextPresent("No activation context.");
 
@@ -836,9 +778,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void client_side_validation()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Client Validation Demo");
+        start("Client Validation Demo");
 
         assertTextSeries(
                 "//script[%d]/@src",
@@ -877,22 +817,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void recursive_components_are_identified_as_errors()
     {
-        open(BASE_URL);
-        clickAndWait("link=Recursive Demo");
+        start("Recursive Demo");
 
         assertTextPresent(
                 "An unexpected application exception has occurred.",
-                "The template for component org.apache.tapestry.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry.integration.app1.components.Recursive). This is not supported (components may not contain themselves).",
-                "This component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
+                "The template for component org.apache.tapestry.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry.integration.app1.components.Recursive). is not supported (components may not contain themselves).",
+                "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
     }
 
     @Test
     public void render_phase_method_may_return_renderable()
     {
-        open(BASE_URL);
-        clickAndWait("link=Renderable Demo");
+        start("Renderable Demo");
 
-        assertTextPresent("Renderable Demo", "[This proves it works.]");
+        assertTextPresent("Renderable Demo", "[proves it works.]");
     }
 
     @Test
@@ -900,8 +838,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         String clear = "link=clear";
 
-        open(BASE_URL);
-        clickAndWait("link=EventHandler Demo");
+        start("EventHandler Demo");
+
         clickAndWait(clear);
 
         clickAndWait("wilma");
@@ -925,8 +863,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void inherited_bindings()
     {
-        open(BASE_URL);
-        clickAndWait("link=Inherited Bindings Demo");
+        start("Inherited Bindings Demo");
 
         assertTextPresent(
                 "Bound: [ value: the-bound-value, bound: true ]",
@@ -936,8 +873,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void client_persistence()
     {
-        open(BASE_URL);
-        clickAndWait("link=Client Persistence Demo");
+        start("Client Persistence Demo");
 
         assertTextPresent("Persisted value: []", "Session: [false]");
 
@@ -949,8 +885,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void attribute_expansions()
     {
-        open(BASE_URL);
-        clickAndWait("link=Attribute Expansions Demo");
+        start("Attribute Expansions Demo");
 
         assertText("//div[@id='mixed-expansion']/@style", "color: blue;");
         assertText("//div[@id='single']/@class", "red");
@@ -968,9 +903,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void palette_component()
     {
-        open(BASE_URL);
-        clickAndWait("link=Palette Demo");
-        clickAndWait("link=reset");
+        start("Palette Demo", "reset");
 
         addSelection("languages:avail", "label=Haskell");
         addSelection("languages:avail", "label=Javascript");
@@ -1020,6 +953,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
 
         open(BASE_URL);
+
         assertTextPresent("Tapestry 5 Integration Application 1");
 
         clickAndWait("link=Return Types");
@@ -1075,9 +1009,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void form_encoding_type()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Form Encoding Type");
+        start("Form Encoding Type");
 
         assertText("//form/@enctype", "x-override");
     }
@@ -1085,9 +1017,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void radio_button_and_group()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=RadioDemo");
+        start("RadioDemo");
 
         String update = "//input[@type='submit']";
 
@@ -1107,9 +1037,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void regexp_validator()
     {
-        open(BASE_URL);
-
-        clickAndWait("link=Regexp Demo");
+        start("Regexp Demo");
 
         String update = "//input[@type='submit']";
 
@@ -1131,4 +1059,36 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Zip code: [12345-9876]");
     }
+
+    private void start(String... linkText)
+    {
+        open(BASE_URL);
+
+        for (String s : linkText)
+            clickAndWait(String.format("link=%s", s));
+    }
+
+    @Test
+    public void multiple_beaneditor_components()
+    {
+        start("MultiBeanEdit Demo");
+
+        clickAndWait("link=Clear Data");
+
+        type("firstName", "Howard");
+        type("lastName", "Lewis Ship");
+        type("path", "/var/www");
+        clickAndWait("//input[@value='Set Access']");
+
+        waitForPageToLoad("30000");
+
+        assertTextSeries(
+                "//li[%d]",
+                1,
+                "First Name: [Howard]",
+                "Last Name: [Lewis Ship]",
+                "Path: [/var/www]",
+                "Role: [GRANT]");
+    }
+
 }

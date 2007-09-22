@@ -13,6 +13,8 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * The core of BeanEditForm has been factored out as a new component, BeanEditor (this allows you to edit multiple beans within the same form).
+  
   * Some of the annotations that aren't used specifically with component classes have been split off into the new
     {{{../tapestry-annotations/}tapestry-annotations}} module.
   
@@ -38,7 +40,7 @@ New And Of Note
   * Explicit \<!DOCTYPE\> declarations inside page and component templates will now be forwarded through to the client
     web browser.
     
-  * The mapping from class names to page names (or component types) has been tweaked to remove some redunancy;
+  * The mapping from class names to page names (or component types) has been tweaked to remove some redundancy;
     For example,
     class org.example.myapp.pages.edit.EditUser will now have the name "edit/User" rather than "edit/EditUser". This
     results in shorter, clearer, more natural URLs.
@@ -50,7 +52,7 @@ New And Of Note
     built on {{{http://script.taculo.us}script.taculo.us}}.
   
   * The default ExceptionReport page has been improved to show details of the incoming request,
-    to filter out repetative and unnecessary data, 
+    to filter out repetitive and unnecessary data, 
     and to display file content when an exception includes a location.
   
   * Action request URLs have been shortened and simplified for the common case. They may also include a query
@@ -86,7 +88,7 @@ New And Of Note
   
   * Initial support for {{{guide/appstate.html}application state objects}}.
   
-  * Input validation messages may now be overriden by providing a particular message key in the containing component's message catalog.
+  * Input validation messages may now be overridden by providing a particular message key in the containing component's message catalog.
   
   * Property expressions may now reference public methods (with no parameters) in addition to traditional property names.
   
@@ -98,7 +100,7 @@ New And Of Note
 
   * Component parameters may have default values.
   
-  * The @ComponentClass anntotation, seen in the earlier {{{../screencast.html}screencasts}} has been removed.
+  * The @ComponentClass annotation, seen in the earlier {{{../screencast.html}screencasts}} has been removed.
   
 Changes from Tapestry 4 to Tapestry 5
 
@@ -204,8 +206,8 @@ public class Login
   into the method by adding parameters to the method. Again, Tapestry will adapt
   to your parameters, in whatever order you supply them.
   
-  Finally, Tapestry 5 explicitly seperates actions (requests that change things) and rendering (requests that
-  render pages) into two seperate requests.  Performing an action, such as clicking a link or submitting a form,
+  Finally, Tapestry 5 explicitly separates actions (requests that change things) and rendering (requests that
+  render pages) into two separate requests.  Performing an action, such as clicking a link or submitting a form,
   results in a <client side redirect> to the new page. This is often called "redirect after post". This helps ensure
   that URLs in the browser are book-markable ... but also requires that a bit more information be stored in the session
   between requests (using the @Persist annotation).  

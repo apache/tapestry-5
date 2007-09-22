@@ -24,7 +24,6 @@ import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
@@ -62,6 +61,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * for a "prepare" event, in order to ensure that a non-null value is ready to be read or
      * updated.
      */
+    @SuppressWarnings("unused")
     @Parameter(required = true)
     private Object _object;
 
@@ -69,7 +69,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * A comma-separated list of property names to be removed from the {@link BeanModel}. The names
      * are case-insensitive.
      */
-    @Parameter(defaultPrefix="literal")
+    @SuppressWarnings("unused")
+    @Parameter(defaultPrefix = "literal")
     private String _remove;
 
     /**
@@ -77,19 +78,14 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * be presented. The names are case insensitive. Any properties not indicated in the list will
      * be appended to the end of the display order.
      */
-    @Parameter(defaultPrefix="literal")
+    @SuppressWarnings("unused")
+    @Parameter(defaultPrefix = "literal")
     private String _reorder;
 
     /** If true, the default, then the embedded Form component will use client-side validation. */
     @SuppressWarnings("unused")
     @Parameter
     private boolean _clientValidation;
-
-    @Inject
-    private ComponentResources _resources;
-
-    @Inject
-    private BeanModelSource _modelSource;
 
     @Component(parameters = "clientValidation=inherit:clientValidation")
     private Form _form;
@@ -99,15 +95,15 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * If not specified, a default bean model will be created from the type of the object bound to
      * the object parameter.
      */
+    @SuppressWarnings("unused")
     @Parameter
     private BeanModel _model;
 
-    // Values that change with each change to the current property:
-
-    private String _propertyName;
-
     @Inject
     private ComponentDefaultProvider _defaultProvider;
+
+    @Inject
+    private ComponentResources _resources;
 
     /**
      * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
@@ -117,67 +113,16 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         return _defaultProvider.defaultBinding("object", _resources);
     }
 
-    public BeanModel getModel()
-    {
-        return _model;
-    }
-
-    public String getPropertyName()
-    {
-        return _propertyName;
-    }
-
-    public void setPropertyName(String propertyName)
-    {
-        _propertyName = propertyName;
-
-    }
-
-    boolean onPrepareFromForm()
+    void onPrepareFromForm()
     {
         // Fire a new prepare event to be consumed by the container. This is the container's
         // chance to ensure that there's an object to edit.
 
         _resources.triggerEvent(Form.PREPARE, null, null);
 
-        // Now check to see if the value is null.
-
-        // The only problem here is that if the bound property is backed by a persistent field, it
-        // is assigned (and stored to the session, and propagated around the cluster) first,
-        // before values are assigned.
-
         if (_object == null) _object = createDefaultObject();
 
         assert _object != null;
-
-        if (_model == null)
-        {
-            Class<? extends Object> beanType = _object.getClass();
-
-            _model = _modelSource.create(beanType, true, _resources.getContainerResources());
-        }
-        
-        if (_remove != null)
-            BeanModelUtils.remove(_model, _remove);
-        
-        if (_reorder != null)
-            BeanModelUtils.reorder(_model, _reorder);
-
-        // Abort the form's prepare event, as we've already sent a prepare on its behalf.
-        return true;
-    }
-
-    /** Used for testing. */
-    void inject(ComponentResources resources, BeanModelSource modelSource)
-    {
-        _resources = resources;
-        _modelSource = modelSource;
-    }
-
-    /** Returns the object being edited. */
-    public Object getObject()
-    {
-        return _object;
     }
 
     private Object createDefaultObject()
@@ -195,6 +140,11 @@ public class BeanEditForm implements ClientElement, FormValidationControl
                     _resources.getCompleteId(),
                     ex), _resources.getLocation(), ex);
         }
+    }
+
+    public Object getObject()
+    {
+        return _object;
     }
 
     /** Returns the client id of the embedded form. */
@@ -231,6 +181,11 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public void recordError(String errorMessage)
     {
         _form.recordError(errorMessage);
+    }
+
+    void inject(ComponentResources resources)
+    {
+        _resources = resources;
     }
 
 }
