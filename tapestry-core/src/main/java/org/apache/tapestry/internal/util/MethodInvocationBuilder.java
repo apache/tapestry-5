@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,12 @@ import java.util.Map;
 
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
 
 /**
  * A utility class for building part of a method body to invoke a method. Analyzes the method and
  * matches parameter types to ParameterBuilders.
- * 
- * 
  */
 public final class MethodInvocationBuilder
 {
@@ -62,7 +60,7 @@ public final class MethodInvocationBuilder
      * @return method invocation expression
      * @see TransformUtils#getDefaultValue(String)
      */
-    public String buildMethodInvocation(MethodSignature signature,
+    public String buildMethodInvocation(TransformMethodSignature signature,
             ClassTransformation transformation)
     {
         StringBuilder builder = new StringBuilder(signature.getMethodName());
@@ -73,8 +71,7 @@ public final class MethodInvocationBuilder
 
         for (int i = 0; i < parameterTypes.length; i++)
         {
-            if (i > 0)
-                builder.append(", ");
+            if (i > 0) builder.append(", ");
 
             String type = parameterTypes[i];
 

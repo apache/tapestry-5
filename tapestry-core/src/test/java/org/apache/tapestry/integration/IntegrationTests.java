@@ -848,16 +848,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(clear);
         clickAndWait("barney");
 
-        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(), parent.onAction(String), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(), child.onAction(String)]");
+        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("betty");
-        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(), parent.onAction(String), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(), child.onAction(String)]");
+        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("fred");
 
-        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(), parent.onAction(String), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(), child.onAction(String), child.onActionFromFred(), child.onActionFromFred(String), child.onAnyEventFromFred(), child.onAnyEventFromFred(String)]");
+        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred(), child.onAnyEventFromFred(String), child.onAnyEventFromFred()]");
     }
 
     @Test

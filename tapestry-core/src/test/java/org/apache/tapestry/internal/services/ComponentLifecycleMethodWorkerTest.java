@@ -21,7 +21,7 @@ import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
@@ -39,7 +39,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         ClassTransformation tf = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
 
-        MethodSignature sig = new MethodSignature("someRandomMethod");
+        TransformMethodSignature sig = new TransformMethodSignature("someRandomMethod");
 
         train_findMethods(tf, sig);
 
@@ -80,7 +80,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature sig = new MethodSignature("aMethod");
+        TransformMethodSignature sig = new TransformMethodSignature("aMethod");
 
         train_findMethods(tf, sig);
 
@@ -109,7 +109,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         ClassTransformation tf = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
 
-        MethodSignature sig = new MethodSignature("setupRender");
+        TransformMethodSignature sig = new TransformMethodSignature("setupRender");
 
         train_findMethods(tf, sig);
 
@@ -142,8 +142,8 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature siga = new MethodSignature("aMethod");
-        MethodSignature sigb = new MethodSignature("bMethod");
+        TransformMethodSignature siga = new TransformMethodSignature("aMethod");
+        TransformMethodSignature sigb = new TransformMethodSignature("bMethod");
 
         train_findMethods(tf, siga, sigb);
 
@@ -174,8 +174,8 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature siga = new MethodSignature("aMethod");
-        MethodSignature sigb = new MethodSignature("bMethod");
+        TransformMethodSignature siga = new TransformMethodSignature("aMethod");
+        TransformMethodSignature sigb = new TransformMethodSignature("bMethod");
 
         train_findMethods(tf, siga, sigb);
 
@@ -204,7 +204,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature sig = new MethodSignature("aMethod");
+        TransformMethodSignature sig = new TransformMethodSignature("aMethod");
 
         train_findMethods(tf, sig);
 
@@ -232,7 +232,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature sig = new MethodSignature(Modifier.PUBLIC, "void", "aMethod", new String[]
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "aMethod", new String[]
         { MarkupWriter.class.getName() }, null);
 
         train_findMethods(tf, sig);
@@ -264,7 +264,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature sig = new MethodSignature(Modifier.PROTECTED, "boolean", "aMethod", null,
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PROTECTED, "boolean", "aMethod", null,
                 null);
 
         train_findMethods(tf, sig);
@@ -301,9 +301,9 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         MutableComponentModel model = mockMutableComponentModel();
         SetupRender annotation = newSetupRender();
 
-        MethodSignature siga = new MethodSignature(Modifier.PROTECTED, "boolean", "aMethod", null,
+        TransformMethodSignature siga = new TransformMethodSignature(Modifier.PROTECTED, "boolean", "aMethod", null,
                 null);
-        MethodSignature sigb = new MethodSignature(Modifier.PUBLIC, "void", "bMethod", new String[]
+        TransformMethodSignature sigb = new TransformMethodSignature(Modifier.PUBLIC, "void", "bMethod", new String[]
         { MarkupWriter.class.getName() }, null);
 
         String ida = "aMethod()";

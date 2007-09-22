@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,11 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 /**
  * Obtains a value from the {@link Environment} service based on the field type. This is triggered
- * by the presense of the {@link Environmental} annotation.
+ * by the presence of the {@link Environmental} annotation.
  */
 public class EnvironmentalWorker implements ComponentClassTransformWorker
 {
@@ -65,7 +65,7 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
 
             String methodName = transformation.newMemberName("environment_read", name);
 
-            MethodSignature sig = new MethodSignature(Modifier.PRIVATE, type, methodName, null,
+            TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, type, methodName, null,
                     null);
 
             String body = String.format(

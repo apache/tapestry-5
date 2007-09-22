@@ -25,7 +25,7 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 /**
  * Peforms transformations that allow pages to be injected into components.
@@ -73,7 +73,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         String injectedPageName = InternalUtils.isBlank(pageName) ? _resolver
                 .resolvePageClassNameToPageName(fieldType) : pageName;
 
-        MethodSignature sig = new MethodSignature(Modifier.PRIVATE, fieldType, methodName, null,
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName, null,
                 null);
 
         BodyBuilder builder = new BodyBuilder();

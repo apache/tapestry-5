@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.OnEvent
      */
-    public static final MethodSignature HANDLE_COMPONENT_EVENT = new MethodSignature(
+    public static final TransformMethodSignature HANDLE_COMPONENT_EVENT = new TransformMethodSignature(
             Modifier.PUBLIC, "boolean", "handleComponentEvent", new String[]
             { ComponentEvent.class.getName() }, null);
 
@@ -44,25 +44,25 @@ public final class TransformConstants
      * Signature for
      * {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()}.
      */
-    public static final MethodSignature CONTAINING_PAGE_DID_LOAD_SIGNATURE = new MethodSignature(
+    public static final TransformMethodSignature CONTAINING_PAGE_DID_LOAD_SIGNATURE = new TransformMethodSignature(
             "containingPageDidLoad");
 
     /** Signature for {@link org.apache.tapestry.runtime.Component#postRenderCleanup()}. */
-    public static final MethodSignature POST_RENDER_CLEANUP_SIGNATURE = new MethodSignature(
+    public static final TransformMethodSignature POST_RENDER_CLEANUP_SIGNATURE = new TransformMethodSignature(
             "postRenderCleanup");
 
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidDetach()}.
      */
-    public static final MethodSignature CONTAINING_PAGE_DID_DETACH_SIGNATURE = new MethodSignature(
+    public static final TransformMethodSignature CONTAINING_PAGE_DID_DETACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidDetach");
 
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidAttach()}.
      */
-    public static final MethodSignature CONTAINING_PAGE_DID_ATTACH_SIGNATURE = new MethodSignature(
+    public static final TransformMethodSignature CONTAINING_PAGE_DID_ATTACH_SIGNATURE = new TransformMethodSignature(
             "containingPageDidAttach");
 
     /**
@@ -70,14 +70,14 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.SetupRender
      */
-    public static final MethodSignature SETUP_RENDER_SIGNATURE = renderPhaseSignature("setupRender");
+    public static final TransformMethodSignature SETUP_RENDER_SIGNATURE = renderPhaseSignature("setupRender");
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#beginRender(MarkupWriter, Event)}.
      * 
      * @see org.apache.tapestry.annotations.BeginRender
      */
-    public static final MethodSignature BEGIN_RENDER_SIGNATURE = renderPhaseSignature("beginRender");
+    public static final TransformMethodSignature BEGIN_RENDER_SIGNATURE = renderPhaseSignature("beginRender");
 
     /**
      * Signature for
@@ -85,7 +85,7 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.BeforeRenderTemplate
      */
-    public static MethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("beforeRenderTemplate");
+    public static TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("beforeRenderTemplate");
 
     /**
      * Signature for
@@ -93,7 +93,7 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.BeforeRenderTemplate
      */
-    public static MethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("afterRenderTemplate");
+    public static TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("afterRenderTemplate");
 
     /**
      * Signature for
@@ -101,7 +101,7 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.BeforeRenderBody
      */
-    public static final MethodSignature BEFORE_RENDER_BODY_SIGNATURE = renderPhaseSignature("beforeRenderBody");
+    public static final TransformMethodSignature BEFORE_RENDER_BODY_SIGNATURE = renderPhaseSignature("beforeRenderBody");
 
     /**
      * Signature for
@@ -109,14 +109,14 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.AfterRenderBody
      */
-    public static final MethodSignature AFTER_RENDER_BODY_SIGNATURE = renderPhaseSignature("afterRenderBody");
+    public static final TransformMethodSignature AFTER_RENDER_BODY_SIGNATURE = renderPhaseSignature("afterRenderBody");
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#afterRender(MarkupWriter, Event)}
      * 
      * @see org.apache.tapestry.annotations.AfterRender
      */
-    public static final MethodSignature AFTER_RENDER_SIGNATURE = renderPhaseSignature("afterRender");
+    public static final TransformMethodSignature AFTER_RENDER_SIGNATURE = renderPhaseSignature("afterRender");
 
     /**
      * Signature for
@@ -124,15 +124,15 @@ public final class TransformConstants
      * 
      * @see org.apache.tapestry.annotations.CleanupRender
      */
-    public static final MethodSignature CLEANUP_RENDER_SIGNATURE = renderPhaseSignature("cleanupRender");
+    public static final TransformMethodSignature CLEANUP_RENDER_SIGNATURE = renderPhaseSignature("cleanupRender");
 
     private TransformConstants()
     {
     }
 
-    private static MethodSignature renderPhaseSignature(String name)
+    private static TransformMethodSignature renderPhaseSignature(String name)
     {
-        return new MethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS,
+        return new TransformMethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS,
                 null);
     }
 }

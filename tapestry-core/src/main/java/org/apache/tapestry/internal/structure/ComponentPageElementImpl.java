@@ -101,7 +101,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     };
 
-    // For the momement, every component will have a template, even if it consists of
+    // For the moment, every component will have a template, even if it consists of
     // just a page element to queue up a BeforeRenderBody phase.
 
     private static void pushElements(RenderQueue queue, List<PageElement> list)

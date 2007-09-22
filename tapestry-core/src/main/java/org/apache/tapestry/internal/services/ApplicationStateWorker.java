@@ -24,7 +24,7 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ApplicationStateManager;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 /**
  * Looks for the {@link ApplicationState} annotation and converts read and write access on such
@@ -94,7 +94,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     {
         String readMethodName = transformation.newMemberName("read", booleanFieldName);
 
-        MethodSignature sig = new MethodSignature(Modifier.PRIVATE, "boolean", readMethodName,
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "boolean", readMethodName,
                 null, null);
 
         String body = format("return %s.exists(%s);", managerFieldName, typeFieldName);
@@ -111,7 +111,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     {
         String writeMethodName = transformation.newMemberName("write", fieldName);
 
-        MethodSignature writeSignature = new MethodSignature(Modifier.PRIVATE, "void",
+        TransformMethodSignature writeSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
                 writeMethodName, new String[]
                 { fieldType }, null);
 
@@ -128,7 +128,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         String readMethodName = transformation.newMemberName("read", fieldName);
 
-        MethodSignature readMethodSignature = new MethodSignature(Modifier.PRIVATE, fieldType,
+        TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, fieldType,
                 readMethodName, null, null);
 
         String body = format("return (%s) %s.get(%s);", fieldType, managerFieldName, typeFieldName);

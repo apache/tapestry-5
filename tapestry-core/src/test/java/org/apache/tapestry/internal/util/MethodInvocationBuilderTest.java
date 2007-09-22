@@ -19,7 +19,7 @@ import java.lang.reflect.Modifier;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.util.MethodInvocationBuilder;
 import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
@@ -36,7 +36,7 @@ public class MethodInvocationBuilderTest extends TapestryTestCase
 
         replay();
 
-        MethodSignature sig = new MethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
         { MARKUP_WRITER_CLASS_NAME }, null);
 
         MethodInvocationBuilder invoker = new MethodInvocationBuilder();
@@ -55,7 +55,7 @@ public class MethodInvocationBuilderTest extends TapestryTestCase
 
         replay();
 
-        MethodSignature sig = new MethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
         { MARKUP_WRITER_CLASS_NAME }, null);
 
         MethodInvocationBuilder invoker = new MethodInvocationBuilder();
@@ -72,7 +72,7 @@ public class MethodInvocationBuilderTest extends TapestryTestCase
 
         replay();
 
-        MethodSignature sig = new MethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
         { MARKUP_WRITER_CLASS_NAME, LOCALE_CLASS_NAME }, null);
 
         MethodInvocationBuilder invoker = new MethodInvocationBuilder();

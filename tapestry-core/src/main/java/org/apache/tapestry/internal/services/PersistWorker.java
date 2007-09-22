@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.PersistentFieldBundle;
 import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.services.TransformUtils;
@@ -93,7 +93,7 @@ public class PersistWorker implements ComponentClassTransformWorker
         builder.addln("%s = $1;", fieldName);
         builder.end();
 
-        transformation.addMethod(new MethodSignature(Modifier.PRIVATE, "void", writeMethodName,
+        transformation.addMethod(new TransformMethodSignature(Modifier.PRIVATE, "void", writeMethodName,
                 new String[]
                 { fieldType }, null), builder.toString());
 

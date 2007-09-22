@@ -21,7 +21,7 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 /**
  * Similar to {@link ComponentLifecycleMethodWorker} but applies to annotations/methods related to
@@ -31,14 +31,14 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
 {
     private final Class<? extends Annotation> _methodAnnotationClass;
 
-    private final MethodSignature _lifecycleMethodSignature;
+    private final TransformMethodSignature _lifecycleMethodSignature;
 
     private final String _methodAlias;
 
     private final MethodInvocationBuilder _invocationBuilder = new MethodInvocationBuilder();
 
     public PageLifecycleAnnotationWorker(final Class<? extends Annotation> methodAnnotationClass,
-            final MethodSignature lifecycleMethodSignature, final String methodAlias)
+            final TransformMethodSignature lifecycleMethodSignature, final String methodAlias)
     {
         _methodAnnotationClass = methodAnnotationClass;
         _lifecycleMethodSignature = lifecycleMethodSignature;
@@ -49,7 +49,7 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
     {
         MethodFilter filter = new MethodFilter()
         {
-            public boolean accept(MethodSignature signature)
+            public boolean accept(TransformMethodSignature signature)
             {
                 if (signature.getMethodName().equals(_methodAlias))
                     return true;
@@ -62,7 +62,7 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
         // If I expected lots of signatures, I'd build up a BodyBuilder in the loop and extend the
         // method outside the loop.
 
-        for (MethodSignature signature : transformation.findMethods(filter))
+        for (TransformMethodSignature signature : transformation.findMethods(filter))
         {
             // TODO: Filter out the non-void methods (with a non-fatal warning/error?) For the
             // moment, we just invoke the method anyway, and ignore the result. Also, MethodInvocationBuilder

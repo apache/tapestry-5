@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,5 +23,5 @@ public interface MethodFilter
      * Passed each signature in turn, only signatures for which this method returns true will be
      * included in the final result.
      */
-    boolean accept(MethodSignature signature);
+    boolean accept(TransformMethodSignature signature);
 }
