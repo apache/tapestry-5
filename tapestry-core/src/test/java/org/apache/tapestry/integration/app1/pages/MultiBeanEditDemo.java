@@ -15,7 +15,9 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.integration.app1.data.RolePath;
 import org.apache.tapestry.integration.app1.data.UserCredentials;
 
@@ -29,6 +31,9 @@ public class MultiBeanEditDemo
 
     @InjectPage
     private MultiBeanDemoResult _resultPage;
+
+    @Component
+    private Form _form;
 
     public UserCredentials getCredentials()
     {
@@ -60,5 +65,7 @@ public class MultiBeanEditDemo
         // Force these to be re-created.
         _credentials = null;
         _rolePath = null;
+
+        _form.clearErrors();
     }
 }

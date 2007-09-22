@@ -26,7 +26,7 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 /**
  * Converts one of the methods of {@link org.apache.tapestry.runtime.Component} into a chain of
@@ -39,7 +39,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
 
     private final Class<? extends Annotation> _methodAnnotation;
 
-    private final MethodSignature _lifecycleMethodSignature;
+    private final TransformMethodSignature _lifecycleMethodSignature;
 
     private final String _lifecycleMethodName;
 
@@ -58,7 +58,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
      * @param reverse
      *            if true, the normal method invocation order is reversed
      */
-    public ComponentLifecycleMethodWorker(MethodSignature lifecycleMethodSignature,
+    public ComponentLifecycleMethodWorker(TransformMethodSignature lifecycleMethodSignature,
             Class<? extends Annotation> methodAnnotation, boolean reverse)
     {
         _lifecycleMethodSignature = lifecycleMethodSignature;
@@ -83,7 +83,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
     {
         MethodFilter filter = new MethodFilter()
         {
-            public boolean accept(MethodSignature signature)
+            public boolean accept(TransformMethodSignature signature)
             {
                 // These methods get added to base classes and otherwise fall into this filter. If
                 // we don't
@@ -100,7 +100,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
             }
         };
 
-        List<MethodSignature> methods = transformation.findMethods(filter);
+        List<TransformMethodSignature> methods = transformation.findMethods(filter);
 
         // Except in the root class, don't bother to add a new method unless there's something to
         // call (beside super).
@@ -118,7 +118,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
             builder.addln(CHECK_ABORT_FLAG);
         }
 
-        Iterator<MethodSignature> i = _reverse ? InternalUtils.reverseIterator(methods) : methods
+        Iterator<TransformMethodSignature> i = _reverse ? InternalUtils.reverseIterator(methods) : methods
                 .iterator();
 
         while (i.hasNext())
@@ -137,7 +137,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
         transformation.addMethod(_lifecycleMethodSignature, builder.toString());
     }
 
-    private void addMethodCallToBody(BodyBuilder builder, MethodSignature sig,
+    private void addMethodCallToBody(BodyBuilder builder, TransformMethodSignature sig,
             ClassTransformation transformation)
     {
         boolean isVoid = sig.getReturnType().equals("void");

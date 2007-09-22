@@ -86,7 +86,7 @@ import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
 import org.apache.tapestry.services.InjectionProvider;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.ResourceDigestGenerator;
@@ -385,7 +385,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final void train_addMethod(ClassTransformation transformation,
-            MethodSignature signature, String... body)
+            TransformMethodSignature signature, String... body)
     {
         transformation.addMethod(eq(signature), codeEq(join(body)));
     }
@@ -443,7 +443,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final void train_extendMethod(ClassTransformation transformation,
-            MethodSignature signature, String... body)
+            TransformMethodSignature signature, String... body)
     {
         transformation.extendMethod(eq(signature), codeEq(join(body)));
     }
@@ -473,19 +473,19 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final void train_findMethods(ClassTransformation transformation,
-            final MethodSignature... signatures)
+            final TransformMethodSignature... signatures)
     {
-        IAnswer<List<MethodSignature>> answer = new IAnswer<List<MethodSignature>>()
+        IAnswer<List<TransformMethodSignature>> answer = new IAnswer<List<TransformMethodSignature>>()
         {
-            public List<MethodSignature> answer() throws Throwable
+            public List<TransformMethodSignature> answer() throws Throwable
             {
                 // Can't think of a way to do this without duplicating some code out of
                 // InternalClassTransformationImpl
 
-                List<MethodSignature> result = newList();
+                List<TransformMethodSignature> result = newList();
                 MethodFilter filter = (MethodFilter) EasyMock.getCurrentArguments()[0];
 
-                for (MethodSignature sig : signatures)
+                for (TransformMethodSignature sig : signatures)
                 {
                     if (filter.accept(sig)) result.add(sig);
                 }
@@ -502,7 +502,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final void train_findMethodsWithAnnotation(ClassTransformation tf,
-            Class<? extends Annotation> annotationType, List<MethodSignature> sigs)
+            Class<? extends Annotation> annotationType, List<TransformMethodSignature> sigs)
     {
         expect(tf.findMethodsWithAnnotation(annotationType)).andReturn(sigs);
     }
@@ -681,14 +681,14 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final <T extends Annotation> void train_getMethodAnnotation(ClassTransformation ct,
-            MethodSignature signature, Class<T> annotationClass, T annotation)
+            TransformMethodSignature signature, Class<T> annotationClass, T annotation)
     {
         expect(ct.getMethodAnnotation(signature, annotationClass)).andReturn(annotation)
                 .atLeastOnce();
     }
 
     protected final void train_getMethodIdentifier(ClassTransformation transformation,
-            MethodSignature signature, String id)
+            TransformMethodSignature signature, String id)
     {
         expect(transformation.getMethodIdentifier(signature)).andReturn(id);
     }

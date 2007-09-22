@@ -24,7 +24,7 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.services.TransformUtils;
 
@@ -43,14 +43,14 @@ public class OnEventWorker implements ComponentClassTransformWorker
     {
         MethodFilter filter = new MethodFilter()
         {
-            public boolean accept(MethodSignature signature)
+            public boolean accept(TransformMethodSignature signature)
             {
                 return signature.getMethodName().startsWith("on")
                         || transformation.getMethodAnnotation(signature, OnEvent.class) != null;
             };
         };
 
-        List<MethodSignature> methods = transformation.findMethods(filter);
+        List<TransformMethodSignature> methods = transformation.findMethods(filter);
 
         // No methods, no work.
 
@@ -61,7 +61,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         builder.addln("if ($1.isAborted()) return $_;");
 
-        for (MethodSignature method : methods)
+        for (TransformMethodSignature method : methods)
             addCodeForMethod(builder, method, transformation);
 
         builder.end();
@@ -69,7 +69,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         transformation.extendMethod(TransformConstants.HANDLE_COMPONENT_EVENT, builder.toString());
     }
 
-    private void addCodeForMethod(BodyBuilder builder, MethodSignature method,
+    private void addCodeForMethod(BodyBuilder builder, TransformMethodSignature method,
             ClassTransformation transformation)
     {
         // $1 is the event
@@ -136,7 +136,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
             builder.end();
     }
 
-    private String extractComponentId(MethodSignature method, OnEvent annotation)
+    private String extractComponentId(TransformMethodSignature method, OnEvent annotation)
     {
         if (annotation != null) return annotation.component();
 
@@ -151,7 +151,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         return name.substring(fromx + 4);
     }
 
-    private String extractEventType(MethodSignature method, OnEvent annotation)
+    private String extractEventType(TransformMethodSignature method, OnEvent annotation)
     {
         if (annotation != null) return annotation.value();
 
@@ -170,7 +170,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         return eventName;
     }
 
-    private int getParameterCount(MethodSignature method)
+    private int getParameterCount(TransformMethodSignature method)
     {
         String[] types = method.getParameterTypes();
 
@@ -184,7 +184,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         return types.length;
     }
 
-    private void buildMethodParameters(BodyBuilder builder, MethodSignature method)
+    private void buildMethodParameters(BodyBuilder builder, TransformMethodSignature method)
     {
         int contextIndex = 0;
 

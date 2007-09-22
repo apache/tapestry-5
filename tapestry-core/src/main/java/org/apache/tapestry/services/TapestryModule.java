@@ -828,7 +828,7 @@ public final class TapestryModule
     }
 
     private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            Class<? extends Annotation> annotationClass, MethodSignature lifecycleMethodSignature,
+            Class<? extends Annotation> annotationClass, TransformMethodSignature lifecycleMethodSignature,
             String methodAlias)
     {
         ComponentClassTransformWorker worker = new PageLifecycleAnnotationWorker(annotationClass,
@@ -840,7 +840,7 @@ public final class TapestryModule
     }
 
     private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            MethodSignature signature, Class<? extends Annotation> annotationClass, boolean reverse)
+            TransformMethodSignature signature, Class<? extends Annotation> annotationClass, boolean reverse)
     {
         // make the name match the annotation class name.
 

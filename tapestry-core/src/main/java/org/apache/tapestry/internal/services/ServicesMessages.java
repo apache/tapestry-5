@@ -29,7 +29,7 @@ import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 class ServicesMessages
 {
@@ -72,7 +72,7 @@ class ServicesMessages
         { fieldName, ctClass.getName(), existingTag, newTag });
     }
 
-    static String noDeclaredMethod(CtClass ctClass, MethodSignature methodSignature)
+    static String noDeclaredMethod(CtClass ctClass, TransformMethodSignature methodSignature)
     {
         return MESSAGES.format("no-declared-method", ctClass.getName(), methodSignature);
     }
@@ -113,7 +113,7 @@ class ServicesMessages
         return MESSAGES.format("may-not-nest-elements-inside-body", elementName);
     }
 
-    static String methodCompileError(MethodSignature signature, String methodBody, Throwable cause)
+    static String methodCompileError(TransformMethodSignature signature, String methodBody, Throwable cause)
     {
         return MESSAGES.format("method-compile-error", signature, methodBody, cause);
     }

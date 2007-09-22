@@ -88,17 +88,20 @@ public interface ClassTransformation extends AnnotationProvider
      * 
      * @param annotationClass
      * @return a list of method signature (which may be empty) in ascending order
+     * @see #findMethods(MethodFilter)
      */
-    List<MethodSignature> findMethodsWithAnnotation(Class<? extends Annotation> annotationClass);
+    List<TransformMethodSignature> findMethodsWithAnnotation(Class<? extends Annotation> annotationClass);
 
     /**
      * Finds all methods matched by the provided filter.
      * 
      * @param filter
      *            Passed each method signature, it may include or exclude each potential
-     * @return a list of matching method signatures (which may be empty) in ascending order
+     * @return a list of matching method signatures (which may be empty) in ascending order (by
+     *         method name), but descending order (by parameter count) within overrides of a single
+     *         method name.
      */
-    List<MethodSignature> findMethods(MethodFilter filter);
+    List<TransformMethodSignature> findMethods(MethodFilter filter);
 
     /**
      * Finds all unclaimed fields matched by the provided filter. Only considers unclaimed, private,
@@ -138,7 +141,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @throws IllegalArgumentException
      *             if the method signature does not correspond to a declared method
      */
-    <T extends Annotation> T getMethodAnnotation(MethodSignature method, Class<T> annotationClass);
+    <T extends Annotation> T getMethodAnnotation(TransformMethodSignature method, Class<T> annotationClass);
 
     /**
      * Claims a field so as to ensure that only a single annotation is applied to any single field.
@@ -256,7 +259,7 @@ public interface ClassTransformation extends AnnotationProvider
      * <p>
      * The method may be declared in the class, or may be inherited from a super-class. For
      * inherited methods, a method is added that first invokes the super implementation. Use
-     * {@link #addMethod(MethodSignature, String)} when it is necessary to control when the
+     * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
      * super-class method is invoked.
      * 
      * @param signature
@@ -266,7 +269,7 @@ public interface ClassTransformation extends AnnotationProvider
      * @throws IllegalArgumentException
      *             if the provided Javassist method body can not be compiled
      */
-    void extendMethod(MethodSignature methodSignature, String methodBody);
+    void extendMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
      * Returns the name of a field that provides the {@link org.apache.tapestry.ComponentResources}
@@ -280,11 +283,11 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Adds a new method to the transformed class. Replaces any existing method declared for the
      * class. When overriding a super-class method, you should use
-     * {@link #extendMethod(MethodSignature, String)}, or you should remember to invoke the super
+     * {@link #extendMethod(TransformMethodSignature, String)}, or you should remember to invoke the super
      * class implemetation explicitly. Use this method to control when the super-class
      * implementation is invoked.
      */
-    void addMethod(MethodSignature signature, String methodBody);
+    void addMethod(TransformMethodSignature signature, String methodBody);
 
     /**
      * Adds a statement to the constructor. The statement is added as is, though a newline is added.
@@ -297,15 +300,15 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Replaces all read-references to the specified field with invocations of the specified method
      * name. Replacements do not occur in methods added via
-     * {@link #addMethod(MethodSignature, String)} or {@link #extendMethod(MethodSignature, String)}.
+     * {@link #addMethod(TransformMethodSignature, String)} or {@link #extendMethod(TransformMethodSignature, String)}.
      */
     void replaceReadAccess(String fieldName, String methodName);
 
     /**
      * Replaces all write accesses to the specified field with invocations of the specified method
      * name. The method should take a single parameter of the same type as the field. Replacements
-     * do not occur in methods added via {@link #addMethod(MethodSignature, String)} or
-     * {@link #extendMethod(MethodSignature, String)}.
+     * do not occur in methods added via {@link #addMethod(TransformMethodSignature, String)} or
+     * {@link #extendMethod(TransformMethodSignature, String)}.
      */
     void replaceWriteAccess(String fieldName, String methodName);
 
@@ -338,12 +341,12 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Converts a signature to a string used to identify the method; this consists of the
-     * {@link MethodSignature#getMediumDescription()} appended with source file information and line
+     * {@link TransformMethodSignature#getMediumDescription()} appended with source file information and line
      * number information (when available).
      * 
      * @param signature
      * @return a string that identifies the class, method name, types of parameters, source file and
      *         source line number
      */
-    String getMethodIdentifier(MethodSignature signature);
+    String getMethodIdentifier(TransformMethodSignature signature);
 }

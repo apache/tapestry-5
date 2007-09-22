@@ -56,7 +56,7 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -591,7 +591,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         // This proves the the field is protected and can be used in subclasses.
 
-        ct.addMethod(new MethodSignature(Modifier.PUBLIC, "java.lang.String", "getValue", null,
+        ct.addMethod(new TransformMethodSignature(Modifier.PUBLIC, "java.lang.String", "getValue", null,
                 null), "return " + subclassFieldName + ";");
 
         ct.finish();
@@ -889,7 +889,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         String fieldName = "_" + baseName;
         String readMethodName = "_read_" + baseName;
 
-        MethodSignature readMethodSignature = new MethodSignature(Modifier.PRIVATE,
+        TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE,
                 STRING_CLASS_NAME, readMethodName, null, null);
 
         ct.addMethod(readMethodSignature, String.format(
@@ -900,7 +900,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         String writeMethodName = "_write_" + baseName;
 
-        MethodSignature writeMethodSignature = new MethodSignature(Modifier.PRIVATE, "void",
+        TransformMethodSignature writeMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
                 writeMethodName, new String[]
                 { STRING_CLASS_NAME }, null);
         ct.addMethod(writeMethodSignature, String.format(
@@ -919,7 +919,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(AnnotatedPage.class, logger);
 
-        List<MethodSignature> l = ct.findMethodsWithAnnotation(SetupRender.class);
+        List<TransformMethodSignature> l = ct.findMethodsWithAnnotation(SetupRender.class);
 
         // Check order
 
@@ -951,13 +951,13 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         MethodFilter filter = new MethodFilter()
         {
-            public boolean accept(MethodSignature signature)
+            public boolean accept(TransformMethodSignature signature)
             {
                 return ct.getMethodAnnotation(signature, SetupRender.class) != null;
             }
         };
 
-        List<MethodSignature> l = ct.findMethods(filter);
+        List<TransformMethodSignature> l = ct.findMethods(filter);
 
         // Check order
 
@@ -1045,7 +1045,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(EventHandlerTarget.class, logger);
 
-        OnEvent annotation = ct.getMethodAnnotation(new MethodSignature("handler"), OnEvent.class);
+        OnEvent annotation = ct.getMethodAnnotation(new TransformMethodSignature("handler"), OnEvent.class);
 
         // Check that the attributes of the annotation match the expectation.
 
@@ -1066,7 +1066,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         try
         {
-            ct.getMethodAnnotation(new MethodSignature("foo"), OnEvent.class);
+            ct.getMethodAnnotation(new TransformMethodSignature("foo"), OnEvent.class);
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -1115,11 +1115,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(MethodIdentifier.class, logger);
 
-        List<MethodSignature> sigs = ct.findMethodsWithAnnotation(OnEvent.class);
+        List<TransformMethodSignature> sigs = ct.findMethodsWithAnnotation(OnEvent.class);
 
         assertEquals(sigs.size(), 1);
 
-        MethodSignature sig = sigs.get(0);
+        TransformMethodSignature sig = sigs.get(0);
 
         assertEquals(
                 ct.getMethodIdentifier(sig),

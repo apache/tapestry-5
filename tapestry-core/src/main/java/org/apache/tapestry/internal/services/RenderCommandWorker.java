@@ -23,7 +23,7 @@ import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 /**
  * Ensures that all components implement {@link RenderCommand} by delegating to
@@ -31,7 +31,7 @@ import org.apache.tapestry.services.MethodSignature;
  */
 public class RenderCommandWorker implements ComponentClassTransformWorker
 {
-    private final MethodSignature RENDER_SIGNATURE = new MethodSignature(Modifier.PUBLIC, "void",
+    private final TransformMethodSignature RENDER_SIGNATURE = new TransformMethodSignature(Modifier.PUBLIC, "void",
             "render", new String[]
             { MarkupWriter.class.getName(), RenderQueue.class.getName() }, null);
 

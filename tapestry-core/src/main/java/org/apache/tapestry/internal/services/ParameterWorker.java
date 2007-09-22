@@ -29,7 +29,7 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.FieldFilter;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.services.TransformUtils;
 
@@ -224,7 +224,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         MethodFilter filter = new MethodFilter()
         {
-            public boolean accept(MethodSignature signature)
+            public boolean accept(TransformMethodSignature signature)
             {
                 return signature.getParameterTypes().length == 0
                         && signature.getMethodName().equals(methodName);
@@ -234,7 +234,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         // This will match exactly 0 or 1 methods, and if it matches, we know the name
         // of the method.
 
-        List<MethodSignature> signatures = transformation.findMethods(filter);
+        List<TransformMethodSignature> signatures = transformation.findMethods(filter);
 
         if (signatures.isEmpty())
             return;
@@ -281,7 +281,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String methodName = transformation.newMemberName("update_parameter", parameterName);
 
-        MethodSignature signature = new MethodSignature(Modifier.PRIVATE, "void", methodName,
+        TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
                 new String[]
                 { fieldType }, null);
 
@@ -341,7 +341,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
 
         String methodName = transformation.newMemberName("read_parameter", parameterName);
 
-        MethodSignature signature = new MethodSignature(Modifier.PRIVATE, fieldType, methodName,
+        TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName,
                 null, null);
 
         transformation.addMethod(signature, builder.toString());

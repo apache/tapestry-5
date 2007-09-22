@@ -22,12 +22,10 @@ import java.lang.reflect.Modifier;
  * A representation of a method signature, which consists of its name, modifiers (primarily,
  * visibility), return type, parameter types, and declared exception types.
  * <p>
- * Types are stored as class names (or primitive names) because the MethodSignature is often used in
- * situations where the actual class has not been loaded yet. When classes are already loaded (such
- * as, for use with {@link org.apache.hivemind.service.ClassFab}), then a different implementation
- * with the same name, {@link org.apache.tapestry.ioc.services.MethodSignature} is used.
+ * Types are stored as class names (or primitive names) because the signature is used with
+ * {@link ClassTransformation} (which operates on as-yet unloaded classes).
  */
-public class MethodSignature implements Comparable<MethodSignature>
+public class TransformMethodSignature implements Comparable<TransformMethodSignature>
 {
     private int _hashCode = -1;
 
@@ -43,15 +41,15 @@ public class MethodSignature implements Comparable<MethodSignature>
 
     private static final String[] EMPTY_STRINGS = new String[0];
 
-    /** Convienience for adding a public void method with no parameters or exception types. */
+    /** Convenience for adding a public void method with no parameters or exception types. */
 
-    public MethodSignature(String name)
+    public TransformMethodSignature(String name)
     {
         this(Modifier.PUBLIC, "void", name, EMPTY_STRINGS, EMPTY_STRINGS);
     }
 
-    public MethodSignature(int modifiers, String type, String name, String[] parameterTypes,
-            String[] exceptionTypes)
+    public TransformMethodSignature(int modifiers, String type, String name,
+            String[] parameterTypes, String[] exceptionTypes)
     {
         _modifiers = modifiers;
 
@@ -136,10 +134,9 @@ public class MethodSignature implements Comparable<MethodSignature>
     @Override
     public boolean equals(Object other)
     {
-        if (other == null || !(other instanceof MethodSignature))
-            return false;
+        if (other == null || !(other instanceof TransformMethodSignature)) return false;
 
-        MethodSignature ms = (MethodSignature) other;
+        TransformMethodSignature ms = (TransformMethodSignature) other;
 
         return _modifiers == ms._modifiers && _returnType.equals(ms._returnType)
                 && _methodName.equals(ms._methodName)
@@ -149,13 +146,11 @@ public class MethodSignature implements Comparable<MethodSignature>
 
     private boolean matches(String[] values, String[] otherValues)
     {
-        if (values.length != otherValues.length)
-            return false;
+        if (values.length != otherValues.length) return false;
 
         for (int i = 0; i < values.length; i++)
         {
-            if (!values[i].equals(otherValues[i]))
-                return false;
+            if (!values[i].equals(otherValues[i])) return false;
         }
 
         return true;
@@ -204,8 +199,7 @@ public class MethodSignature implements Comparable<MethodSignature>
 
         for (int i = 0; i < _parameterTypes.length; i++)
         {
-            if (i > 0)
-                builder.append(", ");
+            if (i > 0) builder.append(", ");
 
             builder.append(_parameterTypes[i]);
         }
@@ -215,14 +209,14 @@ public class MethodSignature implements Comparable<MethodSignature>
 
     /**
      * Sorting is primarily via method name. For methods with the same name, the second level of
-     * sorting is by parameter count (ascending).
+     * sorting is by parameter count (descending).
      */
-    public int compareTo(MethodSignature o)
+    public int compareTo(TransformMethodSignature o)
     {
         int result = _methodName.compareTo(o._methodName);
 
-        if (result == 0)
-            result = _parameterTypes.length - o._parameterTypes.length;
+        // Sort descending
+        if (result == 0) result = o._parameterTypes.length - _parameterTypes.length;
 
         return result;
     }

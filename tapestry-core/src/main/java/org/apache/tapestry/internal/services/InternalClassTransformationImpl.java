@@ -53,7 +53,7 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FieldFilter;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.MethodSignature;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
 import org.slf4j.Logger;
 
@@ -96,7 +96,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private Map<CtMethod, List<Annotation>> _methodAnnotations = newMap();
 
-    private Map<CtMethod, MethodSignature> _methodSignatures = newMap();
+    private Map<CtMethod, TransformMethodSignature> _methodSignatures = newMap();
 
     // Key is field name, value is expression used to replace read access
 
@@ -151,7 +151,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 "resources",
                 null);
 
-        MethodSignature sig = new MethodSignature(Modifier.PUBLIC | Modifier.FINAL,
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC | Modifier.FINAL,
                 ComponentResources.class.getName(), "getComponentResources", null, null);
 
         addMethod(sig, "return " + _resourcesFieldName + ";");
@@ -280,7 +280,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return findAnnotationInList(annotationClass, annotations);
     }
 
-    public <T extends Annotation> T getMethodAnnotation(MethodSignature signature,
+    public <T extends Annotation> T getMethodAnnotation(TransformMethodSignature signature,
             Class<T> annotationClass)
     {
         failIfFrozen();
@@ -485,7 +485,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             _ctClass.addMethod(newMethod);
 
-            MethodSignature sig = getMethodSignature(newMethod);
+            TransformMethodSignature sig = getMethodSignature(newMethod);
 
             addMethodToDescription("add default", sig, "<default>");
         }
@@ -543,7 +543,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _claimedFields.put(fieldName, tag);
     }
 
-    public void addMethod(MethodSignature signature, String methodBody)
+    public void addMethod(TransformMethodSignature signature, String methodBody)
     {
         failIfFrozen();
 
@@ -626,7 +626,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
     }
 
-    public void extendMethod(MethodSignature methodSignature, String methodBody)
+    public void extendMethod(TransformMethodSignature methodSignature, String methodBody)
     {
         failIfFrozen();
 
@@ -649,7 +649,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _addedMethods.add(method);
     }
 
-    private void addMethodToDescription(String operation, MethodSignature methodSignature,
+    private void addMethodToDescription(String operation, TransformMethodSignature methodSignature,
             String methodBody)
     {
         _formatter.format("%s method: %s %s %s(", operation, Modifier.toString(methodSignature
@@ -679,7 +679,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _formatter.format("\n%s\n\n", methodBody);
     }
 
-    private CtMethod findMethod(MethodSignature methodSignature)
+    private CtMethod findMethod(TransformMethodSignature methodSignature)
     {
         CtMethod method = findDeclaredMethod(methodSignature);
 
@@ -694,7 +694,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 methodSignature));
     }
 
-    private CtMethod findDeclaredMethod(MethodSignature methodSignature)
+    private CtMethod findDeclaredMethod(TransformMethodSignature methodSignature)
     {
         for (CtMethod method : _ctClass.getDeclaredMethods())
         {
@@ -704,7 +704,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return null;
     }
 
-    private CtMethod addOverrideOfSuperclassMethod(MethodSignature methodSignature)
+    private CtMethod addOverrideOfSuperclassMethod(TransformMethodSignature methodSignature)
     {
         try
         {
@@ -739,7 +739,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return null;
     }
 
-    private boolean match(CtMethod method, MethodSignature sig)
+    private boolean match(CtMethod method, TransformMethodSignature sig)
     {
         if (!sig.getMethodName().equals(method.getName())) return false;
 
@@ -829,12 +829,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return findFields(filter);
     }
 
-    public List<MethodSignature> findMethodsWithAnnotation(
+    public List<TransformMethodSignature> findMethodsWithAnnotation(
             Class<? extends Annotation> annotationClass)
     {
         failIfFrozen();
 
-        List<MethodSignature> result = newList();
+        List<TransformMethodSignature> result = newList();
 
         for (CtMethod method : _ctClass.getDeclaredMethods())
         {
@@ -842,7 +842,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             if (findAnnotationInList(annotationClass, annotations) != null)
             {
-                MethodSignature sig = getMethodSignature(method);
+                TransformMethodSignature sig = getMethodSignature(method);
                 result.add(sig);
             }
         }
@@ -852,15 +852,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
-    public List<MethodSignature> findMethods(MethodFilter filter)
+    public List<TransformMethodSignature> findMethods(MethodFilter filter)
     {
         notNull(filter, "filter");
 
-        List<MethodSignature> result = newList();
+        List<TransformMethodSignature> result = newList();
 
         for (CtMethod method : _ctClass.getDeclaredMethods())
         {
-            MethodSignature sig = getMethodSignature(method);
+            TransformMethodSignature sig = getMethodSignature(method);
 
             if (filter.accept(sig)) result.add(sig);
         }
@@ -870,9 +870,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
-    private MethodSignature getMethodSignature(CtMethod method)
+    private TransformMethodSignature getMethodSignature(CtMethod method)
     {
-        MethodSignature result = _methodSignatures.get(method);
+        TransformMethodSignature result = _methodSignatures.get(method);
         if (result == null)
         {
             try
@@ -881,7 +881,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 String[] parameters = toTypeNames(method.getParameterTypes());
                 String[] exceptions = toTypeNames(method.getExceptionTypes());
 
-                result = new MethodSignature(method.getModifiers(), type, method.getName(),
+                result = new TransformMethodSignature(method.getModifiers(), type, method.getName(),
                         parameters, exceptions);
 
                 _methodSignatures.put(method, result);
@@ -1331,7 +1331,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String fieldType = getFieldType(fieldName);
 
-        MethodSignature sig = new MethodSignature(Modifier.PRIVATE, "void", methodName,
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
                 new String[]
                 { fieldType }, null);
 
@@ -1491,7 +1491,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _constructor.append("\n");
     }
 
-    public String getMethodIdentifier(MethodSignature signature)
+    public String getMethodIdentifier(TransformMethodSignature signature)
     {
         notNull(signature, "signature");
 
