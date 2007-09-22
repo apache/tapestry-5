@@ -14,61 +14,24 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-import org.apache.tapestry.beaneditor.OrderAfter;
-import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.beaneditor.Validate;
 
-public class RegistrationData
+public class UserCredentials
 {
     private String _lastName;
 
     private String _firstName;
 
-    private int _birthYear;
-
-    private Sex _sex = Sex.MALE;
-
-    private boolean _citizen;
-
-    @OrderAfter("lastName")
-    @Validate("min=1900,max=2007")
-    public int getBirthYear()
-    {
-        return _birthYear;
-    }
-
-    @OrderAfter("lastname,birthyear")
-    public Sex getSex()
-    {
-        return _sex;
-    }
-
-    @OrderBefore("lastname")
+    @Validate("required")
     public String getFirstName()
     {
         return _firstName;
     }
 
-    @Validate("required,minlength=5")
+    @Validate("required")
     public String getLastName()
     {
         return _lastName;
-    }
-
-    public boolean isCitizen()
-    {
-        return _citizen;
-    }
-
-    public void setBirthYear(int birthYear)
-    {
-        _birthYear = birthYear;
-    }
-
-    @Validate("required,minlength=3")
-    public void setFirstName(String firstName)
-    {
-        _firstName = firstName;
     }
 
     public void setLastName(String lastName)
@@ -76,13 +39,9 @@ public class RegistrationData
         _lastName = lastName;
     }
 
-    public void setSex(Sex sex)
+    public void setFirstName(String firstName)
     {
-        _sex = sex;
+        _firstName = firstName;
     }
 
-    public void setCitizen(boolean citizen)
-    {
-        _citizen = citizen;
-    }
 }

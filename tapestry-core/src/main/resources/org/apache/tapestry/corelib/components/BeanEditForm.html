@@ -1,14 +1,15 @@
-<form t:id="form" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <t:errors/>
+<form t:id="form"
+  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <t:errors />
 
-    <div class="t-beaneditor">
-        <div class="t-beaneditor-row" t:type="loop" t:source="model.propertyNames" t:volatile="true"
-            t:value="propertyName">
-            <t:propertyEditor property="propertyName" object="object" model="model" overrides="this"/>
-        </div>
-        <div class="t-beaneditor-row">
-            <input type="submit" value="${submitLabel}"/>
-        </div>
+  <div class="t-beaneditor">
+
+    <t:beaneditor object="object" remove="inherit:remove"
+      reorder="inherit:reorder" model="inherit:model" overrides="this" />
+
+    <div class="t-beaneditor-row">
+      <input type="submit" value="${submitLabel}" />
     </div>
+  </div>
 
 </form>

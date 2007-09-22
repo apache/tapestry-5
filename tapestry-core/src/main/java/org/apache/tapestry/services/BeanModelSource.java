@@ -25,7 +25,7 @@ import org.apache.tapestry.beaneditor.OrderBefore;
 public interface BeanModelSource
 {
     /**
-     * Creates a new model used for editting the indicated bean class. The model will represent all
+     * Creates a new model used for editing the indicated bean class. The model will represent all
      * read/write properties of the bean. The order of the properties is defined by the
      * {@link OrderBefore} annotation on the getter or setter methods. The labels for the properties are
      * derived from the property names, but if the component's message catalog has keys of the form
@@ -35,7 +35,7 @@ public interface BeanModelSource
      * time.
      * 
      * @param beanClass
-     *            class of object to be editted
+     *            class of object to be edited
      * @param filterReadOnlyProperties
      *            if true, then properties that are read-only will be skipped (leaving only
      *            read-write properties). If false, then both read-only and read-write properties
