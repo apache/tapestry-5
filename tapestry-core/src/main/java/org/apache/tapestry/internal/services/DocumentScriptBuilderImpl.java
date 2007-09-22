@@ -30,16 +30,14 @@ public class DocumentScriptBuilderImpl implements DocumentScriptBuilder
 
     public void addScriptLink(String scriptURL)
     {
-        if (_scripts.contains(scriptURL))
-            return;
+        if (_scripts.contains(scriptURL)) return;
 
         _scripts.add(scriptURL);
     }
 
     public void addScript(String script)
     {
-        if (InternalUtils.isBlank(script))
-            return;
+        if (InternalUtils.isBlank(script)) return;
 
         _scriptBlock.append(script);
         _scriptBlock.append("\n");
@@ -49,8 +47,7 @@ public class DocumentScriptBuilderImpl implements DocumentScriptBuilder
     {
         Element body = document.find("html/body");
 
-        if (body == null)
-            return;
+        if (body == null) return;
 
         for (int i = 0; i < _scripts.size(); i++)
         {
@@ -61,17 +58,17 @@ public class DocumentScriptBuilderImpl implements DocumentScriptBuilder
 
         if (_scriptBlock.length() > 0)
         {
-            Element e = body.element("script", "type", "text/javascript", "language", "javascript");
+            Element e = body.element("script", "type", "text/javascript");
             e.raw("\n<!--\n");
 
             // This assumes that Prototype is available.
-            
+
             e.text("Event.observe(window, \"load\", function() {\n");
-            
+
             e.text(_scriptBlock.toString());
 
             e.text("});\n");
-            
+
             e.raw("// -->\n");
         }
 
