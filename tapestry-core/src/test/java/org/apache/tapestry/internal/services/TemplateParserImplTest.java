@@ -605,7 +605,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(t.getText().trim(), "<Test>");
     }
 
-    @DataProvider(name = "doctype_added_correctly_data")
+    @DataProvider(name = "doctype_token_added_correctly_data")
     public Object[][] doctype_token_added_correctly_data()
     {
         return new Object[][]
@@ -617,11 +617,18 @@ public class TemplateParserImplTest extends InternalBaseTestCase
                         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" },
                 { "xhtml1_frameset_doctype.html", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
                         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" },
+                { "html4_strict_doctype.html", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                        "http://www.w3.org/TR/html4/strict.dtd" },
+                { "html4_transitional_doctype.html", "HTML",
+                        "-//W3C//DTD HTML 4.01 Transitional//EN",
+                        "http://www.w3.org/TR/html4/loose.dtd" },
+                { "html4_frameset_doctype.html", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                        "http://www.w3.org/TR/html4/frameset.dtd" },
                 { "system_doctype.xml", "foo", null,
-                        "src/test/resources/org/apache/tapestry/internal/services/simple.dtd" }, };
+                        "src/test/resources/org/apache/tapestry/internal/services/simple.dtd" } };
     }
 
-    @Test(dataProvider = "doctype_added_correctly_data")
+    @Test(dataProvider = "doctype_token_added_correctly_data")
     public void doctype_added_correctly(String fileName, String name, String publicId,
             String systemId) throws Exception
     {
