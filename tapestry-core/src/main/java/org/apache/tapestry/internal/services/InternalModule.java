@@ -89,20 +89,18 @@ public final class InternalModule
         binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
     }
 
-    public static void contributeTemplateParser(MappedConfiguration<String, URL> configuration)
+    public static void contributeTemplateParser(MappedConfiguration<String, URL> config)
     {
         Class c = InternalModule.class;
-        configuration.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
-        configuration.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c
-                .getResource("xhtml1-transitional.dtd"));
-        configuration.add("-//W3C//DTD XHTML 1.0 Frameset//EN", c
-                .getResource("xhtml1-frameset.dtd"));
-        configuration
-                .add("-//W3C//ENTITIES Latin 1 for XHTML//EN", c.getResource("xhtml-lat1.ent"));
-        configuration.add("-//W3C//ENTITIES Symbols for XHTML//EN", c
-                .getResource("xhtml-symbol.ent"));
-        configuration.add("-//W3C//ENTITIES Special for XHTML//EN", c
-                .getResource("xhtml-special.ent"));
+        config.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
+        config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c.getResource("xhtml1-transitional.dtd"));
+        config.add("-//W3C//DTD XHTML 1.0 Frameset//EN", c.getResource("xhtml1-frameset.dtd"));
+        config.add("-//W3C//DTD HTML 4.01//EN", c.getResource("xhtml1-strict.dtd"));
+        config.add("-//W3C//DTD HTML 4.01 Transitional//EN", c.getResource("xhtml1-transitional.dtd"));
+        config.add("-//W3C//DTD HTML 4.01 Frameset//EN", c.getResource("xhtml1-frameset.dtd"));
+        config.add("-//W3C//ENTITIES Latin 1 for XHTML//EN", c.getResource("xhtml-lat1.ent"));
+        config.add("-//W3C//ENTITIES Symbols for XHTML//EN", c.getResource("xhtml-symbol.ent"));
+        config.add("-//W3C//ENTITIES Special for XHTML//EN", c.getResource("xhtml-special.ent"));
     }
 
     /**
@@ -127,7 +125,9 @@ public final class InternalModule
         // contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
-        configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry/scriptaculous_1_7_1_beta_3");
+        configuration.add(
+                "tapestry.scriptaculous.path",
+                "org/apache/tapestry/scriptaculous_1_7_1_beta_3");
     }
 
     private final ComponentInstantiatorSource _componentInstantiatorSource;
@@ -549,7 +549,7 @@ public final class InternalModule
         };
 
         configuration.add("SetRequestEncoding", filter, "before:*");
-        
+
         configuration.add("Ajax", new AjaxFilter());
     }
 }

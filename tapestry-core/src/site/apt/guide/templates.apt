@@ -58,14 +58,18 @@ Template Doctypes
 
   As mentioned above, component templates are well-formed XML documents. This means that if you want to use any
   {{{http://www.w3.org/TR/html401/sgml/entities.html}HTML entities}} (such as &amp; &nbsp; &lt; &gt; or &copy;),
-  you must use an {{{http://www.w3.org/QA/2002/04/valid-dtd-list.html}HTML or XHTML doctype}} in your template. Unfortunately,
-  HTML DTDs aren't valid XML DTDs, causing problems for XML parsers. The result is that you cannot use HTML doctypes in
-  component templates -- you must use XHTML doctypes.
+  you must use an {{{http://www.w3.org/QA/2002/04/valid-dtd-list.html}HTML or XHTML doctype}} in your template. If
+  you choose to use (X)HTML doctypes in your templates, they will be passed on to the client in the resultant (X)HTML.
+  Note that if your pages are composed of multiple components, each with a template, and each template contains a
+  doctype declaration, only the first doctype encountered by the template parser will be passed on to the client.
 
-  If you do choose to use XHTML doctypes in your templates, they will be passed
-  on to the client in the resultant (X)HTML. Note that if your pages are composed of multiple components, each with a template, and
-  each template contains a doctype declaration, only the first doctype encountered by the template parser will be passed on to the
-  client. The following two doctypes are the most common XHTML doctypes:
+  It should also be noted that even though XHTML DTDs are valid XML DTDs, HTML DTDs aren't valid XML DTDs. This means
+  that HTML doctypes cannot be used by XML parsers. Tapestry works around this limitation internally by using XHTML DTDs
+  to parse templates that use HTML DTDs. This internal mapping is possible because XHTML 1.0 is nothing more than "a
+  reformulation of the three HTML 4 document types as applications of XML 1.0," {{{http://www.w3.org/TR/xhtml1/#xhtml}as per the W3C}}.
+  Don't worry though -- the original HTML 4 doctype will still be emitted to the client!
+
+ The following doctypes are the most common (X)HTML doctypes:
 
 +----+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -73,6 +77,12 @@ Template Doctypes
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+   "http://www.w3.org/TR/html4/strict.dtd">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
 +----+
 
 Tapestry Namespace
