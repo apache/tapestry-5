@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,33 +14,39 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
-import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
 
 /**
- * Allows for the injection of the component's {@link org.apache.tapestry.ComponentResources}.
+ * A very late worker related to the {@link Inject} annotation that, when all other forms of
+ * injection have failed, matches the field type to a service interface.
  */
-public class ComponentResourcesInjectionProvider implements InjectionProvider
+public class ServiceInjectionProvider implements InjectionProvider
 {
+    private final ObjectLocator _locator;
+
+    public ServiceInjectionProvider(ObjectLocator locator)
+    {
+        _locator = locator;
+    }
+
+    @SuppressWarnings("unchecked")
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
             ClassTransformation transformation, MutableComponentModel componentModel)
     {
-        if (fieldType.equals(ComponentResources.class))
-        {
-            String body = format("%s = %s;", fieldName, transformation.getResourcesFieldName());
+        Object inject = _locator.getService(fieldType);
 
-            transformation.extendConstructor(body);
+        assert inject != null;
 
-            transformation.makeReadOnly(fieldName);
+        transformation.injectField(fieldName, inject);
 
-            return true;
-        }
+        // If we make it this far without an exception, then we were successful
+        // and should claim the field.
 
-        return false;
+        return true;
     }
+
 }

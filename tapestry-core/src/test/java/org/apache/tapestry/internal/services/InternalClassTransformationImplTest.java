@@ -45,7 +45,6 @@ import org.apache.tapestry.internal.transform.pages.BasicComponent;
 import org.apache.tapestry.internal.transform.pages.ChildClassInheritsAnnotation;
 import org.apache.tapestry.internal.transform.pages.ClaimedFields;
 import org.apache.tapestry.internal.transform.pages.EventHandlerTarget;
-import org.apache.tapestry.internal.transform.pages.FindFieldClass;
 import org.apache.tapestry.internal.transform.pages.MethodIdentifier;
 import org.apache.tapestry.internal.transform.pages.ParentClass;
 import org.apache.tapestry.internal.transform.pages.TargetObject;
@@ -253,23 +252,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void find_fields_of_type() throws Exception
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ClassTransformation ct = createClassTransformation(FindFieldClass.class, logger);
-
-        checkFindFields(ct, "boolean", "_booleanValue");
-        checkFindFields(ct, "int[]", "_intArrayValue");
-        checkFindFields(ct, "java.lang.String", "_stringValue");
-        checkFindFields(ct, "java.util.Date[]", "_dateArrayValue");
-
-        verify();
-    }
-
-    @Test
     public void get_field_modifiers() throws Exception
     {
         Logger logger = mockLogger();
@@ -295,29 +277,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         assertFalse(ct.isField("_doesNotExist"));
 
         verify();
-    }
-
-    @Test
-    public void find_fields_of_type_excludes_claimed_fields() throws Exception
-    {
-        Logger logger = mockLogger();
-
-        replay();
-
-        ClassTransformation ct = createClassTransformation(FindFieldClass.class, logger);
-
-        ct.claimField("_booleanValue", this);
-
-        checkFindFields(ct, "boolean");
-
-        verify();
-    }
-
-    private void checkFindFields(ClassTransformation ct, String fieldType, String... expectedNames)
-    {
-        List<String> actual = ct.findFieldsOfType(fieldType);
-
-        assertEquals(actual, Arrays.asList(expectedNames));
     }
 
     @Test
@@ -591,8 +550,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         // This proves the the field is protected and can be used in subclasses.
 
-        ct.addMethod(new TransformMethodSignature(Modifier.PUBLIC, "java.lang.String", "getValue", null,
-                null), "return " + subclassFieldName + ";");
+        ct.addMethod(new TransformMethodSignature(Modifier.PUBLIC, "java.lang.String", "getValue",
+                null, null), "return " + subclassFieldName + ";");
 
         ct.finish();
 
@@ -889,8 +848,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         String fieldName = "_" + baseName;
         String readMethodName = "_read_" + baseName;
 
-        TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE,
-                STRING_CLASS_NAME, readMethodName, null, null);
+        TransformMethodSignature readMethodSignature = new TransformMethodSignature(
+                Modifier.PRIVATE, STRING_CLASS_NAME, readMethodName, null, null);
 
         ct.addMethod(readMethodSignature, String.format(
                 "throw new RuntimeException(\"read %s\");",
@@ -900,8 +859,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         String writeMethodName = "_write_" + baseName;
 
-        TransformMethodSignature writeMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                writeMethodName, new String[]
+        TransformMethodSignature writeMethodSignature = new TransformMethodSignature(
+                Modifier.PRIVATE, "void", writeMethodName, new String[]
                 { STRING_CLASS_NAME }, null);
         ct.addMethod(writeMethodSignature, String.format(
                 "throw new RuntimeException(\"write %s\");",
@@ -1045,7 +1004,9 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(EventHandlerTarget.class, logger);
 
-        OnEvent annotation = ct.getMethodAnnotation(new TransformMethodSignature("handler"), OnEvent.class);
+        OnEvent annotation = ct.getMethodAnnotation(
+                new TransformMethodSignature("handler"),
+                OnEvent.class);
 
         // Check that the attributes of the annotation match the expectation.
 

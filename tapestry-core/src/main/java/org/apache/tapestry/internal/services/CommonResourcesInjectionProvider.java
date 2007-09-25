@@ -31,7 +31,7 @@ import org.slf4j.Logger;
  */
 public class CommonResourcesInjectionProvider implements InjectionProvider
 {
-    private static final Map<String, String> _configuration = newMap();
+    private static final Map<Class, String> _configuration = newMap();
 
     public CommonResourcesInjectionProvider()
     {
@@ -43,16 +43,15 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
 
     private void add(Class fieldType, String methodName)
     {
-        _configuration.put(fieldType.getName(), methodName);
+        _configuration.put(fieldType, methodName);
     }
 
-    public boolean provideInjection(String fieldName, String fieldType, ObjectLocator locator,
+    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
             ClassTransformation transformation, MutableComponentModel componentModel)
     {
         String implementationMethodName = _configuration.get(fieldType);
 
-        if (implementationMethodName == null)
-            return false;
+        if (implementationMethodName == null) return false;
 
         String resourcesField = transformation.getResourcesFieldName();
 
@@ -68,5 +67,4 @@ public class CommonResourcesInjectionProvider implements InjectionProvider
 
         return true;
     }
-
 }

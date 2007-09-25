@@ -14,78 +14,61 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.annotations.Inject;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry.services.InjectionProvider;
 
 /**
- * Worker for the {@link org.apache.tapestry.annotations.Inject} annotation that delegates out to
- * the master {@link ObjectProvider} to access the value. This worker must be scheduled after
- * certain other workers, such as {@link InjectBlockWorker} (which is keyed off a combination of
- * type and the Inject annotation).
- * 
- * @see ObjectProvider
+ * Performs injection triggered by any field annotated with the {@link Inject} annotation.
+ * <p>
+ * The implementation of this worker mostly delegates to a chain of command of
+ * {@link InjectionProvider}s.
  */
 public class InjectWorker implements ComponentClassTransformWorker
 {
-    private final ObjectProvider _objectProvider;
-
     private final ObjectLocator _locator;
 
-    public InjectWorker(ObjectProvider objectProvider, ObjectLocator locator)
+    // Really, a chain of command
+
+    private final InjectionProvider _injectionProvider;
+
+    public InjectWorker(final ObjectLocator locator,
+            final InjectionProvider injectionProvider)
     {
-        _objectProvider = objectProvider;
         _locator = locator;
+        _injectionProvider = injectionProvider;
     }
 
-    public void transform(ClassTransformation transformation, MutableComponentModel model)
+    public final void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         for (String fieldName : transformation.findFieldsWithAnnotation(Inject.class))
         {
             Inject annotation = transformation.getFieldAnnotation(fieldName, Inject.class);
 
-            inject(fieldName, transformation, model);
-
-            transformation.claimField(fieldName, annotation);
-        }
-
-    }
-
-    @SuppressWarnings("unchecked")
-    private void inject(final String fieldName, final ClassTransformation transformation,
-            MutableComponentModel model)
-    {
-        String fieldType = transformation.getFieldType(fieldName);
-
-        Class type = transformation.toClass(fieldType);
-
-        AnnotationProvider annotationProvider = new AnnotationProvider()
-        {
-            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            try
             {
-                return transformation.getFieldAnnotation(fieldName, annotationClass);
+                String fieldType = transformation.getFieldType(fieldName);
+
+                Class type = transformation.toClass(fieldType);
+
+                boolean success = _injectionProvider.provideInjection(
+                        fieldName,
+                        type,
+                        _locator,
+                        transformation,
+                        model);
+
+                if (success) transformation.claimField(fieldName, annotation);
             }
-        };
+            catch (RuntimeException ex)
+            {
+                throw new RuntimeException(ServicesMessages.fieldInjectionError(transformation
+                        .getClassName(), fieldName, ex), ex);
+            }
 
-        Object inject = null;
-
-        try
-        {
-            inject = _objectProvider.provide(type, annotationProvider, _locator);
         }
-        catch (Exception ex)
-        {
-            throw new RuntimeException(ServicesMessages.fieldInjectionError(transformation
-                    .getClassName(), fieldName, ex), ex);
-        }
-
-        transformation.injectField(fieldName, inject);
     }
-
 }

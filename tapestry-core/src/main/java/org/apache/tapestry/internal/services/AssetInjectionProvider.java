@@ -40,7 +40,7 @@ public class AssetInjectionProvider implements InjectionProvider
         _assetSource = assetSource;
     }
 
-    public boolean provideInjection(String fieldName, String fieldType, ObjectLocator locator,
+    public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
             ClassTransformation transformation, MutableComponentModel componentModel)
     {
         Path path = transformation.getFieldAnnotation(fieldName, Path.class);
@@ -58,7 +58,7 @@ public class AssetInjectionProvider implements InjectionProvider
         String statement = format(
                 "%s = (%s) %s.findAsset(%s.getBaseResource(), \"%s\", %s.getLocale());",
                 fieldName,
-                fieldType,
+                fieldType.getName(),
                 sourceFieldName,
                 resourcesFieldName,
                 expanded,

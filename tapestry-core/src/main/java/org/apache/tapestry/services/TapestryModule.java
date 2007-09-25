@@ -80,6 +80,7 @@ import org.apache.tapestry.internal.services.AssetSourceImpl;
 import org.apache.tapestry.internal.services.BeanBlockSourceImpl;
 import org.apache.tapestry.internal.services.BeanModelSourceImpl;
 import org.apache.tapestry.internal.services.BindingSourceImpl;
+import org.apache.tapestry.internal.services.BlockInjectionProvider;
 import org.apache.tapestry.internal.services.ClassResultProcessor;
 import org.apache.tapestry.internal.services.ClasspathAssetAliasManagerImpl;
 import org.apache.tapestry.internal.services.CommonResourcesInjectionProvider;
@@ -97,6 +98,7 @@ import org.apache.tapestry.internal.services.ComponentWorker;
 import org.apache.tapestry.internal.services.ContextImpl;
 import org.apache.tapestry.internal.services.CookiesImpl;
 import org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer;
+import org.apache.tapestry.internal.services.DefaultInjectionProvider;
 import org.apache.tapestry.internal.services.DefaultValidationDelegateCommand;
 import org.apache.tapestry.internal.services.DocumentScriptBuilder;
 import org.apache.tapestry.internal.services.DocumentScriptBuilderImpl;
@@ -109,12 +111,11 @@ import org.apache.tapestry.internal.services.FieldValidatorSourceImpl;
 import org.apache.tapestry.internal.services.FlashPersistentFieldStrategy;
 import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
-import org.apache.tapestry.internal.services.InjectBlockWorker;
 import org.apache.tapestry.internal.services.InjectComponentWorker;
 import org.apache.tapestry.internal.services.InjectPageWorker;
-import org.apache.tapestry.internal.services.InjectResourcesWorker;
-import org.apache.tapestry.internal.services.InjectStandardStylesheetCommand;
 import org.apache.tapestry.internal.services.InjectWorker;
+import org.apache.tapestry.internal.services.ServiceInjectionProvider;
+import org.apache.tapestry.internal.services.InjectStandardStylesheetCommand;
 import org.apache.tapestry.internal.services.InternalModule;
 import org.apache.tapestry.internal.services.LinkActionResponseGenerator;
 import org.apache.tapestry.internal.services.LinkFactory;
@@ -386,9 +387,6 @@ public final class TapestryModule
 
             ObjectLocator locator,
 
-            @InjectService("MasterObjectProvider")
-            ObjectProvider objectProvider,
-
             InjectionProvider injectionProvider,
 
             Environment environment,
@@ -403,6 +401,8 @@ public final class TapestryModule
 
             BindingSource bindingsource,
 
+            MasterObjectProvider masterObjectProvider,
+
             ApplicationStateManager applicationStateManager)
     {
         // TODO: Proper scheduling of all of this. Since a given field or method should
@@ -411,17 +411,8 @@ public final class TapestryModule
 
         configuration.add("Meta", new MetaWorker());
         configuration.add("ApplicationState", new ApplicationStateWorker(applicationStateManager));
-        configuration.add("Inject", new InjectWorker(objectProvider, locator));
 
-        // These next two "reinterpret" what @Inject does (in the presence of
-        // a particular field type and must come before the normal Inject annotation
-        // processing.
-
-        configuration.add(
-                "InjectResources",
-                new InjectResourcesWorker(locator, injectionProvider),
-                "before:Inject");
-        configuration.add("InjectBlock", new InjectBlockWorker(), "before:Inject");
+        configuration.add("Inject", new InjectWorker(locator, injectionProvider));
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
@@ -470,8 +461,7 @@ public final class TapestryModule
         add(configuration, TransformConstants.CLEANUP_RENDER_SIGNATURE, CleanupRender.class, true);
 
         // Ideally, these should be ordered pretty late in the process to make sure there are no
-        // side effects
-        // with other workers that do work inside the page lifecycle methods.
+        // side effects with other workers that do work inside the page lifecycle methods.
 
         add(
                 configuration,
@@ -491,6 +481,10 @@ public final class TapestryModule
 
         configuration.add("Retain", new RetainWorker());
         configuration.add("Persist", new PersistWorker());
+
+        // This one is always last. Any additional private fields that aren't annotated will
+        // be converted to clear out at the end of the request.
+
         configuration.add("UnclaimedField", new UnclaimedFieldWorker(), "after:*");
     }
 
@@ -526,8 +520,7 @@ public final class TapestryModule
         configuration.add(String.class, "text");
 
         // This may change; as currently implemented, "text" refers more to the edit component
-        // (TextField) than to
-        // the "flavor" of data.
+        // (TextField) than to the "flavor" of data.
 
         configuration.add(Number.class, "text");
         configuration.add(Enum.class, "enum");
@@ -579,24 +572,51 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the elemental providers:
+     * Contributes the base set of injection providers:
      * <ul>
+     * <li>Default -- based on {@link MasterObjectProvider}</li>
+     * <li>Block -- injects fields of type Block</li>
      * <li>ComponentResources -- give component access to its resources</li>
      * <li>CommonResources -- access to properties of resources (log, messages, etc.)</li>
      * <li>Asset -- injection of assets (triggered via {@link Path} annotation), with the path
      * relative to the component class</li>
+     * <li>Service -- ordered last, for use when Inject is present and nothing else works, matches
+     * field type against Tapestry IoC service</li>
      * </ul>
      */
     public static void contributeInjectionProvider(
             OrderedConfiguration<InjectionProvider> configuration,
 
+            MasterObjectProvider masterObjectProvider,
+
+            ObjectLocator locator,
+
             SymbolSource symbolSource,
 
             AssetSource assetSource)
     {
+        configuration.add("Default", new DefaultInjectionProvider(masterObjectProvider, locator));
+
         configuration.add("ComponentResources", new ComponentResourcesInjectionProvider());
-        configuration.add("CommonResources", new CommonResourcesInjectionProvider());
-        configuration.add("Asset", new AssetInjectionProvider(symbolSource, assetSource));
+
+        // This comes after default, to deal with conflicts between injecting a String as the
+        // component id, and injecting a string with @Symbol or @Value.
+
+        configuration.add(
+                "CommonResources",
+                new CommonResourcesInjectionProvider(),
+                "after:Default");
+
+        configuration.add(
+                "Asset",
+                new AssetInjectionProvider(symbolSource, assetSource),
+                "before:Default");
+
+        configuration.add("Block", new BlockInjectionProvider(), "before:Default");
+
+        // This needs to be the last one, since it matches against services
+        // and might blow up if there is no match.
+        configuration.add("Service", new ServiceInjectionProvider(locator), "after:*");
     }
 
     /**
@@ -828,8 +848,8 @@ public final class TapestryModule
     }
 
     private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            Class<? extends Annotation> annotationClass, TransformMethodSignature lifecycleMethodSignature,
-            String methodAlias)
+            Class<? extends Annotation> annotationClass,
+            TransformMethodSignature lifecycleMethodSignature, String methodAlias)
     {
         ComponentClassTransformWorker worker = new PageLifecycleAnnotationWorker(annotationClass,
                 lifecycleMethodSignature, methodAlias);
@@ -840,7 +860,8 @@ public final class TapestryModule
     }
 
     private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            TransformMethodSignature signature, Class<? extends Annotation> annotationClass, boolean reverse)
+            TransformMethodSignature signature, Class<? extends Annotation> annotationClass,
+            boolean reverse)
     {
         // make the name match the annotation class name.
 

@@ -36,7 +36,6 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         MutableComponentModel model = mockMutableComponentModel();
 
         String fieldName = "myField";
-        String fieldType = "java.lang.String";
 
         train_getFieldAnnotation(ct, fieldName, Path.class, null);
 
@@ -44,7 +43,7 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
 
         InjectionProvider provider = new AssetInjectionProvider(symbolSource, assetSource);
 
-        assertFalse(provider.provideInjection(fieldName, fieldType, locator, ct, model));
+        assertFalse(provider.provideInjection(fieldName, String.class, locator, ct, model));
 
         verify();
     }
@@ -60,7 +59,7 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         Path annotation = mockPath();
 
         String fieldName = "myField";
-        String fieldType = "java.lang.Object";
+        Class fieldType = Object.class;
         String value = "${foo}";
         String expanded = "foo.gif";
 

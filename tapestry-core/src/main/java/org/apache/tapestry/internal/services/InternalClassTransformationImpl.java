@@ -151,8 +151,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 "resources",
                 null);
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC | Modifier.FINAL,
-                ComponentResources.class.getName(), "getComponentResources", null, null);
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC
+                | Modifier.FINAL, ComponentResources.class.getName(), "getComponentResources",
+                null, null);
 
         addMethod(sig, "return " + _resourcesFieldName + ";");
     }
@@ -816,19 +817,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return result;
     }
 
-    public List<String> findFieldsOfType(final String type)
-    {
-        FieldFilter filter = new FieldFilter()
-        {
-            public boolean accept(String fieldName, String fieldType)
-            {
-                return type.equals(fieldType);
-            }
-        };
-
-        return findFields(filter);
-    }
-
     public List<TransformMethodSignature> findMethodsWithAnnotation(
             Class<? extends Annotation> annotationClass)
     {
@@ -881,8 +869,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 String[] parameters = toTypeNames(method.getParameterTypes());
                 String[] exceptions = toTypeNames(method.getExceptionTypes());
 
-                result = new TransformMethodSignature(method.getModifiers(), type, method.getName(),
-                        parameters, exceptions);
+                result = new TransformMethodSignature(method.getModifiers(), type,
+                        method.getName(), parameters, exceptions);
 
                 _methodSignatures.put(method, result);
             }
@@ -1331,8 +1319,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String fieldType = getFieldType(fieldName);
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                new String[]
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void",
+                methodName, new String[]
                 { fieldType }, null);
 
         String message = ServicesMessages.readOnlyField(_ctClass.getName(), fieldName);

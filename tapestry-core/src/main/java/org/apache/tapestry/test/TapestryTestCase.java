@@ -86,12 +86,12 @@ import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
 import org.apache.tapestry.services.InjectionProvider;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 import org.apache.tapestry.services.Response;
 import org.apache.tapestry.services.Session;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.ValidationConstraintGenerator;
 import org.apache.tapestry.services.ValidationMessagesSource;
 import org.easymock.EasyMock;
@@ -452,12 +452,6 @@ public abstract class TapestryTestCase extends IOCTestCase
             Locale locale, Asset asset)
     {
         expect(source.findAsset(root, path, locale)).andReturn(asset);
-    }
-
-    protected final void train_findFieldsOfType(ClassTransformation transformation, String type,
-            String... fieldNames)
-    {
-        expect(transformation.findFieldsOfType(type)).andReturn(Arrays.asList(fieldNames));
     }
 
     protected final void train_findFieldsWithAnnotation(ClassTransformation transformation,
@@ -854,7 +848,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     protected final void train_provideInjection(InjectionProvider provider, String fieldName,
-            String fieldType, ObjectLocator locator, ClassTransformation transformation,
+            Class fieldType, ObjectLocator locator, ClassTransformation transformation,
             MutableComponentModel model, boolean result)
     {
         expect(provider.provideInjection(fieldName, fieldType, locator, transformation, model))
