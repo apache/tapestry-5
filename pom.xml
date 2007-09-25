@@ -55,15 +55,15 @@
       <timezone>EDT</timezone>
     </developer>
     <developer>
-    	<id>dadams</id>
-    	<name>Dan Adams</name>
-    	<email>dadams@apache.org</email>
-    	<roles>
-    		<role>Engineer</role>
-    	</roles>
-    	<timezone>EST</timezone>
-    	<organization>Interactive Factory</organization>
-    	<organizationUrl>http://ifactory.com</organizationUrl>
+      <id>dadams</id>
+      <name>Dan Adams</name>
+      <email>dadams@apache.org</email>
+      <roles>
+        <role>Engineer</role>
+      </roles>
+      <timezone>EST</timezone>
+      <organization>Interactive Factory</organization>
+      <organizationUrl>http://ifactory.com</organizationUrl>
     </developer>
   </developers>
 
@@ -276,18 +276,28 @@
         </plugins>
       </reporting>
     </profile>
+
+    <profile>
+      <id>bamboo</id>
+      <distributionManagement>
+        <repository>
+          <id>tapestry</id>
+          <url>
+            file:/var/www/html/maven-repository
+          </url>
+        </repository>
+        <snapshotRepository>
+          <id>tapestry-snapshot</id>
+          <url>
+            file:/var/www/html/maven-snapshot-repository
+          </url>
+        </snapshotRepository>
+      </distributionManagement>
+    </profile>
+
   </profiles>
   <reporting>
     <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <aggregate>true</aggregate>
-          <maxmemory>600m</maxmemory>
-          <splitindex>true</splitindex>
-        </configuration>
-      </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
@@ -309,13 +319,11 @@
   <repositories>
     <repository>
       <id>tapestry</id>
-      <url>http://people.apache.org/~hlship/tapestry-repository</url>
+      <url>http://tapestry.formos.com/maven-repository</url>
     </repository>
     <repository>
       <id>tapestry-snapshot</id>
-      <url>
-        http://people.apache.org/~hlship/tapestry-snapshot-repository
-      </url>
+      <url>http://tapestry.formos.com/maven-snapshot-repository</url>
       <snapshots>
         <enabled>true</enabled>
       </snapshots>
@@ -331,10 +339,11 @@
       <url>http://maven.openqa.org/</url>
     </repository>
   </repositories>
+
   <pluginRepositories>
     <pluginRepository>
       <id>tapestry</id>
-      <url>http://people.apache.org/~hlship/tapestry-repository</url>
+      <url>http://tapestry.formos.com/maven-repository</url>
     </pluginRepository>
     <!-- I believe a version of the surefire plugin lives here. -->
     <pluginRepository>
@@ -385,6 +394,8 @@
       </url>
     </snapshotRepository>
   </distributionManagement>
+
+
 
   <properties>
     <!-- Version 2.1 lists everything as 100% covered, wierd. -->
