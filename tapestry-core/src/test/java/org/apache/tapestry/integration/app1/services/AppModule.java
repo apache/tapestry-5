@@ -84,6 +84,7 @@ public class AppModule
             MappedConfiguration<String, String> configuration)
     {
         configuration.add("tapestry.supported-locales", "en,fr");
+        configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
     }
 
     public ToDoDatabase buildToDoDatabase()

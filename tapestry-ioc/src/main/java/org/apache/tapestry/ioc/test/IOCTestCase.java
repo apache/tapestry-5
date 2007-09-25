@@ -45,6 +45,7 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.services.MasterObjectProvider;
 import org.slf4j.Logger;
 
 /** Add factory and trainer methods for the public interfaces of Tapestry IOC. */
@@ -366,5 +367,10 @@ public class IOCTestCase extends TestBase
             AnnotationProvider annotationProvider, Class<T> annotationClass, T annotation)
     {
         expect(annotationProvider.getAnnotation(annotationClass)).andReturn(annotation);
+    }
+
+    protected final MasterObjectProvider mockMasterObjectProvider()
+    {
+        return newMock(MasterObjectProvider.class);
     }
 }

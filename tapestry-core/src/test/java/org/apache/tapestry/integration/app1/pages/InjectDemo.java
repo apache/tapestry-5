@@ -18,15 +18,20 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.Request;
 
 public class InjectDemo
 {
     // Named --- now demonstrating case insensitivity
-    // Now vestigal! 
+    // Now vestigial!
     @Inject
     private Request _request;
+
+    @Inject
+    @Symbol("app.injected-symbol")
+    private String _injectedSymbol;
 
     // Via ComponentResourcesInjectionProvider
     @Inject
@@ -75,5 +80,10 @@ public class InjectDemo
     String clickWilma()
     {
         return "Wilma";
+    }
+
+    public String getInjectedSymbol()
+    {
+        return _injectedSymbol;
     }
 }

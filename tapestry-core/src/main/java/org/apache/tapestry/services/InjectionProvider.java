@@ -19,13 +19,11 @@ import org.apache.tapestry.model.MutableComponentModel;
 
 /**
  * Provides some form of injection when the value for an
- * {@link org.apache.tapestry.annotations.Inject} annotation is blank. In this case, the provider is
- * responsible for determining the value to be injected from the field name and field type.
+ * {@link org.apache.tapestry.annotations.Inject} annotation is present. In this case, the provider
+ * is responsible for determining the value to be injected from the field name and field type.
  * <p>
  * This interface will be used as part of a
  * {@link org.apache.tapestry.ioc.services.ChainBuilder chain of command}.
- * 
- * 
  */
 public interface InjectionProvider
 {
@@ -37,7 +35,7 @@ public interface InjectionProvider
      * @param fieldName
      *            the name of the field requesting injection
      * @param fieldType
-     *            the type of the field (as a string)
+     *            the type of the field
      * @param locator
      *            allows services to be located
      * @param transformation
@@ -47,6 +45,6 @@ public interface InjectionProvider
      * @return true if an injection has been made (terminates the command chain), false to continue
      *         down the chain
      */
-    boolean provideInjection(String fieldName, String fieldType, ObjectLocator locator,
+    boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
             ClassTransformation transformation, MutableComponentModel componentModel);
 }

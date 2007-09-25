@@ -33,7 +33,6 @@ import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.ServiceDecorator;
@@ -56,6 +55,7 @@ import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
+import org.apache.tapestry.services.MasterObjectProvider;
 import org.slf4j.Logger;
 
 public class RegistryImpl implements Registry, InternalRegistry
@@ -543,14 +543,14 @@ public class RegistryImpl implements Registry, InternalRegistry
     {
         _lock.check();
 
-        ObjectProvider masterProvider = getService(
+        MasterObjectProvider masterProvider = getService(
                 IOCConstants.MASTER_OBJECT_PROVIDER_SERVICE_ID,
-                ObjectProvider.class);
+                MasterObjectProvider.class);
 
         AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider
                 : new NullAnnotationProvider();
 
-        return masterProvider.provide(objectType, effectiveProvider, locator);
+        return masterProvider.provide(objectType, effectiveProvider, locator, true);
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)

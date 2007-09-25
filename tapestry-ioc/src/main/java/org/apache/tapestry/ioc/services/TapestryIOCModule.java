@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ObjectLocator;
@@ -40,6 +39,7 @@ import org.apache.tapestry.ioc.internal.services.ExceptionAnalyzerImpl;
 import org.apache.tapestry.ioc.internal.services.ExceptionTrackerImpl;
 import org.apache.tapestry.ioc.internal.services.LoggingDecoratorImpl;
 import org.apache.tapestry.ioc.internal.services.MapSymbolProvider;
+import org.apache.tapestry.ioc.internal.services.MasterObjectProviderImpl;
 import org.apache.tapestry.ioc.internal.services.PerThreadServiceLifecycle;
 import org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl;
 import org.apache.tapestry.ioc.internal.services.PropertyAccessImpl;
@@ -52,6 +52,7 @@ import org.apache.tapestry.ioc.internal.services.SystemPropertiesSymbolProvider;
 import org.apache.tapestry.ioc.internal.services.ThreadLocaleImpl;
 import org.apache.tapestry.ioc.internal.services.TypeCoercerImpl;
 import org.apache.tapestry.ioc.internal.services.ValueObjectProvider;
+import org.apache.tapestry.services.MasterObjectProvider;
 
 /**
  * Defines the base set of services for the Tapestry IOC container.
@@ -75,6 +76,7 @@ public final class TapestryIOCModule
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults");
         binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults");
         binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
+        binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
     }
 
     /**
@@ -102,18 +104,6 @@ public final class TapestryIOCModule
     }
 
     /**
-     * The master {@link ObjectProvider} is responsible for identifying a particular ObjectProvider
-     * by its prefix, and delegating to that instance.
-     */
-    public static ObjectProvider buildMasterObjectProvider(List<ObjectProvider> configuration,
-
-    @InjectService("ChainBuilder")
-    ChainBuilder chainBuilder)
-    {
-        return chainBuilder.build(ObjectProvider.class, configuration);
-    }
-
-    /**
      * Contributes "DefaultProvider", ordered last, that delegates to
      * {@link ObjectLocator#getService(Class)}.
      * <p>
@@ -125,17 +115,6 @@ public final class TapestryIOCModule
 
             ObjectLocator locator)
     {
-        ObjectProvider defaultProvider = new ObjectProvider()
-        {
-
-            public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                    ObjectLocator locator)
-            {
-                return locator.getService(objectType);
-            }
-        };
-
-        configuration.add("DefaultProvider", defaultProvider, "after:*");
         configuration.add("Value", locator.autobuild(ValueObjectProvider.class));
         configuration.add("Symbol", locator.autobuild(SymbolObjectProvider.class));
     }

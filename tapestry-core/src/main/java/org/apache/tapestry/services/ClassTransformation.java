@@ -76,12 +76,6 @@ public interface ClassTransformation extends AnnotationProvider
      */
     List<String> findFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
 
-    /**
-     * Generates a list of the names of declared instance fields that exactly match the specified
-     * type. Only the names of private instance fields are returned. Any
-     * {@link #claimField(String, Object) claimed} fields are excluded.
-     */
-    List<String> findFieldsOfType(String type);
 
     /**
      * Finds all methods defined in the class that are marked with the provided annotation.
