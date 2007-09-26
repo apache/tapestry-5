@@ -45,6 +45,7 @@
       <item name="Tapestry for Struts Developers" href="struts.html"/>
       <item name="Download" href="http://tapestry.apache.org/download.html"/>
        <item name="Release Notes" href="release-notes.html"/>
+       <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
     </menu>
 
     <menu name="Tapestry 5 Modules">
@@ -74,7 +75,6 @@
     </menu>
 
     <menu name="Developer Info">
-      <item name="DevWiki" href="tap5devwiki.html"/>
       <item name="Environment" href="dev/env.html"/>
       <item name="Release Checklist" href="dev/checklist.html"/>
     </menu>

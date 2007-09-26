@@ -250,14 +250,16 @@
         </plugins>
       </build>
     </profile>
-    <!--  Only enable Javadoc as part of the output site when the release profile is active. -->
+    <!--  Only enable Javadoc as part of the output site when the javadoc profile is active. -->
     <profile>
-      <id>release</id>
+      <id>javadoc</id>
       <reporting>
         <plugins>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
+            <!--  Version 2.3 is broken: See http://jira.codehaus.org/browse/MJAVADOC-145 -->
+            <version>2.2</version>
             <configuration>
               <linksource>true</linksource>
               <links>
@@ -282,16 +284,15 @@
       <distributionManagement>
         <repository>
           <id>tapestry</id>
-          <url>
-            file:/var/www/html/maven-repository
-          </url>
+          <url>file:/var/www/html/maven-repository</url>
         </repository>
         <snapshotRepository>
           <id>tapestry-snapshot</id>
-          <url>
-            file:/var/www/html/maven-snapshot-repository
-          </url>
+          <url>file:/var/www/html/maven-snapshot-repository</url>
         </snapshotRepository>
+        <site>
+          <url>file:/var/www/html/nightly/tapestry5</url>
+        </site>
       </distributionManagement>
     </profile>
 

@@ -86,17 +86,14 @@
     </reporting>
 
   <repositories>
-    <!-- This can be uncommented when the tapestry-release-version is a snapshot.
+    <!-- This can be commented out when the tapestry-release-version is a not a snapshot.
          The non-snapshot Tapestry artifacts are distributed through the central
-         repository at ibiblio. 
+         repository at ibiblio.     -->
   
     <repository>
       <id>tapestry-snapshots</id>
-      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository/</url>
+      <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
     </repository>
-    
-    -->
-    
     
     <repository>
       <id>codehaus.snapshots</id>
@@ -112,18 +109,17 @@
   
   <pluginRepositories>
     
-    <!-- As above, this can be uncommented when access to the snapshot version
-         of a Tapestry Maven plugin is required.
+    <!-- As above, this can be commented out when access to the snapshot version
+         of a Tapestry Maven plugin is not required.   -->
     <pluginRepository>
       <id>tapestry-snapshots</id>
-      <url>http://people.apache.org/~hlship/tapestry-snapshot-repository/</url>
+      <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
     </pluginRepository>
     
-    -->
+
   </pluginRepositories>
   
-
     <properties>
-        <tapestry-release-version>5.0.5</tapestry-release-version>
+        <tapestry-release-version>5.0.6-SNAPSHOT</tapestry-release-version>
     </properties>
 </project>
