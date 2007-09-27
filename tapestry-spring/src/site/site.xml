@@ -35,10 +35,7 @@
   <publishDate format="dd MMM yyyy" />
   
   <body>
-    <links>
-      <item name="Tapestry" href="http://tapestry.apache.org/" />
-      <item name="Apache" href="http://www.apache.org/" />
-    </links>
+
     
     <menu name="Quick Links">
       <item name="Download" href="http://tapestry.apache.org/download.html"/>
