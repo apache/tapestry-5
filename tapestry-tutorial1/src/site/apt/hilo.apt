@@ -20,7 +20,7 @@ Chapter 3: Implementing the Hi/Lo Guessing Game
   
   Let's get to work on the Start page and template.
   
-  <<src/main/webapp/WEB-INF/Start.html>>
+  <<src/main/webapp/Start.tml:>>
   
 ----
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
@@ -55,7 +55,7 @@ Chapter 3: Implementing the Hi/Lo Guessing Game
   First, the Guess page.  Just to get started, we'll create a Guess page without much guessing: it'll just show us the 
   target number, the number we're supposed to be guessing.
   
-  <<src/main/webapp/WEB-INF/Guess.html>>
+  <<src/main/webapp/Guess.tml:>>
   
 ----
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
@@ -268,7 +268,7 @@ public class Start
   Let's start with those links.  We're going to use a new component, Loop, to loop
   over a set of values:
   
-  <<src/main/webapp/WEB-INF/Guess.html:>>
+  <<src/main/webapp/Guess.tml:>>
   
 ---
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
@@ -362,7 +362,7 @@ public class Start
   
   We do need a basic GameOver page.
   
-  <<src/main/webapp/WEB-INF/GameOver.html:>>
+  <<src/main/webapp/GameOver.tml:>>
 
 ---
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
@@ -471,7 +471,7 @@ public class GameOver
 }
 ---
   
-  <<src/main/webapp/WEB-INF/GameOver.html:>>
+  <<src/main/webapp/GameOver.tml:>>
   
 ---
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">

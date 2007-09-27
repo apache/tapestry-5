@@ -58,7 +58,7 @@ public class PageTemplateLocatorImpl implements PageTemplateLocator
             logicalName = logicalName.substring(0, slashx + 1) + simpleClassName;
         }
 
-        String path = format("WEB-INF/%s.%s", logicalName, InternalConstants.TEMPLATE_EXTENSION);
+        String path = format("%s.%s", logicalName, InternalConstants.TEMPLATE_EXTENSION);
 
         return _contextRoot.forFile(path).forLocale(locale);
     }

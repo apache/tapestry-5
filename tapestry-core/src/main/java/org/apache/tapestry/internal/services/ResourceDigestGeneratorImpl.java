@@ -19,9 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.util.Collection;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 
 /**
@@ -30,6 +33,13 @@ import org.apache.tapestry.services.ResourceDigestGenerator;
 public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
 {
     private static final int BUFFER_SIZE = 5000;
+
+    private final Set<String> _digestExtensions;
+
+    public ResourceDigestGeneratorImpl(Collection<String> configuration)
+    {
+        _digestExtensions = CollectionFactory.newSet(configuration);
+    }
 
     public String generateDigest(URL url)
     {
@@ -75,10 +85,13 @@ public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
         }
     }
 
-    /** Current implementation: any path that ends with ".class", but this will expand in the future. */
+    /** Current implementation is based on the path extension, and a configured list of extensions. */
     public boolean requiresDigest(String path)
     {
-        return path.endsWith(".class");
+        int dotx = path.lastIndexOf('.');
+        String extension = path.substring(dotx + 1).toLowerCase();
+
+        return _digestExtensions.contains(extension);
     }
 
 }

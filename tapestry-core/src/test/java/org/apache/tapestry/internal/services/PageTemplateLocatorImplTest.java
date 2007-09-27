@@ -58,7 +58,7 @@ public class PageTemplateLocatorImplTest extends InternalBaseTestCase
 
         train_resolvePageClassNameToPageName(resolver, className, "Foo");
 
-        train_forFile(root, "WEB-INF/Foo.html", withExtension);
+        train_forFile(root, "Foo.tml", withExtension);
         train_forLocale(withExtension, locale, forLocale);
 
         replay();
@@ -93,7 +93,7 @@ public class PageTemplateLocatorImplTest extends InternalBaseTestCase
         train_resolvePageClassNameToPageName(resolver, className, "foo/Create");
 
         // Abnd here's where we're showing that PTLI stitches it back together.
-        train_forFile(root, "WEB-INF/foo/CreateFoo.html", withExtension);
+        train_forFile(root, "foo/CreateFoo.tml", withExtension);
         train_forLocale(withExtension, locale, forLocale);
 
         replay();
@@ -120,7 +120,7 @@ public class PageTemplateLocatorImplTest extends InternalBaseTestCase
 
         train_resolvePageClassNameToPageName(resolver, className, "bar/Baz");
 
-        train_forFile(root, "WEB-INF/bar/Baz.html", withExtension);
+        train_forFile(root, "bar/Baz.tml", withExtension);
         train_forLocale(withExtension, locale, null);
 
         replay();

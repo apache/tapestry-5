@@ -82,27 +82,27 @@ public class ContextImplTest extends InternalBaseTestCase
         train_getResourcePaths(
                 servletContext,
                 "/foo",
-                "/foo/alpha.html",
+                "/foo/alpha.tml",
                 "/foo/beta/",
-                "/foo/gamma.html");
+                "/foo/gamma.tml");
         train_getResourcePaths(
                 servletContext,
                 "/foo/beta/",
-                "/foo/beta/b.html",
-                "/foo/beta/a.html",
+                "/foo/beta/b.tml",
+                "/foo/beta/a.tml",
                 "/foo/beta/c/");
-        train_getResourcePaths(servletContext, "/foo/beta/c/", "/foo/beta/c/c.html");
+        train_getResourcePaths(servletContext, "/foo/beta/c/", "/foo/beta/c/c.tml");
 
         replay();
 
         List<String> actual = new ContextImpl(servletContext).getResourcePaths("/foo");
 
         assertEquals(actual, Arrays.asList(
-                "/foo/alpha.html",
-                "/foo/beta/a.html",
-                "/foo/beta/b.html",
-                "/foo/beta/c/c.html",
-                "/foo/gamma.html"));
+                "/foo/alpha.tml",
+                "/foo/beta/a.tml",
+                "/foo/beta/b.tml",
+                "/foo/beta/c/c.tml",
+                "/foo/gamma.tml"));
 
         verify();
     }

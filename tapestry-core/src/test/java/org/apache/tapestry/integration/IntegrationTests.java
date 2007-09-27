@@ -143,7 +143,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent(
                 "org.apache.tapestry.ioc.internal.util.TapestryException",
-                "Failure parsing template classpath:org/apache/tapestry/integration/app1/pages/BadTemplate.html, line 7, column 15",
+                "Failure parsing template classpath:org/apache/tapestry/integration/app1/pages/BadTemplate.tml, line 7, column 15",
                 "<t:foobar>content from template</t:foobar>",
                 "Element <t:foobar> is in the Tapestry namespace, but is not a recognized Tapestry template element.");
     }

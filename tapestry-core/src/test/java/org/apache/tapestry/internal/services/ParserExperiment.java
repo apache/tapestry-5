@@ -31,7 +31,7 @@ public class ParserExperiment extends DefaultHandler
 {
     public static void main(String[] args) throws Exception
     {
-        new ParserExperiment().parse("basic.html");
+        new ParserExperiment().parse("basic.tml");
     }
 
     public void parse(String file) throws Exception

@@ -1568,4 +1568,24 @@ public final class TapestryModule
                 resources.autobuild(ComponentActionRequestHandlerImpl.class));
     }
 
+    /**
+     * Configures the extensions that will require a digest to be downloaded via the asset
+     * dispatcher. Most resources are "safe", they don't require a digest. For unsafe resources, the
+     * digest is incorporated into the URL to ensure that the client side isn't just "fishing".
+     * <p>
+     * The extensions must be all lower case.
+     * <p>
+     * This contributes "class" and "tml" (the template extension).
+     * 
+     * @param configuration
+     *            collection of extensions
+     */
+    public static void contributeResourceDigestGenerator(Configuration<String> configuration)
+    {
+        // Java class files always require a digest.
+        configuration.add("class");
+
+        // Likewise, we don't want people fishing for templates.
+        configuration.add(InternalConstants.TEMPLATE_EXTENSION);
+    }
 }

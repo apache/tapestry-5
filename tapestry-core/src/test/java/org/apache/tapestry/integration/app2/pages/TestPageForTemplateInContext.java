@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app2.pages;
 
-public class TestPageForTemplateInWEBINF
+public class TestPageForTemplateInContext
 {
     public String getMsg()
     {

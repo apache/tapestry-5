@@ -113,7 +113,8 @@ class ServicesMessages
         return MESSAGES.format("may-not-nest-elements-inside-body", elementName);
     }
 
-    static String methodCompileError(TransformMethodSignature signature, String methodBody, Throwable cause)
+    static String methodCompileError(TransformMethodSignature signature, String methodBody,
+            Throwable cause)
     {
         return MESSAGES.format("method-compile-error", signature, methodBody, cause);
     }
@@ -406,5 +407,10 @@ class ServicesMessages
     static String missingValidatorConstraint(String validatorType, Class type)
     {
         return MESSAGES.format("missing-validator-constraint", validatorType, type.getName());
+    }
+
+    static String resourcesAccessForbidden(String URI)
+    {
+        return MESSAGES.format("resource-access-forbidden", URI);
     }
 }
