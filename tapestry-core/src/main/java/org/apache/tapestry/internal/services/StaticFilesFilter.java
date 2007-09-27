@@ -17,6 +17,9 @@ package org.apache.tapestry.internal.services;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.services.Context;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
@@ -45,19 +48,37 @@ public class StaticFilesFilter implements RequestFilter
         // servlet even if the file doesn't exist, to keep the request from looking like a
         // component action request.
 
-        if (path.equals("/favicon.ico"))
-            return false;
+        if (path.equals("/favicon.ico")) return false;
 
         // We are making the questionable assumption that all files to be vended out will contain
-        // an extension (with a dot seperator). Without this, the filter tends to match against
+        // an extension (with a dot separator). Without this, the filter tends to match against
         // folder names when we don't want it to (especially for the root context path).
 
-        if (path.contains("."))
+        int dotx = path.lastIndexOf(".");
+
+        if (dotx > 0)
         {
             URL url = _context.getResource(path);
 
             if (url != null)
+            {
+                String suffix = path.substring(dotx + 1);
+
+                // We never allow access to Tapestry component templates, even if they exist.
+                // It is considered a security risk, like seeing a raw JSP. Earlier alpha versions
+                // of Tapestry required that the templates be stored in WEB-INF.
+
+                if (suffix.equalsIgnoreCase(InternalConstants.TEMPLATE_EXTENSION))
+                {
+
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, ServicesMessages
+                            .resourcesAccessForbidden(path));
+
+                    return true;
+                }
+
                 return false;
+            }
         }
 
         return handler.service(request, response);

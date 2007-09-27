@@ -17,35 +17,36 @@ Component Templates
     
 Template Location
 
-  Component templates are stored with the component class file.  The files have a ".html" extension, and are stored in
+  Component templates are stored with the component class file.  The files have a ".tml" extension (i.e., <T>apestry <M>arkup
+  <L>anguage), and are stored in
   the same package as corresponding component class.
   
   Under a typical Maven directory structure, the Java class for a component
   might be <<<src/main/java/org/example/myapp/components/MyComponent.java>>>.
-  The corresponding template will be <<<src/main/resources/org/example/myapp/components/MyComponent.html>>>.
+  The corresponding template will be <<<src/main/resources/org/example/myapp/components/MyComponent.tml>>>.
   
   Likewise, the Java class for a component might be <<<src/main/java/org/example/myapp/pages/MyPage.java>>> and
-  the corresponding template will be <<<src/main/resources/org/example/myapp/pages/MyPage.html>>>.
+  the corresponding template will be <<<src/main/resources/org/example/myapp/pages/MyPage.tml>>>.
   
   The template and the compiled class will be packaged together in the WEB-INF/classes folder of the application WAR.
 
   For <pages> (not <components>), a second location will be searched: in the web application context.
   The location is based on the logical name of the page, in the previous example, the template
-  would be <<<MyPage.html>>> in the root folder of the web application.
+  would be <<<MyPage.tml>>> in the root folder of the web application.
   
   In certain cases, Tapestry will simplify the the logical name of a page. For example, the page class
   org.example.pages.address.CreateAddress will be given a logical name of "address/Create" (the redundant "Address"
   is removed as a suffix). However, this only affects how the page is referenced in URLs; the template file
-  will still be CreateAddress.html, whether on the classpath, or as WEB-INF/address/CreateAddress.html.
+  will still be CreateAddress.tml, whether on the classpath, or as address/CreateAddress.tml (in the web context).
   
-  A template on the classpath takes precendence over a file in the web application context.
+  A template on the classpath takes precedence over a file in the web application context.
   
 Template Localization
 
   Templates are {{{localization.html}localized}} in much the same way as individual files of a component's message
   catalog: the effective locale is inserted into the name of the file.  Thus a German users will see the content
-  generated from <<<MyPage_de.html>>> and French users will see content generated from <<<MyPage_fr.html>>>.  When no
-  specific localization is available, the default location (<<<MyPage.html>>>) is used.  
+  generated from <<<MyPage_de.tml>>> and French users will see content generated from <<<MyPage_fr.tml>>>.  When no
+  specific localization is available, the default location (<<<MyPage.tml>>>) is used.  
 
 Template Inheritance
 

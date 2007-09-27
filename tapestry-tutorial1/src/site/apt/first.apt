@@ -135,7 +135,7 @@ mvn jetty:run
   templates.  At runtime, when Tapestry reads the template, it does not use a validating parser.> For the most part, the template looks like
   ordinary XHTML:
   
-  <<src/main/webapp/WEB-INF/Start.html>>
+  <<src/main/webapp/Start.tml:>>
   
 ----
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">

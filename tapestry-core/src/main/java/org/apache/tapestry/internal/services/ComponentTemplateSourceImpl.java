@@ -48,7 +48,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different
      * keys will point to the same resource (i.e., "foo:en_US", "foo:en_UK", and "foo:en" may all be
-     * parsed from the same "foo.html" resource). The resource may end up being null, meaning the
+     * parsed from the same "foo.tml" resource). The resource may end up being null, meaning the
      * template does not exist in any locale.
      */
     private final Map<MultiKey, Resource> _templateResources = newConcurrentMap();
@@ -191,7 +191,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
     /**
      * Checks to see if any parsed resource has changed. If so, then all internal caches are
-     * cleared, and an invalidation event is fired. This is brute force ... a more targetted
+     * cleared, and an invalidation event is fired. This is brute force ... a more targeted
      * dependency management strategy may come later.
      */
     public void checkForUpdates()

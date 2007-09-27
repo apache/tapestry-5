@@ -162,9 +162,9 @@ public enum Honorific
   We'll create a sub-folder, address, to hold them.  Let's get started on the first of these pages, "address/Create"  (that's the real name, including
   the slash --- we'll see in a minute how that maps to classes and templates).
   
-  First, we'll update the Start.html template, to create a link for creating a new page:
+  First, we'll update the Start.tml template, to create a link for creating a new page:
   
-  <<src/main/webapp/WEB-INF/Start.html:>>
+  <<src/main/webapp/Start.tml:>>
 
 ----
     <h1>Address Book</h1>
@@ -176,7 +176,7 @@ public enum Honorific
 
    Now we need the page, let's start with an empty shell, just to test our navigation.
   
-  <<src/main/webapp/WEB-INF/address/CreateAddress.html:>>
+  <<src/main/webapp/address/CreateAddress.tml:>>
   
 ---
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
@@ -212,10 +212,10 @@ public class CreateAddress
    
    Eventually, your application will probably have more entities:  perhaps you'll have a "user/Create" page and a "payment/Create" page and an "account/Create" page.
    Now, you <could> have a bunch of different classes named <<<Create>>> spread across a number of different packages.  That's legal Java, but it isn't ideal.  You may find yourself
-   accidentally editting the Java code for creating an Account when your really want to be editting the code for creating a Payment.
+   accidentally editing the Java code for creating an Account when your really want to be editting the code for creating a Payment.
    
    Tapestry is encouraging you to use a more descriptive name: <<<Create>>><Address> not just <<<Create>>>, but it isn't making you pay the cost (in terms of longer,
-   uglier URLs).  The URL will still be http://localhost:8080/tutorial1/address/create.
+   uglier URLs).  The URL to access the page will still be http://localhost:8080/tutorial1/address/create.
    
 * Using the BeanEditForm component
 

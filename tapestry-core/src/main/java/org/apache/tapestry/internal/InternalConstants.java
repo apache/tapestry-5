@@ -37,12 +37,10 @@ public final class InternalConstants
     public static final String TAPESTRY_APP_NAME_SYMBOL = "tapestry.app-name";
 
     /**
-     * The extension used for Tapestry component template files. Template files are well-formed XML
-     * files. This is also used as the extension for page render requests (perhaps these will be
-     * split into two concepts later, especially if the we designate a particular extension for
-     * Tapestry template files, such as .tsp).
+     * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup
+     * <em>L</em>anguage. Template files are well-formed XML files.
      */
-    public static final String TEMPLATE_EXTENSION = "html";
+    public static final String TEMPLATE_EXTENSION = "tml";
 
     /** All purpose CSS class name for anything related to Tapestry errors. */
     public static final String TAPESTRY_ERROR_CLASS = "t-error";

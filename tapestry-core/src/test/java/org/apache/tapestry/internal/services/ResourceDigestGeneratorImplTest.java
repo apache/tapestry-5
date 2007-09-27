@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.util.Arrays;
 
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.ResourceDigestGenerator;
@@ -33,7 +34,7 @@ public class ResourceDigestGeneratorImplTest extends InternalBaseTestCase
     {
         URL url = getClass().getResource("ResourceDigestGeneratorImplTest.class");
 
-        ResourceDigestGenerator g = new ResourceDigestGeneratorImpl();
+        ResourceDigestGenerator g = new ResourceDigestGeneratorImpl(Arrays.asList("class"));
 
         String digest = g.generateDigest(url);
 
@@ -51,7 +52,7 @@ public class ResourceDigestGeneratorImplTest extends InternalBaseTestCase
 
         URL url = file.toURL();
 
-        ResourceDigestGenerator g = new ResourceDigestGeneratorImpl();
+        ResourceDigestGenerator g = new ResourceDigestGeneratorImpl(Arrays.asList("class"));
 
         String prevDigest = g.generateDigest(url);
 

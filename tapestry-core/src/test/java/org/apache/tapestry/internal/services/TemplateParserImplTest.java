@@ -98,7 +98,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     synchronized void just_HTML()
     {
-        Resource resource = getResource("justHTML.html");
+        Resource resource = getResource("justHTML.tml");
 
         ComponentTemplate template = getParser().parseTemplate(resource);
 
@@ -149,7 +149,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void xml_entity()
     {
-        List<TemplateToken> tokens = tokens("xmlEntity.html");
+        List<TemplateToken> tokens = tokens("xmlEntity.tml");
 
         assertEquals(tokens.size(), 3);
 
@@ -165,7 +165,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test(enabled = false)
     void html_entity()
     {
-        List<TemplateToken> tokens = tokens("html_entity.html");
+        List<TemplateToken> tokens = tokens("html_entity.tml");
 
         assertEquals(tokens.size(), 3);
 
@@ -184,7 +184,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void cdata()
     {
-        List<TemplateToken> tokens = tokens("cdata.html");
+        List<TemplateToken> tokens = tokens("cdata.tml");
 
         // Whitespace text tokens around the CDATA
 
@@ -199,7 +199,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void comment()
     {
-        List<TemplateToken> tokens = tokens("comment.html");
+        List<TemplateToken> tokens = tokens("comment.tml");
 
         // Again, whitespace before and after the comment adds some tokens
 
@@ -217,7 +217,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void multiline_comment()
     {
-        List<TemplateToken> tokens = tokens("multilineComment.html");
+        List<TemplateToken> tokens = tokens("multilineComment.tml");
 
         // Again, whitespace before and after the comment adds some tokens
 
@@ -233,7 +233,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void component()
     {
-        List<TemplateToken> tokens = tokens("component.html");
+        List<TemplateToken> tokens = tokens("component.tml");
 
         assertEquals(tokens.size(), 6);
 
@@ -249,7 +249,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void component_with_body()
     {
-        List<TemplateToken> tokens = tokens("componentWithBody.html");
+        List<TemplateToken> tokens = tokens("componentWithBody.tml");
 
         assertEquals(tokens.size(), 7);
 
@@ -265,7 +265,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void root_element_is_component()
     {
-        List<TemplateToken> tokens = tokens("root_element_is_component.html");
+        List<TemplateToken> tokens = tokens("root_element_is_component.tml");
 
         assertEquals(tokens.size(), 3);
 
@@ -286,7 +286,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void instrumented_element()
     {
-        ComponentTemplate template = parse("instrumented_element.html");
+        ComponentTemplate template = parse("instrumented_element.tml");
         List<TemplateToken> tokens = template.getTokens();
 
         assertEquals(tokens.size(), 3);
@@ -310,7 +310,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void body_element()
     {
-        List<TemplateToken> tokens = tokens("body_element.html");
+        List<TemplateToken> tokens = tokens("body_element.tml");
 
         // start(html), text, body, text, end(html)
         assertEquals(tokens.size(), 5);
@@ -323,7 +323,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void content_within_body_element()
     {
-        List<TemplateToken> tokens = parse("content_within_body_element.html").getTokens();
+        List<TemplateToken> tokens = parse("content_within_body_element.tml").getTokens();
 
         assertEquals(tokens.size(), 5);
 
@@ -338,7 +338,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     void component_with_parameters()
     {
-        List<TemplateToken> tokens = tokens("componentWithParameters.html");
+        List<TemplateToken> tokens = tokens("componentWithParameters.tml");
 
         assertEquals(tokens.size(), 9);
 
@@ -369,7 +369,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void component_with_mixins()
     {
-        List<TemplateToken> tokens = tokens("component_with_mixins.html");
+        List<TemplateToken> tokens = tokens("component_with_mixins.tml");
 
         assertEquals(tokens.size(), 6);
 
@@ -383,7 +383,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void empty_string_mixins_is_null()
     {
-        List<TemplateToken> tokens = tokens("empty_string_mixins_is_null.html");
+        List<TemplateToken> tokens = tokens("empty_string_mixins_is_null.tml");
 
         assertEquals(tokens.size(), 6);
 
@@ -398,7 +398,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void component_ids()
     {
-        ComponentTemplate template = parse("component_ids.html");
+        ComponentTemplate template = parse("component_ids.tml");
 
         Set<String> ids = template.getComponentIds();
 
@@ -408,7 +408,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void expansions_in_normal_text()
     {
-        List<TemplateToken> tokens = tokens("expansions_in_normal_text.html");
+        List<TemplateToken> tokens = tokens("expansions_in_normal_text.tml");
 
         assertEquals(tokens.size(), 7);
 
@@ -432,7 +432,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void expansions_must_be_on_one_line()
     {
-        List<TemplateToken> tokens = tokens("expansions_must_be_on_one_line.html");
+        List<TemplateToken> tokens = tokens("expansions_must_be_on_one_line.tml");
 
         assertEquals(tokens.size(), 3);
 
@@ -447,7 +447,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void multiple_expansions_on_one_line()
     {
-        List<TemplateToken> tokens = tokens("multiple_expansions_on_one_line.html");
+        List<TemplateToken> tokens = tokens("multiple_expansions_on_one_line.tml");
 
         assertEquals(tokens.size(), 10);
 
@@ -471,7 +471,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void expansions_not_allowed_in_cdata()
     {
-        List<TemplateToken> tokens = tokens("expansions_not_allowed_in_cdata.html");
+        List<TemplateToken> tokens = tokens("expansions_not_allowed_in_cdata.tml");
 
         assertEquals(tokens.size(), 5);
 
@@ -483,7 +483,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void expansions_not_allowed_in_attributes()
     {
-        List<TemplateToken> tokens = tokens("expansions_not_allowed_in_attributes.html");
+        List<TemplateToken> tokens = tokens("expansions_not_allowed_in_attributes.tml");
 
         assertEquals(tokens.size(), 4);
 
@@ -496,7 +496,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void parameter_element()
     {
-        List<TemplateToken> tokens = tokens("parameter_element.html");
+        List<TemplateToken> tokens = tokens("parameter_element.tml");
 
         ParameterToken token4 = get(tokens, 4);
         assertEquals(token4.getName(), "fred");
@@ -512,7 +512,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void complex_component_type()
     {
-        List<TemplateToken> tokens = tokens("complex_component_type.html");
+        List<TemplateToken> tokens = tokens("complex_component_type.tml");
 
         assertEquals(tokens.size(), 6);
 
@@ -524,7 +524,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @Test
     public void block_element()
     {
-        List<TemplateToken> tokens = tokens("block_element.html");
+        List<TemplateToken> tokens = tokens("block_element.tml");
 
         BlockToken token2 = get(tokens, 2);
         assertEquals(token2.getId(), "block0");
@@ -545,21 +545,21 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         return new Object[][]
         {
                 {
-                        "mixin_requires_id_or_type.html",
+                        "mixin_requires_id_or_type.tml",
                         "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
                         2 },
-                { "illegal_nesting_within_body_element.html",
+                { "illegal_nesting_within_body_element.tml",
                         "Element 'xyz' is nested within a Tapestry body element", 2 },
                 {
-                        "unexpected_attribute_in_parameter_element.html",
+                        "unexpected_attribute_in_parameter_element.tml",
                         "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
                         4 },
-                { "name_attribute_of_parameter_element_omitted.html",
+                { "name_attribute_of_parameter_element_omitted.tml",
                         "The name attribute of the <parameter> element must be specified.", 4 },
-                { "name_attribute_of_parameter_element_blank.html",
+                { "name_attribute_of_parameter_element_blank.tml",
                         "The name attribute of the <parameter> element must be specified.", 4 },
                 {
-                        "unexpected_attribute_in_block_element.html",
+                        "unexpected_attribute_in_block_element.tml",
                         "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
                         3 },
 
@@ -591,9 +591,9 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         return new Object[][]
         {
-        { "xhtml1_strict_doctype.html" },
-        { "xhtml1_transitional_doctype.html" },
-        { "xhtml1_frameset_doctype.html" } };
+        { "xhtml1_strict_doctype.tml" },
+        { "xhtml1_transitional_doctype.tml" },
+        { "xhtml1_frameset_doctype.tml" } };
     }
 
     @Test(dataProvider = "doctype_parsed_correctly_data")
@@ -610,19 +610,19 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         return new Object[][]
         {
-                { "xhtml1_strict_doctype.html", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
+                { "xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
                         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" },
-                { "xhtml1_transitional_doctype.html", "html",
+                { "xhtml1_transitional_doctype.tml", "html",
                         "-//W3C//DTD XHTML 1.0 Transitional//EN",
                         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd" },
-                { "xhtml1_frameset_doctype.html", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
+                { "xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
                         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd" },
-                { "html4_strict_doctype.html", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                { "html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
                         "http://www.w3.org/TR/html4/strict.dtd" },
-                { "html4_transitional_doctype.html", "HTML",
+                { "html4_transitional_doctype.tml", "HTML",
                         "-//W3C//DTD HTML 4.01 Transitional//EN",
                         "http://www.w3.org/TR/html4/loose.dtd" },
-                { "html4_frameset_doctype.html", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                { "html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
                         "http://www.w3.org/TR/html4/frameset.dtd" },
                 { "system_doctype.xml", "foo", null,
                         "src/test/resources/org/apache/tapestry/internal/services/simple.dtd" } };

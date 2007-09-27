@@ -109,7 +109,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         File packageDir = new File(rootDir, "baz");
         packageDir.mkdirs();
 
-        File f = new File(packageDir, "Biff.html");
+        File f = new File(packageDir, "Biff.tml");
 
         f.createNewFile();
 
@@ -213,7 +213,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
         // Simpler to do it this way ...
 
-        Resource contextTemplateResource = newResource("Fred.html");
+        Resource contextTemplateResource = newResource("Fred.tml");
 
         TemplateParser parser = mockTemplateParser();
         ComponentTemplate template = mockComponentTemplate();

@@ -17,6 +17,8 @@ package org.apache.tapestry.internal.services;
 import java.io.IOException;
 import java.net.URL;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Context;
 import org.apache.tapestry.services.Request;
@@ -81,6 +83,58 @@ public class StaticFilesFilterTest extends InternalBaseTestCase
         RequestFilter filter = new StaticFilesFilter(context);
 
         assertFalse(filter.service(request, response, handler));
+
+        verify();
+    }
+
+    @Test
+    public void existing_template_file() throws Exception
+    {
+        URL url = new URL("file://.");
+        String path = "/cell.tml";
+
+        Request request = newRequest(path);
+        Response response = mockResponse();
+        RequestHandler handler = mockRequestHandler();
+        Context context = mockContext();
+
+        train_getResource(context, path, url);
+
+        response.sendError(
+                HttpServletResponse.SC_FORBIDDEN,
+                "URI /cell.tml may not be accessed remotely.");
+
+        replay();
+
+        RequestFilter filter = new StaticFilesFilter(context);
+
+        assertTrue(filter.service(request, response, handler));
+
+        verify();
+    }
+
+    @Test
+    public void existing_template_file_case_insenitive() throws Exception
+    {
+        URL url = new URL("file://.");
+        String path = "/cell.TML";
+
+        Request request = newRequest(path);
+        Response response = mockResponse();
+        RequestHandler handler = mockRequestHandler();
+        Context context = mockContext();
+
+        train_getResource(context, path, url);
+
+        response.sendError(
+                HttpServletResponse.SC_FORBIDDEN,
+                "URI /cell.TML may not be accessed remotely.");
+
+        replay();
+
+        RequestFilter filter = new StaticFilesFilter(context);
+
+        assertTrue(filter.service(request, response, handler));
 
         verify();
     }

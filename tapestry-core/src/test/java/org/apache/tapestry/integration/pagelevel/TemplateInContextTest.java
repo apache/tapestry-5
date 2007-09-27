@@ -20,17 +20,17 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
-public class TemplateInWEBINFTest extends Assert
+public class TemplateInContextTest extends Assert
 {
     private PageTester _tester;
 
     @Test
-    public void template_in_web_inf()
+    public void template_in_web_context()
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
         _tester = new PageTester(appPackage, appName, "src/test/app2");
-        Document doc = _tester.renderPage("TestPageForTemplateInWEBINF");
+        Document doc = _tester.renderPage("TestPageForTemplateInContext");
         assertTrue(doc.toString().contains("How are you?"));
     }
 
