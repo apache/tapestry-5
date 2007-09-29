@@ -81,6 +81,8 @@ public class Radio implements Field
 
     private String _clientId;
 
+    private String _elementName;
+
     /**
      * If true, then the field will render out with a disabled attribute (to turn off client-side
      * behavior). Further, a disabled field ignores any value in the request when the form is
@@ -99,12 +101,9 @@ public class Radio implements Field
         return _defaultProvider.defaultBinding("value", _resources);
     }
 
-    /**
-     * Returns the element name from the {@link RadioContainer#getElementName() container}.
-     */
     public String getElementName()
     {
-        return _container.getElementName();
+        return _elementName;
     }
 
     public String getLabel()
@@ -131,6 +130,7 @@ public class Radio implements Field
         String value = _container.toClient(_value);
 
         _clientId = _pageRenderSupport.allocateClientId(_resources.getId());
+        _elementName = _container.getElementName();
 
         writer.element(
                 "input",
@@ -139,7 +139,7 @@ public class Radio implements Field
                 "id",
                 _clientId,
                 "name",
-                getElementName(),
+                _elementName,
                 "value",
                 value);
 
