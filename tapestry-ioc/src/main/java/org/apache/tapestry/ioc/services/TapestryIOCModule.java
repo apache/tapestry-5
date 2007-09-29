@@ -16,6 +16,7 @@ package org.apache.tapestry.ioc.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -143,6 +144,7 @@ public final class TapestryIOCModule
      * <li>Null to String (still null)</li>
      * <li>Collection to Boolean (false if empty)</li>
      * <li>Object[] to List</li>
+     * <li>primitive[] to List</li>
      * <li>Object to List (by wrapping as a singleton list)</li>
      * <li>Null to List (still null)</li>
      * <li>Null to Long (zero)</li>
@@ -157,7 +159,7 @@ public final class TapestryIOCModule
      * "weaker" than other coercions. Alternately, coercions from null may need to be handled
      * specially. We'll see if we tweak the algorithm in the future.
      */
-
+    @SuppressWarnings("unchecked")
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
         add(configuration, Object.class, String.class, new Coercion<Object, String>()
@@ -375,6 +377,29 @@ public final class TapestryIOCModule
                 return input.doubleValue();
             }
         });
+
+        Coercion primitiveArrayCoercion = new Coercion<Object, List>()
+        {
+            public List<Object> coerce(Object input)
+            {
+                int length = Array.getLength(input);
+                Object[] array = new Object[length];
+                for (int i = 0; i < length; i++)
+                {
+                    array[i] = Array.get(input, i);
+                }
+                return Arrays.asList(array);
+            }
+        };
+
+        add(configuration, byte[].class, List.class, primitiveArrayCoercion);
+        add(configuration, short[].class, List.class, primitiveArrayCoercion);
+        add(configuration, int[].class, List.class, primitiveArrayCoercion);
+        add(configuration, long[].class, List.class, primitiveArrayCoercion);
+        add(configuration, float[].class, List.class, primitiveArrayCoercion);
+        add(configuration, double[].class, List.class, primitiveArrayCoercion);
+        add(configuration, char[].class, List.class, primitiveArrayCoercion);
+        add(configuration, boolean[].class, List.class, primitiveArrayCoercion);
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,

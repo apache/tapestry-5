@@ -140,6 +140,8 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
         // compound tuples (built around specific tuples).
 
         Float floatValue = new Float(31.14);
+        byte byte1 = 12, byte2 = 56;
+        short short1 = 34, short2 = 98;
         return new Object[][]
         {
         // There's a lot of these!
@@ -175,10 +177,16 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                 { null, List.class, null },
                 { null, Collection.class, null },
                 { null, String.class, null },
-                { new Object[]
-                { "a", 123 }, List.class, Arrays.asList("a", 123) },
-                { new String[]
-                { "a", "b" }, List.class, Arrays.asList("a", "b") },
+                { new Object[] { "a", 123 }, List.class, Arrays.asList("a", 123) },
+                { new String[] { "a", "b" }, List.class, Arrays.asList("a", "b") },
+                { new byte[] { byte1, byte2 }, List.class, Arrays.asList(byte1, byte2) },
+                { new short[] { short1, short2 }, List.class, Arrays.asList(short1, short2) },
+                { new int[] { 1, 2 }, List.class, Arrays.asList(1, 2) },
+                { new long[] { 123L, 321L }, List.class, Arrays.asList(123L, 321L) },
+                { new float[] { 3.4f, 7.777f }, List.class, Arrays.asList(3.4f, 7.777f) },
+                { new double[] { 3.4, 7.777 }, List.class, Arrays.asList(3.4, 7.777) },
+                { new char[] { 'a', 'b' }, List.class, Arrays.asList('a', 'b') },
+                { new boolean[] { true, false }, List.class, Arrays.asList(true, false) },
 
                 { null, Long.class, 0l },
                 { null, Short.class, (short) 0 },
