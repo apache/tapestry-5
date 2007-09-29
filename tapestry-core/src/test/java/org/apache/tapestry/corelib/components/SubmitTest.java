@@ -15,6 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.FormSupport;

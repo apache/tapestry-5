@@ -63,7 +63,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "\'braveheart\' is not a defined persistent strategy.  Defined stategies: bar, foo.");
+                    "\'braveheart\' is not a defined persistent strategy.  Defined strategies: bar, foo.");
         }
 
         verify();

@@ -12,33 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry.corelib.internal;
 
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 
-final class ComponentMessages
+public final class InternalMessages
 {
-    private static final Messages MESSAGES = MessagesImpl.forClass(ComponentMessages.class);
+    private static final Messages MESSAGES = MessagesImpl.forClass(InternalMessages.class);
 
-    static String componentActionNotSerializable(String componentId, Throwable cause)
+    public static String componentActionNotSerializable(String componentId, Throwable cause)
     {
         return MESSAGES.format("component-action-not-serializable", componentId, cause);
     }
 
-    static String encloseErrorsInForm()
+    public static String encloseErrorsInForm()
     {
         return MESSAGES.get("enclose-errors-in-form");
     }
 
-    static String failureInstantiatingObject(Class objectType, String componentId, Throwable cause)
+    public static String failureInstantiatingObject(Class objectType, String componentId,
+            Throwable cause)
     {
         return MESSAGES.format("failure-instantitating-object", ClassFabUtils
                 .toJavaClassName(objectType), componentId, cause);
     }
 
-    static String conflictingEncodingType(String existing, String conflicting)
+    public static String conflictingEncodingType(String existing, String conflicting)
     {
         return MESSAGES.format("conflicting-encoding-type", existing, conflicting);
     }
