@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.services.PropertyAdapter;
  * Used by {@link BeanModelSource} to identify the type of data associated with a particular
  * property (represented as a {@link PropertyAdapter}). The data type is a string used to determine
  * what kind of interface to use for displaying the value of the property, or what kind of interface
- * to use for editting the value of the property. Common property types are "text", "enum",
+ * to use for editing the value of the property. Common property types are "text", "enum",
  * "checkbox", but the list is extensible.
  * 
  * @see Grid
