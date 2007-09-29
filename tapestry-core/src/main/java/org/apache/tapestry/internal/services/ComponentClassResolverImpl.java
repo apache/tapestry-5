@@ -17,10 +17,12 @@ package org.apache.tapestry.internal.services;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.events.InvalidationListener;
@@ -33,6 +35,8 @@ import org.apache.tapestry.services.LibraryMapping;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
+    private static final String CORE_LIBRARY_PREFIX = "core/";
+
     private static final String MIXINS_SUBPACKAGE = "mixins";
 
     private static final String COMPONENTS_SUBPACKAGE = "components";
@@ -283,7 +287,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 if (result == null)
                     throw new IllegalArgumentException(ServicesMessages.couldNotResolvePageName(
                             pageName,
-                            _pageToClassName.keySet()));
+                            presentableNames(_pageToClassName)));
 
                 return result;
             }
@@ -312,12 +316,32 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 if (result == null)
                     throw new IllegalArgumentException(ServicesMessages
-                            .couldNotResolveComponentType(componentType, _componentToClassName
-                                    .keySet()));
+                            .couldNotResolveComponentType(
+                                    componentType,
+                                    presentableNames(_componentToClassName)));
 
                 return result;
             }
         });
+    }
+
+    public Collection<String> presentableNames(Map<String, ?> map)
+    {
+        Set<String> result = newSet();
+
+        for (String name : map.keySet())
+        {
+
+            if (name.startsWith(CORE_LIBRARY_PREFIX))
+            {
+                result.add(name.substring(CORE_LIBRARY_PREFIX.length()));
+                continue;
+            }
+
+            result.add(name);
+        }
+
+        return result;
     }
 
     public String resolveMixinTypeToClassName(final String mixinType)
@@ -331,7 +355,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 if (result == null)
                     throw new IllegalArgumentException(ServicesMessages.couldNotResolveMixinType(
                             mixinType,
-                            _mixinToClassName.keySet()));
+                            presentableNames(_mixinToClassName)));
 
                 return result;
             }
@@ -357,7 +381,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         // If not found, see if it exists under the core package. In this way,
         // anything in core is "inherited" (but overridable) by the application.
 
-        if (result == null) result = logicalNameToClassName.get("core/" + logicalName);
+        if (result == null) result = logicalNameToClassName.get(CORE_LIBRARY_PREFIX + logicalName);
 
         return result;
     }
@@ -391,8 +415,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 if (result == null)
                     throw new IllegalArgumentException(ServicesMessages
-                            .couldNotCanonicalizePageName(pageName, _pageNameToCanonicalPageName
-                                    .keySet()));
+                            .couldNotCanonicalizePageName(
+                                    pageName,
+                                    presentableNames(_pageNameToCanonicalPageName)));
 
                 return result;
             }

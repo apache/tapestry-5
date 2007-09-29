@@ -172,7 +172,40 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         assertEquals(resolver.resolvePageNameToClassName("foo/Bar"), className);
 
         verify();
+    }
 
+    @Test
+    public void core_prefix_stripped_from_exception_message()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+
+        train_for_packages(source, CORE_ROOT_PACKAGE);
+        train_for_app_packages(source);
+
+        train_locateComponentClassNames(locator, CORE_ROOT_PACKAGE + ".pages", CORE_ROOT_PACKAGE
+                + ".pages.Fred", CORE_ROOT_PACKAGE + ".pages.Barney");
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", APP_ROOT_PACKAGE
+                + ".pages.Wilma", APP_ROOT_PACKAGE + ".pages.Betty");
+
+        replay();
+
+        ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
+                CORE_ROOT_PACKAGE));
+
+        try
+        {
+            resolver.resolvePageNameToClassName("Unknown");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(
+                    ex.getMessage(),
+                    "Unable to resolve \'Unknown\' to a page class name.  Available page names: Barney, Betty, Fred, Wilma.");
+        }
+
+        verify();
     }
 
     @Test
@@ -468,7 +501,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         {
             assertEquals(
                     ex.getMessage(),
-                    "Unable to resolve page \'MissingPage\' to a known page name. Available page names: Start.");
+                    "Unable to resolve \'MissingPage\' to a known page name. Available page names: Start.");
         }
 
         verify();
@@ -562,8 +595,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertTrue(ex.getMessage().contains(
-                    "Unable to resolve page 'lib/deep/DeepPage' to a component class name."));
+            assertMessageContains(ex, "Unable to resolve 'lib/deep/DeepPage' to a page class name.");
         }
 
         verify();
@@ -648,8 +680,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertTrue(ex.getMessage().contains(
-                    "Unable to resolve mixin type 'SimpleMixin' to a component class name."));
+            assertMessageContains(ex, "Unable to resolve 'SimpleMixin' to a mixin class name.");
         }
 
         verify();
@@ -677,10 +708,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertTrue(ex
-                    .getMessage()
-                    .contains(
-                            "Unable to resolve component type 'SimpleComponent' to a component class name."));
+            assertTrue(ex.getMessage().contains(
+                    "Unable to resolve 'SimpleComponent' to a component class name."));
         }
 
         verify();

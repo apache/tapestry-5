@@ -24,6 +24,7 @@ import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
+import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
@@ -135,7 +136,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         }
         catch (Exception ex)
         {
-            throw new TapestryException(ComponentMessages.failureInstantiatingObject(
+            throw new TapestryException(InternalMessages.failureInstantiatingObject(
                     type,
                     _resources.getCompleteId(),
                     ex), _resources.getLocation(), ex);

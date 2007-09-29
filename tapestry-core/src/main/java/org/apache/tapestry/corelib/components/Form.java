@@ -40,6 +40,7 @@ import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.TapestryInternalUtils;

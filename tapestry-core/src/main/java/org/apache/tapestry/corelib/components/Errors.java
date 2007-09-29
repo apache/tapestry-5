@@ -20,6 +20,7 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.services.FormSupport;
 
@@ -53,7 +54,7 @@ public class Errors
         // TODO: Would be nice if there was a Location to report ... can we add a Location property
         // to ComponentResources?
 
-        if (_tracker == null) throw new RuntimeException(ComponentMessages.encloseErrorsInForm());
+        if (_tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
 
         String cssClass = _tracker.getHasErrors() ? _class : _class + " t-invisible";
 

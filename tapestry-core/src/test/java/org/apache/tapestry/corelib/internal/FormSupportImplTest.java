@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry.corelib.internal;
 
+import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
 

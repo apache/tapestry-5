@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry.corelib.internal;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.cast;
@@ -35,7 +35,7 @@ import org.apache.tapestry.services.FormSupport;
  * TODO: Most methods should only be invokable depending on whether the form is rendering or
  * processing a submission.
  */
-class FormSupportImpl implements FormSupport
+public class FormSupportImpl implements FormSupport
 {
     private final IdAllocator _idAllocator = new IdAllocator();
 
@@ -81,7 +81,7 @@ class FormSupportImpl implements FormSupport
         }
         catch (IOException ex)
         {
-            throw new RuntimeException(ComponentMessages.componentActionNotSerializable(
+            throw new RuntimeException(InternalMessages.componentActionNotSerializable(
                     completeId,
                     ex), ex);
         }
@@ -101,7 +101,7 @@ class FormSupportImpl implements FormSupport
         _commands.add(notNull(command, "command"));
     }
 
-    void executeDeferred()
+    public void executeDeferred()
     {
         if (_commands == null) return;
 
@@ -116,7 +116,7 @@ class FormSupportImpl implements FormSupport
         return _clientId;
     }
 
-    String getEncodingType()
+    public String getEncodingType()
     {
         return _encodingType;
     }
@@ -126,7 +126,7 @@ class FormSupportImpl implements FormSupport
         notBlank(encodingType, "encodingType");
 
         if (_encodingType != null && !_encodingType.equals(encodingType))
-            throw new IllegalStateException(ComponentMessages.conflictingEncodingType(
+            throw new IllegalStateException(InternalMessages.conflictingEncodingType(
                     _encodingType,
                     encodingType));
 
