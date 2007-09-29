@@ -1021,17 +1021,23 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         String update = "//input[@type='submit']";
 
+        // in a loop ...
         click("//label[.='Accounting']");
-
         clickAndWait(update);
-
         assertTextPresent("Selected department: ACCOUNTING");
 
         click("//label[.='Sales And Marketing']");
-
         clickAndWait(update);
-
         assertTextPresent("Selected department: SALES_AND_MARKETING");
+
+        // not in a loop ...
+        click("//label[.='Temp']");
+        clickAndWait(update);
+        assertTextPresent("Selected position: TEMP");
+
+        click("//label[.='Lifer']");
+        clickAndWait(update);
+        assertTextPresent("Selected position: LIFER");
     }
 
     @Test

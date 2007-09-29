@@ -25,6 +25,9 @@ public class RadioDemo
     @Persist
     private Department _department;
 
+    @Persist
+    private String _position;
+
     private Department _loopValue;
 
     @Inject
@@ -40,6 +43,11 @@ public class RadioDemo
         return _department;
     }
 
+    public String getPosition()
+    {
+        return _position;
+    }
+
     public Department getLoopValue()
     {
         return _loopValue;
@@ -48,6 +56,11 @@ public class RadioDemo
     public void setDepartment(Department department)
     {
         _department = department;
+    }
+
+    public void setPosition(String position)
+    {
+        _position = position;
     }
 
     public void setLoopValue(Department loopValue)
