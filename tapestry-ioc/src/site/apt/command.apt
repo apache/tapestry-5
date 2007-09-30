@@ -32,7 +32,7 @@ ChainBuilder Service
 
   Because this pattern is used so often inside Tapestry, a built-in service exists
   to create implementations of the pattern as needed.  The
-  {{{apidocs/org/apache/tapestry/ioc/services/ChainBuilder.html}ChainBuilder}}
+  {{{../apidocs/org/apache/tapestry/ioc/services/ChainBuilder.html}ChainBuilder}}
   service takes care of all the work:
   
 +----+

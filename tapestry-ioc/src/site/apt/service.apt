@@ -47,7 +47,7 @@ Autobuilding
   with the container.
   
   Every module may have an optional, static bind() method which is passed a
-  {{{apidocs/org/apache/tapestry/ioc/ServiceBinder.html}ServiceBinder}}.  Services may be registered with
+  {{{../apidocs/org/apache/tapestry/ioc/ServiceBinder.html}ServiceBinder}}.  Services may be registered with
   the container by "binding" a service interface to a service implementation:
   
 +------+
@@ -235,7 +235,7 @@ Defining Service Scope
   more can be added.
   
   Service lifecycle is specified using the 
-  {{{apidocs/org/apache/tapestry/ioc/annotations/Scope.html}@Scope annotation}},
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/Scope.html}@Scope annotation}},
   which is attached to a builder method.  When this annotation is not present, the
   default scope, "singleton" is used.
     
@@ -245,7 +245,7 @@ Defining Service Scope
   is created when the service is first referenced.  By reference, we mean any situation in which
   the service is requested by name, such as using the @InjectService annotation on a
   service builder method, or by using the
-  {{{apidocs/org/apache/tapestry/ioc/Registry.html}Registry}} API from outside the
+  {{{../apidocs/org/apache/tapestry/ioc/Registry.html}Registry}} API from outside the
   container.
   
   In any case, the service proxy will only create the service implementation when a method
@@ -309,7 +309,7 @@ Eager Loading Services
   Services are normally created only as needed (per the scope discussion above).
   
   This can be tweaked slightly; by adding the 
-  {{{apidocs/org/apache/tapestry/ioc/annotations/EagerLoad.html}EagerLoad}} annotation to
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/EagerLoad.html}EagerLoad}} annotation to
   the service builder method, Tapestry will instantiate the service when the Registry is first created.
   
   This will cause the service builder method to be invoked, as well as any service decorator methods.
@@ -350,7 +350,7 @@ Injecting Resources
   
   * java.lang.Class: service interface implemented by the service to be constructed
   
-  * {{{apidocs/org/apache/tapestry/ioc/ServiceResources.html}ServiceResources}}:  access to other services
+  * {{{../apidocs/org/apache/tapestry/ioc/ServiceResources.html}ServiceResources}}:  access to other services
   
   []
   
@@ -452,18 +452,18 @@ Builtin Services
   A few services within the Tapestry IOC Module are "builtin"; there is no 
   service builder method
   in the
-  {{{apidocs/org/apache/tapestry/ioc/services/TapestryIOCModule.html}TapestryIOCModule}} class.
+  {{{../apidocs/org/apache/tapestry/ioc/services/TapestryIOCModule.html}TapestryIOCModule}} class.
   
 *---------------------+-----------------------------------------------------------------------------------------+
 | <<Service Id>>      | <<Service Interface>>                                                                   |
 *---------------------+-----------------------------------------------------------------------------------------+
-| ClassFactory        | {{{apidocs/org/apache/tapestry/ioc/services/ClassFactory.html}ClassFactory}}            |
+| ClassFactory        | {{{../apidocs/org/apache/tapestry/ioc/services/ClassFactory.html}ClassFactory}}            |
 *---------------------+-----------------------------------------------------------------------------------------+
-| LogSource           | {{{apidocs/org/apache/tapestry/ioc/LogSource.html}LogSource}}                           |
+| LogSource           | {{{../apidocs/org/apache/tapestry/ioc/LogSource.html}LogSource}}                           |
 *---------------------+-----------------------------------------------------------------------------------------+
-| RegistryShutdownHub | {{{apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}       |
+| RegistryShutdownHub | {{{../apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}       |
 *---------------------+-----------------------------------------------------------------------------------------+
-| ThreadCleanupHub    | {{{apidocs/org/apache/tapestry/ioc/services/ThreadCleanupHub.html}ThreadCleanupHub}}    |
+| ThreadCleanupHub    | {{{../apidocs/org/apache/tapestry/ioc/services/ThreadCleanupHub.html}ThreadCleanupHub}}    |
 *---------------------+-----------------------------------------------------------------------------------------+
 
   Consult the JavaDoc for each of these services to identify under what circumstances you'll need to use them.

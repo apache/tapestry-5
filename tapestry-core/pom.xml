@@ -110,6 +110,7 @@
         <version>${project.version}</version>
         <configuration>
           <rootPackage>org.apache.tapestry.corelib</rootPackage>
+          <apidocs>../apidocs</apidocs>
         </configuration>
       </plugin>
     </plugins>
