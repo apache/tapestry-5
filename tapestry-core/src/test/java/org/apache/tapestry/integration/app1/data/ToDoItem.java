@@ -16,6 +16,9 @@ package org.apache.tapestry.integration.app1.data;
 
 import java.io.Serializable;
 
+import org.apache.tapestry.beaneditor.NonVisual;
+import org.apache.tapestry.beaneditor.Validate;
+
 public class ToDoItem implements Serializable, Cloneable
 {
     private static final long serialVersionUID = 329624498668043734L;
@@ -47,6 +50,7 @@ public class ToDoItem implements Serializable, Cloneable
         }
     }
 
+    @NonVisual
     public long getId()
     {
         return _id;
@@ -57,6 +61,7 @@ public class ToDoItem implements Serializable, Cloneable
         _id = id;
     }
 
+    @Validate("required")
     public String getTitle()
     {
         return _title;
@@ -77,6 +82,7 @@ public class ToDoItem implements Serializable, Cloneable
         _urgency = urgency;
     }
 
+    @NonVisual
     public int getOrder()
     {
         return _order;

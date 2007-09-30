@@ -16,8 +16,10 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.Block;
+import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Persist;
@@ -31,11 +33,18 @@ import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.internal.bindings.AbstractBinding;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry.services.FormSupport;
 
 /**
  * A grid presents tabular data. It is a composite component, created in terms of several
  * sub-components. The sub-components are statically wired to the Grid, as it provides access to the
  * data and other models that they need.
+ * <p>
+ * A Grid may operate inside a {@link Form}. By overriding the cell renderers of properties, the
+ * default output only behavior can be changed to produce a complex form with individual control for
+ * editing properties of each row. This is currently workable but less than ideal -- if the order of
+ * rows provided by the {@link GridDataSource} changes between render and form submission, then
+ * there's the possibility that data will be applied to the wrong server-side objects.
  * 
  * @see BeanModel
  * @see BeanModelSource
@@ -145,7 +154,8 @@ public class Grid implements GridModelProvider
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row" })
+    { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
+            "volatile=inherit:volatile" })
     private GridRows _rows;
 
     @Component(parameters =
@@ -159,6 +169,19 @@ public class Grid implements GridModelProvider
     @SuppressWarnings("unused")
     @Component(parameters = "to=pagerBottom")
     private Delegate _pagerBottom;
+
+    /**
+     * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned
+     * off. Defaults to false, enabling state saving persisting within Forms. If a Grid is present
+     * for some reason within a Form, but does not contain any form control components (such as
+     * {@link TextField}), then binding volatile to false will reduce the amount of client-side
+     * state that must be persisted.
+     */
+    @Parameter
+    private boolean _volatile;
+
+    @Environmental(false)
+    private FormSupport _formSupport;
 
     Binding defaultModel()
     {
@@ -195,7 +218,26 @@ public class Grid implements GridModelProvider
         };
     }
 
+    static final ComponentAction<Grid> SETUP_DATA_SOURCE = new ComponentAction<Grid>()
+    {
+        private static final long serialVersionUID = 8545187927995722789L;
+
+        public void execute(Grid component)
+        {
+            component.setupDataSource();
+        }
+    };
+
     Object setupRender()
+    {
+        if (!_volatile && _formSupport != null) _formSupport.store(this, SETUP_DATA_SOURCE);
+
+        setupDataSource();
+
+        return _dataSource.getAvailableRows() == 0 ? _empty : null;
+    }
+
+    void setupDataSource()
     {
         _dataSource = _typeCoercer.coerce(_source, GridDataSource.class);
 
@@ -207,7 +249,7 @@ public class Grid implements GridModelProvider
 
         int availableRows = _dataSource.getAvailableRows();
 
-        if (availableRows == 0) return _empty;
+        if (availableRows == 0) return;
 
         PropertyModel sortModel = null;
 
@@ -229,8 +271,6 @@ public class Grid implements GridModelProvider
         int endIndex = Math.min(startIndex + _rowsPerPage - 1, availableRows - 1);
 
         _dataSource.prepare(startIndex, endIndex, sortModel, _sortAscending);
-
-        return null;
     }
 
     Object beginRender()

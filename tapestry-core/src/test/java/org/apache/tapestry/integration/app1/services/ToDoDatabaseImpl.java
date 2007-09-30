@@ -43,6 +43,11 @@ public class ToDoDatabaseImpl implements ToDoDatabase
         reset();
     }
 
+    public void clear()
+    {
+        _items.clear();
+    }
+
     public void reset()
     {
         _items.clear();

@@ -161,6 +161,16 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         }
     }
 
+    protected final void assertFieldValueSeries(String idFormat, int startIndex, String... values)
+    {
+        for (int i = 0; i < values.length; i++)
+        {
+            String id = String.format(idFormat, startIndex + i);
+
+            assertFieldValue(id, values[i]);
+        }
+    }
+
     @AfterClass(alwaysRun = true)
     public void cleanup() throws Exception
     {
@@ -519,6 +529,18 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     public void waitForPopUp(String windowID, String timeout)
     {
         _selenium.waitForPopUp(windowID, timeout);
+    }
+
+    /**
+     * Used to start a typical test, by opening to the base URL and clicking through a series of
+     * links.
+     */
+    protected final void start(String... linkText)
+    {
+        open(BASE_URL);
+    
+        for (String s : linkText)
+            clickAndWait(String.format("link=%s", s));
     }
 
 }
