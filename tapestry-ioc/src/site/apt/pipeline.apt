@@ -59,7 +59,7 @@ public class UpcasePostFilter implements StringTransformFilter
 +-----+  
 
   The
-  {{{apidocs/org/apache/tapestry/ioc/services/PipelineBuilder.html}PipelineBuilder}}
+  {{{../apidocs/org/apache/tapestry/ioc/services/PipelineBuilder.html}PipelineBuilder}}
   service is useful for constructing pipelines. The service is often injected
   into a service builder method, along with an ordered configuration of services.
   

@@ -18,7 +18,7 @@ Tapestry Test Utilities
 Usage and Configuration
 
   The core part of this library is a base class for you to extend your tests cases from: 
-  {{{apidocs/org/apache/tapestry/test/AbstractIntegrationTestSuite.html}AbstractIntegrationTestSuite}}.
+  {{{../apidocs/org/apache/tapestry/test/AbstractIntegrationTestSuite.html}AbstractIntegrationTestSuite}}.
   
   This class is responsible for starting an instance of Jetty to server your web application, as well
   as a copy of Selenium Server. It also implements the

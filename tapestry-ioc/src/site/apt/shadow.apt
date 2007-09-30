@@ -5,7 +5,7 @@
 Shadow Services
 
   The 
-  {{{apidocs/org/apache/tapestry/ioc/services/PropertyShadowBuilder.html}PropertyShadowBuilder}}
+  {{{../apidocs/org/apache/tapestry/ioc/services/PropertyShadowBuilder.html}PropertyShadowBuilder}}
   service is used to build a special, delegating kind of service implementation.
   
   Effectively, it is used to allow a property of another service to be exposed as its own service.

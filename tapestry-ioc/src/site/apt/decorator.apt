@@ -130,7 +130,7 @@ public class MyAppModule
 Targetting Multiple Services
 
   By using the
-  {{{apidocs/org/apache/tapestry/ioc/annotations/Match.html}@Match annnotation}},
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/Match.html}@Match annnotation}},
   you may identify which services are to be decorated.
   
   The value specified in the Match annotation is one or more patterns. These patterns
@@ -175,7 +175,7 @@ Ordering of Decorators
 
    In cases where multiple decorators will apply to a single service, you can control
    the order in which decorators are applied using  an additional annotation:
-   {{{apidocs/org/apache/tapestry/ioc/annotations/Order.html}@Order}}.
+   {{{../apidocs/org/apache/tapestry/ioc/annotations/Order.html}@Order}}.
    
    This annotation allows any number of {{{order.html}ordering constraints}}
    to be specified for the decorator, to order it relative to

@@ -95,6 +95,16 @@ public class ComponentReport extends AbstractMavenReport
      */
     private String workDirectory;
 
+    /**
+     * Relative path from the generated report to the API documentation (Javadoc). Defaults to
+     * "apidocs" but will often be changed to "../apidocs" when documentation is created at the
+     * project level.
+     * 
+     * @parameter default-value="apidocs"
+     * @required
+     */
+    private String apidocs;
+
     @Override
     protected String getOutputDirectory()
     {
@@ -213,7 +223,7 @@ public class ComponentReport extends AbstractMavenReport
 
         sink.paragraph();
 
-        String javadocURL = String.format("apidocs/%s.html", className.replace('.', '/'));
+        String javadocURL = String.format("%s/%s.html", apidocs, className.replace('.', '/'));
 
         sink.link(javadocURL);
         sink.text("[JavaDoc]");

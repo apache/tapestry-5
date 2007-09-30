@@ -125,6 +125,7 @@
         <version>${project.version}</version>
         <configuration>
           <rootPackage>org.apache.tapestry.upload</rootPackage>
+          <apidocs>../apidocs</apidocs>
         </configuration>
       </plugin>
     </plugins>
