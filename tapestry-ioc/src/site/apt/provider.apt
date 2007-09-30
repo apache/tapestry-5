@@ -9,7 +9,7 @@ Object Providers
   resolve the parameter automatically.
   
   This is called <object injection>, rather than <service injection>, because the value that will ultimately
-  be injected is not necessarilly a service; it may be some aribrary object.
+  be injected is not necessarily a service; it may be some arbitrary object.
   
   If this sounds vague, its because there is not just one
   {{{../apidocs/org/apache/tapestry/ioc/ObjectProvider.html}ObjectProvider}}; there's a whole set of them,
@@ -18,7 +18,7 @@ Object Providers
   
   There are two built-in object providers:
   
-  * Check for {{{apidocs/org/apache/tapestry/ioc/annotations/Value.html}Value}} annotation
+  * Check for {{{../apidocs/org/apache/tapestry/ioc/annotations/Value.html}Value}} annotation
   
   * Check for a <unique> service in the Registry whose service interface matches the parameter type
   

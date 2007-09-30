@@ -37,4 +37,7 @@ public interface ToDoDatabase
     
     /** Resets the database, clearing out all data, re-adding base data. */
     void reset();
+
+    /** Deletes all items from the database. */
+    void clear();
 }

@@ -700,9 +700,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Grid Enum Demo", "reset");
 
-        assertTextSeries("//tr[1]/td[%d]", 2, "End World Hunger", "Medium");
-        assertTextSeries("//tr[2]/td[%d]", 2, "Develop Faster-Than-Light Travel", "High");
-        assertTextSeries("//tr[3]/td[%d]", 2, "Cure Common Cold", "Low");
+        assertTextSeries("//tr[1]/td[%d]", 1, "End World Hunger", "Medium");
+        assertTextSeries("//tr[2]/td[%d]", 1, "Develop Faster-Than-Light Travel", "High");
+        assertTextSeries("//tr[3]/td[%d]", 1, "Cure Common Cold", "Low");
     }
 
     @Test
@@ -1066,20 +1066,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Zip code: [12345-9876]");
     }
 
-    private void start(String... linkText)
-    {
-        open(BASE_URL);
-
-        for (String s : linkText)
-            clickAndWait(String.format("link=%s", s));
-    }
-
     @Test
     public void multiple_beaneditor_components()
     {
-        start("MultiBeanEdit Demo");
-
-        clickAndWait("link=Clear Data");
+        start("MultiBeanEdit Demo", "Clear Data");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -1097,4 +1087,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "Role: [GRANT]");
     }
 
+    @Test
+    public void grid_inside_form()
+    {
+        start("Grid Form Demo", "reset", "2");
+
+        // The first input field is the form's hidden field.
+
+        assertFieldValue("title", "ToDo # 6");
+        assertFieldValueSeries("title_%d", 0, "ToDo # 7", "ToDo # 8", "ToDo # 9", "ToDo # 10");
+
+        type("title_0", "Cure Cancer");
+        select("urgency_0", "High");
+
+        type("title_1", "Pay Phone Bill");
+        select("urgency_1", "Low");
+
+        clickAndWait("//input[@type='submit']");
+
+        assertFieldValueSeries("title_%d", 0, "Cure Cancer", "Pay Phone Bill");
+        assertFieldValueSeries("urgency_%d", 0, "HIGH", "LOW");
+    }
 }

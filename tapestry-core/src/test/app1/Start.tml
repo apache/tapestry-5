@@ -250,6 +250,10 @@
             </t:pagelink>
             -- Multiple BeanEditor components in a single form
           </li>
+          <li>
+            <t:pagelink page="GridFormDemo">Grid Form Demo</t:pagelink>
+            -- Grid operating inside a Form
+          </li>
         </ul>
       </td>
     </tr>

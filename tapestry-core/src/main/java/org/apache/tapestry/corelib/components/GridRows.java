@@ -16,16 +16,41 @@ package org.apache.tapestry.corelib.components;
 
 import java.util.List;
 
+import org.apache.tapestry.ComponentAction;
+import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.services.FormSupport;
 
 /**
  * Renders out a series of rows within the table.
+ * <p>
+ * Inside a {@link Form}, a series of row index numbers are stored into the form (
+ * {@linkplain FormSupport#store(Object, ComponentAction) as ComponentActions}). This is not ideal
+ * ... in a situation where the data set can shift between the form render and the form submission,
+ * this can cause unexpected results, including applying changes to the wrong objects.
  */
 public class GridRows
 {
+    static class SetupForRow implements ComponentAction<GridRows>
+    {
+        private static final long serialVersionUID = -3216282071752371975L;
+
+        private final int _rowIndex;
+
+        public SetupForRow(int rowIndex)
+        {
+            _rowIndex = rowIndex;
+        }
+
+        public void execute(GridRows component)
+        {
+            component.setupForRow(_rowIndex);
+        }
+    };
+
     /**
      * Parameter used to set the CSS class for each row (each &lt;tr&gt; element) within the
      * &lt;tbody&gt;). This is not cached, so it will be recomputed for each row.
@@ -51,6 +76,19 @@ public class GridRows
      */
     @Parameter(required = true)
     private Object _row;
+
+    /**
+     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off.
+     * Defaults to false, enabling state saving logic within Forms.
+     */
+    @SuppressWarnings("unused")
+    @Parameter
+    private boolean _volatile;
+
+    @Environmental(false)
+    private FormSupport _formSupport;
+
+    private boolean _recordingStateInsideForm;
 
     private int _startRow;
 
@@ -84,18 +122,35 @@ public class GridRows
 
         // This can sometimes happen when the number of items shifts between requests.
 
-        if (_currentPage > maxPages)
-            _currentPage = maxPages;
+        if (_currentPage > maxPages) _currentPage = maxPages;
 
         _startRow = (_currentPage - 1) * _rowsPerPage;
         _endRow = Math.min(availableRows - 1, _startRow + _rowsPerPage - 1);
 
         _rowIndex = _startRow;
+
+        _recordingStateInsideForm = !_volatile && _formSupport != null;
+    }
+
+    /**
+     * Callback method, used when recording state to a form, or called directly when not recording
+     * state.
+     */
+    void setupForRow(int rowIndex)
+    {
+        _row = _provider.getDataSource().getRowValue(rowIndex);
+
     }
 
     void beginRender()
     {
-        _row = _provider.getDataSource().getRowValue(_rowIndex);
+        // When needed, store a callback used when the form is submitted.
+
+        if (_recordingStateInsideForm) _formSupport.store(this, new SetupForRow(_rowIndex));
+
+        // And do it now for the render.
+
+        setupForRow(_rowIndex);
     }
 
     boolean afterRender()
