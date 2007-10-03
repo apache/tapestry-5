@@ -24,6 +24,8 @@ import org.apache.commons.fileupload.FileItem;
 
 public class StubFileItem implements FileItem
 {
+    private static final long serialVersionUID = -7041417646464173208L;
+
     private String fileName;
 
     private String value;
