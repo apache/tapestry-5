@@ -14,6 +14,9 @@
 
 package org.apache.tapestry;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -27,7 +30,7 @@ public class TapestryUtilsTest extends Assert
     }
 
     @DataProvider(name = "string_quoting_input")
-    public Object[][] inputs()
+    public Object[][] string_quoting_input()
     {
         return new Object[][]
         {
@@ -36,5 +39,31 @@ public class TapestryUtilsTest extends Assert
                 { "regexp: \\d{4}", "'regexp: \\\\d{4}'" },
 
         };
+    }
+
+    @Test(dataProvider = "join_input")
+    public void join_array(String[] inputs, String expected)
+    {
+        assertEquals(TapestryUtils.join(inputs), expected);
+    }
+
+    @Test(dataProvider = "join_input")
+    public void join_list(String[] inputs, String expected)
+    {
+        List<String> list = Arrays.asList(inputs);
+
+        assertEquals(TapestryUtils.join(list), expected);
+    }
+
+    @DataProvider(name = "join_input")
+    public Object[][] join_input()
+    {
+        return new Object[][]
+        {
+        { new String[0], "" },
+        { new String[]
+        { "fred" }, "fred" },
+        { new String[]
+        { "fred", "barney", "wilma" }, "barney fred wilma" } };
     }
 }

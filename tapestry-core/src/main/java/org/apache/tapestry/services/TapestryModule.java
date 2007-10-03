@@ -1462,7 +1462,13 @@ public final class TapestryModule
 
                 environment.push(DocumentScriptBuilder.class, builder);
                 environment.push(PageRenderSupport.class, new PageRenderSupportImpl(builder,
-                        symbolSource, assetSource));
+                        symbolSource, assetSource,
+
+                        // Core scripts added to any page that uses scripting
+                        
+                        "${tapestry.scriptaculous}/prototype.js",
+                        "${tapestry.scriptaculous}/scriptaculous.js",
+                        "org/apache/tapestry/tapestry.js"));
             }
         });
 
