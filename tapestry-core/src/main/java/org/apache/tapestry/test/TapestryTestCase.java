@@ -857,7 +857,7 @@ public abstract class TapestryTestCase extends IOCTestCase
 
     @SuppressWarnings("unchecked")
     protected final void train_renderInformalParameters(ComponentResources resources,
-            final MarkupWriter writer, final String... informals)
+            final MarkupWriter writer, final Object... informals)
     {
         resources.renderInformalParameters(writer);
         IAnswer answer = new IAnswer()

@@ -58,7 +58,7 @@ public class AliasContributionTest extends TapestryTestCase
 
         assertEquals(contribution.toString(), "<AliasContribution: java.lang.String FRED>");
 
-        contribution = new AliasContribution(String.class, "servlet", "FRED");
+        contribution = new AliasContribution<String>(String.class, "servlet", "FRED");
 
         assertEquals(
                 contribution.toString(),
