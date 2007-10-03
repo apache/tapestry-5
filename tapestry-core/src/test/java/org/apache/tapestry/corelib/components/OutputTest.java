@@ -95,6 +95,8 @@ public class OutputTest extends TapestryTestCase
 
         Format format = new Format()
         {
+            private static final long serialVersionUID = -4360045992642727894L;
+
             @Override
             public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos)
             {
