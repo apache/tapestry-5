@@ -23,6 +23,12 @@ import org.testng.annotations.Test;
 
 public class PageRenderSupportImplTest extends InternalBaseTestCase
 {
+    private static final String CORE_ASSET_PATH_UNEXPANDED = "${core}";
+
+    private static final String CORE_ASSET_PATH = "/org/apache/tapestry/core/core.png";
+
+    private static final String CORE_ASSET_URL = "/assets/core/core.png";
+
     private static final String ASSET_URL = "/assets/foo/bar.pdf";
 
     @Test
@@ -37,6 +43,36 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         replay();
 
         PageRenderSupport support = new PageRenderSupportImpl(builder, null, null);
+
+        support.addScriptLink(asset);
+
+        verify();
+    }
+
+    @Test
+    public void core_assets_added()
+    {
+        getMocksControl().checkOrder(true);
+
+        Asset coreAsset = mockAsset();
+        DocumentScriptBuilder builder = mockDocumentScriptBuilder();
+        Asset asset = mockAsset();
+        AssetSource assetSource = mockAssetSource();
+        SymbolSource symbolSource = mockSymbolSource();
+
+        train_expandSymbols(symbolSource, CORE_ASSET_PATH_UNEXPANDED, CORE_ASSET_PATH);
+        train_findAsset(assetSource, null, CORE_ASSET_PATH, null, coreAsset);
+
+        train_toClientURL(coreAsset, CORE_ASSET_URL);
+        builder.addScriptLink(CORE_ASSET_URL);
+
+        train_toClientURL(asset, ASSET_URL);
+        builder.addScriptLink(ASSET_URL);
+
+        replay();
+
+        PageRenderSupport support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
+                CORE_ASSET_PATH_UNEXPANDED);
 
         support.addScriptLink(asset);
 

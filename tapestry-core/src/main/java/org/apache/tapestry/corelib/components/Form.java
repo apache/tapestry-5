@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.List;
 
-import org.apache.tapestry.Asset;
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentEventHandler;
@@ -38,7 +37,6 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
@@ -167,18 +165,6 @@ public class Form implements ClientElement, FormValidationControl
 
     private Element _div;
 
-    @Inject
-    @Path("${tapestry.scriptaculous}/prototype.js")
-    private Asset _prototype;
-
-    @Inject
-    @Path("${tapestry.scriptaculous}/scriptaculous.js")
-    private Asset _scriptaculous;
-
-    @Inject
-    @Path("classpath:/org/apache/tapestry/tapestry.js")
-    private Asset _tapestry;
-
     // Collects a stream of component actions. Each action goes in as a UTF string (the component
     // component id), followed by a ComponentAction
 
@@ -255,11 +241,7 @@ public class Form implements ClientElement, FormValidationControl
         writer.end(); // div
 
         if (_clientValidation)
-        {
-            _pageRenderSupport.addScriptLink(_prototype, _scriptaculous, _tapestry);
-
             _pageRenderSupport.addScript(format("Tapestry.registerForm('%s');", _name));
-        }
 
         _environment.peek(Heartbeat.class).begin();
 

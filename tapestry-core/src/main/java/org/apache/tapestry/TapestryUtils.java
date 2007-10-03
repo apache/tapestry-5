@@ -14,6 +14,11 @@
 
 package org.apache.tapestry;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
 /**
  * Utilities often needed when building Tapestry applications.
  */
@@ -58,5 +63,46 @@ public class TapestryUtils
         result.append(APOS);
 
         return result.toString();
+    }
+
+    /**
+     * Joins together several strings, sorting them alphabetically and separating them with spaces.
+     * This is often used when setting the CSS class attribute of an element.
+     */
+    public static String join(String... values)
+    {
+        List<String> list = CollectionFactory.newList(values);
+
+        return sortAndJoin(list);
+    }
+
+    /**
+     * Joins together several strings, sorting them alphabetically and separating them with spaces.
+     * This is often used when setting the CSS class attribute of an element.
+     */
+    public static String join(List<String> values)
+    {
+        List<String> copy = CollectionFactory.newList(values);
+
+        return sortAndJoin(copy);
+    }
+
+    private static String sortAndJoin(List<String> list)
+    {
+        Collections.sort(list);
+
+        StringBuilder builder = new StringBuilder(10 * list.size());
+
+        String sep = "";
+
+        for (String name : list)
+        {
+            builder.append(sep);
+            builder.append(name);
+
+            sep = " ";
+        }
+
+        return builder.toString();
     }
 }

@@ -15,6 +15,8 @@
 package org.apache.tapestry;
 
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
+import org.apache.tapestry.ioc.services.SymbolSource;
+import org.apache.tapestry.services.AssetSource;
 
 /**
  * Provides support to all components that render. This is primarily about generating unique
@@ -45,8 +47,9 @@ public interface PageRenderSupport
     void addScriptLink(Asset... scriptAssets);
 
     /**
-     * Used to add scripts that are stored on the classpath. Each element has symbol expanded, then
-     * is converted to an asset and added as a script link.
+     * Used to add scripts that are stored on the classpath. Each element has
+     * {@linkplain SymbolSource symbols expanded}, then is
+     * {@linkplain AssetSource converted to an asset} and added as a script link.
      * 
      * @param classpaths
      *            array of paths. Symbols in the paths are expanded, then the paths are each

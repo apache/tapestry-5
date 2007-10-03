@@ -17,6 +17,9 @@ package org.apache.tapestry.internal.services;
 import static java.lang.String.format;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
@@ -33,12 +36,30 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     private final AssetSource _assetSource;
 
+    private final List<String> _coreScripts;
+
+    private boolean _coreAssetsAdded;
+
+    /**
+     * @param builder
+     *            Used to assemble JavaScript includes and snippets
+     * @param symbolSource
+     *            Used to example symbols (in
+     *            {@linkplain #addClasspathScriptLink(String...) in classpath scripts)
+     * @param assetSource
+     *            Used to convert classpath scripts to {@link Asset}s
+     * @param coreScripts
+     *            core scripts (evaluated as classpaths scripts) that are added to any page that
+     *            includes a script link or script block
+     */
     public PageRenderSupportImpl(DocumentScriptBuilder builder, SymbolSource symbolSource,
-            AssetSource assetSource)
+            AssetSource assetSource, String... coreScripts)
     {
         _builder = builder;
         _symbolSource = symbolSource;
         _assetSource = assetSource;
+
+        _coreScripts = Arrays.asList(coreScripts);
     }
 
     public String allocateClientId(String id)
@@ -48,6 +69,8 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     public void addScriptLink(Asset... scriptAssets)
     {
+        addCore();
+
         for (Asset asset : scriptAssets)
         {
             notNull(asset, "scriptAsset");
@@ -58,21 +81,38 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     public void addClasspathScriptLink(String... classpaths)
     {
+        addCore();
+
         for (String path : classpaths)
-        {
-            String expanded = _symbolSource.expandSymbols(path);
+            addScriptLinkFromClasspath(path);
+    }
 
-            Asset asset = _assetSource.findAsset(null, expanded, null);
+    private void addScriptLinkFromClasspath(String path)
+    {
+        String expanded = _symbolSource.expandSymbols(path);
 
-            _builder.addScriptLink(asset.toClientURL());
-        }
+        Asset asset = _assetSource.findAsset(null, expanded, null);
+
+        _builder.addScriptLink(asset.toClientURL());
     }
 
     public void addScript(String format, Object... arguments)
     {
+        addCore();
+
         String script = format(format, arguments);
 
         _builder.addScript(script);
     }
 
+    private void addCore()
+    {
+        if (!_coreAssetsAdded)
+        {
+            for (String path : _coreScripts)
+                addScriptLinkFromClasspath(path);
+
+            _coreAssetsAdded = true;
+        }
+    }
 }
