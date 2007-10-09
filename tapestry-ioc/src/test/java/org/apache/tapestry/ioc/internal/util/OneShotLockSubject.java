@@ -17,7 +17,6 @@
  */
 package org.apache.tapestry.ioc.internal.util;
 
-import org.apache.tapestry.ioc.internal.util.OneShotLock;
 
 /**
  * Evolved from a test for aspects + annotations to a test of a class that utilizeds OneShotLock as

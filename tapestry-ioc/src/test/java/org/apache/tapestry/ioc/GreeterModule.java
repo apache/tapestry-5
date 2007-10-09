@@ -15,9 +15,16 @@
 package org.apache.tapestry.ioc;
 
 import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotations.Marker;
 
 public class GreeterModule
 {
+    @Marker(YellowMarker.class)
+    public NameListHolder buildYellowThing()
+    {
+        return null;
+    }
+
     public Greeter buildHelloGreeter()
     {
         return new Greeter()
@@ -38,6 +45,48 @@ public class GreeterModule
                 return "Goodbye";
             }
         };
+    }
+
+    @Marker(BlueMarker.class)
+    public Greeter buildBlueGreeter()
+    {
+        return new Greeter()
+        {
+            public String getGreeting()
+            {
+                return "Blue";
+            }
+        };
+    }
+
+    @Marker(RedMarker.class)
+    public Greeter buildRedGreeter1()
+    {
+        return null;
+    }
+
+    @Marker(RedMarker.class)
+    public Greeter buildRedGreeter2()
+    {
+        return null;
+    }
+
+    public Greeter buildInjectedBlueGreeter(@BlueMarker
+    Greeter greeter)
+    {
+        return greeter;
+    }
+
+    public Greeter buildInjectedRedGreeter(@RedMarker
+    Greeter greeter)
+    {
+        return greeter;
+    }
+
+    public Greeter buildInjectedYellowGreeter(@YellowMarker
+    Greeter greeter)
+    {
+        return greeter;
     }
 
     public Greeter buildGreeter(@InjectService("${greeter}")

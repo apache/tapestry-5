@@ -16,6 +16,8 @@ package org.apache.tapestry.ioc.util;
 
 import java.util.Formatter;
 
+import org.apache.tapestry.ioc.services.MethodSignature;
+
 /**
  * Utility class for assembling the <em>body</em> used with Javassist when defining a method or
  * constructor. Basically, assists with formatting and with indentation. This makes the code that

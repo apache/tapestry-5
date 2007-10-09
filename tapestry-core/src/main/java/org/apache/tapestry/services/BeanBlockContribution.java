@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.corelib.components.Label;
-
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+
+import org.apache.tapestry.corelib.components.Label;
 
 /**
  * A contribution to the {@link BeanBlockSource} service, defining a page name and block id (within

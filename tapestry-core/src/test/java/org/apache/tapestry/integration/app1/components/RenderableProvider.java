@@ -17,8 +17,8 @@ package org.apache.tapestry.integration.app1.components;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.Renderable;
 import org.apache.tapestry.annotations.CleanupRender;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.Environment;
 
 public class RenderableProvider

@@ -13,7 +13,7 @@ Injection with Components
   
 Inject Annotation
 
-  The {{{../../apidocs/org/apache/tapestry/annotations/Inject.html}Inject annotation}} is used to identify fields that will contain injected services and other resources.
+  The {{{../../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject annotation}} is used to identify fields that will contain injected services and other resources.
   
   Tapestry allows for two kinds of injection:
   

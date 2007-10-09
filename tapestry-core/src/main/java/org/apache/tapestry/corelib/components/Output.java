@@ -19,9 +19,9 @@ import java.text.Format;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 

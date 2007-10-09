@@ -20,9 +20,9 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.RadioContainer;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.FormSupport;
@@ -34,7 +34,7 @@ public class RadioGroup
     /**
      * The property read and updated by the group as a whole.
      */
-    @Parameter(required = true, principal=true)
+    @Parameter(required = true, principal = true)
     private Object _value;
 
     /**

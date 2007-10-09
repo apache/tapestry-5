@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.upload.services;
 
+import java.io.File;
+
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-
-import java.io.File;
 
 class UploadMessages
 {

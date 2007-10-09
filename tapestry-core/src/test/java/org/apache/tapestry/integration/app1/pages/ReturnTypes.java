@@ -15,8 +15,8 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.util.TextStreamResponse;
 

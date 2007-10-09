@@ -463,4 +463,32 @@ public class InternalUtils
 
         return constructors[0];
     }
+
+    /**
+     * Adds a value to a specially organized map where the values are lists of objects. This
+     * somewhat simulates a map that allows mutiple values for the same key.
+     * @param map
+     *            to store value into
+     * @param key
+     *            for which a value is added
+     * @param value
+     *            to add
+     * 
+     * @param <K>
+     *            the type of key
+     * @param <V>
+     *            the type of the list
+     */
+    public static <K, V> void addToMapList(Map<K, List<V>> map, K key, V value)
+    {
+        List<V> list = map.get(key);
+
+        if (list == null)
+        {
+            list = newList();
+            map.put(key, list);
+        }
+
+        list.add(value);
+    }
 }

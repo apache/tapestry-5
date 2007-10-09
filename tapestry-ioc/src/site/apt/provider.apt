@@ -4,7 +4,7 @@
 
 Object Providers
 
-  When you don't provide the {{{../apidocs/org/apache/tapestry/annotations/InjectService.html}InjectService}} annotation
+  When you don't provide the {{{../apidocs/org/apache/tapestry/ioc/annotations/InjectService.html}InjectService}} annotation
   on a parameter (to a service builder method or constructor), Tapestry will
   resolve the parameter automatically.
   

@@ -18,7 +18,6 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.List;
 
-import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.Test;
 

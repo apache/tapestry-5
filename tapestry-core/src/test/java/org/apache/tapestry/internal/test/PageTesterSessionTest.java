@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.test;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.apache.tapestry.internal.test.PageTesterSession;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

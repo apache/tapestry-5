@@ -16,7 +16,6 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Field;
 import org.apache.tapestry.annotations.Mixin;
-
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 
 public class InjectComponentMismatch

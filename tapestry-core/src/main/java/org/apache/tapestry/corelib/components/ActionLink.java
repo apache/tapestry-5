@@ -24,9 +24,9 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.

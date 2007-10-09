@@ -22,6 +22,7 @@ import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
@@ -103,6 +104,31 @@ public class AppModule
             public List<Track> getTracks()
             {
                 return tracks;
+            }
+        };
+    }
+
+    @Marker(French.class)
+    public Greeter buildFrenchGreeter()
+    {
+        return new Greeter()
+        {
+            public String getGreeting()
+
+            {
+                return "Bonjour!";
+            }
+        };
+    }
+
+    public Greeter buildDefaultGreeter()
+    {
+        return new Greeter()
+        {
+            public String getGreeting()
+
+            {
+                return "Hello";
             }
         };
     }

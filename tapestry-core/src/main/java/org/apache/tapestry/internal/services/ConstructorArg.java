@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
 import javassist.CtClass;
 
 /**

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import java.util.NoSuchElementException;
+
 /**
  * Provides access to environment services, which are almost always provided to enclosed components
  * by enclosing components.

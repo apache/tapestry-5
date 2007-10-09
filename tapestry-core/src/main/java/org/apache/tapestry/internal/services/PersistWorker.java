@@ -23,9 +23,9 @@ import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.PersistentFieldBundle;
 import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
 
 /**

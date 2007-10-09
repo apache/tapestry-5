@@ -22,6 +22,8 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import org.apache.tapestry.ioc.annotations.Inject;
+
 /**
  * Used in conjunction with the {@link Inject} annotation to identify a service <em>by name</em>
  * and not by type. This is most useful when there are multiple services with the same service

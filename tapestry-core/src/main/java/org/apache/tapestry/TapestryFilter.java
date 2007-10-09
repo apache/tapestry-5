@@ -28,7 +28,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.tapestry.internal.ServletContextSymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.ioc.Registry;

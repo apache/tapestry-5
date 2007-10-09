@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
-
 import java.util.concurrent.TimeUnit;
 
 public class ConcurrentTarget

@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 
 public class ConcurrentTargetWrapper implements Runnable
 {

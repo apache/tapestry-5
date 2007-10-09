@@ -14,17 +14,17 @@
 
 package org.apache.tapestry.upload.services;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tapestry.test.TapestryTestCase;
-import org.apache.tapestry.upload.services.MultipartDecoderImpl;
-import org.testng.annotations.Test;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tapestry.test.TapestryTestCase;
+import org.testng.annotations.Test;
 
 public class MultipartDecoderImplTest extends TapestryTestCase
 {

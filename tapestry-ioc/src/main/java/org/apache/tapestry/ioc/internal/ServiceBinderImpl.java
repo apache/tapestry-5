@@ -17,6 +17,7 @@ package org.apache.tapestry.ioc.internal;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 
 import org.apache.tapestry.ioc.IOCConstants;
@@ -25,6 +26,7 @@ import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceBindingOptions;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.annotations.EagerLoad;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -48,6 +50,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     private String _serviceId;
 
     private Class _serviceInterface;
+
+    private Class _marker;
 
     private Class _serviceImplementation;
 
@@ -81,13 +85,14 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
             }
         };
 
-        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, _scope,
+        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, _marker, _scope,
                 _eagerLoad, source);
 
         _accumulator.addServiceDef(serviceDef);
 
         _serviceId = null;
         _serviceInterface = null;
+        _marker = null;
         _serviceImplementation = null;
         _eagerLoad = false;
         _scope = null;
@@ -131,6 +136,10 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         _scope = scope != null ? scope.value() : IOCConstants.DEFAULT_SCOPE;
 
+        Marker marker = serviceImplementation.getAnnotation(Marker.class);
+
+        _marker = marker != null ? marker.value() : null;
+
         return this;
     }
 
@@ -161,6 +170,17 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         _lock.check();
 
         _scope = scope;
+
+        return this;
+    }
+
+    public <T extends Annotation> ServiceBindingOptions withMarker(Class<T> marker)
+    {
+        notNull(marker, "marker");
+
+        _lock.check();
+
+        _marker = marker;
 
         return this;
     }

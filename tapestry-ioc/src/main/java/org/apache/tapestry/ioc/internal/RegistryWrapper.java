@@ -15,8 +15,8 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.Registry;
 
 /**
  * A wrapper around {@link InternalRegistry} that exists to expand symbols in a service id before

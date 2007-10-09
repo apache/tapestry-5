@@ -17,7 +17,6 @@ package org.apache.tapestry.util;
 import junit.framework.AssertionFailedError;
 
 import org.apache.tapestry.Stooge;
-import org.apache.tapestry.util.StringToEnumCoercion;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

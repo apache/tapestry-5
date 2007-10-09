@@ -21,12 +21,12 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.RadioContainer;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**

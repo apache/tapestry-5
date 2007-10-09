@@ -4,6 +4,7 @@
     <p>ComponentResources: ${resources}</p>
     <p>BindingSource: ${bindingSource}</p>
     <p>Injected Symbol: ${injectedSymbol}</p>
+    <p>Injection via Marker: ${greeting}</p>
     
     
     <p>

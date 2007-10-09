@@ -18,12 +18,12 @@ import java.util.List;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridModelProvider;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Renders out the column headers for the grid. Eventually, this will include control over column
@@ -57,15 +57,18 @@ public class GridColumns
     { "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass" })
     private ActionLink _sort, _sort2;
 
-    @Inject @Path("sort-asc.png")
+    @Inject
+    @Path("sort-asc.png")
     private Asset _ascendingAsset;
 
-    @Inject @Path("sort-desc.png")
+    @Inject
+    @Path("sort-desc.png")
     private Asset _descendingAsset;
-    
-    @Inject @Path("sortable.png")
+
+    @Inject
+    @Path("sortable.png")
     private Asset _sortableAsset;
-    
+
     @Inject
     private Messages _messages;
 
@@ -99,24 +102,27 @@ public class GridColumns
             _sortAscending = true;
         }
     }
-    
-    void onActionFromSort2(String columnId) { onActionFromSort(columnId); }
-    
+
+    void onActionFromSort2(String columnId)
+    {
+        onActionFromSort(columnId);
+    }
+
     public Asset getIcon()
     {
-        if (isActiveSortColumn())
-            return _sortAscending ? _ascendingAsset : _descendingAsset;
-        
+        if (isActiveSortColumn()) return _sortAscending ? _ascendingAsset : _descendingAsset;
+
         return _sortableAsset;
     }
 
     public String getIconLabel()
     {
-        String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending" ) : "sortable";
-        
+        String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending")
+                : "sortable";
+
         return _messages.get(key);
     }
-    
+
     public List<String> getColumnNames()
     {
         return _dataProvider.getDataModel().getPropertyNames();
@@ -135,5 +141,5 @@ public class GridColumns
     public String getCellClass()
     {
         return _columnModel.getId() + "-header";
-    }    
+    }
 }

@@ -417,7 +417,7 @@ Determining if Bound
   In rare cases, you may want to take different behaviors based on whether a parameter is bound
   or not. This can be accomplished by querying the component's resources, which can be 
   {{{inject.html}injected}}  into the component using the
-  {{{../../apidocs/org/apache/tapestry/annotations/Inject.html}Inject}} annotation:
+  {{{../../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation:
   
 +---+
 public class MyComponent

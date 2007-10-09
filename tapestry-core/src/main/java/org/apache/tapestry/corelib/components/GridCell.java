@@ -17,10 +17,10 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.BeanBlockSource;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.PropertyDisplayContext;
@@ -82,11 +82,13 @@ public class GridCell
                     return readPropertyForRow();
                 }
 
-                public String getPropertyId() {
+                public String getPropertyId()
+                {
                     return _model.getId();
                 }
 
-                public String getPropertyName() {
+                public String getPropertyName()
+                {
                     return _model.getPropertyName();
                 }
             };

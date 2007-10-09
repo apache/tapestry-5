@@ -21,8 +21,8 @@ import java.util.Map;
 
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.AliasManager;
 import org.testng.annotations.Test;

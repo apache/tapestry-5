@@ -18,10 +18,10 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Generates a series of links used to jump to a particular page index within the overall data set.
@@ -67,8 +67,7 @@ public class GridPager
 
         _maxPages = ((availableRows - 1) / _rowsPerPage) + 1;
 
-        if (_maxPages < 2)
-            return;
+        if (_maxPages < 2) return;
 
         writer.element("div", "class", "t-data-grid-pager");
 
@@ -105,14 +104,11 @@ public class GridPager
 
     private void writePageLink(MarkupWriter writer, int pageIndex)
     {
-        if (pageIndex < 1 || pageIndex > _maxPages)
-            return;
+        if (pageIndex < 1 || pageIndex > _maxPages) return;
 
-        if (pageIndex <= _lastIndex)
-            return;
+        if (pageIndex <= _lastIndex) return;
 
-        if (pageIndex != _lastIndex + 1)
-            writer.write(" ... "); // &#8230; is ellipsis
+        if (pageIndex != _lastIndex + 1) writer.write(" ... "); // &#8230; is ellipsis
 
         _lastIndex = pageIndex;
 

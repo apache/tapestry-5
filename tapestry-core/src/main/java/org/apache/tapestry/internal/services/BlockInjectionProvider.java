@@ -16,8 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Block;
 import org.apache.tapestry.annotations.Id;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;

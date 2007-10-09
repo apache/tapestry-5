@@ -15,8 +15,8 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.services.SymbolSource;

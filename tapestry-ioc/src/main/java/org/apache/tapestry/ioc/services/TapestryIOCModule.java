@@ -14,8 +14,14 @@
 
 package org.apache.tapestry.ioc.services;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -33,6 +39,7 @@ import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceLifecycle;
 import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.services.ChainBuilderImpl;
 import org.apache.tapestry.ioc.internal.services.DefaultImplementationBuilderImpl;
@@ -60,24 +67,46 @@ import org.apache.tapestry.services.MasterObjectProvider;
  */
 public final class TapestryIOCModule
 {
+
+    /**
+     * Marks services provided by this module that may need to be unambiguously referenced.
+     * Injecting with this marker annotation and the correct type ensure that the version defined in
+     * this module is used, even if another module provides a service with the same service
+     * interface.
+     */
+    @Target(
+    { PARAMETER, FIELD })
+    @Retention(RUNTIME)
+    @Documented
+    public @interface Builtin
+    {
+
+    };
+
     public static void bind(ServiceBinder binder)
     {
-        binder.bind(LoggingDecorator.class, LoggingDecoratorImpl.class);
-        binder.bind(ChainBuilder.class, ChainBuilderImpl.class);
-        binder.bind(PropertyAccess.class, PropertyAccessImpl.class);
-        binder.bind(StrategyBuilder.class, StrategyBuilderImpl.class);
-        binder.bind(PropertyShadowBuilder.class, PropertyShadowBuilderImpl.class);
-        binder.bind(PipelineBuilder.class, PipelineBuilderImpl.class);
-        binder.bind(DefaultImplementationBuilder.class, DefaultImplementationBuilderImpl.class);
-        binder.bind(ExceptionTracker.class, ExceptionTrackerImpl.class);
-        binder.bind(ExceptionAnalyzer.class, ExceptionAnalyzerImpl.class);
-        binder.bind(TypeCoercer.class, TypeCoercerImpl.class);
-        binder.bind(ThreadLocale.class, ThreadLocaleImpl.class);
-        binder.bind(SymbolSource.class, SymbolSourceImpl.class);
-        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults");
-        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults");
-        binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
-        binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
+        binder.bind(LoggingDecorator.class, LoggingDecoratorImpl.class).withMarker(Builtin.class);
+        binder.bind(ChainBuilder.class, ChainBuilderImpl.class).withMarker(Builtin.class);
+        binder.bind(PropertyAccess.class, PropertyAccessImpl.class).withMarker(Builtin.class);
+        binder.bind(StrategyBuilder.class, StrategyBuilderImpl.class).withMarker(Builtin.class);
+        binder.bind(PropertyShadowBuilder.class, PropertyShadowBuilderImpl.class).withMarker(
+                Builtin.class);
+        binder.bind(PipelineBuilder.class, PipelineBuilderImpl.class).withMarker(Builtin.class);
+        binder.bind(DefaultImplementationBuilder.class, DefaultImplementationBuilderImpl.class)
+                .withMarker(Builtin.class);
+        binder.bind(ExceptionTracker.class, ExceptionTrackerImpl.class).withMarker(Builtin.class);
+        binder.bind(ExceptionAnalyzer.class, ExceptionAnalyzerImpl.class).withMarker(Builtin.class);
+        binder.bind(TypeCoercer.class, TypeCoercerImpl.class).withMarker(Builtin.class);
+        binder.bind(ThreadLocale.class, ThreadLocaleImpl.class).withMarker(Builtin.class);
+        binder.bind(SymbolSource.class, SymbolSourceImpl.class).withMarker(Builtin.class);
+        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults")
+                .withMarker(Builtin.class);
+        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults")
+                .withMarker(Builtin.class);
+        binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup").withMarker(
+                Builtin.class);
+        binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class).withMarker(
+                Builtin.class);
     }
 
     /**
@@ -86,6 +115,7 @@ public final class TapestryIOCModule
      * proxiable services (those with explicit service interfaces) can be managed in terms of a
      * lifecycle.
      */
+    @Marker(Builtin.class)
     public static ServiceLifecycleSource build(final Map<String, ServiceLifecycle> configuration)
     {
         return new ServiceLifecycleSource()

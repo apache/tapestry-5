@@ -14,14 +14,12 @@
 
 package org.apache.tapestry.upload.services;
 
-import org.apache.tapestry.services.HttpServletRequestHandler;
-import org.apache.tapestry.test.TapestryTestCase;
-import org.apache.tapestry.upload.services.MultipartDecoder;
-import org.apache.tapestry.upload.services.MultipartServletRequestFilter;
-import org.testng.annotations.Test;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.tapestry.services.HttpServletRequestHandler;
+import org.apache.tapestry.test.TapestryTestCase;
+import org.testng.annotations.Test;
 
 public class MultipartServletRequestFilterTest extends TapestryTestCase
 {

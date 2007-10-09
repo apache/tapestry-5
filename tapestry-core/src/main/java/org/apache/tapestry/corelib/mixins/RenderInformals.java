@@ -19,9 +19,9 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.AfterRenderTemplate;
 import org.apache.tapestry.annotations.BeforeRenderTemplate;
 import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.MixinAfter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Used to render out all informal parameters, in the {@link PostBeginRender} phase.

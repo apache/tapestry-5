@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,30 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotations;
+package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.ObjectProvider;
+import org.apache.tapestry.ioc.def.ServiceDef;
 
 /**
- * Allows injection of various objects into a component class. for certain cases, the type dictates
- * a particular property from {@link ComponentResources} is injected, but in most cases it works
- * like the {@link org.apache.tapestry.ioc.annotations.Inject} annotation used by the IoC container.
- * 
- * @see org.apache.tapestry.services.InjectionProvider
- * @see ObjectProvider
+ * Used to define a {@linkplain ServiceDef#getMarker() marker annotation} for a service
+ * implementation. This allows for injection based on the combination of type and marker interface.
+ * These marker interfaces should not have any values. The mere presence of the marker annotation is
+ * all that is needed.
  */
-@Target(FIELD)
-@Documented
+@Target(
+{ TYPE, METHOD })
 @Retention(RUNTIME)
-public @interface Inject
+@Documented
+public @interface Marker
 {
-
+    /** The type of annotation (which will be present at the injection point). */
+    Class value();
 }

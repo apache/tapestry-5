@@ -184,6 +184,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Another test, DefaultInjectionProvider
         assertTextPresent("<Proxy for BindingSource(org.apache.tapestry.services.BindingSource)>");
+
+        // Prove that injection using a marker annotation (to match against a marked service) works.
+
+        assertTextPresent("Injection via Marker: Bonjour!");
     }
 
     @Test
