@@ -22,10 +22,10 @@ import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeforeRenderBody;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.dom.Element;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.Heartbeat;
 
 /** Generates a &lt;label&gt; element for a particular field. */

@@ -68,7 +68,7 @@ Usage
 * Injecting beans
 
   Inside your component classes, you may use the 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/annotations/Inject.html}Inject}} annotation.  Typically, just the field 
+  {{{http://tapestry.apache.org/tapestry5/tapestry-core/apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation.  Typically, just the field 
   type is sufficient to identify the Spring bean to inject:
   
 +----+

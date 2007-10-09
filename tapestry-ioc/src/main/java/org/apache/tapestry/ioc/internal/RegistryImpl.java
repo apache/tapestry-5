@@ -33,6 +33,7 @@ import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.ServiceDecorator;
@@ -99,6 +100,11 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     private final List<Module> _modules = newList();
 
+    /**
+     * From marker type to a list of marked service instances.
+     */
+    private final Map<Class, List<ServiceDef>> _markerToServiceDef = newMap();
+
     public static final class OrderedConfigurationToOrdererAdaptor<T> implements
             OrderedConfiguration<T>
     {
@@ -140,13 +146,21 @@ public class RegistryImpl implements Registry, InternalRegistry
 
             for (String serviceId : def.getServiceIds())
             {
+                ServiceDef serviceDef = module.getServiceDef(serviceId);
+
                 Module existing = _serviceIdToModule.get(serviceId);
 
                 if (existing != null)
                     throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
-                            .getServiceDef(serviceId), module.getServiceDef(serviceId)));
+                            .getServiceDef(serviceId), serviceDef));
 
                 _serviceIdToModule.put(serviceId, module);
+
+                Class marker = serviceDef.getMarker();
+
+                if (marker != null)
+                    InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
+
             }
         }
 
@@ -210,6 +224,9 @@ public class RegistryImpl implements Registry, InternalRegistry
     {
         _builtinTypes.put(serviceId, serviceInterface);
         _builtinServices.put(serviceId, service);
+
+        // TODO: Figure out a way to "mark" the builtins with the TapestryIoCModule.Builtin
+        // annotation.
     }
 
     public synchronized void shutdown()
@@ -292,6 +309,7 @@ public class RegistryImpl implements Registry, InternalRegistry
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     public <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> objectType)
     {
         _lock.check();
@@ -307,6 +325,23 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         for (Module m : modules)
             addToOrderedConfiguration(configuration, objectType, serviceDef, m);
+
+        // An ugly hack ... perhaps we should introduce a new builtin service so that this can be
+        // accomplished in the normal way?
+
+        if (serviceId.equals("MasterObjectProvider"))
+        {
+            ObjectProvider contribution = new ObjectProvider()
+            {
+                public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
+                        ObjectLocator locator)
+                {
+                    return findServiceByMarkerAndType(objectType, annotationProvider);
+                }
+            };
+
+            configuration.add("ServiceByMarker", (T) contribution);
+        }
 
         return orderer.getOrdered();
     }
@@ -543,14 +578,73 @@ public class RegistryImpl implements Registry, InternalRegistry
     {
         _lock.check();
 
+        AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider
+                : new NullAnnotationProvider();
+
+        // We do a check here for known marker/type combinations, so that you can use a marker
+        // annotation
+        // to inject into a contribution method that contributes to MasterObjectProvider.
+        // We also force a contribution into MasterObjectProvider to accomplish the same thing.
+
+        T result = findServiceByMarkerAndType(objectType, annotationProvider);
+
+        if (result != null) return result;
+
         MasterObjectProvider masterProvider = getService(
                 IOCConstants.MASTER_OBJECT_PROVIDER_SERVICE_ID,
                 MasterObjectProvider.class);
 
-        AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider
-                : new NullAnnotationProvider();
-
         return masterProvider.provide(objectType, effectiveProvider, locator, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T> T findServiceByMarkerAndType(Class<T> objectType, AnnotationProvider provider)
+    {
+        if (provider == null) return null;
+
+        for (Class marker : _markerToServiceDef.keySet())
+        {
+            if (provider.getAnnotation(marker) == null) continue;
+
+            List<ServiceDef> matches = newList();
+
+            for (ServiceDef def : _markerToServiceDef.get(marker))
+            {
+                if (objectType.isAssignableFrom(def.getServiceInterface())) matches.add(def);
+            }
+
+            switch (matches.size())
+            {
+
+                case 1:
+
+                    ServiceDef def = matches.get(0);
+
+                    return getService(def.getServiceId(), objectType);
+
+                case 0:
+
+                    // It's no accident that the user put the marker annotation at the injection
+                    // point, since it matches a known marker annotation, it better be there for
+                    // a reason. So if we don't get a match, we have to assume the user expected
+                    // one, and that is an error.
+
+                    // This doesn't help when the user places an annotation they *think* is a marker
+                    // but isn't really a marker (because no service is marked by the annotation).
+
+                    throw new RuntimeException(IOCMessages
+                            .noServicesMatchMarker(objectType, marker));
+
+                default:
+                    throw new RuntimeException(IOCMessages.manyServicesMatchMarker(
+                            objectType,
+                            marker,
+                            matches));
+            }
+
+        }
+
+        return null;
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
@@ -624,7 +718,6 @@ public class RegistryImpl implements Registry, InternalRegistry
 
         throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure),
                 failure);
-
     }
 
 }

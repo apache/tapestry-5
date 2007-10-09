@@ -287,4 +287,18 @@ public class InternalUtilsTest extends IOCTestCase
 
         assertEquals(InternalUtils.lastTerm("fie.fie.foe.fum"), "fum");
     }
+
+    @Test
+    public void add_to_list_map()
+    {
+        Map<String, List<Integer>> map = CollectionFactory.newMap();
+
+        InternalUtils.addToMapList(map, "fred", 1);
+
+        assertEquals(map.get("fred"), Arrays.asList(1));
+
+        InternalUtils.addToMapList(map, "fred", 2);
+
+        assertEquals(map.get("fred"), Arrays.asList(1, 2));
+    }
 }

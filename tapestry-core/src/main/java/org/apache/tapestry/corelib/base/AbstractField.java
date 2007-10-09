@@ -28,7 +28,6 @@ import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SetupRender;
@@ -36,6 +35,7 @@ import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
 

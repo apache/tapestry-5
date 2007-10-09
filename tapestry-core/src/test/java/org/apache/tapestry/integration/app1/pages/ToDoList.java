@@ -18,10 +18,10 @@ import java.util.List;
 
 import org.apache.tapestry.PrimaryKeyEncoder;
 import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.integration.app1.data.ToDoItem;
 import org.apache.tapestry.integration.app1.services.ToDoDatabase;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.util.DefaultPrimaryKeyEncoder;
 
 public class ToDoList

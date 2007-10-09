@@ -15,8 +15,8 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 public class RenderComponentDemo
 {

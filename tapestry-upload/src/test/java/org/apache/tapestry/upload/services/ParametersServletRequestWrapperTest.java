@@ -14,17 +14,23 @@
 
 package org.apache.tapestry.upload.services;
 
-import static org.easymock.EasyMock.*;
-import static org.testng.Assert.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
-import org.apache.tapestry.upload.services.ParametersServletRequestWrapper;
-import org.testng.annotations.Test;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.testng.annotations.Test;
 
 public class ParametersServletRequestWrapperTest
 {

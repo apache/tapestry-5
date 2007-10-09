@@ -32,7 +32,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
         ObjectCreator delegate = mockObjectCreator();
         Object service = new Object();
 
-        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", "singleton", false, source);
+        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", null, "singleton", false, source);
 
         train_createObject(delegate, service);
 
@@ -70,7 +70,7 @@ public class RecursiveServiceCreationCheckWrapperTest extends IOCInternalTestCas
         ObjectCreator delegate = mockObjectCreator();
         Object service = new Object();
 
-        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", "singleton", false, source);
+        ServiceDef def = new ServiceDefImpl(Runnable.class, "Bar", null, "singleton", false, source);
 
         expect(delegate.createObject()).andThrow(failure);
 

@@ -74,6 +74,9 @@ public class ModuleImpl implements Module
     // the constructor. Guarded by MUTEX.
     private boolean _insideConstructor;
 
+    /** Keyed on fully qualified service id; values are instantiated services (proxies). */
+    private final Map<String, Object> _services = newCaseInsensitiveMap();
+
     public ModuleImpl(InternalRegistry registry, ModuleDef moduleDef, ClassFactory classFactory,
             Logger logger)
     {
@@ -82,9 +85,6 @@ public class ModuleImpl implements Module
         _classFactory = classFactory;
         _logger = logger;
     }
-
-    /** Keyed on fully qualified service id; values are instantiated services (proxies). */
-    private final Map<String, Object> _services = newCaseInsensitiveMap();
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {

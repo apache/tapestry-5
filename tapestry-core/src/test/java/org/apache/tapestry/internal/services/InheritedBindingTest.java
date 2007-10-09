@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;

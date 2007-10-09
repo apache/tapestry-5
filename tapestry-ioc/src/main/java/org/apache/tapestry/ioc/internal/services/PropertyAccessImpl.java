@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;

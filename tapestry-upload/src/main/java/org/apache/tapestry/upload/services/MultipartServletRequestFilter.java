@@ -14,13 +14,14 @@
 
 package org.apache.tapestry.upload.services;
 
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.tapestry.services.HttpServletRequestFilter;
-import org.apache.tapestry.services.HttpServletRequestHandler;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tapestry.services.HttpServletRequestFilter;
+import org.apache.tapestry.services.HttpServletRequestHandler;
 
 /**
  * Filter that decodes an incoming multipart request.

@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.apache.tapestry.internal.test.PageTesterContext;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

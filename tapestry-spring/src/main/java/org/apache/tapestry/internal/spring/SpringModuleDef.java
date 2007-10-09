@@ -92,6 +92,13 @@ public class SpringModuleDef implements ModuleDef
                 {
                     return false;
                 }
+
+                /** Returns null, Spring has no concept of a marker annotation. */
+                public Class getMarker()
+                {
+                    return null;
+                }
+
             };
 
             _serviceDefs.put(beanName, serviceDef);
@@ -132,6 +139,13 @@ public class SpringModuleDef implements ModuleDef
             {
                 return false;
             }
+
+            /** Returns null. */
+            public Class getMarker()
+            {
+                return null;
+            }
+
         };
 
         _serviceDefs.put(CONTEXT_SERVICE_ID, serviceDef);

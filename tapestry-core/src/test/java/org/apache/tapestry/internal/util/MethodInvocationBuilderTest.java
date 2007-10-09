@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.util;
 import java.lang.reflect.Modifier;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.util.MethodInvocationBuilder;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.test.TapestryTestCase;

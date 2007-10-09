@@ -16,7 +16,6 @@ package org.apache.tapestry.internal.util;
 
 import java.util.List;
 
-import org.apache.tapestry.internal.util.ContentType;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

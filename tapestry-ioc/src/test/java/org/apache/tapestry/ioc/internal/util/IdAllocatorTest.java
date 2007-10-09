@@ -18,7 +18,6 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.List;
 
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

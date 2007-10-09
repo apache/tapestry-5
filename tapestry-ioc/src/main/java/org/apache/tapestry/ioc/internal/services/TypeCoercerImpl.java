@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.util.Collection;
@@ -103,23 +103,8 @@ public class TypeCoercerImpl implements TypeCoercer
         {
             Class key = tuple.getSourceType();
 
-            addTuple(key, tuple);
+            InternalUtils.addToMapList(_sourceTypeToTuple, key, tuple);
         }
-    }
-
-    @SuppressWarnings(
-    { "unchecked", "unchecked" })
-    private void addTuple(Class key, CoercionTuple tuple)
-    {
-        List<CoercionTuple> list = _sourceTypeToTuple.get(key);
-
-        if (list == null)
-        {
-            list = newList();
-            _sourceTypeToTuple.put(key, list);
-        }
-
-        list.add(tuple);
     }
 
     @SuppressWarnings("unchecked")

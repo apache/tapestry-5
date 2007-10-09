@@ -21,8 +21,8 @@ import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
 

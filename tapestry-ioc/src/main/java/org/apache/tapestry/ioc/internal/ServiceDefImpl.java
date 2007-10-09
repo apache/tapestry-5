@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
+
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.def.ServiceDef;
@@ -30,11 +31,14 @@ public class ServiceDefImpl implements ServiceDef
 
     private final ObjectCreatorSource _source;
 
-    ServiceDefImpl(Class serviceInterface, String serviceId, String scope, boolean eagerLoad,
-            ObjectCreatorSource source)
+    private Class _marker;
+
+    ServiceDefImpl(Class serviceInterface, String serviceId, Class marker,
+            String scope, boolean eagerLoad, ObjectCreatorSource source)
     {
         _serviceInterface = serviceInterface;
         _serviceId = serviceId;
+        _marker = marker;
         _scope = scope;
         _eagerLoad = eagerLoad;
         _source = source;
@@ -69,6 +73,11 @@ public class ServiceDefImpl implements ServiceDef
     public boolean isEagerLoad()
     {
         return _eagerLoad;
+    }
+
+    public Class getMarker()
+    {
+        return _marker;
     }
 
 }

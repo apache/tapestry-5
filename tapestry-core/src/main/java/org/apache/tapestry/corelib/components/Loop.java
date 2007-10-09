@@ -27,10 +27,10 @@ import org.apache.tapestry.PrimaryKeyEncoder;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
 
@@ -221,8 +221,7 @@ public class Loop
     {
         _index = 0;
 
-        if (_source == null)
-            return false;
+        if (_source == null) return false;
 
         _iterator = _source.iterator();
 
@@ -291,8 +290,7 @@ public class Loop
             }
         }
 
-        if (_formSupport != null && _volatile)
-            _formSupport.store(this, ADVANCE_VOLATILE);
+        if (_formSupport != null && _volatile) _formSupport.store(this, ADVANCE_VOLATILE);
 
         startHeartbeat();
     }
@@ -313,8 +311,7 @@ public class Loop
 
     void afterRenderBody(MarkupWriter writer)
     {
-        if (_elementName != null)
-            writer.end();
+        if (_elementName != null) writer.end();
     }
 
     /** Ends the current heartbeat. */
@@ -323,10 +320,9 @@ public class Loop
     {
         endHeartbeat();
 
-        if (_formSupport != null)
-            _formSupport.store(this, END_HEARTBEAT);
+        if (_formSupport != null) _formSupport.store(this, END_HEARTBEAT);
 
-        return ! _iterator.hasNext();
+        return !_iterator.hasNext();
     }
 
     private void endHeartbeat()

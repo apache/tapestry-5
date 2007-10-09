@@ -17,8 +17,8 @@ package org.apache.tapestry.ioc.def;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ModuleBuilderSource;
-import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.OrderedConfiguration;
 
 /**
  * Contribution to a service configuration.

@@ -14,19 +14,19 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 
-import java.util.Set;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.services.ClassFabUtils;
+import java.util.Set;
 
 import javassist.ClassPath;
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
+
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 /**
  * Used to ensure that {@link javassist.ClassPool#appendClassPath(javassist.ClassPath)} is invoked

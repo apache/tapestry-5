@@ -148,7 +148,7 @@ Service Ids
   it down to a <single> service. At this point, it is necessary to <disambiguate> the link between
   the service interface and <one> service.  One approach is to use
   the 
-  {{{../apidocs/org/apache/tapestry/annotations/InjectService.html}InjectService}} annotation:
+  {{{../apidocs/org/apache/tapestry/ioc/annotations/InjectService.html}InjectService}} annotation:
   
   
 +-----------------------------------------------------------------------------------+
@@ -428,7 +428,7 @@ Injecting Resources
 
   It doesn't work because type String always gets the service id, as a resource (as with the serviceId parameter).
   In order to get this to work, we need to turn off the resource injection for the alertEmail parameter.
-  That's what the {{{../apidocs/org/apache/tapestry/annotations/Inject.html}Inject}} annotation does:
+  That's what the {{{../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation does:
   
 +-----------------------------------------------------------------------------------+
   public static Indexer build(String serviceId, Log serviceLog,  

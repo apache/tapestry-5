@@ -22,8 +22,11 @@ import java.lang.reflect.Method;
 import java.util.Set;
 
 import org.apache.tapestry.ioc.AutobuildModule;
+import org.apache.tapestry.ioc.BlueMarker;
 import org.apache.tapestry.ioc.IOCConstants;
+import org.apache.tapestry.ioc.MarkerModule;
 import org.apache.tapestry.ioc.ObjectCreator;
+import org.apache.tapestry.ioc.RedMarker;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.StringHolder;
 import org.apache.tapestry.ioc.def.ContributionDef;
@@ -86,6 +89,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         assertTrue(sd.toString().contains(className + ".buildFred()"));
         assertEquals(sd.getServiceScope(), IOCConstants.DEFAULT_SCOPE);
         assertEquals(sd.isEagerLoad(), false);
+        assertNull(sd.getMarker());
 
         sd = md.getServiceDef("Wilma");
         assertEquals(sd.isEagerLoad(), true);
@@ -501,6 +505,70 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         ServiceDef sd = md.getServiceDef("Runnable");
 
         assertTrue(sd.isEagerLoad());
+
+        verify();
+    }
+
+    @Test
+    public void service_builder_method_has_marker_annotation()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+
+        ServiceDef sd = md.getServiceDef("Greeter");
+
+        assertEquals(sd.getMarker(), BlueMarker.class);
+
+        verify();
+    }
+
+    @Test
+    public void bound_service_has_marker_annotation()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+
+        ServiceDef sd = md.getServiceDef("RedGreeter");
+
+        assertEquals(sd.getMarker(), RedMarker.class);
+
+        verify();
+    }
+
+    @Test
+    public void bound_service_explicit_marker()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+
+        ServiceDef sd = md.getServiceDef("SecondRedGreeter");
+
+        assertEquals(sd.getMarker(), RedMarker.class);
+
+        verify();
+    }
+
+    @Test
+    public void explicit_marker_overrides_marker_annotation()
+    {
+        Logger logger = mockLogger();
+
+        replay();
+
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+
+        ServiceDef sd = md.getServiceDef("SurprisinglyBlueGreeter");
+
+        assertEquals(sd.getMarker(), BlueMarker.class);
 
         verify();
     }

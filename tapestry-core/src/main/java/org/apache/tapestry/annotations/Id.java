@@ -22,6 +22,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.apache.tapestry.Block;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Optional annotation, used with {@link Inject}, which exists to provide the id of an object when

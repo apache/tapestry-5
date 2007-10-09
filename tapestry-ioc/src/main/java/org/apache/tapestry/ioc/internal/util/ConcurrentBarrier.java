@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A barrier used to execute code in a context where it is guarded by read/write locks. In addition,

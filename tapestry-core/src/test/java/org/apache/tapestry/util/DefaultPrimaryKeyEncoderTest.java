@@ -17,7 +17,6 @@ package org.apache.tapestry.util;
 import java.util.Arrays;
 
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.util.DefaultPrimaryKeyEncoder;
 import org.testng.annotations.Test;
 
 public class DefaultPrimaryKeyEncoderTest extends InternalBaseTestCase

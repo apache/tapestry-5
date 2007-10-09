@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.ioc.def;
 
+
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 
@@ -31,8 +32,23 @@ public interface ServiceDef
      */
     ObjectCreator createServiceCreator(ServiceBuilderResources resources);
 
-    /** Returns the service id, derived from the method name. */
+    /**
+     * Returns the service id, derived from the method name or the unqualified service interface
+     * name. Service ids must be unique among <em>all</em> services in all modules. Service ids
+     * are used in a heavy handed way to support ultimate disambiguation, but their primary purpose
+     * is to support service contribution methods.
+     */
     String getServiceId();
+
+    /**
+     * Returns an optional <em>marker annotation</em>. Marker annotations are used to
+     * disambiguate services; the combination of a marker annotation and a service type is expected
+     * to be unique. The annotation is placed on the field or method/constructor parameter and the
+     * service is located by combining the marker with service type (the parameter or field type).
+     * 
+     * @return the annotation, or null if the service has no annotation
+     */
+    Class getMarker();
 
     /**
      * Returns the service interface associated with this service. This is the interface exposed to
@@ -47,7 +63,7 @@ public interface ServiceDef
      * {@link org.apache.tapestry.ioc.annotations.Scope} annotation to the service builder method
      * for the service.
      * <p>
-     * Services that are not proxied will ignore thier scope; such services are always treated as
+     * Services that are not proxied will ignore their scope; such services are always treated as
      * singletons.
      */
     String getServiceScope();

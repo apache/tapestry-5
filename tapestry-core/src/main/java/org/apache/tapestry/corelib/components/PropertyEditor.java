@@ -23,11 +23,11 @@ import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BeanBlockSource;
 import org.apache.tapestry.services.Environment;
@@ -257,8 +257,9 @@ public class PropertyEditor
     }
 
     /** Used for testing. */
-    void inject(ComponentResources resources, ComponentResources overrides, PropertyModel propertyModel,
-            BeanBlockSource beanBlockSource, Messages messages, Object object)
+    void inject(ComponentResources resources, ComponentResources overrides,
+            PropertyModel propertyModel, BeanBlockSource beanBlockSource, Messages messages,
+            Object object)
     {
         _resources = resources;
         _overrides = overrides;

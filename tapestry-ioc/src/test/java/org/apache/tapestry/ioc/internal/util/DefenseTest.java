@@ -18,7 +18,6 @@ import static org.apache.tapestry.ioc.internal.util.Defense.cast;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
-import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.Test;
 

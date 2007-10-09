@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.ioc;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.tapestry.ioc.annotations.EagerLoad;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
@@ -52,4 +54,6 @@ public interface ServiceBindingOptions
      * @return this binding options, for further configuration
      */
     ServiceBindingOptions eagerLoad();
+
+    <T extends Annotation> ServiceBindingOptions withMarker(Class<T> marker);
 }

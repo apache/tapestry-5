@@ -29,6 +29,7 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 final class IOCMessages
 {
@@ -303,5 +304,19 @@ final class IOCMessages
     static String autobuildConstructorError(String constructorDescription, Throwable cause)
     {
         return MESSAGES.format("autobuild-constructor-error", constructorDescription, cause);
+    }
+
+    static String noServicesMatchMarker(Class objectType, Class marker)
+    {
+        return MESSAGES.format("no-services-match-marker", ClassFabUtils
+                .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker));
+    }
+
+    static String manyServicesMatchMarker(Class objectType, Class marker,
+            Collection<ServiceDef> matchingServices)
+    {
+        return MESSAGES.format("many-services-match-marker", ClassFabUtils
+                .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker), InternalUtils
+                .joinSorted(matchingServices));
     }
 }

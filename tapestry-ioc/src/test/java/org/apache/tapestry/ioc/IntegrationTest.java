@@ -585,4 +585,58 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(g.toString(), "<Proxy for HelloGreeter(org.apache.tapestry.ioc.Greeter)>");
     }
 
+    @Test
+    public void injection_by_marker_with_single_match()
+    {
+        Registry r = buildRegistry(GreeterModule.class);
+
+        Greeter g = r.getService("InjectedBlueGreeter", Greeter.class);
+
+        assertEquals(g.getGreeting(), "Blue");
+    }
+
+    @Test
+    public void injection_by_marker_with_multiple_matches()
+    {
+        Registry r = buildRegistry(GreeterModule.class);
+
+        Greeter g = r.getService("InjectedRedGreeter", Greeter.class);
+
+        try
+        {
+            g.getGreeting();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(
+                    ex,
+                    "Error invoking service builder method",
+                    "Unable to locate a single service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.RedMarker",
+                    "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter1()",
+                    "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter2()");
+        }
+    }
+
+    @Test
+    public void injection_by_marker_with_zero_matches()
+    {
+        Registry r = buildRegistry(GreeterModule.class);
+
+        Greeter g = r.getService("InjectedYellowGreeter", Greeter.class);
+
+        try
+        {
+            g.getGreeting();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(
+                    ex,
+                    "Error invoking service builder method",
+                    " Unable to locate any service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.YellowMarker.");
+        }
+
+    }
 }

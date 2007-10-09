@@ -29,8 +29,8 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.FieldFilter;
 import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformConstants;
+import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
 
 /**

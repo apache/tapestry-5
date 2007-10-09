@@ -34,11 +34,11 @@ import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.SelectModelVisitor;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
@@ -58,8 +58,8 @@ import org.apache.tapestry.services.Request;
  * In normal mode, the items in the selected list are kept in the same "natural" order as the items
  * in the available list.
  * <p>
- * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In addition,
- * two extra buttons appear to move items up and down within the selected list.
+ * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In
+ * addition, two extra buttons appear to move items up and down within the selected list.
  * <p>
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the
  * columns, etc. By default, the &lt;select&gt; element's widths are driven by the length of the
@@ -72,9 +72,8 @@ import org.apache.tapestry.services.Request;
  * </pre>
  * 
  * <p>
- * This ensures that the two columns are the same width, and that the column widths don't change
- * as items move back and forth.
- * 
+ * This ensures that the two columns are the same width, and that the column widths don't change as
+ * items move back and forth.
  * <p>
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by the many
  * browsers, and are not fully handled on the client side.

@@ -16,8 +16,8 @@ package org.apache.tapestry.integration.app1.components;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 public class Inner
 {

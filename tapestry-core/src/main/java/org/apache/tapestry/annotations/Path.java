@@ -23,6 +23,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.apache.tapestry.Asset;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Used in conjunction with the {@link Inject} annotation to inject an {@link Asset} based on a

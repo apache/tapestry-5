@@ -15,9 +15,11 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Inject;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.integration.app1.services.French;
+import org.apache.tapestry.integration.app1.services.Greeter;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.Request;
@@ -48,6 +50,15 @@ public class InjectDemo
     // Again, demonstrates case insensitivity
     @InjectPage("barney")
     private Runnable _barney;
+
+    @Inject
+    @French
+    private Greeter _greeter;
+
+    public String getGreeting()
+    {
+        return _greeter.getGreeting();
+    }
 
     public BindingSource getBindingSource()
     {

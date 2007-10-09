@@ -16,7 +16,7 @@ package org.apache.tapestry.corelib.pages;
 
 import java.util.List;
 
-import org.apache.tapestry.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry.ioc.services.ExceptionInfo;

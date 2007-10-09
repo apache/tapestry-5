@@ -40,9 +40,10 @@ import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.annotations.EagerLoad;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Match;
 import org.apache.tapestry.ioc.annotations.Order;
+import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
@@ -312,10 +313,19 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             }
         };
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, scope, eagerLoad,
-                source);
+        Class marker = extractMarker(method);
+
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, marker, scope,
+                eagerLoad, source);
 
         addServiceDef(serviceDef);
+    }
+
+    private Class extractMarker(Method method)
+    {
+        Marker annotation = method.getAnnotation(Marker.class);
+
+        return annotation == null ? null : annotation.value();
     }
 
     public void addServiceDef(ServiceDef serviceDef)
