@@ -8,7 +8,7 @@ Tapestry Inversion of Control Container
   a design approach that allows a working system to be fabricated from many small, easily testable pieces.
   
   An additional benefit of using IoC (Inversion of Control) is that, by breaking a complex system into small pieces, it becomes easier to
-  modify and extend the system, by overriding or replacing small pieces of the system.
+  modify and extend the system, by overriding or replacing selected parts of the system.
   
   The use of IoC in Tapestry represents an evolution from Tapestry 3 to Tapestry 4 to Tapestry 5.  Tapestry 3 did not use IoC, though it included
   some weaker mechanisms, such as extensions, that served a similar purpose.  To make large scale changes to the behavior of Tapestry 3 required
@@ -19,7 +19,7 @@ Tapestry Inversion of Control Container
   because of HiveMind's flexibility.
   
   Tapestry 5 extends on this, replacing HiveMind with a new container specifically build for Tapestry 5,
-  designed for greater ease of use, expressiveness and performance.  And it can be used seperately from the rest of Tapestry!
+  designed for greater ease of use, expressiveness and performance.  And it can be used separately from the rest of Tapestry!
   
 * Why Not Spring?
 
@@ -64,6 +64,16 @@ Tapestry Inversion of Control Container
   
   Tapestry IoC also represents many simplifications of HiveMind, representing lessons learned while creating both
   HiveMind and Tapestry 4.
+
+* Why not Guice?
+
+  {{{http://code.google.com/p/google-guice/}Google Guice}} is a newcomer to the IoC landscape.  Guice and T5 IoC are very close and, in fact,
+  T5 IoC expressly borrows many great and innovative ideas from Guice. Guice abandons not only XML but even any concept of a service id ...
+  for injection, services are matched by type and perhaps filtered based on annotations.
+
+  Guice is still missing some core ideas needed in T5 IoC.  There's no concept of configurations or anything similar.
+  And there are limitations on injection based on scope (a request scoped value can't be injected into a global scope service; in T5 IoC, scope
+  is internal to the proxy and never an issue).
   
 Goals
 
@@ -104,7 +114,7 @@ Goals
   when the minimum number of them control the maximum area on the board.  Playing "heavy" just gives your opponent a free
   chance to take control of another section of the board.
   
-   In software development, we are also attempting to create complex systems
+  In software development, we are also attempting to create complex systems
   from simple pieces, but our tension is derived from the need to add functionality balanced against the need
   to test and maintain existing code.  Too often in the world of software development, the need to add functionality
   trumps all, and testing and maintenance is deferred ... until too late.
@@ -151,7 +161,7 @@ Terminology
   Services are aggregated into <<modules>>:
       
   * A module is defined by a <<module builder>>, a specific class containing a mix of static or instance methods, used to define
-   services, decorate them (see below), or contribute to service configurations (again, more below).
+    services, decorate them (see below), or contribute to service configurations (again, more below).
   
   * Methods of the module builder class define the services provided by the module, 
     and the same methods are responsible
@@ -163,7 +173,7 @@ Terminology
   
   The <<registry>> is the outside world's view of the modules and services. From the registry, it is possible to obtain
   a service, via its unique id or by its service interface.  Access by unique id is <caseless> (meaning, a match will be found
-  even the case of the search key doesn't match the case of the service itself). 
+  even the case of the search key doesn't match the case of the service id itself). 
     
     
   Services may be <<decorated>> by <<service decorator methods>>.  These methods create
@@ -173,12 +183,12 @@ Terminology
   Control is given over the order in which decorators are applied to a service.
   
   A service may have a <<configuration>>. The configuration is either a map, a collection, or an ordered list. The service defines the type
-  of object allowed to be contributed into the configuration. The configuration is contructed
+  of object allowed to be contributed into the configuration. The configuration is constructed
   from <<contributions>> provided by one or more modules.   <<Service contributor methods>> are invoked to contribute objects into
   configurations.
   
   <Note: In HiveMind, services and configurations were separate, which often lead
-  to linked pairs of similarily named services and configurations. For Tapestry IoC, each service is allowed to have a single configuration,
+  to linked pairs of similarly named services and configurations. For Tapestry IoC, each service is allowed to have a single configuration,
   which is normally sufficient.>
   
   Services are instantiated as needed. In this case, "need" translates to "when a method of the service is invoked".
@@ -187,7 +197,7 @@ Terminology
   constructed. This occurs in a completely <<thread-safe>> manner. Just-in-time instantiation allows for more complex, more finely grained networks of services, and improves
   startup time.
   
-  Services define a <<scope>> that controls when the service is constructed, as well as its visiblity.  The default scope is <<singleton>>, meaning a single
+  Services define a <<scope>> that controls when the service is constructed, as well as its visibility.  The default scope is <<singleton>>, meaning a single
   global instance created as needed.  Other scopes allow service implementations to be bound to the current thread (i.e., the current
   request in a servlet application).
   

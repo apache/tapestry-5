@@ -44,7 +44,7 @@ registry.eagerLoadServices();
 Building the Default Registry
 
   The default registry is available by invoking the static method
-  {{{../apidocs/org/apache/tapestry/ioc/IOCUtilities.html#buildDefaultRegistry()}ICCUtilities.buildDefaultRegistry()}}.
+  {{{../apidocs/org/apache/tapestry/ioc/IOCUtilities.html#buildDefaultRegistry()}IOCUtilities.buildDefaultRegistry()}}.
   This method builds a Registry using
   {{{module.html#Autoloading modules}autoloading logic}}, where modules to load
   are identified via a JAR Manifest entry.
