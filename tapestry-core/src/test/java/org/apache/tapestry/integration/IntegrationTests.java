@@ -20,7 +20,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.internal.services.InjectComponentWorker;
+import org.apache.tapestry.internal.services.InjectContainerWorker;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
@@ -157,18 +157,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * {@link InjectComponentWorker} is largely tested by the forms tests ({@link RenderDisabled}
+     * {@link InjectContainerWorker} is largely tested by the forms tests ({@link RenderDisabled}
      * is built on it). test is for the failure case, where a mixin class is used with the wrong
      * type of component.
      */
     @Test
-    public void inject_component_failure() throws Exception
+    public void inject_container_failure() throws Exception
     {
-        start("InjectComponentMismatch");
+        start("InjectContainerMismatch");
 
         // And exception message:
 
-        assertTextPresent("Component InjectComponentMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
+        assertTextPresent("Component InjectContainerMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
     }
 
     @Test

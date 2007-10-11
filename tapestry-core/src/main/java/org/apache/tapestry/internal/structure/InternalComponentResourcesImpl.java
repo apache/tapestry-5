@@ -292,9 +292,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Component getContainer()
     {
-        ComponentPageElement containerElement = _element.getContainerElement();
+        if (_containerResources == null) return null;
 
-        return containerElement == null ? null : containerElement.getComponent();
+        return _containerResources.getComponent();
     }
 
     public ComponentResources getContainerResources()
@@ -318,11 +318,6 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
             _messages = _messagesSource.getMessages(_componentModel, getLocale());
 
         return _messages;
-    }
-
-    public Component getCoreComponent()
-    {
-        return _element.getComponent();
     }
 
     public String getElementName()

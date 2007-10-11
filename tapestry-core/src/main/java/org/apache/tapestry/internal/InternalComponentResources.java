@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@ package org.apache.tapestry.internal;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.PersistentFieldManager;
 
 /**
@@ -54,7 +53,7 @@ public interface InternalComponentResources extends ComponentResources,
     /**
      * Returns true if the named parameter's {@link org.apache.tapestry.Binding} is invariant, false
      * if otherwise, or if the parameter is not bound. Invariant bindings are cached more
-     * aggresively than variant bindings.
+     * aggressively than variant bindings.
      * 
      * @param parameterName
      *            the name of parameter to check for invariance
@@ -63,14 +62,8 @@ public interface InternalComponentResources extends ComponentResources,
     boolean isInvariant(String parameterName);
 
     /**
-     * For a normal component, the same as {@link #getComponent()}, but for a mixin, returns the
-     * component to which the mixin is attached.
-     */
-    Component getCoreComponent();
-
-    /**
      * Posts a change to a persistent field. If the component is still loading, then this change is
-     * ignored. Otherwise, it is propogated, via the
+     * ignored. Otherwise, it is propagated, via the
      * {@link Page#persistFieldChange(org.apache.tapestry.internal.structure.ComponentPageElement, String, Object) page}
      * to the {@link PersistentFieldManager}.
      */

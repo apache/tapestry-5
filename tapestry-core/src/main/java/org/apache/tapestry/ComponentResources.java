@@ -45,6 +45,7 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Returns the component which contains this component, or null for the root component.
+     * For mixins, this returns the componet to which the mixin is attached.
      */
     Component getContainer();
 

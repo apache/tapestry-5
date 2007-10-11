@@ -16,7 +16,7 @@ package org.apache.tapestry.corelib.mixins;
 
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.InjectComponent;
+import org.apache.tapestry.annotations.InjectContainer;
 import org.apache.tapestry.annotations.MixinAfter;
 
 /**
@@ -25,7 +25,7 @@ import org.apache.tapestry.annotations.MixinAfter;
 @MixinAfter
 public class RenderDisabled
 {
-    @InjectComponent
+    @InjectContainer
     private Field _field;
 
     void beginRender(MarkupWriter writer)

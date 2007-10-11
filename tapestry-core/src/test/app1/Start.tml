@@ -70,10 +70,10 @@
             -- components can inherit templates from base classes
           </li>
           <li>
-            <a href="InjectComponentMismatch">
-              InjectComponentMismatch
+            <a href="InjectContainerMismatch">
+              InjectContainerMismatch
             </a>
-            -- check error reporting when @InjectComponent doesn't match
+            -- check error reporting when @InjectContainer doesn't match
             the actual field type
           </li>
 

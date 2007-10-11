@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.annotations;
+package org.apache.tapestry.integration.app1.pages;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.Field;
+import org.apache.tapestry.annotations.Mixin;
+import org.apache.tapestry.corelib.mixins.RenderDisabled;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-/**
- * Used exclusively inside a mixin to connect the mixin to the component to which it is attached.
- */
-@Target(FIELD)
-@Documented
-@Retention(RUNTIME)
-public @interface InjectComponent {
-
+public class InjectContainerMismatch
+{
+    /**
+     * This mixin only works with components of type {@link Field}. That's the mismatch right
+     * there.
+     */
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled _renderDisabled;
 }
