@@ -111,7 +111,7 @@ import org.apache.tapestry.internal.services.FieldValidatorSourceImpl;
 import org.apache.tapestry.internal.services.FlashPersistentFieldStrategy;
 import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
-import org.apache.tapestry.internal.services.InjectComponentWorker;
+import org.apache.tapestry.internal.services.InjectContainerWorker;
 import org.apache.tapestry.internal.services.InjectPageWorker;
 import org.apache.tapestry.internal.services.InjectStandardStylesheetCommand;
 import org.apache.tapestry.internal.services.InjectWorker;
@@ -421,7 +421,7 @@ public final class TapestryModule
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.add("InjectPage", new InjectPageWorker(requestPageCache, resolver));
-        configuration.add("InjectComponent", new InjectComponentWorker());
+        configuration.add("InjectComponent", new InjectContainerWorker());
         configuration.add("RenderCommand", new RenderCommandWorker());
 
         // Default values for parameters are often some form of injection, so make sure

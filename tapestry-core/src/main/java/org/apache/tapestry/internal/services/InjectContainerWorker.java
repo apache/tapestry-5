@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import java.util.List;
 
-import org.apache.tapestry.annotations.InjectComponent;
+import org.apache.tapestry.annotations.InjectContainer;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
@@ -25,15 +25,15 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformConstants;
 
 /**
- * Identifies the {@link InjectComponent} annotation and adds code to initialize it to the core
+ * Identifies the {@link InjectContainer} annotation and adds code to initialize it to the core
  * component.
  */
-public class InjectComponentWorker implements ComponentClassTransformWorker
+public class InjectContainerWorker implements ComponentClassTransformWorker
 {
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
-        List<String> names = transformation.findFieldsWithAnnotation(InjectComponent.class);
+        List<String> names = transformation.findFieldsWithAnnotation(InjectContainer.class);
 
         if (names.isEmpty())
             return;
@@ -44,26 +44,26 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
 
-        builder.addln("%s core = %s.getCoreComponent();", Component.class.getName(), transformation
+        builder.addln("%s container = %s.getContainer();", Component.class.getName(), transformation
                 .getResourcesFieldName());
 
         for (String fieldName : names)
         {
-            InjectComponent annotation = transformation.getFieldAnnotation(
+            InjectContainer annotation = transformation.getFieldAnnotation(
                     fieldName,
-                    InjectComponent.class);
+                    InjectContainer.class);
 
             String fieldType = transformation.getFieldType(fieldName);
 
             builder.addln("try");
             builder.begin();
-            builder.addln("%s = (%s) core;", fieldName, fieldType);
+            builder.addln("%s = (%s) container;", fieldName, fieldType);
             builder.end();
             builder.addln("catch (ClassCastException ex)");
             builder.begin();
             builder.addln(
-                    "String message = %s.buildCastExceptionMessage(core, \"%s.%s\", \"%s\");",
-                    InjectComponentWorker.class.getName(),
+                    "String message = %s.buildCastExceptionMessage(container, \"%s.%s\", \"%s\");",
+                    InjectContainerWorker.class.getName(),
                     model.getComponentClassName(),
                     fieldName,
                     fieldType);
