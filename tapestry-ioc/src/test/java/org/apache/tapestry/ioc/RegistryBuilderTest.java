@@ -16,7 +16,6 @@ package org.apache.tapestry.ioc;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.jar.Manifest;
 
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
@@ -50,13 +49,7 @@ public class RegistryBuilderTest extends IOCTestCase
         String value = String.format("%s, %s, %s", FredModule.class.getName(), BarneyModule.class
                 .getName(), RegistryBuilderTestModule.class.getName());
 
-        Manifest mf = new Manifest();
-
-        mf.getMainAttributes().putValue(IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME, value);
-
-        // A package private method. Add in the two modules as if they were listed in the manifest.
-
-        IOCUtilities.addModulesInManifest(builder, mf);
+        IOCUtilities.addModulesInList(builder, value);
 
         Registry registry = builder.build();
 

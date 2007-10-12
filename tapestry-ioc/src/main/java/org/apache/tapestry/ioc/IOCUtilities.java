@@ -23,6 +23,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
 
+import org.apache.tapestry.ioc.annotations.SubModule;
+
 /**
  * A collection of utility methods for a couple of different areas, including creating the initial
  * {@link org.apache.tapestry.ioc.Registry}.
@@ -34,10 +36,12 @@ public final class IOCUtilities
     }
 
     /**
-     * Construct a default registry, including modules identify via the Tapestry-Module-Classes
-     * Manifest entry.
+     * Construct a default Registry, including modules identifed via the Tapestry-Module-Classes
+     * Manifest entry. The registry will have been
+     * {@linkplain Registry#performRegistryStartup() started up} before it is returned.
      * 
-     * @return constructed Registry, after eager loading of services
+     * @return constructed Registry, after startup
+     * @see #addDefaultModules(RegistryBuilder)
      */
     public static Registry buildDefaultRegistry()
     {
@@ -54,10 +58,14 @@ public final class IOCUtilities
 
     /**
      * Scans the classpath for JAR Manifests that contain the Tapestry-Module-Classes attribute and
-     * adds each corresponding class to the RegistryBuilder.
+     * adds each corresponding class to the RegistryBuilder. In addition, looks for a system
+     * property named "tapestry.modules" and adds all of those modules as well. The tapestry.modules
+     * approach is intended for development.
      * 
      * @param builder
      *            the builder to which modules will be added
+     * @see SubModule
+     * @see RegistryBuilder#add(String)
      */
     public static void addDefaultModules(RegistryBuilder builder)
     {
@@ -71,6 +79,9 @@ public final class IOCUtilities
 
                 addModulesInManifest(builder, url);
             }
+
+            addModulesInList(builder, System.getProperty("tapestry.modules"));
+
         }
         catch (Exception ex)
         {
@@ -92,7 +103,9 @@ public final class IOCUtilities
 
             in = null;
 
-            addModulesInManifest(builder, mf);
+            String list = mf.getMainAttributes().getValue(MODULE_BUILDER_MANIFEST_ENTRY_NAME);
+
+            addModulesInList(builder, list);
         }
         finally
         {
@@ -100,10 +113,8 @@ public final class IOCUtilities
         }
     }
 
-    static void addModulesInManifest(RegistryBuilder builder, Manifest mf)
+    static void addModulesInList(RegistryBuilder builder, String list)
     {
-        String list = mf.getMainAttributes().getValue(MODULE_BUILDER_MANIFEST_ENTRY_NAME);
-
         if (list == null) return;
 
         String[] classnames = list.split(",");

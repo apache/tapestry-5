@@ -26,7 +26,7 @@ builder.add(AppModule.class, UtilModule.class);
 
 Registry registry = builder.build();
 
-registry.eagerLoadServices();
+registry.performRegistryStartup();
 +---+
 
   You may invoke add() as many times as you wish, or pass as many module classes
@@ -37,7 +37,7 @@ registry.eagerLoadServices();
   {{{../apidocs/org/apache/tapestry/ioc/services/TapestryIoCModule.html}Tapestry IoC module}}, plus
   the modules you explicitly list.
   
-  The call to eagerLoadServices() is necessary to ensure that any services marked with the
+  The call to performRegistryStartup() is necessary to ensure that any services marked with the
   {{{../apidocs/org/apache/tapestry/ioc/annotations/EagerLoad.html}EagerLoad}} annotation are, in fact,
   loaded.
   
@@ -48,6 +48,11 @@ Building the Default Registry
   This method builds a Registry using
   {{{module.html#Autoloading modules}autoloading logic}}, where modules to load
   are identified via a JAR Manifest entry.
+  
+  In addition, the JVM system property <<<tapestry.modules>>> (if specified) is a list of additional
+  module classes to load.  This is often used in development, where tests may be executed against
+  the local classes, not JARs, and so there no manifest to read.
+  
   
 Shutting down the Registry
 
