@@ -7,9 +7,7 @@
   <packaging>pom</packaging>
   <version>5.0.6-SNAPSHOT</version>
   <name>Tapestry 5 Project</name>
-  <description>
-    Master project for the modules of Tapestry 5.
-  </description>
+  <description> Master project for the modules of Tapestry 5. </description>
   <inceptionYear>2006</inceptionYear>
   <url>http://tapestry.apache.org/tapestry5/</url>
   <issueManagement>
@@ -28,9 +26,7 @@
     <url>http://www.apache.org</url>
   </organization>
   <scm>
-    <connection>
-      scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/
-    </connection>
+    <connection> scm:svn:https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk/ </connection>
     <url>http://svn.apache.org/viewvc/tapestry/tapestry5/trunk/</url>
   </scm>
   <developers>
@@ -77,25 +73,19 @@
       <name>Tapestry User List</name>
       <subscribe>users-subscribe@tapestry.apache.org</subscribe>
       <unsubscribe>users-unsubscribe@tapestry.apache.org</unsubscribe>
-      <archive>
-        http://mail-archives.apache.org/mod_mbox/tapestry-users/
-      </archive>
+      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-users/ </archive>
     </mailingList>
     <mailingList>
       <name>Tapestry Developer List</name>
       <subscribe>dev-subscribe@tapestry.apache.org</subscribe>
       <unsubscribe>dev-unsubscribe@tapestry.apache.org</unsubscribe>
-      <archive>
-        http://mail-archives.apache.org/mod_mbox/tapestry-dev/
-      </archive>
+      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-dev/ </archive>
     </mailingList>
     <mailingList>
       <name>Tapestry Commits List</name>
       <subscribe>commits-subscribe@tapestry.apache.org</subscribe>
       <unsubscribe>commits-unsubscribe@tapestry.apache.org</unsubscribe>
-      <archive>
-        http://mail-archives.apache.org/mod_mbox/tapestry-commits/
-      </archive>
+      <archive> http://mail-archives.apache.org/mod_mbox/tapestry-commits/ </archive>
     </mailingList>
   </mailingLists>
 
@@ -235,6 +225,14 @@
             </archive>
           </configuration>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <configuration>
+            <!-- Will be true for profile "release" -->
+            <updateReleaseInfo>${update-release-info}</updateReleaseInfo>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
@@ -249,6 +247,9 @@
           </plugin>
         </plugins>
       </build>
+      <properties>
+        <update-release-info>true</update-release-info>
+      </properties>
     </profile>
     <!--  Only enable Javadoc as part of the output site when the javadoc profile is active. -->
     <profile>
@@ -265,13 +266,9 @@
               <links>
                 <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
                 <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
-                <link>
-                  http://jakarta.apache.org/commons/logging/apidocs/
-                </link>
+                <link> http://jakarta.apache.org/commons/logging/apidocs/ </link>
               </links>
-              <stylesheetfile>
-                ${basedir}/src/site/resources/css/jdstyle.css
-              </stylesheetfile>
+              <stylesheetfile> ${basedir}/src/site/resources/css/jdstyle.css </stylesheetfile>
               <aggregate>true</aggregate>
             </configuration>
           </plugin>
@@ -378,21 +375,16 @@
   <distributionManagement>
     <site>
       <id>tapestry</id>
-      <url>
-        scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/
-      </url>
+      <url> scpexe://people.apache.org/www/tapestry.apache.org/tapestry5/ </url>
     </site>
     <repository>
       <id>tapestry</id>
-      <url>
-        scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository
+      <url> scpexe://people.apache.org/home/hlship/public_html/tapestry-ibiblio-rsynch-repository
       </url>
     </repository>
     <snapshotRepository>
       <id>tapestry-snapshot</id>
-      <url>
-        scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository
-      </url>
+      <url> scpexe://people.apache.org/home/hlship/public_html/tapestry-snapshot-repository </url>
     </snapshotRepository>
   </distributionManagement>
 
@@ -401,6 +393,7 @@
   <properties>
     <!-- Version 2.1 lists everything as 100% covered, wierd. -->
     <cobertura-plugin-version>2.0</cobertura-plugin-version>
+    <update-release-info>false</update-release-info>
   </properties>
 
 </project>
