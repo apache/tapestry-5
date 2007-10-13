@@ -1112,4 +1112,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertFieldValueSeries("title_%d", 0, "Cure Cancer", "Pay Phone Bill");
         assertFieldValueSeries("urgency_%d", 0, "HIGH", "LOW");
     }
+
+    @Test
+    public void missing_template_for_page()
+    {
+        start("Missing Template Demo");
+
+        assertTextPresent("Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
+    }
 }
