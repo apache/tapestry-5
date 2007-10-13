@@ -34,7 +34,7 @@ Contributing an Alias
   public static void contributeAlias(@InjectService("MyService") MyService myService,
      Configuration<AliasContribution> configuration)
   {
-     configuration.add(new AliasContribution.create(MyService.class, myService));
+     configuration.add(AliasContribution.create(MyService.class, myService));
   }
 +---+
 
@@ -43,7 +43,8 @@ Contributing an Alias
   A contribution is made providing the service type. 
   
   Notice that the contribution doesn't <have> to be a service; you can just instantiate an object inside the
-  contribution method and contribute that.
+  contribution method and contribute that.  That's what we're doing in the example, though we're using a create() static
+  method rather than <<new>> (just to smooth out some Java Generics ugliness).
   
 Contributing to AliasOverrides
 
