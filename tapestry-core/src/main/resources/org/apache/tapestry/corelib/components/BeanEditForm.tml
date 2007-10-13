@@ -8,7 +8,7 @@
       reorder="inherit:reorder" model="inherit:model" overrides="this" />
 
     <div class="t-beaneditor-row">
-      <input type="submit" value="${submitLabel}" />
+      <input type="submit" class="t-beaneditor-submit" value="${submitLabel}" />
     </div>
   </div>
 
