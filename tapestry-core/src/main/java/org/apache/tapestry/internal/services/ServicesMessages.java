@@ -413,4 +413,9 @@ class ServicesMessages
     {
         return MESSAGES.format("resource-access-forbidden", URI);
     }
+
+    static String noMarkupFromPageRender(org.apache.tapestry.internal.structure.Page page)
+    {
+        return MESSAGES.format("no-markup-from-page-render", page.getLogicalName());
+    }
 }

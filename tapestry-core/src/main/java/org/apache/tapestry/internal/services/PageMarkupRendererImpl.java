@@ -40,6 +40,9 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
         queue.run(writer);
 
         _pageRenderInitializer.cleanup(writer);
+
+        if (writer.getDocument().getRootElement() == null)
+            throw new RuntimeException(ServicesMessages.noMarkupFromPageRender(page));
     }
 
 }
