@@ -161,6 +161,23 @@ Tapestry Elements
    Tapestry 4 users will recognize the \<body\> element as a replacement for the
    RenderBody component.
    
+* \<container\>
+
+   A container element contains markup without being considered part of the template. This is useful for components that render several top level
+   tags, for example, a component that renders several columns within a table row:
+   
++---+
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <td>${label}</td>
+  <td>${value}</td>
+</t:container>
++---+     
+   
+   This component only makes sense when used inside a \<tr\> element of its container's template.
+   
+   Without the \<t:container\> element, there would be no way to create a valid XML document as the template, because XML documents must always
+   have a single root element.
+   
 * \<block\>
 
   A block is a container of a portion of the component template. A block does not normally render; any component or contents you put inside

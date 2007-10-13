@@ -96,7 +96,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    synchronized void just_HTML()
+    synchronized public void just_HTML()
     {
         Resource resource = getResource("justHTML.tml");
 
@@ -147,7 +147,31 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void xml_entity()
+    public void container_element()
+    {
+        List<TemplateToken> tokens = tokens("container_element.tml");
+
+        assertEquals(tokens.size(), 4);
+
+        TextToken t0 = get(tokens, 0);
+
+        assertEquals(t0.getText().trim(), "A bit of text.");
+
+        StartElementToken t1 = get(tokens, 1);
+
+        assertEquals(t1.getName(), "foo");
+
+        EndElementToken t2 = get(tokens, 2);
+
+        assertNotNull(t2); // Keep compiler happy
+
+        TextToken t3 = get(tokens, 3);
+
+        assertEquals(t3.getText().trim(), "Some more text.");
+    }
+
+    @Test
+    public void xml_entity()
     {
         List<TemplateToken> tokens = tokens("xmlEntity.tml");
 
@@ -163,7 +187,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
     /** Test disabled when not online. */
     @Test(enabled = false)
-    void html_entity()
+    public void html_entity()
     {
         List<TemplateToken> tokens = tokens("html_entity.tml");
 
@@ -182,7 +206,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void cdata()
+    public void cdata()
     {
         List<TemplateToken> tokens = tokens("cdata.tml");
 
@@ -197,7 +221,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void comment()
+    public void comment()
     {
         List<TemplateToken> tokens = tokens("comment.tml");
 
@@ -215,7 +239,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void multiline_comment()
+    public void multiline_comment()
     {
         List<TemplateToken> tokens = tokens("multilineComment.tml");
 
@@ -231,7 +255,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void component()
+    public void component()
     {
         List<TemplateToken> tokens = tokens("component.tml");
 
@@ -247,7 +271,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void component_with_body()
+    public void component_with_body()
     {
         List<TemplateToken> tokens = tokens("componentWithBody.tml");
 
@@ -308,7 +332,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void body_element()
+    public void body_element()
     {
         List<TemplateToken> tokens = tokens("body_element.tml");
 
@@ -321,7 +345,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void content_within_body_element()
+    public void content_within_body_element()
     {
         List<TemplateToken> tokens = parse("content_within_body_element.tml").getTokens();
 
@@ -336,7 +360,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    void component_with_parameters()
+    public void component_with_parameters()
     {
         List<TemplateToken> tokens = tokens("componentWithParameters.tml");
 
