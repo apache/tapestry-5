@@ -18,7 +18,7 @@ Quickstart Archetype
   
   mvn archetype:create -DarchetypeGroupId=org.apache.tapestry -DarchetypeArtifactId=quickstart -DgroupId=<<org.example>> -DartifactId=<<myapp>> -DpackageName=<<org.example.myapp>> -Dversion=<<1.0.0-SNAPSHOT>>
   
-  Maven will use the information from that massive command line to locate and configure the archetpe, and produce the project:
+  Maven will use the information from that massive command line to locate and configure the archetype, and produce the project:
   
 +---+
 $ mvn archetype:create -DarchetypeGroupId=org.apache.tapestry -DarchetypeArtifactId=quickstart -DgroupId=org.example -DartifactId=myapp -DpackageName=org.example.myapp -Dversion=1.0.0-SNAPSHOT
