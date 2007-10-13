@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -188,6 +189,8 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                 { new char[] { 'a', 'b' }, List.class, Arrays.asList('a', 'b') },
                 { new boolean[] { true, false }, List.class, Arrays.asList(true, false) },
 
+                { "foo/bar/baz.txt", File.class, new File("foo/bar/baz.txt") },
+                
                 { null, Long.class, 0l },
                 { null, Short.class, (short) 0 },
                 { null, Byte.class, (byte) 0 },

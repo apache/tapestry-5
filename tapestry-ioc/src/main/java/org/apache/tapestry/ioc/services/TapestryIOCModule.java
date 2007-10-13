@@ -19,6 +19,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 
+import java.io.File;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -180,6 +181,7 @@ public final class TapestryIOCModule
      * <li>Null to Long (zero)</li>
      * <li>Null to BigDecimal (zero)</li>
      * <li>Null to BigInteger (zero)</li>
+     * <li>String to File</li>
      * </ul>
      * <p>
      * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches
@@ -430,6 +432,14 @@ public final class TapestryIOCModule
         add(configuration, double[].class, List.class, primitiveArrayCoercion);
         add(configuration, char[].class, List.class, primitiveArrayCoercion);
         add(configuration, boolean[].class, List.class, primitiveArrayCoercion);
+
+        add(configuration, String.class, File.class, new Coercion<String, File>()
+        {
+            public File coerce(String input)
+            {
+                return new File(input);
+            }
+        });
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
