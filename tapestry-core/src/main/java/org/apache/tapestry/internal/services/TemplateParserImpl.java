@@ -47,6 +47,7 @@ import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.LocationImpl;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.ioc.util.Stack;
 import org.slf4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
@@ -82,13 +83,13 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private final List<TemplateToken> _tokens = newList();
 
-    // Non-blank ids from start component (<comp>) elements
+    // Non-blank ids from start component elements
 
     private final Set<String> _componentIds = newSet();
 
-    // Used to accumulate text provided by the characters(). Even contiguous characters may be
-    // broken up across multiple invocations due to parser internals. We accumulate those together
-    // before forming a text token.
+    // Used to accumulate text provided by the characters() method. Even contiguous characters may
+    // be broken up across multiple invocations due to parser internals. We accumulate those
+    // together before forming a text token.
 
     private final StringBuilder _textBuffer = new StringBuilder();
 
@@ -105,6 +106,23 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private final Logger _logger;
 
     private final Map<String, URL> _configuration;
+
+    private final Stack<Runnable> _endTagHandlerStack = new Stack<Runnable>();
+
+    private final Runnable _addEndElementToken = new Runnable()
+    {
+        public void run()
+        {
+            _tokens.add(new EndElementToken(getCurrentLocation()));
+        }
+    };
+
+    private final Runnable _ignoreEndElement = new Runnable()
+    {
+        public void run()
+        {
+        }
+    };
 
     // Note the use of the non-greedy modifier; this prevents the pattern from merging multiple
     // expansions on the same text line into a single large
@@ -134,6 +152,11 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         _insideBody = false;
         _insideBodyErrorLogged = false;
         _ignoreEvents = true;
+
+        // Stack needs a clear();
+
+        while (!_endTagHandlerStack.isEmpty())
+            _endTagHandlerStack.pop();
     }
 
     public ComponentTemplate parseTemplate(Resource templateResource)
@@ -338,6 +361,12 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             return;
         }
 
+        if (localName.equalsIgnoreCase("container"))
+        {
+            startContainer();
+            return;
+        }
+
         // The component type is derived from the element name. Since element names may not contain
         // slashes, we convert periods to slashes. Later down the pipeline, they'll probably be
         // converted back into periods, as part of a fully qualified class name.
@@ -348,6 +377,12 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         startPossibleComponent(attributes, null, componentType);
     }
 
+    private void startContainer()
+    {
+        // Neither the container nor its end tag are considered tokens, just the contents inside.
+        _endTagHandlerStack.push(_ignoreEndElement);
+    }
+
     private void startBlock(Attributes attributes)
     {
         String blockId = findSingleParameter("block", "id", attributes);
@@ -355,6 +390,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // null is ok for blockId
 
         _tokens.add(new BlockToken(blockId, getCurrentLocation()));
+        _endTagHandlerStack.push(_addEndElementToken);
     }
 
     private void startParameter(Attributes attributes)
@@ -366,6 +402,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
                     getCurrentLocation(), null);
 
         _tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
+        _endTagHandlerStack.push(_addEndElementToken);
     }
 
     private String findSingleParameter(String elementName, String attributeName,
@@ -478,6 +515,11 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         _tokens.addAll(attributeTokens);
 
         if (id != null) _componentIds.add(id);
+
+        // TODO: Is there value in having different end elements for components vs. ordinary
+        // elements?
+
+        _endTagHandlerStack.push(_addEndElementToken);
     }
 
     private void startBody()
@@ -486,20 +528,23 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         _insideBody = true;
         _insideBodyErrorLogged = false;
+
+        _endTagHandlerStack.push(new Runnable()
+        {
+            public void run()
+            {
+                _insideBody = false;
+
+                // And don't add an end element token.
+            }
+        });
     }
 
     public void endElement(String uri, String localName, String qName) throws SAXException
     {
         processTextBuffer();
 
-        // TODO: Handle tapestry namespace elements?
-
-        // Because XML tags are always balanced, we don't even need to know what element just closed
-        // when we assemble things later.
-
-        if (!_insideBody) _tokens.add(new EndElementToken(getCurrentLocation()));
-
-        _insideBody = false;
+        _endTagHandlerStack.pop().run();
     }
 
     private Location getCurrentLocation()
