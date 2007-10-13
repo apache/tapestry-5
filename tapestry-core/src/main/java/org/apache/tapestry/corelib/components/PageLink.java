@@ -49,6 +49,13 @@ public class PageLink implements ClientElement
     @Environmental
     private PageRenderSupport _support;
 
+    /**
+     * If true, then then no link element is rendered (and no informal parameters as well). The body
+     * is, however, still rendered.
+     */
+    @Parameter("false")
+    private boolean _disabled;
+
     private String _clientId;
 
     /**
@@ -63,6 +70,8 @@ public class PageLink implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
+        if (_disabled) return;
+
         _clientId = _support.allocateClientId(_resources.getId());
 
         Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
@@ -79,6 +88,8 @@ public class PageLink implements ClientElement
 
     void afterRender(MarkupWriter writer)
     {
+        if (_disabled) return;
+
         writer.end(); // <a>
     }
 
@@ -87,4 +98,8 @@ public class PageLink implements ClientElement
         return _clientId;
     }
 
+    void setDisabled(boolean disabled)
+    {
+        _disabled = disabled;
+    }
 }
