@@ -22,7 +22,9 @@ import org.apache.tapestry.services.ObjectRenderer;
 
 /**
  * Renders out an object using the {@link ObjectRenderer} service. Used primarily on the
- * {@link ExceptionReport} page.
+ * {@link ExceptionReport} page. This is focused on objects that have a specific
+ * {@link ObjectRenderer} strategy. The {@link BeanDisplay} component is used for displaying the
+ * contents of arbitrary objects in terms of a series of property names and values.
  */
 public class RenderObject
 {

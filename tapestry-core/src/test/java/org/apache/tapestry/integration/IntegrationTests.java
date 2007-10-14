@@ -561,7 +561,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(submitButton);
 
-        assertTextPresent("[Howard]", "[Lewis Ship]", "[1966]", "[MARTIAN]", "[true]");
+        // The XPath support is too week for //div[@class='t-beandisplay-value'][%d], so we
+        // just look for the text itself.
+
+        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U. S. Citizen");
     }
 
     @Test
@@ -577,7 +580,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("//input[@type=\'submit\']");
 
-        assertTextPresent("[Howard]", "[Lewis Ship]", "[0]", "[MAIL]", "[false]");
+        assertTextPresent("Howard", "Lewis Ship", "0", "100% He-Man", "U. S. Citizen");
     }
 
     @Test
@@ -705,7 +708,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Grid Enum Demo", "reset");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "End World Hunger", "Medium");
-        assertTextSeries("//tr[2]/td[%d]", 1, "Develop Faster-Than-Light Travel", "High");
+        assertTextSeries("//tr[2]/td[%d]", 1, "Develop Faster-Than-Light Travel", "Ultra Important");
         assertTextSeries("//tr[3]/td[%d]", 1, "Cure Common Cold", "Low");
     }
 
@@ -815,7 +818,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("//input[@type='submit']");
 
-        assertTextPresent("First Name: [Howard]");
+        assertTextPresent("Howard", "Lewis Ship", "1966", "U. S. Citizen");
     }
 
     @Test
@@ -1102,7 +1105,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertFieldValueSeries("title_%d", 0, "ToDo # 7", "ToDo # 8", "ToDo # 9", "ToDo # 10");
 
         type("title_0", "Cure Cancer");
-        select("urgency_0", "High");
+        select("urgency_0", "Top Priority");
 
         type("title_1", "Pay Phone Bill");
         select("urgency_1", "Low");

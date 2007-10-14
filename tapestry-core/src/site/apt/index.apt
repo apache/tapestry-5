@@ -22,7 +22,7 @@ New And Of Note
   * Some of the annotations that aren't used specifically with component classes have been split off into the new
     {{{../tapestry-annotations/}tapestry-annotations}} module.
   
-  * Validator constraint values may now be specified in the component message catalog, rather than in the @Validation annotation (or validation compnent parameter). 
+  * Validator constraint values may now be specified in the component message catalog, rather than in the @Validation annotation (or validate component parameter). 
   
   * A new validator, regexp, has been added.
   
@@ -127,7 +127,7 @@ Changes from Tapestry 4 to Tapestry 5
   
   * Automatic reloading of templates and even <Java classes>
   
-  * Super-duper Ajax integration built on {{{http://dojotoolkit.org} Dojo}}
+  * Super-duper Ajax integration built in (<that's still very much in progress>)
   
   * Easy & fast unit testing of individual pages or components
     
@@ -163,17 +163,13 @@ public class Login
   @Component
   private Form _form;
   
-  @InjectPage
-  private Start _startPage;
-  
   @Inject
   private LoginAuthenticator _authenticator;
   
-  @OnEvent("submit")
-  private Object doLogin()
+  private Object onSubmit()
   {
     if (_authenticator.isValidLogin(_userId, _password))
-      return _startPage;
+      return Start.class;
       
     // Stay on this page:
   
@@ -193,11 +189,11 @@ public class Login
 +----+
 
   This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
-  within the application are injected with the @Inject annotation. The @OnEvent
-  annotation identifies, to Tapestry, when the method is to be invoked
+  within the application are injected with the @Inject annotation. The method name, onSubmit(),
+  informs Tapestry about when the method is to be invoked
   (when a form component contained by the page emits a "submit" event). The method's 
-  return value directs Tapestry on what to do: jump to another page within the application
-  (by returning the injected Start page), or stay on the same page to display the
+  return value directs Tapestry on what to do next: jump to another page within the application
+  (here identified as the class for the page, but other options exist), or stay on the same page to display the
   error message.
   
   This also represents a distinct change from Tapestry 4. In earlier versions of Tapestry, 
