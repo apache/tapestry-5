@@ -33,9 +33,9 @@ public class BeanEditorDemo
         return _data;
     }
 
-    String onSuccess()
+    Object onSuccess()
     {
-        return "ViewRegistration";
+        return ViewRegistration.class;
     }
 
     void onActionFromClear()

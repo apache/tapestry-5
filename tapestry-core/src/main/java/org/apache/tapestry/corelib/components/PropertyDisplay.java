@@ -15,16 +15,18 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.base.AbstractPropertyOutput;
 
 /**
- * Part of {@link Grid} that renders the markup inside a single data cell. GridCell is used inside a
- * pair of loops; the outer loop for each row, the inner loop for each property of the row.
+ * Outputs a single property value. Overrides for individual properties come from block parameters
+ * whose name matches the {@linkplain PropertyModel#getId() property id}. This component is rarely
+ * used on its own, but is a critical piece of the {@link BeanDisplay} component.
  */
-public class GridCell extends AbstractPropertyOutput
+public class PropertyDisplay extends AbstractPropertyOutput
 {
     Object beginRender(MarkupWriter writer)
     {
-        return renderPropertyValue(writer, getPropertyModel().getId() + "Cell");
+        return renderPropertyValue(writer, getPropertyModel().getId());
     }
 }

@@ -16,12 +16,12 @@ package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.services.PropertyDisplayContext;
+import org.apache.tapestry.services.PropertyOutputContext;
 
 public class PropertyDisplayBlocks
 {
     @Environmental
-    private PropertyDisplayContext _context;
+    private PropertyOutputContext _context;
 
     public String getConvertedEnumValue()
     {
@@ -29,6 +29,6 @@ public class PropertyDisplayBlocks
 
         if (value == null) return null;
 
-        return TapestryInternalUtils.getLabelForEnum(_context.getContainerMessages(), value);
+        return TapestryInternalUtils.getLabelForEnum(_context.getMessages(), value);
     }
 }

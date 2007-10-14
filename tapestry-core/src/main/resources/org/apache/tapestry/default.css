@@ -93,13 +93,18 @@ TABLE.t-data-table TD {
   border: 1px solid silver;
   margin: 0px;
 }
-DIV.t-beaneditor {
+DIV.t-beaneditor, DIV.t-beandisplay {
   display: block;
   background: #ffc;
   border: 2px solid silver;
   padding: 2px;
   font-family: "Trebuchet MS", Arial, sans-serif;
 }
+
+DIV.t-beandisplay {
+  background: #c0c0c0;
+}
+
 FORM.t-beaneditor LABEL:after {
   content: ":";
 }
@@ -107,17 +112,22 @@ DIV.t-beaneditor-row {
   padding: 4px 0px 2px 0px;
 }
 DIV.t-beaneditor LABEL:after {
-  vertical-align: middle;
   content: ":";
 }
-DIV.t-beaneditor LABEL {
+DIV.t-beaneditor LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
   width: 10%;
   display: block;
   float: left;
   text-align: right;
   clear: left;
   padding-right: 3px;
+  vertical-align: middle;  
 }
+
+DIV.t-beandisplay DIV.t-beandisplay-label {
+  padding-right: 5px;
+}
+
 TABLE.t-data-grid THEAD TR {
   color: white;
   background-color: #809FFF;
