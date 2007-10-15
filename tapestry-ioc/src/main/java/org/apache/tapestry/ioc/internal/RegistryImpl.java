@@ -32,10 +32,12 @@ import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.ServiceDecorator;
 import org.apache.tapestry.ioc.ServiceLifecycle;
 import org.apache.tapestry.ioc.ServiceResources;
@@ -56,6 +58,7 @@ import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
+import org.apache.tapestry.ioc.services.TapestryIOCModule.Builtin;
 import org.apache.tapestry.services.MasterObjectProvider;
 import org.slf4j.Logger;
 
@@ -220,13 +223,48 @@ public class RegistryImpl implements Registry, InternalRegistry
         return _loggerSource.getLogger(TapestryIOCModule.class + "." + serviceId);
     }
 
-    private <T> void addBuiltin(String serviceId, Class<T> serviceInterface, T service)
+    private <T> void addBuiltin(final String serviceId, final Class<T> serviceInterface, T service)
     {
         _builtinTypes.put(serviceId, serviceInterface);
         _builtinServices.put(serviceId, service);
 
-        // TODO: Figure out a way to "mark" the builtins with the TapestryIoCModule.Builtin
-        // annotation.
+        // Make sure each of the builtin services is also available via the Builtin annotation
+        // marker.
+
+        ServiceDef serviceDef = new ServiceDef()
+        {
+            public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
+            {
+                return null;
+            }
+
+            public Class getMarker()
+            {
+                return Builtin.class;
+            }
+
+            public String getServiceId()
+            {
+                return serviceId;
+            }
+
+            public Class getServiceInterface()
+            {
+                return serviceInterface;
+            }
+
+            public String getServiceScope()
+            {
+                return IOCConstants.DEFAULT_SCOPE;
+            }
+
+            public boolean isEagerLoad()
+            {
+                return false;
+            }
+        };
+
+        InternalUtils.addToMapList(_markerToServiceDef, serviceDef.getMarker(), serviceDef);
     }
 
     public synchronized void shutdown()

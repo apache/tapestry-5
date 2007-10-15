@@ -23,6 +23,8 @@ import java.util.Map;
 
 import org.apache.tapestry.ioc.internal.ExceptionInConstructorModule;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.ioc.services.TapestryIOCModule.Builtin;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -638,5 +640,27 @@ public class IntegrationTest extends IOCInternalTestCase
                     " Unable to locate any service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.YellowMarker.");
         }
 
+    }
+
+    @Test
+    public void builtin_services_available_via_marker_annotation()
+    {
+        Registry r = buildRegistry();
+
+        TypeCoercer tc1 = r.getService("TypeCoercer", TypeCoercer.class);
+
+        Builtin annotation = newMock(Builtin.class);
+
+        AnnotationProvider ap = mockAnnotationProvider();
+
+        train_getAnnotation(ap, Builtin.class, annotation);
+
+        replay();
+
+        TypeCoercer tc2 = r.getObject(TypeCoercer.class, ap);
+
+        assertSame(tc1, tc2);
+
+        verify();
     }
 }

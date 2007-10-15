@@ -43,7 +43,7 @@ public class RegistryWrapper implements Registry
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return _registry.getObject(objectType, null);
+        return _registry.getObject(objectType, annotationProvider);
     }
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
