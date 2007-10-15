@@ -93,8 +93,10 @@ public class PageTester implements ComponentInvoker
      * @param contextPath
      *            The path to the context root so that Tapestry can find the templates (if they're
      *            put there).
+     * @param modulesClasses
+     *            Classes of additional modules to load
      */
-    public PageTester(String appPackage, String appName, String contextPath)
+    public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
         _preferedLanguage = Locale.ENGLISH;
         _contextPath = contextPath;
@@ -106,7 +108,8 @@ public class PageTester implements ComponentInvoker
                 PageTesterModule.TEST_MODE);
 
         initializer.addModules(PageTesterModule.class);
-
+        initializer.addModules(moduleClasses);
+        
         _registry = initializer.getRegistry();
 
         _request = _registry.getObject(TestableRequest.class, null);

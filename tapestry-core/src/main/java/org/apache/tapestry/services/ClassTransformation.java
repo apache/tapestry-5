@@ -17,6 +17,8 @@ package org.apache.tapestry.services;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
+import javassist.CtBehavior;
+
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.slf4j.Logger;
 
@@ -265,6 +267,20 @@ public interface ClassTransformation extends AnnotationProvider
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);
 
+    /**
+     * Inserts code at the beginning of a method body (i.e. {@link CtBehavior#insertBefore(String)}.
+     * <p>
+     * The method may be declared in the class, or may be inherited from a super-class. For
+     * inherited methods, a method is added that first invokes the super implementation. Use
+     * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
+     * super-class method is invoked.
+     * 
+     * @param methodSignature
+     * @param methodBody
+     * @throws IllegalArgumentException If the provided Javassist method body could not be compiled
+     */
+    void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
+    
     /**
      * Returns the name of a field that provides the {@link org.apache.tapestry.ComponentResources}
      * for the transformed component. This will be a protected field, accessible to the class and

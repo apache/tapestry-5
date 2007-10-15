@@ -1039,6 +1039,33 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         verify();
     }
+    
+    @Test
+    public void prefix_method() throws Exception {
+        Logger logger = mockLogger();
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "int", "getParentField", null, null);
+        
+        replay();
+        
+        InternalClassTransformation ct = createClassTransformation(ParentClass.class, logger);
+        ct.prefixMethod(sig, "return 42;");
+        
+        String desc = ct.toString();
+        assertTrue(desc.contains("prefix"));
+        assertTrue(desc.contains("getParentField"));
+
+        // fail if frozen
+        ct.finish();
+        try
+        {
+            ct.prefixMethod(sig, "return 0;");
+            unreachable();
+        }
+        catch (IllegalStateException e) { }
+        
+        
+        verify();
+    }    
 
     @Test
     public void remove_field() throws Exception

@@ -649,6 +649,27 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         _addedMethods.add(method);
     }
+    
+    public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
+    {
+        failIfFrozen();
+        
+        CtMethod method = findMethod(methodSignature);
+        try
+        {
+            method.insertBefore(methodBody);
+        }
+        catch (CannotCompileException ex)
+        {
+            throw new MethodCompileException(ServicesMessages.methodCompileError(
+                    methodSignature,
+                    methodBody,
+                    ex), methodBody, ex);
+        }
+        
+        addMethodToDescription("prefix", methodSignature, methodBody);
+        _addedMethods.add(method);
+    }
 
     private void addMethodToDescription(String operation, TransformMethodSignature methodSignature,
             String methodBody)
