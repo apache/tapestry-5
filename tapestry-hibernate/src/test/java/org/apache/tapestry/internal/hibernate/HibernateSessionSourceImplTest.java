@@ -14,12 +14,19 @@
 
 package org.apache.tapestry.internal.hibernate;
 
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
+import org.apache.tapestry.hibernate.HibernateConfigurer;
+import org.apache.tapestry.hibernate.HibernateEntityPackageManager;
 import org.apache.tapestry.hibernate.HibernateSessionSource;
 import org.apache.tapestry.internal.services.ClassNameLocatorImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.test.TapestryTestCase;
+import org.example.app0.entities.User;
+import org.hibernate.Session;
+import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
@@ -35,10 +42,23 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
         Collection<String> packageNames = CollectionFactory.newList(
                 "org.example.myapp.entities",
                 "org.example.app0.entities");
+    	HibernateEntityPackageManager packageManager = newMock(HibernateEntityPackageManager.class);
+    	expect(packageManager.getPackageNames()).andReturn(packageNames);
 
-        HibernateSessionSource source = new HibernateSessionSourceImpl(_log, packageNames,
-                new ClassNameLocatorImpl());
+    	List<HibernateConfigurer> filters = Arrays.asList(
+    			new DefaultHibernateConfigurer(),
+    			new PackageNameHibernateConfigurer(packageManager, new ClassNameLocatorImpl()));
+    	
+    	replay();
+        HibernateSessionSource source = new HibernateSessionSourceImpl(_log, filters);
 
-        assertNotNull(source.create());
+        Session session = source.create();
+		assertNotNull(session);
+		
+		// make sure it found the entity in the package
+		ClassMetadata meta = session.getSessionFactory().getClassMetadata(User.class);
+		assertEquals(meta.getEntityName(), "org.example.app0.entities.User");
+		
+        verify();
     }
 }

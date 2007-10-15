@@ -16,11 +16,17 @@ package org.apache.tapestry.hibernate;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.hibernate.DefaultHibernateConfigurer;
 import org.apache.tapestry.internal.hibernate.HibernateSessionManagerImpl;
 import org.apache.tapestry.internal.hibernate.HibernateSessionSourceImpl;
+import org.apache.tapestry.internal.hibernate.PackageNameHibernateConfigurer;
+import org.apache.tapestry.internal.services.ClassNameLocator;
 import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
@@ -30,19 +36,24 @@ import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.services.AliasContribution;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.slf4j.Logger;
 
 public class HibernateModule
 {
-    public static void bind(ServiceBinder binder)
-    {
-        binder.bind(HibernateSessionSource.class, HibernateSessionSourceImpl.class);
-    }
 
+    public static HibernateEntityPackageManager build(final Collection<String> packageNames) {
+    	return new HibernateEntityPackageManager() {
+			public Collection<String> getPackageNames() {
+				return packageNames;
+			}
+    	};
+    }
+    
     /**
      * Contributes the package "&lt;root&gt;.entities" to the configuration, so that it will be
      * scanned for annotated entity classes.
      */
-    public static void contributeHibernateSessionSource(Configuration<String> configuration,
+    public static void contributeHibernateEntityPackageManager(Configuration<String> configuration,
 
     @Inject
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
@@ -95,4 +106,23 @@ public class HibernateModule
     {
         configuration.add(AliasContribution.create(Session.class, session));
     }
+    
+    public static HibernateSessionSource build(Logger log, List<HibernateConfigurer> config) {
+    	return new HibernateSessionSourceImpl(log, config);
+    }
+    
+    /** Adds the following configurers:
+     * <ul>
+     * <li>Default - performs default hibernate configuration</li>
+     * <li>PackageName - loads entities by package name</li>
+     * </ul>
+     */
+    public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
+    		final ClassNameLocator classNameLocator,
+    		final HibernateEntityPackageManager packageManager) 
+    {
+    	config.add("Default", new DefaultHibernateConfigurer());    	
+    	config.add("PackageName", new PackageNameHibernateConfigurer(packageManager, classNameLocator));
+    }
+    
 }

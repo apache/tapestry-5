@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.internal.hibernate;
 
-import java.util.Collection;
+import java.util.List;
 
+import org.apache.tapestry.hibernate.HibernateConfigurer;
 import org.apache.tapestry.hibernate.HibernateSessionSource;
-import org.apache.tapestry.internal.services.ClassNameLocator;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
@@ -28,38 +27,14 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
 {
     private SessionFactory _sessionFactory;
 
-    public HibernateSessionSourceImpl(Logger logger, Collection<String> packageNames,
-
-    @InjectService("ClassNameLocator")
-    ClassNameLocator classNameLocator)
+    public HibernateSessionSourceImpl(Logger logger, List<HibernateConfigurer> hibernateConfigurers)
     {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         long startTime = System.currentTimeMillis();
 
         AnnotationConfiguration configuration = new AnnotationConfiguration();
 
-        // Perform normal configuration.
-
-        configuration.configure();
-
-        for (String packageName : packageNames)
-        {
-            configuration.addPackage(packageName);
-
-            for (String className : classNameLocator.locateClassNames(packageName))
-            {
-                try
-                {
-                    Class entityClass = contextClassLoader.loadClass(className);
-
-                    configuration.addAnnotatedClass(entityClass);
-                }
-                catch (ClassNotFoundException ex)
-                {
-                    throw new RuntimeException(ex);
-                }
-            }
-        }
+        for(HibernateConfigurer configurer : hibernateConfigurers)
+        	configurer.configure(configuration);
 
         long configurationComplete = System.currentTimeMillis();
 
