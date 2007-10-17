@@ -11,7 +11,6 @@
         <resource>src/test/resources/PLACEHOLDER</resource>
     </resources>
     <sources>
-        <source>src/main/java/base/</source>
         <source>src/main/java/pages/Start.java</source>
         <source>src/main/java/services/AppModule.java</source>
     </sources>
