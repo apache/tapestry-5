@@ -15,18 +15,59 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
-public class DocumentScriptBuilderImpl implements DocumentScriptBuilder
+public class DocumentHeadBuilderImpl implements DocumentHeadBuilder
 {
     private final List<String> _scripts = newList();
 
     private final StringBuilder _scriptBlock = new StringBuilder();
+
+    private final Set<String> _stylesheets = newSet();
+
+    private final List<IncludedStylesheet> _includedStylesheets = newList();
+
+    private class IncludedStylesheet
+    {
+        private final String _url;
+
+        private final String _media;
+
+        IncludedStylesheet(String url, String media)
+        {
+            _url = url;
+            _media = media;
+        }
+
+        void add(Element head, int index)
+        {
+            head.elementAt(index, "link",
+
+            "href", _url,
+
+            "rel", "stylesheet",
+
+            "type", "text/css",
+
+            "media", _media);
+        }
+    }
+
+    public void addStylesheetLink(String styleURL, String media)
+    {
+        if (_stylesheets.contains(styleURL)) return;
+
+        _includedStylesheets.add(new IncludedStylesheet(styleURL, media));
+
+        _stylesheets.add(styleURL);
+    }
 
     public void addScriptLink(String scriptURL)
     {
@@ -45,7 +86,30 @@ public class DocumentScriptBuilderImpl implements DocumentScriptBuilder
 
     public void updateDocument(Document document)
     {
-        Element body = document.find("html/body");
+        Element root = document.getRootElement();
+
+        // This can happen due to a catastrophic rendering error, such as a missing page template.
+        if (root == null) return;
+
+        // This only applies when the document is an HTML document. This may need to change in the
+        // future, perhaps configurable, to allow for html and xhtml and perhaps others. Does SVG
+        // use stylesheets?
+
+        if (!root.getName().equals("html")) return;
+
+        int stylesheets = _includedStylesheets.size();
+
+        if (stylesheets > 0)
+        {
+            Element head = root.find("head");
+
+            if (head == null) head = root.elementAt(0, "head");
+
+            for (int i = 0; i < stylesheets; i++)
+                _includedStylesheets.get(i).add(head, i);
+        }
+
+        Element body = root.find("body");
 
         if (body == null) return;
 

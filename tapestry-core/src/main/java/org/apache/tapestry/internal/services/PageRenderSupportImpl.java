@@ -30,7 +30,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
 {
     private final IdAllocator _idAllocator = new IdAllocator();
 
-    private final DocumentScriptBuilder _builder;
+    private final DocumentHeadBuilder _builder;
 
     private final SymbolSource _symbolSource;
 
@@ -52,7 +52,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
      *            core scripts (evaluated as classpaths scripts) that are added to any page that
      *            includes a script link or script block
      */
-    public PageRenderSupportImpl(DocumentScriptBuilder builder, SymbolSource symbolSource,
+    public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
             AssetSource assetSource, String... coreScripts)
     {
         _builder = builder;
@@ -98,11 +98,20 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     public void addScript(String format, Object... arguments)
     {
+        notNull(format, "format");
+
         addCore();
 
         String script = format(format, arguments);
 
         _builder.addScript(script);
+    }
+
+    public void addStylesheetLink(Asset stylesheet, String media)
+    {
+        notNull(stylesheet, "stylesheet");
+
+        _builder.addStylesheetLink(stylesheet.toClientURL(), media);
     }
 
     private void addCore()

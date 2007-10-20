@@ -34,7 +34,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script_link_by_asset()
     {
-        DocumentScriptBuilder builder = mockDocumentScriptBuilder();
+        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
         Asset asset = mockAsset();
 
         train_toClientURL(asset, ASSET_URL);
@@ -55,7 +55,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         getMocksControl().checkOrder(true);
 
         Asset coreAsset = mockAsset();
-        DocumentScriptBuilder builder = mockDocumentScriptBuilder();
+        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
         Asset asset = mockAsset();
         AssetSource assetSource = mockAssetSource();
         SymbolSource symbolSource = mockSymbolSource();
@@ -82,7 +82,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script()
     {
-        DocumentScriptBuilder builder = mockDocumentScriptBuilder();
+        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
 
         builder.addScript("Tapestry.Foo(\"bar\");");
 
@@ -101,7 +101,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         String path = "${root}/foo/bar.pdf";
         String expanded = "org/apache/tapestry/foo/bar.pdf";
 
-        DocumentScriptBuilder builder = mockDocumentScriptBuilder();
+        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
         Asset asset = mockAsset();
         SymbolSource source = mockSymbolSource();
         AssetSource assetSource = mockAssetSource();
@@ -118,6 +118,25 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         PageRenderSupport support = new PageRenderSupportImpl(builder, source, assetSource);
 
         support.addClasspathScriptLink(path);
+
+        verify();
+    }
+
+    @Test
+    public void add_stylesheet_link()
+    {
+        String media = "print";
+        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
+        Asset asset = mockAsset();
+
+        train_toClientURL(asset, ASSET_URL);
+        builder.addStylesheetLink(ASSET_URL, media);
+
+        replay();
+
+        PageRenderSupport support = new PageRenderSupportImpl(builder, null, null);
+
+        support.addStylesheetLink(asset, media);
 
         verify();
     }

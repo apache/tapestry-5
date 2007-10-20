@@ -171,14 +171,20 @@ public final class Element extends Node
         return child;
     }
 
-    public void comment(String text)
+    /** Adds the comment and returns this element for further construction. */
+    public Element comment(String text)
     {
         newChild(new Comment(this, text));
+
+        return this;
     }
 
-    public void raw(String text)
+    /** Adds the raw text and returns this element for further construction. */
+    public Element raw(String text)
     {
         newChild(new Raw(this, text));
+
+        return this;
     }
 
     /**

@@ -100,8 +100,8 @@ import org.apache.tapestry.internal.services.CookiesImpl;
 import org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer;
 import org.apache.tapestry.internal.services.DefaultInjectionProvider;
 import org.apache.tapestry.internal.services.DefaultValidationDelegateCommand;
-import org.apache.tapestry.internal.services.DocumentScriptBuilder;
-import org.apache.tapestry.internal.services.DocumentScriptBuilderImpl;
+import org.apache.tapestry.internal.services.DocumentHeadBuilder;
+import org.apache.tapestry.internal.services.DocumentHeadBuilderImpl;
 import org.apache.tapestry.internal.services.EnumValueEncoderFactory;
 import org.apache.tapestry.internal.services.EnvironmentImpl;
 import org.apache.tapestry.internal.services.EnvironmentalShadowBuilderImpl;
@@ -113,7 +113,6 @@ import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.services.InjectContainerWorker;
 import org.apache.tapestry.internal.services.InjectPageWorker;
-import org.apache.tapestry.internal.services.InjectStandardStylesheetCommand;
 import org.apache.tapestry.internal.services.InjectWorker;
 import org.apache.tapestry.internal.services.InternalModule;
 import org.apache.tapestry.internal.services.LinkActionResponseGenerator;
@@ -1432,7 +1431,7 @@ public final class TapestryModule
             ThreadLocale threadLocale,
 
             @Path("org/apache/tapestry/default.css")
-            Asset stylesheetAsset,
+            final Asset stylesheetAsset,
 
             @Path("org/apache/tapestry/field-error-marker.png")
             Asset fieldErrorIcon,
@@ -1451,24 +1450,30 @@ public final class TapestryModule
 
                 Document document = environment.peek(Document.class);
 
-                DocumentScriptBuilder builder = environment.pop(DocumentScriptBuilder.class);
+                DocumentHeadBuilder builder = environment.pop(DocumentHeadBuilder.class);
 
                 builder.updateDocument(document);
             }
 
             public void setup(Environment environment)
             {
-                DocumentScriptBuilder builder = new DocumentScriptBuilderImpl();
+                DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 
-                environment.push(DocumentScriptBuilder.class, builder);
-                environment.push(PageRenderSupport.class, new PageRenderSupportImpl(builder,
-                        symbolSource, assetSource,
+                environment.push(DocumentHeadBuilder.class, builder);
+
+                PageRenderSupportImpl support = new PageRenderSupportImpl(builder,
+                        symbolSource,
+                        assetSource,
 
                         // Core scripts added to any page that uses scripting
-                        
+
                         "${tapestry.scriptaculous}/prototype.js",
                         "${tapestry.scriptaculous}/scriptaculous.js",
-                        "org/apache/tapestry/tapestry.js"));
+                        "org/apache/tapestry/tapestry.js");
+
+                support.addStylesheetLink(stylesheetAsset, null);
+
+                environment.push(PageRenderSupport.class, support);
             }
         });
 
@@ -1488,9 +1493,6 @@ public final class TapestryModule
                 environment.push(Heartbeat.class, heartbeat);
             }
         });
-
-        configuration.add("InjectStandardStylesheet", new InjectStandardStylesheetCommand(
-                stylesheetAsset));
 
         configuration.add("DefaultValidationDelegate", new DefaultValidationDelegateCommand(
                 threadLocale, validationMessagesSource, fieldErrorIcon));

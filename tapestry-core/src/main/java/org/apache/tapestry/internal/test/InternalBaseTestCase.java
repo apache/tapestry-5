@@ -42,7 +42,7 @@ import org.apache.tapestry.internal.parser.TemplateToken;
 import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.ComponentTemplateSource;
-import org.apache.tapestry.internal.services.DocumentScriptBuilder;
+import org.apache.tapestry.internal.services.DocumentHeadBuilder;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.internal.services.LinkFactory;
 import org.apache.tapestry.internal.services.LinkFactoryListener;
@@ -540,9 +540,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return buffer.toString();
     }
 
-    protected final DocumentScriptBuilder mockDocumentScriptBuilder()
+    protected final DocumentHeadBuilder mockDocumentScriptBuilder()
     {
-        return newMock(DocumentScriptBuilder.class);
+        return newMock(DocumentHeadBuilder.class);
     }
 
     protected final void train_canonicalizePageName(ComponentClassResolver resolver,

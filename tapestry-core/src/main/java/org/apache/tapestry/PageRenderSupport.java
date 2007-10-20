@@ -21,7 +21,7 @@ import org.apache.tapestry.services.AssetSource;
 /**
  * Provides support to all components that render. This is primarily about generating unique
  * client-side ids (very important for JavaScript generation) as well as accumulating JavaScript to
- * be sent to the client.
+ * be sent to the client. PageRenderSupport also allows for the incremental addition of stylesheets.
  */
 public interface PageRenderSupport
 {
@@ -56,6 +56,19 @@ public interface PageRenderSupport
      *            converted into an asset.
      */
     void addClasspathScriptLink(String... classpaths);
+
+    /**
+     * Adds a link to a CSS stylesheet. As with JavaScript libraries, each stylesheet is added at
+     * most once. Stylesheets added this way will be ordered before any other content in the
+     * &lt;head&gt; element of the document. The &lt;head&gt; element will be created, if necessary.
+     * 
+     * @param stylesheet
+     *            the asset referencing the stylesheet
+     * @param media
+     *            the media value for the stylesheet, or null to not specify a specific media type
+     */
+
+    void addStylesheetLink(Asset stylesheet, String media);
 
     /**
      * Adds a script statement to the page's script block (which appears at the end of the page,
