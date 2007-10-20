@@ -17,12 +17,23 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.dom.Document;
 
 /**
- * Responsible for building script links and script blocks into a document.
+ * Responsible for injecting script and style links into the &lt;head&gt; element of the rendered
+ * HTML document.
  */
-public interface DocumentScriptBuilder
+public interface DocumentHeadBuilder
 {
     /** Adds a link to load a script. Scripts will be loaded only once. */
     void addScriptLink(String scriptURL);
+
+    /**
+     * Adds a link to load a CSS stylesheet. Stylesheets are loaded only once.
+     * 
+     * @param styleURL
+     *            URL of stylesheet to load
+     * @param media
+     *            media value (or null to omit the media attribute)
+     */
+    void addStylesheetLink(String styleURL, String media);
 
     /**
      * Adds JavaScript code. The code is collected into a single block that is injected just before
