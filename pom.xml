@@ -252,6 +252,8 @@
       </build>
       <properties>
         <update-release-info>true</update-release-info>
+        <!--  Don't re-run tests as part of the deploy build. -->
+        <maven.test.skip>true</maven.test.skip>
       </properties>
     </profile>
     <!--  Only enable Javadoc as part of the output site when the javadoc profile is active. -->
