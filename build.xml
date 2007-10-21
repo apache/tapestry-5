@@ -36,26 +36,29 @@
 
 			<!-- Folds the licences and the JARs into the subfolder.  Repetitive but such is life. -->
 			
-			<zipfileset prefix="tapestry-core" dir="../tapestry-core" includes="${licenses}" />
-			<zipfileset prefix="tapestry-core" dir="../tapestry-core/target" includes="*.jar" />
+			<zipfileset prefix="tapestry-annotations" dir="tapestry-annotations" includes="${licenses}" />
+			<zipfileset prefix="tapestry-annotations" dir="tapestry-annotations/target" includes="*.jar" />
 
-			<zipfileset prefix="tapestry-hibernate" dir="../tapestry-hibernate" includes="${licenses}" />
-			<zipfileset prefix="tapestry-hibernate" dir="../tapestry-hibernate/target" includes="*.jar" />
+			<zipfileset prefix="tapestry-core" dir="tapestry-core" includes="${licenses}" />
+			<zipfileset prefix="tapestry-core" dir="tapestry-core/target" includes="*.jar" />
 
-			<zipfileset prefix="tapestry-ioc" dir="../tapestry-ioc" includes="${licenses}" />
-			<zipfileset prefix="tapestry-ioc" dir="../tapestry-ioc/target" includes="*.jar" />
+			<zipfileset prefix="tapestry-hibernate" dir="tapestry-hibernate" includes="${licenses}" />
+			<zipfileset prefix="tapestry-hibernate" dir="tapestry-hibernate/target" includes="*.jar" />
 
-			<zipfileset prefix="tapestry-spring" dir="../tapestry-spring" includes="${licenses}" />
-			<zipfileset prefix="tapestry-spring" dir="../tapestry-spring/target" includes="*.jar" />
+			<zipfileset prefix="tapestry-ioc" dir="tapestry-ioc" includes="${licenses}" />
+			<zipfileset prefix="tapestry-ioc" dir="tapestry-ioc/target" includes="*.jar" />
 
-			<zipfileset prefix="tapestry-test" dir="../tapestry-test" includes="${licenses}" />
-			<zipfileset prefix="tapestry-test" dir="../tapestry-test/target" includes="*.jar" />
+			<zipfileset prefix="tapestry-spring" dir="tapestry-spring" includes="${licenses}" />
+			<zipfileset prefix="tapestry-spring" dir="tapestry-spring/target" includes="*.jar" />
 
-			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload" includes="${licenses}" />
-			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload/target" includes="*.jar" />
+			<zipfileset prefix="tapestry-test" dir="tapestry-test" includes="${licenses}" />
+			<zipfileset prefix="tapestry-test" dir="tapestry-test/target" includes="*.jar" />
 
-			<zipfileset prefix="tapestry-tutorial1" dir="../tapestry-tutorial1" includes="${licenses}" />
-			<zipfileset prefix="tapestry-tutorial1" dir="../tapestry-tutorial1/target" includes="*.war" />
+			<zipfileset prefix="tapestry-upload" dir="tapestry-upload" includes="${licenses}" />
+			<zipfileset prefix="tapestry-upload" dir="tapestry-upload/target" includes="*.jar" />
+
+			<zipfileset prefix="tapestry-tutorial1" dir="tapestry-tutorial1" includes="${licenses}" />
+			<zipfileset prefix="tapestry-tutorial1" dir="tapestry-tutorial1/target" includes="*.war" />
 			
 		</zip>
 		
@@ -76,17 +79,18 @@
 		<zip destfile="${src.zip}">
 			<fileset dir="." includes="${licenses}"/>
 			
-			<zipfileset prefix="tapestry-core" dir="../tapestry-core" includes="${sources}"/>
-			<zipfileset prefix="tapestry-hibernate" dir="../tapestry-hibernate" includes="${sources}"/>
-			<zipfileset prefix="tapestry-ioc" dir="../tapestry-ioc" includes="${sources}"/>
-			<zipfileset prefix="tapestry-spring" dir="../tapestry-spring" includes="${sources}"/>
-			<zipfileset prefix="tapestry-test" dir="../tapestry-spring" includes="${sources}"/>
+			<zipfileset prefix="tapestry-annotations" dir="tapestry-annotations" includes="${sources}"/>
+			<zipfileset prefix="tapestry-core" dir="tapestry-core" includes="${sources}"/>
+			<zipfileset prefix="tapestry-hibernate" dir="tapestry-hibernate" includes="${sources}"/>
+			<zipfileset prefix="tapestry-ioc" dir="tapestry-ioc" includes="${sources}"/>
+			<zipfileset prefix="tapestry-spring" dir="tapestry-spring" includes="${sources}"/>
+			<zipfileset prefix="tapestry-test" dir="tapestry-spring" includes="${sources}"/>
+			<zipfileset prefix="tapestry-upload" dir="tapestry-upload" includes="${sources}"/>
 			
 			<zipfileset prefix="tapestry-project" dir="." includes="${sources}"/>
-			<zipfileset prefix="quickstart" dir="../quickstart" includes="${sources}"/>
-			<zipfileset prefix="tapestry-component-report" dir="../tapestry-component-report" includes="${sources}"/>
-			<zipfileset prefix="tapestry-upload" dir="../tapestry-upload" includes="${sources}"/>
-			<zipfileset prefix="tapestry-tutorial1" dir="../tapestry-tutorial1" includes="${sources}"/>
+			<zipfileset prefix="quickstart" dir="quickstart" includes="${sources}"/>
+			<zipfileset prefix="tapestry-component-report" dir="tapestry-component-report" includes="${sources}"/>
+			<zipfileset prefix="tapestry-tutorial1" dir="tapestry-tutorial1" includes="${sources}"/>
 			
 		</zip>
 		
@@ -104,7 +108,15 @@
 			<fileset dir="${dists.dir}" includes="*.bz2,*.gz,*.zip"/>
 		</checksum>
 		
-		<echo>*** Please sign the distributions using GPG before uploading the files. ***</echo>
+		<echo>*** Please sign the distributions using GPG before uploading the files. ***
+		
+
+Signing Mojo:    for i in target/dist/*.zip target/dist/*.gz target/dist/*.bz2; do echo $i; gpg --armor --detach-sig $i; done
+			
+Upload Mojo:     scp target/dist/* hlship@people.apache.org:public_html/tapestry-releases			
+			
+		</echo>
+		
 		
 	</target>
 	
