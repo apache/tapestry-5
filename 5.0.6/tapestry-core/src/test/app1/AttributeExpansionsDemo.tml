@@ -1,0 +1,25 @@
+<t:border  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  
+  <h1>Expansions in Attributes</h1>
+  
+  <style>
+    DIV.red { font-weight: bold; color: red; }
+    
+    DIV.goober-red { font-style: italic; color: #FF9F2F; }
+ 
+    DIV.goober-green { font-size: x-large; color: green; }
+    
+  </style>
+  
+  <div id="mixed-expansion" style="color: ${colorscheme}">This text is blue, thanks to property colorscheme.</div>
+  
+  <div id="single" class="${styleClass}">This text is red and bold, thanks to the class attribute, set from property styleClass.</div>
+  
+  <div id="consecutive" class="${message:cssclassprefix}${styleClass}">And this text is italic and orange, from a complex CSS class attribute, built from multiple expansions.</div>
+  
+  <div id="trailer" class="${message:cssclassprefix}green">This text is green and large, and tests a trailing literal string within an attribute with an expansion.</div>
+  
+  <div id="formal"><t:echo value="${prefix}${message:alert}"/></div>
+  
+  <!-- A comment! -->
+</t:border>

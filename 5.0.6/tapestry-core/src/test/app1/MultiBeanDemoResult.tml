@@ -1,0 +1,13 @@
+<html t:type="Border"
+  xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+  <h1>MultiBean Edit Demo</h1>
+
+  <ul>
+    <li>First Name: [${credentials.firstName}]</li>
+    <li>Last Name: [${credentials.lastName}]</li>
+    <li>Path: [${rolePath.path}]</li>
+    <li>Role: [${rolePath.role}]</li>
+  </ul>
+
+</html>
