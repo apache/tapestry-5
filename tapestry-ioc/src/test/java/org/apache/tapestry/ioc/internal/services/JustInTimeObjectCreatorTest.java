@@ -16,6 +16,8 @@ package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry.ioc.internal.ServiceActivityTracker;
+import org.apache.tapestry.ioc.services.Status;
 import org.testng.annotations.Test;
 
 public class JustInTimeObjectCreatorTest extends IOCInternalTestCase
@@ -29,7 +31,7 @@ public class JustInTimeObjectCreatorTest extends IOCInternalTestCase
 
         replay();
 
-        JustInTimeObjectCreator j = new JustInTimeObjectCreator(creator, SERVICE_ID);
+        JustInTimeObjectCreator j = new JustInTimeObjectCreator(null, creator, SERVICE_ID);
 
         j.registryDidShutdown();
 
@@ -51,16 +53,19 @@ public class JustInTimeObjectCreatorTest extends IOCInternalTestCase
     {
         ObjectCreator creator = mockObjectCreator();
         Object service = new Object();
+        ServiceActivityTracker tracker = mockServiceActivityTracker();
 
         replay();
 
-        JustInTimeObjectCreator j = new JustInTimeObjectCreator(creator, SERVICE_ID);
+        JustInTimeObjectCreator j = new JustInTimeObjectCreator(tracker, creator, SERVICE_ID);
 
         verify();
 
         // First access: use the creator to get the actual object.
 
         train_createObject(creator, service);
+
+        tracker.setStatus(SERVICE_ID, Status.REAL);
 
         replay();
 
