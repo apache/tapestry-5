@@ -17,35 +17,30 @@ Bumping the Version Number
   At this point, the version number of the tapestry-project POM is 5.0.x-SNAPSHOT. 
   Modules inherit their version number from the tapestry-project POM version number.
   
+  We need to update the version number across all modules, from 5.0.x-SNAPSHOT to just 5.0.x.
+  
   The first step is to bump up those numbers to the final release value.
   
-  * Edit tapestry-project/pom.xml, and change the \<version\> value (at the top of the file).  Change it from <<<5.0.x-SNAPSHOT>>> to <<<5.0.x>>>.
+   * module quickstart: <<quickstart/src/main/resources/archetype-resources/pom.xml>> contains a copy of the version number, <<at the bottom>> of the file.
+  	 
+   * other modules: A Ruby script, support/update-versions, can change the version numbers everywhere else.  A single parameter on the command line is the new version number.
+         This updates the master POM and the POM in each module.
   
-  * In each module, change the <parent> pom.xml \<version>\ field to point to the new tapestry-project POM version (<<<5.0.x>>>).
+   []
+    	 
+  From the root folder, execute <<<mvn clean install>>>; this should take a couple of minutes.
   
-  	 * quickstart
-  	 
-		* The version number is also mentioned in <<quickstart/src/site/apt/index.apt>>, change it there.
+Add The Next Release to JIRA
+
+  Use:
   
-		* <<quickstart/src/main/resources/archetype-resources/pom.xml>> contains a copy of the version number, <<at the bottom>> of the file.
-  	 
-  	 * tapestry-component-report
-  	 
-  	 * tapestry-core
-  	 
-  	 * tapestry-hibernate
-     
-  	 * tapestry-ioc
-  	 
-  	 * tapestry-spring
-  	 
-  	 * tapestry-test
-  	 
-  	 * tapestry-tutorial1
-  	 
-  	 []
-    
-  * From tapestry-project, execute <<<mvn clean install>>>; this should take a couple of minutes.
+  {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}}
+  
+  to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.0.x + 1).  Example: after building out 5.0.3, create 5.0.4.    
+  Schedule it above the existing version.
+  
+  While you're there, use the <<Release>> option for the previous release; this ensures that any existing bugs are not marked as pending for the old release,
+  and sets the date of release in JIRA.  
   
 Generate the Release Notes
 
@@ -61,14 +56,16 @@ Generate the Release Notes
   
 Build and Deploy Site
 
-  From tapestry-project, execute <<<mvn site site:deploy>>>
+  From tapestry-project, execute <<<mvn site site:deploy -Pjavadoc>>>
   
   This will build the project site and each of the module sites.  The sites go to a server that is periodically copied over to the live server; it can take up to an hour
   for changes to show up.
   
+  The -Pjavadoc activates a profile that ensure that Javadoc is generated (normally, Javadoc is not generated as it is so time consuming).
+  
 Build and Deploy Artifacts
 
-  From tapestry-project, execute <<<mvn gpg:sign deploy>>>
+  From tapestry-project, execute <<<mvn deploy -Pdeploy>>>
   
   This will sign the artifacts using GPG and deploy them.  Alas, due to bugs in Maven, it has a tendency to sign the signature files (".asc") and upload those as well; we'll clean that up in a bit.
   
@@ -144,17 +141,7 @@ Tag In Subversion
     
   <<<copy -rHEAD https://svn.apache.org/repos/asf/tapestry/tapestry5/trunk https://svn.apache.org/repos/asf/tapestry/tapestry5/tags/releases/5.0.x>>>
     
-Add The Next Release to JIRA
 
-  Use:
-  
-  {{{https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}https://issues.apache.org/jira/secure/project/ManageVersions.jspa?pid=10573}}
-  
-  to add the next release.  Any bugs that are fixed will be tagged with this new version number (5.0.x + 1).  Example: after building out 5.0.3, create 5.0.4.    
-  Schedule it above the existing version.
-  
-  While you're there, use the <<Release>> option for the previous release; this ensures that any existing bugs are not marked as pending for the release,
-  and sets the date of release in JIRA.
 
 Run the vote
 
@@ -202,7 +189,7 @@ On success: roll it out!
 > tar cf - * | ( cd /www/people.apache.org/repo/m2-ibiblio-rsync-repository && tar xvf - )
 ----
 
-  This is an old hack for merging one directory into another.
+  This is an old hack for merging one directory into another.  <Could this be done easier using rsync?>
   
   The aritfacts copied to m2-ibiblio-rsync-repository will (eventually) by copied to the central Maven ibiblio repository, where they will be
   visible to every Maven user.
@@ -225,7 +212,7 @@ Update the Downloads Page
   
 Advance the Version Numbers
 
-	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just release 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.      
+	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just released 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.      
     
     
     

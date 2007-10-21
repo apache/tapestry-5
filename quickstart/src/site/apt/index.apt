@@ -104,7 +104,8 @@ Compiling 1 source file to /Users/Howard/work/myapp/target/classes
 About Snapshots
 
   Tapestry 5 is currently in a pre-release stage. The Tapestry libraries, including this archetype, are being distributed as snaphots and are rebuilt nightly. Being snapshots, these artifacts are not in the central Maven repository.
-  To make use of the Tapestry snapshots, append  <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository/>>> and <<<-DarchetypeVersion=5.0.6-SNAPSHOT>>>  to the command line when invoking Maven. 
+  To make use of the Tapestry snapshots, append  <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository/>>> and <<<-DarchetypeVersion=5.0.x-SNAPSHOT>>>  (you'll have to figure out what
+  the lastest snapshot is) to the command line when invoking Maven. 
   
   The generated POM includes entries to automatically search the snapshot repository, so you won't need to use <<<-DremoteRepositories>>> after creating your initial project.
   
