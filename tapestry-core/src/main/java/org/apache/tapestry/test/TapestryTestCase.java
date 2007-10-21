@@ -22,6 +22,7 @@ import static org.easymock.EasyMock.eq;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.net.URL;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +56,8 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.services.MapMessages;
 import org.apache.tapestry.internal.services.MarkupWriterImpl;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Locatable;
@@ -62,6 +66,7 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -980,4 +985,49 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(FormSupport.class);
     }
 
+    /**
+     * Provides access to component messages, suitable for testing. Reads the associated .properties
+     * file for the class (NOT any localization of it). Only the messages directly in the
+     * .properties file is available.
+     * 
+     * @param componentClass
+     *            component class whose messages are needed *
+     * @return the Messages instance
+     */
+    protected final Messages messagesFor(Class componentClass) throws IOException
+    {
+        String file = componentClass.getSimpleName() + ".properties";
+
+        Properties properties = new Properties();
+
+        InputStream is = null;
+
+        try
+        {
+            is = componentClass.getResourceAsStream(file);
+
+            if (is == null)
+                throw new RuntimeException(String.format(
+                        "Class %s does not have a message catalog.",
+                        componentClass.getName()));
+
+            properties.load(is);
+        }
+        finally
+        {
+            TapestryInternalUtils.close(is);
+        }
+
+        Map<String, String> map = CollectionFactory.newCaseInsensitiveMap();
+
+        for (Object key : properties.keySet())
+        {
+
+            String skey = (String) key;
+
+            map.put(skey, properties.getProperty(skey));
+        }
+
+        return new MapMessages(map);
+    }
 }
