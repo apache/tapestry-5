@@ -1,0 +1,10 @@
+This product includes software developed by
+The Apache Software Foundation (http://www.apache.org/).
+
+This product makes use of the Hibernate Object Relational Mapping Framework, which
+is released under the Lesser GNU Public License.
+http://hibernate.org
+
+
+
+

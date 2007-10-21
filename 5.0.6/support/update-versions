@@ -1,0 +1,61 @@
+#!/usr/bin/ruby
+
+# This script is used to roll the version numbers of all modules up.
+# The version number is always determined from the master POM's version number.
+# However, when changing version number of the master POM, every module must have
+# it's <parent>/<version> element updated.  That's what this script is for.
+
+# Rub gems:  Think of it as Maven for Ruby but not brain-damaged. See http://www.rubygems.org/read/book/1
+
+require 'rubygems'
+
+# This script requires the Ruby gem hpricot ("gem install hpricot"). It was built with version 0.6.
+# http://code.whytheluckystiff.net/hpricot
+
+require 'hpricot'
+
+# This script doesn't bother with optparse, it's just a single command line option: the new version number.
+# Use with care!
+
+$version = ARGV[0]
+
+def write(file, pom)
+  puts "Updating #{file} ..."
+  
+  File.open(file, "w") do |stream|
+    stream << pom
+  end
+  
+end
+
+def process_module(mod_name)
+
+  file = "#{mod_name}/pom.xml"
+  
+  pom = open(file) do |f|
+    Hpricot.XML(f)
+  end
+  
+  pom.at("/project/parent/version").inner_html = $version
+  
+  write(file, pom)
+end
+
+puts "Updating to version #{$version} ..."
+
+$master_pom = open("pom.xml") do |f|
+    Hpricot.XML(f)
+end
+
+$modules = []
+
+($master_pom/"project/modules/module").each { |elem| $modules << elem.inner_html }
+
+$master_pom.at("/project/version").inner_html = $version
+
+write("pom.xml", $master_pom)
+
+# Add entries for each module
+
+$modules.sort.each { |mod_name| process_module(mod_name) }
+

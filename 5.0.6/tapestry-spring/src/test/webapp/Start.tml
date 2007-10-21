@@ -1,0 +1,21 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <head>
+    <title>Start Page</title>
+  </head>
+  <body>
+    <p>
+      This is a silly application for converting text to uppercase.
+    </p>
+    <t:form>
+      <t:errors/>
+      <t:label for="input"/>
+      <input t:type="textfield" t:id="input" size="40"/>
+      <br/>
+      <input type="submit" value="Convert"/>
+    </t:form>
+    
+    <p>
+      Spring beans: [${springBeans}]
+    </p>
+  </body>
+</html>

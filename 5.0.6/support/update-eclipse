@@ -1,0 +1,139 @@
+#!/usr/bin/ruby
+
+# This script is used to update the Eclipse .classpath file for the master project; it is used when
+# a module is added or removed, or when a src folder is added or removed from a module.
+#
+# It assumes the layout of each module conforms to Maven's default layout:
+# - src/main/java
+# - src/test/java
+# - test/main/resources
+# - src/test/resources
+#
+# This script must be executed from the root project directory (the directory containing the master pom.xml, and containing
+# the directories for the modules).
+
+# TODO: Update the .classpath in each module
+
+require 'optparse'
+
+# Rub gems:  Think of it as Maven for Ruby but not brain-damaged. See http://www.rubygems.org/read/book/1
+
+require 'rubygems'
+
+# This script requires the Ruby gem hpricot ("gem install hpricot"). It was built with version 0.6.
+# http://code.whytheluckystiff.net/hpricot
+
+require 'hpricot'
+
+$dryrun = false
+
+$opts = OptionParser.new do |opts|
+    opts.banner = "Usage: update-eclipse [options]"
+  
+    opts.on("-d", "--dry-run", "Show the generated POM but don't write anything") do
+        $dryrun = true
+    end
+    
+    opts.on("-h", "--help", "Help for this command") do
+        puts opts
+        exit
+    end
+    
+end
+
+def fail(message)
+    puts "Error: #{message}"
+    puts $opts
+end
+
+begin
+    $opts.parse!
+rescue OptionParser::InvalidOption
+    fail $!
+end
+
+def exist(mod_name, folder)
+  path = "#{mod_name}/#{folder}"
+
+  if File.directory?(path) 
+    yield path
+  end
+end
+
+def add_source_folder(mod_name, folder, output_dir)
+  exist(mod_name, folder) do |path|
+    $classpath << %Q{  <classpathentry kind="src" output="#{output_dir}" path="#{path}"/>}
+  end
+end
+
+def add_class_folder(mod_name, folder)
+  exist(mod_name, folder) do |path|
+    $lib_classpath << %Q{  <classpathentry kind="lib" path="#{path}"/>}
+  end
+end
+
+def add_module(mod_name)
+  add_source_folder(mod_name, "src/main/java", "bin");
+  add_source_folder(mod_name, "src/test/java", "bin-test")
+  
+  add_class_folder(mod_name, "src/main/resources") 
+  add_class_folder(mod_name, "src/test/resources") 
+end
+
+$master_pom = open("pom.xml") do |f|
+    Hpricot.XML(f)
+end
+
+
+# We're going to build up the classpath a line at a time.  This part is always the same:
+
+$classpath = [
+  %Q{<?xml version="1.0" encoding="UTF-8"?>},
+  "<classpath>"
+]
+
+# I like the resource folders to be organized at the bottom of the list, after all source folders.
+# So we use a temporary buffer to collect those lines and add them all in at the end.
+
+$lib_classpath = []
+
+$modules = []
+
+($master_pom/"project/modules/module").each { |elem| $modules << elem.inner_html }
+
+# Add entries for each module
+
+$modules.sort.each { |mod_name| add_module(mod_name) }
+
+# Add in the libraries (i.e. class folders)
+
+$classpath.concat($lib_classpath)
+
+# And this stuff is attached to the end.
+
+$classpath.concat [
+	%Q{  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>},
+	%Q{  <classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>},
+	%Q{  <classpathentry kind="output" path="bin"/>},
+  %Q{</classpath>}
+  ]
+
+# And we're done!
+
+if $dryrun
+  puts "Generated .classpath:"
+  $classpath.each { |s| puts s }
+  exit
+end
+
+# Write out the updated .classpath
+
+File.open(".classpath", "w") do |file|
+  $classpath.each do |line| 
+    file.print line 
+    file.print "\n"
+  end
+end
+
+puts "Updated .classpath successfully."
+

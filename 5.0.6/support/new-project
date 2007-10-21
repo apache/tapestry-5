@@ -1,0 +1,81 @@
+#!/usr/bin/ruby
+
+require 'optparse'
+
+$group = nil
+$artifact = nil
+$package = nil
+$version = "1.0.0-SNAPSHOT"
+$archetypeVersion = "5.0.5"
+$offline = false
+
+$opts = OptionParser.new do |opts|
+  
+  opts.banner = "Usage: new-project.rb [options]"
+  
+  opts.on("-g", "--group GROUP", "The group id for the new project") do |value|
+    $group = value
+  end
+
+  opts.on("-a", "--artifact ARTIFACT", "The artifact for the new project") do |value|
+    $artifact = value
+  end
+  
+  opts.on("-p", "--package PACKAGE", "The root package for source code in the new project") do |value|
+    $package = value
+  end
+  
+  opts.on("-v", "--version VERSION", "The version number of the new project") do |value|
+    $version = value
+  end
+  
+  opts.on("-o", "--offline", "Execute Maven in offline mode") { $offline = true }
+  
+  opts.on("-V", "--archetype-version VERSION", "Version of the Tapestry quickstart archetype") do |value|
+    $archetypeVersion = value
+  end
+  
+  opts.on("-h", "--help", "Help for this command") do
+    puts opts
+    exit
+  end
+end
+
+def fail(message)
+  puts "Error: #{message}"
+  puts $opts
+  exit
+end
+
+
+begin
+  $opts.parse!
+rescue OptionParser::InvalidOption
+  fail $!
+end
+
+fail "Unexpected command line argument" if ARGV.length > 0
+fail "Must specify group" unless $group
+fail "Must specify artifact" unless $artifact
+
+$package = $package || "#$group.#$artifact"
+
+command = ["mvn"]
+
+command << "-o" if $offline
+
+command << [
+  "archetype:create",
+  "-DarchetypeGroupId=org.apache.tapestry",
+  "-DarchetypeArtifactId=quickstart",
+  "-DarchetypeVersion=#$archetypeVersion",
+  "-DgroupId=#$group",
+  "-DartifactId=#$artifact",
+  "-DartifactVersion=#$version",
+  "-DpackageName=#$package"]
+
+command = command.join ' '
+
+exec command
+
+
