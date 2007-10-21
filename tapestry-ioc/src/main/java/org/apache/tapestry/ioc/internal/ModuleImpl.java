@@ -46,12 +46,15 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
+import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
 
 public class ModuleImpl implements Module
 {
     private final InternalRegistry _registry;
+
+    private final ServiceActivityTracker _tracker;
 
     private final ModuleDef _moduleDef;
 
@@ -77,10 +80,11 @@ public class ModuleImpl implements Module
     /** Keyed on fully qualified service id; values are instantiated services (proxies). */
     private final Map<String, Object> _services = newCaseInsensitiveMap();
 
-    public ModuleImpl(InternalRegistry registry, ModuleDef moduleDef, ClassFactory classFactory,
-            Logger logger)
+    public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker,
+            ModuleDef moduleDef, ClassFactory classFactory, Logger logger)
     {
         _registry = registry;
+        _tracker = tracker;
         _moduleDef = moduleDef;
         _classFactory = classFactory;
         _logger = logger;
@@ -242,7 +246,8 @@ public class ModuleImpl implements Module
 
             creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
 
-            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(creator, serviceId);
+            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(_tracker, creator,
+                    serviceId);
 
             Object proxy = createProxy(resources, delegate);
 
@@ -255,6 +260,8 @@ public class ModuleImpl implements Module
             // is being realized anyway.
 
             if (def.isEagerLoad() && eagerLoadProxies != null) eagerLoadProxies.add(delegate);
+
+            _tracker.setStatus(serviceId, Status.VIRTUAL);
 
             return proxy;
         }

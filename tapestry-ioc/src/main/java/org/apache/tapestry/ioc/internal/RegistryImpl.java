@@ -55,6 +55,8 @@ import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
+import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
@@ -69,6 +71,8 @@ public class RegistryImpl implements Registry, InternalRegistry
     private static final String REGISTRY_SHUTDOWN_HUB_SERVICE_ID = "RegistryShutdownHub";
 
     static final String THREAD_CLEANUP_HUB_SERVICE_ID = "ThreadCleanupHub";
+
+    private static final String SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID = "ServiceActivityScoreboard";
 
     /**
      * Used to obtain the {@link org.apache.tapestry.ioc.services.ClassFactory} service, which is
@@ -98,6 +102,8 @@ public class RegistryImpl implements Registry, InternalRegistry
     private final ThreadCleanupHubImpl _cleanupHub;
 
     private final ClassFactory _classFactory;
+
+    private final ServiceActivityTracker _tracker;
 
     private SymbolSource _symbolSource;
 
@@ -139,33 +145,14 @@ public class RegistryImpl implements Registry, InternalRegistry
     {
         _loggerSource = loggerSource;
 
-        for (ModuleDef def : moduleDefs)
-        {
-            Logger logger = _loggerSource.getLogger(def.getLoggerName());
+        final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl();
 
-            Module module = new ModuleImpl(this, def, classFactory, logger);
+        _tracker = scoreboardAndTracker;
 
-            _modules.add(module);
-
-            for (String serviceId : def.getServiceIds())
-            {
-                ServiceDef serviceDef = module.getServiceDef(serviceId);
-
-                Module existing = _serviceIdToModule.get(serviceId);
-
-                if (existing != null)
-                    throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
-                            .getServiceDef(serviceId), serviceDef));
-
-                _serviceIdToModule.put(serviceId, module);
-
-                Class marker = serviceDef.getMarker();
-
-                if (marker != null)
-                    InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
-
-            }
-        }
+        addBuiltin(
+                SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID,
+                ServiceActivityScoreboard.class,
+                scoreboardAndTracker);
 
         addBuiltin(LOG_SOURCE_SERVICE_ID, LoggerSource.class, _loggerSource);
 
@@ -189,6 +176,47 @@ public class RegistryImpl implements Registry, InternalRegistry
                 _registryShutdownHub);
 
         _lifecycles.put("singleton", new SingletonServiceLifecycle());
+
+        _registryShutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
+        {
+            public void registryDidShutdown()
+            {
+                scoreboardAndTracker.shutdown();
+            }
+        });
+
+        for (ModuleDef def : moduleDefs)
+        {
+            logger = _loggerSource.getLogger(def.getLoggerName());
+
+            Module module = new ModuleImpl(this, _tracker, def, classFactory, logger);
+
+            _modules.add(module);
+
+            for (String serviceId : def.getServiceIds())
+            {
+                ServiceDef serviceDef = module.getServiceDef(serviceId);
+
+                Module existing = _serviceIdToModule.get(serviceId);
+
+                if (existing != null)
+                    throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
+                            .getServiceDef(serviceId), serviceDef));
+
+                _serviceIdToModule.put(serviceId, module);
+
+                // The service is defined but will not have gone further than that.
+                _tracker.define(serviceDef, Status.DEFINED);
+
+                Class marker = serviceDef.getMarker();
+
+                if (marker != null)
+                    InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
+
+            }
+        }
+
+        scoreboardAndTracker.startup();
     }
 
     /**
@@ -265,6 +293,8 @@ public class RegistryImpl implements Registry, InternalRegistry
         };
 
         InternalUtils.addToMapList(_markerToServiceDef, serviceDef.getMarker(), serviceDef);
+
+        _tracker.define(serviceDef, Status.BUILTIN);
     }
 
     public synchronized void shutdown()

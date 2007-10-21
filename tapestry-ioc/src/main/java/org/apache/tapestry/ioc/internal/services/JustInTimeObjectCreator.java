@@ -16,7 +16,9 @@ package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.internal.EagerLoadServiceProxy;
+import org.apache.tapestry.ioc.internal.ServiceActivityTracker;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry.ioc.services.Status;
 
 /**
  * Invoked from a fabricated service delegate to get or realize (instantiate and configure) the
@@ -28,6 +30,8 @@ import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceProxy,
         RegistryShutdownListener
 {
+    private final ServiceActivityTracker _tracker;
+
     private ObjectCreator _creator;
 
     private boolean _shutdown;
@@ -36,8 +40,10 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
 
     private final String _serviceId;
 
-    public JustInTimeObjectCreator(ObjectCreator creator, String serviceId)
+    public JustInTimeObjectCreator(ServiceActivityTracker tracker, ObjectCreator creator,
+            String serviceId)
     {
+        _tracker = tracker;
         _creator = creator;
         _serviceId = serviceId;
     }
@@ -59,9 +65,11 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
             try
             {
                 _object = _creator.createObject();
-                
+
                 // And if that's successful ...
-                
+
+                _tracker.setStatus(_serviceId, Status.REAL);
+
                 _creator = null;
             }
             catch (RuntimeException ex)

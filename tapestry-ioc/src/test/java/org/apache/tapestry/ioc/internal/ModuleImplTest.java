@@ -29,6 +29,7 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import org.apache.tapestry.ioc.services.Status;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -40,30 +41,39 @@ public class ModuleImplTest extends IOCInternalTestCase
         InternalRegistry registry = mockInternalRegistry();
         Logger logger = mockLogger();
         ClassFactory factory = new ClassFactoryImpl();
+        ServiceActivityTracker tracker = mockServiceActivityTracker();
 
         ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger,
                 getClassFactory());
 
-        Module module = new ModuleImpl(registry, moduleDef, null, logger);
+        Module module = new ModuleImpl(registry, tracker, moduleDef, null, logger);
 
         expect(registry.getServiceLogger("Upcase")).andReturn(logger);
 
         train_isDebugEnabled(logger, true);
         logger.debug("Creating service 'Upcase'.");
 
-        train_getLifecycle(registry, "singleton", new SingletonServiceLifecycle());
+        tracker.setStatus("Upcase", Status.VIRTUAL);
 
         train_newClass(registry, factory, UpcaseService.class);
 
         registry.addRegistryShutdownListener(isA(RegistryShutdownListener.class));
 
+        replay();
+
+        UpcaseService service = module.getService("Upcase", UpcaseService.class);
+
+        verify();
+
+        train_getLifecycle(registry, "singleton", new SingletonServiceLifecycle());
+
         train_isDebugEnabled(logger, false);
 
         train_findDecoratorsForService(registry);
 
-        replay();
+        tracker.setStatus("Upcase", Status.REAL);
 
-        UpcaseService service = module.getService("Upcase", UpcaseService.class);
+        replay();
 
         assertEquals(service.upcase("hello"), "HELLO");
 
@@ -84,7 +94,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, null);
 
-        Module module = new ModuleImpl(registry, moduleDef, null, logger);
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
 
         replay();
 
@@ -119,7 +129,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         replay();
 
-        Module module = new ModuleImpl(registry, moduleDef, null, logger);
+        Module module = new ModuleImpl(registry, null, moduleDef, null, logger);
 
         Set<DecoratorDef> defs = module.findMatchingDecoratorDefs(serviceDef);
 
@@ -138,7 +148,7 @@ public class ModuleImplTest extends IOCInternalTestCase
 
         replay();
 
-        Module module = new ModuleImpl(registry, def, null, logger);
+        Module module = new ModuleImpl(registry, null, def, null, logger);
 
         try
         {
@@ -164,7 +174,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         Logger logger = mockLogger();
         ModuleDef def = new DefaultModuleDefImpl(ExtraPublicConstructorsModule.class, logger, null);
         ClassFactory factory = newMock(ClassFactory.class);
-        Module module = new ModuleImpl(registry, def, null, logger);
+        Module module = new ModuleImpl(registry, null, def, null, logger);
 
         logger.warn(contains("contains more than one public constructor"));
 

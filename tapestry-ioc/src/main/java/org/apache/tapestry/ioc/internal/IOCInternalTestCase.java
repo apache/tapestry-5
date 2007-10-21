@@ -144,4 +144,9 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
     }
 
+    protected ServiceActivityTracker mockServiceActivityTracker()
+    {
+        return newMock(ServiceActivityTracker.class);
+    }
+
 }

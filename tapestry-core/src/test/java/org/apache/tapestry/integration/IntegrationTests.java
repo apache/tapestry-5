@@ -1158,4 +1158,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Howard Lewis Ship", "Dec 24, 1966");
     }
+
+    /** This basically checks that the services status page does not error. */
+    @Test
+    public void services_status()
+    {
+        open(BASE_URL + "servicestatus");
+
+        assertTextPresent("Tapestry IoC Services Status");
+    }
 }

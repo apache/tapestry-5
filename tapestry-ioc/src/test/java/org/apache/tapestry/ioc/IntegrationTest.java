@@ -23,6 +23,9 @@ import java.util.Map;
 
 import org.apache.tapestry.ioc.internal.ExceptionInConstructorModule;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry.ioc.services.ServiceActivity;
+import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.services.TapestryIOCModule.Builtin;
 import org.testng.Assert;
@@ -662,5 +665,44 @@ public class IntegrationTest extends IOCInternalTestCase
         assertSame(tc1, tc2);
 
         verify();
+    }
+
+    /**
+     * A cursory test for {@link ServiceActivityScoreboard}, just to see if any data has been
+     * collected.
+     */
+    @Test
+    public void service_activity_scoreboard()
+    {
+        Registry r = buildRegistry(GreeterModule.class);
+
+        ServiceActivityScoreboard scoreboard = r.getService(ServiceActivityScoreboard.class);
+
+        // Force the state of a few services.
+
+        TypeCoercer tc = r.getService("TypeCoercer", TypeCoercer.class);
+
+        tc.coerce("123", Integer.class);
+
+        r.getService("BlueGreeter", Greeter.class);
+
+        // Now get the activity list and poke around.
+
+        List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
+
+        assertTrue(serviceActivity.size() > 0);
+
+        for (ServiceActivity a : serviceActivity)
+        {
+            String serviceId = a.getServiceId();
+
+            if (serviceId.equals("ClassFactory")) assertEquals(a.getStatus(), Status.BUILTIN);
+
+            if (serviceId.equals("RedGreeter1")) assertEquals(a.getStatus(), Status.DEFINED);
+
+            if (serviceId.equals("TypeCoercer")) assertEquals(a.getStatus(), Status.REAL);
+
+            if (serviceId.equals("BlueGreeter")) assertEquals(a.getStatus(), Status.VIRTUAL);
+        }
     }
 }
