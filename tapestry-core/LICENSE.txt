@@ -421,4 +421,18 @@ OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
+DYNARCH.COM DHTML/JAVASCRIPT CALENDAR
 
+The DHTML Calendar
+-------------------
+
+  Author: Mihai Bazon, <mihai_bazon@yahoo.com>
+          http://dynarch.com/mishoo/
+
+  This program is free software published under the
+  terms of the GNU Lesser General Public License.
+
+  For the entire license text please refer to
+  http://www.gnu.org/licenses/lgpl.html
+  
+  

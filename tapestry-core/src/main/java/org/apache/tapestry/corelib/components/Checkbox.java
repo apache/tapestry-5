@@ -49,20 +49,17 @@ public class Checkbox extends AbstractField
     @BeginRender
     void begin(MarkupWriter writer)
     {
-        writer.element(
-                "input",
-                "type",
-                "checkbox",
-                "name",
-                getElementName(),
-                "id",
-                getClientId(),
-                "checked",
-                _value ? "checked" : null);
+        writer.element("input", "type", "checkbox",
+
+        "name", getElementName(),
+
+        "id", getClientId(),
+
+        "checked", _value ? "checked" : null);
 
         _resources.renderInformalParameters(writer);
 
-        getValidationDecorator().insideField(this);
+        decorateInsideField();
     }
 
     @AfterRender

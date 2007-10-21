@@ -145,7 +145,7 @@ public class Upload extends AbstractField
 
         _resources.renderInformalParameters(writer);
 
-        getValidationDecorator().insideField(this);
+        decorateInsideField();
     }
 
     public void afterRender(MarkupWriter writer)
@@ -172,7 +172,7 @@ public class Upload extends AbstractField
     {
         // We have our copy ...
         _formSupport = formSupport;
-        
+
         // As does AbstractField
         setFormSupport(formSupport);
     }

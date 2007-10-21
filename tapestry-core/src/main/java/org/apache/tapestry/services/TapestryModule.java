@@ -17,6 +17,7 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -343,11 +344,16 @@ public final class TapestryModule
 
             // @Inject not needed, because this isn't a service builder method
             @Symbol("tapestry.scriptaculous.path")
-            String scriptaculousPath)
-    {
-        configuration.add("tapestry/", "org/apache/tapestry/");
+            String scriptaculousPath,
 
-        configuration.add("scriptaculous/", scriptaculousPath + "/");
+            @Symbol("tapestry.jscalendar.path")
+            String jscalendarPath)
+    {
+        configuration.add("tapestry", "org/apache/tapestry");
+
+        configuration.add("scriptaculous", scriptaculousPath);
+
+        configuration.add("jscalendar", jscalendarPath);
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
@@ -506,6 +512,7 @@ public final class TapestryModule
      * <li>Number --&gt; text
      * <li>Enum --&gt; enum
      * <li>Boolean --&gt; checkbox
+     * <li>Date --&gt; date
      * </ul>
      */
     public static void contributeDefaultDataTypeAnalyzer(
@@ -524,6 +531,7 @@ public final class TapestryModule
         configuration.add(Number.class, "text");
         configuration.add(Enum.class, "enum");
         configuration.add(Boolean.class, "checkbox");
+        configuration.add(Date.class, "date");
     }
 
     public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)
@@ -531,8 +539,10 @@ public final class TapestryModule
         addEditBlock(configuration, "text", "text");
         addEditBlock(configuration, "enum", "enum");
         addEditBlock(configuration, "checkbox", "checkbox");
+        addEditBlock(configuration, "date", "date");
 
         addDisplayBlock(configuration, "enum", "enum");
+        addDisplayBlock(configuration, "date", "date");
     }
 
     private static void addEditBlock(Configuration<BeanBlockContribution> configuration,

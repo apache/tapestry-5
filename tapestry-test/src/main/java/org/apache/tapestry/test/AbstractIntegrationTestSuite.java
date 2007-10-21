@@ -57,6 +57,8 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     // root.
     public static final String BASE_URL = String.format("http://localhost:%d/", JETTY_PORT);
 
+    public static final String SUBMIT = "//input[@type='submit']";
+
     private final String _webappRoot;
 
     private JettyRunner _jettyRunner;

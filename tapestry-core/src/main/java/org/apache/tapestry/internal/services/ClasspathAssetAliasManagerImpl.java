@@ -31,7 +31,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     private final Request _request;
 
     /** Map from alias to path. */
-    private final Map<String, String> _aliasToPathPrefix;
+    private final Map<String, String> _aliasToPathPrefix = newMap();
 
     /** Map from path to alias. */
     private final Map<String, String> _pathPrefixToAlias = newMap();
@@ -41,20 +41,23 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     private final List<String> _sortedPathPrefixes;
 
     /**
-     * Configuration is a map of aliases (short names) to complete names. Keys and values should not
-     * start with a slash, but should end with one. Example: "tapestry/" --> "org/apache/tapestry/".
+     * Configuration is a map of aliases (short names) to complete names. Keys and values should end
+     * with a slash, but one will be provided as necessary, so don't both.
      */
     public ClasspathAssetAliasManagerImpl(Request request,
 
-    final Map<String, String> configuration)
+    Map<String, String> configuration)
     {
         _request = request;
 
-        _aliasToPathPrefix = configuration;
-
-        for (Map.Entry<String, String> e : _aliasToPathPrefix.entrySet())
+        for (Map.Entry<String, String> e : configuration.entrySet())
         {
-            _pathPrefixToAlias.put(e.getValue(), e.getKey());
+            String alias = withSlash(e.getKey());
+            String path = withSlash(e.getValue());
+
+            _aliasToPathPrefix.put(alias, path);
+            _pathPrefixToAlias.put(path, alias);
+
         }
 
         Comparator<String> sortDescendingByLength = new Comparator<String>()
@@ -70,6 +73,13 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
         _sortedPathPrefixes = newList(_aliasToPathPrefix.values());
         Collections.sort(_sortedPathPrefixes, sortDescendingByLength);
+    }
+
+    private String withSlash(String input)
+    {
+        if (input.endsWith("/")) return input;
+
+        return input + "/";
     }
 
     public String toClientURL(String resourcePath)

@@ -4,4 +4,8 @@
     ${convertedEnumValue}
   </t:block>
   
+  <t:block id="date">
+    <t:output value="context.propertyValue" format="dateFormat"/>
+  </t:block>
+  
 </div>

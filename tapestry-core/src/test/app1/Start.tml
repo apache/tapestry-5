@@ -110,8 +110,12 @@
             -- Loops and Submit inside Form, volatile mode
           </li>
           <li>
-<t:pagelink page="MissingTemplate">Missing Template Demo</t:pagelink> -- Demo for what happens when a template is not found for a page.
-</li>
+            <t:pagelink page="MissingTemplate">
+              Missing Template Demo
+            </t:pagelink>
+            -- Demo for what happens when a template is not found for a
+            page.
+          </li>
         </ul>
       </td>
       <td>
@@ -257,6 +261,17 @@
             <t:pagelink page="GridFormDemo">Grid Form Demo</t:pagelink>
             -- Grid operating inside a Form
           </li>
+          <li>
+            <t:pagelink page="DateFieldDemo">DateField Demo</t:pagelink>
+            -- using DateField by itself on a page
+          </li>
+          <li>
+            <t:pagelink page="BeanEditDateDemo">
+              BeanEditor / Date Demo
+            </t:pagelink>
+            -- Use of date properties inside BeanEditor and BeanDisplay
+          </li>
+
         </ul>
       </td>
     </tr>

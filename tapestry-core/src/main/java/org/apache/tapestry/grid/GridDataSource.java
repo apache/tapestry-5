@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.grid;
 
+import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.corelib.components.Grid;
@@ -53,7 +54,7 @@ public interface GridDataSource
 
     /**
      * Returns the type of value in the rows, or null if not known. This value is used to create a
-     * default {@link GridDataModel} when no such model is provided.
+     * default {@link BeanModel} when no such model is explicitly provided.
      * 
      * @return the row type, or null
      */
