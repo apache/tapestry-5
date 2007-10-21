@@ -96,13 +96,15 @@ TABLE.t-data-table TD {
 DIV.t-beaneditor, DIV.t-beandisplay {
   display: block;
   background: #ffc;
-  border: 2px solid silver;
+  border: 2px outset brown;
   padding: 2px;
   font-family: "Trebuchet MS", Arial, sans-serif;
 }
 
 DIV.t-beandisplay {
-  background: #c0c0c0;
+  background: #CCBE99;
+  border: 2px outset black;
+  width: auto;
 }
 
 FORM.t-beaneditor LABEL:after {
@@ -254,3 +256,9 @@ DIV.t-palette-selected {
 DIV.t-palette-spacer {
   clear: left;
 }
+
+BUTTON.t-calendar-trigger {
+  margin-left: 3px;
+  padding: none;
+}
+

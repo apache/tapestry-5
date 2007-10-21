@@ -15,4 +15,9 @@
     <input t:id="checkboxField"/>
   </t:block>
   
+  <t:block id="date">
+    <t:label for="dateField"/>
+    <input t:id="dateField"/>
+  </t:block>
+  
 </div>

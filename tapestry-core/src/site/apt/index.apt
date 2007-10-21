@@ -13,6 +13,8 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
   
+  * We finally have a DateField component, built on top of the {{{http://www.dynarch.com/projects/calendar/}dynarch.com DHTML/JavaScript Calendar}}.
+  
   * The Grid component may now be used inside a Form.
   
   * Tapestry templates now use the extension .tml (not .html). Page templates in the context are now stored at the root, not under WEB-INF.

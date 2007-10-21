@@ -14,14 +14,23 @@
 
 package org.apache.tapestry.corelib.pages;
 
+import java.text.DateFormat;
+import java.util.Locale;
+
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.PropertyOutputContext;
 
 public class PropertyDisplayBlocks
 {
     @Environmental
     private PropertyOutputContext _context;
+
+    @Inject
+    private Locale _locale;
+
+    private final DateFormat _dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, _locale);
 
     public String getConvertedEnumValue()
     {
@@ -30,5 +39,15 @@ public class PropertyDisplayBlocks
         if (value == null) return null;
 
         return TapestryInternalUtils.getLabelForEnum(_context.getMessages(), value);
+    }
+
+    public DateFormat getDateFormat()
+    {
+        return _dateFormat;
+    }
+
+    public PropertyOutputContext getContext()
+    {
+        return _context;
     }
 }

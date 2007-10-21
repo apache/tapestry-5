@@ -66,6 +66,7 @@ import org.apache.tapestry.services.RequestExceptionHandler;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.ResourceDigestGenerator;
+import org.apache.tapestry.services.TapestryModule;
 import org.slf4j.Logger;
 
 public final class InternalModule
@@ -93,10 +94,12 @@ public final class InternalModule
     {
         Class c = InternalModule.class;
         config.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
-        config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c.getResource("xhtml1-transitional.dtd"));
+        config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c
+                .getResource("xhtml1-transitional.dtd"));
         config.add("-//W3C//DTD XHTML 1.0 Frameset//EN", c.getResource("xhtml1-frameset.dtd"));
         config.add("-//W3C//DTD HTML 4.01//EN", c.getResource("xhtml1-strict.dtd"));
-        config.add("-//W3C//DTD HTML 4.01 Transitional//EN", c.getResource("xhtml1-transitional.dtd"));
+        config.add("-//W3C//DTD HTML 4.01 Transitional//EN", c
+                .getResource("xhtml1-transitional.dtd"));
         config.add("-//W3C//DTD HTML 4.01 Frameset//EN", c.getResource("xhtml1-frameset.dtd"));
         config.add("-//W3C//ENTITIES Latin 1 for XHTML//EN", c.getResource("xhtml-lat1.ent"));
         config.add("-//W3C//ENTITIES Symbols for XHTML//EN", c.getResource("xhtml-symbol.ent"));
@@ -105,6 +108,8 @@ public final class InternalModule
 
     /**
      * Contributes factory defaults that map be overridden.
+     * 
+     * @see TapestryModule#contributeClasspathAssetAliasManager(MappedConfiguration, String, String)
      */
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
     {
@@ -113,7 +118,10 @@ public final class InternalModule
 
         configuration.add("tapestry.file-check-interval", "1000"); // 1 second
         configuration.add("tapestry.file-check-update-timeout", "50"); // 50 milliseconds
+        
+        // This should be overridden for particular applications.
         configuration.add("tapestry.supported-locales", "en");
+        
         configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
 
         configuration.add("tapestry.start-page-name", "start");
@@ -128,6 +136,11 @@ public final class InternalModule
         configuration.add(
                 "tapestry.scriptaculous.path",
                 "org/apache/tapestry/scriptaculous_1_7_1_beta_3");
+
+        // Likewise for jscalendar, currently version 1.0
+
+        configuration.add("tapestry.jscalendar.path", "org/apache/tapestry/jscalendar-1.0");
+        configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
     }
 
     private final ComponentInstantiatorSource _componentInstantiatorSource;

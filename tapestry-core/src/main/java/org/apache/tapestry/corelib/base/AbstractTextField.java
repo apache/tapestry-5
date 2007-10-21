@@ -42,7 +42,7 @@ import org.apache.tapestry.services.ValidationMessagesSource;
 public abstract class AbstractTextField extends AbstractField
 {
     /**
-     * The value to be read and updated. This is not necessarilly a string, a translator may be
+     * The value to be read and updated. This is not necessarily a string, a translator may be
      * provided to convert between client side and server side representations. If not bound, a
      * default binding is made to a property of the container matching the component's id. If no
      * such property exists, then you will see a runtime exception due to the unbound value
@@ -60,8 +60,8 @@ public abstract class AbstractTextField extends AbstractField
     private Translator<Object> _translate;
 
     /**
-     * The object that will peform input validation (which occurs after translation). The translate
-     * binding prefix is genereally used to provide this object in a declarative fashion.
+     * The object that will perform input validation (which occurs after translation). The translate
+     * binding prefix is generally used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
@@ -141,10 +141,10 @@ public abstract class AbstractTextField extends AbstractField
         writeFieldTag(writer, value);
 
         _validate.render(writer);
-        
+
         _resources.renderInformalParameters(writer);
 
-        getValidationDecorator().insideField(this);
+        decorateInsideField();
     }
 
     /**

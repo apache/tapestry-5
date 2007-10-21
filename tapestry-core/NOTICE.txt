@@ -13,6 +13,9 @@ http://prototypejs.org/
 This product includes modified versions of Java classes from the JSON library.
 http://json.org/
 
+This product includes the DHTML/JavaScript Calendar, distributed under the terms of the Lesser GNU Public License.
+
+
 This product includes images from the Silk icon set, distributed under the terms of the Creative Commons Attribution 2.5 License.
 http://www.famfamfam.com/lab/icons/silk/
 

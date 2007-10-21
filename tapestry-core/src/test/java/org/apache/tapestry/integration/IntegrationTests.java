@@ -266,7 +266,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("userName", "howard");
         type("password", "wrong-password");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertFieldValue("userName", "howard");
         // Verify that password fields do not render a non-blank password, even when it is known.
@@ -277,7 +277,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         type("password", "tapestry");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertTextPresent("You have provided the correct user name and password.");
     }
@@ -317,7 +317,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("ValidForm");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
         assertTextPresent("You must provide a value for Email.");
         // is an overridden validation error message:
         assertTextPresent("Please provide a detailed description of the incident.");
@@ -333,7 +333,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("message", "Show me the money!");
         type("hours", "foo");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertTextPresent("[false]");
         assertTextPresent("The input value 'foo' is not parseable as an integer value.");
@@ -342,7 +342,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         type("hours", " 19 ");
         click("//input[@id='urgent']");
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         // Make sure the decoration went away.
 
@@ -404,7 +404,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         select("department", "R&D");
         click("urgent");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertFieldValue("email", "foo@bar.baz");
         assertFieldValue("message", "Message for you, sir!");
@@ -523,10 +523,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void bean_editor()
     {
-        String submitButton = "//input[@type='submit']";
-
         start("BeanEditor Demo", "Clear Data");
-        clickAndWait(submitButton);
+        clickAndWait(SUBMIT);
 
         assertTextPresent(
                 "(First Name is Required)",
@@ -548,7 +546,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         select("sex", "label=Martian");
         click("citizen");
 
-        clickAndWait(submitButton);
+        clickAndWait(SUBMIT);
 
         assertTextPresent(
                 "You must provide at least 3 characters for First Name.",
@@ -559,7 +557,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("lastName", "Lewis Ship");
         type("birthYear", "1966");
 
-        clickAndWait(submitButton);
+        clickAndWait(SUBMIT);
 
         // The XPath support is too week for //div[@class='t-beandisplay-value'][%d], so we
         // just look for the text itself.
@@ -797,7 +795,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Notice: click, not click and wait.
 
-        click("//input[@type='submit']");
+        click(SUBMIT);
 
         assertTextSeries(
                 "//li[%d]",
@@ -809,14 +807,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
         type("birthYear", "1000");
-        click("//input[@type='submit']");
+        click(SUBMIT);
 
         assertText("//li", "Year of Birth requires a value of at least 1900.");
 
         type("birthYear", "1966");
         click("citizen");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertTextPresent("Howard", "Lewis Ship", "1966", "U. S. Citizen");
     }
@@ -916,7 +914,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         addSelection("languages:avail", "label=Javascript");
         click("languages:select");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
         assertTextPresent("Selected Languages: [HASKELL, JAVASCRIPT]");
 
         addSelection("languages", "label=Javascript");
@@ -933,12 +931,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("languages:select");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertTextPresent("[ERLANG, HASKELL, JAVA, LISP, ML, PERL, PYTHON, RUBY]");
 
         check("reorder");
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         addSelection("languages", "label=Ruby");
 
@@ -950,7 +948,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("languages:down");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertTextPresent("[ERLANG, RUBY, HASKELL, JAVA, LISP, ML, PYTHON, PERL]");
     }
@@ -1026,7 +1024,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("RadioDemo");
 
-        String update = "//input[@type='submit']";
+        String update = SUBMIT;
 
         // in a loop ...
         click("//label[.='Accounting']");
@@ -1052,7 +1050,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Regexp Demo");
 
-        String update = "//input[@type='submit']";
+        String update = SUBMIT;
 
         type("zipCode", "abc");
 
@@ -1110,7 +1108,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("title_1", "Pay Phone Bill");
         select("urgency_1", "Low");
 
-        clickAndWait("//input[@type='submit']");
+        clickAndWait(SUBMIT);
 
         assertFieldValueSeries("title_%d", 0, "Cure Cancer", "Pay Phone Bill");
         assertFieldValueSeries("urgency_%d", 0, "HIGH", "LOW");
@@ -1122,5 +1120,42 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Missing Template Demo");
 
         assertTextPresent("Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
+    }
+
+    /**
+     * This can test some output and parsing capability of the DateField component, but not the
+     * interesting client-side behavior.
+     */
+    @Test
+    public void basic_datefield()
+    {
+        start("DateField Demo");
+
+        type("birthday", "12/24/66");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("[12/24/1966]");
+
+        assertFieldValue("birthday", "12/24/66");
+    }
+
+    /**
+     * This also checks that the date type is displayed correctly by BeanDisplay and Grid.
+     */
+    @Test
+    public void date_field_inside_bean_editor()
+    {
+        start("BeanEditor / Date Demo", "clear");
+
+        type("name", "Howard Lewis Ship");
+        type("date", "12/24/66");
+
+        clickAndWait(SUBMIT);
+
+        // Notice the date output format; that is controlled by the date Block on the
+        // PropertyDisplayBlocks page.
+
+        assertTextPresent("Howard Lewis Ship", "Dec 24, 1966");
     }
 }

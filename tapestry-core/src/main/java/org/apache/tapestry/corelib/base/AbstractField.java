@@ -25,6 +25,7 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.ValidationDecorator;
 import org.apache.tapestry.ValidationException;
+import org.apache.tapestry.Validator;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
@@ -224,21 +225,31 @@ public abstract class AbstractField implements Field
      */
     protected abstract void processSubmission(FormSupport formSupport, String elementName);
 
+    /** Allows the validation decorator to write markup before the field itself writes markup. */
     @BeginRender
     final void beforeDecorator(MarkupWriter writer)
     {
         _decorator.beforeField(this);
     }
 
+    /**
+     * Allows the validation decorator to write markup after the field has written all of its
+     * markup.
+     */
     @AfterRender
     final void afterDecorator(MarkupWriter writer)
     {
         _decorator.afterField(this);
     }
 
-    protected final ValidationDecorator getValidationDecorator()
+    /**
+     * Invoked from subclasses after they have written their tag and (where appropriate) their
+     * informal parameters <em>and</em> have allowed their {@link Validator} to write markup as
+     * well.
+     */
+    protected final void decorateInsideField()
     {
-        return _decorator;
+        _decorator.insideField(this);
     }
 
     protected final void setDecorator(ValidationDecorator decorator)

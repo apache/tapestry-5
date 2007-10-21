@@ -21,6 +21,7 @@ import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.corelib.components.BeanEditForm;
 import org.apache.tapestry.corelib.components.Checkbox;
+import org.apache.tapestry.corelib.components.DateField;
 import org.apache.tapestry.corelib.components.Select;
 import org.apache.tapestry.corelib.components.TextField;
 import org.apache.tapestry.services.BeanBlockContribution;
@@ -58,6 +59,12 @@ public class PropertyEditBlocks
     { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId" })
     private Checkbox _checkboxField;
 
+    @SuppressWarnings("unused")
+    @Component(parameters =
+    { "value=context.propertyValue", "label=prop:context.label",
+            "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator" })
+    private DateField _dateField;
+
     public PropertyEditContext getContext()
     {
         return _context;
@@ -66,6 +73,11 @@ public class PropertyEditBlocks
     public FieldValidator getTextFieldValidator()
     {
         return _context.getValidator(_textField);
+    }
+
+    public FieldValidator getDateFieldValidator()
+    {
+        return _context.getValidator(_dateField);
     }
 
     public FieldValidator getSelectValidator()
