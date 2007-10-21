@@ -10,12 +10,12 @@ Preparation
 
   Send an announcement to the list, asking them to hold off on trunk checkins.
   
-  Make <<sure>> (<<sure!>>) you have the latest copies of tapestry-project and all of the modules.
+  Make <<sure>> (<<sure!>>) you have the latest copies of the Tapestry 5 project and all its modules.
   
 Bumping the Version Number
 
-  At this point, the version number of the tapestry-project POM is 5.0.x-SNAPSHOT. 
-  Modules inherit their version number from the tapestry-project POM version number.
+  At this point, the version number of the project POM is 5.0.x-SNAPSHOT. 
+  Modules inherit their version number from the project POM version number.
   
   We need to update the version number across all modules, from 5.0.x-SNAPSHOT to just 5.0.x.
   
@@ -56,7 +56,7 @@ Generate the Release Notes
   
 Build and Deploy Site
 
-  From tapestry-project, execute <<<mvn site site:deploy -Pjavadoc>>>
+  Execute <<<mvn site site:deploy -Pjavadoc>>>
   
   This will build the project site and each of the module sites.  The sites go to a server that is periodically copied over to the live server; it can take up to an hour
   for changes to show up.
@@ -65,22 +65,19 @@ Build and Deploy Site
   
 Build and Deploy Artifacts
 
-  From tapestry-project, execute <<<mvn deploy -Pdeploy>>>
+  Execute <<<mvn deploy -Pdeploy>>>
   
   This will sign the artifacts using GPG and deploy them.  Alas, due to bugs in Maven, it has a tendency to sign the signature files (".asc") and upload those as well; we'll clean that up in a bit.
   
   Since the version number is not longer -SNAPSHOT, each file
   will be published to the Tapestry Snapshot Repository ({{{http://people.apache.org/~hlship/tapestry-snapshot-repository/}http://people.apache.org/~hlship/tapestry-snapshot-repository/}}).
-  Once the vote on the release is approved, the files will be moved from there to the Apache Ibiblio Sync directory, and from there to the world.
-  
-  This takes 10 - 15 minutes. There's a whole lot of FTP-ing and SSH-ing going on.  Maven tends to run the test suites repeatedly, which is a
-  bummer (that tapestry-core suite starts up Firefox and Selenium and takes about a minute to run each time).
+  Once the vote on the release is approved, the files will be moved from there to the Apache Ibiblio Sync directory, and from there to the world.   
   
 Binary / Source Distributions
 
   An Ant script is used to build traditional binary and source distributions.  It requires Ant <<1.7.0>>.
   
-  From the tapestry-project directory,  execute <<<ant>>>.
+  Execute <<<ant>>>.
   
 ----
 $ ant
@@ -120,7 +117,7 @@ Cleaning up
   
   <<<find tapestry-ibiblio-rsynch-repository -name \*.asc.\* | xargs rm>>>>
   
-  This deletes lots of excess GnuPG signature files that were inadventently created and uploaded.
+  This deletes lots of excess GnuPG signature files that were inadvertently created and uploaded.
   
   And, of course, permissions are never quite right:
   
@@ -128,13 +125,11 @@ Cleaning up
        
 Commit Changes
 
-  Commit changes to tapestry-project and all modules.
+  Commit changes to the project.
   
 Tag In Subversion
 
-  For tapestry-project and each module, you must tag the release.
-  
-  You do this with SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
+  You must the source in SVN, copying the trunk folder to tags/releases/5.0.x.  The SVN tags/releases folder must
   already exist, the specific folder must not.
 
   I do this from Eclipse, but the command line (for example) is pretty straight forward (and I may create a script to help with this):
