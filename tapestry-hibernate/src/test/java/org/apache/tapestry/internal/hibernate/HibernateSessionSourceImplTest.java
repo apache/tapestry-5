@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.hibernate;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.tapestry.hibernate.HibernateConfigurer;
@@ -26,6 +27,7 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
+import org.hibernate.cfg.Configuration;
 import org.hibernate.metadata.ClassMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,4 +63,28 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
 		
         verify();
     }
+    
+    @Test
+    public void get_configuration() {
+        HibernateConfigurer configurer = new HibernateConfigurer() {
+			public void configure(Configuration configuration) {
+				configuration.setProperty("foo", "bar");
+				configuration.configure();
+			}
+        };
+        HibernateSessionSource source = new HibernateSessionSourceImpl(_log, Arrays.asList(configurer));
+        
+        Configuration config = source.getConfiguration();
+        assertNotNull(config);
+        assertEquals("bar", config.getProperty("foo"));
+        
+        // configuration should be immutable
+        try {
+        	config.setProperty("hibernate.dialect", "foo");
+        	fail("did not throw");
+        } catch(UnsupportedOperationException e) {
+        	assertTrue(e.getMessage().contains("immutable"));
+        }
+    }
+
 }

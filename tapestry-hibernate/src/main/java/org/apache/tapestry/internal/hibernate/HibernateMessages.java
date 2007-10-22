@@ -33,4 +33,8 @@ class HibernateMessages
     {
         return MESSAGES.format("entity-catalog", InternalUtils.joinSorted(entityNames));
     }
+    
+    static String configurationImmutable() {
+    	return MESSAGES.get("configuration-immutable");
+    }
 }
