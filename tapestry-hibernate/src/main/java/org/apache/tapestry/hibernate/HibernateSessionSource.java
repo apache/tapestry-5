@@ -32,4 +32,9 @@ public interface HibernateSessionSource
 
     /** Returns the SessionFactory from which Hibernate sessions are created. */
     SessionFactory getSessionFactory();
+    
+    /** Returns the final configuration used to create the {@link SessionFactory}.
+     * The configuration is immutable.
+     */
+    Configuration getConfiguration();
 }

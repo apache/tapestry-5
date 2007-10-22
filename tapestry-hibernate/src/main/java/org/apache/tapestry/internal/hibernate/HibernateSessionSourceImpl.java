@@ -21,17 +21,19 @@ import org.apache.tapestry.hibernate.HibernateSessionSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
+import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 
 public class HibernateSessionSourceImpl implements HibernateSessionSource
 {
-    private SessionFactory _sessionFactory;
+    private final SessionFactory _sessionFactory;
+    private final Configuration _configuration;
 
     public HibernateSessionSourceImpl(Logger logger, List<HibernateConfigurer> hibernateConfigurers)
     {
         long startTime = System.currentTimeMillis();
 
-        AnnotationConfiguration configuration = new AnnotationConfiguration();
+        Configuration configuration = new AnnotationConfiguration();
 
         for(HibernateConfigurer configurer : hibernateConfigurers)
         	configurer.configure(configuration);
@@ -39,6 +41,7 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
         long configurationComplete = System.currentTimeMillis();
 
         _sessionFactory = configuration.buildSessionFactory();
+        _configuration = new ImmutableConfiguration(configuration);
 
         long factoryCreated = System.currentTimeMillis();
 
@@ -61,4 +64,10 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
     {
         return _sessionFactory;
     }
+
+	public Configuration getConfiguration() {
+		return _configuration;
+	}
+    
+    
 }
