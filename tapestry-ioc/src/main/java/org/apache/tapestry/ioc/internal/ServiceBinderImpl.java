@@ -41,10 +41,14 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final ClassFactory _classFactory;
 
-    public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory)
+    private final Class _defaultMarker;
+
+    public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory,
+            Class defaultMarker)
     {
         _accumulator = accumulator;
         _classFactory = classFactory;
+        _defaultMarker = defaultMarker;
     }
 
     private String _serviceId;
@@ -92,7 +96,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         _serviceId = null;
         _serviceInterface = null;
-        _marker = null;
+        _marker = _defaultMarker;
         _serviceImplementation = null;
         _eagerLoad = false;
         _scope = null;
@@ -138,7 +142,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         Marker marker = serviceImplementation.getAnnotation(Marker.class);
 
-        _marker = marker != null ? marker.value() : null;
+        _marker = marker != null ? marker.value() : _defaultMarker;
 
         return this;
     }
@@ -176,8 +180,6 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public <T extends Annotation> ServiceBindingOptions withMarker(Class<T> marker)
     {
-        notNull(marker, "marker");
-
         _lock.check();
 
         _marker = marker;
