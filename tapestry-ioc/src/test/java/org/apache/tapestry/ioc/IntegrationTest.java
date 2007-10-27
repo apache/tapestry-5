@@ -23,11 +23,11 @@ import java.util.Map;
 
 import org.apache.tapestry.ioc.internal.ExceptionInConstructorModule;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ServiceActivity;
 import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.ioc.services.TapestryIOCModule.Builtin;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

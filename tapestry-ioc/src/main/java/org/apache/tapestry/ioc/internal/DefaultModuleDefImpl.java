@@ -84,6 +84,8 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
 
+    private final Class _defaultMarker;
+
     static
     {
         PARAMETER_TYPE_TO_CONFIGURATION_TYPE.put(Configuration.class, UNORDERED);
@@ -98,11 +100,15 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
      * @param classFactory
      *            TODO
      */
-    public DefaultModuleDefImpl(Class builderClass, Logger logger, ClassFactory classFactory)
+    public DefaultModuleDefImpl(Class<?> builderClass, Logger logger, ClassFactory classFactory)
     {
         _builderClass = builderClass;
         _logger = logger;
         _classFactory = classFactory;
+
+        Marker annotation = builderClass.getAnnotation(Marker.class);
+
+        _defaultMarker = annotation != null ? annotation.value() : null;
 
         grind();
         bind();
@@ -325,7 +331,10 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     {
         Marker annotation = method.getAnnotation(Marker.class);
 
-        return annotation == null ? null : annotation.value();
+        // Use the annotation value if present, otherwise use the module's default
+        // (from the module class's annotation, or null if no annotation there).
+
+        return annotation == null ? _defaultMarker : annotation.value();
     }
 
     public void addServiceDef(ServiceDef serviceDef)
@@ -384,7 +393,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 return;
             }
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, _classFactory);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, _classFactory, _defaultMarker);
 
             bindMethod.invoke(null, binder);
 

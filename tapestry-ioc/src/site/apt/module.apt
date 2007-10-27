@@ -18,6 +18,8 @@ Tapestry IoC Modules
   * To <decorate> services by providing <interceptors> around them
 
   * To provide explicit code for building a service
+  
+  * To set a default <marker> for all services defined in the module
 
   []
 
@@ -265,3 +267,35 @@ Module Builder Implementation Notes
   necessary in a few cases, where the constructor for a module is dependent on contributions
   from the same module (this creates a chicken-and-the-egg situation that is resolved through
   static methods).
+  
+Default Marker
+
+  Services are often referenced by a particular marker interface on the method or contructor parameter. Tapestry
+  will use the intersection of services with that exact marker and assignable by type to find a unique service
+  to inject.  
+  
+  Often, all services in a module should share a marker, this can be specified with a @Marker annotation
+  on the module class.  For example, the TapestryIOCModule:
+  
++---+
+@Marker(Builtin.class)
+public final class TapestryIOCModule
+{
+  . . .
++---+
+
+  This references a particular annotation class, Builtin:
+  
++---+
+@Target(
+{ PARAMETER, FIELD })
+@Retention(RUNTIME)
+@Documented
+public @interface Builtin
+{
+
+}
++----+
+
+  The annotation can be applied to method and constructor parameters, for use within the IoC container.  It can also be applied
+  to fields, though this is specific to the Tapestry web framework.

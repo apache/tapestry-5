@@ -29,6 +29,9 @@ import org.apache.tapestry.ioc.def.ServiceDef;
  * implementation. This allows for injection based on the combination of type and marker interface.
  * These marker interfaces should not have any values. The mere presence of the marker annotation is
  * all that is needed.
+ * <p>
+ * When applied to a module class, this sets the default marker for all services within the module
+ * (whereas the normal default marker is null).
  */
 @Target(
 { TYPE, METHOD })

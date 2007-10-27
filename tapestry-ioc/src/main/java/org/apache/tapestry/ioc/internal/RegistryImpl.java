@@ -50,6 +50,7 @@ import org.apache.tapestry.ioc.internal.services.ThreadCleanupHubImpl;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.Orderer;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -61,7 +62,6 @@ import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
-import org.apache.tapestry.ioc.services.TapestryIOCModule.Builtin;
 import org.apache.tapestry.services.MasterObjectProvider;
 import org.slf4j.Logger;
 
