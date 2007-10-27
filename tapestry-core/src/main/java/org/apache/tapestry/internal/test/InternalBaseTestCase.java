@@ -156,6 +156,11 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return _registry.autobuild(clazz);
     }
 
+    public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
+    {
+        return _registry.proxy(interfaceClass, implementationClass);
+    }
+
     public final void shutdown()
     {
         throw new UnsupportedOperationException("No registry shutdown until @AfterSuite.");

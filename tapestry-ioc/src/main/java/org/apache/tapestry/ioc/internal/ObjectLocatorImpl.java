@@ -65,4 +65,9 @@ public class ObjectLocatorImpl implements ObjectLocator
         return _registry.autobuild(clazz);
     }
 
+    public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
+    {
+        return _registry.proxy(interfaceClass, implementationClass);
+    }
+
 }

@@ -51,11 +51,12 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.Orderer;
 import org.apache.tapestry.ioc.services.ClassFab;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
 import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
@@ -788,4 +789,39 @@ public class RegistryImpl implements Registry, InternalRegistry
                 failure);
     }
 
+    public <T> T proxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)
+    {
+        notNull(interfaceClass, "interfaceClass");
+        notNull(implementationClass, "implementationClass");
+
+        // TODO: Check really an interface
+        // TODO: Check impl class extends interfaceClass and is concrete
+
+        final ObjectCreator autobuildCreator = new ObjectCreator()
+        {
+            public Object createObject()
+            {
+                return autobuild(implementationClass);
+            }
+        };
+
+        ObjectCreator justInTime = new ObjectCreator()
+        {
+            private Object _delegate;
+
+            public synchronized Object createObject()
+            {
+                if (_delegate == null) _delegate = autobuildCreator.createObject();
+
+                return _delegate;
+            }
+        };
+
+        ClassFab cf = _classFactory.newClass(interfaceClass);
+
+        String description = String.format("<Autobuild proxy %s(%s)>", implementationClass
+                .getName(), interfaceClass.getName());
+
+        return ClassFabUtils.createObjectCreatorProxy(cf, interfaceClass, justInTime, description);
+    }
 }

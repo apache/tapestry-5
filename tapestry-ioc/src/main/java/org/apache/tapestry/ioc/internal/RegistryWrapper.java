@@ -68,4 +68,9 @@ public class RegistryWrapper implements Registry
         _registry.performRegistryStartup();
     }
 
+    public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
+    {
+        return _registry.proxy(interfaceClass, implementationClass);
+    }
+
 }

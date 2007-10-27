@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.ioc;
 
+import org.apache.tapestry.services.MasterObjectProvider;
+
 /**
  * Defines an object which can provide access to services defined within a
  * {@link org.apache.tapestry.ioc.Registry}, or to objects or object instances available by other
@@ -87,4 +89,20 @@ public interface ObjectLocator
      *             if the autobuild fails
      */
     <T> T autobuild(Class<T> clazz);
+
+    /**
+     * Creates a proxy. The proxy will defer invocation of {@link #autobuild(Class)} until
+     * just-in-time (that is, first method invocation). In a limited number of cases, it is
+     * necessary to use such a proxy to prevent service construction cycles, particularily when
+     * contributing (directly or indirectly) to the {@link MasterObjectProvider} (which is itself at
+     * the heart of autobuilding).
+     * 
+     * @param <T>
+     * @param interfaceClass
+     *            the interface implemented by the proxy
+     * @param implementationClass
+     *            a concrete class that implements the interface
+     * @return a proxy
+     */
+    <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass);
 }

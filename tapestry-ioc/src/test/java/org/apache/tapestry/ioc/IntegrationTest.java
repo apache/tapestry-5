@@ -705,4 +705,31 @@ public class IntegrationTest extends IOCInternalTestCase
             if (serviceId.equals("BlueGreeter")) assertEquals(a.getStatus(), Status.VIRTUAL);
         }
     }
+
+    @Test
+    public void proxy_autobuild_object()
+    {
+        Registry r = buildRegistry();
+
+        CountingGreeterImpl._instantiationCount = 0;
+
+        Greeter g = r.proxy(Greeter.class, CountingGreeterImpl.class);
+
+        assertEquals(CountingGreeterImpl._instantiationCount, 0);
+
+        assertEquals(
+                g.toString(),
+                "<Autobuild proxy org.apache.tapestry.ioc.CountingGreeterImpl(org.apache.tapestry.ioc.Greeter)>");
+
+        assertEquals(CountingGreeterImpl._instantiationCount, 0);
+
+        // Show that the class is not instantiated until a method is invoked, and that its
+        // only instantiated once.
+
+        for (int i = 0; i < 5; i++)
+        {
+            assertEquals(g.getGreeting(), "Hello");
+            assertEquals(CountingGreeterImpl._instantiationCount, 1);
+        }
+    }
 }

@@ -24,7 +24,6 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -44,8 +43,8 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.JustInTimeObjectCreator;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
@@ -366,43 +365,9 @@ public class ModuleImpl implements Module
     private Object createProxyInstance(ObjectCreator creator, String serviceId,
             Class serviceInterface, String description)
     {
-        Class proxyClass = createProxyClass(serviceId, serviceInterface, description);
-
-        try
-        {
-            return proxyClass.getConstructors()[0].newInstance(creator);
-        }
-        catch (Exception ex)
-        {
-            // This should never happen, so we won't go to a lot of trouble
-            // reporting it.
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
-    }
-
-    private Class createProxyClass(String serviceId, Class serviceInterface, String proxyDescription)
-    {
         ClassFab cf = _registry.newClass(serviceInterface);
 
-        cf.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
-
-        cf.addConstructor(new Class[]
-        { ObjectCreator.class }, null, "_creator = $1;");
-
-        addDelegateGetter(cf, serviceInterface, serviceId);
-
-        cf.proxyMethodsToDelegate(serviceInterface, "_delegate()", proxyDescription);
-
-        return cf.createClass();
-    }
-
-    private void addDelegateGetter(ClassFab cf, Class serviceInterface, String serviceId)
-    {
-        String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
-
-        MethodSignature sig = new MethodSignature(serviceInterface, "_delegate", null, null);
-
-        cf.addMethod(Modifier.PRIVATE, sig, body);
+        return ClassFabUtils.createObjectCreatorProxy(cf, serviceInterface, creator, description);
     }
 
     public Set<ContributionDef> getContributorDefsForService(String serviceId)
