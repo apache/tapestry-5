@@ -33,7 +33,7 @@ public interface ObjectLocator
      * 
      * @param <T>
      * @param serviceId
-     *            unique ervice id used to locate the service object (may contain <em>symbols</em>,
+     *            unique Service id used to locate the service object (may contain <em>symbols</em>,
      *            which will be expanded), case is ignored
      * @param serviceInterface
      *            the interface implemented by the service (or an interface extended by the service
@@ -87,13 +87,14 @@ public interface ObjectLocator
      * @return the instantiated instance
      * @throws RuntimeException
      *             if the autobuild fails
+     *             @see MasterObjectProvider
      */
     <T> T autobuild(Class<T> clazz);
 
     /**
      * Creates a proxy. The proxy will defer invocation of {@link #autobuild(Class)} until
      * just-in-time (that is, first method invocation). In a limited number of cases, it is
-     * necessary to use such a proxy to prevent service construction cycles, particularily when
+     * necessary to use such a proxy to prevent service construction cycles, particularly when
      * contributing (directly or indirectly) to the {@link MasterObjectProvider} (which is itself at
      * the heart of autobuilding).
      * 
