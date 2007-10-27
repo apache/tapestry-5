@@ -19,43 +19,46 @@ require 'hpricot'
 
 $version = ARGV[0]
 
+def read_pom(file)
+  open(file) do |f|
+    Hpricot.XML(f)
+  end
+end
+
 def write(file, pom)
   puts "Updating #{file} ..."
   
   File.open(file, "w") do |stream|
     stream << pom
-  end
-  
+  end  
+end
+
+def edit_pom(file)
+  pom = read_pom(file)
+  yield pom
+  write(file, pom)
 end
 
 def process_module(mod_name)
 
-  file = "#{mod_name}/pom.xml"
-  
-  pom = open(file) do |f|
-    Hpricot.XML(f)
+  edit_pom("#{mod_name}/pom.xml") do |pom|
+    pom.at("/project/parent/version").inner_html = $version
   end
-  
-  pom.at("/project/parent/version").inner_html = $version
-  
-  write(file, pom)
 end
 
 puts "Updating to version #{$version} ..."
 
-$master_pom = open("pom.xml") do |f|
-    Hpricot.XML(f)
+edit_pom("pom.xml") do |pom|
+  
+  modules = []
+
+  (pom/"project/modules/module").each { |elem| modules << elem.inner_html }
+
+  modules.sort.each { |mod_name| process_module(mod_name) }
+
+  pom.at("/project/version").inner_html = $version
 end
 
-$modules = []
-
-($master_pom/"project/modules/module").each { |elem| $modules << elem.inner_html }
-
-$master_pom.at("/project/version").inner_html = $version
-
-write("pom.xml", $master_pom)
-
-# Add entries for each module
-
-$modules.sort.each { |mod_name| process_module(mod_name) }
-
+edit_pom("quickstart/src/main/resources/archetype-resources/pom.xml") do |pom|
+  pom.at("/project/properties/tapestry-release-version").inner_html = $version
+end

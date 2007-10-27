@@ -28,30 +28,59 @@ $ mvn archetype:create -DarchetypeGroupId=org.apache.tapestry -DarchetypeArtifac
 [INFO] Building Maven Default Project
 [INFO]    task-segment: [archetype:create] (aggregator-style)
 [INFO] ----------------------------------------------------------------------------
-
-. . .
-
+[INFO] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[INFO] Setting property: velocimacro.messages.on => 'false'.
+[INFO] Setting property: resource.loader => 'classpath'.
+[INFO] Setting property: resource.manager.logwhenfound => 'false'.
+[INFO] ************************************************************** 
+[INFO] Starting Jakarta Velocity v1.4
+[INFO] RuntimeInstance initializing.
+[INFO] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+[INFO] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+[INFO] Resource Loader Instantiated: org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader
+[INFO] ClasspathResourceLoader : initialization starting.
+[INFO] ClasspathResourceLoader : initialization complete.
+[INFO] ResourceCache : initialized. (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+[INFO] Default ResourceManager initialization complete.
+[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+[INFO] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+[INFO] Created: 20 parsers.
+[INFO] Velocimacro : initialization starting.
+[INFO] Velocimacro : adding VMs from VM library template : VM_global_library.vm
+[ERROR] ResourceManager : unable to find resource 'VM_global_library.vm' in any resource loader.
+[INFO] Velocimacro : error using  VM library template VM_global_library.vm : org.apache.velocity.exception.ResourceNotFoundException: Unable to find resource 'VM_global_library.vm'
+[INFO] Velocimacro :  VM library template macro registration complete.
+[INFO] Velocimacro : allowInline = true : VMs can be defined inline in templates
+[INFO] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+[INFO] Velocimacro : allowInlineLocal = false : VMs defined inline will be  global in scope if allowed.
+[INFO] Velocimacro : initialization complete.
+[INFO] Velocity successfully started.
 [INFO] [archetype:create]
+[INFO] artifact org.apache.tapestry:quickstart: checking for updates from central
 [INFO] ----------------------------------------------------------------------------
-[INFO] Using following parameters for creating Archetype: quickstart:5.0.5
+[INFO] Using following parameters for creating Archetype: quickstart:RELEASE
 [INFO] ----------------------------------------------------------------------------
 [INFO] Parameter: groupId, Value: org.example
 [INFO] Parameter: packageName, Value: org.example.myapp
-[INFO] Parameter: basedir, Value: /Users/Howard/work
+[INFO] Parameter: basedir, Value: /Users/Howard/Documents/workspace/tapestry5/target
 [INFO] Parameter: package, Value: org.example.myapp
 [INFO] Parameter: version, Value: 1.0.0-SNAPSHOT
 [INFO] Parameter: artifactId, Value: myapp
+[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/pom.xml [line 14,column 22] : ${tapestry-release-version} is not a valid reference.
+[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/pom.xml [line 80,column 26] : ${tapestry-release-version} is not a valid reference.
 [INFO] ********************* End of debug info from resources from generated POM ***********************
-[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/src/main/webapp/WEB-INF/Start.html [line 11,column 34] : ${currentTime} is not a valid reference.
-[INFO] Archetype created in dir: /Users/Howard/work/myapp
+[WARNING] org.apache.velocity.runtime.exception.ReferenceException: reference : template = archetype-resources/src/main/webapp/Start.tml [line 11,column 34] : ${currentTime} is not a valid reference.
+[INFO] Archetype created in dir: /Users/Howard/Documents/workspace/tapestry5/target/myapp
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESSFUL
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 1 second
-[INFO] Finished at: Tue Jan 23 11:57:11 PST 2007
-[INFO] Final Memory: 4M/8M
+[INFO] Total time: 2 seconds
+[INFO] Finished at: Fri Oct 26 18:12:49 PDT 2007
+[INFO] Final Memory: 5M/9M
 [INFO] ------------------------------------------------------------------------
-~/work
 $
 +---+
 
@@ -105,7 +134,7 @@ About Snapshots
 
   Tapestry 5 is currently in a pre-release stage. The Tapestry libraries, including this archetype, are being distributed as snaphots and are rebuilt nightly. Being snapshots, these artifacts are not in the central Maven repository.
   To make use of the Tapestry snapshots, append  <<<-DremoteRepositories=http://tapestry.formos.com/maven-snapshot-repository/>>> and <<<-DarchetypeVersion=5.0.x-SNAPSHOT>>>  (you'll have to figure out what
-  the lastest snapshot is) to the command line when invoking Maven. 
+  the lastest snapshot version is) to the command line when invoking Maven. 
   
   The generated POM includes entries to automatically search the snapshot repository, so you won't need to use <<<-DremoteRepositories>>> after creating your initial project.
   
