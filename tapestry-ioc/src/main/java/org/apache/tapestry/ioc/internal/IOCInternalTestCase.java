@@ -73,6 +73,12 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         _registry.performRegistryStartup();
     }
 
+    public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
+    {
+        return _registry.proxy(interfaceClass, implementationClass);
+    }
+
+    
     @BeforeSuite
     public final void setup_registry()
     {

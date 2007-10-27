@@ -14,16 +14,20 @@
 
 package org.apache.tapestry.ioc.services;
 
+import static java.lang.String.format;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Map;
+
+import org.apache.tapestry.ioc.ObjectCreator;
 
 /**
  * Handy method useful when creating new classes using
  * {@link org.apache.tapestry.ioc.services.ClassFab}.
  */
-public class ClassFabUtils
+public final class ClassFabUtils
 {
     private static long _uid = System.currentTimeMillis();
 
@@ -47,11 +51,7 @@ public class ClassFabUtils
 
     public static String generateClassName(Class interfaceClass)
     {
-        String name = interfaceClass.getName();
-
-        int dotx = name.lastIndexOf('.');
-
-        return generateClassName(name.substring(dotx + 1));
+        return generateClassName(interfaceClass.getSimpleName());
     }
 
     /**
@@ -200,5 +200,53 @@ public class ClassFabUtils
         if (type.isArray()) return "[" + getTypeCode(type.getComponentType());
 
         return "L" + type.getName().replace('.', '/') + ";";
+    }
+
+    /**
+     * Creates a proxy for a given service interface around an {@link ObjectCreator} that can
+     * provide (on demand) an object (implementing the service interface) to delegate to. The
+     * ObjectCreator will be invoked on every method invocation ( if it is caching, that should be
+     * internal to its implementation).
+     * 
+     * @param <T>
+     * @param classFab
+     *            used to create the new class
+     * @param serviceInterface
+     *            the interface the proxy will implement
+     * @param creator
+     *            the createor which will provide an instance of the interface
+     * @param description
+     *            description to be returned from the proxy's toString() method
+     * @return the instantiated proxy object
+     */
+    public static <T> T createObjectCreatorProxy(ClassFab classFab, Class<T> serviceInterface,
+            ObjectCreator creator, String description)
+    {
+        classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
+
+        classFab.addConstructor(new Class[]
+        { ObjectCreator.class }, null, "_creator = $1;");
+
+        String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
+
+        MethodSignature sig = new MethodSignature(serviceInterface, "_delegate", null, null);
+
+        classFab.addMethod(Modifier.PRIVATE, sig, body);
+
+        classFab.proxyMethodsToDelegate(serviceInterface, "_delegate()", description);
+        Class proxyClass = classFab.createClass();
+
+        try
+        {
+            Object proxy = proxyClass.getConstructors()[0].newInstance(creator);
+
+            return serviceInterface.cast(proxy);
+        }
+        catch (Exception ex)
+        {
+            // This should never happen, so we won't go to a lot of trouble
+            // reporting it.
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
 }
