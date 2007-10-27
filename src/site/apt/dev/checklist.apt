@@ -19,14 +19,7 @@ Bumping the Version Number
   
   We need to update the version number across all modules, from 5.0.x-SNAPSHOT to just 5.0.x.
   
-  The first step is to bump up those numbers to the final release value.
-  
-   * module quickstart: <<quickstart/src/main/resources/archetype-resources/pom.xml>> contains a copy of the version number, <<at the bottom>> of the file.
-  	 
-   * other modules: A Ruby script, support/update-versions, can change the version numbers everywhere else.  A single parameter on the command line is the new version number.
-         This updates the master POM and the POM in each module.
-  
-   []
+  The Ruby script,  support/update-versions, can change the version numbers everywhere they need changing.  A single parameter on the command line is the new version number.
     	 
   From the root folder, execute <<<mvn clean install>>>; this should take a couple of minutes.
   
@@ -207,7 +200,8 @@ Update the Downloads Page
   
 Advance the Version Numbers
 
-	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just released 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.      
+	This is optional but is useful, go find all those version numbers again and set them to 5.0.(n+1)-SNAPSHOT.  So, if you just released 5.0.3, set all the version numbers to 5.0.4-SNAPSHOT.    Again,
+	use the support/update-versions Ruby script.  
     
     
     
