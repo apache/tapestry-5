@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
@@ -29,6 +29,7 @@ import org.slf4j.Logger;
  * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
  * configure and extend Tapestry, or to place your own services.
  */
+@Marker(Local.class)
 public class AppModule
 {
     public static void contributeApplicationDefaults(
@@ -83,8 +84,9 @@ public class AppModule
      * management or security.
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-            @InjectService("TimingFilter")
-            RequestFilter filter)
+
+    @Local
+    RequestFilter filter)
     {
         // Each contribution to an ordered configuration has a name, When necessary, you may
         // set constraints to precisely control the invocation order of the contributed filter

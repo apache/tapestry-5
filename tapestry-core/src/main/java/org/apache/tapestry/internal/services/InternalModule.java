@@ -54,6 +54,7 @@ import org.apache.tapestry.services.ApplicationInitializerFilter;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
+import org.apache.tapestry.services.ClasspathProvider;
 import org.apache.tapestry.services.ComponentActionRequestFilter;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
 import org.apache.tapestry.services.ComponentClassResolver;
@@ -271,6 +272,7 @@ public final class InternalModule
         return service;
     }
 
+    @Marker(ClasspathProvider.class)
     public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
 
     ClasspathAssetAliasManager aliasManager)

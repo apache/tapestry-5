@@ -14,9 +14,9 @@
 
 package org.apache.tapestry;
 
-import static java.lang.String.format;
-
 import java.io.IOException;
+import java.util.Formatter;
+import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,6 +32,9 @@ import org.apache.tapestry.internal.ServletContextSymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.def.ModuleDef;
+import org.apache.tapestry.ioc.services.ServiceActivity;
+import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
+import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.HttpServletRequestHandler;
 import org.apache.tapestry.services.ServletApplicationInitializer;
@@ -41,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The TapestryFilter is responsible for intercepting all requests into the web application. It
  * identifies the requests that are relevant to Tapestry, and lets the servlet container handle the
- * rest. It is also responsible for initializating Tapestry.
+ * rest. It is also responsible for initializing Tapestry.
  */
 public class TapestryFilter implements Filter
 {
@@ -95,8 +98,36 @@ public class TapestryFilter implements Filter
 
         long toFinish = System.currentTimeMillis();
 
-        _logger.info(format("Startup time: %,d ms to build IoC Registry, %,d ms overall.", toRegistry
-                - start, toFinish - start));
+        StringBuilder buffer = new StringBuilder("Startup status:\n\n");
+        Formatter f = new Formatter(buffer);
+
+        f.format("Startup time: %,d ms to build IoC Registry, %,d ms overall."
+                + "\n\nStartup services status:\n", toRegistry - start, toFinish - start);
+
+        int unrealized = 0;
+
+        ServiceActivityScoreboard scoreboard = _registry
+                .getService(ServiceActivityScoreboard.class);
+
+        List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
+
+        for (ServiceActivity activity : serviceActivity)
+        {
+            Status status = activity.getStatus();
+
+            f.format("%40s: %s\n", activity.getServiceId(), status.name());
+
+            if (status == Status.DEFINED || status == Status.VIRTUAL) unrealized++;
+
+        }
+
+        f.format(
+                "\n%d/%d unrealized services (%4.2f%%)\n",
+                unrealized,
+                serviceActivity.size(),
+                100. * unrealized / serviceActivity.size());
+
+        _logger.info(buffer.toString());
     }
 
     protected final FilterConfig getFilterConfig()

@@ -173,6 +173,7 @@ import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Marker;
+import org.apache.tapestry.ioc.annotations.Primary;
 import org.apache.tapestry.ioc.annotations.SubModule;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.annotations.Value;
@@ -278,7 +279,7 @@ public final class TapestryModule
     public static void contributeAlias(Configuration<AliasContribution> configuration,
             ObjectLocator locator,
 
-            @InjectService("ComponentClassFactory")
+            @ComponentLayer
             ClassFactory componentClassFactory,
 
             @InjectService("DefaultDataTypeAnalyzer")
@@ -929,7 +930,7 @@ public final class TapestryModule
 
     PropertyAccess propertyAccess,
 
-    @InjectService("ComponentClassFactory")
+    @ComponentLayer
     ClassFactory componentClassFactory)
     {
         _pipelineBuilder = pipelineBuilder;
@@ -970,7 +971,7 @@ public final class TapestryModule
     public ValidationMessagesSource build(Collection<String> configuration,
             UpdateListenerHub updateListenerHub,
 
-            @InjectService("ClasspathAssetFactory")
+            @ClasspathProvider
             AssetFactory classpathAssetFactory)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
@@ -1145,6 +1146,7 @@ public final class TapestryModule
                 terminator);
     }
 
+    @Marker(Primary.class)
     public ComponentEventResultProcessor build(
             Map<Class, ComponentEventResultProcessor> configuration)
     {
@@ -1196,7 +1198,7 @@ public final class TapestryModule
 
     public static ComponentMessagesSource build(UpdateListenerHub updateListenerHub,
 
-    @InjectService("ContextAssetFactory")
+    @ContextProvider
     AssetFactory contextAssetFactory,
 
     @Inject
@@ -1280,10 +1282,10 @@ public final class TapestryModule
     }
 
     public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration,
-            @InjectService("ContextAssetFactory")
+            @ContextProvider
             AssetFactory contextAssetFactory,
 
-            @InjectService("ClasspathAssetFactory")
+            @ClasspathProvider
             AssetFactory classpathAssetFactory)
     {
         configuration.add("context", contextAssetFactory);
@@ -1306,10 +1308,13 @@ public final class TapestryModule
      * </dl>
      */
     public void contributeComponentEventResultProcessor(
-            @InjectService("ComponentInstanceResultProcessor")
-            ComponentEventResultProcessor componentInstanceProcessor,
-            ComponentClassResolver componentClassResolver,
-            MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
+
+    @InjectService("ComponentInstanceResultProcessor")
+    ComponentEventResultProcessor componentInstanceProcessor,
+
+    ComponentClassResolver componentClassResolver,
+
+    MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
         configuration.add(
                 ActionResponseGenerator.class,
