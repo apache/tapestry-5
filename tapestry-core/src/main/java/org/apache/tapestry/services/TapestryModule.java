@@ -172,10 +172,12 @@ import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.SubModule;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.Coercion;
@@ -208,6 +210,7 @@ import org.slf4j.Logger;
  * The root module for Tapestry.
  */
 @SubModule(InternalModule.class)
+@Marker(Builtin.class)
 public final class TapestryModule
 {
     public static void bind(ServiceBinder binder)
@@ -1216,6 +1219,7 @@ public final class TapestryModule
      * dipping into the internals side to register for the correct notifications). Failure to
      * properly clean up can result in really nasty PermGen space memory leaks.
      */
+    @Marker(ComponentLayer.class)
     public ClassFactory buildComponentClassFactory()
     {
         return _shadowBuilder.build(

@@ -17,8 +17,8 @@ package org.apache.tapestry.ioc.internal.services;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 
@@ -31,10 +31,10 @@ public class SymbolObjectProvider implements ObjectProvider
 
     private final TypeCoercer _typeCoercer;
 
-    public SymbolObjectProvider(@InjectService("SymbolSource")
+    public SymbolObjectProvider(@Builtin
     SymbolSource symbolSource,
 
-    @InjectService("TypeCoercer")
+    @Builtin
     TypeCoercer typeCoercer)
     {
         _symbolSource = symbolSource;

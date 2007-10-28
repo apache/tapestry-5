@@ -21,7 +21,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
@@ -37,7 +37,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
 
     private final ExceptionTracker _exceptionTracker;
 
-    public LoggingDecoratorImpl(@InjectService("ClassFactory")
+    public LoggingDecoratorImpl(@Builtin
     ClassFactory classFactory,
 
     ExceptionTracker exceptionTracker)

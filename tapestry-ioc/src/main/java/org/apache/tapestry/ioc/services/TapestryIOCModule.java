@@ -33,7 +33,6 @@ import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.services.ChainBuilderImpl;
@@ -77,8 +76,10 @@ public final class TapestryIOCModule
         binder.bind(TypeCoercer.class, TypeCoercerImpl.class);
         binder.bind(ThreadLocale.class, ThreadLocaleImpl.class);
         binder.bind(SymbolSource.class, SymbolSourceImpl.class);
-        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults");
-        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults");
+        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("ApplicationDefaults")
+                .withMarker(ApplicationDefaults.class);
+        binder.bind(SymbolProvider.class, MapSymbolProvider.class).withId("FactoryDefaults")
+                .withMarker(FactoryDefaults.class);
         binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
         binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
     }
@@ -423,8 +424,10 @@ public final class TapestryIOCModule
     }
 
     public static void contributeSymbolSource(OrderedConfiguration<SymbolProvider> configuration,
-            @InjectService("ApplicationDefaults")
-            SymbolProvider applicationDefaults, @InjectService("FactoryDefaults")
+            @ApplicationDefaults
+            SymbolProvider applicationDefaults,
+
+            @FactoryDefaults
             SymbolProvider factoryDefaults)
     {
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider());
