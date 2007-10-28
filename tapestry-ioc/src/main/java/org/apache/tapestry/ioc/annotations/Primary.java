@@ -23,14 +23,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 import org.apache.tapestry.ioc.services.ChainBuilder;
-
-import apple.awt.StrategyBufferImage;
+import org.apache.tapestry.ioc.services.StrategyBuilder;
 
 /**
  * Marker annotation used to denote a service that is the primary instance of some common interface.
  * This is often used when a service is a {@linkplain ChainBuilder chain of command} or
- * {@linkplain StrategyBufferImage strategy-based} and, therefore, many services will implement the
- * same interface.
+ * {@linkplain StrategyBuilder strategy-based} and, therefore, many services will implement the same
+ * interface.
  */
 @Target(
 { PARAMETER, FIELD })
