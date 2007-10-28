@@ -20,7 +20,7 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.AssetSource;
@@ -37,13 +37,13 @@ public class AssetObjectProvider implements ObjectProvider
 
     private final SymbolSource _symbolSource;
 
-    public AssetObjectProvider(@InjectService("AssetSource")
+    public AssetObjectProvider(@Builtin
     AssetSource source,
 
-    @InjectService("TypeCoercer")
+    @Builtin
     TypeCoercer typeCoercer,
 
-    @InjectService("SymbolSource")
+    @Builtin
     SymbolSource symbolSource)
     {
         _source = source;

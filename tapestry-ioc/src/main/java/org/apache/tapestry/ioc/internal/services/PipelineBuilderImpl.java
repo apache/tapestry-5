@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal.services;
 
 import java.util.List;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
@@ -28,7 +28,7 @@ public class PipelineBuilderImpl implements PipelineBuilder
 
     private final DefaultImplementationBuilder _defaultImplementationBuilder;
 
-    public PipelineBuilderImpl(@InjectService("ClassFactory")
+    public PipelineBuilderImpl(@Builtin
     ClassFactory classFactory,
 
     DefaultImplementationBuilder defaultImplementationBuilder)

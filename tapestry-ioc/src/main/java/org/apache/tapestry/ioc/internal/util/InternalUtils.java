@@ -192,6 +192,9 @@ public class InternalUtils
 
         };
 
+        // At some point, it would be nice to eliminate InjectService, and rely
+        // entirely on service interface type and point-of-injection markers.
+
         InjectService is = provider.getAnnotation(InjectService.class);
 
         if (is != null)
@@ -467,13 +470,13 @@ public class InternalUtils
     /**
      * Adds a value to a specially organized map where the values are lists of objects. This
      * somewhat simulates a map that allows mutiple values for the same key.
+     * 
      * @param map
      *            to store value into
      * @param key
      *            for which a value is added
      * @param value
      *            to add
-     * 
      * @param <K>
      *            the type of key
      * @param <V>

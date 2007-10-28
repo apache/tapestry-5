@@ -19,7 +19,7 @@ import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
@@ -33,7 +33,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 
     private final PropertyAccess _propertyAccess;
 
-    public PropertyShadowBuilderImpl(@InjectService("ClassFactory")
+    public PropertyShadowBuilderImpl(@Builtin
     ClassFactory classFactory,
 
     PropertyAccess propertyAccess)

@@ -19,7 +19,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurr
 
 import java.util.Map;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.DefaultImplementationBuilder;
@@ -35,7 +35,7 @@ public class DefaultImplementationBuilderImpl implements DefaultImplementationBu
 
     private final ClassFactory _classFactory;
 
-    public DefaultImplementationBuilderImpl(@InjectService("ClassFactory")
+    public DefaultImplementationBuilderImpl(@Builtin
     ClassFactory classFactory)
     {
         _classFactory = classFactory;

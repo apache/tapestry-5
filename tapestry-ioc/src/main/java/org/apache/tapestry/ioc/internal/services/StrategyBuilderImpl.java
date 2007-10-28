@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal.services;
 
 import java.lang.reflect.Modifier;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodIterator;
@@ -29,7 +29,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
 {
     private final ClassFactory _classFactory;
 
-    public StrategyBuilderImpl(@InjectService("ClassFactory")
+    public StrategyBuilderImpl(@Builtin
     ClassFactory classFactory)
     {
         _classFactory = classFactory;

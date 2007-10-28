@@ -22,7 +22,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
@@ -41,7 +41,7 @@ public class ChainBuilderImpl implements ChainBuilder
 
     private Map<Class, Class> _cache = newConcurrentMap();
 
-    public ChainBuilderImpl(@InjectService("ClassFactory")
+    public ChainBuilderImpl(@Builtin
     ClassFactory classFactory)
     {
         _classFactory = classFactory;

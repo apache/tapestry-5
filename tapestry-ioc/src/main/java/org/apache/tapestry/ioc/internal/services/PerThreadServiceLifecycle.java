@@ -23,7 +23,7 @@ import java.lang.reflect.Modifier;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceLifecycle;
 import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
@@ -49,8 +49,9 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
     private static final String PER_THREAD_METHOD_NAME = "_perThreadInstance";
 
     public PerThreadServiceLifecycle(ThreadCleanupHub threadCleanupHub,
-            @InjectService("ClassFactory")
-            ClassFactory classFactory)
+
+    @Builtin
+    ClassFactory classFactory)
     {
         _threadCleanupHub = threadCleanupHub;
         _classFactory = classFactory;

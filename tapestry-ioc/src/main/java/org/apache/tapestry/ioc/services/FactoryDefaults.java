@@ -23,16 +23,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Marks services provided by this module that may need to be unambiguously referenced.
- * Injecting with this marker annotation and the correct type ensure that the version defined in
- * this module is used, even if another module provides a service with the same service
- * interface.
+ * Used to disambiguate which version of {@link SymbolProvider} is being referenced. Symbols defined
+ * by contributing to FactoryDefaults are overridden by contributions to {@link ApplicationDefaults}.
  */
 @Target(
 { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
-public @interface Builtin
+public @interface FactoryDefaults
 {
 
 }

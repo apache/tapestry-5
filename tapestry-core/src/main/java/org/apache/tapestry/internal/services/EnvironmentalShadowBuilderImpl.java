@@ -19,7 +19,7 @@ import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
@@ -32,7 +32,8 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
 
     private final Environment _environment;
 
-    public EnvironmentalShadowBuilderImpl(@InjectService("ClassFactory")
+    /** Construct using the default builtin factory, not the component layer version. */
+    public EnvironmentalShadowBuilderImpl(@Builtin
     ClassFactory classFactory,
 
     Environment environment)

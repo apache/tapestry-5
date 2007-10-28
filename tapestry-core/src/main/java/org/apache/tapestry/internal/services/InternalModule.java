@@ -37,9 +37,10 @@ import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.PropertyAccess;
@@ -58,6 +59,7 @@ import org.apache.tapestry.services.ComponentActionRequestHandler;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentMessagesSource;
 import org.apache.tapestry.services.Context;
+import org.apache.tapestry.services.ContextProvider;
 import org.apache.tapestry.services.ObjectRenderer;
 import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.apache.tapestry.services.PropertyConduitSource;
@@ -69,6 +71,7 @@ import org.apache.tapestry.services.ResourceDigestGenerator;
 import org.apache.tapestry.services.TapestryModule;
 import org.slf4j.Logger;
 
+@Marker(Builtin.class)
 public final class InternalModule
 {
     public static void bind(ServiceBinder binder)
@@ -118,10 +121,10 @@ public final class InternalModule
 
         configuration.add("tapestry.file-check-interval", "1000"); // 1 second
         configuration.add("tapestry.file-check-update-timeout", "50"); // 50 milliseconds
-        
+
         // This should be overridden for particular applications.
         configuration.add("tapestry.supported-locales", "en");
-        
+
         configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
 
         configuration.add("tapestry.start-page-name", "start");
@@ -174,7 +177,7 @@ public final class InternalModule
         _requestGlobals = requestGlobals;
     }
 
-    public PageTemplateLocator build(@InjectService("ContextAssetFactory")
+    public PageTemplateLocator build(@ContextProvider
     AssetFactory contextAssetFactory,
 
     ComponentClassResolver componentClassResolver)
@@ -183,7 +186,7 @@ public final class InternalModule
                 componentClassResolver);
     }
 
-    public ComponentInstantiatorSource build(@InjectService("ClassFactory")
+    public ComponentInstantiatorSource build(@Builtin
     ClassFactory classFactory,
 
     ComponentClassTransformer transformer,
@@ -279,6 +282,7 @@ public final class InternalModule
         return factory;
     }
 
+    @Marker(ContextProvider.class)
     public AssetFactory buildContextAssetFactory(ApplicationGlobals globals)
     {
         return new ContextAssetFactory(_request, globals.getContext());
