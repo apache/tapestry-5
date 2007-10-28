@@ -28,6 +28,7 @@ import org.apache.tapestry.ioc.services.ServiceActivity;
 import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry.ioc.services.Status;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -645,6 +646,7 @@ public class IntegrationTest extends IOCInternalTestCase
 
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void builtin_services_available_via_marker_annotation()
     {
@@ -657,6 +659,12 @@ public class IntegrationTest extends IOCInternalTestCase
         AnnotationProvider ap = mockAnnotationProvider();
 
         train_getAnnotation(ap, Builtin.class, annotation);
+
+        // On the build server, the order of keys inside the RegistryImpl's _markerToServiceDef
+        // is different, and so it *may* query ofr a number of other annotations
+        // besides Builtin.
+        
+        expect(ap.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
 
         replay();
 
