@@ -47,6 +47,7 @@
                                        
         <menu name="Tapestry IoC Container">
             <item name="Introduction" href="index.html"/>
+            <item name="Overview of Tapestry IoC" href="overview.html"/>
             <item name="Modules" href="module.html"/>
             <item name="Services" href="service.html"/>
             <item name="Decorators" href="decorator.html"/>

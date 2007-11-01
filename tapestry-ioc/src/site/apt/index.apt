@@ -146,6 +146,11 @@ Goals
   See {{{http://www.pragmaticprogrammer.com/ppbook/index.shtml}The Pragmatic Programmer}} for more insights into
   building solid code.
   
+Overview
+
+  The Tapestry IoC container takes over all the plumbing necessary for a highly scalable, extensible, thread-safe, testable
+  application.  Please see the {{{overview.html}overview}} for more details.  
+  
 Terminology
 
   The basic unit in Tapestry IoC is a <<service>>.  A service consists of a <<service interface>> and a <<service implementation>>.
