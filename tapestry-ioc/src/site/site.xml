@@ -62,11 +62,17 @@
             <item name="Startup" href="startup.html"/>
         </menu>
         
+        
         <menu name="Service Builders">
             <item name="Chain Of Command" href="command.html"/>
             <item name="Strategy" href="strategy.html"/>
             <item name="Pipeline" href="pipeline.html"/>
             <item name="Shadow Services" href="shadow.html"/>
+        </menu>
+         
+        <menu name="Tapestry IoC Cookbook">
+          <item name="Introduction" href="cookbook/index.html"/>
+  		  <item name="Basics" href="cookbook/basics.html"/>
         </menu>
          
                         

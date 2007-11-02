@@ -1,0 +1,14 @@
+ ----
+ Tapestry IoC Cookbook
+ ----
+
+Tapestry IoC Cookbook
+
+  Tapestry IoC, though designed specifically for the needs of the Tapestry web framework, also may be employed as a stand-alone IoC container, separate
+  from the rest of Tapestry.
+
+  Tapestry IoC is a sophisticated tool that takes some experience to use properly.
+
+  The existing documentation is factually correct, but is designed more as a reference, rather than giving the big picture.  
+
+  The cookbook will show a bit more about how to use Tapestry IoC, using real examples from the Tapestry code base.
