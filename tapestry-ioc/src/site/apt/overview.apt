@@ -21,7 +21,14 @@ Tapestry IoC Overview
   
   That's an <unmanaged> system.  Most desktop applications are unmanaged, so it's a very familiar pattern, and easy to get your head around.
 
-  Building web applications tends to be quite a different story.  It's a very different environment largely because of <multithreading>.
+  By contrast, web application are a <managed> environment.  You don't write a main(), you don't control startup.  You <configure>
+  the Servlet API to tell it about your servlet classes to be instantiated, and their lifecycle is totally controlled by
+  the servlet container. 
+
+  Inversion of Control is just a more general application of this approach. The container is ultimately responsible for
+  instantiating and configuring the objects you tell it about, and running their entire lifecycle of those objects.
+
+  Building web applications are more complicated than monolithic applications, largely because of <multithreading>.
   Your code will be servicing many different users simultaneously across many different threads.  This tends to complicate the
   code you write, since some fundamental aspects of object oriented development get called into question: in particular, the use
   of <internal state>, values stored inside instance variables, since in a multi-threaded environment, that's no longer the safe

@@ -9,7 +9,7 @@ Basic Services and Injection
   In many cases, these conventions are just a little stronger: you may have to do some amount of
   extra configuration if you choose to go your own way.
 
-* Getting Started
+Getting Started
 
   Like anything else, you want to choose a package for your application, such as org.example.myapp.
   
@@ -19,7 +19,7 @@ Basic Services and Injection
 
   Thus, you might start with a module class org.example.myapp.services.MyAppModule.
 
-* Simple Services
+Simple Services
 
   The simplest services don't have any special configuration or dependencies.  They are defined as services so that
   they can be shared.
@@ -62,7 +62,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
   And that's the essence of Tapestry IoC right there; the bind() plus the constructor is <all> that's necessary.
 
-* Service Disambiguation
+Service Disambiguation
 
   In the previous example, we relied on the fact that only a single service implements the PropertyAccess interface.
   Had more than one done so, Tapestry would have thrown an exception when the ExceptionAnalyzer service was realized (it isn't
@@ -87,11 +87,10 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
   In fact, there are different implementations of this class: one for context resources (part of the web application), the other
   for classpath resources (packaged inside a JAR).  The Asset instances are created via
-  {{{../../apidocs/org/apache/tapesty/AssetFactory.html}AssetFactory}} services.
+  {{{../../apidocs/org/apache/tapesty/services/AssetFactory.html}AssetFactory}} services.
 
   Tapestry defines two such services, in the
-  {{{../../apidocs/org/apache/tapestry/internal/InternalModule.html}InternalModule}} (which is part of the internal implementation of Tapestry,
-  as opposed to Tapestry's public APIs).
+  {{{../../apidocs/org/apache/tapestry/services/TapestryModule.html}TapestryModule}}.
 
 +---+
   @Marker(ClasspathProvider.class)
@@ -117,7 +116,8 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
   listener of events from another service.  For the ContextAssetFactory, we are extracting a value from an injected service and passing
   <that> to the constructor.
 
-  What's important is that the services are differentiated not just in terms of their name, but in terms of their <marker annotation>.
+  What's important is that the services are differentiated not just in terms of their id (which is defined by the name of the method,
+  after stripping off "build"), but in terms of their <marker annotation>.
 
   The {{{../../apidocs/org/apache/tapestry/ioc/annotations/Marker.html}Marker}} annotation provides the discriminator.  When
   the service type is supplemented with the ClasspathProvider annotation, the ClasspathAssetFactory is injected.  When the

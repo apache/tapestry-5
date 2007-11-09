@@ -35,8 +35,7 @@ public class InjectWorker implements ComponentClassTransformWorker
 
     private final InjectionProvider _injectionProvider;
 
-    public InjectWorker(final ObjectLocator locator,
-            final InjectionProvider injectionProvider)
+    public InjectWorker(ObjectLocator locator, InjectionProvider injectionProvider)
     {
         _locator = locator;
         _injectionProvider = injectionProvider;

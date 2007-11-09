@@ -87,7 +87,7 @@ Binding Parameters
   
 +---+
 <html t:type="layout" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <p> Merry Christmas: <t:count end="3"> Ho! </t:comp>
+    <p> Merry Christmas: <t:count end="3"> Ho! </t:count>
     </p>
 </html>
 +---+  
