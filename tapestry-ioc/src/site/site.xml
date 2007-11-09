@@ -73,6 +73,8 @@
         <menu name="Tapestry IoC Cookbook">
           <item name="Introduction" href="cookbook/index.html"/>
   		  <item name="Basics" href="cookbook/basics.html"/>
+          <item name="Service Configurations" href="cookbook/servconf.html"/>
+		  <item name="Using Patterns" href="cookbook/patterns.html"/>
         </menu>
          
                         

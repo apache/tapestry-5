@@ -14,21 +14,28 @@
 
 package org.apache.tapestry.services;
 
+import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.tapestry.Asset;
+import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
@@ -63,103 +70,17 @@ import org.apache.tapestry.internal.beaneditor.ValidateAnnotationConstraintGener
 import org.apache.tapestry.internal.bindings.AssetBindingFactory;
 import org.apache.tapestry.internal.bindings.BlockBindingFactory;
 import org.apache.tapestry.internal.bindings.ComponentBindingFactory;
+import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.internal.bindings.LiteralBindingFactory;
 import org.apache.tapestry.internal.bindings.MessageBindingFactory;
+import org.apache.tapestry.internal.bindings.PropBindingFactory;
 import org.apache.tapestry.internal.bindings.TranslateBindingFactory;
 import org.apache.tapestry.internal.bindings.ValidateBindingFactory;
+import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.grid.ListGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
-import org.apache.tapestry.internal.services.AliasImpl;
-import org.apache.tapestry.internal.services.AliasManagerImpl;
-import org.apache.tapestry.internal.services.ApplicationGlobalsImpl;
-import org.apache.tapestry.internal.services.ApplicationStateManagerImpl;
-import org.apache.tapestry.internal.services.ApplicationStatePersistenceStrategySourceImpl;
-import org.apache.tapestry.internal.services.ApplicationStateWorker;
-import org.apache.tapestry.internal.services.AssetDispatcher;
-import org.apache.tapestry.internal.services.AssetInjectionProvider;
-import org.apache.tapestry.internal.services.AssetSourceImpl;
-import org.apache.tapestry.internal.services.BeanBlockSourceImpl;
-import org.apache.tapestry.internal.services.BeanModelSourceImpl;
-import org.apache.tapestry.internal.services.BindingSourceImpl;
-import org.apache.tapestry.internal.services.BlockInjectionProvider;
-import org.apache.tapestry.internal.services.ClassResultProcessor;
-import org.apache.tapestry.internal.services.ClasspathAssetAliasManagerImpl;
-import org.apache.tapestry.internal.services.CommonResourcesInjectionProvider;
-import org.apache.tapestry.internal.services.ComponentActionDispatcher;
-import org.apache.tapestry.internal.services.ComponentActionRequestHandlerImpl;
-import org.apache.tapestry.internal.services.ComponentClassResolverImpl;
-import org.apache.tapestry.internal.services.ComponentDefaultProviderImpl;
-import org.apache.tapestry.internal.services.ComponentInstanceResultProcessor;
-import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
-import org.apache.tapestry.internal.services.ComponentLifecycleMethodWorker;
-import org.apache.tapestry.internal.services.ComponentMessagesSourceImpl;
-import org.apache.tapestry.internal.services.ComponentResourcesInjectionProvider;
-import org.apache.tapestry.internal.services.ComponentSourceImpl;
-import org.apache.tapestry.internal.services.ComponentWorker;
-import org.apache.tapestry.internal.services.ContextImpl;
-import org.apache.tapestry.internal.services.CookiesImpl;
-import org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer;
-import org.apache.tapestry.internal.services.DefaultInjectionProvider;
-import org.apache.tapestry.internal.services.DefaultValidationDelegateCommand;
-import org.apache.tapestry.internal.services.DocumentHeadBuilder;
-import org.apache.tapestry.internal.services.DocumentHeadBuilderImpl;
-import org.apache.tapestry.internal.services.EnumValueEncoderFactory;
-import org.apache.tapestry.internal.services.EnvironmentImpl;
-import org.apache.tapestry.internal.services.EnvironmentalShadowBuilderImpl;
-import org.apache.tapestry.internal.services.EnvironmentalWorker;
-import org.apache.tapestry.internal.services.FieldValidatorDefaultSourceImpl;
-import org.apache.tapestry.internal.services.FieldValidatorSourceImpl;
-import org.apache.tapestry.internal.services.FlashPersistentFieldStrategy;
-import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
-import org.apache.tapestry.internal.services.HeartbeatImpl;
-import org.apache.tapestry.internal.services.InjectContainerWorker;
-import org.apache.tapestry.internal.services.InjectPageWorker;
-import org.apache.tapestry.internal.services.InjectWorker;
-import org.apache.tapestry.internal.services.InternalModule;
-import org.apache.tapestry.internal.services.LinkActionResponseGenerator;
-import org.apache.tapestry.internal.services.LinkFactory;
-import org.apache.tapestry.internal.services.MarkupWriterFactoryImpl;
-import org.apache.tapestry.internal.services.MetaDataLocatorImpl;
-import org.apache.tapestry.internal.services.MetaWorker;
-import org.apache.tapestry.internal.services.MixinAfterWorker;
-import org.apache.tapestry.internal.services.MixinWorker;
-import org.apache.tapestry.internal.services.ObjectComponentEventResultProcessor;
-import org.apache.tapestry.internal.services.OnEventWorker;
-import org.apache.tapestry.internal.services.PageLifecycleAnnotationWorker;
-import org.apache.tapestry.internal.services.PageRenderDispatcher;
-import org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl;
-import org.apache.tapestry.internal.services.PageRenderSupportImpl;
-import org.apache.tapestry.internal.services.ParameterWorker;
-import org.apache.tapestry.internal.services.PersistWorker;
-import org.apache.tapestry.internal.services.PersistentFieldManagerImpl;
-import org.apache.tapestry.internal.services.PropertyConduitSourceImpl;
-import org.apache.tapestry.internal.services.RenderCommandWorker;
-import org.apache.tapestry.internal.services.RequestGlobalsImpl;
-import org.apache.tapestry.internal.services.RequestImpl;
-import org.apache.tapestry.internal.services.RequestPageCache;
-import org.apache.tapestry.internal.services.RequestRenderer;
-import org.apache.tapestry.internal.services.ResourceCache;
-import org.apache.tapestry.internal.services.ResourceDigestGeneratorImpl;
-import org.apache.tapestry.internal.services.ResourceStreamer;
-import org.apache.tapestry.internal.services.ResponseImpl;
-import org.apache.tapestry.internal.services.RetainWorker;
-import org.apache.tapestry.internal.services.RootPathDispatcher;
-import org.apache.tapestry.internal.services.ServiceAnnotationObjectProvider;
-import org.apache.tapestry.internal.services.ServiceInjectionProvider;
-import org.apache.tapestry.internal.services.SessionApplicationStatePersistenceStrategy;
-import org.apache.tapestry.internal.services.SessionPersistentFieldStrategy;
-import org.apache.tapestry.internal.services.StaticFilesFilter;
-import org.apache.tapestry.internal.services.StreamResponseResultProcessor;
-import org.apache.tapestry.internal.services.StringResultProcessor;
-import org.apache.tapestry.internal.services.StringValueEncoder;
-import org.apache.tapestry.internal.services.SupportsInformalParametersWorker;
-import org.apache.tapestry.internal.services.TranslatorDefaultSourceImpl;
-import org.apache.tapestry.internal.services.TranslatorSourceImpl;
-import org.apache.tapestry.internal.services.UnclaimedFieldWorker;
-import org.apache.tapestry.internal.services.UpdateListenerHub;
-import org.apache.tapestry.internal.services.ValidationConstraintGeneratorImpl;
-import org.apache.tapestry.internal.services.ValidationMessagesSourceImpl;
-import org.apache.tapestry.internal.services.ValueEncoderSourceImpl;
+import org.apache.tapestry.internal.services.*;
+import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.Location;
@@ -174,7 +95,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Primary;
-import org.apache.tapestry.ioc.annotations.SubModule;
+import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -188,6 +109,7 @@ import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry.ioc.services.StrategyBuilder;
 import org.apache.tapestry.ioc.services.SymbolSource;
+import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
@@ -210,7 +132,6 @@ import org.slf4j.Logger;
 /**
  * The root module for Tapestry.
  */
-@SubModule(InternalModule.class)
 @Marker(Builtin.class)
 public final class TapestryModule
 {
@@ -240,6 +161,23 @@ public final class TapestryModule
         binder.bind(BeanBlockSource.class, BeanBlockSourceImpl.class);
         binder.bind(ComponentDefaultProvider.class, ComponentDefaultProviderImpl.class);
         binder.bind(MarkupWriterFactory.class, MarkupWriterFactoryImpl.class);
+
+        binder.bind(TemplateParser.class, TemplateParserImpl.class);
+        binder.bind(PageResponseRenderer.class, PageResponseRendererImpl.class);
+        binder.bind(PageMarkupRenderer.class, PageMarkupRendererImpl.class);
+        binder.bind(ComponentInvocationMap.class, NoOpComponentInvocationMap.class);
+        binder.bind(ObjectRenderer.class, LocationRenderer.class).withId("LocationRenderer");
+        binder.bind(UpdateListenerHub.class, UpdateListenerHubImpl.class);
+        binder.bind(ObjectProvider.class, AssetObjectProvider.class).withId("AssetObjectProvider");
+        binder.bind(LinkFactory.class, LinkFactoryImpl.class);
+        binder.bind(LocalizationSetter.class, LocalizationSetterImpl.class);
+        binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);
+        binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
+        binder.bind(RequestExceptionHandler.class, DefaultRequestExceptionHandler.class);
+        binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
+        binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);
+        binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
+
     }
 
     public static Alias build(Logger logger,
@@ -884,11 +822,7 @@ public final class TapestryModule
                 reverse));
     }
 
-    private final ChainBuilder _chainBuilder;
-
     private final PipelineBuilder _pipelineBuilder;
-
-    private final RequestGlobals _requestGlobals;
 
     private final ApplicationGlobals _applicationGlobals;
 
@@ -900,13 +834,27 @@ public final class TapestryModule
 
     private final StrategyBuilder _strategyBuilder;
 
-    private final ComponentInstantiatorSource _componentInstantiatorSource;
-
     private final LinkFactory _linkFactory;
 
     private final PropertyAccess _propertyAccess;
 
     private final ClassFactory _componentClassFactory;
+
+    private final ComponentInstantiatorSource _componentInstantiatorSource;
+
+    private final ComponentTemplateSource _componentTemplateSource;
+
+    private final UpdateListenerHub _updateListenerHub;
+
+    private final ThreadCleanupHub _threadCleanupHub;
+
+    private final ChainBuilder _chainBuilder;
+
+    private final Request _request;
+
+    private final ThreadLocale _threadLocale;
+
+    private final RequestGlobals _requestGlobals;
 
     public TapestryModule(PipelineBuilder pipelineBuilder,
 
@@ -931,7 +879,15 @@ public final class TapestryModule
     PropertyAccess propertyAccess,
 
     @ComponentLayer
-    ClassFactory componentClassFactory)
+    ClassFactory componentClassFactory,
+
+    UpdateListenerHub updateListenerHub, ThreadCleanupHub threadCleanupHub,
+
+    ComponentTemplateSource componentTemplateSource,
+
+    Request request,
+
+    ThreadLocale threadLocale)
     {
         _pipelineBuilder = pipelineBuilder;
         _shadowBuilder = shadowBuilder;
@@ -945,6 +901,12 @@ public final class TapestryModule
         _linkFactory = linkFactory;
         _propertyAccess = propertyAccess;
         _componentClassFactory = componentClassFactory;
+
+        _updateListenerHub = updateListenerHub;
+        _threadCleanupHub = threadCleanupHub;
+        _componentTemplateSource = componentTemplateSource;
+        _request = request;
+        _threadLocale = threadLocale;
     }
 
     public Context build(ApplicationGlobals globals)
@@ -1614,5 +1576,455 @@ public final class TapestryModule
 
         // Likewise, we don't want people fishing for templates.
         configuration.add(InternalConstants.TEMPLATE_EXTENSION);
+    }
+
+    public static void contributeTemplateParser(MappedConfiguration<String, URL> config)
+    {
+        // Any class inside the internal module would do.  Or we could move all these
+        // files to o.a.t.services.
+        
+        Class c = UpdateListenerHub.class;
+        config.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
+        config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c
+                .getResource("xhtml1-transitional.dtd"));
+        config.add("-//W3C//DTD XHTML 1.0 Frameset//EN", c.getResource("xhtml1-frameset.dtd"));
+        config.add("-//W3C//DTD HTML 4.01//EN", c.getResource("xhtml1-strict.dtd"));
+        config.add("-//W3C//DTD HTML 4.01 Transitional//EN", c
+                .getResource("xhtml1-transitional.dtd"));
+        config.add("-//W3C//DTD HTML 4.01 Frameset//EN", c.getResource("xhtml1-frameset.dtd"));
+        config.add("-//W3C//ENTITIES Latin 1 for XHTML//EN", c.getResource("xhtml-lat1.ent"));
+        config.add("-//W3C//ENTITIES Symbols for XHTML//EN", c.getResource("xhtml-symbol.ent"));
+        config.add("-//W3C//ENTITIES Special for XHTML//EN", c.getResource("xhtml-special.ent"));
+    }
+
+    /**
+     * Contributes factory defaults that map be overridden.
+     * 
+     * @see TapestryModule#contributeClasspathAssetAliasManager(MappedConfiguration, String, String)
+     */
+    public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
+    {
+        // Remember this is request-to-request time, presumably it'll take the developer more than
+        // one second to make a change, save it, and switch back to the browser.
+
+        configuration.add("tapestry.file-check-interval", "1000"); // 1 second
+        configuration.add("tapestry.file-check-update-timeout", "50"); // 50 milliseconds
+
+        // This should be overridden for particular applications.
+        configuration.add("tapestry.supported-locales", "en");
+
+        configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
+
+        configuration.add("tapestry.start-page-name", "start");
+
+        // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
+        // support a new version, we create a new folder, and update the path entry. We can then
+        // delete the old version folder (or keep it around). This should be more manageable than
+        // overwriting the local copy with updates. There's also a ClasspathAliasManager
+        // contribution based on the path.
+
+        configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
+        configuration.add(
+                "tapestry.scriptaculous.path",
+                "org/apache/tapestry/scriptaculous_1_7_1_beta_3");
+
+        // Likewise for jscalendar, currently version 1.0
+
+        configuration.add("tapestry.jscalendar.path", "org/apache/tapestry/jscalendar-1.0");
+        configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
+    }
+
+    public PageTemplateLocator build(@ContextProvider
+    AssetFactory contextAssetFactory,
+
+    ComponentClassResolver componentClassResolver)
+    {
+        return new PageTemplateLocatorImpl(contextAssetFactory.getRootResource(),
+                componentClassResolver);
+    }
+
+    public ComponentInstantiatorSource build(@Builtin
+    ClassFactory classFactory,
+
+    ComponentClassTransformer transformer,
+
+    Logger logger)
+    {
+        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(classFactory
+                .getClassLoader(), transformer, logger);
+
+        _updateListenerHub.addUpdateListener(source);
+
+        return source;
+    }
+
+    public ComponentClassTransformer buildComponentClassTransformer(ServiceResources resources)
+    {
+        ComponentClassTransformerImpl transformer = resources
+                .autobuild(ComponentClassTransformerImpl.class);
+
+        _componentInstantiatorSource.addInvalidationListener(transformer);
+
+        return transformer;
+    }
+
+    public PagePool build(Logger logger, PageLoader pageLoader,
+            ComponentMessagesSource componentMessagesSource, ComponentClassResolver resolver)
+    {
+        PagePoolImpl service = new PagePoolImpl(logger, pageLoader, _threadLocale, resolver);
+
+        // This covers invalidations due to changes to classes
+
+        pageLoader.addInvalidationListener(service);
+
+        // This covers invalidation due to changes to message catalogs (properties files)
+
+        componentMessagesSource.addInvalidationListener(service);
+
+        // ... and this covers invalidations due to changes to templates
+
+        _componentTemplateSource.addInvalidationListener(service);
+
+        return service;
+    }
+
+    public PageLoader buildPageLoader(ServiceResources resources)
+    {
+        PageLoaderImpl service = resources.autobuild(PageLoaderImpl.class);
+
+        // Recieve invalidations when the class loader is discarded (due to a component class
+        // change). The notification is forwarded to the page loader's listeners.
+
+        _componentInstantiatorSource.addInvalidationListener(service);
+
+        return service;
+    }
+
+    @Scope(PERTHREAD_SCOPE)
+    public RequestPageCache build(PagePool pagePool)
+    {
+        RequestPageCacheImpl service = new RequestPageCacheImpl(pagePool);
+
+        _threadCleanupHub.addThreadCleanupListener(service);
+
+        return service;
+    }
+
+    public ResourceCache build(ResourceDigestGenerator digestGenerator)
+    {
+        ResourceCacheImpl service = new ResourceCacheImpl(digestGenerator);
+
+        _updateListenerHub.addUpdateListener(service);
+
+        return service;
+    }
+
+    public ComponentTemplateSource build(TemplateParser parser, PageTemplateLocator locator)
+    {
+        ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator);
+
+        _updateListenerHub.addUpdateListener(service);
+
+        return service;
+    }
+
+    @Marker(ClasspathProvider.class)
+    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
+
+    ClasspathAssetAliasManager aliasManager)
+    {
+        ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager);
+
+        resourceCache.addInvalidationListener(factory);
+
+        return factory;
+    }
+
+    @Marker(ContextProvider.class)
+    public AssetFactory buildContextAssetFactory(ApplicationGlobals globals)
+    {
+        return new ContextAssetFactory(_request, globals.getContext());
+    }
+
+    public CookieSink buildCookieSink()
+    {
+        return new CookieSink()
+        {
+
+            public void addCookie(Cookie cookie)
+            {
+                _requestGlobals.getHTTPServletResponse().addCookie(cookie);
+            }
+
+        };
+    }
+
+    public CookieSource buildCookieSource()
+    {
+        return new CookieSource()
+        {
+
+            public Cookie[] getCookies()
+            {
+                return _requestGlobals.getHTTPServletRequest().getCookies();
+            }
+
+        };
+    }
+
+    /**
+     * Builds the PropBindingFactory as a chain of command. The terminator of the chain is
+     * responsible for ordinary property names (and property paths). Contributions to the service
+     * cover additional special cases, such as simple literal values.
+     * 
+     * @param configuration
+     *            contributions of special factories for some constants, each contributed factory
+     *            may return a binding if applicable, or null otherwise
+     */
+    public BindingFactory buildPropBindingFactory(List<BindingFactory> configuration,
+            PropertyConduitSource propertyConduitSource)
+    {
+        PropBindingFactory service = new PropBindingFactory(propertyConduitSource);
+
+        configuration.add(service);
+
+        return _chainBuilder.build(BindingFactory.class, configuration);
+    }
+
+    /**
+     * Adds content types for "css" and "js" file extensions.
+     */
+    public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add("css", "text/css");
+        configuration.add("js", "text/javascript");
+    }
+
+    /**
+     * Adds a filter that sets the application package (for class loading purposes). The filter is
+     * ordered before:*.*".
+     */
+    public void contributeApplicationInitializer(
+            OrderedConfiguration<ApplicationInitializerFilter> configuration,
+            final ApplicationGlobals applicationGlobals, final PropertyAccess propertyAccess,
+            final TypeCoercer typeCoercer)
+    {
+        final InvalidationListener listener = new InvalidationListener()
+        {
+            public void objectWasInvalidated()
+            {
+                propertyAccess.clearCache();
+                typeCoercer.clearCache();
+            }
+        };
+
+        ApplicationInitializerFilter clearCaches = new ApplicationInitializerFilter()
+        {
+            public void initializeApplication(Context context, ApplicationInitializer initializer)
+            {
+                // Snuck in here is the logic to clear the PropertyAccess service's cache whenever
+                // the component class loader is invalidated.
+
+                _componentInstantiatorSource.addInvalidationListener(listener);
+
+                initializer.initializeApplication(context);
+            }
+        };
+
+        configuration.add("ClearCachesOnInvalidation", clearCaches);
+    }
+
+    public void contributePropBindingFactory(OrderedConfiguration<BindingFactory> configuration)
+    {
+        BindingFactory keywordFactory = new BindingFactory()
+        {
+            private final Map<String, Object> _keywords = newCaseInsensitiveMap();
+
+            {
+                _keywords.put("true", Boolean.TRUE);
+                _keywords.put("false", Boolean.FALSE);
+                _keywords.put("null", null);
+            }
+
+            public Binding newBinding(String description, ComponentResources container,
+                    ComponentResources component, String expression, Location location)
+            {
+                String key = expression.trim();
+
+                if (_keywords.containsKey(key))
+                    return new LiteralBinding(description, _keywords.get(key), location);
+
+                return null;
+            }
+        };
+
+        BindingFactory thisFactory = new BindingFactory()
+        {
+
+            public Binding newBinding(String description, ComponentResources container,
+                    ComponentResources component, String expression, Location location)
+            {
+                if ("this".equalsIgnoreCase(expression.trim()))
+                    return new LiteralBinding(description, container.getComponent(), location);
+
+                return null;
+            }
+        };
+
+        BindingFactory longFactory = new BindingFactory()
+        {
+            private final Pattern _pattern = Pattern.compile("^\\s*(-?\\d+)\\s*$");
+
+            public Binding newBinding(String description, ComponentResources container,
+                    ComponentResources component, String expression, Location location)
+            {
+                Matcher matcher = _pattern.matcher(expression);
+
+                if (matcher.matches())
+                {
+                    String value = matcher.group(1);
+
+                    return new LiteralBinding(description, new Long(value), location);
+                }
+
+                return null;
+            }
+        };
+
+        BindingFactory intRangeFactory = new BindingFactory()
+        {
+            private final Pattern _pattern = Pattern
+                    .compile("^\\s*(-?\\d+)\\s*\\.\\.\\s*(-?\\d+)\\s*$");
+
+            public Binding newBinding(String description, ComponentResources container,
+                    ComponentResources component, String expression, Location location)
+            {
+                Matcher matcher = _pattern.matcher(expression);
+
+                if (matcher.matches())
+                {
+                    int start = Integer.parseInt(matcher.group(1));
+                    int finish = Integer.parseInt(matcher.group(2));
+
+                    IntegerRange range = new IntegerRange(start, finish);
+
+                    return new LiteralBinding(description, range, location);
+                }
+
+                return null;
+            }
+        };
+
+        BindingFactory doubleFactory = new BindingFactory()
+        {
+            // So, either 1234. or 1234.56 or .78
+            private final Pattern _pattern = Pattern
+                    .compile("^\\s*(\\-?((\\d+\\.)|(\\d*\\.\\d+)))\\s*$");
+
+            public Binding newBinding(String description, ComponentResources container,
+                    ComponentResources component, String expression, Location location)
+            {
+                Matcher matcher = _pattern.matcher(expression);
+
+                if (matcher.matches())
+                {
+                    String value = matcher.group(1);
+
+                    return new LiteralBinding(description, new Double(value), location);
+                }
+
+                return null;
+            }
+        };
+
+        BindingFactory stringFactory = new BindingFactory()
+        {
+            // This will match embedded single quotes as-is, no escaping necessary.
+
+            private final Pattern _pattern = Pattern.compile("^\\s*'(.*)'\\s*$");
+
+            public Binding newBinding(String description, ComponentResources container,
+                    ComponentResources component, String expression, Location location)
+            {
+                Matcher matcher = _pattern.matcher(expression);
+
+                if (matcher.matches())
+                {
+                    String value = matcher.group(1);
+
+                    return new LiteralBinding(description, value, location);
+                }
+
+                return null;
+            }
+        };
+
+        // To be honest, order probably doesn't matter.
+
+        configuration.add("Keyword", keywordFactory);
+        configuration.add("This", thisFactory);
+        configuration.add("Long", longFactory);
+        configuration.add("IntRange", intRangeFactory);
+        configuration.add("Double", doubleFactory);
+        configuration.add("StringLiteral", stringFactory);
+    }
+
+    /**
+     * Adds a filter that checks for updates to classes and other resources. It is ordered before:*.
+     */
+    public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
+            RequestGlobals requestGlobals,
+
+            // @Inject not needed because its a long, not a String
+            @Symbol("tapestry.file-check-interval")
+            long checkInterval,
+
+            @Symbol("tapestry.file-check-update-timeout")
+            long updateTimeout,
+
+            LocalizationSetter localizationSetter)
+    {
+        configuration.add("CheckForUpdates", new CheckForUpdatesFilter(_updateListenerHub,
+                checkInterval, updateTimeout), "before:*");
+
+        configuration.add("Localization", new LocalizationFilter(localizationSetter));
+    }
+
+    public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkFactory linkFactory,
+            ServiceResources resources)
+    {
+        ClientPersistentFieldStrategy service = resources
+                .autobuild(ClientPersistentFieldStrategy.class);
+
+        linkFactory.addListener(service);
+
+        return service;
+    }
+
+    public static void contributeComponentActionRequestHandler(
+            OrderedConfiguration<ComponentActionRequestFilter> configuration,
+            final RequestEncodingInitializer encodingInitializer)
+    {
+        ComponentActionRequestFilter filter = new ComponentActionRequestFilter()
+        {
+            public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
+                    String eventType, String[] context, String[] activationContext,
+                    ComponentActionRequestHandler handler)
+            {
+                encodingInitializer.initializeRequestEncoding(logicalPageName);
+
+                return handler.handle(
+                        logicalPageName,
+                        nestedComponentId,
+                        eventType,
+                        context,
+                        activationContext);
+            }
+
+        };
+
+        configuration.add("SetRequestEncoding", filter, "before:*");
+
+        configuration.add("Ajax", new AjaxFilter());
     }
 }

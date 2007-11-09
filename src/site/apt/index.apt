@@ -102,6 +102,8 @@ What's changed since Tapestry 4?
   
 New and Noteworthy
 
+  * An {{{tapestry-ioc/overview.html}overview}} and {{{tapestry-ioc/cookbook/}cookbook}} for Tapestry IoC has been written.
+
   * The nightly build on the {{{http://tapestry.formos.com/bamboo}Bamboo CI server}} now creates 
     {{{http://tapestry.formos.com/nightly/tapestry5/}full documentation}}.
 
