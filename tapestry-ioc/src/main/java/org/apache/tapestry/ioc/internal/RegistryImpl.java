@@ -47,6 +47,7 @@ import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry.ioc.internal.services.ThreadCleanupHubImpl;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.Orderer;
@@ -74,6 +75,14 @@ public class RegistryImpl implements Registry, InternalRegistry
     static final String THREAD_CLEANUP_HUB_SERVICE_ID = "ThreadCleanupHub";
 
     private static final String SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID = "ServiceActivityScoreboard";
+
+    /** The set of marker annotations for a builtin service. */
+    private final static Set<Class> BUILTIN = CollectionFactory.newSet();
+
+    static
+    {
+        BUILTIN.add(Builtin.class);
+    }
 
     /**
      * Used to obtain the {@link org.apache.tapestry.ioc.services.ClassFactory} service, which is
@@ -209,9 +218,7 @@ public class RegistryImpl implements Registry, InternalRegistry
                 // The service is defined but will not have gone further than that.
                 _tracker.define(serviceDef, Status.DEFINED);
 
-                Class marker = serviceDef.getMarker();
-
-                if (marker != null)
+                for (Class marker : serviceDef.getMarkers())
                     InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
 
             }
@@ -267,9 +274,9 @@ public class RegistryImpl implements Registry, InternalRegistry
                 return null;
             }
 
-            public Class getMarker()
+            public Set<Class> getMarkers()
             {
-                return Builtin.class;
+                return BUILTIN;
             }
 
             public String getServiceId()
@@ -293,7 +300,8 @@ public class RegistryImpl implements Registry, InternalRegistry
             }
         };
 
-        InternalUtils.addToMapList(_markerToServiceDef, serviceDef.getMarker(), serviceDef);
+        for (Class marker : serviceDef.getMarkers())
+            InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
 
         _tracker.define(serviceDef, Status.BUILTIN);
     }

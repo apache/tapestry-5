@@ -34,6 +34,7 @@ import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.test.IOCTestCase;
@@ -89,7 +90,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         assertTrue(sd.toString().contains(className + ".buildFred()"));
         assertEquals(sd.getServiceScope(), IOCConstants.DEFAULT_SCOPE);
         assertEquals(sd.isEagerLoad(), false);
-        assertNull(sd.getMarker());
+        assertTrue(sd.getMarkers().isEmpty());
 
         sd = md.getServiceDef("Wilma");
         assertEquals(sd.isEagerLoad(), true);
@@ -520,7 +521,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         ServiceDef sd = md.getServiceDef("Greeter");
 
-        assertEquals(sd.getMarker(), BlueMarker.class);
+        assertListsEquals(CollectionFactory.newList(sd.getMarkers()), BlueMarker.class);
 
         verify();
     }
@@ -536,7 +537,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         ServiceDef sd = md.getServiceDef("RedGreeter");
 
-        assertEquals(sd.getMarker(), RedMarker.class);
+        assertListsEquals(CollectionFactory.newList(sd.getMarkers()), RedMarker.class);
 
         verify();
     }
@@ -552,11 +553,12 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         ServiceDef sd = md.getServiceDef("SecondRedGreeter");
 
-        assertEquals(sd.getMarker(), RedMarker.class);
+        assertListsEquals(CollectionFactory.newList(sd.getMarkers()), RedMarker.class);
 
         verify();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void explicit_marker_overrides_marker_annotation()
     {
@@ -568,8 +570,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         ServiceDef sd = md.getServiceDef("SurprisinglyBlueGreeter");
 
-        assertEquals(sd.getMarker(), BlueMarker.class);
+        // BlueMarker from ServiceBindingOptions, RedMarker from @Marker on class
+        assertEquals(sd.getMarkers(), CollectionFactory.newSet(RedMarker.class, BlueMarker.class));
 
         verify();
     }
+
+    // TODO: We're short on tests that ensure that marker annotations are additive (i.e., module
+    // marker annotations are
+    // merged into the set specific to the service).
 }

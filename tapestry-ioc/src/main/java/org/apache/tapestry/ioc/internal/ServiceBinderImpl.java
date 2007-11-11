@@ -19,6 +19,8 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.Set;
 
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.ObjectCreator;
@@ -29,6 +31,7 @@ import org.apache.tapestry.ioc.annotations.EagerLoad;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -41,21 +44,21 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final ClassFactory _classFactory;
 
-    private final Class _defaultMarker;
+    private final Set<Class> _defaultMarkers;
 
     public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory,
-            Class defaultMarker)
+            Set<Class> defaultMarkers)
     {
         _accumulator = accumulator;
         _classFactory = classFactory;
-        _defaultMarker = defaultMarker;
+        _defaultMarkers = defaultMarkers;
     }
 
     private String _serviceId;
 
     private Class _serviceInterface;
 
-    private Class _marker;
+    private final Set<Class> _markers = CollectionFactory.newSet();
 
     private Class _serviceImplementation;
 
@@ -89,14 +92,18 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
             }
         };
 
-        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, _marker, _scope,
+        // Combine service-specific markers with those inherited form the module.
+        Set<Class> markers = CollectionFactory.newSet(_defaultMarkers);
+        markers.addAll(_markers);
+
+        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, markers, _scope,
                 _eagerLoad, source);
 
         _accumulator.addServiceDef(serviceDef);
 
         _serviceId = null;
         _serviceInterface = null;
-        _marker = _defaultMarker;
+        _markers.clear();
         _serviceImplementation = null;
         _eagerLoad = false;
         _scope = null;
@@ -142,7 +149,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         Marker marker = serviceImplementation.getAnnotation(Marker.class);
 
-        _marker = marker != null ? marker.value() : _defaultMarker;
+        if (marker != null) _markers.addAll(Arrays.asList(marker.value()));
 
         return this;
     }
@@ -178,11 +185,11 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return this;
     }
 
-    public <T extends Annotation> ServiceBindingOptions withMarker(Class<T> marker)
+    public <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker)
     {
         _lock.check();
 
-        _marker = marker;
+        _markers.addAll(Arrays.asList(marker));
 
         return this;
     }

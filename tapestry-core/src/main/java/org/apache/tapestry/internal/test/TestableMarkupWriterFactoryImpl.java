@@ -18,7 +18,7 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.services.Builtin;
+import org.apache.tapestry.services.Core;
 import org.apache.tapestry.services.MarkupWriterFactory;
 
 @Scope(PERTHREAD_SCOPE)
@@ -32,7 +32,7 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
      * Using Builtin to reference to framework-provided version, which this implementation wraps
      * around.
      */
-    public TestableMarkupWriterFactoryImpl(@Builtin
+    public TestableMarkupWriterFactoryImpl(@Core
     MarkupWriterFactory delegate)
     {
         _delegate = delegate;

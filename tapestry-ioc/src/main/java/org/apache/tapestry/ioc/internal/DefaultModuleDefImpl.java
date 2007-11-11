@@ -28,6 +28,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
@@ -48,6 +50,7 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.slf4j.Logger;
@@ -84,7 +87,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
 
-    private final Class _defaultMarker;
+    private final Set<Class> _defaultMarkers = newSet();
 
     static
     {
@@ -108,7 +111,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         Marker annotation = builderClass.getAnnotation(Marker.class);
 
-        _defaultMarker = annotation != null ? annotation.value() : null;
+        if (annotation != null) _defaultMarkers.addAll(Arrays.asList(annotation.value()));
 
         grind();
         bind();
@@ -319,22 +322,22 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             }
         };
 
-        Class marker = extractMarker(method);
+        Set<Class> markers = newSet(_defaultMarkers);
+        markers.addAll(extractMarkers(method));
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, marker, scope,
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope,
                 eagerLoad, source);
 
         addServiceDef(serviceDef);
     }
 
-    private Class extractMarker(Method method)
+    private Collection<Class> extractMarkers(Method method)
     {
         Marker annotation = method.getAnnotation(Marker.class);
 
-        // Use the annotation value if present, otherwise use the module's default
-        // (from the module class's annotation, or null if no annotation there).
+        if (annotation == null) return Collections.emptyList();
 
-        return annotation == null ? _defaultMarker : annotation.value();
+        return CollectionFactory.newList(annotation.value());
     }
 
     public void addServiceDef(ServiceDef serviceDef)
@@ -393,7 +396,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
                 return;
             }
 
-            ServiceBinderImpl binder = new ServiceBinderImpl(this, _classFactory, _defaultMarker);
+            ServiceBinderImpl binder = new ServiceBinderImpl(this, _classFactory, _defaultMarkers);
 
             bindMethod.invoke(null, binder);
 

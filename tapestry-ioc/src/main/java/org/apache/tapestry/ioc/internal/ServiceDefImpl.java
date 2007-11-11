@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import java.util.Set;
 
+import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.def.ServiceDef;
@@ -31,17 +33,33 @@ public class ServiceDefImpl implements ServiceDef
 
     private final ObjectCreatorSource _source;
 
-    private Class _marker;
+    private final Set<Class> _markers;
 
-    ServiceDefImpl(Class serviceInterface, String serviceId, Class marker,
-            String scope, boolean eagerLoad, ObjectCreatorSource source)
+    /**
+     * @param serviceInterface
+     *            interface implemented by the service (or the service implementation class, for
+     *            non-proxied services)
+     * @param serviceId
+     *            unique id for the service
+     * @param markers
+     *            set of marker annotation classes (will be retained not copied)
+     * @param scope
+     *            scope of the service (i.e., {@link IOCConstants#DEFAULT_SCOPE}).
+     * @param eagerLoad
+     *            if true, the service is realized at startup, rather than on-demand
+     * @param source
+     *            used to create the service implementation when needed
+     */
+    ServiceDefImpl(Class serviceInterface, String serviceId, Set<Class> markers, String scope,
+            boolean eagerLoad, ObjectCreatorSource source)
     {
         _serviceInterface = serviceInterface;
         _serviceId = serviceId;
-        _marker = marker;
         _scope = scope;
         _eagerLoad = eagerLoad;
         _source = source;
+
+        _markers = markers;
     }
 
     @Override
@@ -75,9 +93,9 @@ public class ServiceDefImpl implements ServiceDef
         return _eagerLoad;
     }
 
-    public Class getMarker()
+    public Set<Class> getMarkers()
     {
-        return _marker;
+        return _markers;
     }
 
 }

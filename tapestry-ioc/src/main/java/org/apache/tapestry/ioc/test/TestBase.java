@@ -14,6 +14,9 @@
 
 package org.apache.tapestry.ioc.test;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
 import org.easymock.IMocksControl;
@@ -154,5 +157,59 @@ public class TestBase extends Assert
 
         for (String substring : substrings)
             assertTrue(message.contains(substring));
+    }
+
+    /**
+     * Compares two lists for equality; first all the elements are individually compared for
+     * equality (if the lists are of unequal length, only elements up to the shorter length are
+     * compared). Then the length of the lists are compared. This generally gives
+     * 
+     * @param <T>
+     *            type of objects to compare
+     * @param actual
+     *            actual values to check
+     * @param expected
+     *            expected values
+     */
+    protected final <T> void assertListsEquals(List<T> actual, List<T> expected)
+    {
+        int count = Math.min(actual.size(), expected.size());
+
+        for (int i = 0; i < count; i++)
+        {
+            assertEquals(actual.get(i), expected.get(i), String.format("Element #%d.", i));
+        }
+
+        assertEquals(actual.size(), expected.size(), "List size.");
+    }
+
+    /**
+     * Convenience for {@link #assertListsEquals(List, List)}.
+     * 
+     * @param <T>
+     *            tyoe of objects to compare
+     * @param actual
+     *            actual values to check
+     * @param expected
+     *            expected values
+     */
+    protected final <T> void assertListsEquals(List<T> actual, T... expected)
+    {
+        assertListsEquals(actual, Arrays.asList(expected));
+    }
+
+    /**
+     * Convenience for {@link #assertListsEquals(List, List)}.
+     * 
+     * @param <T>
+     *            tyoe of objects to compare
+     * @param actual
+     *            actual values to check
+     * @param expected
+     *            expected values
+     */
+    protected final <T> void assertArraysEqual(T[] actual, T... expected)
+    {
+        assertListsEquals(Arrays.asList(actual), expected);
     }
 }

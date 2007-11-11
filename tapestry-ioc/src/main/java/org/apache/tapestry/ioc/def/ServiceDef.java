@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.ioc.def;
 
+import java.util.Set;
 
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
@@ -48,7 +49,7 @@ public interface ServiceDef
      * 
      * @return the annotation, or null if the service has no annotation
      */
-    Class getMarker();
+    Set<Class> getMarkers();
 
     /**
      * Returns the service interface associated with this service. This is the interface exposed to
