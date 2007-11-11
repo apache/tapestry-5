@@ -24,6 +24,7 @@ import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry.services.Core;
 
 /**
  * Exposes assets (in the current locale). The Inject annotation must be supplemented by a
@@ -37,7 +38,7 @@ public class AssetObjectProvider implements ObjectProvider
 
     private final SymbolSource _symbolSource;
 
-    public AssetObjectProvider(@Builtin
+    public AssetObjectProvider(@Core
     AssetSource source,
 
     @Builtin

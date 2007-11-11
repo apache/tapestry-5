@@ -132,7 +132,7 @@ import org.slf4j.Logger;
 /**
  * The root module for Tapestry.
  */
-@Marker(Builtin.class)
+@Marker(Core.class)
 public final class TapestryModule
 {
     public static void bind(ServiceBinder binder)
@@ -1580,9 +1580,9 @@ public final class TapestryModule
 
     public static void contributeTemplateParser(MappedConfiguration<String, URL> config)
     {
-        // Any class inside the internal module would do.  Or we could move all these
+        // Any class inside the internal module would do. Or we could move all these
         // files to o.a.t.services.
-        
+
         Class c = UpdateListenerHub.class;
         config.add("-//W3C//DTD XHTML 1.0 Strict//EN", c.getResource("xhtml1-strict.dtd"));
         config.add("-//W3C//DTD XHTML 1.0 Transitional//EN", c

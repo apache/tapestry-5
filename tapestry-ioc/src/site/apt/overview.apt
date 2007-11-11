@@ -21,7 +21,7 @@ Tapestry IoC Overview
   
   That's an <unmanaged> system.  Most desktop applications are unmanaged, so it's a very familiar pattern, and easy to get your head around.
 
-  By contrast, web application are a <managed> environment.  You don't write a main(), you don't control startup.  You <configure>
+  By contrast, web applications are a <managed> environment.  You don't write a main(), you don't control startup.  You <configure>
   the Servlet API to tell it about your servlet classes to be instantiated, and their lifecycle is totally controlled by
   the servlet container. 
 
@@ -34,7 +34,7 @@ Tapestry IoC Overview
   of <internal state>, values stored inside instance variables, since in a multi-threaded environment, that's no longer the safe
   place it is in traditional development.  Shared objects plus internal state plus multiple threads equals an broken, unpredictable application.
   
-  Frameworks such as Tapestry (both the IoC container, and the web framework itself) exists to help.
+  Frameworks such as Tapestry -- both the IoC container, and the web framework itself -- exist to help.
   
   When thinking in terms of IoC, <<small is beautiful>>.  What does that mean?  It means small classes and small methods
   are easier to code than large ones.  At one extreme, we have servlets circa 1997 (and Visual Basic before that) with methods a thousand lines long,

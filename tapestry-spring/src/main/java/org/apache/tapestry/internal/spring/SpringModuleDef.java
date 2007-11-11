@@ -93,10 +93,10 @@ public class SpringModuleDef implements ModuleDef
                     return false;
                 }
 
-                /** Returns null, Spring has no concept of a marker annotation. */
-                public Class getMarker()
+                /** Returns an empty set, Spring has no concept of a marker annotation. */
+                public Set<Class> getMarkers()
                 {
-                    return null;
+                    return Collections.emptySet();
                 }
 
             };
@@ -141,9 +141,9 @@ public class SpringModuleDef implements ModuleDef
             }
 
             /** Returns null. */
-            public Class getMarker()
+            public Set<Class> getMarkers()
             {
-                return null;
+                return Collections.emptySet();
             }
 
         };

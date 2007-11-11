@@ -56,15 +56,16 @@ public interface ServiceBindingOptions
     ServiceBindingOptions eagerLoad();
 
     /**
-     * Defines the marker interface for the service, used to connect injections by type at the point
-     * of injection with a particular service implementation, based on the intersection of type and
-     * marker interface. The containing module will sometimes provide a default marker interface for
-     * all services within the module, this method allows that default to be overridden (typically a
-     * different marker annotation, but sometimes to null).
+     * Defines the marker interface(s) for the service, used to connect injections by type at the
+     * point of injection with a particular service implementation, based on the intersection of
+     * type and marker interface. The containing module will sometimes provide a set of default
+     * marker annotations for all services within the module, this method allows that default to be
+     * extended.
      * 
      * @param <T>
      * @param marker
+     *            one or more markers to add
      * @return this binding options, for further configuration
      */
-    <T extends Annotation> ServiceBindingOptions withMarker(Class<T> marker);
+    <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker);
 }
