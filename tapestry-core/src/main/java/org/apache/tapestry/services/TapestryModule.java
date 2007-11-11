@@ -1624,9 +1624,7 @@ public final class TapestryModule
         // contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
-        configuration.add(
-                "tapestry.scriptaculous.path",
-                "org/apache/tapestry/scriptaculous_1_7_1_beta_3");
+        configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry/scriptaculous_1_8");
 
         // Likewise for jscalendar, currently version 1.0
 
