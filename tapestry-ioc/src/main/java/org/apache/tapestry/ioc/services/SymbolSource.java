@@ -27,19 +27,18 @@ public interface SymbolSource
     /**
      * Expands the value for a particular symbol. This may involve recursive expansion, if the
      * immediate value for the symbol itself contains symbols.
-     * 
+     *
      * @param symbolName
      * @return the expanded string
-     * @throws RuntimeException
-     *             if the symbol name can not be expanded (no {@link SymbolProvider} can provide its
-     *             value), or if an expansion is directly or indirectly recursive
+     * @throws RuntimeException if the symbol name can not be expanded (no {@link SymbolProvider} can provide its
+     *                          value), or if an expansion is directly or indirectly recursive
      */
     String valueForSymbol(String symbolName);
 
     /**
      * Given an input string that <em>may</em> contain symbols, returns the string with any and
      * all symbols fully expanded.
-     * 
+     *
      * @param input
      * @return expanded input
      */

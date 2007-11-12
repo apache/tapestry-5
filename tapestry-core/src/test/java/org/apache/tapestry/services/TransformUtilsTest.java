@@ -14,19 +14,14 @@
 
 package org.apache.tapestry.services;
 
-import static org.apache.tapestry.services.TransformUtils.getDefaultValue;
-import static org.apache.tapestry.services.TransformUtils.getUnwrapperMethodName;
-import static org.apache.tapestry.services.TransformUtils.getWrapperType;
-import static org.apache.tapestry.services.TransformUtils.getWrapperTypeName;
-import static org.apache.tapestry.services.TransformUtils.isPrimitive;
-
-import java.util.Map;
-
+import static org.apache.tapestry.services.TransformUtils.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 /**
- * 
+ *
  */
 public class TransformUtilsTest extends Assert
 {

@@ -36,7 +36,9 @@ public final class Text extends Node
         write(text);
     }
 
-    /** Writes additional text into the node, appending it to any existing text. */
+    /**
+     * Writes additional text into the node, appending it to any existing text.
+     */
     public void write(String text)
     {
         _document.getMarkupModel().encode(text, _buffer);

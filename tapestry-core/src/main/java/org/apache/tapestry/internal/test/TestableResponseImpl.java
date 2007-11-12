@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
+import org.apache.tapestry.services.Response;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-
-import org.apache.tapestry.services.Response;
 
 public class TestableResponseImpl implements Response
 {

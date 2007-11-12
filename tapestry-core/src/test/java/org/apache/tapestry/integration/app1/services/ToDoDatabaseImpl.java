@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.integration.app1.services;
 
+import org.apache.tapestry.integration.app1.data.ToDoItem;
+import org.apache.tapestry.integration.app1.data.Urgency;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
@@ -21,9 +23,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.integration.app1.data.ToDoItem;
-import org.apache.tapestry.integration.app1.data.Urgency;
 
 /**
  * We clone everything that comes in or goes out. This does a reasonable job of simulating an

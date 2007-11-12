@@ -15,13 +15,12 @@
 package org.apache.tapestry.internal.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * Represents an HTTP content type. Allows to set various elements like the mime type, the character
@@ -47,9 +46,8 @@ public final class ContentType
     /**
      * Creates a new content type from the argument. The format of the argument has to be
      * basetype/subtype(;key=value)*
-     * 
-     * @param contentType
-     *            the content type that needs to be represented
+     *
+     * @param contentType the content type that needs to be represented
      */
     public ContentType(String contentType)
     {
@@ -127,8 +125,7 @@ public final class ContentType
     }
 
     /**
-     * @param key
-     *            the name of the content type parameter
+     * @param key the name of the content type parameter
      * @return the value of the content type parameter
      */
     public String getParameter(String key)
@@ -139,10 +136,8 @@ public final class ContentType
     }
 
     /**
-     * @param key
-     *            the name of the content type parameter
-     * @param value
-     *            the value of the content type parameter
+     * @param key   the name of the content type parameter
+     * @param value the value of the content type parameter
      */
     public void setParameter(String key, String value)
     {
@@ -155,9 +150,8 @@ public final class ContentType
     /**
      * Parses the argument and configures the content type accordingly. The format of the argument
      * has to be type/subtype(;key=value)*
-     * 
-     * @param contentType
-     *            the content type that needs to be represented
+     *
+     * @param contentType the content type that needs to be represented
      */
     public void parse(String contentType)
     {

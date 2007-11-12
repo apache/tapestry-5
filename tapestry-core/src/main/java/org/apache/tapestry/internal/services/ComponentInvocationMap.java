@@ -26,33 +26,35 @@ import org.apache.tapestry.test.PageTester;
  * (simulated) requests. In this way, a unit test can have the
  * {@link PageTester#clickLink(Element) click a link} or
  * {@link PageTester#submitForm(Element, java.util.Map) submit a form}.
- * <p>
+ * <p/>
  * The information needed is generated in slightly disparate places, so the {@link LinkFactory}
  * tells the map about Links and ComponentInvocations, and the {@link MarkupWriter} will link
  * Elements to Link instance.
  */
 public interface ComponentInvocationMap
 {
-    /** Stores a connection between a particular link and an invocation of a component. */
+    /**
+     * Stores a connection between a particular link and an invocation of a component.
+     */
     void store(Link link, ComponentInvocation invocation);
 
-    /** Stores a connection between an element and the link associated with that element. */
+    /**
+     * Stores a connection between an element and the link associated with that element.
+     */
     void store(Element element, Link link);
 
     /**
      * Returns the invocation associated with a link.
-     * 
-     * @param link
-     *            previously create link
+     *
+     * @param link previously create link
      * @return associcated component invocation, or null
      */
     ComponentInvocation get(Link link);
 
     /**
      * Returns the invocation associated with a rendered element.
-     * 
-     * @param element
-     *            extracted from the rendered {@link Document}
+     *
+     * @param element extracted from the rendered {@link Document}
      * @return the corresponding invocation
      */
     ComponentInvocation get(Element element);

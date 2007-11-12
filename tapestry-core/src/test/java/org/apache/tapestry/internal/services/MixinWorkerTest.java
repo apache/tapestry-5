@@ -108,7 +108,7 @@ public class MixinWorkerTest extends InternalBaseTestCase
     }
 
     protected final void train_resolveMixinTypeToClassName(ComponentClassResolver resolver,
-            String mixinType, String mixinClassName)
+                                                           String mixinType, String mixinClassName)
     {
         expect(resolver.resolveMixinTypeToClassName(mixinType)).andReturn(mixinClassName);
     }

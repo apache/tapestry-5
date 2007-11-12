@@ -20,7 +20,7 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.RenderQueue;
 
 /**
- * 
+ *
  */
 public class ExpansionPageElement implements PageElement
 {

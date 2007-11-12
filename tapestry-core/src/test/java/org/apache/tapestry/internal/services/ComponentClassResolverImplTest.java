@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry.services.LibraryMapping;
 import static org.easymock.EasyMock.isA;
+import org.testng.annotations.Test;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.LibraryMapping;
-import org.testng.annotations.Test;
 
 public class ComponentClassResolverImplTest extends InternalBaseTestCase
 {
@@ -39,7 +38,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     private static final String LIB_ROOT_PACKAGE = "org.example.lib";
 
     private ComponentClassResolverImpl create(ComponentInstantiatorSource source,
-            ClassNameLocator locator, LibraryMapping... mappings)
+                                              ClassNameLocator locator, LibraryMapping... mappings)
     {
         List<LibraryMapping> list = Arrays.asList(mappings);
 
@@ -191,7 +190,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         try
         {
@@ -247,7 +246,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         // Can look like an application page, but still resolves to the core library class name.
 
@@ -279,7 +278,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     protected final void train_locateComponentClassNames(ClassNameLocator locator,
-            String packageName, String... classNames)
+                                                         String packageName, String... classNames)
     {
         expect(locator.locateClassNames(packageName)).andReturn(Arrays.asList(classNames));
     }
@@ -305,7 +304,9 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** All of the caches are handled identically, so we just test the pages for caching. */
+    /**
+     * All of the caches are handled identically, so we just test the pages for caching.
+     */
     @Test
     public void resolved_page_names_are_cached()
     {
@@ -365,7 +366,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("CorePage"), className);
 
@@ -388,7 +389,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageClassNameToPageName(className), "core/CorePage");
 
@@ -412,7 +413,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+                                                                                     LIB_ROOT_PACKAGE),
+                                                 new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/LibPage"), className);
 
@@ -436,7 +438,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(LIB_PREFIX,
-                LIB_ROOT_PACKAGE), new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+                                                                                     LIB_ROOT_PACKAGE),
+                                                 new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/libpage"), className);
         assertEquals(resolver.resolvePageNameToClassName("LIB/LIBPAGE"), className);
@@ -456,7 +459,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         String className = LIB_ROOT_PACKAGE + ".pages.LibPage";
 
@@ -490,7 +493,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         try
         {
@@ -519,7 +522,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         String className = CORE_ROOT_PACKAGE + ".foo.CorePage";
 
@@ -585,7 +588,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping("lib/deep",
-                deepPackage), new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE), new LibraryMapping(
+                                                                                     deepPackage),
+                                                 new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE), new LibraryMapping(
                 CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         try
@@ -671,7 +675,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         try
         {
@@ -699,7 +703,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         replay();
 
         ComponentClassResolver resolver = create(source, locator, new LibraryMapping(CORE_PREFIX,
-                CORE_ROOT_PACKAGE));
+                                                                                     CORE_ROOT_PACKAGE));
 
         try
         {

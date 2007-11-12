@@ -21,12 +21,16 @@ import org.apache.tapestry.dom.Document;
  */
 public abstract class DefaultPageRenderCommand implements PageRenderCommand
 {
-    /** Does nothing. */
+    /**
+     * Does nothing.
+     */
     public void cleanup(Environment environment, Document document)
     {
     }
 
-    /** Does nothing. */
+    /**
+     * Does nothing.
+     */
     public void setup(Environment environment, Document document)
     {
     }

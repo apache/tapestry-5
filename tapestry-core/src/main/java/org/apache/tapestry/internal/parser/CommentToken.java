@@ -18,8 +18,6 @@ import org.apache.tapestry.ioc.Location;
 
 /**
  * A node representing a comment embedded in the source input.
- * 
- * 
  */
 public class CommentToken extends TemplateToken
 {

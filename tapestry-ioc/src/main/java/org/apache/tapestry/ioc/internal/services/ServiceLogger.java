@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
-
-import java.util.Iterator;
-
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
 import org.slf4j.Logger;
+
+import static java.lang.String.format;
+import java.util.Iterator;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.services.LoggingDecoratorImpl} to delegate out
@@ -44,7 +43,9 @@ public final class ServiceLogger
         _exceptionTracker = exceptionTracker;
     }
 
-    /** Returns true if the debugging is enabled for the underlying Log. */
+    /**
+     * Returns true if the debugging is enabled for the underlying Log.
+     */
     public boolean isDebugEnabled()
     {
         return _logger.isDebugEnabled();
@@ -52,9 +53,8 @@ public final class ServiceLogger
 
     /**
      * Invoked when a method is first entered
-     * 
-     * @param name
-     *            of the method
+     *
+     * @param name      of the method
      * @param arguments
      */
     public void entry(String name, Object[] arguments)
@@ -136,11 +136,9 @@ public final class ServiceLogger
 
     /**
      * Invoked when a method returns a value
-     * 
-     * @param name
-     *            of the method
-     * @param result
-     *            the return value for the method invocation
+     *
+     * @param name   of the method
+     * @param result the return value for the method invocation
      */
     public void exit(String name, Object result)
     {
@@ -157,13 +155,17 @@ public final class ServiceLogger
         _logger.debug(buffer.toString());
     }
 
-    /** Invoked when void method finishes succesfully. */
+    /**
+     * Invoked when void method finishes succesfully.
+     */
     public void voidExit(String name)
     {
         _logger.debug(format("[%s] %s", EXIT, name));
     }
 
-    /** Invoked when method invocation instead throws an exception. */
+    /**
+     * Invoked when method invocation instead throws an exception.
+     */
     public void fail(String name, Throwable t)
     {
         if (_logger.isDebugEnabled())

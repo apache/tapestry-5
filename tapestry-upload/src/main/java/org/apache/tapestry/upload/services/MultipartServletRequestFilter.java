@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.upload.services;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tapestry.services.HttpServletRequestFilter;
 import org.apache.tapestry.services.HttpServletRequestHandler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Filter that decodes an incoming multipart request.
@@ -36,7 +35,7 @@ public class MultipartServletRequestFilter implements HttpServletRequestFilter
     }
 
     public boolean service(HttpServletRequest request, HttpServletResponse response,
-            HttpServletRequestHandler handler) throws IOException
+                           HttpServletRequestHandler handler) throws IOException
     {
         if (ServletFileUpload.isMultipartContent(request)) request = _decoder.decode(request);
 

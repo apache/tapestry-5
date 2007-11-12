@@ -14,35 +14,22 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.Locale;
-
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.SelectModelVisitor;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ValidationTracker;
-import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.BeforeRenderTemplate;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.ValueEncoderFactory;
-import org.apache.tapestry.services.ValueEncoderSource;
+import org.apache.tapestry.services.*;
 import org.apache.tapestry.util.EnumSelectModel;
+
+import java.util.Locale;
 
 /**
  * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side.
  * An validation decorations will go around the entire &lt;select&gt; element.
- * <p>
+ * <p/>
  * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to
  * convert between server-side values and client-side strings. In many cases, a {@link ValueEncoder}
  * can be generated automatically from the type of the value parameter. The
@@ -72,7 +59,7 @@ public final class Select extends AbstractField
     /**
      * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to
      * create client-side string values for the different options.
-     * 
+     *
      * @see ValueEncoderSource
      */
     @Parameter
@@ -101,12 +88,16 @@ public final class Select extends AbstractField
     @Environmental
     private ValidationTracker _tracker;
 
-    /** Performs input validation on the value supplied by the user in the form submission. */
+    /**
+     * Performs input validation on the value supplied by the user in the form submission.
+     */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> _validate = NOOP_VALIDATOR;
 
-    /** The value to read or update. */
+    /**
+     * The value to read or update.
+     */
     @Parameter(required = true, principal = true)
     private Object _value;
 
@@ -143,7 +134,7 @@ public final class Select extends AbstractField
         writer.element("select", "name", getElementName(), "id", getClientId());
 
         _resources.renderInformalParameters(writer);
-        
+
         // Disabled via mixin
     }
 

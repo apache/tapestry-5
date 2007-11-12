@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class PageTemplateLocatorImplTest extends InternalBaseTestCase
 {

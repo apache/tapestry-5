@@ -14,20 +14,19 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-
-import java.util.List;
-
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.util.Holder;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.easymock.IAnswer;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
 {

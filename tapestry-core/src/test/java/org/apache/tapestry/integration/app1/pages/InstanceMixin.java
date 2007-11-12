@@ -14,6 +14,10 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
+import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.integration.app1.components.Output;
+import org.apache.tapestry.integration.app1.mixins.Emphasis;
+
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.Format;
@@ -21,26 +25,17 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.MixinClasses;
-import org.apache.tapestry.annotations.Mixins;
-import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.annotations.Retain;
-import org.apache.tapestry.integration.app1.components.Output;
-import org.apache.tapestry.integration.app1.mixins.Emphasis;
-
 public class InstanceMixin
 {
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "value=date2", "format=format", "test=showEmphasis" })
+            {"value=date2", "format=format", "test=showEmphasis"})
     @Mixins("Emphasis")
     private Output _output2;
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "value=date3", "format=format", "test=showEmphasis" })
+            {"value=date3", "format=format", "test=showEmphasis"})
     @MixinClasses(Emphasis.class)
     private Output _output3;
 

@@ -24,13 +24,15 @@ import org.apache.tapestry.ioc.services.PropertyAdapter;
  * what kind of interface to use for displaying the value of the property, or what kind of interface
  * to use for editing the value of the property. Common property types are "text", "enum",
  * "checkbox", but the list is extensible.
- * 
+ *
  * @see Grid
  * @see BeanEditForm
  * @see BeanBlockSource
  */
 public interface DataTypeAnalyzer
 {
-    /** Identifies the data type, if known, or returns null if not known. */
+    /**
+     * Identifies the data type, if known, or returns null if not known.
+     */
     String identifyDataType(PropertyAdapter adapter);
 }

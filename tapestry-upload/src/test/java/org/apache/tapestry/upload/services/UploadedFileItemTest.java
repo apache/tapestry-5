@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.upload.services;
 
-import java.io.File;
-import java.io.InputStream;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.input.NullInputStream;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.InputStream;
 
 public class UploadedFileItemTest extends TapestryTestCase
 {

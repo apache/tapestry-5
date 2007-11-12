@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -27,9 +24,12 @@ import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformMethodSignature;
 
+import java.lang.reflect.Modifier;
+import java.util.List;
+
 /**
  * Peforms transformations that allow pages to be injected into components.
- * 
+ *
  * @see InjectPage
  */
 public class InjectPageWorker implements ComponentClassTransformWorker
@@ -61,7 +61,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
     }
 
     private void addInjectedPage(ClassTransformation transformation, String fieldName,
-            String cacheFieldName)
+                                 String cacheFieldName)
     {
         InjectPage annotation = transformation.getFieldAnnotation(fieldName, InjectPage.class);
 
@@ -74,7 +74,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
                 .resolvePageClassNameToPageName(fieldType) : pageName;
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName, null,
-                null);
+                                                                    null);
 
         BodyBuilder builder = new BodyBuilder();
         builder.begin();

@@ -16,7 +16,6 @@ package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
 import org.apache.tapestry.services.PersistentFieldChange;
 
 public class PersistentFieldChangeImpl implements PersistentFieldChange
@@ -28,7 +27,7 @@ public class PersistentFieldChangeImpl implements PersistentFieldChange
     private final Object _value;
 
     public PersistentFieldChangeImpl(final String componentId, final String fieldName,
-            final Object value)
+                                     final Object value)
     {
         notNull(componentId, "componentId");
         notBlank(fieldName, "fieldName");

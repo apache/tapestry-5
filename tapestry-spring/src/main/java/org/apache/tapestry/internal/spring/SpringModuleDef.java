@@ -14,12 +14,6 @@
 
 package org.apache.tapestry.internal.spring;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
@@ -27,9 +21,14 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions,
@@ -156,13 +155,17 @@ public class SpringModuleDef implements ModuleDef
         return null;
     }
 
-    /** Returns an empty set. */
+    /**
+     * Returns an empty set.
+     */
     public Set<ContributionDef> getContributionDefs()
     {
         return Collections.emptySet();
     }
 
-    /** Returns an empty set. */
+    /**
+     * Returns an empty set.
+     */
     public Set<DecoratorDef> getDecoratorDefs()
     {
         return Collections.emptySet();

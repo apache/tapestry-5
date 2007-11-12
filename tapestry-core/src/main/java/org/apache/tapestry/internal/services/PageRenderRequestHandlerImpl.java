@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.Page;
@@ -25,6 +23,8 @@ import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.PageRenderRequestHandler;
 import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 /**
  * Handles a PageLink as specified by a PageLinkPathSource by activating and then rendering the
@@ -41,8 +41,8 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
     private final Response _response;
 
     public PageRenderRequestHandlerImpl(RequestPageCache cache,
-            ComponentEventResultProcessor resultProcessor,
-            PageResponseRenderer pageResponseRenderer, Response response)
+                                        ComponentEventResultProcessor resultProcessor,
+                                        PageResponseRenderer pageResponseRenderer, Response response)
     {
         _cache = cache;
         _resultProcessor = resultProcessor;

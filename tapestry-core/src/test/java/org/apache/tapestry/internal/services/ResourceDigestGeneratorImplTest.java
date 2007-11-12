@@ -14,18 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.util.Arrays;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 import org.testng.annotations.Test;
+
+import java.io.*;
+import java.net.URL;
+import java.util.Arrays;
 
 public class ResourceDigestGeneratorImplTest extends InternalBaseTestCase
 {

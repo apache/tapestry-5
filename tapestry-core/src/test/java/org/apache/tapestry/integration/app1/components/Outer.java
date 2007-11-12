@@ -15,7 +15,6 @@
 package org.apache.tapestry.integration.app1.components;
 
 import static org.apache.tapestry.TapestryConstants.LITERAL_BINDING_PREFIX;
-
 import org.apache.tapestry.annotations.Parameter;
 
 public class Outer

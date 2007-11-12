@@ -18,8 +18,6 @@ import org.apache.tapestry.ioc.Location;
 
 /**
  * Stores an attribute/value pair (as part of an XML element).
- * 
- * 
  */
 public class AttributeToken extends TemplateToken
 {
@@ -35,13 +33,17 @@ public class AttributeToken extends TemplateToken
         _value = value;
     }
 
-    /** Returns local name for the attribute. */
+    /**
+     * Returns local name for the attribute.
+     */
     public String getName()
     {
         return _name;
     }
 
-    /** Returns the value for the attribute. */
+    /**
+     * Returns the value for the attribute.
+     */
     public String getValue()
     {
         return _value;

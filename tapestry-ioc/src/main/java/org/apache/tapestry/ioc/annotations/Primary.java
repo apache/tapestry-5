@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry.ioc.services.ChainBuilder;
 import org.apache.tapestry.ioc.services.StrategyBuilder;
+
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  * Marker annotation used to denote a service that is the primary instance of some common interface.
@@ -32,7 +31,7 @@ import org.apache.tapestry.ioc.services.StrategyBuilder;
  * interface.
  */
 @Target(
-{ PARAMETER, FIELD })
+        {PARAMETER, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface Primary

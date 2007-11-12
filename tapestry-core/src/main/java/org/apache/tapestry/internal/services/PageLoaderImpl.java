@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.PersistentFieldManager;
 
+import java.util.Locale;
+
 public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoader,
-        InvalidationListener
+                                                                        InvalidationListener
 {
     private final ComponentTemplateSource _templateSource;
 
@@ -36,8 +36,8 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
     private final ComponentClassResolver _resolver;
 
     public PageLoaderImpl(ComponentTemplateSource templateSource,
-            PageElementFactory pageElementFactory, LinkFactory linkFactory,
-            PersistentFieldManager persistentFieldManager, ComponentClassResolver resolver)
+                          PageElementFactory pageElementFactory, LinkFactory linkFactory,
+                          PersistentFieldManager persistentFieldManager, ComponentClassResolver resolver)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
@@ -52,7 +52,8 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
         // effort to pool them for reuse, but not too likely.
 
         PageLoaderProcessor processor = new PageLoaderProcessor(_templateSource,
-                _pageElementFactory, _linkFactory, _persistentFieldManager);
+                                                                _pageElementFactory, _linkFactory,
+                                                                _persistentFieldManager);
 
         String pageClassName = _resolver.resolvePageNameToClassName(logicalPageName);
 

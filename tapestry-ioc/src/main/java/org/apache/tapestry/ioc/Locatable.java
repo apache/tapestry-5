@@ -17,11 +17,11 @@ package org.apache.tapestry.ioc;
 /**
  * Interface implemented by objects which carry a location tag. Defines a readable property,
  * location.
- * 
- * 
  */
 public interface Locatable
 {
-    /** Returns the location associated with this object for error reporting purposes. */
+    /**
+     * Returns the location associated with this object for error reporting purposes.
+     */
     Location getLocation();
 }

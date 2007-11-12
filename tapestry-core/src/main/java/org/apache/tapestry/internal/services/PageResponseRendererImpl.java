@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.TapestryConstants;
@@ -25,6 +22,9 @@ import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.MetaDataLocator;
 import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class PageResponseRendererImpl implements PageResponseRenderer
 {
@@ -37,7 +37,7 @@ public class PageResponseRendererImpl implements PageResponseRenderer
     private final MetaDataLocator _metaDataLocator;
 
     public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory,
-            PageMarkupRenderer markupRenderer, MetaDataLocator metaDataLocator)
+                                    PageMarkupRenderer markupRenderer, MetaDataLocator metaDataLocator)
     {
         _markupWriterFactory = markupWriterFactory;
         _markupRenderer = markupRenderer;
@@ -54,7 +54,7 @@ public class PageResponseRendererImpl implements PageResponseRenderer
         ContentType contentType = new ContentType(contentTypeString);
 
         // Make sure thre's always a charset specified.
-        
+
         String encoding = contentType.getParameter(CHARSET);
         if (encoding == null)
         {

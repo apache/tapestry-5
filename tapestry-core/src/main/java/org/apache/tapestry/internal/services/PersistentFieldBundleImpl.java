@@ -15,12 +15,11 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.services.PersistentFieldBundle;
+import org.apache.tapestry.services.PersistentFieldChange;
 
 import java.util.Collection;
 import java.util.Map;
-
-import org.apache.tapestry.services.PersistentFieldBundle;
-import org.apache.tapestry.services.PersistentFieldChange;
 
 public class PersistentFieldBundleImpl implements PersistentFieldBundle
 {

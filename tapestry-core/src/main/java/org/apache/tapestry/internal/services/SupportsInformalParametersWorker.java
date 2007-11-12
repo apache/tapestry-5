@@ -21,8 +21,7 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 
 /**
  * Checks for the {@link SupportsInformalParameters} annotation, settting the corresponding
- * flag on the model if present. 
- *
+ * flag on the model if present.
  */
 public class SupportsInformalParametersWorker implements ComponentClassTransformWorker
 {

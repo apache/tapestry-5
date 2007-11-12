@@ -14,15 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.awt.Image;
-import java.beans.BeanDescriptor;
-import java.beans.BeanInfo;
-import java.beans.EventSetDescriptor;
-import java.beans.MethodDescriptor;
-import java.beans.PropertyDescriptor;
-import java.util.Arrays;
-import java.util.Random;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
@@ -30,6 +21,11 @@ import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.testng.annotations.Test;
+
+import java.awt.*;
+import java.beans.*;
+import java.util.Arrays;
+import java.util.Random;
 
 public class PropertyAccessImplTest extends IOCInternalTestCase
 {

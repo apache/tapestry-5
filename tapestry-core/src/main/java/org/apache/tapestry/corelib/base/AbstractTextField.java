@@ -14,26 +14,16 @@
 
 package org.apache.tapestry.corelib.base;
 
-import java.util.Locale;
-
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.Translator;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ValidationTracker;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.TranslatorDefaultSource;
-import org.apache.tapestry.services.ValidationMessagesSource;
+import org.apache.tapestry.services.*;
+
+import java.util.Locale;
 
 /**
  * Abstract class for a variety of components that render some variation of a text field. Most of
@@ -152,16 +142,14 @@ public abstract class AbstractTextField extends AbstractField
      * &lt;input&gt;). The {@link AbstractField#getElementName() elementName} and
      * {@link AbstractField#getClientId() clientId} properties will already have been set or
      * updated.
-     * <p>
+     * <p/>
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will
      * be responsible for including an {@link AfterRender} phase method to invoke
      * {@link MarkupWriter#end()}.
-     * 
-     * @param writer
-     *            markup write to send output to
-     * @param value
-     *            the value (either obtained and translated from the value parameter, or obtained
-     *            from the tracker)
+     *
+     * @param writer markup write to send output to
+     * @param value  the value (either obtained and translated from the value parameter, or obtained
+     *               from the tracker)
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 

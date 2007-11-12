@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collection;
-import java.util.Set;
-
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Collection;
+import java.util.Set;
 
 /**
  * Tricky to test, since the code is literally hunting around inside its own brain. There's a lot of

@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.integration.pagelevel;
 
-import java.util.Locale;
-
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.test.PageTester;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class LocaleTest extends Assert
 {

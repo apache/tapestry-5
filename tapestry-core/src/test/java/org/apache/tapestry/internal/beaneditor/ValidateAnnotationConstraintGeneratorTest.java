@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.beaneditor;
 
-import java.util.Arrays;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.ValidationConstraintGenerator;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 public class ValidateAnnotationConstraintGeneratorTest extends InternalBaseTestCase
 {

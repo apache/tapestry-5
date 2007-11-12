@@ -14,12 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
 import javassist.CtClass;
-
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
@@ -31,12 +26,16 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.TransformMethodSignature;
 
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+
 class ServicesMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(ServicesMessages.class);
 
     static final String duplicateContribution(Object conflict, Class contributionType,
-            Object existing)
+                                              Object existing)
     {
         return MESSAGES.format(
                 "duplicate-contribution",
@@ -66,10 +65,10 @@ class ServicesMessages
     }
 
     static String fieldAlreadyClaimed(String fieldName, CtClass ctClass, Object existingTag,
-            Object newTag)
+                                      Object newTag)
     {
         return MESSAGES.format("field-already-claimed", new Object[]
-        { fieldName, ctClass.getName(), existingTag, newTag });
+                {fieldName, ctClass.getName(), existingTag, newTag});
     }
 
     static String noDeclaredMethod(CtClass ctClass, TransformMethodSignature methodSignature)
@@ -114,7 +113,7 @@ class ServicesMessages
     }
 
     static String methodCompileError(TransformMethodSignature signature, String methodBody,
-            Throwable cause)
+                                     Throwable cause)
     {
         return MESSAGES.format("method-compile-error", signature, methodBody, cause);
     }
@@ -179,7 +178,7 @@ class ServicesMessages
     }
 
     static String unknownPersistentFieldStrategy(String stategyName,
-            Collection<String> strategyNames)
+                                                 Collection<String> strategyNames)
     {
         return MESSAGES.format("unknown-persistent-field-strategy", stategyName, InternalUtils
                 .joinSorted(strategyNames));
@@ -198,7 +197,7 @@ class ServicesMessages
     }
 
     static String couldNotResolveComponentType(String componentType,
-            Collection<String> componentTypes)
+                                               Collection<String> componentTypes)
     {
         return MESSAGES.format("could-not-resolve-component-type", componentType, InternalUtils
                 .joinSorted(componentTypes));
@@ -221,7 +220,7 @@ class ServicesMessages
     }
 
     static String componentInstanceIsNotAPage(String methodDescription, Component component,
-            Component result)
+                                              Component result)
     {
         return MESSAGES.format("component-instance-is-not-a-page", methodDescription, component
                 .getComponentResources().getCompleteId(), result.getComponentResources()
@@ -249,7 +248,7 @@ class ServicesMessages
     }
 
     static String componentNotAssignableToField(Component component, String fieldName,
-            String fieldType)
+                                                String fieldType)
     {
         return MESSAGES.format("component-not-assignable-to-field", component
                 .getComponentResources().getCompleteId(), fieldName, fieldType);
@@ -294,7 +293,7 @@ class ServicesMessages
     }
 
     static String invalidComponentEventResult(Component component, Object result,
-            String methodDescription, Collection<Class> configuredResultTypes)
+                                              String methodDescription, Collection<Class> configuredResultTypes)
     {
         List<String> classNames = CollectionFactory.newList();
 
@@ -307,7 +306,7 @@ class ServicesMessages
     }
 
     static String undefinedTapestryAttribute(String elementName, String attributeName,
-            String allowedAttributeName)
+                                             String allowedAttributeName)
     {
         return MESSAGES.format(
                 "undefined-tapestry-attribute",
@@ -322,7 +321,7 @@ class ServicesMessages
     }
 
     static String missingApplicationStatePersistenceStrategy(String name,
-            Collection<String> availableNames)
+                                                             Collection<String> availableNames)
     {
         return MESSAGES.format(
                 "missing-application-state-persistence-strategy",
@@ -345,7 +344,7 @@ class ServicesMessages
     }
 
     static String noSuchProperty(Class targetClass, String propertyName, String propertyExpression,
-            Collection<String> propertyNames)
+                                 Collection<String> propertyNames)
     {
         return MESSAGES.format(
                 "no-such-property",

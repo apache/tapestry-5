@@ -14,8 +14,6 @@
 
 package org.apache.tapestry;
 
-import java.util.Locale;
-
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.internal.services.OnEventWorker;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
@@ -23,6 +21,8 @@ import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentSource;
 import org.slf4j.Logger;
+
+import java.util.Locale;
 
 /**
  * Operations shared by the public {@link ComponentResources} interface and
@@ -45,29 +45,23 @@ public interface ComponentResourcesCommon extends Locatable
 
     /**
      * Creates a component action request link as a callback for this component.
-     * 
-     * @param action
-     *            a name for the action associated with the link
-     * @param forForm
-     *            if true, the link will be used as the action for an HTML form submission, which
-     *            may affect what information is encoded into the link
-     * @param context
-     *            additional objects to be encoded into the path portion of the link; each is
-     *            converted to a string an URI encoded
+     *
+     * @param action  a name for the action associated with the link
+     * @param forForm if true, the link will be used as the action for an HTML form submission, which
+     *                may affect what information is encoded into the link
+     * @param context additional objects to be encoded into the path portion of the link; each is
+     *                converted to a string an URI encoded
      */
     Link createActionLink(String action, boolean forForm, Object... context);
 
     /**
      * Creates a render request link to a specific page.
-     * 
-     * @param pageName
-     *            the logical name of the page to link to
-     * @param override
-     *            if true, the context is used even if empty (normally, the target page is allowed
-     *            to passivate, providing a context, when the provided context is empty)
-     * @param context
-     *            the activation context for the page. If omitted, the activation context is
-     *            obtained from the target paget
+     *
+     * @param pageName the logical name of the page to link to
+     * @param override if true, the context is used even if empty (normally, the target page is allowed
+     *                 to passivate, providing a context, when the provided context is empty)
+     * @param context  the activation context for the page. If omitted, the activation context is
+     *                 obtained from the target paget
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 
@@ -75,9 +69,9 @@ public interface ComponentResourcesCommon extends Locatable
      * Returns a string consisting of the fully qualified class name of the containing page, and the
      * {@link #getNestedId() nested id} of this component, separated by a colon. I.e.,
      * "MyPage:foo.bar.baz". For a page, returns just the page's logical name.
-     * <p>
+     * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
-     * 
+     *
      * @see ComponentSource
      */
 
@@ -88,19 +82,16 @@ public interface ComponentResourcesCommon extends Locatable
      * component, then its container, and so on. When a matching event handler method is located, it
      * is invoked. If the method returns a value, the value is passed to the handler (if handler is
      * null, then it is an error for a method to return a non-null vavlue).
-     * <p>
+     * <p/>
      * Resolution of event type to event handler methods is case insensitive.
-     * 
-     * @param eventType
-     *            event type (as determined from the request, or otherwise by design)
-     * @param context
-     *            the context (as extracted from the request, or provided by the triggering
-     *            component); these values may be provided to event handler methods via their
-     *            parameters (may be null)
-     * @param handler
-     *            the handler to be informed of the result, or null if the event is a notification
-     *            that does not support return values from event handler methods (the value true is
-     *            allowed even if the handler is null).
+     *
+     * @param eventType event type (as determined from the request, or otherwise by design)
+     * @param context   the context (as extracted from the request, or provided by the triggering
+     *                  component); these values may be provided to event handler methods via their
+     *                  parameters (may be null)
+     * @param handler   the handler to be informed of the result, or null if the event is a notification
+     *                  that does not support return values from event handler methods (the value true is
+     *                  allowed even if the handler is null).
      * @return true if any event handler was invoked (even if no event handler method returns a
      *         non-null value)
      * @see OnEventWorker
@@ -117,39 +108,38 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns the log instance associated with the component (which is based on the component or
      * mixin's class name).
-     * 
+     *
      * @see ComponentModel#getLogger()
      */
     Logger getLogger();
 
-    /** Returns the locale for the page containing this component. */
+    /**
+     * Returns the locale for the page containing this component.
+     */
     Locale getLocale();
 
     /**
      * Returns the name of element that represents the component in its template, or null if the
      * element was a component type (in the Tapestry namespace).
-     * 
+     *
      * @return the element name
      */
     String getElementName();
 
     /**
      * Returns a block from the component's template, referenced by its id.
-     * 
-     * @param blockId
-     *            the id of the block (case insensitive)
+     *
+     * @param blockId the id of the block (case insensitive)
      * @return the identified Block
-     * @throws BlockNotFoundException
-     *             if no block with the given id exists
+     * @throws BlockNotFoundException if no block with the given id exists
      * @see #findBlock(String)
      */
     Block getBlock(String blockId);
 
     /**
      * As with {@link #getBlock(String)}, but returns null if the block is not found.
-     * 
-     * @param blockId
-     *            the id of the block (case insensitive)
+     *
+     * @param blockId the id of the block (case insensitive)
      * @return the block, or null
      */
     Block findBlock(String blockId);
@@ -157,7 +147,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns the <em>logical</em> name of the page containing this component. This is the short
      * name (it often appears in URLs)
-     * 
+     *
      * @return the logical name of the page which contains this component
      */
     String getPageName();

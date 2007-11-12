@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategySource;
 
+import java.util.Map;
+
 public class ApplicationStatePersistenceStrategySourceImpl implements
-        ApplicationStatePersistenceStrategySource
+                                                           ApplicationStatePersistenceStrategySource
 {
     private final Map<String, ApplicationStatePersistenceStrategy> _configuration;
 

@@ -19,11 +19,7 @@ import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.corelib.components.BeanEditForm;
-import org.apache.tapestry.corelib.components.Checkbox;
-import org.apache.tapestry.corelib.components.DateField;
-import org.apache.tapestry.corelib.components.Select;
-import org.apache.tapestry.corelib.components.TextField;
+import org.apache.tapestry.corelib.components.*;
 import org.apache.tapestry.services.BeanBlockContribution;
 import org.apache.tapestry.services.BeanBlockSource;
 import org.apache.tapestry.services.PropertyEditContext;
@@ -33,7 +29,7 @@ import org.apache.tapestry.util.EnumValueEncoder;
 /**
  * A page that exists to contain blocks used to edit different types of properties. The blocks on
  * this page are contributed into the {@link BeanBlockSource} service configuration.
- * 
+ *
  * @see BeanBlockContribution
  * @see BeanEditForm
  */
@@ -43,26 +39,26 @@ public class PropertyEditBlocks
     private PropertyEditContext _context;
 
     @Component(parameters =
-    { "value=context.propertyValue", "label=prop:context.label",
-            "translate=prop:context.translator", "validate=prop:textFieldValidator",
-            "clientId=prop:context.propertyId" })
+            {"value=context.propertyValue", "label=prop:context.label",
+                    "translate=prop:context.translator", "validate=prop:textFieldValidator",
+                    "clientId=prop:context.propertyId"})
     private TextField _textField;
 
     @Component(parameters =
-    { "value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
-            "model=selectModelForProperty", "validate=prop:selectValidator",
-            "clientId=prop:context.propertyId" })
+            {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
+                    "model=selectModelForProperty", "validate=prop:selectValidator",
+                    "clientId=prop:context.propertyId"})
     private Select _select;
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId" })
+            {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId"})
     private Checkbox _checkboxField;
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "value=context.propertyValue", "label=prop:context.label",
-            "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator" })
+            {"value=context.propertyValue", "label=prop:context.label",
+                    "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator"})
     private DateField _dateField;
 
     public PropertyEditContext getContext()
@@ -85,14 +81,18 @@ public class PropertyEditBlocks
         return _context.getValidator(_select);
     }
 
-    /** Provide a value encoder for an enum type. */
+    /**
+     * Provide a value encoder for an enum type.
+     */
     @SuppressWarnings("unchecked")
     public ValueEncoder getValueEncoderForProperty()
     {
         return new EnumValueEncoder(_context.getPropertyType());
     }
 
-    /** Provide a select mode for an enum type. */
+    /**
+     * Provide a select mode for an enum type.
+     */
     @SuppressWarnings("unchecked")
     public SelectModel getSelectModelForProperty()
     {

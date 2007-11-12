@@ -14,22 +14,21 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.events.InvalidationListener;
+import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.services.ThreadLocale;
+import org.apache.tapestry.services.ComponentClassResolver;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.slf4j.Logger;
-
 /**
  * A very naive implementation just to get us past the start line.
- * <p>
+ * <p/>
  * Registered as an invalidation listener with the
  * {@link org.apache.tapestry.internal.services.PageLoader}; thus the pool is cleared whenever
  */
@@ -46,7 +45,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener
     private final Map<PageLocator, List<Page>> _pool = newMap();
 
     public PagePoolImpl(Logger logger, PageLoader pageLoader, ThreadLocale threadLocale,
-            ComponentClassResolver resolver)
+                        ComponentClassResolver resolver)
     {
         _logger = logger;
         _pageLoader = pageLoader;

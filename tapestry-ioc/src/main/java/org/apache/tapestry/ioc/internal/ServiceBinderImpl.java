@@ -14,27 +14,22 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.util.Arrays;
-import java.util.Set;
-
-import org.apache.tapestry.ioc.IOCConstants;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ServiceBindingOptions;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.annotations.EagerLoad;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.ClassFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.util.Arrays;
+import java.util.Set;
 
 public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 {
@@ -47,7 +42,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     private final Set<Class> _defaultMarkers;
 
     public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory,
-            Set<Class> defaultMarkers)
+                             Set<Class> defaultMarkers)
     {
         _accumulator = accumulator;
         _classFactory = classFactory;
@@ -97,7 +92,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         markers.addAll(_markers);
 
         ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, markers, _scope,
-                _eagerLoad, source);
+                                                   _eagerLoad, source);
 
         _accumulator.addServiceDef(serviceDef);
 
@@ -126,7 +121,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     }
 
     public <T> ServiceBindingOptions bind(Class<T> serviceInterface,
-            Class<? extends T> serviceImplementation)
+                                          Class<? extends T> serviceImplementation)
     {
         notNull(serviceInterface, "serviceIterface");
         notNull(serviceImplementation, "serviceImplementation");

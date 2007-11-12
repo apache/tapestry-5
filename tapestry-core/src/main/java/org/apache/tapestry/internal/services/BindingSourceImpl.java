@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.Map;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.BindingSource;
+
+import java.util.Map;
 
 public class BindingSourceImpl implements BindingSource
 {
@@ -36,13 +35,13 @@ public class BindingSourceImpl implements BindingSource
     }
 
     public Binding newBinding(String description, ComponentResources container,
-            String defaultPrefix, String expression)
+                              String defaultPrefix, String expression)
     {
         return newBinding(description, container, container, defaultPrefix, expression, null);
     }
 
     public Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String defaultPrefix, String expression, Location location)
+                              ComponentResources component, String defaultPrefix, String expression, Location location)
     {
         notBlank(description, "description");
         notNull(container, "container");
@@ -78,7 +77,7 @@ public class BindingSourceImpl implements BindingSource
         catch (Exception ex)
         {
             throw new TapestryException(ServicesMessages.bindingSourceFailure(expression, ex),
-                    location, ex);
+                                        location, ex);
         }
     }
 }

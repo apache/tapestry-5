@@ -14,13 +14,15 @@
 
 package org.apache.tapestry.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.event.InvalidationEventHub;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.model.ComponentModel;
 
-/** Used to connect a Tapestry component to its message catalog. */
+import java.util.Locale;
+
+/**
+ * Used to connect a Tapestry component to its message catalog.
+ */
 public interface ComponentMessagesSource extends InvalidationEventHub
 {
     /**
@@ -28,7 +30,7 @@ public interface ComponentMessagesSource extends InvalidationEventHub
      * locale. If the component extends from another component, then its localized properties will
      * merge with its parent's properties (with the subclass overriding the super class on any
      * conflicts).
-     * 
+     *
      * @param componentModel
      * @param locale
      * @return the message catalog for the component, in the indicated locale

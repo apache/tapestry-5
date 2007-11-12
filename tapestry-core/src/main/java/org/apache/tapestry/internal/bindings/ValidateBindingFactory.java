@@ -37,13 +37,13 @@ public class ValidateBindingFactory implements BindingFactory
     }
 
     public Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String expression, Location location)
+                              ComponentResources component, String expression, Location location)
     {
         Object fieldAsObject = component.getComponent();
 
         if (!Field.class.isInstance(fieldAsObject))
             throw new TapestryException(BindingsMessages.validateBindingForFieldsOnly(component),
-                    location, null);
+                                        location, null);
 
         Field field = (Field) fieldAsObject;
 

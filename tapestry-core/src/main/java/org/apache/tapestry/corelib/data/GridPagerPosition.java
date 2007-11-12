@@ -20,17 +20,26 @@ import org.apache.tapestry.corelib.components.Grid;
  * Used by the {@link Grid} component to control where the pager portion of the Grid should be
  * displayed.
  */
-public enum GridPagerPosition {
-    /** Position the pager above the Grid's table. */
+public enum GridPagerPosition
+{
+    /**
+     * Position the pager above the Grid's table.
+     */
     TOP(true, false),
 
-    /** Position the pager below the Grid's table (this is the default). */
+    /**
+     * Position the pager below the Grid's table (this is the default).
+     */
     BOTTOM(false, true),
 
-    /** Show the pager above and below the Grid's table. */
+    /**
+     * Show the pager above and below the Grid's table.
+     */
     BOTH(true, true),
 
-    /** Don't show a pager (the application will need to supply its own navigation mechanism). */
+    /**
+     * Don't show a pager (the application will need to supply its own navigation mechanism).
+     */
     NONE(false, false);
 
     private final boolean _matchTop;

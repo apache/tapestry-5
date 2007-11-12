@@ -14,18 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.net.URL;
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.services.*;
+import org.testng.annotations.Test;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.Context;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestFilter;
-import org.apache.tapestry.services.RequestHandler;
-import org.apache.tapestry.services.Response;
-import org.testng.annotations.Test;
+import java.io.IOException;
+import java.net.URL;
 
 public class StaticFilesFilterTest extends InternalBaseTestCase
 {

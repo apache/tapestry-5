@@ -18,11 +18,7 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
@@ -39,13 +35,13 @@ import org.apache.tapestry.services.FormSupport;
  * A grid presents tabular data. It is a composite component, created in terms of several
  * sub-components. The sub-components are statically wired to the Grid, as it provides access to the
  * data and other models that they need.
- * <p>
+ * <p/>
  * A Grid may operate inside a {@link Form}. By overriding the cell renderers of properties, the
  * default output only behavior can be changed to produce a complex form with individual control for
  * editing properties of each row. This is currently workable but less than ideal -- if the order of
  * rows provided by the {@link GridDataSource} changes between render and form submission, then
  * there's the possibility that data will be applied to the wrong server-side objects.
- * 
+ *
  * @see BeanModel
  * @see BeanModelSource
  */
@@ -149,17 +145,17 @@ public class Grid implements GridModelProvider
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "sortColumnId=sortColumnId", "sortAscending=sortAscending" })
+            {"sortColumnId=sortColumnId", "sortAscending=sortAscending"})
     private GridColumns _columns;
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
-            "volatile=inherit:volatile" })
+            {"rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
+                    "volatile=inherit:volatile"})
     private GridRows _rows;
 
     @Component(parameters =
-    { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage" })
+            {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage"})
     private GridPager _pager;
 
     @SuppressWarnings("unused")

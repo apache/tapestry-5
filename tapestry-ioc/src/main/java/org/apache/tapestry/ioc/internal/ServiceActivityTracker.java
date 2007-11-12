@@ -26,21 +26,17 @@ public interface ServiceActivityTracker
 
     /**
      * Defines a service in the tracker with an initial status.
-     * 
-     * @param serviceDef
-     *            the service being defined
-     * @param initialStatus
-     *            typically {@link Status#BUILTIN} or {@link Status#DEFINED}
+     *
+     * @param serviceDef    the service being defined
+     * @param initialStatus typically {@link Status#BUILTIN} or {@link Status#DEFINED}
      */
     void define(ServiceDef serviceDef, Status initialStatus);
 
     /**
      * Updates the status for the service.
-     * 
-     * @param serviceId
-     *            identifies the service, which must be previously defined
-     * @param status
-     *            the new status value
+     *
+     * @param serviceId identifies the service, which must be previously defined
+     * @param status    the new status value
      */
     void setStatus(String serviceId, Status status);
 }

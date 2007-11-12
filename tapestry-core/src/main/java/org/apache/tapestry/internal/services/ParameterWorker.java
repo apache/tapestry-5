@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.InternalComponentResources;
@@ -24,14 +21,10 @@ import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.FieldFilter;
-import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.TransformConstants;
-import org.apache.tapestry.services.TransformMethodSignature;
-import org.apache.tapestry.services.TransformUtils;
+import org.apache.tapestry.services.*;
+
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 /**
  * Responsible for identifying parameters via the {@link org.apache.tapestry.annotations.Parameter}
@@ -73,14 +66,14 @@ public class ParameterWorker implements ComponentClassTransformWorker
     }
 
     private void convertFieldsIntoParameters(ClassTransformation transformation,
-            MutableComponentModel model, List<String> fieldNames)
+                                             MutableComponentModel model, List<String> fieldNames)
     {
         for (String name : fieldNames)
             convertFieldIntoParameter(name, transformation, model);
     }
 
     private void convertFieldIntoParameter(String name, ClassTransformation transformation,
-            MutableComponentModel model)
+                                           MutableComponentModel model)
     {
         Parameter annotation = transformation.getFieldAnnotation(name, Parameter.class);
 
@@ -134,8 +127,8 @@ public class ParameterWorker implements ComponentClassTransformWorker
      * Returns the name of a field that stores whether the parameter binding is invariant.
      */
     private String addParameterSetup(String fieldName, String defaultPrefix, String defaultBinding,
-            String parameterName, String cachedFieldName, boolean cache, String fieldType,
-            String resourcesFieldName, ClassTransformation transformation)
+                                     String parameterName, String cachedFieldName, boolean cache, String fieldType,
+                                     String resourcesFieldName, ClassTransformation transformation)
     {
         String defaultFieldName = transformation.addField(Modifier.PRIVATE, fieldType, fieldName
                 + "_default");
@@ -192,8 +185,9 @@ public class ParameterWorker implements ComponentClassTransformWorker
     }
 
     private void addDefaultBindingSetup(String parameterName, String defaultPrefix,
-            String defaultBinding, String resourcesFieldName, ClassTransformation transformation,
-            BodyBuilder builder)
+                                        String defaultBinding, String resourcesFieldName,
+                                        ClassTransformation transformation,
+                                        BodyBuilder builder)
     {
         if (InternalUtils.isNonBlank(defaultBinding))
         {
@@ -249,8 +243,8 @@ public class ParameterWorker implements ComponentClassTransformWorker
     }
 
     private void addWriterMethod(String fieldName, String cachedFieldName, boolean cache,
-            String parameterName, String fieldType, String resourcesFieldName,
-            ClassTransformation transformation)
+                                 String parameterName, String fieldType, String resourcesFieldName,
+                                 ClassTransformation transformation)
     {
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
@@ -282,18 +276,20 @@ public class ParameterWorker implements ComponentClassTransformWorker
         String methodName = transformation.newMemberName("update_parameter", parameterName);
 
         TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                new String[]
-                { fieldType }, null);
+                                                                          new String[]
+                                                                                  {fieldType}, null);
 
         transformation.addMethod(signature, builder.toString());
 
         transformation.replaceWriteAccess(fieldName, methodName);
     }
 
-    /** Adds a private method that will be the replacement for read-access to the field. */
+    /**
+     * Adds a private method that will be the replacement for read-access to the field.
+     */
     private void addReaderMethod(String fieldName, String cachedFieldName,
-            String invariantFieldName, boolean cache, String parameterName, String fieldType,
-            String resourcesFieldName, ClassTransformation transformation)
+                                 String invariantFieldName, boolean cache, String parameterName, String fieldType,
+                                 String resourcesFieldName, ClassTransformation transformation)
     {
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
@@ -342,7 +338,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
         String methodName = transformation.newMemberName("read_parameter", parameterName);
 
         TransformMethodSignature signature = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName,
-                null, null);
+                                                                          null, null);
 
         transformation.addMethod(signature, builder.toString());
 
@@ -371,6 +367,6 @@ public class ParameterWorker implements ComponentClassTransformWorker
         }
 
         resources.bindParameter(parameterName, new LiteralBinding("default " + parameterName,
-                value, null));
+                                                                  value, null));
     }
 }

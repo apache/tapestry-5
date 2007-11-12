@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.util.Locale;
-
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.Locale;
 
 public class LocalizationFilterTest extends TapestryTestCase
 {

@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.io.File;
-import java.net.URL;
-
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.net.URL;
 
 public class URLChangeTrackerTest extends TapestryTestCase
 {

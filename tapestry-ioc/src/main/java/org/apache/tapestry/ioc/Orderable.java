@@ -20,7 +20,7 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
  * A wrapper that allows objects of a target type to be ordered. Each Orderable object is given a
  * unique id and a set of pre-requisites (objects which should be ordered earlier) and
  * post-requisites (objects which should be ordered later).
- * 
+ *
  * @param <T>
  */
 public class Orderable<T>
@@ -32,11 +32,9 @@ public class Orderable<T>
     private final String[] _constraints;
 
     /**
-     * @param id
-     *            unique identifier for the target object
-     * @param target
-     *            the object to be ordered; this may also be null (in which case the id represents a
-     *            placeholder)
+     * @param id     unique identifier for the target object
+     * @param target the object to be ordered; this may also be null (in which case the id represents a
+     *               placeholder)
      */
 
     public Orderable(String id, T target, String... constraints)

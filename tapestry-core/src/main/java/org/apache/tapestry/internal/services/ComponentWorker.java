@@ -84,7 +84,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
     }
 
     private void addMixinClasses(String fieldName, ClassTransformation transformation,
-            MutableEmbeddedComponentModel model)
+                                 MutableEmbeddedComponentModel model)
     {
         MixinClasses annotation = transformation.getFieldAnnotation(fieldName, MixinClasses.class);
 
@@ -95,7 +95,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
     }
 
     private void addMixinTypes(String fieldName, ClassTransformation transformation,
-            MutableEmbeddedComponentModel model)
+                               MutableEmbeddedComponentModel model)
     {
         Mixins annotation = transformation.getFieldAnnotation(fieldName, Mixins.class);
 

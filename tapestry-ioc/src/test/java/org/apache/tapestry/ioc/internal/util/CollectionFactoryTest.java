@@ -14,21 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import static java.util.Arrays.asList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.*;
+import static java.util.Arrays.asList;
 
 public class CollectionFactoryTest extends Assert
 {

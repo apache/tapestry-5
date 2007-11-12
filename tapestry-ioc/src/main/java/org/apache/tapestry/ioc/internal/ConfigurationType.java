@@ -16,15 +16,20 @@ package org.apache.tapestry.ioc.internal;
 
 /**
  * Defines the three types of configurations a service may request.
- * 
- * 
  */
-public enum ConfigurationType {
+public enum ConfigurationType
+{
 
-    /** @see org.apache.tapestry.ioc.Configuration */
+    /**
+     * @see org.apache.tapestry.ioc.Configuration
+     */
     UNORDERED,
-    /** @see org.apache.tapestry.ioc.OrderedConfiguration */
+    /**
+     * @see org.apache.tapestry.ioc.OrderedConfiguration
+     */
     ORDERED,
-    /** @see org.apache.tapestry.ioc.MappedConfiguration */
+    /**
+     * @see org.apache.tapestry.ioc.MappedConfiguration
+     */
     MAPPED
 }

@@ -14,18 +14,17 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.ModuleBuilderSource;
+import org.apache.tapestry.ioc.ServiceDecorator;
+import org.apache.tapestry.ioc.ServiceResources;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.ModuleBuilderSource;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.slf4j.Logger;
 
 /**
  * A wrapper around a decorator method.
@@ -49,7 +48,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
     private final Class _serviceInterface;
 
     public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleBuilderSource,
-            ServiceResources resources, ClassFactory classFactory)
+                                ServiceResources resources, ClassFactory classFactory)
     {
         _serviceId = resources.getServiceId();
         _decoratorMethod = method;
@@ -84,7 +83,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         Throwable failure = null;
 
         Object moduleBuilder = InternalUtils.isStatic(_decoratorMethod) ? null
-                : _moduleBuilderSource.getModuleBuilder();
+                               : _moduleBuilderSource.getModuleBuilder();
 
         try
         {

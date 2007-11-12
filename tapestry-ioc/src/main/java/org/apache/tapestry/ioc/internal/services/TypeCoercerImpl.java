@@ -14,25 +14,16 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry.ioc.internal.util.InheritanceSearch;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.Coercion;
 import org.apache.tapestry.ioc.services.CoercionTuple;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+
+import java.util.*;
 
 public class TypeCoercerImpl implements TypeCoercer
 {
@@ -189,12 +180,12 @@ public class TypeCoercerImpl implements TypeCoercer
     /**
      * Here's the real meat; we do a search of the space to find coercions, or a system of
      * coercions, that accomplish the desired coercion.
-     * <p>
+     * <p/>
      * There's <strong>TREMENDOUS</strong> room to improve this algorithm. For example, inheritance
      * lists could be cached. Further, there's probably more ways to early prune the search.
      * However, even with dozens or perhaps hundreds of tuples, I suspect the search will still
      * grind to a conclusion quickly.
-     * <p>
+     * <p/>
      * The order of operations should help ensure that the most efficient tuple chain is located. If
      * you think about how tuples are added to the queue, there are two factors: size (the number of
      * steps in the coercion) and "class distance" (that is, number of steps up the inheritance
@@ -203,10 +194,10 @@ public class TypeCoercerImpl implements TypeCoercer
      * By the time we reach some of those, we'll have begun queing up the 3 step coercions, and so
      * forth, until we run out of input tuples we can use to fabricate multi-step compound
      * coercions, or reach a final response.
-     * <p>
+     * <p/>
      * This does create a good number of short lived temporary objects (the compound tuples), but
      * that's what the GC is really good at.
-     * 
+     *
      * @param sourceType
      * @param targetType
      * @return coercer from sourceType to targetType
@@ -278,9 +269,11 @@ public class TypeCoercerImpl implements TypeCoercer
         return InternalUtils.joinSorted(descriptions);
     }
 
-    /** Seeds the pool with the initial set of coercions for the given type. */
+    /**
+     * Seeds the pool with the initial set of coercions for the given type.
+     */
     private void seedQueue(Class sourceType, Set<CoercionTuple> consideredTuples,
-            LinkedList<CoercionTuple> queue)
+                           LinkedList<CoercionTuple> queue)
     {
         // Work from the source type up looking for tuples
 
@@ -301,21 +294,17 @@ public class TypeCoercerImpl implements TypeCoercer
     /**
      * Creates and adds to the pool a new set of coercions based on an intermediate tuple. Adds
      * compound coercion tuples to the end of the queue.
-     * 
-     * @param sourceType
-     *            the source type of the coercion
-     * @param intermediateTuple
-     *            a tuple that converts from the source type to some intermediate type (that is not
-     *            assignable to the target type)
-     * @param consideredTuples
-     *            set of tuples that have already been added to the pool (directly, or as a compound
-     *            coercion)
-     * @param queue
-     *            the work queue of tuples
+     *
+     * @param sourceType        the source type of the coercion
+     * @param intermediateTuple a tuple that converts from the source type to some intermediate type (that is not
+     *                          assignable to the target type)
+     * @param consideredTuples  set of tuples that have already been added to the pool (directly, or as a compound
+     *                          coercion)
+     * @param queue             the work queue of tuples
      */
     @SuppressWarnings("unchecked")
     private void queueIntermediates(Class sourceType, CoercionTuple intermediateTuple,
-            Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
+                                    Set<CoercionTuple> consideredTuples, LinkedList<CoercionTuple> queue)
     {
         Class intermediateType = intermediateTuple.getTargetType();
 
@@ -344,10 +333,10 @@ public class TypeCoercerImpl implements TypeCoercer
                 // intermediate type, hopefully closer to our eventual target type.
 
                 Coercion compoundCoercer = new CompoundCoercion(intermediateTuple.getCoercion(),
-                        tuple.getCoercion());
+                                                                tuple.getCoercion());
 
                 CoercionTuple compoundTuple = new CoercionTuple(sourceType, newIntermediateType,
-                        compoundCoercer, false);
+                                                                compoundCoercer, false);
 
                 // So, every tuple that is added to the queue can take as input the sourceType.
                 // The target type may be another intermdiate type, or may be something

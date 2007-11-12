@@ -7,55 +7,55 @@
 
 // full day names
 Calendar._DN = new Array
-("Sunnuntai",
- "Maanantai",
- "Tiistai",
- "Keskiviikko",
- "Torstai",
- "Perjantai",
- "Lauantai",
- "Sunnuntai");
+        ("Sunnuntai",
+                "Maanantai",
+                "Tiistai",
+                "Keskiviikko",
+                "Torstai",
+                "Perjantai",
+                "Lauantai",
+                "Sunnuntai");
 
 // short day names
 Calendar._SDN = new Array
-("Su",
- "Ma",
- "Ti",
- "Ke",
- "To",
- "Pe",
- "La",
- "Su");
+        ("Su",
+                "Ma",
+                "Ti",
+                "Ke",
+                "To",
+                "Pe",
+                "La",
+                "Su");
 
 // full month names
 Calendar._MN = new Array
-("Tammikuu",
- "Helmikuu",
- "Maaliskuu",
- "Huhtikuu",
- "Toukokuu",
- "Kesäkuu",
- "Heinäkuu",
- "Elokuu",
- "Syyskuu",
- "Lokakuu",
- "Marraskuu",
- "Joulukuu");
+        ("Tammikuu",
+                "Helmikuu",
+                "Maaliskuu",
+                "Huhtikuu",
+                "Toukokuu",
+                "Kesäkuu",
+                "Heinäkuu",
+                "Elokuu",
+                "Syyskuu",
+                "Lokakuu",
+                "Marraskuu",
+                "Joulukuu");
 
 // short month names
 Calendar._SMN = new Array
-("Tam",
- "Hel",
- "Maa",
- "Huh",
- "Tou",
- "Kes",
- "Hei",
- "Elo",
- "Syy",
- "Lok",
- "Mar",
- "Jou");
+        ("Tam",
+                "Hel",
+                "Maa",
+                "Huh",
+                "Tou",
+                "Kes",
+                "Hei",
+                "Elo",
+                "Syy",
+                "Lok",
+                "Mar",
+                "Jou");
 
 // tooltips
 Calendar._TT = {};
@@ -72,10 +72,10 @@ Calendar._TT["ABOUT"] =
 "- Käytä " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " painikkeita valitaksesi kuukausi\n" +
 "- Pitämällä hiiren painiketta minkä tahansa yllä olevan painikkeen kohdalla, saat näkyviin valikon nopeampaan siirtymiseen.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Ajan valinta:\n" +
-"- Klikkaa kellonajan numeroita lisätäksesi aikaa\n" +
-"- tai pitämällä Shift-näppäintä pohjassa saat aikaa taaksepäin\n" +
-"- tai klikkaa ja pidä hiiren painike pohjassa sekä liikuta hiirtä muuttaaksesi aikaa nopeasti eteen- ja taaksepäin.";
+                             "Ajan valinta:\n" +
+                             "- Klikkaa kellonajan numeroita lisätäksesi aikaa\n" +
+                             "- tai pitämällä Shift-näppäintä pohjassa saat aikaa taaksepäin\n" +
+                             "- tai klikkaa ja pidä hiiren painike pohjassa sekä liikuta hiirtä muuttaaksesi aikaa nopeasti eteen- ja taaksepäin.";
 
 Calendar._TT["PREV_YEAR"] = "Edell. vuosi (paina hetki, näet valikon)";
 Calendar._TT["PREV_MONTH"] = "Edell. kuukausi (paina hetki, näet valikon)";

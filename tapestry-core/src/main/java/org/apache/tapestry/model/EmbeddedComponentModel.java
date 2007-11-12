@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.model;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.ioc.Locatable;
+
+import java.util.List;
 
 /**
  * The model for a component embedded within another component, as defined by the
@@ -25,10 +25,14 @@ import org.apache.tapestry.ioc.Locatable;
  */
 public interface EmbeddedComponentModel extends Locatable
 {
-    /** A unique id for the embedded component. */
+    /**
+     * A unique id for the embedded component.
+     */
     String getId();
 
-    /** The type of the component, which may be blank. */
+    /**
+     * The type of the component, which may be blank.
+     */
     String getComponentType();
 
     /**
@@ -37,10 +41,14 @@ public interface EmbeddedComponentModel extends Locatable
      */
     String getComponentClassName();
 
-    /** A sorted list of the names of all bound parameters. */
+    /**
+     * A sorted list of the names of all bound parameters.
+     */
     List<String> getParameterNames();
 
-    /** The value for each parameter, which will be interpreted as a binding expression. */
+    /**
+     * The value for each parameter, which will be interpreted as a binding expression.
+     */
     String getParameterValue(String parameterName);
 
     /**

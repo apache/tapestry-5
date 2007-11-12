@@ -31,7 +31,7 @@ class ModelMessages
     }
 
     static String duplicateParameterValue(String parameterName, String componentId,
-            String componentClassName)
+                                          String componentClassName)
     {
         return MESSAGES.format(
                 "duplicate-parameter-value",

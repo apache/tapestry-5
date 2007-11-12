@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.net.URL;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.Context;
 import org.testng.annotations.Test;
+
+import java.net.URL;
 
 public class ContextResourceTest extends InternalBaseTestCase
 {

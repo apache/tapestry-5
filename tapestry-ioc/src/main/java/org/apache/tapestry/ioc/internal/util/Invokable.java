@@ -18,12 +18,14 @@ package org.apache.tapestry.ioc.internal.util;
 /**
  * Similiar to {@link Runnable} execpt that it returns a value. Used by {@link ConcurrentBarrier} to
  * identify the block of code to execute with read/write lock protection.
- * 
+ *
  * @param <T>
- *            the return value type
+ * the return value type
  */
 public interface Invokable<T>
 {
-    /** Called to produce a value. */
+    /**
+     * Called to produce a value.
+     */
     T invoke();
 }

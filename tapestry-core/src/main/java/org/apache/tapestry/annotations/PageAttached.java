@@ -14,26 +14,26 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.METHOD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Method annotation used for methods that should be invoked when the page is first attached to a
  * request. This is useful for initializations that should occur on each request that involves the
  * page. Often, such initializations will be balanced by cleanups when the page is detached.
- * <p>
+ * <p/>
  * PageAttached methods should take no parameters and return void. They must either have this
  * annotation, or be named "pageAttached".
- * 
+ *
  * @see PageDetached
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface PageAttached {
+public @interface PageAttached
+{
 
 }

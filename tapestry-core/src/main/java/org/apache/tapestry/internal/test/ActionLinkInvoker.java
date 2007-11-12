@@ -16,11 +16,7 @@ package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.internal.services.ActionLinkTarget;
-import org.apache.tapestry.internal.services.ComponentInvocation;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.InvocationTarget;
-import org.apache.tapestry.internal.services.LinkActionResponseGenerator;
+import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.ActionResponseGenerator;
@@ -40,11 +36,12 @@ public class ActionLinkInvoker implements ComponentInvoker
     private final ComponentInvocationMap _componentInvocationMap;
 
     public ActionLinkInvoker(Registry registry, ComponentInvoker followupInvoker,
-            ComponentInvocationMap componentInvocationMap)
+                             ComponentInvocationMap componentInvocationMap)
     {
         _registry = registry;
         _followupInvoker = followupInvoker;
-        _componentActionRequestHandler = _registry.getService("ComponentActionRequestHandler", ComponentActionRequestHandler.class);
+        _componentActionRequestHandler = _registry.getService("ComponentActionRequestHandler",
+                                                              ComponentActionRequestHandler.class);
         _componentInvocationMap = componentInvocationMap;
 
     }
@@ -52,9 +49,8 @@ public class ActionLinkInvoker implements ComponentInvoker
     /**
      * Click on the action link and get another link in return. Then follow up the link with another
      * {@link ComponentInvoker}.
-     * 
-     * @param invocation
-     *            The ComponentInvocation object corresponding to the action link.
+     *
+     * @param invocation The ComponentInvocation object corresponding to the action link.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document invoke(ComponentInvocation invocation)

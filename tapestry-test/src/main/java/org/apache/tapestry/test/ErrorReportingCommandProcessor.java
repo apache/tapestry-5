@@ -22,144 +22,144 @@ import com.thoughtworks.selenium.CommandProcessor;
  */
 public class ErrorReportingCommandProcessor implements CommandProcessor
 {
-  private final CommandProcessor _delegate;
+    private final CommandProcessor _delegate;
 
-  public ErrorReportingCommandProcessor(final CommandProcessor delegate)
-  {
-    _delegate = delegate;
-  }
-
-  private static final String BORDER = "**********************************************************************";
-  
-  private void reportError(String command, String[] args, RuntimeException ex)
-  {
-    StringBuilder builder = new StringBuilder();
-
-    builder.append(BORDER);
-    builder.append("\nSeleninum failure processing comamnd ");
-    builder.append(command);
-    builder.append("(");
-
-    for (int i = 0; i < args.length; i++)
+    public ErrorReportingCommandProcessor(final CommandProcessor delegate)
     {
-      if (i > 0) builder.append(", ");
-      builder.append('"');
-      builder.append(args[i]);
-      builder.append('"');
+        _delegate = delegate;
     }
 
-    builder.append("): ");
-    builder.append(ex.toString());
+    private static final String BORDER = "**********************************************************************";
 
-    builder.append("\n\nPage source:\n\n");
+    private void reportError(String command, String[] args, RuntimeException ex)
+    {
+        StringBuilder builder = new StringBuilder();
 
-    builder.append(_delegate.getString("getHtmlSource", new String[] {}));
+        builder.append(BORDER);
+        builder.append("\nSeleninum failure processing comamnd ");
+        builder.append(command);
+        builder.append("(");
 
-    builder.append("\n");
-    builder.append(BORDER);
-        
-    System.err.println(builder.toString());
-  }
+        for (int i = 0; i < args.length; i++)
+        {
+            if (i > 0) builder.append(", ");
+            builder.append('"');
+            builder.append(args[i]);
+            builder.append('"');
+        }
 
-  public String doCommand(String command, String[] args)
-  {
-    try
-    {
-      return _delegate.doCommand(command, args);
-    }
-    catch (RuntimeException ex)
-    {
-      reportError(command, args, ex);
-      throw ex;
-    }
-  }
+        builder.append("): ");
+        builder.append(ex.toString());
 
-  public boolean getBoolean(String string, String[] strings)
-  {
-    try
-    {
-      return _delegate.getBoolean(string, strings);
-    }
-    catch (RuntimeException ex)
-    {
-      reportError(string, strings, ex);
-      throw ex;
-    }
-  }
+        builder.append("\n\nPage source:\n\n");
 
-  public boolean[] getBooleanArray(String string, String[] strings)
-  {
-    try
-    {
-      return _delegate.getBooleanArray(string, strings);
-    }
-    catch (RuntimeException ex)
-    {
-      reportError(string, strings, ex);
-      throw ex;
-    }
-  }
+        builder.append(_delegate.getString("getHtmlSource", new String[]{}));
 
-  public Number getNumber(String string, String[] strings)
-  {
-    try
-    {
-      return _delegate.getNumber(string, strings);
-    }
-    catch (RuntimeException ex)
-    {
-      reportError(string, strings, ex);
-      throw ex;
-    }
-  }
+        builder.append("\n");
+        builder.append(BORDER);
 
-  public Number[] getNumberArray(String string, String[] strings)
-  {
-    try
-    {
-      return _delegate.getNumberArray(string, strings);
+        System.err.println(builder.toString());
     }
-    catch (RuntimeException ex)
-    {
-      reportError(string, strings, ex);
-      throw ex;
-    }
-  }
 
-  public String getString(String string, String[] strings)
-  {
-    try
+    public String doCommand(String command, String[] args)
     {
-      return _delegate.getString(string, strings);
+        try
+        {
+            return _delegate.doCommand(command, args);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(command, args, ex);
+            throw ex;
+        }
     }
-    catch (RuntimeException ex)
-    {
-      reportError(string, strings, ex);
-      throw ex;
-    }
-  }
 
-  public String[] getStringArray(String string, String[] strings)
-  {
-    try
+    public boolean getBoolean(String string, String[] strings)
     {
-      return _delegate.getStringArray(string, strings);
+        try
+        {
+            return _delegate.getBoolean(string, strings);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(string, strings, ex);
+            throw ex;
+        }
     }
-    catch (RuntimeException ex)
+
+    public boolean[] getBooleanArray(String string, String[] strings)
     {
-      reportError(string, strings, ex);
-      throw ex;
+        try
+        {
+            return _delegate.getBooleanArray(string, strings);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(string, strings, ex);
+            throw ex;
+        }
     }
-  }
 
-  public void start()
-  {
-    _delegate.start();
-  }
+    public Number getNumber(String string, String[] strings)
+    {
+        try
+        {
+            return _delegate.getNumber(string, strings);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(string, strings, ex);
+            throw ex;
+        }
+    }
 
-  public void stop()
-  {
-    _delegate.stop();
-  }
+    public Number[] getNumberArray(String string, String[] strings)
+    {
+        try
+        {
+            return _delegate.getNumberArray(string, strings);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(string, strings, ex);
+            throw ex;
+        }
+    }
+
+    public String getString(String string, String[] strings)
+    {
+        try
+        {
+            return _delegate.getString(string, strings);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(string, strings, ex);
+            throw ex;
+        }
+    }
+
+    public String[] getStringArray(String string, String[] strings)
+    {
+        try
+        {
+            return _delegate.getStringArray(string, strings);
+        }
+        catch (RuntimeException ex)
+        {
+            reportError(string, strings, ex);
+            throw ex;
+        }
+    }
+
+    public void start()
+    {
+        _delegate.start();
+    }
+
+    public void stop()
+    {
+        _delegate.stop();
+    }
 
 }

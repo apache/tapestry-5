@@ -14,12 +14,14 @@
 
 package org.apache.tapestry.integration.app1.components;
 
-import java.text.Format;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.Parameter;
 
-/** component that formats a value and outputs it. */
+import java.text.Format;
+
+/**
+ * component that formats a value and outputs it.
+ */
 public class Output
 {
     @Parameter(required = true)

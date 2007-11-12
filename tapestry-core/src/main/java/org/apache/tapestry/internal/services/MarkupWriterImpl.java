@@ -14,16 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.PrintWriter;
-
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.dom.DefaultMarkupModel;
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.dom.MarkupModel;
-import org.apache.tapestry.dom.Text;
+import org.apache.tapestry.dom.*;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+
+import java.io.PrintWriter;
 
 public class MarkupWriterImpl implements MarkupWriter
 {

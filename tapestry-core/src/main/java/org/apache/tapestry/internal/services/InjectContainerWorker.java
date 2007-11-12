@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.InjectContainer;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -23,6 +21,8 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformConstants;
+
+import java.util.List;
 
 /**
  * Identifies the {@link InjectContainer} annotation and adds code to initialize it to the core
@@ -81,7 +81,7 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
     }
 
     public static String buildCastExceptionMessage(Component component, String fieldName,
-            String fieldType)
+                                                   String fieldType)
     {
         return ServicesMessages.componentNotAssignableToField(component, fieldName, fieldType);
     }

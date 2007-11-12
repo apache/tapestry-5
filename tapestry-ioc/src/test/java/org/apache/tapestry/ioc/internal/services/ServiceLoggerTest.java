@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.Arrays;
-
 import org.apache.tapestry.ioc.services.ExceptionTracker;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 public class ServiceLoggerTest extends IOCTestCase
 {
@@ -65,7 +65,7 @@ public class ServiceLoggerTest extends IOCTestCase
         try_entry("yogi", "yogi(null, null)", null, null);
         try_entry("wilma", "wilma(1, 2, 3)", 1, 2, 3);
         try_entry("betty", "betty(\"rubble\", {1, 2, 3, \"four\"})", "rubble", new Object[]
-        { 1, 2, 3, "four" });
+                {1, 2, 3, "four"});
         try_entry("betty", "betty(\"rubble\", [1, 2, 3, \"four\", [5, 6]])", "rubble", Arrays
                 .asList(1, 2, 3, "four", Arrays.asList(5, 6)));
     }

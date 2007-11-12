@@ -16,8 +16,6 @@ package org.apache.tapestry.internal.transform.pages;
 
 /**
  * Used to check that Javassist does make child classes inherit class annotations.
- * 
- * 
  */
 public class ChildClassInheritsAnnotation extends ParentClass
 {

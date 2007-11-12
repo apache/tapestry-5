@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.internal.util.MethodInvocationBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.MethodFilter;
 import org.apache.tapestry.services.TransformMethodSignature;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Similar to {@link ComponentLifecycleMethodWorker} but applies to annotations/methods related to
@@ -38,7 +38,8 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
     private final MethodInvocationBuilder _invocationBuilder = new MethodInvocationBuilder();
 
     public PageLifecycleAnnotationWorker(final Class<? extends Annotation> methodAnnotationClass,
-            final TransformMethodSignature lifecycleMethodSignature, final String methodAlias)
+                                         final TransformMethodSignature lifecycleMethodSignature,
+                                         final String methodAlias)
     {
         _methodAnnotationClass = methodAnnotationClass;
         _lifecycleMethodSignature = lifecycleMethodSignature;

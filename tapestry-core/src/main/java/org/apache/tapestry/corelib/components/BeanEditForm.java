@@ -14,11 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FormValidationControl;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
@@ -36,15 +32,15 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
  * UI for editing the properties of a JavaBean, with the flavor of UI for each property (text field,
  * checkbox, drop down list) determined from the property type, and the order and validation for the
  * properties determined from annotations on the property's getter and setter methods.
- * <p>
+ * <p/>
  * You may add &lt;t:parameter&gt;s to the component; when the name matches (case insensitive) the
  * name of a property, then the corresponding Block is renderered, rather than any of the built in
  * property editor blocks. This allows you to override specific properties with your own customized
  * UI, for cases where the default UI is insufficient, or no built-in editor type is appropriate.
- * <p>
+ * <p/>
  * This component is likely to change more than any other thing in Tapestry! What's available now is
  * a very limited preview of its eventual functionality.
- * 
+ *
  * @see BeanModel
  * @see BeanModelSource
  * @see PropertyEditor
@@ -52,7 +48,9 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
 @SupportsInformalParameters
 public class BeanEditForm implements ClientElement, FormValidationControl
 {
-    /** The text label for the submit button of the form, by default "Create/Update". */
+    /**
+     * The text label for the submit button of the form, by default "Create/Update".
+     */
     @Parameter(value = "message:submit-label", defaultPrefix = "literal")
     private String _submitLabel;
 
@@ -83,7 +81,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter(defaultPrefix = "literal")
     private String _reorder;
 
-    /** If true, the default, then the embedded Form component will use client-side validation. */
+    /**
+     * If true, the default, then the embedded Form component will use client-side validation.
+     */
     @SuppressWarnings("unused")
     @Parameter
     private boolean _clientValidation;
@@ -148,7 +148,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         return _object;
     }
 
-    /** Returns the client id of the embedded form. */
+    /**
+     * Returns the client id of the embedded form.
+     */
     public String getClientId()
     {
         return _form.getClientId();

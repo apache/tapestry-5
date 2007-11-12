@@ -14,13 +14,8 @@
 
 package org.apache.tapestry.validator;
 
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryUtils.quote;
-
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 
 /**
@@ -62,7 +57,7 @@ public final class Required implements Validator<Void, Object>
     }
 
     public void render(Field field, Void constraintValue, MessageFormatter formatter,
-            MarkupWriter writer, PageRenderSupport pageRenderSupport)
+                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
     {
         pageRenderSupport.addScript(
                 "Tapestry.Field.required('%s', %s);",

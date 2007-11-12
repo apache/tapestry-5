@@ -22,7 +22,7 @@ import org.apache.tapestry.util.TextStreamResponse;
 
 /**
  * Tests the various event handler method return types.
- * 
+ *
  * @see ComponentEventResultProcessor
  */
 public class ReturnTypes

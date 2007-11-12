@@ -7,10 +7,10 @@
 */
 
 // ** I18N
-Calendar._DN  = new Array('Nedìle','Pondìlí','Úterý','Støeda','Ètvrtek','Pátek','Sobota','Nedìle');
-Calendar._SDN = new Array('Ne','Po','Út','St','Èt','Pá','So','Ne');
-Calendar._MN  = new Array('Leden','Únor','Bøezen','Duben','Kvìten','Èerven','Èervenec','Srpen','Záøí','Øíjen','Listopad','Prosinec');
-Calendar._SMN = new Array('Led','Úno','Bøe','Dub','Kvì','Èrv','Èvc','Srp','Záø','Øíj','Lis','Pro');
+Calendar._DN = new Array('Nedìle', 'Pondìlí', 'Úterý', 'Støeda', 'Ètvrtek', 'Pátek', 'Sobota', 'Nedìle');
+Calendar._SDN = new Array('Ne', 'Po', 'Út', 'St', 'Èt', 'Pá', 'So', 'Ne');
+Calendar._MN = new Array('Leden', 'Únor', 'Bøezen', 'Duben', 'Kvìten', 'Èerven', 'Èervenec', 'Srpen', 'Záøí', 'Øíjen', 'Listopad', 'Prosinec');
+Calendar._SMN = new Array('Led', 'Úno', 'Bøe', 'Dub', 'Kvì', 'Èrv', 'Èvc', 'Srp', 'Záø', 'Øíj', 'Lis', 'Pro');
 
 // tooltips
 Calendar._TT = {};
@@ -39,10 +39,10 @@ Calendar._TT["ABOUT"] =
 "- Podržte tlaèítko myši na jakémkoliv z tìch tlaèítek pro rychlejší výbìr.";
 
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Výbìr èasu:\n" +
-"- Kliknìte na jakoukoliv z èástí výbìru èasu pro zvýšení.\n" +
-"- nebo Shift-click pro snížení\n" +
-"- nebo kliknìte a táhnìte pro rychlejší výbìr.";
+                             "Výbìr èasu:\n" +
+                             "- Kliknìte na jakoukoliv z èástí výbìru èasu pro zvýšení.\n" +
+                             "- nebo Shift-click pro snížení\n" +
+                             "- nebo kliknìte a táhnìte pro rychlejší výbìr.";
 
 // the following is to inform that "%s" is to be the first day of week
 // %s will be replaced with the day name.

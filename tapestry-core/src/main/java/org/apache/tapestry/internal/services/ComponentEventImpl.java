@@ -14,10 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ComponentEventHandler;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.ComponentEvent;
 
@@ -32,21 +31,16 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
     private final TypeCoercer _typeCoercer;
 
     /**
-     * @param eventType
-     *            non blank string used to identify the type of event that was triggered
-     * @param originatingComponentId
-     *            the id of the component that triggered the event (this will likely need to change
-     *            somewhat)
-     * @param context
-     *            an array of values that can be made available to handler methods via method
-     *            parameters
-     * @param handler
-     *            invoked when a non-null return value is obtained from an event handler method
-     * @param typeCoercer
-     *            used when coercing context values to parameter types
+     * @param eventType              non blank string used to identify the type of event that was triggered
+     * @param originatingComponentId the id of the component that triggered the event (this will likely need to change
+     *                               somewhat)
+     * @param context                an array of values that can be made available to handler methods via method
+     *                               parameters
+     * @param handler                invoked when a non-null return value is obtained from an event handler method
+     * @param typeCoercer            used when coercing context values to parameter types
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, Object[] context,
-            ComponentEventHandler handler, TypeCoercer typeCoercer)
+                              ComponentEventHandler handler, TypeCoercer typeCoercer)
     {
         super(handler);
 

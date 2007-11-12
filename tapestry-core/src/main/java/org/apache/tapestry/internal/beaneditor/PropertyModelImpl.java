@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal.beaneditor;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 public class PropertyModelImpl implements PropertyModel
@@ -40,7 +39,7 @@ public class PropertyModelImpl implements PropertyModel
     private boolean _sortable;
 
     public PropertyModelImpl(BeanModel model, final String name, final PropertyConduit conduit,
-            Messages messages)
+                             Messages messages)
     {
         _model = model;
         _name = name;

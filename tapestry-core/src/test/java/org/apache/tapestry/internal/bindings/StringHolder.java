@@ -19,8 +19,8 @@ public interface StringHolder
     void setValue(String value);
 
     String getValue();
-    
+
     String stringValue();
-    
+
     void voidMethod();
 }

@@ -18,10 +18,8 @@ import java.util.List;
 
 /**
  * An analysis of an exception (including nested exceptions).
- * <p>
+ * <p/>
  * TODO: Make serializable and/or convert to XML format.
- * 
- * 
  */
 public interface ExceptionAnalysis
 {

@@ -24,7 +24,7 @@ import org.apache.tapestry.services.ComponentEventResultProcessor;
 /**
  * Used when a component event handler returns a class value. The value is interpreted as the page
  * class. A link to the page will be sent.
- * 
+ *
  * @see LinkActionResponseGenerator
  */
 public class ClassResultProcessor implements ComponentEventResultProcessor<Class>
@@ -36,7 +36,7 @@ public class ClassResultProcessor implements ComponentEventResultProcessor<Class
     private final LinkFactory _linkFactory;
 
     public ClassResultProcessor(ComponentClassResolver resolver, RequestPageCache requestPageCache,
-            LinkFactory linkFactory)
+                                LinkFactory linkFactory)
     {
         _resolver = resolver;
         _requestPageCache = requestPageCache;
@@ -44,7 +44,7 @@ public class ClassResultProcessor implements ComponentEventResultProcessor<Class
     }
 
     public ActionResponseGenerator processComponentEvent(Class value, Component component,
-            String methodDescripion)
+                                                         String methodDescripion)
     {
         String className = value.getName();
         String pageName = _resolver.resolvePageClassNameToPageName(className);

@@ -14,25 +14,27 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Used to attach one ore more instance mixin to an embedded component. Each mixin is specified in
  * terms of a logical mixin type name. This annotation is only recognized when used in conjuction
  * with the {@link Component} annotation.
- * 
+ *
  * @see MixinClasses
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Mixins {
+public @interface Mixins
+{
 
-    /** One or more mixin type names, from which actual mixin class names can be resolved. */
+    /**
+     * One or more mixin type names, from which actual mixin class names can be resolved.
+     */
     String[] value();
 }

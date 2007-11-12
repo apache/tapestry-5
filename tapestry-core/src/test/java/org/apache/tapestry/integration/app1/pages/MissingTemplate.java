@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-/** A page that simple doesn't have a template. */
+/**
+ * A page that simple doesn't have a template.
+ */
 public class MissingTemplate
 {
 

@@ -19,9 +19,9 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 /**
  * A simple, streamlined implementation of {@link java.util.Stack}. The implementation is
  * <em>not</em> threadsafe.
- * 
+ *
  * @param <E>
- *            the type of elements stored in the map
+ * the type of elements stored in the map
  * @see CollectionFactory#newStack()
  */
 public class Stack<E>
@@ -43,22 +43,25 @@ public class Stack<E>
     }
 
     /**
-     * @param initialSize
-     *            the initial size of the internal array (which will be expanded as necessary). For
-     *            best efficiency, set this to the maximum depth of the stack.
+     * @param initialSize the initial size of the internal array (which will be expanded as necessary). For
+     *                    best efficiency, set this to the maximum depth of the stack.
      */
     public Stack(int initialSize)
     {
         _items = new Object[Math.max(initialSize, MINIMUM_SIZE)];
     }
 
-    /** Returns true if the stack is empty. */
+    /**
+     * Returns true if the stack is empty.
+     */
     public boolean isEmpty()
     {
         return _index < 0;
     }
 
-    /** Pushes a new item onto the stack. */
+    /**
+     * Pushes a new item onto the stack.
+     */
     public void push(E item)
     {
         _index++;
@@ -77,10 +80,9 @@ public class Stack<E>
 
     /**
      * Pops the top element off the stack and returns it.
-     * 
+     *
      * @return the top element of the stack
-     * @throws IllegalStateException
-     *             if the stack is empty
+     * @throws IllegalStateException if the stack is empty
      */
     @SuppressWarnings("unchecked")
     public E pop()
@@ -103,10 +105,9 @@ public class Stack<E>
 
     /**
      * Returns the top element of the stack without affecting the stack.
-     * 
+     *
      * @return top element on the stack
-     * @throws IllegalStateException
-     *             if the stack is empty
+     * @throws IllegalStateException if the stack is empty
      */
     @SuppressWarnings("unchecked")
     public E peek()
@@ -118,7 +119,7 @@ public class Stack<E>
 
     /**
      * Describes the stack, listing the element in order of depth (top element first).
-     * 
+     *
      * @return string description of the stack
      */
     @Override

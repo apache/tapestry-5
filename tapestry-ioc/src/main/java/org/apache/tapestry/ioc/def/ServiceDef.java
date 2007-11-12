@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.ioc.def;
 
-import java.util.Set;
-
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
+
+import java.util.Set;
 
 /**
  * Service definition derived, by default, from a service builder method.
@@ -26,9 +26,8 @@ public interface ServiceDef
 {
     /**
      * Returns an {@link ObjectCreator} that can create the core service implementation.
-     * 
-     * @param resources
-     *            used to resolve dependencies of the service, or access its configuration
+     *
+     * @param resources used to resolve dependencies of the service, or access its configuration
      * @return an object that can (later) be used to instantiate the service itself
      */
     ObjectCreator createServiceCreator(ServiceBuilderResources resources);
@@ -46,7 +45,7 @@ public interface ServiceDef
      * disambiguate services; the combination of a marker annotation and a service type is expected
      * to be unique. The annotation is placed on the field or method/constructor parameter and the
      * service is located by combining the marker with service type (the parameter or field type).
-     * 
+     *
      * @return the annotation, or null if the service has no annotation
      */
     Set<Class> getMarkers();
@@ -63,7 +62,7 @@ public interface ServiceDef
      * Returns the lifecycle defined for the service. This is indicated by adding a
      * {@link org.apache.tapestry.ioc.annotations.Scope} annotation to the service builder method
      * for the service.
-     * <p>
+     * <p/>
      * Services that are not proxied will ignore their scope; such services are always treated as
      * singletons.
      */
@@ -71,7 +70,7 @@ public interface ServiceDef
 
     /**
      * Returns true if the service should be eagerly loaded at Registry startup.
-     * 
+     *
      * @see org.apache.tapestry.ioc.annotations.EagerLoad
      */
     boolean isEagerLoad();

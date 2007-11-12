@@ -18,7 +18,7 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.runtime.RenderQueue;
 
 /**
- * 
+ *
  */
 public class TextPageElement implements PageElement
 {

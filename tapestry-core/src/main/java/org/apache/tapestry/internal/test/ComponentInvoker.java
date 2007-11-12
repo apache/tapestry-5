@@ -23,8 +23,7 @@ import org.apache.tapestry.internal.services.ComponentInvocation;
 public interface ComponentInvoker
 {
     /**
-     * @param invocation
-     *            The ComponentInvocation object to be invoked.
+     * @param invocation The ComponentInvocation object to be invoked.
      * @return The DOM created. Typically you will assert against it.
      */
     Document invoke(ComponentInvocation invocation);

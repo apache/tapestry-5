@@ -14,19 +14,19 @@
 
 package org.apache.tapestry.services;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Service interface for the tapestry.request.HttpServletRequestHandler pipeline service.
- * 
- * 
+ *
  * @see org.apache.tapestry.services.HttpServletRequestFilter
  */
 public interface HttpServletRequestHandler
 {
-    /** Returns true if the request was handled, false otherwise. */
+    /**
+     * Returns true if the request was handled, false otherwise.
+     */
     boolean service(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

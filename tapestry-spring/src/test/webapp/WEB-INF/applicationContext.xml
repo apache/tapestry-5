@@ -17,7 +17,7 @@
 
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
 
-<beans>  
-  <bean id="upcase" class="org.example.testapp.services.UpcaseImpl"/>
+<beans>
+    <bean id="upcase" class="org.example.testapp.services.UpcaseImpl"/>
 </beans>
 

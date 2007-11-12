@@ -14,14 +14,6 @@
 
 package org.apache.tapestry.internal.beaneditor;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
@@ -29,9 +21,16 @@ import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.PropertyConduitSource;
+
+import java.util.List;
+import java.util.Map;
 
 public class BeanModelImpl implements BeanModel
 {
@@ -50,7 +49,7 @@ public class BeanModelImpl implements BeanModel
     private final List<String> _propertyNames = CollectionFactory.newList();
 
     public BeanModelImpl(Class beanType, PropertyConduitSource propertyConduitSource,
-            TypeCoercer typeCoercer, Messages messages)
+                         TypeCoercer typeCoercer, Messages messages)
     {
         _beanType = beanType;
         _propertyConduitSource = propertyConduitSource;
@@ -81,7 +80,7 @@ public class BeanModelImpl implements BeanModel
     }
 
     public PropertyModel add(RelativePosition position, String existingPropertyName,
-            String propertyName, PropertyConduit conduit)
+                             String propertyName, PropertyConduit conduit)
     {
         notNull(position, "position");
 
@@ -107,7 +106,7 @@ public class BeanModelImpl implements BeanModel
     }
 
     public PropertyModel add(RelativePosition position, String existingPropertyName,
-            String propertyName)
+                             String propertyName)
     {
         PropertyConduit conduit = createConduit(propertyName);
 

@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.upload.services;
 
+import org.apache.tapestry.upload.components.Upload;
+
 import java.io.File;
 import java.io.InputStream;
 
-import org.apache.tapestry.upload.components.Upload;
-
 /**
  * Represents an uploaded file.
- * 
+ *
  * @see Upload
  */
 public interface UploadedFile
@@ -58,9 +58,8 @@ public interface UploadedFile
 
     /**
      * Writes the content of the file to a known location.
-     * 
-     * @param file
-     *            Location to write file to
+     *
+     * @param file Location to write file to
      */
     void write(File file);
 }

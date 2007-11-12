@@ -30,7 +30,9 @@ public class ValidateBindingFactoryTest extends TapestryTestCase
 {
     private interface FieldComponent extends Field, Component
     {
-    };
+    }
+
+    ;
 
     @Test
     public void not_a_field()

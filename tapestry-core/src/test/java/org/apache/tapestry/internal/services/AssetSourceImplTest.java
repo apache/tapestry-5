@@ -14,10 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
@@ -26,6 +22,10 @@ import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.AssetSource;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Map;
 
 public class AssetSourceImplTest extends InternalBaseTestCase
 {

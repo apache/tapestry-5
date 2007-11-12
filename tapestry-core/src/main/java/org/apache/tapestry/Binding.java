@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.AnnotationProvider;
  * can represent any kind of value that can be obtained from the parent component, but is often a
  * JavaBean property that can be read and updated. Different implementations of Binding as used to
  * access different kinds of resources of the container.
- * <p>
+ * <p/>
  * A binding ultimately must provide access to the underlying annotations. In most cases, there are
  * no annotations, but bindings that ultimate invoke methods or read and update fields must provide
  * access to those annotations.
@@ -40,7 +40,7 @@ public interface Binding extends AnnotationProvider
      * Updates the current value. Most types of bindings are read-only, and this method will throw a
      * runtime exception. It is the caller's responsibility to ensure that the value passed in is of
      * the appropriate type.
-     * 
+     *
      * @param value
      */
     void set(Object value);

@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 public class StaticModule
 {

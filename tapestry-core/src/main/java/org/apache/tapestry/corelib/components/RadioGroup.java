@@ -14,20 +14,12 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.RadioContainer;
-import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.ComponentDefaultProvider;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.ValueEncoderSource;
+import org.apache.tapestry.services.*;
 
 public class RadioGroup
 {
@@ -48,7 +40,7 @@ public class RadioGroup
     /**
      * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to
      * create client-side string values for the different radio button values.
-     * 
+     *
      * @see ValueEncoderSource
      */
     @Parameter(required = true)
@@ -99,7 +91,9 @@ public class RadioGroup
         {
             component.setup(_elementName);
         }
-    };
+    }
+
+    ;
 
     private static final ComponentAction<RadioGroup> PROCESS_SUBMISSION = new ComponentAction<RadioGroup>()
     {

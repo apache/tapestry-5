@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.reflect.Constructor;
-
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
+
+import java.lang.reflect.Constructor;
 
 /**
  * Implementation of {@link Instantiator} based on a class, a list of parameters to the class'
@@ -35,17 +35,14 @@ public class ReflectiveInstantiator implements Instantiator
 
     /**
      * Creates a new instance that will instantiate the given class. The
-     * 
-     * @param componentModel
-     *            model defining the behavior of the component
-     * @param instanceClass
-     *            class to instantiate
-     * @param parameters
-     *            passed to the constructor; the first instance is ignored (and overriden) as the
-     *            {@link org.apache.tapestry.internal.InternalComponentResources} instance.
+     *
+     * @param componentModel model defining the behavior of the component
+     * @param instanceClass  class to instantiate
+     * @param parameters     passed to the constructor; the first instance is ignored (and overriden) as the
+     *                       {@link org.apache.tapestry.internal.InternalComponentResources} instance.
      */
     ReflectiveInstantiator(ComponentModel componentModel, Class instanceClass,
-            Object[] constructorParameters)
+                           Object[] constructorParameters)
     {
         _componentModel = componentModel;
         _constructorParameters = constructorParameters;

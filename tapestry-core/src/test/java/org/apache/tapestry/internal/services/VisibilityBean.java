@@ -18,8 +18,6 @@ import org.apache.tapestry.annotations.Retain;
 
 /**
  * Used to test some issues related to visibility.
- * 
- * 
  */
 public class VisibilityBean
 {

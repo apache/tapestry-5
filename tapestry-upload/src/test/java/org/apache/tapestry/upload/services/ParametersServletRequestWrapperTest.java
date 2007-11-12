@@ -14,23 +14,15 @@
 
 package org.apache.tapestry.upload.services;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.easymock.EasyMock.*;
+import static org.testng.Assert.*;
+import org.testng.annotations.Test;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.testng.annotations.Test;
 
 public class ParametersServletRequestWrapperTest
 {
@@ -135,7 +127,7 @@ public class ParametersServletRequestWrapperTest
         wrapper.addParameter("foo", "another");
 
         assertEquals(wrapper.getParameterValues("foo"), new String[]
-        { "blah", "another" });
+                {"blah", "another"});
         verify(request);
     }
 
@@ -176,7 +168,7 @@ public class ParametersServletRequestWrapperTest
         assertEquals(parameters.size(), 2);
         assertEquals(parameters.get("single"), "blah");
         assertEquals((String[]) parameters.get("multi"), new String[]
-        { "one", "two" });
+                {"one", "two"});
 
         verify(request);
     }

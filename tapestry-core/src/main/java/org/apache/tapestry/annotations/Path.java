@@ -14,23 +14,22 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.ioc.annotations.Inject;
+
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  * Used in conjunction with the {@link Inject} annotation to inject an {@link Asset} based on a
  * path.
  */
 @Target(
-{ FIELD, PARAMETER })
+        {FIELD, PARAMETER})
 @Documented
 @Retention(RUNTIME)
 public @interface Path
@@ -39,7 +38,7 @@ public @interface Path
      * The path to the resource; if prefixed (say with "classpath:") then its a complete path within
      * the identified namespace; otherwise it's a relative path from the class containing the
      * annotation. Symbols will be expanded.
-     * 
+     *
      * @return
      */
     String value();

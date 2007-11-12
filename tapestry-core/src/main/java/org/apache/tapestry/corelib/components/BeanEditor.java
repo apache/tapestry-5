@@ -43,7 +43,9 @@ public class BeanEditor
         {
             component.doPrepare();
         }
-    };
+    }
+
+    ;
 
     /**
      * The object to be edited by the BeanEditor. This will be read when the component renders and
@@ -120,7 +122,9 @@ public class BeanEditor
         _propertyName = propertyName;
     }
 
-    /** Returns the object being edited. */
+    /**
+     * Returns the object being edited.
+     */
     public Object getObject()
     {
         return _object;

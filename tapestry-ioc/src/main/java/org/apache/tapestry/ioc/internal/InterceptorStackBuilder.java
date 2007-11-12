@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceDecorator;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Responsible for constructing the interceptor stack, on demand, by invoking an ordered series of
@@ -34,13 +34,10 @@ public class InterceptorStackBuilder implements ObjectCreator
     private final Module _module;
 
     /**
-     * @param module
-     *            the module containing the decorator method
-     * @param serviceId
-     *            identifies the service to be decorated
-     * @param coreServiceCreator
-     *            responsible for creating the core service which is then decorated with a stack of
-     *            interceptors
+     * @param module             the module containing the decorator method
+     * @param serviceId          identifies the service to be decorated
+     * @param coreServiceCreator responsible for creating the core service which is then decorated with a stack of
+     *                           interceptors
      */
     public InterceptorStackBuilder(Module module, String serviceId, ObjectCreator coreServiceCreator)
     {

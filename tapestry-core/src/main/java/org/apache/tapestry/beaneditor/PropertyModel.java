@@ -21,7 +21,9 @@ import org.apache.tapestry.PropertyConduit;
  */
 public interface PropertyModel
 {
-    /** Returns the name of the property (which may, in fact, be a property expression). */
+    /**
+     * Returns the name of the property (which may, in fact, be a property expression).
+     */
     String getPropertyName();
 
     /**
@@ -30,10 +32,14 @@ public interface PropertyModel
      */
     String getId();
 
-    /** Returns a user-presentable label for the property. */
+    /**
+     * Returns a user-presentable label for the property.
+     */
     String getLabel();
 
-    /** Returns the type of the property. */
+    /**
+     * Returns the type of the property.
+     */
     Class getPropertyType();
 
     /**
@@ -44,7 +50,7 @@ public interface PropertyModel
 
     /**
      * Changes the data type for the property.
-     * 
+     *
      * @param dataType
      * @return the property edit model, for further changes
      */
@@ -59,14 +65,15 @@ public interface PropertyModel
 
     /**
      * Changes the label for the property to the provided value.
-     * 
-     * @param label
-     *            new label for property
+     *
+     * @param label new label for property
      * @return the property edit model, for further changes
      */
     PropertyModel label(String label);
 
-    /** Returns the containing model, often used for "fluent" construction of the model. */
+    /**
+     * Returns the containing model, often used for "fluent" construction of the model.
+     */
     BeanModel model();
 
     /**
@@ -75,6 +82,8 @@ public interface PropertyModel
      */
     boolean isSortable();
 
-    /** Updates sortable and returns the model for further changes. */
+    /**
+     * Updates sortable and returns the model for further changes.
+     */
     PropertyModel sortable(boolean sortable);
 }

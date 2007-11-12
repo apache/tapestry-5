@@ -14,11 +14,6 @@
 
 package org.apache.tapestry.integration;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.net.URL;
-
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.internal.services.InjectContainerWorker;
 import org.apache.tapestry.ioc.Resource;
@@ -26,12 +21,17 @@ import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.URL;
+
 /**
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on
  * my system, Skype is listening on localhost:80.
  */
 @Test(timeOut = 50000, sequential = true, groups =
-{ "integration" })
+        {"integration"})
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     public IntegrationTests()
@@ -168,7 +168,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // And exception message:
 
-        assertTextPresent("Component InjectContainerMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
+        assertTextPresent(
+                "Component InjectContainerMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
     }
 
     @Test
@@ -196,7 +197,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("InstanceMixin");
 
         final String[] dates =
-        { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
+                {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
 
         for (String date : dates)
         {
@@ -309,7 +310,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("RenderPhaseOrder");
 
-        assertTextPresent("[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
+        assertTextPresent(
+                "[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
     }
 
     @Test
@@ -444,7 +446,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         test_loop_inside_form("ToDo List (Volatile)");
     }
 
-    /** also verifies the use of meta data to set the default strategy. */
+    /**
+     * also verifies the use of meta data to set the default strategy.
+     */
     @Test
     public void flash_persistence()
     {
@@ -848,21 +852,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(clear);
 
         clickAndWait("wilma");
-        assertTextPresent("[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild(), child.onAction()]");
+        assertTextPresent(
+                "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild(), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("barney");
 
-        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
+        assertTextPresent(
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("betty");
-        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
+        assertTextPresent(
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
         clickAndWait("fred");
 
-        assertTextPresent("[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred(), child.onAnyEventFromFred(String), child.onAnyEventFromFred()]");
+        assertTextPresent(
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred(), child.onAnyEventFromFred(String), child.onAnyEventFromFred()]");
     }
 
     @Test
@@ -1119,7 +1127,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Missing Template Demo");
 
-        assertTextPresent("Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
+        assertTextPresent(
+                "Page MissingTemplate did not generate any markup when rendered. This could be because its template file could not be located, or because a render phase method in the page prevented rendering.");
     }
 
     /**
@@ -1159,7 +1168,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Howard Lewis Ship", "Dec 24, 1966");
     }
 
-    /** This basically checks that the services status page does not error. */
+    /**
+     * This basically checks that the services status page does not error.
+     */
     @Test
     public void services_status()
     {

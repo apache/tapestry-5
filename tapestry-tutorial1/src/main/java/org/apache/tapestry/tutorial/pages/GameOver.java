@@ -18,16 +18,16 @@ import org.apache.tapestry.annotations.Persist;
 
 public class GameOver
 {
-  @Persist
-  private int _count;
+    @Persist
+    private int _count;
 
-  public int getCount()
-  {
-    return _count;
-  }
+    public int getCount()
+    {
+        return _count;
+    }
 
-  void setup(int count)
-  {
-    _count = count;
-  }
+    void setup(int count)
+    {
+        _count = count;
+    }
 }

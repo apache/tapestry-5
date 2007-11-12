@@ -23,7 +23,7 @@ public class ComponentInvocationTest extends Assert
     public void no_context()
     {
         ComponentInvocation invocation = new ComponentInvocation(new OpaqueConstantTarget("abc"),
-                new String[0], null);
+                                                                 new String[0], null);
         assertEquals(invocation.buildURI(false), "abc");
         assertEquals(invocation.buildURI(true), "abc");
     }
@@ -32,8 +32,8 @@ public class ComponentInvocationTest extends Assert
     public void context()
     {
         ComponentInvocation invocation = new ComponentInvocation(new OpaqueConstantTarget("abc"),
-                new String[]
-                { "x", "123" }, null);
+                                                                 new String[]
+                                                                         {"x", "123"}, null);
         assertEquals(invocation.buildURI(false), "abc/x/123");
         assertEquals(invocation.buildURI(true), "abc/x/123");
     }
@@ -42,8 +42,8 @@ public class ComponentInvocationTest extends Assert
     public void parameters()
     {
         ComponentInvocation invocation = new ComponentInvocation(new OpaqueConstantTarget("abc"),
-                new String[]
-                { "x", "123" }, null);
+                                                                 new String[]
+                                                                         {"x", "123"}, null);
         invocation.addParameter("p1", "foo");
         invocation.addParameter("p2", "bar");
         assertEquals(invocation.buildURI(false), "abc/x/123?p1=foo&p2=bar");

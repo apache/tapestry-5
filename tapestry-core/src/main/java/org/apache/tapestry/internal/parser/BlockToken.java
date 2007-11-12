@@ -25,10 +25,8 @@ public class BlockToken extends TemplateToken
     private final String _id;
 
     /**
-     * @param id
-     *            the id of the block, or null for an anonymous block
-     * @param location
-     *            of the block element
+     * @param id       the id of the block, or null for an anonymous block
+     * @param location of the block element
      */
     public BlockToken(String id, Location location)
     {
@@ -37,7 +35,9 @@ public class BlockToken extends TemplateToken
         _id = id;
     }
 
-    /** Returns the block's template-unique id, or null if the block element did not specify an id. */
+    /**
+     * Returns the block's template-unique id, or null if the block element did not specify an id.
+     */
     public String getId()
     {
         return _id;

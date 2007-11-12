@@ -14,21 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-
 import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.PageRenderRequestHandler;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
+import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
 
 public class PageRenderDispatcherTest extends InternalBaseTestCase
@@ -119,7 +111,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         replay();
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
-                renderer, response);
+                                                                            renderer, response);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -161,14 +153,14 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_getRootElement(page, rootElement);
 
         train_triggerEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[]
-        { "zip", "zoom" }, null, false);
+                {"zip", "zoom"}, null, false);
 
         renderer.renderPageResponse(page, response);
 
         replay();
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
-                renderer, response);
+                                                                            renderer, response);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -183,7 +175,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     }
 
     private void train_triggerEvent(ComponentPageElement element, String eventType,
-            Object[] context, ComponentEventHandler handler, boolean handled)
+                                    Object[] context, ComponentEventHandler handler, boolean handled)
     {
         expect(
                 element.triggerEvent(

@@ -76,7 +76,8 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         // tests for that.
 
         ct
-                .extendConstructor("myField = (java.lang.Object) as.findAsset(rez.getBaseResource(), \"foo.gif\", rez.getLocale());");
+                .extendConstructor(
+                        "myField = (java.lang.Object) as.findAsset(rez.getBaseResource(), \"foo.gif\", rez.getLocale());");
 
         ct.makeReadOnly(fieldName);
 

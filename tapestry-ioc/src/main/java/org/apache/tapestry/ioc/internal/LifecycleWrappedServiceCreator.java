@@ -35,7 +35,7 @@ public class LifecycleWrappedServiceCreator implements ObjectCreator
     private final ObjectCreator _creator;
 
     public LifecycleWrappedServiceCreator(InternalRegistry registry, String serviceScope,
-            ServiceResources resources, ObjectCreator creator)
+                                          ServiceResources resources, ObjectCreator creator)
     {
         _registry = registry;
         _serviceScope = serviceScope;

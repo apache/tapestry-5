@@ -14,11 +14,7 @@
 
 package org.apache.tapestry.internal;
 
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.BaseValidationDecorator;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationTracker;
+import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.Environment;
@@ -36,17 +32,14 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     private Messages _validationMessages;
 
     /**
-     * @param environment
-     *            used to locate objects and services during the render
-     * @param validationMessages
-     *            obtained from {@link ValidationMessagesSource}, used to obtain the label for the
-     *            icon
-     * @param iconAsset
-     *            asset for an icon that will be displayed after each field (marked with the
-     *            "t-invisible" CSS class, if the field is not in error)
+     * @param environment        used to locate objects and services during the render
+     * @param validationMessages obtained from {@link ValidationMessagesSource}, used to obtain the label for the
+     *                           icon
+     * @param iconAsset          asset for an icon that will be displayed after each field (marked with the
+     *                           "t-invisible" CSS class, if the field is not in error)
      */
     public DefaultValidationDecorator(final Environment environment, Messages validationMessages,
-            Asset iconAsset)
+                                      Asset iconAsset)
     {
         _environment = environment;
         _validationMessages = validationMessages;

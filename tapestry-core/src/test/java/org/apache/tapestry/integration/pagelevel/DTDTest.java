@@ -32,11 +32,11 @@ public class DTDTest extends Assert
     public Object[][] dtd_page_provider()
     {
         return new Object[][]
-        {
-        { "DTDFromPage", FRAMESET, "slagheap", },
-        { "DTDFromComponent", TRANSITIONAL, "flubber", },
-        { "MultipleDTD", STRICT, "blubber", },
-        { "NoDTD", "", "no_dtd_loser", } };
+                {
+                        {"DTDFromPage", FRAMESET, "slagheap",},
+                        {"DTDFromComponent", TRANSITIONAL, "flubber",},
+                        {"MultipleDTD", STRICT, "blubber",},
+                        {"NoDTD", "", "no_dtd_loser",}};
     }
 
     @Test(dataProvider = "dtd_page_provider")

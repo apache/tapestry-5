@@ -20,7 +20,7 @@ import org.apache.tapestry.services.ValueEncoderFactory;
 /**
  * An implementation of {@link ValueEncoderFactory} that returns a pre-wired instance of
  * {@link ValueEncoder}.
- * 
+ *
  * @param <V>
  */
 public class GenericValueEncoderFactory<V> implements ValueEncoderFactory<V>

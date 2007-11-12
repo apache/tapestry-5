@@ -14,12 +14,6 @@
 
 package org.apache.tapestry.ioc;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.lang.reflect.AnnotatedElement;
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ioc.annotations.SubModule;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.DefaultModuleDefImpl;
@@ -27,10 +21,15 @@ import org.apache.tapestry.ioc.internal.LoggerSourceImpl;
 import org.apache.tapestry.ioc.internal.RegistryImpl;
 import org.apache.tapestry.ioc.internal.RegistryWrapper;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
 import org.slf4j.Logger;
+
+import java.lang.reflect.AnnotatedElement;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Used to construct the IoC {@link org.apache.tapestry.ioc.Registry}. This class is <em>not</em>
@@ -40,7 +39,9 @@ public final class RegistryBuilder
 {
     private final OneShotLock _lock = new OneShotLock();
 
-    /** Module defs, keyed on module id. */
+    /**
+     * Module defs, keyed on module id.
+     */
     final List<ModuleDef> _modules = newList();
 
     private final ClassLoader _classLoader;

@@ -17,8 +17,6 @@ package org.apache.tapestry.ioc;
 /**
  * Encapsulates a strategy for determining the size of an object. Different implementations are
  * mapped to different types.
- * 
- * 
  */
 public interface Sizer
 {

@@ -22,6 +22,8 @@ import org.apache.tapestry.ComponentResources;
  */
 public interface ComponentResourcesAware
 {
-    /** Returns the resources associated with this component class. */
+    /**
+     * Returns the resources associated with this component class.
+     */
     ComponentResources getComponentResources();
 }

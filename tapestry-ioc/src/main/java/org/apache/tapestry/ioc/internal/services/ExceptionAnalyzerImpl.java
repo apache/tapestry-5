@@ -14,21 +14,14 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.services.*;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.ExceptionAnalysis;
-import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
-import org.apache.tapestry.ioc.services.ExceptionInfo;
-import org.apache.tapestry.ioc.services.PropertyAccess;
 
 public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 {
@@ -73,7 +66,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
      * includes: an exception message not present in the containing exception or a property value
      * not present in the containing exception. Also the first exception is always valued and the
      * last exception (with the stack trace) is valued.
-     * 
+     *
      * @param previousInfo
      * @param info
      * @return

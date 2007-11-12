@@ -19,61 +19,61 @@ import org.apache.tapestry.annotations.Persist;
 
 public class Guess
 {
-  @Persist
-  private int _target;
+    @Persist
+    private int _target;
 
-  private int _guess;
+    private int _guess;
 
-  @Persist
-  private String _message;
+    @Persist
+    private String _message;
 
-  @Persist
-  private int _count;
+    @Persist
+    private int _count;
 
-  public String getMessage()
-  {
-    return _message;
-  }
-
-  @InjectPage
-  private GameOver _gameOver;
-
-  Object onActionFromLink(int guess)
-  {
-    _count++;
-
-    if (guess == _target)
+    public String getMessage()
     {
-      _gameOver.setup(_count);
-      return _gameOver;
+        return _message;
     }
 
-    if (guess < _target)
-      _message = String.format("%d is too low.", guess);
-    else
-      _message = String.format("%d is too high.", guess);
+    @InjectPage
+    private GameOver _gameOver;
 
-    return null;
-  }
+    Object onActionFromLink(int guess)
+    {
+        _count++;
 
-  public int getGuess()
-  {
-    return _guess;
-  }
+        if (guess == _target)
+        {
+            _gameOver.setup(_count);
+            return _gameOver;
+        }
 
-  public void setGuess(int guess)
-  {
-    _guess = guess;
-  }
+        if (guess < _target)
+            _message = String.format("%d is too low.", guess);
+        else
+            _message = String.format("%d is too high.", guess);
 
-  void setup(int target)
-  {
-    _target = target;
-    _count = 0;
-  }
+        return null;
+    }
 
-  public int getTarget()
-  {
-    return _target;
-  }
+    public int getGuess()
+    {
+        return _guess;
+    }
+
+    public void setGuess(int guess)
+    {
+        _guess = guess;
+    }
+
+    void setup(int target)
+    {
+        _target = target;
+        _count = 0;
+    }
+
+    public int getTarget()
+    {
+        return _target;
+    }
 }

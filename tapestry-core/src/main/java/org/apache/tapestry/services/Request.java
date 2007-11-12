@@ -26,9 +26,8 @@ public interface Request
     /**
      * Gets the {@link Session}. If create is false and the session has not be created previously,
      * returns null.
-     * 
-     * @param create
-     *            true to force the creation of the session
+     *
+     * @param create true to force the creation of the session
      * @return the session (or null if create is false the session has not been previously created)
      */
     Session getSession(boolean create);
@@ -39,7 +38,9 @@ public interface Request
      */
     String getContextPath();
 
-    /** Returns a list of query parameter names, in alphabetical order. */
+    /**
+     * Returns a list of query parameter names, in alphabetical order.
+     */
     List<String> getParameterNames();
 
     /**
@@ -51,7 +52,7 @@ public interface Request
     /**
      * Returns the parameter values for the given name. Returns null if no such parameter is in the
      * request.
-     * <p>
+     * <p/>
      * TODO: Shouldn't this move to {@link FormParameterLookup}?
      */
     String[] getParameters(String name);
@@ -62,52 +63,55 @@ public interface Request
      */
     String getPath();
 
-    /** Returns the locale of the client as determined from the request headers. */
+    /**
+     * Returns the locale of the client as determined from the request headers.
+     */
     Locale getLocale();
 
-    /** Returns the names of all headers in the request. */
+    /**
+     * Returns the names of all headers in the request.
+     */
     List<String> getHeaderNames();
 
     /**
      * Returns the value of the specified request header as a <code>long</code> value that
      * represents a <code>Date</code> object. Use this method with headers that contain dates,
      * such as <code>If-Modified-Since</code>.
-     * <p>
+     * <p/>
      * The date is returned as the number of milliseconds since January 1, 1970 GMT. The header name
      * is case insensitive.
-     * <p>
+     * <p/>
      * If the request did not have a header of the specified name, this method returns -1. If the
      * header can't be converted to a date, the method throws an
      * <code>IllegalArgumentException</code>.
-     * 
-     * @param nme
-     *            a <code>String</code> specifying the name of the header
+     *
+     * @param nme a <code>String</code> specifying the name of the header
      * @return a <code>long</code> value representing the date specified in the header expressed
      *         as the number of milliseconds since January 1, 1970 GMT, or -1 if the named header
      *         was not included with the reqest
-     * @exception IllegalArgumentException
-     *                If the header value can't be converted to a date
+     * @throws IllegalArgumentException If the header value can't be converted to a date
      */
     long getDateHeader(String name);
 
-    /** Returns the named header as a string, or null if not found. */
+    /**
+     * Returns the named header as a string, or null if not found.
+     */
     String getHeader(String name);
 
     /**
      * Sets the encoding of the request, which must occur before any parameters for the request are
      * read.
-     * 
-     * @param requestEncoding
-     *            charset used when parsing parameters
+     *
+     * @param requestEncoding charset used when parsing parameters
      */
     void setEncoding(String requestEncoding);
-    
+
     /**
      * Returns true if the request originated on the client using XmlHttpRequest (the core of any Ajax behavior).
      * Ajax action requests may behave quite differently than ordinary, page-based requests.  This implementation
      * currently depends on the client side setting a header: <strong>X-Requested-With=XmlHttpRequest</strong> (this is what
      * Prototype does).
-     * 
+     *
      * @return true if the request has an XmlHttpRequest origin
      */
     boolean isXHR();

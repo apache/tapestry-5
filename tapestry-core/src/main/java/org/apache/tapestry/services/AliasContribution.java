@@ -15,10 +15,9 @@
 package org.apache.tapestry.services;
 
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 import java.util.Formatter;
-
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * A contribution into the {@link Alias} or AliasOverride service configuration.
@@ -80,7 +79,9 @@ public final class AliasContribution<T>
         return _contributionType;
     }
 
-    /** The contributed object, which will be made available. */
+    /**
+     * The contributed object, which will be made available.
+     */
     public T getObject()
     {
         return _object;

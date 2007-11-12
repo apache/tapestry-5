@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.AliasManager;
+
+import java.util.Map;
 
 public class AliasImpl implements Alias, ObjectProvider
 {
@@ -64,7 +63,7 @@ public class AliasImpl implements Alias, ObjectProvider
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-            ObjectLocator locator)
+                         ObjectLocator locator)
     {
         initialize();
 

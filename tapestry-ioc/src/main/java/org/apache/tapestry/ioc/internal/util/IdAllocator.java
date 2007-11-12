@@ -25,7 +25,7 @@ import java.util.Map;
 /**
  * Used to "uniquify" names within a given context. A base name is passed in, and the return value
  * is the base name, or the base name extended with a suffix to make it unique.
- * <p>
+ * <p/>
  * This class is not threadsafe.
  */
 
@@ -33,12 +33,16 @@ public final class IdAllocator
 {
     private static final String SEPARATOR = "_";
 
-    /** Map from allocated id to a generator for names associated with the allocated id. */
+    /**
+     * Map from allocated id to a generator for names associated with the allocated id.
+     */
     private final Map<String, NameGenerator> _generatorMap;
 
     private final String _namespace;
 
-    /** Generates unique names with a particular prefix. */
+    /**
+     * Generates unique names with a particular prefix.
+     */
     private static class NameGenerator implements Cloneable
     {
         private final String _baseId;
@@ -55,7 +59,9 @@ public final class IdAllocator
             return _baseId + _index++;
         }
 
-        /** Clones this instance, returning an equivalent but seperate copy. */
+        /**
+         * Clones this instance, returning an equivalent but seperate copy.
+         */
         @Override
         public NameGenerator clone()
         {
@@ -71,13 +77,17 @@ public final class IdAllocator
         }
     }
 
-    /** Creates a new allocator with no namespace. */
+    /**
+     * Creates a new allocator with no namespace.
+     */
     public IdAllocator()
     {
         this("");
     }
 
-    /** Creates a new allocator with the provided namespace. */
+    /**
+     * Creates a new allocator with the provided namespace.
+     */
     public IdAllocator(String namespace)
     {
         this(namespace, new HashMap<String, NameGenerator>());
@@ -89,7 +99,9 @@ public final class IdAllocator
         _generatorMap = generatorMap;
     }
 
-    /** Returns a list of all allocated ids, sorted alphabetically. */
+    /**
+     * Returns a list of all allocated ids, sorted alphabetically.
+     */
     public List<String> getAllocatedIds()
     {
         return InternalUtils.sortedKeys(_generatorMap);
@@ -157,7 +169,9 @@ public final class IdAllocator
         return result;
     }
 
-    /** Checks to see if a given name has been allocated. */
+    /**
+     * Checks to see if a given name has been allocated.
+     */
     public boolean isAllocated(String name)
     {
         return _generatorMap.containsKey(name);

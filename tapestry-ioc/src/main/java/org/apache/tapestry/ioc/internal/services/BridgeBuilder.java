@@ -14,19 +14,18 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodIterator;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.slf4j.Logger;
+
+import static java.lang.String.format;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Used by the {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to create
@@ -49,7 +48,7 @@ class BridgeBuilder<S, F>
     private Constructor _constructor;
 
     BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface,
-            ClassFactory classFactory)
+                  ClassFactory classFactory)
     {
         _logger = logger;
         _serviceInterface = serviceInterface;
@@ -112,18 +111,16 @@ class BridgeBuilder<S, F>
         _classFab.addField("_filter", Modifier.PRIVATE | Modifier.FINAL, _filterInterface);
 
         _classFab.addConstructor(new Class[]
-        { _serviceInterface, _filterInterface }, null, "{ _next = $1; _filter = $2; }");
+                {_serviceInterface, _filterInterface}, null, "{ _next = $1; _filter = $2; }");
 
         _classFab.addInterface(_serviceInterface);
     }
 
     /**
      * Instantiates a bridge object.
-     * 
-     * @param nextBridge
-     *            the next Bridge object in the pipeline, or the terminator service
-     * @param filter
-     *            the filter object for this step of the pipeline
+     *
+     * @param nextBridge the next Bridge object in the pipeline, or the terminator service
+     * @param filter     the filter object for this step of the pipeline
      */
     public S instantiateBridge(S nextBridge, F filter)
     {
@@ -158,7 +155,7 @@ class BridgeBuilder<S, F>
      * Finds a matching method in filterMethods for the given service method. A matching method has
      * the same signature as the service interface method, but with an additional parameter matching
      * the service interface itself.
-     * <p>
+     * <p/>
      * The matching method signature from the list of filterMethods is removed and code generation
      * strategies for making the two methods call each other are added.
      */

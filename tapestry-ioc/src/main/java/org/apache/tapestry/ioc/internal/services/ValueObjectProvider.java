@@ -35,15 +35,15 @@ public class ValueObjectProvider implements ObjectProvider
     public ValueObjectProvider(@Builtin
     SymbolSource symbolSource,
 
-    @Builtin
-    TypeCoercer typeCoercer)
+                               @Builtin
+                               TypeCoercer typeCoercer)
     {
         _symbolSource = symbolSource;
         _typeCoercer = typeCoercer;
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-            ObjectLocator locator)
+                         ObjectLocator locator)
     {
         Value annotation = annotationProvider.getAnnotation(Value.class);
 

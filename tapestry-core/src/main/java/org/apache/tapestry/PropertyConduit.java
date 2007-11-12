@@ -24,23 +24,22 @@ public interface PropertyConduit extends AnnotationProvider
 {
     /**
      * Reads the property from the instance.
-     * 
-     * @param instance
-     *            object containing the property
+     *
+     * @param instance object containing the property
      * @return the current value of the property
      */
     Object get(Object instance);
 
     /**
      * Changes the current value of the property.
-     * 
-     * @param instance
-     *            object containing the property
-     * @param value
-     *            to change the property to
+     *
+     * @param instance object containing the property
+     * @param value    to change the property to
      */
     void set(Object instance, Object value);
 
-    /** Returns the type of the property read or updated by the conduit. */
+    /**
+     * Returns the type of the property read or updated by the conduit.
+     */
     Class getPropertyType();
 }

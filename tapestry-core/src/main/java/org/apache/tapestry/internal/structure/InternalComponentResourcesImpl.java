@@ -14,23 +14,14 @@
 
 package org.apache.tapestry.internal.structure;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentEventHandler;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.*;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
@@ -38,6 +29,9 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ComponentMessagesSource;
 import org.slf4j.Logger;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
@@ -64,8 +58,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private Messages _messages;
 
     public InternalComponentResourcesImpl(ComponentPageElement element,
-            ComponentResources containerResources, Instantiator componentInstantiator,
-            TypeCoercer typeCoercer, ComponentMessagesSource messagesSource)
+                                          ComponentResources containerResources, Instantiator componentInstantiator,
+                                          TypeCoercer typeCoercer, ComponentMessagesSource messagesSource)
     {
         _element = element;
         _containerResources = containerResources;

@@ -30,21 +30,18 @@ public interface BeanModelSource
      * {@link OrderBefore} annotation on the getter or setter methods. The labels for the properties are
      * derived from the property names, but if the component's message catalog has keys of the form
      * <code>propertyName-label</code>, then those will be used instead.
-     * <p>
+     * <p/>
      * Models are <em>mutable</em>, so they are not cached, a fresh instance is created each
      * time.
-     * 
-     * @param beanClass
-     *            class of object to be edited
-     * @param filterReadOnlyProperties
-     *            if true, then properties that are read-only will be skipped (leaving only
-     *            read-write properties). If false, then both read-only and read-write properties
-     *            will be included.
-     * @param resources
-     *            used when resolving resources, especially component messages (used to access
-     *            labels)
+     *
+     * @param beanClass                class of object to be edited
+     * @param filterReadOnlyProperties if true, then properties that are read-only will be skipped (leaving only
+     *                                 read-write properties). If false, then both read-only and read-write properties
+     *                                 will be included.
+     * @param resources                used when resolving resources, especially component messages (used to access
+     *                                 labels)
      * @return a model
      */
     BeanModel create(Class beanClass, boolean filterReadOnlyProperties,
-            ComponentResources resources);
+                     ComponentResources resources);
 }

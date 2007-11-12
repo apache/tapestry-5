@@ -14,36 +14,36 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry.services.MetaDataLocator;
 import org.apache.tapestry.services.Session;
+
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  * Identifies a field as persistent, meaning its value persists from one request to the next.
  * Different strategies exist for how this is accomplished, the most common being the default,
  * "session", which stores the field's value in the {@link Session}.
- * <p>
+ * <p/>
  * In most cases, the value will be omitted and will default to the empty string. This forces a
  * search for the correct strategy. Starting with the component (or mixin) itself, a check is made
  * for the {@link Meta meta data property} <code>tapestry.persistence-strategy</code>. If a value
  * is found, it is used, otherwise the search continues up the inheritance hierarchy, towards the
  * page. If not found, then the "session" strategy is used.
- * <p>
+ * <p/>
  * In this way, the session persistence strategy for a component and all of its sub-components can
  * be controlled by the containing component.
- * 
+ *
  * @see MetaDataLocator
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Persist {
+public @interface Persist
+{
 
     /**
      * The strategy used to persist the value. The default value, the empty string, allows

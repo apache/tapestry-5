@@ -14,20 +14,20 @@
 
 package org.apache.tapestry;
 
+import org.apache.tapestry.corelib.components.Loop;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.apache.tapestry.corelib.components.Loop;
 
 /**
  * Used by {@link Loop} and similar components to extract out an identifier, here termed a "primary
  * key", that can be stored on the client and later used to recover the same, or equivalent, server
  * side object.
- * 
+ *
  * @param <K>
- *            the type of the primary key, used to identify the value (which must be serializable)
+ * the type of the primary key, used to identify the value (which must be serializable)
  * @param <V>
- *            the type of value identified by the key
+ * the type of value identified by the key
  */
 public interface PrimaryKeyEncoder<K extends Serializable, V>
 {
@@ -35,9 +35,8 @@ public interface PrimaryKeyEncoder<K extends Serializable, V>
      * Given a particular value, this method extracts and returns the primary key that identifies
      * the value. The key will later be converted back into a value using
      * {@link #toValue(Serializable)}.
-     * 
-     * @param value
-     *            whose primary key is needed
+     *
+     * @param value whose primary key is needed
      * @return the key for the value
      */
     K toKey(V value);
@@ -55,9 +54,8 @@ public interface PrimaryKeyEncoder<K extends Serializable, V>
     /**
      * For a particular primary key, previously obtained via {@link #toKey(Object)}, this method
      * returns the same or equivalent object.
-     * 
-     * @param key
-     *            used to identify the object
+     *
+     * @param key used to identify the object
      * @return the value object for the key
      */
     V toValue(K key);

@@ -16,8 +16,6 @@ package org.apache.tapestry.ioc.internal.services;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.services.FilterMethodAnalyzer}.
- * 
- * 
  */
 public interface SampleFilter
 {

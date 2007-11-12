@@ -20,6 +20,8 @@ package org.apache.tapestry.runtime;
  */
 public interface RenderQueue
 {
-    /** Adds the new command to the front of the queue. */
+    /**
+     * Adds the new command to the front of the queue.
+     */
     void push(RenderCommand command);
 }

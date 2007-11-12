@@ -16,38 +16,38 @@
 -->
 
 <suite name="Tapestry Core" annotations="1.5" verbose="0">
-  <test name="Integration Tests">
-    <packages>
-      <package name="org.apache.tapestry.integration"/>
-    </packages>
-  </test>
-  <test name="Public APIs">
-    <packages>
-      <package name="org.apache.tapestry"/>
-      <package name="org.apache.tapestry.integration.pagelevel"/>
-      <package name="org.apache.tapestry.corelib.components"/>
-      <package name="org.apache.tapestry.corelib.internal"/>
-      <package name="org.apache.tapestry.dom"/>
-      <package name="org.apache.tapestry.json"/>
-      <package name="org.apache.tapestry.services"/>
-      <package name="org.apache.tapestry.util"/>
-      <package name="org.apache.tapestry.runtime"/>
-      <package name="org.apache.tapestry.translator"/>
-      <package name="org.apache.tapestry.validator"/>
-    </packages>
-  </test>
-  <test name="Internal APIs">
-    <packages>
-      <package name="org.apache.internal"/>
-      <package name="org.apache.tapestry.internal"/>
-      <package name="org.apache.tapestry.internal.beaneditor"/>
-      <package name="org.apache.tapestry.internal.grid"/>
-      <package name="org.apache.tapestry.internal.services"/>
-      <package name="org.apache.tapestry.internal.structure"/>
-      <package name="org.apache.tapestry.internal.util"/>
-      <package name="org.apache.tapestry.internal.bindings"/>
-      <package name="org.apache.tapestry.internal.model"/>
-      <package name="org.apache.tapestry.internal.test"/>
-    </packages>
-  </test>
+    <test name="Integration Tests">
+        <packages>
+            <package name="org.apache.tapestry.integration"/>
+        </packages>
+    </test>
+    <test name="Public APIs">
+        <packages>
+            <package name="org.apache.tapestry"/>
+            <package name="org.apache.tapestry.integration.pagelevel"/>
+            <package name="org.apache.tapestry.corelib.components"/>
+            <package name="org.apache.tapestry.corelib.internal"/>
+            <package name="org.apache.tapestry.dom"/>
+            <package name="org.apache.tapestry.json"/>
+            <package name="org.apache.tapestry.services"/>
+            <package name="org.apache.tapestry.util"/>
+            <package name="org.apache.tapestry.runtime"/>
+            <package name="org.apache.tapestry.translator"/>
+            <package name="org.apache.tapestry.validator"/>
+        </packages>
+    </test>
+    <test name="Internal APIs">
+        <packages>
+            <package name="org.apache.internal"/>
+            <package name="org.apache.tapestry.internal"/>
+            <package name="org.apache.tapestry.internal.beaneditor"/>
+            <package name="org.apache.tapestry.internal.grid"/>
+            <package name="org.apache.tapestry.internal.services"/>
+            <package name="org.apache.tapestry.internal.structure"/>
+            <package name="org.apache.tapestry.internal.util"/>
+            <package name="org.apache.tapestry.internal.bindings"/>
+            <package name="org.apache.tapestry.internal.model"/>
+            <package name="org.apache.tapestry.internal.test"/>
+        </packages>
+    </test>
 </suite>

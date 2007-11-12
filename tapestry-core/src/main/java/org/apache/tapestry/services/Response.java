@@ -27,27 +27,24 @@ public interface Response
     /**
      * Returns a PrintWriter object to which output may be sent. Invoking flush() on the writer will
      * commit the output.
-     * 
-     * @param contentType
-     *            the MIME content type for the output, typically "text/html"
+     *
+     * @param contentType the MIME content type for the output, typically "text/html"
      */
     PrintWriter getPrintWriter(String contentType) throws IOException;
 
     /**
      * Returns an OutputStream to which byte-oriented output may be sent. Invoking flush() on the
      * stream will commit the output.
-     * 
-     * @param contentType
-     *            the MIME content type for the output, often "application/octet-stream" or
-     *            "text/plain" or one of several others
+     *
+     * @param contentType the MIME content type for the output, often "application/octet-stream" or
+     *                    "text/plain" or one of several others
      */
     OutputStream getOutputStream(String contentType) throws IOException;
 
     /**
      * Sends a redirect to the client.
-     * 
-     * @param URL
-     *            full or partial (relative) URL to send to the client
+     *
+     * @param URL full or partial (relative) URL to send to the client
      * @see #encodeRedirectURL(String)
      */
     void sendRedirect(String URL) throws IOException;
@@ -59,28 +56,23 @@ public interface Response
      * unmodified. If an error-page declaration has been made for the web application corresponding
      * to the status code passed in, it will be served back in preference to the suggested msg
      * parameter.
-     * <p>
+     * <p/>
      * If the response has already been committed, this method throws an IllegalStateException.
      * After using this method, the response should be considered to be committed and should not be
      * written to.
-     * 
-     * @param sc
-     *            the error status code
-     * @param message
-     *            the descriptive message
-     * @exception IOException
-     *                If an input or output exception occurs
-     * @exception IllegalStateException
-     *                If the response was committed
+     *
+     * @param sc      the error status code
+     * @param message the descriptive message
+     * @throws IOException           If an input or output exception occurs
+     * @throws IllegalStateException If the response was committed
      */
     void sendError(int sc, String message) throws IOException;
 
     /**
      * Sets the length of the content body in the response; this method sets the HTTP Content-Length
      * header.
-     * 
-     * @param length
-     *            the length of the content
+     *
+     * @param length the length of the content
      */
     void setContentLength(int length);
 
@@ -88,38 +80,34 @@ public interface Response
      * Sets a response header with the given name and date-value. The date is specified in terms of
      * milliseconds since the epoch. If the header had already been set, the new value overwrites
      * the previous one.
-     * 
-     * @param name
-     *            the name of the header to set
-     * @param date
-     *            the assigned date value
+     *
+     * @param name the name of the header to set
+     * @param date the assigned date value
      */
     void setDateHeader(String name, long date);
 
     /**
      * Sets a response header with the given name and value. If the header had already been set,
      * the new value overwrites the previous one.
-     * @param name
-     *            the name of the header to set
-     * @param value
-     *            the assigned value
+     *
+     * @param name  the name of the header to set
+     * @param value the assigned value
      */
     void setHeader(String name, String value);
 
     /**
      * Sets a response header with the given name and integer value. If the header had already been set,
      * the new value overwrites the previous one.
-     * @param name
-     *            the name of the header to set
-     * @param value
-     *            the assigned integer value
+     *
+     * @param name  the name of the header to set
+     * @param value the assigned integer value
      */
     void setIntHeader(String name, int value);
 
     /**
      * Encodes the URL, ensuring that a session id is included (if a session exists, and as
      * necessary depending on the client browser's use of cookies).
-     * 
+     *
      * @param URL
      * @return the same URL or a different one with additional information to track the user session
      */
@@ -128,7 +116,7 @@ public interface Response
     /**
      * Encodes the URL for use as a redirect, ensuring that a session id is included (if a session
      * exists, and as necessary depending on the client browser's use of cookies).
-     * 
+     *
      * @param URL
      * @return the same URL or a different one with additional information to track the user session
      */

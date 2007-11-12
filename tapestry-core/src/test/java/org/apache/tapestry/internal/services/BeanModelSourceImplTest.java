@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
@@ -29,7 +26,12 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-/** Tests for the bean editor model source itself, as well as the model classes. */
+import java.util.Arrays;
+import java.util.Collections;
+
+/**
+ * Tests for the bean editor model source itself, as well as the model classes.
+ */
 public class BeanModelSourceImplTest extends InternalBaseTestCase
 {
     private BeanModelSource _source;
@@ -46,7 +48,9 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         _source = null;
     }
 
-    /** Tests defaults for property names, labels and conduits. */
+    /**
+     * Tests defaults for property names, labels and conduits.
+     */
     @Test
     public void default_model_for_bean()
     {
@@ -391,7 +395,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertSame(propertyModel.getPropertyType(), String[].class);
 
         String[] value =
-        { "foo", "bar" };
+                {"foo", "bar"};
 
         StringArrayBean bean = new StringArrayBean();
 

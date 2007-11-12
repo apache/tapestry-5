@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * An object that can generate the final response sent to the client as part of an action request.
  * This is almost always a redirect request.
- * 
+ *
  * @see ComponentEventResultProcessor
  */
 public interface ActionResponseGenerator

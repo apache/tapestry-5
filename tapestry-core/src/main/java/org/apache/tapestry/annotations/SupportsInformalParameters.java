@@ -14,26 +14,26 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.model.ComponentModel;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.model.ComponentModel;
 
 /**
  * Used to identify a component that can support informal parameters. By default, components do not
  * support informal parameters.
- * 
+ *
  * @see ComponentModel#getSupportsInformalParameters()
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
 @Inherited
-public @interface SupportsInformalParameters {
+public @interface SupportsInformalParameters
+{
 
 }

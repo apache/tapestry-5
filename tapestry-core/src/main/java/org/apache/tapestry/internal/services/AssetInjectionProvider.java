@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.services.SymbolSource;
@@ -23,6 +21,8 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
+
+import static java.lang.String.format;
 
 /**
  * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more
@@ -41,7 +41,7 @@ public class AssetInjectionProvider implements InjectionProvider
     }
 
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+                                    ClassTransformation transformation, MutableComponentModel componentModel)
     {
         Path path = transformation.getFieldAnnotation(fieldName, Path.class);
 

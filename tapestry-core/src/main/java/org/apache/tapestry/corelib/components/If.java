@@ -22,7 +22,9 @@ import org.apache.tapestry.annotations.Parameter;
  */
 public class If
 {
-    /** If true, then the body of the If component is rendered. If false, the body is omitted. */
+    /**
+     * If true, then the body of the If component is rendered. If false, the body is omitted.
+     */
     @Parameter(required = true)
     private boolean _test;
 

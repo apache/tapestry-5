@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 /**
  * Service responsible for writing a full page markup response.

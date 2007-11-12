@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * 
+ *
  */
 public interface GetterMethodsInterface
 {

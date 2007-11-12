@@ -15,16 +15,14 @@
 package org.apache.tapestry.upload.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.services.Dispatcher;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
-import org.apache.tapestry.services.Dispatcher;
 
 /**
  * Wrapper for HttpServletRequest that overrides the parameter methods of the wrapped request. i.e.

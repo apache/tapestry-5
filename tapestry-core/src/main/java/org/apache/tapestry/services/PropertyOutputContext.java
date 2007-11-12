@@ -42,6 +42,8 @@ public interface PropertyOutputContext
      */
     String getPropertyId();
 
-    /** Returns the name of the property (which may, in fact, be a property expression). */
+    /**
+     * Returns the name of the property (which may, in fact, be a property expression).
+     */
     String getPropertyName();
 }

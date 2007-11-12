@@ -14,21 +14,20 @@
 
 package org.apache.tapestry.internal.structure;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.List;
-import java.util.Locale;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.services.LinkFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.services.PersistentFieldBundle;
 import org.apache.tapestry.services.PersistentFieldManager;
 import org.slf4j.Logger;
+
+import java.util.List;
+import java.util.Locale;
 
 public class PageImpl implements Page
 {
@@ -53,7 +52,7 @@ public class PageImpl implements Page
     private PersistentFieldBundle _fieldBundle;
 
     public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
-            PersistentFieldManager persistentFieldManager)
+                    PersistentFieldManager persistentFieldManager)
     {
         _logicalPageName = logicalPageName;
         _locale = locale;
@@ -153,7 +152,7 @@ public class PageImpl implements Page
     }
 
     public Link createActionLink(ComponentPageElement element, String action, boolean forForm,
-            Object... context)
+                                 Object... context)
     {
         return _linkFactory.createActionLink(element, action, forForm, context);
     }

@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-import java.util.Locale;
-
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
@@ -25,6 +22,9 @@ import org.apache.tapestry.services.ValidationMessagesSource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Locale;
 
 public class ValidationMessagesSourceImplTest extends Assert
 {

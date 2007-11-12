@@ -20,14 +20,14 @@ import org.apache.tapestry.ioc.ServiceResources;
 
 /**
  * Definition of a service decorator, which (by default) is derived from a service decorator method.
- * <p>
+ * <p/>
  * A note on decorator scheduling. The scheduling is based on the desired order of <em>behavior</em>.
  * Thus, if logging should occur before security checks, and security checks should occur before
  * transaction management, then the desired decorator order is Logging, Security, Transactions. This
  * might be specified as having Security occur after Logging, and Transactions occur after Security.
  * It might also be specified by having Logging ordered "before:*", and Transactions ordered
  * "after:*" with no specified scheduling for Security.
- * <p>
+ * <p/>
  * Once this order is established, decorators are <em>applied</em> in reverse order. Each
  * decorator's job is to create an <em>interceptor</em> for the service, that delegates to the
  * next implementation. This implies that the decorators are executed last to first. In the above
@@ -55,23 +55,21 @@ public interface DecoratorDef
     /**
      * Creates an object that can perform the decoration (in the default case, by invoking the
      * decorator method on the module builder instance.
-     * 
-     * @param moduleBuilderSource
-     *            the module builder instance associated with the module containing the decorator
-     *            (not necessarily the module containing the service being decorated)
-     * @param resources
-     *            the resources visible <em>to the decorator</em> (which may be in a different
-     *            module than the service being decorated). Other resource properties (serviceId,
-     *            serviceInterface, log, etc.) are for the service being decorated.
+     *
+     * @param moduleBuilderSource the module builder instance associated with the module containing the decorator
+     *                            (not necessarily the module containing the service being decorated)
+     * @param resources           the resources visible <em>to the decorator</em> (which may be in a different
+     *                            module than the service being decorated). Other resource properties (serviceId,
+     *                            serviceInterface, log, etc.) are for the service being decorated.
      */
     ServiceDecorator createDecorator(ModuleBuilderSource moduleBuilderSource,
-            ServiceResources resources);
+                                     ServiceResources resources);
 
     /**
      * Used to determine which services may be decorated by this decorator. When decorating a
      * service, first the decorators that target the service are identified, then ordering occurs,
      * then the {@link ServiceDecorator}s are invoked.
-     * 
+     *
      * @param serviceDef
      * @return true if the decorator applies to the service
      */

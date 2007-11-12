@@ -14,28 +14,21 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.PropertyConduit;
+import org.apache.tapestry.internal.events.InvalidationListener;
+import org.apache.tapestry.internal.util.MultiKey;
+import org.apache.tapestry.ioc.AnnotationProvider;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.services.*;
+import org.apache.tapestry.ioc.util.BodyBuilder;
+import org.apache.tapestry.services.PropertyConduitSource;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
-
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.internal.util.MultiKey;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.apache.tapestry.services.PropertyConduitSource;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
@@ -47,16 +40,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private final Map<Class, Class> _classToEffectiveClass = newConcurrentMap();
 
-    /** Keyed on combination of root class and expression. */
+    /**
+     * Keyed on combination of root class and expression.
+     */
     private final Map<MultiKey, PropertyConduit> _cache = newConcurrentMap();
 
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-            new Class[]
-            { Object.class }, null);
+                                                                             new Class[]
+                                                                                     {Object.class}, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-            new Class[]
-            { Object.class, Object.class }, null);
+                                                                             new Class[]
+                                                                                     {Object.class, Object.class},
+                                                                             null);
 
     public PropertyConduitSourceImpl(final PropertyAccess access, final ClassFactory classFactory)
     {
@@ -115,7 +111,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      * and overrides the constructor. In a worst-case race condition, we may build two (or more)
      * conduits for the same rootClass/expression, and it will get sorted out when the conduit is
      * stored into the cache.
-     * 
+     *
      * @param rootClass
      * @param expression
      * @return the conduit
@@ -127,7 +123,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         ClassFab classFab = _classFactory.newClass(name, BasePropertyConduit.class);
 
         classFab.addConstructor(new Class[]
-        { Class.class, AnnotationProvider.class, String.class }, null, "super($$);");
+                {Class.class, AnnotationProvider.class, String.class}, null, "super($$);");
 
         String[] terms = expression.split("\\.");
 
@@ -341,7 +337,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     private Method readMethodForTerm(Class activeType, String expression, String term,
-            boolean mustExist)
+                                     boolean mustExist)
     {
         if (term.endsWith(PARENS))
         {

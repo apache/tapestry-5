@@ -14,39 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Modifier;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtBehavior;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMember;
-import javassist.CtMethod;
-import javassist.CtNewConstructor;
-import javassist.CtNewMethod;
-import javassist.NotFoundException;
+import javassist.*;
 import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.ComponentModel;
@@ -56,6 +33,11 @@ import org.apache.tapestry.services.MethodFilter;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
 import org.slf4j.Logger;
+
+import static java.lang.String.format;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Implementation of the {@link org.apache.tapestry.internal.services.InternalClassTransformation}
@@ -75,13 +57,19 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final IdAllocator _idAllocator;
 
-    /** Map, keyed on InjectKey, of field name. */
+    /**
+     * Map, keyed on InjectKey, of field name.
+     */
     private final Map<MultiKey, String> _injectionCache = newMap();
 
-    /** Map from a field to the annotation objects for that field. */
+    /**
+     * Map from a field to the annotation objects for that field.
+     */
     private Map<String, List<Annotation>> _fieldAnnotations = newMap();
 
-    /** Used to identify fields that have been "claimed" by other annotations. */
+    /**
+     * Used to identify fields that have been "claimed" by other annotations.
+     */
     private Map<String, Object> _claimedFields = newMap();
 
     private Set<String> _addedFieldNames = newSet();
@@ -107,7 +95,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private Set<String> _removedFieldNames;
 
-    /** Contains the assembled Javassist code for the class' default constructor. */
+    /**
+     * Contains the assembled Javassist code for the class' default constructor.
+     */
     private StringBuilder _constructor = new StringBuilder();
 
     private final List<ConstructorArg> _constructorArgs;
@@ -127,7 +117,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * annotation.
      */
     public InternalClassTransformationImpl(CtClass ctClass, ClassLoader loader, Logger logger,
-            ComponentModel componentModel)
+                                           ComponentModel componentModel)
     {
         _ctClass = ctClass;
         _classPool = _ctClass.getClassPool();
@@ -153,14 +143,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC
                 | Modifier.FINAL, ComponentResources.class.getName(), "getComponentResources",
-                null, null);
+                                  null, null);
 
         addMethod(sig, "return " + _resourcesFieldName + ";");
     }
 
     public InternalClassTransformationImpl(CtClass ctClass,
-            InternalClassTransformation parentTransformation, ClassLoader loader, Logger logger,
-            ComponentModel componentModel)
+                                           InternalClassTransformation parentTransformation, ClassLoader loader,
+                                           Logger logger,
+                                           ComponentModel componentModel)
     {
         _ctClass = ctClass;
         _classPool = _ctClass.getClassPool();
@@ -229,7 +220,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return _resourcesFieldName;
     }
 
-    /** Loads the names of all declared fields and methods into the idAllocator. */
+    /**
+     * Loads the names of all declared fields and methods into the idAllocator.
+     */
 
     private void preloadMemberNames()
     {
@@ -282,7 +275,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     public <T extends Annotation> T getMethodAnnotation(TransformMethodSignature signature,
-            Class<T> annotationClass)
+                                                        Class<T> annotationClass)
     {
         failIfFrozen();
 
@@ -301,16 +294,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * Searches an array of objects (that are really annotations instances) to find one that is of
      * the correct type, which is returned.
-     * 
+     *
      * @param <T>
-     * @param annotationClass
-     *            the annotation to search for
-     * @param annotations
-     *            the available annotations
+     * @param annotationClass the annotation to search for
+     * @param annotations     the available annotations
      * @return the matching annotation instance, or null if not found
      */
     private <T extends Annotation> T findAnnotationInList(Class<T> annotationClass,
-            List<Annotation> annotations)
+                                                          List<Annotation> annotations)
     {
         for (Object annotation : annotations)
         {
@@ -393,7 +384,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         catch (NotFoundException ex)
         {
             throw new RuntimeException(ServicesMessages.missingDeclaredField(_ctClass, fieldName),
-                    ex);
+                                       ex);
         }
     }
 
@@ -440,7 +431,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * super-interfaces). The implementations return null (or 0, or false, as appropriate to to the
      * method type). There are a number of degenerate cases that are not covered properly: these are
      * related to base interfaces that may be implemented by base classes.
-     * 
+     *
      * @param ctInterface
      * @throws NotFoundException
      */
@@ -577,7 +568,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
 
             CtMethod method = new CtMethod(returnType, signature.getMethodName(), parameters,
-                    _ctClass);
+                                           _ctClass);
 
             // TODO: Check for duplicate method add
 
@@ -649,11 +640,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         _addedMethods.add(method);
     }
-    
+
     public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
     {
         failIfFrozen();
-        
+
         CtMethod method = findMethod(methodSignature);
         try
         {
@@ -666,13 +657,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                     methodBody,
                     ex), methodBody, ex);
         }
-        
+
         addMethodToDescription("prefix", methodSignature, methodBody);
         _addedMethods.add(method);
     }
 
     private void addMethodToDescription(String operation, TransformMethodSignature methodSignature,
-            String methodBody)
+                                        String methodBody)
     {
         _formatter.format("%s method: %s %s %s(", operation, Modifier.toString(methodSignature
                 .getModifiers()), methodSignature.getReturnType(), methodSignature.getMethodName());
@@ -891,7 +882,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 String[] exceptions = toTypeNames(method.getExceptionTypes());
 
                 result = new TransformMethodSignature(method.getModifiers(), type,
-                        method.getName(), parameters, exceptions);
+                                                      method.getName(), parameters, exceptions);
 
                 _methodSignatures.put(method, result);
             }
@@ -1103,13 +1094,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * Adds a parameter to the constructor for the class; the parameter is used to initialize the
      * value for a field.
-     * 
-     * @param fieldName
-     *            name of field to inject
-     * @param fieldType
-     *            Javassist type of the field (and corresponding parameter)
-     * @param value
-     *            the value to be injected (which will in unusual cases be null)
+     *
+     * @param fieldName name of field to inject
+     * @param fieldType Javassist type of the field (and corresponding parameter)
+     * @param value     the value to be injected (which will in unusual cases be null)
      */
     private void addInjectToConstructor(String fieldName, CtClass fieldType, Object value)
     {
@@ -1341,8 +1329,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String fieldType = getFieldType(fieldName);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                methodName, new String[]
-                { fieldType }, null);
+                                                                    methodName, new String[]
+                {fieldType}, null);
 
         String message = ServicesMessages.readOnlyField(_ctClass.getName(), fieldName);
 
@@ -1443,7 +1431,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 if (_addedMethods.contains(access.where())) return;
 
                 Map<String, String> transformMap = access.isReader() ? _fieldReadTransforms
-                        : _fieldWriteTransforms;
+                                                   : _fieldWriteTransforms;
 
                 String body = transformMap.get(access.getFieldName());
                 if (body == null) return;

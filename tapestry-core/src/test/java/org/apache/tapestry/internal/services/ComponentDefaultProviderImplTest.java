@@ -164,14 +164,14 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
     }
 
     protected final void train_getPropertyAdapter(ClassPropertyAdapter classPropertyAdapter,
-            String propertyName, PropertyAdapter propertyAdapter)
+                                                  String propertyName, PropertyAdapter propertyAdapter)
     {
         expect(classPropertyAdapter.getPropertyAdapter(propertyName)).andReturn(propertyAdapter)
                 .atLeastOnce();
     }
 
     protected final void train_getAdapter(PropertyAccess access, Object object,
-            ClassPropertyAdapter classPropertyAdapter)
+                                          ClassPropertyAdapter classPropertyAdapter)
     {
         expect(access.getAdapter(object)).andReturn(classPropertyAdapter);
     }

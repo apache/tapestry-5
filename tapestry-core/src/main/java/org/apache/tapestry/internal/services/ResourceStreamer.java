@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
+
+import java.io.IOException;
 
 /**
  * Responsible for streaming the contents of a resource to the client. The {@link Resource} to
@@ -25,6 +25,8 @@ import org.apache.tapestry.ioc.internal.util.ClasspathResource;
  */
 public interface ResourceStreamer
 {
-    /** Streams the content of the resource to the client. */
+    /**
+     * Streams the content of the resource to the client.
+     */
     void streamResource(Resource resource) throws IOException;
 }

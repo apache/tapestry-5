@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
@@ -27,7 +26,8 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Mixin {
+public @interface Mixin
+{
 
     /**
      * Defines the type of mixin, using a logical mixin name. This value takes precedence over the

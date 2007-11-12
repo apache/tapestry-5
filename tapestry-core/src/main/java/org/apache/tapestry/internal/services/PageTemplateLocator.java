@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.model.ComponentModel;
+
+import java.util.Locale;
 
 /**
  * Responsible for locating page templates in the web application context.
@@ -27,11 +27,9 @@ public interface PageTemplateLocator
     /**
      * Given model, determines if the model is for a page (rather than a component) and if so, sees
      * if there is a localized template for the page in the web application context.
-     * 
-     * @param model
-     *            the component model defining the page to search for
-     * @param locale
-     *            the desired localization of the template
+     *
+     * @param model  the component model defining the page to search for
+     * @param locale the desired localization of the template
      * @return the template resource, or null if not found or the model is not a page
      */
     Resource findPageTemplateResource(ComponentModel model, Locale locale);

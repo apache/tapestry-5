@@ -14,20 +14,6 @@
 
 package org.apache.tapestry;
 
-import java.io.IOException;
-import java.util.Formatter;
-import java.util.List;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry.internal.ServletContextSymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.ioc.Registry;
@@ -40,6 +26,13 @@ import org.apache.tapestry.services.HttpServletRequestHandler;
 import org.apache.tapestry.services.ServletApplicationInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Formatter;
+import java.util.List;
 
 /**
  * The TapestryFilter is responsible for intercepting all requests into the web application. It
@@ -72,7 +65,7 @@ public class TapestryFilter implements Filter
         SymbolProvider provider = new ServletContextSymbolProvider(context);
 
         TapestryAppInitializer appInitializer = new TapestryAppInitializer(provider, filterName,
-                "servlet");
+                                                                           "servlet");
 
         appInitializer.addModules(provideExtraModuleDefs(context));
 
@@ -139,9 +132,8 @@ public class TapestryFilter implements Filter
      * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any
      * additional initialization to occur. This implementation does nothing, and my be overriden in
      * subclasses.
-     * 
-     * @param registry
-     *            from which services may be extracted
+     *
+     * @param registry from which services may be extracted
      * @throws ServletException
      */
     protected void init(Registry registry) throws ServletException
@@ -175,7 +167,9 @@ public class TapestryFilter implements Filter
         }
     }
 
-    /** Shuts down and discards the registry. */
+    /**
+     * Shuts down and discards the registry.
+     */
     public final void destroy()
     {
         destroy(_registry);
@@ -191,7 +185,7 @@ public class TapestryFilter implements Filter
      * Invoked from {@link #destroy()} to allow subclasses to add additional shutdown logic to the
      * filter. The Registry will be shutdown after this call. This implementation does nothing, and
      * may be overridden in subclasses.
-     * 
+     *
      * @param registry
      */
     protected void destroy(Registry registry)

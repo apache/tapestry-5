@@ -23,7 +23,7 @@ import java.util.zip.GZIPOutputStream;
  * Wraps a {@link Base64OutputStream} with a {@link GZIPOutputStream} as an
  * {@link ObjectOutputStream}. This allows an object (or objects) to be encoded into a Base64
  * string (accessed via {@link #toBase64()}).
- * 
+ *
  * @see Base64ObjectInputStream
  */
 public class Base64ObjectOutputStream extends ObjectOutputStream

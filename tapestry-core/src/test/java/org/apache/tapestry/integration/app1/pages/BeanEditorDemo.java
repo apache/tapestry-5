@@ -22,7 +22,7 @@ import org.apache.tapestry.integration.app1.data.RegistrationData;
 public class BeanEditorDemo
 {
     @Component(id = "registrationData", parameters =
-    { "clientValidation=clientValidation" })
+            {"clientValidation=clientValidation"})
     private BeanEditForm _form;
 
     @ApplicationState

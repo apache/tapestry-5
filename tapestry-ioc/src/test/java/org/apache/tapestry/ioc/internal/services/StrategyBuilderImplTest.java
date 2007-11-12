@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
+import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.services.StrategyBuilder;
+import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.services.StrategyBuilder;
-import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.testng.annotations.Test;
 
 public class StrategyBuilderImplTest extends IOCInternalTestCase
 {
@@ -41,7 +40,9 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
             return _value;
         }
 
-    };
+    }
+
+    ;
 
     @Test
     public void standard()

@@ -35,14 +35,15 @@ public interface RadioContainer
 
     /**
      * Converts an object to a client-side string representation of that value.
-     * 
-     * @param value
-     *            to convert (may be null)
+     *
+     * @param value to convert (may be null)
      * @return string representation of the value
      * @see ValueEncoder#toClient(Object)
      */
     String toClient(Object value);
 
-    /** Returns true if the value is the current selected value. */
+    /**
+     * Returns true if the value is the current selected value.
+     */
     boolean isSelected(Object value);
 }

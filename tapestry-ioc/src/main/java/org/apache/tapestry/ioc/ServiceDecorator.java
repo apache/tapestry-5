@@ -18,17 +18,14 @@ package org.apache.tapestry.ioc;
  * A service decorator is derived from a {@link org.apache.tapestry.ioc.def.DecoratorDef} and is
  * responsible for building an interceptor around an existing implementation (called the
  * "delegate").
- * 
- * 
  */
 public interface ServiceDecorator
 {
     /**
      * Creates a new interceptor object implementing the same service interface as the delegate
      * object.
-     * 
-     * @param delegate
-     *            an existing object implementing the service interface.
+     *
+     * @param delegate an existing object implementing the service interface.
      * @return a new object implementing the same service interface, or delegate or null if the
      *         decorator chooses not to create a new interceptor.
      */

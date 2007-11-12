@@ -47,7 +47,7 @@ public class DefaultInjectWorker implements ComponentClassTransformWorker
 
     @SuppressWarnings("unchecked")
     private void inject(String fieldName, ClassTransformation transformation,
-            MutableComponentModel model)
+                        MutableComponentModel model)
     {
         String fieldType = transformation.getFieldType(fieldName);
 

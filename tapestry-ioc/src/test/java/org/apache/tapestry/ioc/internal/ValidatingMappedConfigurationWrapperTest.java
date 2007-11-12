@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry.ioc.def.ContributionDef;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.slf4j.Logger;
+import org.testng.annotations.Test;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.slf4j.Logger;
-import org.testng.annotations.Test;
 
 public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCase
 {
@@ -119,7 +118,8 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
-                logger, Class.class, Runnable.class, keyToContribution, delegate);
+                                                                               logger, Class.class, Runnable.class,
+                                                                               keyToContribution, delegate);
 
         wrapper.add("java.util.List", value);
 
@@ -144,7 +144,8 @@ public class ValidatingMappedConfigurationWrapperTest extends IOCInternalTestCas
         replay();
 
         MappedConfiguration wrapper = new ValidatingMappedConfigurationWrapper(SERVICE_ID, def,
-                logger, Class.class, Runnable.class, keyToContribution, delegate);
+                                                                               logger, Class.class, Runnable.class,
+                                                                               keyToContribution, delegate);
 
         wrapper.add(List.class, "do something");
 

@@ -20,7 +20,7 @@ import org.apache.tapestry.util.EnumValueEncoder;
 
 /**
  * Factory that provides a configured instance of {@link EnumValueEncoder}.
- * 
+ *
  * @param <E>
  */
 public class EnumValueEncoderFactory<E extends Enum<E>> implements ValueEncoderFactory<E>

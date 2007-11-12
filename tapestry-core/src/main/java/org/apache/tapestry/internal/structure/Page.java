@@ -14,23 +14,23 @@
 
 package org.apache.tapestry.internal.structure;
 
-import java.util.Locale;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.slf4j.Logger;
 
+import java.util.Locale;
+
 /**
  * Represents a unique page within the application. Pages are part of the <em>internal</em>
  * structure of a Tapestry application; end developers who refer to "page" are really referring to
  * the {@link #getRootComponent() root component} of the actual page.
- * <p>
+ * <p/>
  * One of the most important aspects of a Page is that it <em>does not</em> have to be coded in a
  * thread-safe manner. Pages are always accessed within a single thread, associated with a single
  * incoming request.
- * <p>
+ * <p/>
  * The Page object is never visible to end-user code. The page also exists to provide a kind of
  * service to components embedded (directly or indirectly) within the page.
  */
@@ -67,13 +67,13 @@ public interface Page
     /**
      * Invoked to inform the page that it is being detached from the current request. This occurs
      * just before the page is returned to the page pool.
-     * <p>
+     * <p/>
      * A page may be clean or dirty. A page is dirty if its dirty count is greater than zero
      * (meaning that, during the render of the page, some components did not fully render), or if
      * any of its listeners throw an exception from containingPageDidDetech().
-     * <p>
+     * <p/>
      * The page pool should discard pages that are dirty, rather than store them into the pool.
-     * 
+     *
      * @return true if the page is "dirty", false otherwise
      * @see org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidDetach()
      */
@@ -89,7 +89,7 @@ public interface Page
 
     /**
      * Inform the page that it is now completely loaded.
-     * 
+     *
      * @see org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()
      */
 
@@ -109,15 +109,14 @@ public interface Page
     /**
      * Retrieves a component element by its nested id (a sequence of simple ids, separated by dots).
      * A nested id of '' (the empty string) returns the root element of the page.
-     * 
-     * @throws IllegalArgumentException
-     *             if the nestedId does not correspond to a component
+     *
+     * @throws IllegalArgumentException if the nestedId does not correspond to a component
      */
     ComponentPageElement getComponentElementByNestedId(String nestedId);
 
     /**
      * Creates a link that will trigger behavior in a component within the page.
-     * 
+     *
      * @param element
      * @param action
      * @param forForm
@@ -125,41 +124,33 @@ public interface Page
      * @return
      */
     Link createActionLink(ComponentPageElement element, String action, boolean forForm,
-            Object... context);
+                          Object... context);
 
     /**
      * Creates a link to the named page.
-     * 
-     * @param pageName
-     *            the logical name of the page
-     * @param override
-     *            if true, the provided context is used even if empty
-     * @param context
-     *            optional activation context for the page (if not provided, it is generated from
-     *            the page itself)
+     *
+     * @param pageName the logical name of the page
+     * @param override if true, the provided context is used even if empty
+     * @param context  optional activation context for the page (if not provided, it is generated from
+     *                 the page itself)
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 
     /**
      * Posts a change to a persistent field.
-     * 
-     * @param resources
-     *            the component resources for the component or mixin containing the field whose
-     *            value changed
-     * @param fieldName
-     *            the name of the field
-     * @param newValue
-     *            the new value for the field
+     *
+     * @param resources the component resources for the component or mixin containing the field whose
+     *                  value changed
+     * @param fieldName the name of the field
+     * @param newValue  the new value for the field
      */
     void persistFieldChange(ComponentResources resources, String fieldName, Object newValue);
 
     /**
      * Gets a change for a field within the component.
-     * 
-     * @param element
-     *            the element for which a persistent field value is required
-     * @param fieldName
-     *            the name of the persistent field
+     *
+     * @param element   the element for which a persistent field value is required
+     * @param fieldName the name of the persistent field
      * @return the value, or null if no value is stored
      */
     Object getFieldChange(ComponentPageElement element, String fieldName);
@@ -171,6 +162,8 @@ public interface Page
      */
     void incrementDirtyCount();
 
-    /** Called as a component finishes rendering itself. */
+    /**
+     * Called as a component finishes rendering itself.
+     */
     void decrementDirtyCount();
 }

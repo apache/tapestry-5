@@ -14,28 +14,18 @@
 
 package org.apache.tapestry.mojo;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.StringTokenizer;
-
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
-
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
@@ -45,10 +35,14 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * The component report generates documentation about components and parameters within the current
  * project.
- * 
+ *
  * @goal component-report
  * @requiresDependencyResolution compile
  * @execute phase="generate-sources"
@@ -57,7 +51,7 @@ public class ComponentReport extends AbstractMavenReport
 {
     /**
      * Identifies the application root package.
-     * 
+     *
      * @parameter
      * @required
      */
@@ -65,7 +59,7 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * The Maven Project Object
-     * 
+     *
      * @parameter expression="${project}"
      * @required
      * @readonly
@@ -74,14 +68,14 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * Generates the site report
-     * 
+     *
      * @component
      */
     private SiteRenderer siteRenderer;
 
     /**
      * Location of the generated site.
-     * 
+     *
      * @parameter default-value="${project.reporting.outputDirectory}"
      * @required
      */
@@ -89,7 +83,7 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * Working directory for temporary files.
-     * 
+     *
      * @parameter default-value="target"
      * @required
      */
@@ -99,7 +93,7 @@ public class ComponentReport extends AbstractMavenReport
      * Relative path from the generated report to the API documentation (Javadoc). Defaults to
      * "apidocs" but will often be changed to "../apidocs" when documentation is created at the
      * project level.
-     * 
+     *
      * @parameter default-value="apidocs"
      * @required
      */
@@ -178,14 +172,16 @@ public class ComponentReport extends AbstractMavenReport
 
     }
 
-    /** Convert to lower case, remove all period characters. */
+    /**
+     * Convert to lower case, remove all period characters.
+     */
     private String fixup(String input)
     {
         return input.toLowerCase().replaceAll("\\.", "");
     }
 
     private void writeClassDescription(Map<String, ClassDescription> descriptions, Sink sink,
-            String className)
+                                       String className)
     {
         ClassDescription cd = descriptions.get(className);
 
@@ -315,7 +311,7 @@ public class ComponentReport extends AbstractMavenReport
     }
 
     private final static String[] PARAMETER_HEADERS =
-    { "Name", "Type", "Flags", "Default", "Default Prefix", "Description" };
+            {"Name", "Type", "Flags", "Default", "Default Prefix", "Description"};
 
     private Map<String, ClassDescription> runJavadoc() throws MavenReportException
     {
@@ -330,23 +326,23 @@ public class ComponentReport extends AbstractMavenReport
         catch (IOException ex)
         {
             throw new MavenReportException("Unable to locate javadoc command: " + ex.getMessage(),
-                    ex);
+                                           ex);
         }
 
         String parametersPath = workDirectory + File.separator + "component-parameters.xml";
 
         String[] arguments =
-        { "-private", "-o", parametersPath,
+                {"-private", "-o", parametersPath,
 
-        "-subpackages", rootPackage,
+                 "-subpackages", rootPackage,
 
-        "-doclet", ParametersDoclet.class.getName(),
+                 "-doclet", ParametersDoclet.class.getName(),
 
-        "-docletpath", docletPath(),
+                 "-docletpath", docletPath(),
 
-        "-sourcepath", sourcePath(),
+                 "-sourcepath", sourcePath(),
 
-        "-classpath", classPath() };
+                 "-classpath", classPath()};
 
         command.addArguments(arguments);
 
@@ -365,7 +361,7 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * Needed to help locate this plugin's local JAR file for the -doclet argument.
-     * 
+     *
      * @parameter default-value="${localRepository}"
      * @read-only
      */
@@ -373,7 +369,7 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * Needed to help locate this plugin's local JAR file for the -doclet argument.
-     * 
+     *
      * @parameter default-value="${plugin.groupId}"
      * @read-only
      */
@@ -381,7 +377,7 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * Needed to help locate this plugin's local JAR file for the -doclet argument.
-     * 
+     *
      * @parameter default-value="${plugin.artifactId}"
      * @read-only
      */
@@ -389,7 +385,7 @@ public class ComponentReport extends AbstractMavenReport
 
     /**
      * Needed to help locate this plugin's local JAR file for the -doclet argument.
-     * 
+     *
      * @parameter default-value="${plugin.version}"
      * @read-only
      */
@@ -463,7 +459,7 @@ public class ComponentReport extends AbstractMavenReport
         catch (CommandLineException ex)
         {
             throw new MavenReportException("Unable to execute javadoc command: " + ex.getMessage(),
-                    ex);
+                                           ex);
         }
 
         // ----------------------------------------------------------------------
@@ -504,7 +500,7 @@ public class ComponentReport extends AbstractMavenReport
             return new File(SystemUtils.getJavaHome() + File.separator + "bin", executableName);
 
         return new File(SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin",
-                executableName);
+                        executableName);
     }
 
     private String toArgumentPath(List<String> paths)
@@ -590,7 +586,7 @@ public class ComponentReport extends AbstractMavenReport
             String description = node.getValue();
 
             ParameterDescription pd = new ParameterDescription(name, type, defaultValue,
-                    defaultPrefix, required, cache, description);
+                                                               defaultPrefix, required, cache, description);
 
             cd.getParameters().put(name, pd);
         }

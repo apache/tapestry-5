@@ -48,9 +48,8 @@ public class URLChangeTracker
     /**
      * Creates a new URL change tracker, using either millisecond-level granularity or second-level
      * granularity.
-     * 
-     * @param granularitySeconds
-     *            whether or not to use second-level granularity
+     *
+     * @param granularitySeconds whether or not to use second-level granularity
      */
     public URLChangeTracker(boolean granularitySeconds)
     {
@@ -60,9 +59,8 @@ public class URLChangeTracker
     /**
      * Stores a new URL into the tracker, or returns the previous time stamp for a previously added
      * URL. Filters out all non-file URLs.
-     * 
-     * @param url
-     *            of the resource to add
+     *
+     * @param url of the resource to add
      * @return the current timestamp for the URL, or 0 if not a file URL
      */
     public long add(URL url)
@@ -148,7 +146,9 @@ public class URLChangeTracker
         }
     }
 
-    /** Needed for testing. */
+    /**
+     * Needed for testing.
+     */
     int trackedFileCount()
     {
         return _fileToTimestamp.size();

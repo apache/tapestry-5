@@ -14,34 +14,26 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.tapestry.ioc.util.CaseInsensitiveMap;
+import org.apache.tapestry.ioc.util.Stack;
+
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
-import org.apache.tapestry.ioc.util.CaseInsensitiveMap;
-import org.apache.tapestry.ioc.util.Stack;
 
 /**
  * Static factory methods to ease the creation of new collection types (when using generics). Most
  * of these method leverage the compiler's ability to match generic types by return value. Typical
  * usage (with a static import):
- * 
+ * <p/>
  * <pre>
  * Map&lt;Foo, Bar&gt; map = newMap();
  * </pre>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * This is a replacement for:
- * 
+ * <p/>
  * <pre>
  * Map&lt;Foo, Bar&gt; map = new HashMap&lt;Foo, Bar&gt;();
  * </pre>
@@ -52,19 +44,25 @@ public final class CollectionFactory
     {
     }
 
-    /** Constructs and returns a generic {@link HashMap} instance. */
+    /**
+     * Constructs and returns a generic {@link HashMap} instance.
+     */
     public static <K, V> Map<K, V> newMap()
     {
         return new HashMap<K, V>();
     }
 
-    /** Constructs and returns a generic {@link java.util.HashSet} instance. */
+    /**
+     * Constructs and returns a generic {@link java.util.HashSet} instance.
+     */
     public static <T> Set<T> newSet()
     {
         return new HashSet<T>();
     }
 
-    /** Contructs a new {@link HashSet} and initializes it using the provided collection. */
+    /**
+     * Contructs a new {@link HashSet} and initializes it using the provided collection.
+     */
     public static <T, V extends T> Set<T> newSet(Collection<V> values)
     {
         return new HashSet<T>(values);
@@ -92,7 +90,9 @@ public final class CollectionFactory
         return new ConcurrentHashMap<K, V>();
     }
 
-    /** Contructs and returns a new generic {@link java.util.ArrayList} instance. */
+    /**
+     * Contructs and returns a new generic {@link java.util.ArrayList} instance.
+     */
     public static <T> List<T> newList()
     {
         return new ArrayList<T>();
@@ -107,19 +107,25 @@ public final class CollectionFactory
         return new ArrayList<T>(Arrays.asList(elements));
     }
 
-    /** Useful for queues. */
+    /**
+     * Useful for queues.
+     */
     public static <T> LinkedList<T> newLinkedList()
     {
         return new LinkedList<T>();
     }
 
-    /** Constructs and returns a new {@link ArrayList} as a copy of the provided collection. */
+    /**
+     * Constructs and returns a new {@link ArrayList} as a copy of the provided collection.
+     */
     public static <T, V extends T> List<T> newList(Collection<V> list)
     {
         return new ArrayList<T>(list);
     }
 
-    /** Constructs and returns a new {@link java.util.concurrent.CopyOnWriteArrayList}. */
+    /**
+     * Constructs and returns a new {@link java.util.concurrent.CopyOnWriteArrayList}.
+     */
     public static <T> List<T> newThreadSafeList()
     {
         return new CopyOnWriteArrayList<T>();

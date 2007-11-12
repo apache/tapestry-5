@@ -28,7 +28,7 @@ public interface ResourceCache extends InvalidationEventHub
     /**
      * Returns true if the path requires that the client URL for the resource include a digest to
      * validate that the client is authorized to access the resource.
-     * 
+     *
      * @param resource
      * @return true if digest is required for the resource
      * @see ResourceDigestGenerator#requiresDigest(String)
@@ -37,7 +37,7 @@ public interface ResourceCache extends InvalidationEventHub
 
     /**
      * Returns the digest for the given path.
-     * 
+     *
      * @param resource
      * @return the digest, or null if the resource does not exist
      */
@@ -45,7 +45,7 @@ public interface ResourceCache extends InvalidationEventHub
 
     /**
      * Returns the time modified for the resource.
-     * 
+     *
      * @param resource
      * @return the date time modified for the path, or a negative value if the resource does not
      *         exist

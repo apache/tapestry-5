@@ -14,16 +14,13 @@
 
 package org.apache.tapestry.validator;
 
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryUtils.quote;
-
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 
-/** Enforces a maximum integer value. */
+/**
+ * Enforces a maximum integer value.
+ */
 public class Max implements Validator<Long, Number>
 {
     public Class<Long> getConstraintType()
@@ -59,7 +56,7 @@ public class Max implements Validator<Long, Number>
     }
 
     public void render(Field field, Long constraintValue, MessageFormatter formatter,
-            MarkupWriter writer, PageRenderSupport pageRenderSupport)
+                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
     {
         pageRenderSupport.addScript(
                 "Tapestry.Field.max('%s', %d, %s);",

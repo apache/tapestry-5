@@ -15,12 +15,11 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.annotations.Scope;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.services.ThreadLocale;
 
 import java.util.Locale;
-
-import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.services.ThreadLocale;
 
 @Scope(PERTHREAD_SCOPE)
 public class ThreadLocaleImpl implements ThreadLocale

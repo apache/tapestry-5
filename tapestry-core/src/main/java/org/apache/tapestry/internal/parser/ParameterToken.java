@@ -16,16 +16,16 @@ package org.apache.tapestry.internal.parser;
 
 import org.apache.tapestry.ioc.Location;
 
-/** A parameter block to be passed to a component as a parameter. */
+/**
+ * A parameter block to be passed to a component as a parameter.
+ */
 public class ParameterToken extends TemplateToken
 {
     private final String _name;
 
     /**
-     * @param name
-     *            the name of the parameter to be bound
-     * @param location
-     *            location of the element
+     * @param name     the name of the parameter to be bound
+     * @param location location of the element
      */
     public ParameterToken(String name, Location location)
     {

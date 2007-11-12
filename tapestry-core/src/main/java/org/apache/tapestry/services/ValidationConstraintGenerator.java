@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.services;
 
-import java.util.List;
-
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.ioc.AnnotationProvider;
+
+import java.util.List;
 
 /**
  * Invoked to generate a list of validation constraint strings for a property. This typically
@@ -34,12 +34,10 @@ public interface ValidationConstraintGenerator
      * {@link FieldValidatorSource#createValidators(org.apache.tapestry.Field, String) validate specification}.
      * These will ultimately be used to create {@link FieldValidator}s for the field that edits the
      * property.
-     * 
-     * @param propertyType
-     *            the type of the property for which constraints are needed
-     * @param annotationProvider
-     *            provides access to any annotations concerning the property (for implementations
-     *            that are based on analysis of property annotations)
+     *
+     * @param propertyType       the type of the property for which constraints are needed
+     * @param annotationProvider provides access to any annotations concerning the property (for implementations
+     *                           that are based on analysis of property annotations)
      * @return a list of constraints
      * @see FieldValidatorSource
      */

@@ -19,6 +19,6 @@ public class PageLinkContext
     public Object[] getComputedContext()
     {
         return new Object[]
-        { "fred", 7, true };
+                {"fred", 7, true};
     }
 }

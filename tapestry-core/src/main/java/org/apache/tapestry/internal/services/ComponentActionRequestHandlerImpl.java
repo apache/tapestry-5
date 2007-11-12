@@ -34,7 +34,7 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
     private final LinkFactory _linkFactory;
 
     public ComponentActionRequestHandlerImpl(ComponentEventResultProcessor resultProcessor,
-            RequestPageCache cache, LinkFactory linkFactory)
+                                             RequestPageCache cache, LinkFactory linkFactory)
     {
         _resultProcessor = resultProcessor;
         _cache = cache;
@@ -42,7 +42,7 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
     }
 
     public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-            String eventType, String[] context, String[] activationContext)
+                                          String eventType, String[] context, String[] activationContext)
     {
         Page page = _cache.get(logicalPageName);
 

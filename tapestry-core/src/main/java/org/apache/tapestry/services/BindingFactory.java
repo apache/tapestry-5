@@ -25,25 +25,21 @@ public interface BindingFactory
 {
     /**
      * Creates a new binding instance.
-     * <p>
+     * <p/>
      * The binding represents a connection between the container and the component (the component is
      * usually the child of the component, though in a few cases, it is the component itself). In
      * most cases, the expression is evaluated in terms of the resources of the <em>container</em>
      * and the component is ignored.
-     * 
-     * @param description
-     *            of the binding, such as, "parameter foo"
-     * @param container
-     *            the component, as represented by its resources, for which a binding is to be
-     *            created.
-     * @param component
-     *            the component whose parameter is to be bound by the resulting binding (rarely
-     *            used)
+     *
+     * @param description of the binding, such as, "parameter foo"
+     * @param container   the component, as represented by its resources, for which a binding is to be
+     *                    created.
+     * @param component   the component whose parameter is to be bound by the resulting binding (rarely
+     *                    used)
      * @param expression
-     * @param location
-     *            from which the binding was generate, or null if not known
+     * @param location    from which the binding was generate, or null if not known
      * @return the new binding instance
      */
     Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String expression, Location location);
+                       ComponentResources component, String expression, Location location);
 }

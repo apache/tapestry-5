@@ -26,9 +26,8 @@ public final class IntegerTranslator implements Translator<Integer>
 {
     /**
      * Parses blank values to null, otherwise parses the client value to an integer.
-     * 
-     * @throws ValidationException
-     *             if the clientValue can not be parsed as an integer
+     *
+     * @throws ValidationException if the clientValue can not be parsed as an integer
      */
     public Integer parseClient(String clientValue, Messages messages) throws ValidationException
     {

@@ -14,24 +14,18 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.net.URL;
-import java.util.Set;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Scope;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.services.ObjectRenderer;
+
+import java.io.*;
+import java.net.URL;
+import java.util.Set;
 
 /**
  * Responsible for rendering a {@link Location}. It is designed to only perform the full output
@@ -95,7 +89,7 @@ public class LocationRenderer implements ObjectRenderer<Location>
 
                 writer.element("td");
                 writer.attributes("class", line == current ? "t-location-line t-location-current"
-                        : "t-location-line");
+                                           : "t-location-line");
                 writer.write(Integer.toString(current));
                 writer.end();
 

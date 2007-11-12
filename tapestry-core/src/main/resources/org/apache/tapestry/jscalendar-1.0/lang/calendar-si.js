@@ -3,54 +3,54 @@
 * Feel free to use this script under the terms of the GNU Lesser General
 * Public License, as long as you do not remove or alter this notice.
 */
- // full day names
+// full day names
 Calendar._DN = new Array
-("Nedelja",
- "Ponedeljek",
- "Torek",
- "Sreda",
- "Četrtek",
- "Petek",
- "Sobota",
- "Nedelja");
+        ("Nedelja",
+                "Ponedeljek",
+                "Torek",
+                "Sreda",
+                "Četrtek",
+                "Petek",
+                "Sobota",
+                "Nedelja");
  // short day names
- Calendar._SDN = new Array
-("Ned",
- "Pon",
- "Tor",
- "Sre",
- "Čet",
- "Pet",
- "Sob",
- "Ned");
+Calendar._SDN = new Array
+        ("Ned",
+                "Pon",
+                "Tor",
+                "Sre",
+                "Čet",
+                "Pet",
+                "Sob",
+                "Ned");
 // short month names
 Calendar._SMN = new Array
-("Jan",
- "Feb",
- "Mar",
- "Apr",
- "Maj",
- "Jun",
- "Jul",
- "Avg",
- "Sep",
- "Okt",
- "Nov",
- "Dec");
+        ("Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "Maj",
+                "Jun",
+                "Jul",
+                "Avg",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Dec");
   // full month names
 Calendar._MN = new Array
-("Januar",
- "Februar",
- "Marec",
- "April",
- "Maj",
- "Junij",
- "Julij",
- "Avgust",
- "September",
- "Oktober",
- "November",
- "December");
+        ("Januar",
+                "Februar",
+                "Marec",
+                "April",
+                "Maj",
+                "Junij",
+                "Julij",
+                "Avgust",
+                "September",
+                "Oktober",
+                "November",
+                "December");
 
 // tooltips
 // tooltips
@@ -68,10 +68,10 @@ Calendar._TT["ABOUT"] =
 "- Uporabite " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " gumbe za izbor meseca\n" +
 "- Zadržite klik na kateremkoli od zgornjih gumbov za hiter izbor.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Izbor ćasa:\n" +
-"- Kliknite na katerikoli del ćasa za poveć. le-tega\n" +
-"- ali Shift-click za zmanj. le-tega\n" +
-"- ali kliknite in povlecite za hiter izbor.";
+                             "Izbor ćasa:\n" +
+                             "- Kliknite na katerikoli del ćasa za poveć. le-tega\n" +
+                             "- ali Shift-click za zmanj. le-tega\n" +
+                             "- ali kliknite in povlecite za hiter izbor.";
 
 Calendar._TT["TOGGLE"] = "Spremeni dan s katerim se prićne teden";
 Calendar._TT["PREV_YEAR"] = "Predhodnje leto (dolg klik za meni)";

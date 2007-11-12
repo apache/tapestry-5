@@ -14,22 +14,17 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.internal.util.Holder;
+import org.apache.tapestry.services.*;
+import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
+import org.easymock.IAnswer;
+import org.testng.annotations.Test;
 
 import java.util.Collections;
 import java.util.Map;
-
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.services.ApplicationStateContribution;
-import org.apache.tapestry.services.ApplicationStateCreator;
-import org.apache.tapestry.services.ApplicationStateManager;
-import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry.services.ApplicationStatePersistenceStrategySource;
-import org.easymock.EasyMock;
-import org.easymock.IAnswer;
-import org.testng.annotations.Test;
 
 public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 {

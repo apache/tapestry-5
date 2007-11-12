@@ -14,7 +14,8 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-public enum Department {
+public enum Department
+{
 
     ACCOUNTING, RESEARCH_AND_DESIGN, IT, SALES_AND_MARKETING
 }

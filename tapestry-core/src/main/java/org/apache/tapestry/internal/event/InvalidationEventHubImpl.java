@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.internal.event;
 
+import org.apache.tapestry.internal.events.InvalidationListener;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadSafeList;
 
 import java.util.List;
-
-import org.apache.tapestry.internal.events.InvalidationListener;
 
 /**
  * Base implementation class for classes (especially services) that need to manage a list of
@@ -28,7 +27,9 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
 {
     private final List<InvalidationListener> _listeners = newThreadSafeList();
 
-    /** Notifies all {@link InvalidationListener listener}s. */
+    /**
+     * Notifies all {@link InvalidationListener listener}s.
+     */
     protected final void fireInvalidationEvent()
     {
         for (InvalidationListener listener : _listeners)

@@ -15,13 +15,12 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadSafeList;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 public class RegistryShutdownHubImpl implements RegistryShutdownHub
 {
@@ -46,9 +45,8 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
     /**
      * Fires the {@link RegistryShutdownListener#registryDidShutdown()} method on each listener. At
      * the end, all the listeners are discarded.
-     * 
-     * @param log
-     *            used if any listener throws an exception
+     *
+     * @param log used if any listener throws an exception
      */
     public void fireRegistryDidShutdown()
     {

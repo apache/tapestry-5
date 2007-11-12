@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.PrimaryKeyEncoder;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.Defense;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -24,20 +24,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.tapestry.PrimaryKeyEncoder;
-import org.apache.tapestry.ioc.internal.util.Defense;
-
 /**
  * A default, extensible version of {@link PrimaryKeyEncoder} that is based on loading known values
  * into an internal map. When there's a reasonable number (hundreds, perhaps thousands) of items to
  * choose from, and those items are fast and cheap to read and instantiate, this implementation is a
  * good bet. For very large result sets, you'll need to create your own implementation of
  * {@link PrimaryKeyEncoder}.
- * 
+ *
  * @param <K>
- *            the key type (which must be serializable)
+ * the key type (which must be serializable)
  * @param <V>
- *            the value type
+ * the value type
  */
 public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements PrimaryKeyEncoder<K, V>
 {
@@ -49,7 +46,9 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
     private K _currentKey;
 
-    /** Adds a new key/value pair to the encoder. */
+    /**
+     * Adds a new key/value pair to the encoder.
+     */
     public final void add(K key, V value)
     {
         Defense.notNull(key, "key");
@@ -69,7 +68,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     /**
      * Returns the values previously {@link #add(Serializable, Object) added to the encoder},
      * <em>in the order in which they were added</em>. Values that are deleted are not returned.
-     * 
+     *
      * @return ordered list of values
      */
     public final List<V> getValues()
@@ -80,9 +79,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     /**
      * Returns a list of all the values <em>except</em> those values whose keys are in the
      * provided set. The set may be null, in which case all values are returned.
-     * 
-     * @param keySet
-     *            set of keys identifying values to exclude, or null to exclude no values
+     *
+     * @param keySet set of keys identifying values to exclude, or null to exclude no values
      * @return values (not in the set) in order origionally added
      */
     protected final List<V> valuesNotInKeySet(Set<K> keySet)
@@ -157,11 +155,10 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      * (they key was not valuable, possibly because it points to a deleted entity object) and
      * provide a temporary object. This method may return null, but in a typical application, that
      * will likely case NullPointerExceptions further down the processing chain.
-     * <p>
+     * <p/>
      * This implementation returns null, and is intended to be overriden in subclasses.
-     * 
-     * @param key
-     *            key for which a value is required
+     *
+     * @param key key for which a value is required
      * @return a substitute value, or null
      */
     protected V provideMissingObject(K key)
@@ -181,9 +178,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
     /**
      * Returns true if the current key is in the provided set.
-     * 
-     * @param keySet
-     *            the set of keys to check, or null
+     *
+     * @param keySet the set of keys to check, or null
      * @return true if the key is in the set, false if it is missing (or if keySet is null)
      */
     protected final boolean inKeySet(Set<K> keySet)
@@ -193,20 +189,18 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
     /**
      * Modifies a keySet to add or remove the current key. If necessary, a new Set is created.
-     * <p>
+     * <p/>
      * Useage: <code>
      * private Set<K> _myFlagKeys;
-     * 
+     * <p/>
      * public boolean void setMyFlag(boolean value)
      * {
-     *   _myFlagKeys = modifySet(_myFlagKeys, value);
+     * _myFlagKeys = modifySet(_myFlagKeys, value);
      * }
      * </code>
-     * 
-     * @param keySet
-     *            the set of keys, or null
-     * @param value
-     *            true to add the current key, false to remove
+     *
+     * @param keySet the set of keys, or null
+     * @param value  true to add the current key, false to remove
      * @return the provided key set, or a new one
      */
     protected final Set<K> modifyKeySet(Set<K> keySet, boolean value)
@@ -227,7 +221,9 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
         return keySet;
     }
 
-    /** Does nothing. Subclasses may override as necessary. */
+    /**
+     * Does nothing. Subclasses may override as necessary.
+     */
     public void prepareForKeys(List<K> keys)
     {
     }

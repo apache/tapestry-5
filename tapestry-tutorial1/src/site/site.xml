@@ -16,42 +16,42 @@
 -->
 
 <project name="Tapestry 5 Tutorial #1">
-  <bannerLeft>
-    <name>Tapestry 5</name>
-    <href>http://tapestry.apache.org/tapestry5/</href>
-    <src>images/tapestry_banner.gif</src>
-  </bannerLeft>
-  <bannerRight>
-    <name>Apache</name>
-    <href>http://www.apache.org</href>
-    <src>images/asf_logo_wide.gif</src>
-  </bannerRight>
-  <skin>
-    <groupId>org.apache.tapestry</groupId>
-    <artifactId>maven-skin</artifactId>
-    <version>1.1</version>
-  </skin>
-  
-  <publishDate format="dd MMM yyyy" />
-  
-  <body>
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
 
-    
-    <menu name="Quick Links">
-      <item name="Download" href="http://tapestry.apache.org/download.html"/>
-    </menu>
-        
-    <menu name="Tutorial">
-      <item name="Introduction" href="index.html"/>
-      <item name="Environment" href="env.html"/>
-      <item name="Your First Application" href="first.html"/> 
-      <item name="Hi/Lo Game" href="hilo.html"/>
-      <item name="Forms" href="forms.html"/>
-      <item name="Forms, pt 2" href="forms2.html"/>
-    </menu>    
-        
-        
-    <menu ref="reports"/>
-    
-  </body>
+    <publishDate format="dd MMM yyyy"/>
+
+    <body>
+
+
+        <menu name="Quick Links">
+            <item name="Download" href="http://tapestry.apache.org/download.html"/>
+        </menu>
+
+        <menu name="Tutorial">
+            <item name="Introduction" href="index.html"/>
+            <item name="Environment" href="env.html"/>
+            <item name="Your First Application" href="first.html"/>
+            <item name="Hi/Lo Game" href="hilo.html"/>
+            <item name="Forms" href="forms.html"/>
+            <item name="Forms, pt 2" href="forms2.html"/>
+        </menu>
+
+
+        <menu ref="reports"/>
+
+    </body>
 </project>

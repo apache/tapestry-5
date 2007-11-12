@@ -16,13 +16,12 @@ package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
-import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 public class PropertyAdapterImpl implements PropertyAdapter
 {
@@ -46,7 +45,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
     public PropertyAdapterImpl(PropertyDescriptor descriptor)
     {
         this(descriptor.getName(), descriptor.getPropertyType(), descriptor.getReadMethod(),
-                descriptor.getWriteMethod());
+             descriptor.getWriteMethod());
     }
 
     public String getName()

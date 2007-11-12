@@ -14,30 +14,37 @@
 
 package org.apache.tapestry.integration.app1.services;
 
-import java.util.List;
-
 import org.apache.tapestry.integration.app1.data.ToDoItem;
+
+import java.util.List;
 
 public interface ToDoDatabase
 {
-    /** Adds an item to the database, first assigning a unique id to the item. */
+    /**
+     * Adds an item to the database, first assigning a unique id to the item.
+     */
     void add(ToDoItem item);
 
-    /** Finds all items, sorted ascending by each item's order property. */
+    /**
+     * Finds all items, sorted ascending by each item's order property.
+     */
     List<ToDoItem> findAll();
 
     /**
      * Updates an existing item.
-     * 
+     *
      * @param item
-     * @throws RuntimeException
-     *             if the item does not exist
+     * @throws RuntimeException if the item does not exist
      */
     void update(ToDoItem item);
-    
-    /** Resets the database, clearing out all data, re-adding base data. */
+
+    /**
+     * Resets the database, clearing out all data, re-adding base data.
+     */
     void reset();
 
-    /** Deletes all items from the database. */
+    /**
+     * Deletes all items from the database.
+     */
     void clear();
 }

@@ -23,6 +23,8 @@ import org.apache.tapestry.services.MarkupWriterFactory;
  */
 public interface TestableMarkupWriterFactory extends MarkupWriterFactory
 {
-    /** Returns the most recently created markup writer. */
+    /**
+     * Returns the most recently created markup writer.
+     */
     MarkupWriter getLatestMarkupWriter();
 }

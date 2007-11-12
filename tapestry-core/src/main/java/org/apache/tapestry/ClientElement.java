@@ -21,7 +21,7 @@ package org.apache.tapestry;
  * (JavaScript) logic. For components, the client id will be null or innaccurate until after the
  * component has rendered itself. Inside of any kind of loop, the clientId property is only accurate
  * just after the component has rendered, and before it renders again.
- * <p>
+ * <p/>
  * Some components must be configured to provide a client id. In many cases, the client id matches
  * the component's {@link ComponentResourcesCommon#getId() component id}, typically passed through
  * {@link PageRenderSupport#allocateClientId(String)} to ensure uniqueness.

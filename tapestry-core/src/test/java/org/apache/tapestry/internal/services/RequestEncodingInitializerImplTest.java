@@ -51,7 +51,7 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
         replay();
 
         RequestEncodingInitializer init = new RequestEncodingInitializerImpl(cache, locator,
-                request);
+                                                                             request);
 
         init.initializeRequestEncoding(pageName);
 
@@ -83,7 +83,7 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
         replay();
 
         RequestEncodingInitializer init = new RequestEncodingInitializerImpl(cache, locator,
-                request);
+                                                                             request);
 
         init.initializeRequestEncoding(pageName);
 
@@ -91,7 +91,7 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
     }
 
     protected final void train_findMeta(MetaDataLocator locator, String metaDataKey,
-            InternalComponentResources resources, String metaDataValue)
+                                        InternalComponentResources resources, String metaDataValue)
     {
         expect(locator.findMeta(metaDataKey, resources)).andReturn(metaDataValue);
     }

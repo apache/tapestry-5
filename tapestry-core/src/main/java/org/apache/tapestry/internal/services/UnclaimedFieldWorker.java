@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.model.MutableComponentModel;
+import org.apache.tapestry.services.ClassTransformation;
+import org.apache.tapestry.services.ComponentClassTransformWorker;
 import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
 import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
-
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
 
 /**
  * Designed to be just about the last worker in the pipeline. Its job is to add cleanup code that

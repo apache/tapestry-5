@@ -14,20 +14,24 @@
 
 package org.apache.tapestry.internal.parser;
 
+import org.apache.tapestry.ioc.Resource;
+
 import java.util.List;
 import java.util.Set;
-
-import org.apache.tapestry.ioc.Resource;
 
 /**
  * A parsed component template, containing all the tokens parsed from the template.
  */
 public interface ComponentTemplate
 {
-    /** Returns true if no template could be found for the component. */
+    /**
+     * Returns true if no template could be found for the component.
+     */
     boolean isMissing();
 
-    /** Returns the resource that was parsed to form the template. */
+    /**
+     * Returns the resource that was parsed to form the template.
+     */
     Resource getResource();
 
     /**

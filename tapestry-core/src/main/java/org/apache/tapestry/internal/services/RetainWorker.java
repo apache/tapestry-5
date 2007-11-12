@@ -22,8 +22,6 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 /**
  * Identifies fields with the {@link org.apache.tapestry.annotations.Retain} annotation, and
  * "claims" them so that no special work will occur on them.
- * 
- * 
  */
 public final class RetainWorker implements ComponentClassTransformWorker
 {

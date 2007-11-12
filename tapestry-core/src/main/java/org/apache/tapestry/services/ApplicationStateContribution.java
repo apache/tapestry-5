@@ -48,7 +48,9 @@ public final class ApplicationStateContribution
         return _creator;
     }
 
-    /** The name of the strategy used to control where the ASO is stored. */
+    /**
+     * The name of the strategy used to control where the ASO is stored.
+     */
     public String getStrategy()
     {
         return _strategy;

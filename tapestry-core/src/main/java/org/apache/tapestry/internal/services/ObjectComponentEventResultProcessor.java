@@ -14,14 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collection;
-
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
-/** A catch-all for type Object that reports the return value as an error. */
+import java.util.Collection;
+
+/**
+ * A catch-all for type Object that reports the return value as an error.
+ */
 public class ObjectComponentEventResultProcessor implements ComponentEventResultProcessor<Object>
 {
     private final Collection<Class> _configuredClasses;
@@ -32,7 +34,7 @@ public class ObjectComponentEventResultProcessor implements ComponentEventResult
     }
 
     public ActionResponseGenerator processComponentEvent(Object value, Component component,
-            String methodDescripion)
+                                                         String methodDescripion)
     {
         String message = ServicesMessages.invalidComponentEventResult(
                 component,

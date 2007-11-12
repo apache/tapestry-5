@@ -18,8 +18,6 @@ import java.util.EventListener;
 
 /**
  * Event listener interfaces for objects that need to know when the Registry shutsdown.
- * 
- * 
  */
 public interface RegistryShutdownListener extends EventListener
 {

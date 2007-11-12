@@ -22,34 +22,32 @@ import org.apache.tapestry.dom.Document;
  */
 public interface DocumentHeadBuilder
 {
-    /** Adds a link to load a script. Scripts will be loaded only once. */
+    /**
+     * Adds a link to load a script. Scripts will be loaded only once.
+     */
     void addScriptLink(String scriptURL);
 
     /**
      * Adds a link to load a CSS stylesheet. Stylesheets are loaded only once.
-     * 
-     * @param styleURL
-     *            URL of stylesheet to load
-     * @param media
-     *            media value (or null to omit the media attribute)
+     *
+     * @param styleURL URL of stylesheet to load
+     * @param media    media value (or null to omit the media attribute)
      */
     void addStylesheetLink(String styleURL, String media);
 
     /**
      * Adds JavaScript code. The code is collected into a single block that is injected just before
      * the close body tag of the page.
-     * 
-     * @param script
-     *            statement to add to the block (a newline will be appended as well)
+     *
+     * @param script statement to add to the block (a newline will be appended as well)
      */
     void addScript(String script);
 
     /**
      * Updates the supplied Document, locating the html/body element and adding script links (to the
      * top) and a script block (to the end).
-     * 
-     * @param document
-     *            to be updated
+     *
+     * @param document to be updated
      */
     void updateDocument(Document document);
 }

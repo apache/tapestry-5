@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import java.util.Random;
-
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.util.Random;
 
 public class LocationImplTest extends IOCTestCase
 {

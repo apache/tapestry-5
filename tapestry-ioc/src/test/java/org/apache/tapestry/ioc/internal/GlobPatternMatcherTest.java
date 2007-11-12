@@ -16,11 +16,10 @@ package org.apache.tapestry.ioc.internal;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
-
 import org.testng.annotations.Test;
 
 /**
- * 
+ *
  */
 public class GlobPatternMatcherTest
 {

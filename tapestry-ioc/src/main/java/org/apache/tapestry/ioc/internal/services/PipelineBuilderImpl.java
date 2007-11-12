@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.DefaultImplementationBuilder;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 public class PipelineBuilderImpl implements PipelineBuilder
 {
@@ -31,14 +31,14 @@ public class PipelineBuilderImpl implements PipelineBuilder
     public PipelineBuilderImpl(@Builtin
     ClassFactory classFactory,
 
-    DefaultImplementationBuilder defaultImplementationBuilder)
+                               DefaultImplementationBuilder defaultImplementationBuilder)
     {
         _classFactory = classFactory;
         _defaultImplementationBuilder = defaultImplementationBuilder;
     }
 
     public <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface,
-            List<F> filters)
+                          List<F> filters)
     {
         S terminator = _defaultImplementationBuilder.createDefaultImplementation(serviceInterface);
 
@@ -46,12 +46,12 @@ public class PipelineBuilderImpl implements PipelineBuilder
     }
 
     public <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface,
-            List<F> filters, S terminator)
+                          List<F> filters, S terminator)
     {
         if (filters.isEmpty()) return terminator;
 
         BridgeBuilder<S, F> bb = new BridgeBuilder<S, F>(log, serviceInterface, filterInterface,
-                _classFactory);
+                                                         _classFactory);
 
         // The first bridge will point to the terminator.
         // Like service decorators, we work deepest (last)

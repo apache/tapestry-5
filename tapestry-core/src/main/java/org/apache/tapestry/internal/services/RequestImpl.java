@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Basic implementation of {@link org.apache.tapestry.services.Request} that wraps around an

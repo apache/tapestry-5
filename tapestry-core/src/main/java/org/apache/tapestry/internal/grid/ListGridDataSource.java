@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.grid;
 
+import org.apache.tapestry.PropertyConduit;
+import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.grid.GridDataSource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.grid.GridDataSource;
 
 public class ListGridDataSource implements GridDataSource
 {
@@ -46,7 +45,7 @@ public class ListGridDataSource implements GridDataSource
 
     @SuppressWarnings("unchecked")
     public void prepare(int startIndex, int endIndex, PropertyModel sortModel,
-            final boolean ascending)
+                        final boolean ascending)
     {
         if (sortModel == null)
             return;
@@ -98,7 +97,9 @@ public class ListGridDataSource implements GridDataSource
         Collections.sort(_list, reverseComparator);
     }
 
-    /** Returns the type of the first element in the list, or null if the list is empty. */
+    /**
+     * Returns the type of the first element in the list, or null if the list is empty.
+     */
     public Class getRowType()
     {
         return _list.isEmpty() ? null : _list.get(0).getClass();

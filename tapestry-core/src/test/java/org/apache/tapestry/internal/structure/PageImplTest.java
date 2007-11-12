@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.structure;
 
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.same;
-
-import java.util.Locale;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.PageLifecycleListener;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class PageImplTest extends InternalBaseTestCase
 {
@@ -71,7 +70,9 @@ public class PageImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** Also checks that listeners are invoked, even if the page is dirty. */
+    /**
+     * Also checks that listeners are invoked, even if the page is dirty.
+     */
     @Test
     public void detach_dirty_if_dirty_count_non_zero()
     {

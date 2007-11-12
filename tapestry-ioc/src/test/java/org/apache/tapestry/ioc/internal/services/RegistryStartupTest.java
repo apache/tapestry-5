@@ -14,17 +14,19 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
+import java.util.List;
+
 public class RegistryStartupTest extends IOCTestCase
 {
-    /** Runnable runs. */
+    /**
+     * Runnable runs.
+     */
     @Test
     public void success()
     {

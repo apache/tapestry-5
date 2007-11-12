@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -25,6 +23,8 @@ import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Modifier;
 
 /**
  * Of course, we're committing the cardinal sin of testing the code that's generated, rather than
@@ -233,7 +233,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         SetupRender annotation = newSetupRender();
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "aMethod", new String[]
-        { MarkupWriter.class.getName() }, null);
+                {MarkupWriter.class.getName()}, null);
 
         train_findMethods(tf, sig);
 
@@ -265,7 +265,7 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         SetupRender annotation = newSetupRender();
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PROTECTED, "boolean", "aMethod", null,
-                null);
+                                                                    null);
 
         train_findMethods(tf, sig);
 
@@ -302,9 +302,9 @@ public class ComponentLifecycleMethodWorkerTest extends TapestryTestCase
         SetupRender annotation = newSetupRender();
 
         TransformMethodSignature siga = new TransformMethodSignature(Modifier.PROTECTED, "boolean", "aMethod", null,
-                null);
+                                                                     null);
         TransformMethodSignature sigb = new TransformMethodSignature(Modifier.PUBLIC, "void", "bMethod", new String[]
-        { MarkupWriter.class.getName() }, null);
+                {MarkupWriter.class.getName()}, null);
 
         String ida = "aMethod()";
 

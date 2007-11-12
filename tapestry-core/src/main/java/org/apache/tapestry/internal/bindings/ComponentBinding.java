@@ -26,7 +26,7 @@ public class ComponentBinding extends AbstractBinding
     private final String _componentId;
 
     public ComponentBinding(String description, ComponentResources resources, String componentId,
-            Location location)
+                            Location location)
     {
         super(location);
 

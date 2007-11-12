@@ -1,27 +1,27 @@
 // ** I18N
 Calendar._DN = new Array
-("Duminică",
- "Luni",
- "Marţi",
- "Miercuri",
- "Joi",
- "Vineri",
- "Sâmbătă",
- "Duminică");
+        ("Duminică",
+                "Luni",
+                "Marţi",
+                "Miercuri",
+                "Joi",
+                "Vineri",
+                "Sâmbătă",
+                "Duminică");
 Calendar._SDN_len = 2;
 Calendar._MN = new Array
-("Ianuarie",
- "Februarie",
- "Martie",
- "Aprilie",
- "Mai",
- "Iunie",
- "Iulie",
- "August",
- "Septembrie",
- "Octombrie",
- "Noiembrie",
- "Decembrie");
+        ("Ianuarie",
+                "Februarie",
+                "Martie",
+                "Aprilie",
+                "Mai",
+                "Iunie",
+                "Iulie",
+                "August",
+                "Septembrie",
+                "Octombrie",
+                "Noiembrie",
+                "Decembrie");
 
 // tooltips
 Calendar._TT = {};
@@ -39,10 +39,10 @@ Calendar._TT["ABOUT"] =
 "- Folosiţi butoanele " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " pentru a selecta luna\n" +
 "- Tineţi butonul mouse-ului apăsat pentru selecţie mai rapidă.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Selecţia orei:\n" +
-"- Click pe ora sau minut pentru a mări valoarea cu 1\n" +
-"- Sau Shift-Click pentru a micşora valoarea cu 1\n" +
-"- Sau Click şi drag pentru a selecta mai repede.";
+                             "Selecţia orei:\n" +
+                             "- Click pe ora sau minut pentru a mări valoarea cu 1\n" +
+                             "- Sau Shift-Click pentru a micşora valoarea cu 1\n" +
+                             "- Sau Click şi drag pentru a selecta mai repede.";
 
 Calendar._TT["PREV_YEAR"] = "Anul precedent (lung pt menu)";
 Calendar._TT["PREV_MONTH"] = "Luna precedentă (lung pt menu)";

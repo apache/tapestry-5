@@ -24,25 +24,20 @@ public interface PersistentFieldManager
 {
     /**
      * Posts a change of a persistent property.
-     * 
-     * @param pageName
-     *            the logical name of the page containing the component
-     * @param resources
-     *            the resources for the component or mixin (used to determine the persistence
-     *            strategy)
-     * @param fieldName
-     *            the name of the field whose persistent value has changed
-     * @param newValue
-     *            the new value for the field, possibly null
+     *
+     * @param pageName  the logical name of the page containing the component
+     * @param resources the resources for the component or mixin (used to determine the persistence
+     *                  strategy)
+     * @param fieldName the name of the field whose persistent value has changed
+     * @param newValue  the new value for the field, possibly null
      */
     void postChange(String pageName, ComponentResources resources, String fieldName, Object newValue);
 
     /**
      * Locates all persistently stored changes to all properties within the page (for the current
      * session and request) and gathers them together into a bundle.
-     * 
-     * @param pageName
-     *            the logical name of the page to gather changes for
+     *
+     * @param pageName the logical name of the page to gather changes for
      * @return a bundle identifying all such changes
      */
     PersistentFieldBundle gatherChanges(String pageName);

@@ -25,18 +25,16 @@ public interface ValidationDecorator
     /**
      * Invoked after the label has rendered its tag, but before it has rendered content inside the
      * tag, to allow the decorator to write additional attributes.
-     * 
-     * @param field
-     *            the field corresponding to the label
-     * @param labelElement
-     *            the element for this label
+     *
+     * @param field        the field corresponding to the label
+     * @param labelElement the element for this label
      */
     void insideLabel(Field field, Element labelElement);
 
     /**
      * Renders immediately before the field itself. The field will typically render a single
      * element, though a complex field may render multiple elements or even some JavaScript.
-     * 
+     *
      * @param field
      */
     void beforeField(Field field);
@@ -46,11 +44,13 @@ public interface ValidationDecorator
      * Generally speaking, you will want to
      * {@linkplain ComponentResources#renderInformalParameters(MarkupWriter) render informal parameters}
      * <strong>before</strong> invoking this method.
-     * 
+     *
      * @param field
      */
     void insideField(Field field);
 
-    /** Invoked after the field has completed rendering itself. */
+    /**
+     * Invoked after the field has completed rendering itself.
+     */
     void afterField(Field field);
 }

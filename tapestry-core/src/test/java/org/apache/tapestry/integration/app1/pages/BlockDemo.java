@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import java.util.Map;
-
 import org.apache.tapestry.Block;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.annotations.Retain;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
+import java.util.Map;
 
 public class BlockDemo
 {

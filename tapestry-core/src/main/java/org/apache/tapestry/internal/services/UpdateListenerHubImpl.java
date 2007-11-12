@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.events.UpdateListener;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadSafeList;
 
 import java.util.List;
-
-import org.apache.tapestry.internal.events.UpdateListener;
 
 public class UpdateListenerHubImpl implements UpdateListenerHub
 {

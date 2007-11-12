@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class RegistryBuilderTest extends IOCTestCase
 {

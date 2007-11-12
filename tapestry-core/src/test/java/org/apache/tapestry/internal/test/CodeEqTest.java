@@ -30,12 +30,12 @@ public class CodeEqTest extends Assert
     public Object[][] stripValues()
     {
         return new Object[][]
-        {
-                { "foo", "foo" },
-                { " foo\n", "foo" },
-                { "  foo \nbar\n\n  \tbaz", "foo bar baz" },
-                { "{\n  bar();\n  baz();\n  if (gnip())\n  {\n    gnop();\n  }\n}\n",
-                        "{bar(); baz(); if (gnip()){gnop();}}" } };
+                {
+                        {"foo", "foo"},
+                        {" foo\n", "foo"},
+                        {"  foo \nbar\n\n  \tbaz", "foo bar baz"},
+                        {"{\n  bar();\n  baz();\n  if (gnip())\n  {\n    gnop();\n  }\n}\n",
+                         "{bar(); baz(); if (gnip()){gnop();}}"}};
     }
 
     @Test(enabled = false)
@@ -62,8 +62,8 @@ public class CodeEqTest extends Assert
     public Object[][] matchValues()
     {
         return new Object[][]
-        {
-        { "{ foo(); }", "{\n  foo();\n}", true },
-        { " foo();", "foo ();", false }, };
+                {
+                        {"{ foo(); }", "{\n  foo();\n}", true},
+                        {" foo();", "foo ();", false},};
     }
 }

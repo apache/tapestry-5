@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import java.util.Locale;
-
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class LocalizedNameGeneratorTest extends IOCTestCase
 {

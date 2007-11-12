@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.dom;
 
-import java.io.PrintWriter;
-
 import org.apache.tapestry.ioc.internal.util.Defense;
+
+import java.io.PrintWriter;
 
 /**
  * The root node of a DOM.
@@ -42,9 +42,8 @@ public final class Document extends Node
 
     /**
      * Finds an element based on a path of element names.
-     * 
-     * @param path
-     *            slash separated series of element names
+     *
+     * @param path slash separated series of element names
      * @return the matching element, or null if not found
      * @see Element#find(String)
      */
@@ -63,7 +62,9 @@ public final class Document extends Node
         return slashx < 0 ? _rootElement : _rootElement.find(path.substring(slashx + 1));
     }
 
-    /** Builds with an instance of {@link DefaultMarkupModel}. */
+    /**
+     * Builds with an instance of {@link DefaultMarkupModel}.
+     */
     public Document()
     {
         this(new DefaultMarkupModel());
@@ -74,7 +75,9 @@ public final class Document extends Node
         return _model;
     }
 
-    /** Creates the root element for this document, replacing any previous root element. */
+    /**
+     * Creates the root element for this document, replacing any previous root element.
+     */
     public Element newRootElement(String name)
     {
         _rootElement = new Element(this, name);
@@ -93,7 +96,7 @@ public final class Document extends Node
         {
             _dtd.toMarkup(writer);
         }
-        
+
         _rootElement.toMarkup(writer);
     }
 
@@ -112,9 +115,8 @@ public final class Document extends Node
 
     /**
      * Tries to find an element in this document whose id is specified.
-     * 
-     * @param id
-     *            the value of the id attribute of the element being looked for
+     *
+     * @param id the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
      */
     public Element getElementById(String id)

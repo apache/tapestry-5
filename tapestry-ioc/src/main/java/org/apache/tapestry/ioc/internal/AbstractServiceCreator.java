@@ -14,21 +14,18 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.ConfigurationType.MAPPED;
-import static org.apache.tapestry.ioc.internal.ConfigurationType.ORDERED;
-import static org.apache.tapestry.ioc.internal.ConfigurationType.UNORDERED;
+import org.apache.tapestry.ioc.ObjectCreator;
+import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry.ioc.ServiceResources;
+import static org.apache.tapestry.ioc.internal.ConfigurationType.*;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.slf4j.Logger;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.ServiceResources;
-import org.slf4j.Logger;
 
 /**
  * Abstract implementation of {@link ObjectCreator} geared towards the creation of the core service
@@ -129,7 +126,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
     @SuppressWarnings("unchecked")
     private final void addOrderedConfigurationParameter(Map<Class, Object> parameterDefaults,
-            Type genericType)
+                                                        Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
         List configuration = _resources.getOrderedConfiguration(valueType);
@@ -139,7 +136,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
     @SuppressWarnings("unchecked")
     private void addUnorderedConfigurationParameter(Map<Class, Object> parameterDefaults,
-            Type genericType)
+                                                    Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
         Collection configuration = _resources.getUnorderedConfiguration(valueType);
@@ -149,7 +146,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
     @SuppressWarnings("unchecked")
     private void addMappedConfigurationParameter(Map<Class, Object> parameterDefaults,
-            Type genericType)
+                                                 Type genericType)
     {
         Class keyType = findParameterizedTypeFromGenericType(genericType, 0);
         Class valueType = findParameterizedTypeFromGenericType(genericType, 1);
@@ -166,9 +163,8 @@ public abstract class AbstractServiceCreator implements ObjectCreator
      * Extracts from a generic type the underlying parameterized type. I.e., for List<Runnable>,
      * will return Runnable. This is limited to simple parameterized types, not the more complex
      * cases involving wildcards and upper/lower boundaries.
-     * 
-     * @param type
-     *            the genetic type of the parameter, i.e., List<Runnable>
+     *
+     * @param type the genetic type of the parameter, i.e., List<Runnable>
      * @return the parameterize type (i.e. Runnable.class if type represents List<Runnable>).
      */
 
@@ -188,11 +184,9 @@ public abstract class AbstractServiceCreator implements ObjectCreator
      * then Object.class is returned. Otherwise, the type must be a ParameterizedType. We check to
      * make sure it has the correct number of a actual types (1 for a Collection or List, 2 for a
      * Map). The actual types must be classes (wildcards just aren't supported)
-     * 
-     * @param type
-     *            a Class or ParameterizedType to inspect
-     * @param typeIndex
-     *            the index within the ParameterizedType to extract
+     *
+     * @param type      a Class or ParameterizedType to inspect
+     * @param typeIndex the index within the ParameterizedType to extract
      * @return the actual type, or Object.class if the input type is not generic, or null if any
      *         other pre-condition is not met
      */

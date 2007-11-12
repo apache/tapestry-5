@@ -14,19 +14,20 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.BufferedInputStream;
-import java.net.URL;
-
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/** Used to experiment with namespace aware SAX parsers. */
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.BufferedInputStream;
+import java.net.URL;
+
+/**
+ * Used to experiment with namespace aware SAX parsers.
+ */
 public class ParserExperiment extends DefaultHandler
 {
     public static void main(String[] args) throws Exception
@@ -179,7 +180,7 @@ public class ParserExperiment extends DefaultHandler
 
     @Override
     public void unparsedEntityDecl(String name, String publicId, String systemId,
-            String notationName) throws SAXException
+                                   String notationName) throws SAXException
     {
         log("unparsedEntityDecl", name, "publicId=" + publicId, "systemId=" + systemId);
     }

@@ -18,13 +18,13 @@ import org.apache.tapestry.ioc.services.Coercion;
 
 /**
  * Combines two coercions to create a coercsion through an intermediate type.
- * 
+ *
  * @param <S>
- *            The source (input) type
+ * The source (input) type
  * @param <I>
- *            The intermediate type
+ * The intermediate type
  * @param <T>
- *            The target (output) type
+ * The target (output) type
  */
 public class CompoundCoercion<S, I, T> implements Coercion<S, T>
 {
@@ -44,7 +44,7 @@ public class CompoundCoercion<S, I, T> implements Coercion<S, T>
         // the second operation (I --> T).
 
         I intermediate = _op1.coerce(input);
-        
+
         return _op2.coerce(intermediate);
     }
 

@@ -16,15 +16,14 @@ package org.apache.tapestry.services;
 
 /**
  * Interface implemented by a page used for reporting exceptions.
- * 
- * 
+ *
  * @see RequestExceptionHandler
  */
 public interface ExceptionReporter
 {
     /**
      * Used to communicate to the page what exception is to be reported.
-     * 
+     *
      * @param exception
      */
     void reportException(Throwable exception);

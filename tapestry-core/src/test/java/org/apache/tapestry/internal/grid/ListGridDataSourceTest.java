@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.grid;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
@@ -26,6 +23,9 @@ import org.apache.tapestry.services.BeanModelSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ListGridDataSourceTest extends InternalBaseTestCase
 {

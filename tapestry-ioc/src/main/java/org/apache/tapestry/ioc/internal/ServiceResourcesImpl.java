@@ -14,19 +14,18 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.ObjectCreator;
+import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry.ioc.def.ServiceDef;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.ClassFactory;
+import org.slf4j.Logger;
 
 import java.lang.reflect.Constructor;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.slf4j.Logger;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.ServiceBuilderResources}. We just have one
@@ -45,7 +44,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
     private final ClassFactory _classFactory;
 
     public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef serviceDef,
-            ClassFactory classFactory, Logger logger)
+                                ClassFactory classFactory, Logger logger)
     {
         super(registry, module);
 

@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.Test;
 
+import java.io.Serializable;
+import java.util.List;
+
 /**
- * 
+ *
  */
 public class InheritanceSearchTest extends TestBase
 {

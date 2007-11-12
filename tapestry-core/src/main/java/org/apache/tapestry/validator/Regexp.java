@@ -14,17 +14,12 @@
 
 package org.apache.tapestry.validator;
 
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryUtils.quote;
+import org.apache.tapestry.ioc.MessageFormatter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
-import org.apache.tapestry.ioc.MessageFormatter;
 
 public class Regexp implements Validator<Pattern, String>
 {
@@ -54,7 +49,7 @@ public class Regexp implements Validator<Pattern, String>
     }
 
     public void render(Field field, Pattern constraintValue, MessageFormatter formatter,
-            MarkupWriter writer, PageRenderSupport pageRenderSupport)
+                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
     {
         pageRenderSupport.addScript(
                 "Tapestry.Field.regexp('%s', %s, %s);",
@@ -65,7 +60,7 @@ public class Regexp implements Validator<Pattern, String>
     }
 
     public void validate(Field field, Pattern constraintValue, MessageFormatter formatter,
-            String value) throws ValidationException
+                         String value) throws ValidationException
     {
         Matcher matcher = constraintValue.matcher(value);
 

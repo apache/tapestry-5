@@ -26,19 +26,17 @@ public interface ApplicationStateManager
      * configuration that determines how an instance is stored and created as needed. A requested
      * ASO not in the configuration is assumed to be created via a no-args constructor, and stored
      * in the session.
-     * 
+     *
      * @param <T>
-     * @param asoClass
-     *            identifies the ASO to access or create
+     * @param asoClass identifies the ASO to access or create
      * @return the ASO instance
      */
     <T> T get(Class<T> asoClass);
 
     /**
      * Returns true if the ASO already exists, false if it has not yet been created.
-     * 
-     * @param asoClass
-     *            used to select the ASO
+     *
+     * @param asoClass used to select the ASO
      * @return true if ASO exists, false if null
      */
     <T> boolean exists(Class<T> asoClass);
@@ -46,12 +44,10 @@ public interface ApplicationStateManager
     /**
      * Stores a new ASO, replacing the existing ASO (if any). Storing the value null will delete the
      * ASO so that it may be re-created later.
-     * 
+     *
      * @param <T>
-     * @param asoClass
-     *            the type of ASO
-     * @param aso
-     *            the ASO instance
+     * @param asoClass the type of ASO
+     * @param aso      the ASO instance
      */
     <T> void set(Class<T> asoClass, T aso);
 }

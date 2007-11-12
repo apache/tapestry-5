@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategySource;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.Map;
 
 public class ApplicationStatePersistenceStrategySourceImplTest extends InternalBaseTestCase
 {

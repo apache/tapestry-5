@@ -14,13 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationException;
 
-/** Aggregates together a number of field validator instances as a single unit. */
+import java.util.List;
+
+/**
+ * Aggregates together a number of field validator instances as a single unit.
+ */
 public final class CompositeFieldValidator implements FieldValidator
 {
     private final FieldValidator[] _validators;

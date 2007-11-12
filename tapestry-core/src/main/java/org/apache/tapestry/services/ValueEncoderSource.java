@@ -24,11 +24,9 @@ public interface ValueEncoderSource
 {
     /**
      * Creates a value encoder based on the <em>type</em> of the named parameter.
-     * 
-     * @param parameterName
-     *            the name of the parameter whose type is used to locate a PKE factory
-     * @param resources
-     *            the resources of the component, from which parameter and its type are extracted
+     *
+     * @param parameterName the name of the parameter whose type is used to locate a PKE factory
+     * @param resources     the resources of the component, from which parameter and its type are extracted
      * @return the value encoder
      */
     ValueEncoder createEncoder(String parameterName, ComponentResources resources);

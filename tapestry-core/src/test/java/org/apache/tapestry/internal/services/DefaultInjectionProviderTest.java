@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
@@ -24,6 +21,8 @@ import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.MasterObjectProvider;
 import org.apache.tapestry.services.Request;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.testng.annotations.Test;
 
 public class DefaultInjectionProviderTest extends InternalBaseTestCase

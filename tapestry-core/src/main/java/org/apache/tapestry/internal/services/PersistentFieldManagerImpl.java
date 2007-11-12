@@ -14,18 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collection;
-import java.util.Map;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.MetaDataLocator;
-import org.apache.tapestry.services.PersistentFieldBundle;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.PersistentFieldManager;
-import org.apache.tapestry.services.PersistentFieldStrategy;
+import org.apache.tapestry.services.*;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class PersistentFieldManagerImpl implements PersistentFieldManager
 {
@@ -38,7 +34,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
     private final Map<String, PersistentFieldStrategy> _strategies;
 
     public PersistentFieldManagerImpl(MetaDataLocator locator,
-            Map<String, PersistentFieldStrategy> strategies)
+                                      Map<String, PersistentFieldStrategy> strategies)
     {
         _metaDataLocator = locator;
 
@@ -70,7 +66,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
     }
 
     public void postChange(String pageName, ComponentResources resources, String fieldName,
-            Object newValue)
+                           Object newValue)
     {
         String strategyName = findStrategy(resources, fieldName);
         PersistentFieldStrategy strategy = getStrategy(strategyName);

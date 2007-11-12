@@ -14,26 +14,25 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.ioc.ServiceBinder;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.ioc.ServiceBinder;
 
 /**
  * Marker annotation placed on a service builder method to indicate that the service should be
  * eagerly loaded: realized as if a service method had been invoked. Service realization invokes the
  * service builder method and applys any decorators to the service.
- * <p>
+ * <p/>
  * This annotation may also be placed directly on a service implementation class, when using
  * autobuilding via the {@link ServiceBinder}.
  */
 @Target(
-{ TYPE, METHOD })
+        {TYPE, METHOD})
 @Retention(RUNTIME)
 @Documented
 public @interface EagerLoad

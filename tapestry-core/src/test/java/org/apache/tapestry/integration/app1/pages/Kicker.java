@@ -24,7 +24,7 @@ public class Kicker
     Object onAction()
     {
         _target.setActivationContext(new String[]
-        { "betty", "wilma" });
+                {"betty", "wilma"});
 
         return _target;
     }

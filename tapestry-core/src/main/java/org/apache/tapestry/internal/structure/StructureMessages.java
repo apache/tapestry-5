@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.structure;
 
-import java.util.List;
-
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+
+import java.util.List;
 
 class StructureMessages
 {
@@ -50,7 +50,7 @@ class StructureMessages
     }
 
     static String missingMixinForParameter(String componentId, String mixinName,
-            String parameterName)
+                                           String parameterName)
     {
         return MESSAGES
                 .format("missing-mixin-for-parameter", componentId, mixinName, parameterName);

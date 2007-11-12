@@ -75,10 +75,10 @@ public final class TransformUtils
     }
 
     private static void add(Class primitiveType, Class wrapperType, String unwrapperMethodName,
-            String defaultValue)
+                            String defaultValue)
     {
         PrimitiveTypeInfo info = new PrimitiveTypeInfo(wrapperType, unwrapperMethodName,
-                defaultValue);
+                                                       defaultValue);
 
         _classToInfo.put(primitiveType, info);
         _nameToInfo.put(primitiveType.getName(), info);
@@ -95,9 +95,8 @@ public final class TransformUtils
     /**
      * Returns the name of wrapper type for a given input type. For primitive types, returns the
      * wrapper type. For other types, returns the input type name.
-     * 
-     * @param type
-     *            primitive type name, or fully qualified class name
+     *
+     * @param type primitive type name, or fully qualified class name
      */
     public static String getWrapperTypeName(String type)
     {
@@ -109,9 +108,8 @@ public final class TransformUtils
     /**
      * For primitive types, returns the method on the <em>wrapper type</em> that converts back to
      * the primitive.
-     * 
-     * @param type
-     *            the primitive type
+     *
+     * @param type the primitive type
      * @return the method of the corresponding wrapper type, or null if type is not a primitive type
      */
     public static String getUnwrapperMethodName(String type)
@@ -124,9 +122,8 @@ public final class TransformUtils
     /**
      * Returns the wrapper type for a given input type. For primitive types, returns the wrapper
      * type. For other types, returns the type itself.
-     * 
-     * @param type
-     *            primitive or object type
+     *
+     * @param type primitive or object type
      */
     public static Class getWrapperType(Class type)
     {

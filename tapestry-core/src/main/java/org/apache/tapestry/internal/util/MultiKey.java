@@ -32,7 +32,7 @@ public final class MultiKey
      * Creates a new instance from the provided values. It is assumed that the values provided are
      * good map keys themselves -- immutable, with proper implementations of equals() and
      * hashCode().
-     * 
+     *
      * @param values
      */
     public MultiKey(Object... values)

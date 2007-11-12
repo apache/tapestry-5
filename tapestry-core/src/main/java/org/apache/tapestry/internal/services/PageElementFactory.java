@@ -17,12 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.CommentToken;
-import org.apache.tapestry.internal.parser.DTDToken;
-import org.apache.tapestry.internal.parser.ExpansionToken;
-import org.apache.tapestry.internal.parser.StartElementToken;
-import org.apache.tapestry.internal.parser.TextToken;
+import org.apache.tapestry.internal.parser.*;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
@@ -51,42 +46,34 @@ public interface PageElementFactory
      * that returns the fully expanded expression will be returned.
      */
     Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
-            ComponentResources embeddedComponentResources, String defaultBindingPrefix,
-            String expression, Location location);
+                       ComponentResources embeddedComponentResources, String defaultBindingPrefix,
+                       String expression, Location location);
 
     /**
      * Creates a new component and adds it to the page and to its container.
-     * <p>
+     * <p/>
      * Note: doesn't add the component as a child of the container.
-     * 
-     * @param page
-     *            the page that will ultimately contain the new component
-     * @param container
-     *            the existing component that contains the new component
-     * @param id
-     *            the id, unique within the container, of the new component
-     * @param componentType
-     *            the type of the component (as defined in the template or the {@link Component}
-     *            annotation)
-     * @param componentClassName
-     *            the fully qualfied class name used when the componentType is blank (null or the
-     *            empty string)
-     * @param elementName
-     *            TODO
-     * @param location
-     *            location of the component's element within its container's template
+     *
+     * @param page               the page that will ultimately contain the new component
+     * @param container          the existing component that contains the new component
+     * @param id                 the id, unique within the container, of the new component
+     * @param componentType      the type of the component (as defined in the template or the {@link Component}
+     *                           annotation)
+     * @param componentClassName the fully qualfied class name used when the componentType is blank (null or the
+     *                           empty string)
+     * @param elementName        TODO
+     * @param location           location of the component's element within its container's template
      * @return the newly created comopnent, after adding it to the page and container
      */
     ComponentPageElement newComponentElement(Page page, ComponentPageElement container, String id,
-            String componentType, String componentClassName, String elementName, Location location);
+                                             String componentType, String componentClassName, String elementName,
+                                             Location location);
 
     /**
      * Creates a new root component for a page. Adds any mixins defined by the components model.
-     * 
-     * @param page
-     *            the page that will contain the root component
-     * @param className
-     *            the fully qualified class name of the root component
+     *
+     * @param page      the page that will contain the root component
+     * @param className the fully qualified class name of the root component
      * @return the root page element
      */
     ComponentPageElement newRootComponentElement(Page page, String className);
@@ -95,31 +82,29 @@ public interface PageElementFactory
 
     /**
      * Adds a mixin to the element, resolving the mixin type to a mixin class.
-     * <p>
+     * <p/>
      * Sure, this isn't quite a <em>factory</em> method, but PEF has all the tools to accomplish
      * this handy, as opposed to PageLoaderImpl.
-     * 
-     * @param component
-     *            the component to which a mixin will be added
-     * @param mixinType
-     *            used to resolve the mixin class name
+     *
+     * @param component the component to which a mixin will be added
+     * @param mixinType used to resolve the mixin class name
      */
     void addMixinByTypeName(ComponentPageElement component, String mixinType);
 
     /**
      * Adds a mixin to the element.
-     * <p>
+     * <p/>
      * Sure, this isn't quite a <em>factory</em> method, but PEF has all the tools to accomplish
      * this handy, as opposed to PageLoaderImpl.
-     * 
-     * @param component
-     *            the component to which a mixin will be added
-     * @param mixinClassName
-     *            fully qualified class name of the mixin
+     *
+     * @param component      the component to which a mixin will be added
+     * @param mixinClassName fully qualified class name of the mixin
      */
     void addMixinByClassName(ComponentPageElement component, String mixinClassName);
 
-    /** Creates a new element from the token. */
+    /**
+     * Creates a new element from the token.
+     */
     PageElement newCommentElement(CommentToken token);
 
     PageElement newDTDElement(DTDToken token);

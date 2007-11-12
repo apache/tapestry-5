@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class PageTesterSessionTest extends Assert
 {

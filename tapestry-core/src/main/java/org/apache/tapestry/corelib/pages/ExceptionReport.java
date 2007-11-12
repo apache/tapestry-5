@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.corelib.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
@@ -23,6 +21,8 @@ import org.apache.tapestry.ioc.services.ExceptionInfo;
 import org.apache.tapestry.services.ExceptionReporter;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
+
+import java.util.List;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually

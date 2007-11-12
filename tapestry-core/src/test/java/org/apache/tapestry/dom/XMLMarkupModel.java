@@ -14,11 +14,15 @@
 
 package org.apache.tapestry.dom;
 
-/** Used for some testing where we want a model with XML style semantics. */
+/**
+ * Used for some testing where we want a model with XML style semantics.
+ */
 public final class XMLMarkupModel extends DefaultMarkupModel
 {
 
-    /** Always returns ABBREVIATE. */
+    /**
+     * Always returns ABBREVIATE.
+     */
     @Override
     public EndTagStyle getEndTagStyle(String element)
     {

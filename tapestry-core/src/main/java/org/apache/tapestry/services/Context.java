@@ -26,31 +26,31 @@ public interface Context
     /**
      * Returns a URL to a resource stored within the context. The path should start with a leading
      * slash.
-     * 
+     *
      * @param path
      * @return the URL for the path, or null if the path does not correspond to a file.
      */
     URL getResource(String path);
 
-    /** Returns an initial parameter value defined by servlet. */
+    /**
+     * Returns an initial parameter value defined by servlet.
+     */
     String getInitParameter(String name);
 
     /**
      * Looks for resources within the web application within the supplied path. The list will be
      * recurively expanded, as necessary. The path must start with a leading slash, and usually ends
      * with a slash as well.
-     * 
-     * @param path
-     *            to search for (should start with a leading slash)
+     *
+     * @param path to search for (should start with a leading slash)
      * @return the matches, sorted alphabetically
      */
     List<String> getResourcePaths(String path);
 
     /**
      * Returns an attribute previously stored into the context with the given name.
-     * 
-     * @param name
-     *            used to retrieve the attribute
+     *
+     * @param name used to retrieve the attribute
      * @return the attribute, or null if not found
      */
     Object getAttribute(String name);

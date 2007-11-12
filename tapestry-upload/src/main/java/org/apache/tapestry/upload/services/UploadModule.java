@@ -62,7 +62,8 @@ public class UploadModule
             SymbolSource symbolSource)
     {
         MultipartDecoderImpl multipartDecoder = new MultipartDecoderImpl(repositoryPath,
-                repositoryThreshold, maxRequestSize, maxFileSize);
+                                                                         repositoryThreshold, maxRequestSize,
+                                                                         maxFileSize);
 
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.

@@ -19,12 +19,12 @@ package org.apache.tapestry.ioc;
  * resource), a line number, and a column number. This is part of "line precise exception
  * reporting", whereby errors at runtime can be tracked backwards to the files from which they were
  * parsed or otherwise constructed.
- * 
- * 
  */
 public interface Location
 {
-    /** The resource from which the object tagged with a location was derived. */
+    /**
+     * The resource from which the object tagged with a location was derived.
+     */
     Resource getResource();
 
     /**

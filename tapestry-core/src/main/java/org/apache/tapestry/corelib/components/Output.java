@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.text.Format;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
@@ -24,6 +22,8 @@ import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ComponentDefaultProvider;
+
+import java.text.Format;
 
 /**
  * A component for formatting output. If the component is represented in the template using an
@@ -40,7 +40,9 @@ public class Output
     @Parameter(required = true)
     private Object _value;
 
-    /** The format to be applied to the object. */
+    /**
+     * The format to be applied to the object.
+     */
     @Parameter(required = true)
     private Format _format;
 

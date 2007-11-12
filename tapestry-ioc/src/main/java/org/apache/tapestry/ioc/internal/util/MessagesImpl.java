@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
+import org.apache.tapestry.ioc.Messages;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.util.AbstractMessages;
 
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
-
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.util.AbstractMessages;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.Messages} based around a
@@ -36,7 +35,7 @@ public class MessagesImpl extends AbstractMessages
      * Finds the messages for a given Messages utility class. Strings the trailing "Messages" and
      * replaces it with "Strings" to form the base path. Loads the bundle using the default locale,
      * and the class' class loader.
-     * 
+     *
      * @param forClass
      * @return Messages for the class
      */

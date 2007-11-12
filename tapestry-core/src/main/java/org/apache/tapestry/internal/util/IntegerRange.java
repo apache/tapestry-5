@@ -108,7 +108,9 @@ public final class IntegerRange implements Iterable<Integer>
         return result;
     }
 
-    /** Returns true if the other object is an IntegerRange with the same start and finish values. */
+    /**
+     * Returns true if the other object is an IntegerRange with the same start and finish values.
+     */
     @Override
     public boolean equals(Object obj)
     {

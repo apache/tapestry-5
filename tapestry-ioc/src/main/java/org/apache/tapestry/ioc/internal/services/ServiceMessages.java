@@ -15,7 +15,6 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import javassist.CtClass;
-
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
@@ -102,7 +101,7 @@ final class ServiceMessages
     }
 
     static String propertyTypeMismatch(String propertyName, Class sourceClass, Class propertyType,
-            Class expectedType)
+                                       Class expectedType)
     {
         return MESSAGES.format(
                 "property-type-mismatch",
@@ -113,7 +112,7 @@ final class ServiceMessages
     }
 
     static String extraFilterMethod(MethodSignature sig, Class filterInterface,
-            Class serviceInterface)
+                                    Class serviceInterface)
     {
         return MESSAGES.format(
                 "extra-filter-method",

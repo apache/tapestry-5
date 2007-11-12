@@ -15,14 +15,13 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 {

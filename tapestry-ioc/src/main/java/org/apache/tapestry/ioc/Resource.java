@@ -21,16 +21,20 @@ import java.util.Locale;
  * Represents a resource on the server that may be used for server side processing, or may be
  * exposed to the client side. Generally, this represents an abstraction on top of files on the
  * class path and files stored in the web application context.
- * <p>
+ * <p/>
  * Resources are often used as map keys; they should be immutable and should implement hashCode()
  * and equals().
  */
 public interface Resource
 {
-    /** Returns the URL for the resource, or null if it does not exist. */
+    /**
+     * Returns the URL for the resource, or null if it does not exist.
+     */
     URL toURL();
 
-    /** Returns a localized version of the resource. May return null if no such resource exists. */
+    /**
+     * Returns a localized version of the resource. May return null if no such resource exists.
+     */
     Resource forLocale(Locale locale);
 
     /**
@@ -44,9 +48,8 @@ public interface Resource
      * Returns a new Resource with the extension changed (or, if the resource does not have an
      * extension, the extension is added). The new Resource may not exist (that is, {@link #toURL()}
      * may return null.
-     * 
-     * @param extension
-     *            to apply to the resource, such as "html" or "properties"
+     *
+     * @param extension to apply to the resource, such as "html" or "properties"
      * @return the new resource
      */
     Resource withExtension(String extension);
@@ -63,6 +66,8 @@ public interface Resource
      */
     String getFile();
 
-    /** Return the path (the combination of folder and file). */
+    /**
+     * Return the path (the combination of folder and file).
+     */
     String getPath();
 }

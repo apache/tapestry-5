@@ -29,11 +29,9 @@ public interface MetaDataLocator
 {
     /**
      * Searches for the value for the corresponding key.
-     * 
-     * @param key
-     *            the key used to locate the meta data (case insensitive)
-     * @param resources
-     *            the resources of the initial component used in the search
+     *
+     * @param key       the key used to locate the meta data (case insensitive)
+     * @param resources the resources of the initial component used in the search
      * @return the value if found (in the component, the component's container, etc. or via a folder
      *         default) or null if not found anywhere
      */

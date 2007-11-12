@@ -14,10 +14,10 @@
 
 package org.apache.tapestry;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 /**
  * Utilities often needed when building Tapestry applications.
@@ -34,7 +34,7 @@ public class TapestryUtils
      * Quotes the provided value as a JavaScript string literal. The input value is surrounded by
      * single quotes and any interior backslash, single or double quotes are escaped (a preceding
      * backslash is added).
-     * 
+     *
      * @param text
      * @return quoted text
      */

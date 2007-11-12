@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.internal;
 
-/** A key/value pair. */
+/**
+ * A key/value pair.
+ */
 public class KeyValue
 {
     private final String _key;

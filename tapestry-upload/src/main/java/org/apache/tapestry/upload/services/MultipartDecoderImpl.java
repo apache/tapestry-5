@@ -14,20 +14,18 @@
 
 package org.apache.tapestry.upload.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.io.File;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of multipart decoder for servlets.
@@ -45,7 +43,7 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
     private final long _maxFileSize;
 
     public MultipartDecoderImpl(String repositoryLocation, int repositoryThreshold,
-            long maxRequestSize, long maxFileSize)
+                                long maxRequestSize, long maxFileSize)
     {
         _repositoryLocation = repositoryLocation;
         _repositoryThreshold = repositoryThreshold;
@@ -101,9 +99,12 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
     }
 
     protected HttpServletRequest processFileItems(HttpServletRequest request,
-            List<FileItem> fileItems)
+                                                  List<FileItem> fileItems)
     {
-        if (fileItems == null || fileItems.isEmpty()) { return request; }
+        if (fileItems == null || fileItems.isEmpty())
+        {
+            return request;
+        }
 
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
 

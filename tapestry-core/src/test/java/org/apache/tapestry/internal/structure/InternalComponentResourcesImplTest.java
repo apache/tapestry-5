@@ -42,7 +42,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(element, null,
-                ins, coercer, null);
+                                                                                  ins, coercer, null);
 
         resources.renderInformalParameters(writer);
 
@@ -68,7 +68,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(element, null,
-                ins, coercer, null);
+                                                                                  ins, coercer, null);
 
         resources.bindParameter("fred", binding);
 
@@ -103,7 +103,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         replay();
 
         InternalComponentResources resources = new InternalComponentResourcesImpl(element, null,
-                ins, coercer, null);
+                                                                                  ins, coercer, null);
 
         resources.bindParameter("fred", binding);
 

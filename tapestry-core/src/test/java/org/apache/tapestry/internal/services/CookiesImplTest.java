@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.Cookie;
-
 import org.apache.tapestry.internal.test.TestableRequestImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import javax.servlet.http.Cookie;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Tests for {@link org.apache.tapestry.services.impl.CookiesImpl}.
@@ -101,13 +100,13 @@ public class CookiesImplTest extends Assert
     public void test_Match()
     {
         attempt("fred", "flintstone", new String[]
-        { "barney", "rubble", "fred", "flintstone" });
+                {"barney", "rubble", "fred", "flintstone"});
     }
 
     public void test_No_Match()
     {
         attempt("foo", null, new String[]
-        { "bar", "baz" });
+                {"bar", "baz"});
     }
 
     public void test_Write_Cookie_Domain()

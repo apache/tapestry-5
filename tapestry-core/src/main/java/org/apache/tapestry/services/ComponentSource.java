@@ -27,12 +27,10 @@ public interface ComponentSource
 {
     /**
      * Gets a component by its id.
-     * 
-     * @param componentId
-     *            complete component id
+     *
+     * @param componentId complete component id
      * @return the component
-     * @throws IllegalArgumentException
-     *             if the component can not be found
+     * @throws IllegalArgumentException if the component can not be found
      * @see ComponentResourcesCommon#getCompleteId()
      */
     Component getComponent(String componentId);
@@ -40,12 +38,10 @@ public interface ComponentSource
     /**
      * Returns the page identified by its logical page name. A logical page name is the short form
      * of a page name often emebedded into URLs.
-     * 
-     * @param pageName
-     *            the logical page name
+     *
+     * @param pageName the logical page name
      * @return the corresponding page's root component
-     * @throws IllegalArgumentException
-     *             if the page can not be found
+     * @throws IllegalArgumentException if the page can not be found
      */
     Component getPage(String pageName);
 }

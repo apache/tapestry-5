@@ -39,19 +39,25 @@ public class DTDToken extends TemplateToken
         _systemId = systemId;
     }
 
-    /** Returns the doctype name (the name of the document root element) */
+    /**
+     * Returns the doctype name (the name of the document root element)
+     */
     public String getName()
     {
         return _name;
     }
 
-    /** Returns the public identifier of the DTD */
+    /**
+     * Returns the public identifier of the DTD
+     */
     public String getPublicId()
     {
         return _publicId;
     }
 
-    /** Returns the system identifier of the DTD */
+    /**
+     * Returns the system identifier of the DTD
+     */
     public String getSystemId()
     {
         return _systemId;

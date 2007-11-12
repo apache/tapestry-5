@@ -14,15 +14,17 @@
 
 package org.apache.tapestry.validator;
 
-import java.util.regex.Pattern;
-
 import org.apache.tapestry.Field;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.testng.annotations.Test;
 
-/** These are getting tedious; I'd rather do it via integration tests. */
+import java.util.regex.Pattern;
+
+/**
+ * These are getting tedious; I'd rather do it via integration tests.
+ */
 public class RegexpTest extends InternalBaseTestCase
 {
     @Test

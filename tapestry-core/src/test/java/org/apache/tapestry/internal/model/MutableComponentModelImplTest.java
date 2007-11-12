@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.model;
 
-import java.util.Arrays;
-
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
@@ -26,6 +24,8 @@ import org.apache.tapestry.model.MutableEmbeddedComponentModel;
 import org.apache.tapestry.model.ParameterModel;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 /**
  * Tests {@link org.apache.tapestry.internal.model.MutableComponentModelImpl} and

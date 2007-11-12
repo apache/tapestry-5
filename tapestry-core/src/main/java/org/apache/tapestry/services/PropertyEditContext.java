@@ -26,7 +26,7 @@ import org.apache.tapestry.ioc.Messages;
 /**
  * Defines a context for editing a property of a bean via {@link BeanEditForm}. This value is made
  * available to blocks via the {@link Environmental} annotation.
- * 
+ *
  * @see BeanBlockSource
  */
 public interface PropertyEditContext
@@ -40,9 +40,8 @@ public interface PropertyEditContext
     /**
      * Updates the value of the property being edited (the context encapsulates the object
      * containing the property).
-     * 
-     * @param value
-     *            new value for the property
+     *
+     * @param value new value for the property
      */
     void setPropertyValue(Object value);
 
@@ -54,14 +53,14 @@ public interface PropertyEditContext
 
     /**
      * Returns the translator appropriate for the field (this is based on the property type).
-     * 
+     *
      * @see TranslatorDefaultSource
      */
     Translator getTranslator();
 
     /**
      * Returns the FieldValidator for the field.
-     * 
+     *
      * @see Validate
      * @see FieldValidatorDefaultSource
      */

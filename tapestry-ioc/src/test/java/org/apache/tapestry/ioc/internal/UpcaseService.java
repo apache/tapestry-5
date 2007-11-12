@@ -16,11 +16,11 @@ package org.apache.tapestry.ioc.internal;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.SingletonServiceLifecycleTest}.
- * 
- * 
  */
 public interface UpcaseService
 {
-    /** Returns the uppercase version of an input string. */
+    /**
+     * Returns the uppercase version of an input string.
+     */
     String upcase(String input);
 }

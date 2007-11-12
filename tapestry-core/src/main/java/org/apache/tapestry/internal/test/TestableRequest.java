@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.test;
 
-import java.util.Map;
-
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.test.PageTester;
+
+import java.util.Map;
 
 /**
  * An extended version of {@link Request} that allows the {@link PageTester} to control and override
@@ -26,12 +26,18 @@ import org.apache.tapestry.test.PageTester;
  */
 public interface TestableRequest extends Request
 {
-    /** Clears the internal parameters map. */
+    /**
+     * Clears the internal parameters map.
+     */
     void clear();
 
-    /** Loads new parameter/value pairs into the map. */
+    /**
+     * Loads new parameter/value pairs into the map.
+     */
     void loadParameters(Map<String, String> parameterValues);
 
-    /** Loads a single parameter/value pair. */
+    /**
+     * Loads a single parameter/value pair.
+     */
     void loadParameter(String parameterName, String parameterValue);
 }

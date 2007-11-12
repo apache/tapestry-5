@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Messages;
+
+import java.util.Locale;
 
 /**
  * For a particular field, geenerates the default validation for the field, in accordance with a
@@ -30,7 +30,7 @@ public interface FieldValidatorDefaultSource
     /**
      * Analyzes the property type and property annotations to determine the default set of
      * validations for the property, which are wrapped to form a {@link FieldValidator} for a field.
-     * 
+     *
      * @param field
      * @param overrideId
      * @param overrideMessages
@@ -40,6 +40,6 @@ public interface FieldValidatorDefaultSource
      * @return
      */
     FieldValidator createDefaultValidator(Field field, String overrideId,
-            Messages overrideMessages, Locale locale, Class propertyType,
-            AnnotationProvider propertyAnnotations);
+                                          Messages overrideMessages, Locale locale, Class propertyType,
+                                          AnnotationProvider propertyAnnotations);
 }

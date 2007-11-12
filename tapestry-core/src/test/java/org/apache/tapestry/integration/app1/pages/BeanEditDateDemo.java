@@ -14,9 +14,8 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.integration.app1.data.BirthdayReminder;
-
 import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.integration.app1.data.BirthdayReminder;
 
 public class BeanEditDateDemo
 {

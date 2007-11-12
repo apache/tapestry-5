@@ -26,7 +26,7 @@ public interface ClassNameLocator
      * top-level classes in the indicated package (or a sub-package), but excludes inner classes. No
      * other filtering (beyond inner classes) occurs, so there's no guarantee that the class names
      * returned are public (for example)
-     * 
+     *
      * @param packageName
      * @return fully qualified class names
      */

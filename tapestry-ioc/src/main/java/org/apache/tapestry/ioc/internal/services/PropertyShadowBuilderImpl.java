@@ -14,18 +14,11 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
+import org.apache.tapestry.ioc.services.*;
 
+import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
-
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 
 public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 {
@@ -36,7 +29,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
     public PropertyShadowBuilderImpl(@Builtin
     ClassFactory classFactory,
 
-    PropertyAccess propertyAccess)
+                                     PropertyAccess propertyAccess)
     {
         _classFactory = classFactory;
         _propertyAccess = propertyAccess;
@@ -68,7 +61,7 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
         cf.addField("_source", Modifier.PRIVATE | Modifier.FINAL, sourceClass);
 
         cf.addConstructor(new Class[]
-        { sourceClass }, null, "_source = $1;");
+                {sourceClass}, null, "_source = $1;");
 
         String body = format("return _source.%s();", adapter.getReadMethod().getName());
 

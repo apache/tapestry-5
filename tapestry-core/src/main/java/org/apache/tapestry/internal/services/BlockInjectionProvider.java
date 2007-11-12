@@ -28,7 +28,7 @@ import org.apache.tapestry.services.TransformConstants;
  * Identifies fields of type {@link Block} that have the {@link Inject} annotation and converts them
  * into read-only fields containing the injected Block from the template. The annotation's value is
  * the id of the block to inject; if omitted, the block id is deduced from the field id.
- * <p>
+ * <p/>
  * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation,
  * Inject, with a different interpretation.
  */
@@ -36,7 +36,7 @@ public class BlockInjectionProvider implements InjectionProvider
 {
 
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+                                    ClassTransformation transformation, MutableComponentModel componentModel)
     {
         if (!fieldType.equals(Block.class)) return false;
 

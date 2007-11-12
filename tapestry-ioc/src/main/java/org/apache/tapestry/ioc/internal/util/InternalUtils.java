@@ -14,30 +14,21 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.services.ClassFactory;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Utilities used within various internal implemenations of Tapestry IOC and the rest of the
@@ -56,11 +47,9 @@ public class InternalUtils
      * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a
      * {@link MethodLocation} (where possible). {@link #asString(Method)} is used under the covers,
      * to present a detailed, but not excessive, description of the class, method and parameters.
-     * 
-     * @param method
-     *            method to convert to a string
-     * @param classFactory
-     *            used to obtain the {@link MethodLocation}
+     *
+     * @param method       method to convert to a string
+     * @param classFactory used to obtain the {@link MethodLocation}
      * @return the method formatted for presentation to the user
      */
     public static String asString(Method method, ClassFactory classFactory)
@@ -74,7 +63,7 @@ public class InternalUtils
      * Converts a method to a user presentable string consisting of the containing class name, the
      * method name, and the short form of the parameter list (the class name of each parameter type,
      * shorn of the package name portion).
-     * 
+     *
      * @param method
      * @return short string representation
      */
@@ -99,14 +88,18 @@ public class InternalUtils
         return buffer.append(")").toString();
     }
 
-    /** Returns the size of an object array, or null if the array is empty. */
+    /**
+     * Returns the size of an object array, or null if the array is empty.
+     */
 
     public static int size(Object[] array)
     {
         return array == null ? 0 : array.length;
     }
 
-    /** Strips leading punctuation ("_" and "$") from the provided name. */
+    /**
+     * Strips leading punctuation ("_" and "$") from the provided name.
+     */
     public static String stripMemberPrefix(String memberName)
     {
         StringBuilder builder = new StringBuilder(memberName);
@@ -159,16 +152,14 @@ public class InternalUtils
 
     /**
      * Finds a specific annotation type within an array of annotations.
-     * 
+     *
      * @param <T>
-     * @param annotations
-     *            to search
-     * @param annotationClass
-     *            to match
+     * @param annotations     to search
+     * @param annotationClass to match
      * @return the annotation instance, if found, or null otherwise
      */
     public static <T extends Annotation> T findAnnotation(Annotation[] annotations,
-            Class<T> annotationClass)
+                                                          Class<T> annotationClass)
     {
         for (Annotation a : annotations)
         {
@@ -180,8 +171,8 @@ public class InternalUtils
 
     @SuppressWarnings("unchecked")
     private static Object calculateParameterValue(Class parameterType,
-            final Annotation[] parameterAnnotations, ObjectLocator locator,
-            Map<Class, Object> parameterDefaults)
+                                                  final Annotation[] parameterAnnotations, ObjectLocator locator,
+                                                  Map<Class, Object> parameterDefaults)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -221,7 +212,7 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForMethod(Method method, ObjectLocator locator,
-            Map<Class, Object> parameterDefaults)
+                                                        Map<Class, Object> parameterDefaults)
     {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] annotations = method.getParameterAnnotations();
@@ -230,7 +221,8 @@ public class InternalUtils
     }
 
     public static Object[] calculateParametersForConstructor(Constructor constructor,
-            ObjectLocator locator, Map<Class, Object> parameterDefaults)
+                                                             ObjectLocator locator,
+                                                             Map<Class, Object> parameterDefaults)
     {
         Class[] parameterTypes = constructor.getParameterTypes();
         Annotation[][] annotations = constructor.getParameterAnnotations();
@@ -239,8 +231,8 @@ public class InternalUtils
     }
 
     public static Object[] calculateParameters(ObjectLocator locator,
-            Map<Class, Object> parameterDefaults, Class[] parameterTypes,
-            Annotation[][] parameterAnnotations)
+                                               Map<Class, Object> parameterDefaults, Class[] parameterTypes,
+                                               Annotation[][] parameterAnnotations)
     {
         int parameterCount = parameterTypes.length;
 
@@ -258,7 +250,9 @@ public class InternalUtils
         return parameters;
     }
 
-    /** Joins together some number of elements to form a comma separated list. */
+    /**
+     * Joins together some number of elements to form a comma separated list.
+     */
     public static String join(List elements)
     {
         StringBuilder buffer = new StringBuilder();
@@ -276,7 +270,9 @@ public class InternalUtils
         return buffer.toString();
     }
 
-    /** Creates a sorted copy of the provided elements, then turns that into a comma separated list. */
+    /**
+     * Creates a sorted copy of the provided elements, then turns that into a comma separated list.
+     */
     public static String joinSorted(Collection elements)
     {
         List<String> list = newList();
@@ -304,7 +300,9 @@ public class InternalUtils
         return !isBlank(input);
     }
 
-    /** Capitalizes a string, converting the first character to uppercase. */
+    /**
+     * Capitalizes a string, converting the first character to uppercase.
+     */
     public static String capitalize(String input)
     {
         if (input.length() == 0) return input;
@@ -331,9 +329,8 @@ public class InternalUtils
     /**
      * Extracts the string keys from a map and returns them in sorted order. The keys are converted
      * to strings.
-     * 
-     * @param map
-     *            the map to extract keys from (may be null)
+     *
+     * @param map the map to extract keys from (may be null)
      * @return the sorted keys, or the empty set if map is null
      */
 
@@ -353,11 +350,10 @@ public class InternalUtils
 
     /**
      * Gets a value from a map (which may be null).
-     * 
+     *
      * @param <K>
      * @param <V>
-     * @param map
-     *            the map to extract from (may be null)
+     * @param map the map to extract from (may be null)
      * @param key
      * @return the value from the map, or null if the map is null
      */
@@ -369,7 +365,9 @@ public class InternalUtils
         return map.get(key);
     }
 
-    /** Returns true if the method provided is a static method. */
+    /**
+     * Returns true if the method provided is a static method.
+     */
     public static final boolean isStatic(Method method)
     {
         return Modifier.isStatic(method.getModifiers());
@@ -400,7 +398,9 @@ public class InternalUtils
         };
     }
 
-    /** Return true if the input string contains the marker for symbols that must be expanded. */
+    /**
+     * Return true if the input string contains the marker for symbols that must be expanded.
+     */
     public static boolean containsSymbols(String input)
     {
         return input.contains("${");
@@ -428,9 +428,8 @@ public class InternalUtils
      * Returns null if there are no public constructors. If there is more than one constructor with
      * the maximum number of parameters, it is not determined which will be returned (don't build a
      * class like that!).
-     * 
-     * @param clazz
-     *            to search for a constructor for
+     *
+     * @param clazz to search for a constructor for
      * @return the constructor to be used to instantiate the class, or null if no appropriate
      *         constructor was found
      */
@@ -470,17 +469,12 @@ public class InternalUtils
     /**
      * Adds a value to a specially organized map where the values are lists of objects. This
      * somewhat simulates a map that allows mutiple values for the same key.
-     * 
-     * @param map
-     *            to store value into
-     * @param key
-     *            for which a value is added
-     * @param value
-     *            to add
-     * @param <K>
-     *            the type of key
-     * @param <V>
-     *            the type of the list
+     *
+     * @param map   to store value into
+     * @param key   for which a value is added
+     * @param value to add
+     * @param <K>   the type of key
+     * @param <V>   the type of the list
      */
     public static <K, V> void addToMapList(Map<K, List<V>> map, K key, V value)
     {

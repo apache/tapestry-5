@@ -23,15 +23,12 @@ public interface PageRenderRequestFilter
     /**
      * Invoked to activate and render a page. The return value of the event handler method(s) for
      * the activate event may result in an action response generator being returned.
-     * 
-     * @param logicalPageName
-     *            the logical name of the page to activate and render
-     * @param context
-     *            context data, supplied by the page at render time, extracted from the render URL
-     * @param handler
-     *            to delegate the invocation to
+     *
+     * @param logicalPageName the logical name of the page to activate and render
+     * @param context         context data, supplied by the page at render time, extracted from the render URL
+     * @param handler         to delegate the invocation to
      * @return an action response generator, or null if the page simply rendered
      */
     ActionResponseGenerator handle(String logicalPageName, String[] context,
-            PageRenderRequestHandler handler);
+                                   PageRenderRequestHandler handler);
 }

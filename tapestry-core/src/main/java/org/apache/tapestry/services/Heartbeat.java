@@ -28,14 +28,15 @@ public interface Heartbeat
      */
     void begin();
 
-    /** Executes all commands since the most recent {@link #begin()}. */
+    /**
+     * Executes all commands since the most recent {@link #begin()}.
+     */
     void end();
 
     /**
      * Adds a new command to the current Heartbeat. The command will be executed by {@link #end()}.
-     * 
-     * @param command
-     *            command to be executed at the end of the heartbeat
+     *
+     * @param command command to be executed at the end of the heartbeat
      */
     void defer(Runnable command);
 }

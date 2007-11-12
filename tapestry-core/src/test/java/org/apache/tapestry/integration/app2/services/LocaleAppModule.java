@@ -35,16 +35,17 @@ public class LocaleAppModule
     {
         configuration.add("FortyTwo", new FortyTwoWorker());
     }
-    
-    private static final class FortyTwoWorker implements ComponentClassTransformWorker {
+
+    private static final class FortyTwoWorker implements ComponentClassTransformWorker
+    {
 
         public void transform(ClassTransformation transformation, MutableComponentModel model)
         {
-            for(TransformMethodSignature sig : transformation.findMethodsWithAnnotation(FortyTwo.class))
+            for (TransformMethodSignature sig : transformation.findMethodsWithAnnotation(FortyTwo.class))
             {
                 transformation.prefixMethod(sig, "return 42;");
             }
         }
-        
+
     }
 }

@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.Arrays;
-
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
@@ -25,6 +23,8 @@ import org.apache.tapestry.ioc.services.ExceptionInfo;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
 {

@@ -18,12 +18,14 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 
 /**
  * Provided by the {@link ServiceActivityScoreboard} to track a single service's state and activity.
- * 
+ *
  * @see ServiceDef
  */
 public interface ServiceActivity
 {
-    /** The unique id for the service. */
+    /**
+     * The unique id for the service.
+     */
     String getServiceId();
 
     /**
@@ -32,9 +34,13 @@ public interface ServiceActivity
      */
     Class getServiceInterface();
 
-    /** The scope of the service (typically "singleton" or "perthread"). */
+    /**
+     * The scope of the service (typically "singleton" or "perthread").
+     */
     String getScope();
 
-    /** Indicates the lifecycle status of the service. */
+    /**
+     * Indicates the lifecycle status of the service.
+     */
     Status getStatus();
 }

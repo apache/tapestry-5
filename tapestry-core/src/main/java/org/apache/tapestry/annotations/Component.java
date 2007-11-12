@@ -14,22 +14,20 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Used to define an <em>embedded component</em> within another component.
- * 
- * 
  */
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Component {
+public @interface Component
+{
 
     /**
      * The id of the component. When left blank (the default), the component id is determined from

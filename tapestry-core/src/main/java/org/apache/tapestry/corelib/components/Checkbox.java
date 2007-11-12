@@ -25,7 +25,9 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
 
-/** A Checkbox component is simply a &lt;input type="checkbox"&gt;. */
+/**
+ * A Checkbox component is simply a &lt;input type="checkbox"&gt;.
+ */
 public class Checkbox extends AbstractField
 {
     @Inject
@@ -51,11 +53,11 @@ public class Checkbox extends AbstractField
     {
         writer.element("input", "type", "checkbox",
 
-        "name", getElementName(),
+                       "name", getElementName(),
 
-        "id", getClientId(),
+                       "id", getClientId(),
 
-        "checked", _value ? "checked" : null);
+                       "checked", _value ? "checked" : null);
 
         _resources.renderInformalParameters(writer);
 

@@ -14,21 +14,20 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
+
+import java.util.Map;
 
 /**
  * Generates Assets for files on the classpath. Caches generated client URLs internally, and clears
  * that cache when notified to do so by the {@link ResourceCache}.
- * 
+ *
  * @see AssetDispatcher
  */
 public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
@@ -40,7 +39,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
     private final Map<Resource, String> _resourceToClientURL = newConcurrentMap();
 
     public ClasspathAssetFactory(final ResourceCache cache,
-            final ClasspathAssetAliasManager aliasManager)
+                                 final ClasspathAssetAliasManager aliasManager)
     {
         _cache = cache;
         _aliasManager = aliasManager;

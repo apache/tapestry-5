@@ -14,31 +14,16 @@
 
 package org.apache.tapestry.corelib.base;
 
-import java.io.Serializable;
-
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Mixin;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SetupRender;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.*;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
+
+import java.io.Serializable;
 
 /**
  * Provides initialization of the clientId and elementName properties. In addition, adds the
@@ -114,7 +99,9 @@ public abstract class AbstractField implements Field
         }
     }
 
-    /** Used a shared instance for all types of fields, for efficiency. */
+    /**
+     * Used a shared instance for all types of fields, for efficiency.
+     */
     private static final ProcessSubmissionAction PROCESS_SUBMISSION_ACTION = new ProcessSubmissionAction();
 
     /**
@@ -202,7 +189,7 @@ public abstract class AbstractField implements Field
     /**
      * Used by subclasses to create a default binding to a property of the container matching the
      * component id.
-     * 
+     *
      * @return a binding to the property, or null if the container does not have a corresponding
      *         property
      */
@@ -215,17 +202,17 @@ public abstract class AbstractField implements Field
      * Method implemented by subclasses to actually do the work of processing the submission of the
      * form. The element's elementName property will already have been set. This method is only
      * invoked if the field is <strong>not {@link #isDisabled() disabled}</strong>.
-     * 
-     * @param formSupport
-     *            support for the form submission, used to
-     *            {@link FormSupport#getParameterValue(String) obtain submitted parameter values}.
-     *            Passing this value in saves subclasses from having to (re)inject it.
-     * @param elementName
-     *            the name of the element (used to find the correct parameter in the request)
+     *
+     * @param formSupport support for the form submission, used to
+     *                    {@link FormSupport#getParameterValue(String) obtain submitted parameter values}.
+     *                    Passing this value in saves subclasses from having to (re)inject it.
+     * @param elementName the name of the element (used to find the correct parameter in the request)
      */
     protected abstract void processSubmission(FormSupport formSupport, String elementName);
 
-    /** Allows the validation decorator to write markup before the field itself writes markup. */
+    /**
+     * Allows the validation decorator to write markup before the field itself writes markup.
+     */
     @BeginRender
     final void beforeDecorator(MarkupWriter writer)
     {

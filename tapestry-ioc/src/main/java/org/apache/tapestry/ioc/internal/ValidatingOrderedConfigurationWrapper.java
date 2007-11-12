@@ -24,7 +24,7 @@ import org.slf4j.Logger;
  * the value is converted to null but added anyway. This ensures that incorrect values contributed
  * in don't screw up the {@link org.apache.tapestry.ioc.internal.util.Orderer} (and generate a bunch
  * of error messages there).
- * 
+ *
  * @param <T>
  */
 public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfiguration<T>
@@ -40,7 +40,7 @@ public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfigur
     private final OrderedConfiguration<T> _delegate;
 
     public ValidatingOrderedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-            Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
+                                                 Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
     {
         _serviceId = serviceId;
         _contributionDef = contributionDef;

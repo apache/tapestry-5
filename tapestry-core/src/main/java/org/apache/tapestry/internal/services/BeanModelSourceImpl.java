@@ -14,13 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.NonVisual;
@@ -28,14 +21,16 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyAdapter;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.DataTypeAnalyzer;
 import org.apache.tapestry.services.PropertyConduitSource;
+
+import java.util.List;
+import java.util.Map;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
@@ -52,8 +47,8 @@ public class BeanModelSourceImpl implements BeanModelSource
     private final DataTypeAnalyzer _dataTypeAnalyzer;
 
     public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer,
-            PropertyAccess propertyAccess, PropertyConduitSource propertyConduitSource,
-            ClassFactory classFactory, DataTypeAnalyzer dataTypeAnalyzer)
+                               PropertyAccess propertyAccess, PropertyConduitSource propertyConduitSource,
+                               ClassFactory classFactory, DataTypeAnalyzer dataTypeAnalyzer)
     {
         _loggerSource = loggerSource;
         _typeCoercer = typeCoercer;
@@ -64,7 +59,7 @@ public class BeanModelSourceImpl implements BeanModelSource
     }
 
     public BeanModel create(Class beanClass, boolean filterReadOnlyProperties,
-            ComponentResources resources)
+                            ComponentResources resources)
     {
         notNull(beanClass, "beanClass");
         notNull(resources, "resources");
@@ -74,7 +69,7 @@ public class BeanModelSourceImpl implements BeanModelSource
         ClassPropertyAdapter adapter = _propertyAccess.getAdapter(beanClass);
 
         final BeanModel model = new BeanModelImpl(beanClass, _propertyConduitSource, _typeCoercer,
-                messages);
+                                                  messages);
 
         List<String> propertyNames = newList();
 

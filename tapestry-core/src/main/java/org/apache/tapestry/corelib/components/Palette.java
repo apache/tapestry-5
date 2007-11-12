@@ -14,67 +14,55 @@
 
 package org.apache.tapestry.corelib.components;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.OptionGroupModel;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.Renderable;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.SelectModelVisitor;
-import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured
  * for multiple selection; the one on the left is the list of "available" elements, the one on the
  * right is "selected". Elements can be moved between the lists by clicking a button, or double
  * clicking an option (and eventually, via drag and drop).
- * <p>
+ * <p/>
  * The items in the available list are kept ordered as per {@link SelectModel} order. When items are
  * moved from the selected list to the available list, they items are inserted back into their
  * proper positions.
- * <p>
+ * <p/>
  * The Palette may operate in normal or re-orderable mode, controlled by the reorder parameter.
- * <p>
+ * <p/>
  * In normal mode, the items in the selected list are kept in the same "natural" order as the items
  * in the available list.
- * <p>
+ * <p/>
  * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In
  * addition, two extra buttons appear to move items up and down within the selected list.
- * <p>
+ * <p/>
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the
  * columns, etc. By default, the &lt;select&gt; element's widths are driven by the length of the
  * longest &lt;option&gt;, and it is common to override this to a fixed value:
- * 
+ * <p/>
  * <pre>
  * &lt;style&gt;
  * DIV.t-palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
- * 
- * <p>
+ * <p/>
+ * <p/>
  * This ensures that the two columns are the same width, and that the column widths don't change as
  * items move back and forth.
- * <p>
+ * <p/>
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by the many
  * browsers, and are not fully handled on the client side.
  */
@@ -180,7 +168,9 @@ public class Palette extends AbstractField
         }
     }
 
-    /** List of Runnable commands to render the available options. */
+    /**
+     * List of Runnable commands to render the available options.
+     */
     private List<Runnable> _availableOptions;
 
     /**
@@ -217,11 +207,15 @@ public class Palette extends AbstractField
     @Path("palette.js")
     private Asset _paletteLibrary;
 
-    /** Used to include scripting code in the rendered page. */
+    /**
+     * Used to include scripting code in the rendered page.
+     */
     @Environmental
     private PageRenderSupport _renderSupport;
 
-    /** Needed to access query parameters when processing form submission. */
+    /**
+     * Needed to access query parameters when processing form submission.
+     */
     @Inject
     private Request _request;
 
@@ -385,13 +379,17 @@ public class Palette extends AbstractField
         writer.end();
     }
 
-    /** Prevent the body from rendering. */
+    /**
+     * Prevent the body from rendering.
+     */
     boolean beforeRenderBody()
     {
         return false;
     }
 
-    /** The natural order of elements, in terms of their client ids. */
+    /**
+     * The natural order of elements, in terms of their client ids.
+     */
     private List<String> _naturalOrder;
 
     @SuppressWarnings("unchecked")

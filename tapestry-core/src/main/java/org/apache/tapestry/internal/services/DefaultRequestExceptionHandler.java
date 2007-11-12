@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ExceptionReporter;
 import org.apache.tapestry.services.RequestExceptionHandler;
 import org.apache.tapestry.services.Response;
 import org.slf4j.Logger;
+
+import java.io.IOException;
 
 /**
  * Default implementation of {@link RequestExceptionHandler} that displays the standard
@@ -37,7 +37,7 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
     private final Logger _logger;
 
     public DefaultRequestExceptionHandler(RequestPageCache pageCache,
-            PageResponseRenderer renderer, Response response, Logger logger)
+                                          PageResponseRenderer renderer, Response response, Logger logger)
     {
         _pageCache = pageCache;
         _renderer = renderer;

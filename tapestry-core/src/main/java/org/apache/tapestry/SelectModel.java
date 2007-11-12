@@ -14,13 +14,13 @@
 
 package org.apache.tapestry;
 
-import java.util.List;
-
 import org.apache.tapestry.corelib.components.Select;
+
+import java.util.List;
 
 /**
  * Defines the possible options and option groups for a &lt;select&gt; [X]HTML element.
- * <p>
+ * <p/>
  * Primarily used by the {@link Select} component, but potentially used by anything similar, that
  * needs to present a list of options to the user. Generally paired with a {@link ValueEncoder} to
  * create client-side representations of server-side values.
@@ -29,7 +29,7 @@ public interface SelectModel
 {
     /**
      * The list of groups, each containing some number of individual options.
-     * 
+     *
      * @return the groups, or null
      */
     List<OptionGroupModel> getOptionGroups();
@@ -37,7 +37,7 @@ public interface SelectModel
     /**
      * The list of ungrouped options, which appear after any grouped options. Generally, a model
      * will either provide option groups or ungroup options, but not both.
-     * 
+     *
      * @return the ungrouped options, or null
      */
     List<OptionModel> getOptions();

@@ -21,13 +21,15 @@ package org.apache.tapestry.ioc;
  */
 public interface Messages
 {
-    /** Returns true if the bundle contains the named key. */
+    /**
+     * Returns true if the bundle contains the named key.
+     */
     boolean contains(String key);
 
     /**
      * Returns the localized message for the given key. If catalog does not contain such a key, then
      * a modified version of the key is returned (converted to upper case and enclosed in brackets).
-     * 
+     *
      * @param key
      * @return localized message for key, or placeholder
      */
@@ -36,7 +38,7 @@ public interface Messages
     /**
      * Returns a formatter for the message, which can be used to substitute arguments (as per
      * {@link java.util.Formatter}).
-     * 
+     *
      * @param key
      * @return formattable object
      */

@@ -7,49 +7,49 @@
 // Distributed under the same terms as the calendar itself.
 
 Calendar._DN = new Array
-("Niedziela",
- "Poniedziałek",
- "Wtorek",
- "Środa",
- "Czwartek",
- "Piątek",
- "Sobota",
- "Niedziela");
+        ("Niedziela",
+                "Poniedziałek",
+                "Wtorek",
+                "Środa",
+                "Czwartek",
+                "Piątek",
+                "Sobota",
+                "Niedziela");
 Calendar._SDN = new Array
-("Nie",
- "Pn",
- "Wt",
- "Śr",
- "Cz",
- "Pt",
- "So",
- "Nie");
+        ("Nie",
+                "Pn",
+                "Wt",
+                "Śr",
+                "Cz",
+                "Pt",
+                "So",
+                "Nie");
 Calendar._MN = new Array
-("Styczeń",
- "Luty",
- "Marzec",
- "Kwiecień",
- "Maj",
- "Czerwiec",
- "Lipiec",
- "Sierpień",
- "Wrzesień",
- "Październik",
- "Listopad",
- "Grudzień");
+        ("Styczeń",
+                "Luty",
+                "Marzec",
+                "Kwiecień",
+                "Maj",
+                "Czerwiec",
+                "Lipiec",
+                "Sierpień",
+                "Wrzesień",
+                "Październik",
+                "Listopad",
+                "Grudzień");
 Calendar._SMN = new Array
-("Sty",
- "Lut",
- "Mar",
- "Kwi",
- "Maj",
- "Cze",
- "Lip",
- "Sie",
- "Wrz",
- "Paź",
- "Lis",
- "Gru");
+        ("Sty",
+                "Lut",
+                "Mar",
+                "Kwi",
+                "Maj",
+                "Cze",
+                "Lip",
+                "Sie",
+                "Wrz",
+                "Paź",
+                "Lis",
+                "Gru");
 
 // tooltips
 Calendar._TT = {};
@@ -66,10 +66,10 @@ Calendar._TT["ABOUT"] =
 "- Użyj przycisków " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " by wybrać miesiąc\n" +
 "- Przytrzymaj klawisz myszy nad jednym z powyższych przycisków dla szybszego wyboru.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Wybór czasu:\n" +
-"- Kliknij na jednym z pól czasu by zwiększyć jego wartość\n" +
-"- lub kliknij trzymając Shift by zmiejszyć jego wartość\n" +
-"- lub kliknij i przeciągnij dla szybszego wyboru.";
+                             "Wybór czasu:\n" +
+                             "- Kliknij na jednym z pól czasu by zwiększyć jego wartość\n" +
+                             "- lub kliknij trzymając Shift by zmiejszyć jego wartość\n" +
+                             "- lub kliknij i przeciągnij dla szybszego wyboru.";
 
 //Calendar._TT["TOGGLE"] = "Zmień pierwszy dzień tygodnia";
 Calendar._TT["PREV_YEAR"] = "Poprzedni rok (przytrzymaj dla menu)";

@@ -31,7 +31,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
     private final Logger _logger;
 
     public ComponentInstanceResultProcessor(final RequestPageCache requestPageCache,
-            LinkFactory linkFactory, Logger logger)
+                                            LinkFactory linkFactory, Logger logger)
     {
         _requestPageCache = requestPageCache;
         _linkFactory = linkFactory;
@@ -39,7 +39,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
     }
 
     public ActionResponseGenerator processComponentEvent(Component value, Component component,
-            String methodDescription)
+                                                         String methodDescription)
     {
         ComponentResources resources = value.getComponentResources();
 

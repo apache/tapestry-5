@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.util;
 
-import java.util.List;
-
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.SelectModelVisitor;
+
+import java.util.List;
 
 /**
  * Base class for {@link SelectModel} implementations, whose primary job is to provide the

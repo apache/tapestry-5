@@ -14,22 +14,17 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.easymock.EasyMock.isA;
-
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceLifecycle;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import static org.easymock.EasyMock.isA;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+
+import java.util.Collections;
+import java.util.List;
 
 public class IOCInternalTestCase extends IOCTestCase implements Registry
 {
@@ -78,7 +73,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         return _registry.proxy(interfaceClass, implementationClass);
     }
 
-    
+
     @BeforeSuite
     public final void setup_registry()
     {
@@ -128,7 +123,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     }
 
     protected final void train_findDecoratorsForService(Module module, String serviceId,
-            List<ServiceDecorator> decorators)
+                                                        List<ServiceDecorator> decorators)
     {
         expect(module.findDecoratorsForService(serviceId)).andReturn(decorators);
     }
@@ -139,13 +134,13 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     }
 
     protected final void train_getLifecycle(InternalRegistry registry, String scope,
-            ServiceLifecycle lifecycle)
+                                            ServiceLifecycle lifecycle)
     {
         expect(registry.getServiceLifecycle(scope)).andReturn(lifecycle);
     }
 
     protected final <T> void train_getService(InternalRegistry registry, String serviceId,
-            Class<T> serviceInterface, T service)
+                                              Class<T> serviceInterface, T service)
     {
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
     }

@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.parser;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * 
+ *
  */
 public class TextToken extends TemplateToken
 {
@@ -30,7 +30,9 @@ public class TextToken extends TemplateToken
         _text = text;
     }
 
-    /** Returns the text extracted from that part of the template. */
+    /**
+     * Returns the text extracted from that part of the template.
+     */
     public String getText()
     {
         return _text;

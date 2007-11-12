@@ -14,26 +14,19 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.LocalizedNameGenerator;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.*;
 
 /**
  * A utility class that encapsulates all the logic for reading properties files and assembling
@@ -45,7 +38,9 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 {
     private final URLChangeTracker _tracker;
 
-    /** Keyed on bundle id and locale. */
+    /**
+     * Keyed on bundle id and locale.
+     */
     private final Map<MultiKey, Messages> _messagesByBundleIdAndLocale = newConcurrentMap();
 
     /**

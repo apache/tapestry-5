@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * Basic implementation of {@link org.apache.tapestry.ioc.ObjectCreator} that handles invoking a
@@ -31,7 +31,7 @@ public class ServiceBuilderMethodInvoker extends AbstractServiceCreator
     private final Method _builderMethod;
 
     public ServiceBuilderMethodInvoker(ServiceBuilderResources resources,
-            String creatorDescription, Method method)
+                                       String creatorDescription, Method method)
     {
         super(resources, creatorDescription);
 

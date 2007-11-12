@@ -14,6 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.commons.codec.binary.Hex;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.services.ResourceDigestGenerator;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,11 +26,6 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.util.Collection;
 import java.util.Set;
-
-import org.apache.commons.codec.binary.Hex;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.ResourceDigestGenerator;
 
 /**
  * Implementation of {@link ResourceDigestGenerator} that generates MD5 digests.
@@ -85,7 +85,9 @@ public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
         }
     }
 
-    /** Current implementation is based on the path extension, and a configured list of extensions. */
+    /**
+     * Current implementation is based on the path extension, and a configured list of extensions.
+     */
     public boolean requiresDigest(String path)
     {
         int dotx = path.lastIndexOf('.');

@@ -35,7 +35,7 @@ public class ServiceInjectionProvider implements InjectionProvider
 
     @SuppressWarnings("unchecked")
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+                                    ClassTransformation transformation, MutableComponentModel componentModel)
     {
         Object inject = _locator.getService(fieldType);
 

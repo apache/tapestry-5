@@ -51,7 +51,7 @@ public class Target
     public Object[] getContextToEncode()
     {
         return new Object[]
-        { "fred", "barney", "clark kent" };
+                {"fred", "barney", "clark kent"};
     }
 
     public Object getObject()

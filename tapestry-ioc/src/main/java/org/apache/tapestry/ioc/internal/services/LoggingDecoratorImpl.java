@@ -14,22 +14,15 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
+import org.apache.tapestry.ioc.services.*;
 import static org.apache.tapestry.ioc.services.ClassFabUtils.toJavaClassName;
+import org.apache.tapestry.ioc.util.BodyBuilder;
+import org.slf4j.Logger;
 
+import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
-
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.ExceptionTracker;
-import org.apache.tapestry.ioc.services.LoggingDecorator;
-import org.apache.tapestry.ioc.services.MethodIterator;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.util.BodyBuilder;
-import org.slf4j.Logger;
 
 public class LoggingDecoratorImpl implements LoggingDecorator
 {
@@ -40,7 +33,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
     public LoggingDecoratorImpl(@Builtin
     ClassFactory classFactory,
 
-    ExceptionTracker exceptionTracker)
+                                ExceptionTracker exceptionTracker)
     {
         _classFactory = classFactory;
         _exceptionTracker = exceptionTracker;
@@ -83,7 +76,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
         cf.addField("_logger", Modifier.PRIVATE | Modifier.FINAL, ServiceLogger.class);
 
         cf.addConstructor(new Class[]
-        { serviceInterface, ServiceLogger.class }, null, "{ _delegate = $1; _logger = $2; }");
+                {serviceInterface, ServiceLogger.class}, null, "{ _delegate = $1; _logger = $2; }");
 
         addMethods(cf, serviceInterface, serviceId);
 
@@ -154,7 +147,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
     }
 
     private void addExceptionHandler(BodyBuilder builder, String quotedMethodName,
-            Class exceptionType)
+                                     Class exceptionType)
     {
         builder.addln("catch (%s ex)", exceptionType.getName());
         builder.begin();

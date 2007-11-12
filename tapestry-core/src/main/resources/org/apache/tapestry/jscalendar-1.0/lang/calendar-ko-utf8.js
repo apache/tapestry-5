@@ -14,14 +14,14 @@
 // full day names
 
 Calendar._DN = new Array
-("일요일",
- "월요일",
- "화요일",
- "수요일",
- "목요일",
- "금요일",
- "토요일",
- "일요일");
+        ("일요일",
+                "월요일",
+                "화요일",
+                "수요일",
+                "목요일",
+                "금요일",
+                "토요일",
+                "일요일");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -37,44 +37,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("일",
- "월",
- "화",
- "수",
- "목",
- "금",
- "토",
- "일");
+        ("일",
+                "월",
+                "화",
+                "수",
+                "목",
+                "금",
+                "토",
+                "일");
 
 // full month names
 Calendar._MN = new Array
-("1월",
- "2월",
- "3월",
- "4월",
- "5월",
- "6월",
- "7월",
- "8월",
- "9월",
- "10월",
- "11월",
- "12월");
+        ("1월",
+                "2월",
+                "3월",
+                "4월",
+                "5월",
+                "6월",
+                "7월",
+                "8월",
+                "9월",
+                "10월",
+                "11월",
+                "12월");
 
 // short month names
 Calendar._SMN = new Array
-("1",
- "2",
- "3",
- "4",
- "5",
- "6",
- "7",
- "8",
- "9",
- "10",
- "11",
- "12");
+        ("1",
+                "2",
+                "3",
+                "4",
+                "5",
+                "6",
+                "7",
+                "8",
+                "9",
+                "10",
+                "11",
+                "12");
 
 // tooltips
 Calendar._TT = {};
@@ -83,10 +83,10 @@ Calendar._TT["INFO"] = "calendar 에 대해서";
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
 "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"\n"+
+"\n" +
 "최신 버전을 받으시려면 http://www.dynarch.com/projects/calendar/ 에 방문하세요\n" +
-"\n"+
-"GNU LGPL 라이센스로 배포됩니다. \n"+
+"\n" +
+"GNU LGPL 라이센스로 배포됩니다. \n" +
 "라이센스에 대한 자세한 내용은 http://gnu.org/licenses/lgpl.html 을 읽으세요." +
 "\n\n" +
 "날짜 선택:\n" +
@@ -94,10 +94,10 @@ Calendar._TT["ABOUT"] =
 "- 달을 선택하려면 " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " 버튼을 누르세요\n" +
 "- 계속 누르고 있으면 위 값들을 빠르게 선택하실 수 있습니다.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"시간 선택:\n" +
-"- 마우스로 누르면 시간이 증가합니다\n" +
-"- Shift 키와 함께 누르면 감소합니다\n" +
-"- 누른 상태에서 마우스를 움직이면 좀 더 빠르게 값이 변합니다.\n";
+                             "시간 선택:\n" +
+                             "- 마우스로 누르면 시간이 증가합니다\n" +
+                             "- Shift 키와 함께 누르면 감소합니다\n" +
+                             "- 누른 상태에서 마우스를 움직이면 좀 더 빠르게 값이 변합니다.\n";
 
 Calendar._TT["PREV_YEAR"] = "지난 해 (길게 누르면 목록)";
 Calendar._TT["PREV_MONTH"] = "지난 달 (길게 누르면 목록)";

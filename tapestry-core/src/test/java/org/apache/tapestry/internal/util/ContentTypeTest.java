@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.util.List;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 public class ContentTypeTest extends Assert
 {

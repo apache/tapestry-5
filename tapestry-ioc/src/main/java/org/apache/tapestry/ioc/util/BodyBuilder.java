@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.util;
 
-import java.util.Formatter;
-
 import org.apache.tapestry.ioc.services.MethodSignature;
+
+import java.util.Formatter;
 
 /**
  * Utility class for assembling the <em>body</em> used with Javassist when defining a method or
@@ -24,7 +24,7 @@ import org.apache.tapestry.ioc.services.MethodSignature;
  * assembles a method body much simpler ... and it makes the result neater, which will be easier to
  * debug (debugging dynamically generated code is hard enough that it should be easy to read the
  * input code before worrying about why it doesn't compile or execute properly).
- * <p>
+ * <p/>
  * This class is not threadsafe.
  */
 public final class BodyBuilder
@@ -58,11 +58,9 @@ public final class BodyBuilder
 
     /**
      * Adds text to the current line, without ending the line.
-     * 
-     * @param a
-     *            string format, as per {@link java.util.Formatter}
-     * @param args
-     *            arguments referenced by format specifiers
+     *
+     * @param a    string format, as per {@link java.util.Formatter}
+     * @param args arguments referenced by format specifiers
      */
     public void add(String format, Object... args)
     {
@@ -71,11 +69,9 @@ public final class BodyBuilder
 
     /**
      * Adds text to the current line and ends the line.
-     * 
-     * @param a
-     *            string format, as per {@link java.util.Formatter}
-     * @param args
-     *            arguments referenced by format specifiers
+     *
+     * @param a    string format, as per {@link java.util.Formatter}
+     * @param args arguments referenced by format specifiers
      */
     public void addln(String format, Object... args)
     {
@@ -145,7 +141,7 @@ public final class BodyBuilder
      * Returns the current contents of the buffer. This value is often passed to methods such as
      * {@link org.apache.tapestry.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or
      * {@link org.apache.tapestry.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
-     * <p>
+     * <p/>
      * A BodyBuilder can be used again after invoking toString(), typically by invoking
      * {@link #clear()}.
      */

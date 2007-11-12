@@ -36,7 +36,7 @@ public class DefaultValidationDelegateCommand implements PageRenderCommand
     private final Asset _iconAsset;
 
     public DefaultValidationDelegateCommand(ThreadLocale threadLocale,
-            ValidationMessagesSource messagesSource, Asset iconAsset)
+                                            ValidationMessagesSource messagesSource, Asset iconAsset)
     {
         _threadLocale = threadLocale;
         _messagesSource = messagesSource;
@@ -53,7 +53,7 @@ public class DefaultValidationDelegateCommand implements PageRenderCommand
         Messages messages = _messagesSource.getValidationMessages(_threadLocale.getLocale());
 
         ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages,
-                _iconAsset);
+                                                                       _iconAsset);
 
         environment.push(ValidationDecorator.class, decorator);
     }

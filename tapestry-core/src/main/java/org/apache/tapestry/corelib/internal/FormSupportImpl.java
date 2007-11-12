@@ -14,24 +14,21 @@
 
 package org.apache.tapestry.corelib.internal;
 
+import org.apache.tapestry.ComponentAction;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.cast;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import static org.apache.tapestry.ioc.internal.util.Defense.*;
+import org.apache.tapestry.ioc.internal.util.IdAllocator;
+import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.services.FormSupport;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.FormSupport;
-
 /**
  * Provides support to components enclosed by a form when the form is rendering (allowing the
  * components to registry form submit callback commands), and also during form submission time.
- * <p>
+ * <p/>
  * TODO: Most methods should only be invokable depending on whether the form is rendering or
  * processing a submission.
  */
@@ -47,13 +44,17 @@ public class FormSupportImpl implements FormSupport
 
     private String _encodingType;
 
-    /** Constructor used when processing a form submission. */
+    /**
+     * Constructor used when processing a form submission.
+     */
     public FormSupportImpl()
     {
         this(null, null);
     }
 
-    /** Constructor used when rendering. */
+    /**
+     * Constructor used when rendering.
+     */
     public FormSupportImpl(String clientId, ObjectOutputStream actions)
     {
         _clientId = clientId;

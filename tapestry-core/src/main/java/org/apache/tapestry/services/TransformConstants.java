@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.services;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.runtime.ComponentEvent;
 import org.apache.tapestry.runtime.Event;
+
+import java.lang.reflect.Modifier;
 
 /**
  * Constants used by implementations of
@@ -29,16 +29,16 @@ public final class TransformConstants
     // Shared parameters of a whole bunch of lifecycle methods, representing the different
     // component render states.
     private static final String[] RENDER_PHASE_METHOD_PARAMETERS =
-    { MarkupWriter.class.getName(), Event.class.getName() };
+            {MarkupWriter.class.getName(), Event.class.getName()};
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#handleEvent(Event event)
-     * 
+     *
      * @see org.apache.tapestry.annotations.OnEvent
      */
     public static final TransformMethodSignature HANDLE_COMPONENT_EVENT = new TransformMethodSignature(
             Modifier.PUBLIC, "boolean", "handleComponentEvent", new String[]
-            { ComponentEvent.class.getName() }, null);
+            {ComponentEvent.class.getName()}, null);
 
     /**
      * Signature for
@@ -47,7 +47,9 @@ public final class TransformConstants
     public static final TransformMethodSignature CONTAINING_PAGE_DID_LOAD_SIGNATURE = new TransformMethodSignature(
             "containingPageDidLoad");
 
-    /** Signature for {@link org.apache.tapestry.runtime.Component#postRenderCleanup()}. */
+    /**
+     * Signature for {@link org.apache.tapestry.runtime.Component#postRenderCleanup()}.
+     */
     public static final TransformMethodSignature POST_RENDER_CLEANUP_SIGNATURE = new TransformMethodSignature(
             "postRenderCleanup");
 
@@ -67,14 +69,14 @@ public final class TransformConstants
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#setupRender(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.SetupRender
      */
     public static final TransformMethodSignature SETUP_RENDER_SIGNATURE = renderPhaseSignature("setupRender");
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#beginRender(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.BeginRender
      */
     public static final TransformMethodSignature BEGIN_RENDER_SIGNATURE = renderPhaseSignature("beginRender");
@@ -82,38 +84,41 @@ public final class TransformConstants
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.Component#beforeRenderTemplate(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.BeforeRenderTemplate
      */
-    public static TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("beforeRenderTemplate");
+    public static TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
+            "beforeRenderTemplate");
 
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.Component#afterRenderTemplate(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.BeforeRenderTemplate
      */
-    public static TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature("afterRenderTemplate");
+    public static TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
+            "afterRenderTemplate");
 
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.Component#beforeRenderBody(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.BeforeRenderBody
      */
-    public static final TransformMethodSignature BEFORE_RENDER_BODY_SIGNATURE = renderPhaseSignature("beforeRenderBody");
+    public static final TransformMethodSignature BEFORE_RENDER_BODY_SIGNATURE = renderPhaseSignature(
+            "beforeRenderBody");
 
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.Component#afterRenderBody(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.AfterRenderBody
      */
     public static final TransformMethodSignature AFTER_RENDER_BODY_SIGNATURE = renderPhaseSignature("afterRenderBody");
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#afterRender(MarkupWriter, Event)}
-     * 
+     *
      * @see org.apache.tapestry.annotations.AfterRender
      */
     public static final TransformMethodSignature AFTER_RENDER_SIGNATURE = renderPhaseSignature("afterRender");
@@ -121,7 +126,7 @@ public final class TransformConstants
     /**
      * Signature for
      * {@link org.apache.tapestry.runtime.Component#cleanupRender(MarkupWriter, Event)}.
-     * 
+     *
      * @see org.apache.tapestry.annotations.CleanupRender
      */
     public static final TransformMethodSignature CLEANUP_RENDER_SIGNATURE = renderPhaseSignature("cleanupRender");
@@ -133,6 +138,6 @@ public final class TransformConstants
     private static TransformMethodSignature renderPhaseSignature(String name)
     {
         return new TransformMethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS,
-                null);
+                                            null);
     }
 }

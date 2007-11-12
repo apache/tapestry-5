@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.event.InvalidationEventHub;
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.ioc.Messages;
+
+import java.util.Locale;
 
 public interface MessagesSource extends InvalidationEventHub, UpdateListener
 {
@@ -27,10 +27,9 @@ public interface MessagesSource extends InvalidationEventHub, UpdateListener
      * locale. If the component extends from another component, then its localized properties will
      * merge with its parent's properties (with the subclass overriding the super class on any
      * conflicts).
-     * 
-     * @param MessagesBundle
-     *            defines the set of properties files to read, as well as a series of parent bundles
-     *            to extend and override
+     *
+     * @param MessagesBundle defines the set of properties files to read, as well as a series of parent bundles
+     *                       to extend and override
      * @param locale
      * @return the message catalog for the bundle, in the indicated locale
      */

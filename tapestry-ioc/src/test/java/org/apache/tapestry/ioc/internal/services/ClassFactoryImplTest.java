@@ -14,10 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.LocationImpl;
 import org.apache.tapestry.ioc.services.ClassFab;
@@ -26,6 +22,10 @@ import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 public class ClassFactoryImplTest extends IOCTestCase
 {
@@ -136,7 +136,7 @@ public class ClassFactoryImplTest extends IOCTestCase
                 .getConstructorLocation(cc)
                 .toString()
                 .matches(
-                        "org.apache.tapestry.ioc.internal.services.LineNumberBean\\(String, int\\) \\(at LineNumberBean.java:(19|20)\\)"));
+                "org.apache.tapestry.ioc.internal.services.LineNumberBean\\(String, int\\) \\(at LineNumberBean.java:(19|20)\\)"));
     }
 
     /**

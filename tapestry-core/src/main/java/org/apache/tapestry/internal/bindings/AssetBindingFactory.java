@@ -24,7 +24,7 @@ import org.apache.tapestry.services.BindingFactory;
 
 /**
  * Binding factory where the expression is a reference to an asset.
- * 
+ *
  * @see AssetSource
  */
 public class AssetBindingFactory implements BindingFactory
@@ -37,7 +37,7 @@ public class AssetBindingFactory implements BindingFactory
     }
 
     public Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String expression, Location location)
+                              ComponentResources component, String expression, Location location)
     {
         Resource baseResource = container.getBaseResource();
 

@@ -18,17 +18,14 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeforeRenderBody;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.Heartbeat;
 
-/** Generates a &lt;label&gt; element for a particular field. */
+/**
+ * Generates a &lt;label&gt; element for a particular field.
+ */
 @SupportsInformalParameters
 public class Label
 {

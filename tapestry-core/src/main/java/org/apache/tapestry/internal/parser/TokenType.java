@@ -18,7 +18,8 @@ package org.apache.tapestry.internal.parser;
  * Defines the different types of {@link org.apache.tapestry.internal.parser.TemplateToken}s. Each
  * value maps to a particular subclass of TemplateToken.
  */
-public enum TokenType {
+public enum TokenType
+{
 
     ATTRIBUTE, CDATA, COMMENT, END_ELEMENT, START_COMPONENT, START_ELEMENT, TEXT, BODY, EXPANSION, PARAMETER, BLOCK, DTD
 }

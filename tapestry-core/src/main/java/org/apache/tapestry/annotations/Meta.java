@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.model.ComponentModel;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.model.ComponentModel;
 
 /**
  * Allows for the specification of per-component meta-data. Meta data can later be accessed via
@@ -31,7 +30,8 @@ import org.apache.tapestry.model.ComponentModel;
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface Meta {
+public @interface Meta
+{
     /**
      * The meta data as a list of "name=value" elements.
      */

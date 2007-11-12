@@ -35,7 +35,7 @@ public class TranslateBindingFactory implements BindingFactory
     }
 
     public Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String expression, Location location)
+                              ComponentResources component, String expression, Location location)
     {
         Translator translator = _source.get(expression);
 

@@ -16,8 +16,6 @@ package org.apache.tapestry.ioc.internal;
 
 /**
  * A placeholder for a real service interface.
- * 
- * 
  */
 public interface FoeService
 {

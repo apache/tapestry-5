@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.bindings;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Abstract base class for bindings. Assumes that the binding is read only and invariant. Subclasses
@@ -38,8 +38,7 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding
     }
 
     /**
-     * @throws TapestryException
-     *             always
+     * @throws TapestryException always
      */
     public void set(Object value)
     {

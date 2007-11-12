@@ -19,8 +19,6 @@ import org.apache.tapestry.ioc.Location;
 /**
  * Literal text that was enclosed within a !CDATA in the input template (so we should do the same
  * during output).
- * 
- * 
  */
 public class CDATAToken extends TemplateToken
 {

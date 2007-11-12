@@ -72,7 +72,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         replay();
 
         PageRenderSupport support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
-                CORE_ASSET_PATH_UNEXPANDED);
+                                                              CORE_ASSET_PATH_UNEXPANDED);
 
         support.addScriptLink(asset);
 

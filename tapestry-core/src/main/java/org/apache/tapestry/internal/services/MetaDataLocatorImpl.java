@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.services.MetaDataLocator;
+
+import java.util.Map;
 
 public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListener
 {

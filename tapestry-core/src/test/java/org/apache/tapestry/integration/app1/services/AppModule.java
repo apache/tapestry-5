@@ -14,17 +14,6 @@
 
 package org.apache.tapestry.integration.app1.services;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.io.IOException;
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-import java.net.URL;
-import java.util.List;
-
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
@@ -34,6 +23,16 @@ import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
 import org.slf4j.Logger;
+
+import java.io.IOException;
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
+import java.net.URL;
+import java.util.List;
 
 /**
  * I was just dying to see how fast requests are!
@@ -45,7 +44,7 @@ public class AppModule
      * same service interface.
      */
     @Target(
-    { PARAMETER, FIELD })
+            {PARAMETER, FIELD})
     @Retention(RUNTIME)
     @Documented
     public @interface Local
@@ -78,8 +77,8 @@ public class AppModule
 
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
 
-    @Local
-    RequestFilter filter)
+                                         @Local
+                                         RequestFilter filter)
     {
         configuration.add("Timing", filter);
     }

@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.ioc.Messages;
+
+import java.util.Locale;
 
 /**
  * Source for validation messages, within a particular locale.

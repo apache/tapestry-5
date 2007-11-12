@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.dom;
 
+import org.apache.tapestry.internal.util.PrintOutCollector;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.io.PrintWriter;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.tapestry.internal.util.PrintOutCollector;
 
 /**
  * A node within the DOM.
@@ -34,7 +33,7 @@ public abstract class Node
     /**
      * Creates a new node, setting its container to the provided value. Container may also be null,
      * but that is only used for Document nodes (the topmost node of a DOM).
-     * 
+     *
      * @param container
      */
     protected Node(Node container)
@@ -47,7 +46,9 @@ public abstract class Node
         return _container;
     }
 
-    /** Returns the node as an {@link Element}, if it is an element. Returns null otherwise. */
+    /**
+     * Returns the node as an {@link Element}, if it is an element. Returns null otherwise.
+     */
     Element asElement()
     {
         return null;
@@ -110,6 +111,8 @@ public abstract class Node
         return _children == null ? Collections.EMPTY_LIST : _children;
     }
 
-    /** Writes the markup for this node to the writer. */
+    /**
+     * Writes the markup for this node to the writer.
+     */
     public abstract void toMarkup(PrintWriter writer);
 }

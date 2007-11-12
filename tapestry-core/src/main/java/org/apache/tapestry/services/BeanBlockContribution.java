@@ -14,9 +14,8 @@
 
 package org.apache.tapestry.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-
 import org.apache.tapestry.corelib.components.Label;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 
 /**
  * A contribution to the {@link BeanBlockSource} service, defining a page name and block id (within
@@ -52,7 +51,9 @@ public final class BeanBlockContribution
         return _dataType;
     }
 
-    /** The id of the block within the page. */
+    /**
+     * The id of the block within the page.
+     */
     public String getBlockId()
     {
         return _blockId;
@@ -68,7 +69,9 @@ public final class BeanBlockContribution
         return _edit;
     }
 
-    /** The logical name of the page containing the block. */
+    /**
+     * The logical name of the page containing the block.
+     */
     public String getPageName()
     {
         return _pageName;

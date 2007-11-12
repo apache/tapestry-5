@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
 import org.apache.tapestry.services.Request;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 {
@@ -49,7 +48,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         replay();
 
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(request,
-                configuration());
+                                                                                configuration());
 
         assertEquals(manager.toClientURL(resourcePath), "/ctx"
                 + TapestryConstants.ASSET_PATH_PREFIX + expectedClientURL);
@@ -61,19 +60,19 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     public Object[][] to_client_url_data()
     {
         return new Object[][]
-        {
-        { "foo/bar/Baz.txt", "foo/bar/Baz.txt" },
-        { "com/example/mylib/Foo.bar", "mylib/Foo.bar" },
-        { "com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar" },
-        { "org/apache/tapestry/internal/Foo.bar", "tapestry-internal/Foo.bar" },
-        { "org/apache/tapestry/Foo.bar", "tapestry/Foo.bar" }, };
+                {
+                        {"foo/bar/Baz.txt", "foo/bar/Baz.txt"},
+                        {"com/example/mylib/Foo.bar", "mylib/Foo.bar"},
+                        {"com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar"},
+                        {"org/apache/tapestry/internal/Foo.bar", "tapestry-internal/Foo.bar"},
+                        {"org/apache/tapestry/Foo.bar", "tapestry/Foo.bar"},};
     }
 
     @Test(dataProvider = "to_resource_path_data")
     public void to_resource_path(String clientURL, String expectedResourcePath)
     {
         ClasspathAssetAliasManager manager = new ClasspathAssetAliasManagerImpl(null,
-                configuration());
+                                                                                configuration());
 
         assertEquals(manager.toResourcePath(clientURL), expectedResourcePath);
     }

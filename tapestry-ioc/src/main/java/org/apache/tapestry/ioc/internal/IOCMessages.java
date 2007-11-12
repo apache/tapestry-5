@@ -14,7 +14,13 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.def.ContributionDef;
+import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.asString;
+import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 import static org.apache.tapestry.ioc.services.ClassFabUtils.toJavaClassName;
 
 import java.lang.reflect.Constructor;
@@ -23,13 +29,6 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.MessagesImpl;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 final class IOCMessages
 {
@@ -58,7 +57,7 @@ final class IOCMessages
     }
 
     static String serviceWrongInterface(String serviceId, Class actualInterface,
-            Class requestedInterface)
+                                        Class requestedInterface)
     {
         return MESSAGES.format(
                 "service-wrong-interface",
@@ -126,7 +125,7 @@ final class IOCMessages
     }
 
     static String decoratorReturnedWrongType(Method method, String serviceId, Object returned,
-            Class serviceInterface)
+                                             Class serviceInterface)
     {
         return MESSAGES.format(
                 "decorator-returned-wrong-type",
@@ -196,14 +195,14 @@ final class IOCMessages
     }
 
     static String contributionWrongValueType(String serviceId, ContributionDef def,
-            Class actualClass, Class expectedClass)
+                                             Class actualClass, Class expectedClass)
     {
         return MESSAGES.format("contribution-wrong-value-type", serviceId, def, actualClass
                 .getName(), expectedClass.getName());
     }
 
     static String contributionWrongKeyType(String serviceId, ContributionDef def,
-            Class actualClass, Class expectedClass)
+                                           Class actualClass, Class expectedClass)
     {
         return MESSAGES.format(
                 "contribution-wrong-key-type",
@@ -224,7 +223,7 @@ final class IOCMessages
     }
 
     static String contributionDuplicateKey(String serviceId, ContributionDef contributionDef,
-            ContributionDef existingDef)
+                                           ContributionDef existingDef)
     {
         return MESSAGES.format(
                 "contribution-duplicate-key",
@@ -313,7 +312,7 @@ final class IOCMessages
     }
 
     static String manyServicesMatchMarker(Class objectType, Class marker,
-            Collection<ServiceDef> matchingServices)
+                                          Collection<ServiceDef> matchingServices)
     {
         return MESSAGES.format("many-services-match-marker", ClassFabUtils
                 .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker), InternalUtils

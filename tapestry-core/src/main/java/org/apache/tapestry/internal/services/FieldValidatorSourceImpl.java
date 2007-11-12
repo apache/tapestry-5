@@ -14,26 +14,21 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.*;
+import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.ioc.Messages;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.cast;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.Validator;
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FieldValidatorSource;
 import org.apache.tapestry.services.ValidationMessagesSource;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class FieldValidatorSourceImpl implements FieldValidatorSource
 {
@@ -46,8 +41,8 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     private final PageRenderSupport _pageRenderSupport;
 
     public FieldValidatorSourceImpl(ValidationMessagesSource messagesSource,
-            TypeCoercer typeCoercer, PageRenderSupport pageRenderSupport,
-            Map<String, Validator> validators)
+                                    TypeCoercer typeCoercer, PageRenderSupport pageRenderSupport,
+                                    Map<String, Validator> validators)
     {
         _messagesSource = messagesSource;
         _typeCoercer = typeCoercer;
@@ -79,7 +74,8 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     }
 
     public FieldValidator createValidator(Field field, String validatorType,
-            String constraintValue, String overrideId, Messages overrideMessages, Locale locale)
+                                          String constraintValue, String overrideId, Messages overrideMessages,
+                                          Locale locale)
     {
         notBlank(validatorType, "validatorType");
 
@@ -121,11 +117,11 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                 validator);
 
         return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator,
-                _pageRenderSupport);
+                                      _pageRenderSupport);
     }
 
     private MessageFormatter findMessageFormatter(String overrideId, Messages overrideMessages,
-            Locale locale, String validatorType, Validator validator)
+                                                  Locale locale, String validatorType, Validator validator)
     {
 
         String overrideKey = overrideId + "-" + validatorType + "-message";
@@ -171,19 +167,33 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     enum State
     {
 
-        /** The start of a validator type. */
+        /**
+         * The start of a validator type.
+         */
         TYPE_START,
-        /** The end of a validator type. */
+        /**
+         * The end of a validator type.
+         */
         TYPE_END,
-        /** Equals sign after a validator type, or a comma. */
+        /**
+         * Equals sign after a validator type, or a comma.
+         */
         EQUALS_OR_COMMA,
-        /** The start of a constraint value. */
+        /**
+         * The start of a constraint value.
+         */
         VALUE_START,
-        /** The end of the constraint value. */
+        /**
+         * The end of the constraint value.
+         */
         VALUE_END,
-        /** The comma after a constraint value. */
+        /**
+         * The comma after a constraint value.
+         */
         COMMA
-    };
+    }
+
+    ;
 
     static List<ValidatorSpecification> parse(String specification)
     {
@@ -312,7 +322,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                 result.add(new ValidatorSpecification(type));
                 break;
 
-            // Case when the specification ends with an equals sign.
+                // Case when the specification ends with an equals sign.
 
             case VALUE_START:
                 result.add(new ValidatorSpecification(type, ""));
@@ -324,7 +334,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                 result.add(new ValidatorSpecification(type, value));
                 break;
 
-            // For better or worse, ending the string with a comma is valid.
+                // For better or worse, ending the string with a comma is valid.
 
             default:
 

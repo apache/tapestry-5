@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.List;
-
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
@@ -24,9 +22,11 @@ import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.grid.GridModelProvider;
 import org.apache.tapestry.services.FormSupport;
 
+import java.util.List;
+
 /**
  * Renders out a series of rows within the table.
- * <p>
+ * <p/>
  * Inside a {@link Form}, a series of row index numbers are stored into the form (
  * {@linkplain FormSupport#store(Object, ComponentAction) as ComponentActions}). This is not ideal
  * ... in a situation where the data set can shift between the form render and the form submission,
@@ -49,7 +49,9 @@ public class GridRows
         {
             component.setupForRow(_rowIndex);
         }
-    };
+    }
+
+    ;
 
     /**
      * Parameter used to set the CSS class for each row (each &lt;tr&gt; element) within the
@@ -58,15 +60,21 @@ public class GridRows
     @Parameter(cache = false)
     private String _rowClass;
 
-    /** Object that provides access to the bean and data models used to render the Grid. */
+    /**
+     * Object that provides access to the bean and data models used to render the Grid.
+     */
     @Parameter(value = "componentResources.container")
     private GridModelProvider _provider;
 
-    /** Number of rows displayed on each page. Long result sets are split across multiple pages. */
+    /**
+     * Number of rows displayed on each page. Long result sets are split across multiple pages.
+     */
     @Parameter(required = true)
     private int _rowsPerPage;
 
-    /** The current page number within the available pages (indexed from 1). */
+    /**
+     * The current page number within the available pages (indexed from 1).
+     */
     @Parameter(required = true)
     private int _currentPage;
 

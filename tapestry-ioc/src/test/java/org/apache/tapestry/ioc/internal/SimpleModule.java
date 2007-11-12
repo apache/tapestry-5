@@ -53,7 +53,9 @@ public class SimpleModule
         return null;
     }
 
-    /** Minimal contribution method. */
+    /**
+     * Minimal contribution method.
+     */
     public void contributeBarney(Configuration configuration)
     {
 

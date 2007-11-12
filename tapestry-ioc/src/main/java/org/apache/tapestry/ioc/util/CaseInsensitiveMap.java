@@ -15,13 +15,7 @@
 package org.apache.tapestry.ioc.util;
 
 import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.AbstractSet;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 /**
  * An mapped collection where the keys are always strings and access to values is case-insensitive.
@@ -31,9 +25,9 @@ import java.util.Set;
  * thousands or millions of key/value pairs. Unlike HashMap, it is based on a sorted list of entries
  * rather than hash bucket. It is also geared towards a largely static map, one that is created and
  * then used without modification.
- * 
+ *
  * @param <V>
- *            the type of value stored
+ * the type of value stored
  */
 public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Serializable
 {
@@ -82,9 +76,8 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         /**
          * Returns true if both keys are null, or if the provided key is the same as, or
          * case-insensitively equal to, the entrie's key.
-         * 
-         * @param key
-         *            to compare against
+         *
+         * @param key to compare against
          * @return true if equal
          */
         boolean matches(String key)
@@ -442,7 +435,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
      * select() has located a matching hashCode, but there's an outlying possibility that multiple
      * keys share the same hashCode. Backup the cursor until we get to locate the initial hashCode
      * match, then march forward until the key is located, or the hashCode stops matching.
-     * 
+     *
      * @param key
      * @param hashCode
      */

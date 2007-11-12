@@ -14,32 +14,32 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-
-import java.lang.reflect.Modifier;
-import java.util.Map;
-
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
-
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.slf4j.Logger;
 
+import java.lang.reflect.Modifier;
+import java.util.Map;
+
 /**
  * Implementation of {@link org.apache.tapestry.internal.services.ComponentClassTransformer}.
  */
 public class ComponentClassTransformerImpl implements ComponentClassTransformer,
-        InvalidationListener
+                                                      InvalidationListener
 {
-    /** Map from class name to class transformation. */
+    /**
+     * Map from class name to class transformation.
+     */
     private final Map<String, InternalClassTransformation> _nameToClassTransformation = newConcurrentMap();
 
     private final Map<String, ComponentModel> _nameToComponentModel = newConcurrentMap();
@@ -49,11 +49,10 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     private final LoggerSource _logSource;
 
     /**
-     * @param workerChain
-     *            the ordered list of class transform works as a chain of command instance
+     * @param workerChain the ordered list of class transform works as a chain of command instance
      */
     public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain,
-            LoggerSource logSource)
+                                         LoggerSource logSource)
     {
         _workerChain = workerChain;
         _logSource = logSource;
@@ -119,12 +118,14 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         ComponentModel parentModel = _nameToComponentModel.get(parentClassname);
 
         MutableComponentModel model = new MutableComponentModelImpl(classname, logger,
-                baseResource, parentModel);
+                                                                    baseResource, parentModel);
 
         InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
                 ctClass, classLoader, logger, model)
-                : new InternalClassTransformationImpl(ctClass, parentTransformation, classLoader,
-                        logger, model);
+                                                     : new InternalClassTransformationImpl(ctClass,
+                                                                                           parentTransformation,
+                                                                                           classLoader,
+                                                                                           logger, model);
 
         try
         {

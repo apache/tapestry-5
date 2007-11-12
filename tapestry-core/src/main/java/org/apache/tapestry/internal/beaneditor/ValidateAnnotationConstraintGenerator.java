@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.beaneditor;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.services.ValidationConstraintGenerator;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Checks for the {@link Validate} annotation, and extracts its value to form the result.

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+
+import java.util.List;
 
 /**
  * Extends {@link org.apache.tapestry.services.ClassTransformation} with additional methods that may
@@ -42,9 +42,8 @@ public interface InternalClassTransformation extends ClassTransformation
 
     /**
      * Called (after {@link #finish()}) to construct an instantiator for the component.
-     * 
-     * @param componentClass
-     *            the class to be instantiated
+     *
+     * @param componentClass the class to be instantiated
      * @return the component's instantiator
      */
     Instantiator createInstantiator(Class componentClass);

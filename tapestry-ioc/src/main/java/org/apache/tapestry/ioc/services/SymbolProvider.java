@@ -14,13 +14,15 @@
 
 package org.apache.tapestry.ioc.services;
 
-/** A provider of values for symbols. */
+/**
+ * A provider of values for symbols.
+ */
 public interface SymbolProvider
 {
     /**
      * Returns the value for the symbol, or null if this provider can not provide a value. The value
      * itself may contain symbols that will be recursively expanded.
-     * 
+     *
      * @param symbolName
      * @return the value or null
      */

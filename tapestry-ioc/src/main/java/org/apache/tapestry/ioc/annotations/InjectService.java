@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 @Target(PARAMETER)
@@ -28,10 +27,11 @@ import java.lang.annotation.Target;
  * Annotation used with parameters of service builder methods to identify the service to be injected
  * into the service builder method via the parameter. In many cases the
  * {@link org.apache.tapestry.ioc.annotations.Inject} annotation is more flexible or appropriate.
- * 
- * 
+ *
+ *
  */
-public @interface InjectService {
+public @interface InjectService
+{
 
     /**
      * The id of the service to inject; either a fully qualified id, or the unqualified id of a

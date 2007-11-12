@@ -14,31 +14,32 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.ioc.def.ServiceDef;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.ioc.def.ServiceDef;
 
 /**
  * Used to define a {@linkplain ServiceDef#getMarkers() marker annotation} for a service
  * implementation. This allows for injection based on the combination of type and marker interface.
  * These marker interfaces should not have any values. The mere presence of the marker annotation is
  * all that is needed.
- * <p>
+ * <p/>
  * When applied to a module class, this sets the default marker for all services within the module
  * (whereas the normal default marker is null).
  */
 @Target(
-{ TYPE, METHOD })
+        {TYPE, METHOD})
 @Retention(RUNTIME)
 @Documented
 public @interface Marker
 {
-    /** The type of annotation (which will be present at the injection point). */
+    /**
+     * The type of annotation (which will be present at the injection point).
+     */
     Class value();
 }

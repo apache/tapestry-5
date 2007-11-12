@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Heartbeat;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 public class LoopTest extends InternalBaseTestCase
 {

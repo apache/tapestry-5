@@ -21,7 +21,7 @@ import org.apache.tapestry.corelib.components.Form;
  * Handler interface for action requests. Action requests <em>do things</em> such as process a
  * form submission or otherwise change state. In the majority of cases, after the action, a redirect
  * response is sent to the client which, in turn, causes a page render.
- * 
+ *
  * @see ActionLink
  * @see Form
  * @see ComponentActionRequestFilter
@@ -31,18 +31,14 @@ public interface ComponentActionRequestHandler
     /**
      * Handler for a component action request, which returns a response generator used to send the
      * final response to the client.
-     * 
-     * @param logicalPageName
-     *            the page name containing the component, and the default component to render the
-     *            response
-     * @param nestedComponentId
-     *            the id of the component within the page
-     * @param eventType
-     *            the type of event to trigger on the component
-     * @param context
-     *            context information to provide to the event handler
+     *
+     * @param logicalPageName   the page name containing the component, and the default component to render the
+     *                          response
+     * @param nestedComponentId the id of the component within the page
+     * @param eventType         the type of event to trigger on the component
+     * @param context           context information to provide to the event handler
      * @parram activationContext activation context for the page
      */
     ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-            String eventType, String[] context, String[] activationContext);
+                                   String eventType, String[] context, String[] activationContext);
 }

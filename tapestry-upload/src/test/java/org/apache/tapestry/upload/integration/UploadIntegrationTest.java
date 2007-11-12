@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.upload.integration;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
 import org.example.upload.pages.Start;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  * . TODO: These tests wont work because Selenium cannot enter values for input type="file'

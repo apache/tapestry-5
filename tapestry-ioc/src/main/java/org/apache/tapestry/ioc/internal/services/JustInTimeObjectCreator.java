@@ -28,7 +28,7 @@ import org.apache.tapestry.ioc.services.Status;
  * application startup), and orderly shutdown of proxies.
  */
 public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceProxy,
-        RegistryShutdownListener
+                                                RegistryShutdownListener
 {
     private final ServiceActivityTracker _tracker;
 
@@ -41,7 +41,7 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
     private final String _serviceId;
 
     public JustInTimeObjectCreator(ServiceActivityTracker tracker, ObjectCreator creator,
-            String serviceId)
+                                   String serviceId)
     {
         _tracker = tracker;
         _creator = creator;
@@ -51,9 +51,8 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
     /**
      * Checks to see if the proxy has been shutdown, then invokes
      * {@link ObjectCreator#createObject()} if it has not already done so.
-     * 
-     * @throws IllegalStateException
-     *             if the registry has been shutdown
+     *
+     * @throws IllegalStateException if the registry has been shutdown
      */
     public synchronized Object createObject()
     {

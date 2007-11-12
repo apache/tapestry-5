@@ -24,11 +24,9 @@ public interface ObjectRenderer<T>
 {
     /**
      * Renders the object out as markup.
-     * 
-     * @param object
-     *            to be rendered
-     * @param writer
-     *            to which output should be directed
+     *
+     * @param object to be rendered
+     * @param writer to which output should be directed
      */
     void render(T object, MarkupWriter writer);
 }

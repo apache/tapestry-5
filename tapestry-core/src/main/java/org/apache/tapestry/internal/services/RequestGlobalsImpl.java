@@ -15,14 +15,13 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.Response;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Dumb data holder for per-request data.

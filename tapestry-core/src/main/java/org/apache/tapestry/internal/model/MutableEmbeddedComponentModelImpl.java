@@ -14,20 +14,19 @@
 
 package org.apache.tapestry.internal.model;
 
+import org.apache.tapestry.ioc.BaseLocatable;
+import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.model.MutableEmbeddedComponentModel;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.BaseLocatable;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.model.MutableEmbeddedComponentModel;
-
 public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
-        MutableEmbeddedComponentModel
+                                                                     MutableEmbeddedComponentModel
 {
     private final String _id;
 
@@ -39,11 +38,13 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
 
     private Map<String, String> _parameters;
 
-    /** List of mixin class names. */
+    /**
+     * List of mixin class names.
+     */
     private List<String> _mixinClassNames;
 
     public MutableEmbeddedComponentModelImpl(String id, String componentType,
-            String componentClassName, String declaredClass, Location location)
+                                             String componentClassName, String declaredClass, Location location)
     {
         super(location);
 

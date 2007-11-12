@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.services.MasterObjectProvider;
+
+import java.util.List;
 
 public class MasterObjectProviderImpl implements MasterObjectProvider
 {
@@ -31,7 +31,7 @@ public class MasterObjectProviderImpl implements MasterObjectProvider
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-            ObjectLocator locator, boolean required)
+                         ObjectLocator locator, boolean required)
     {
         for (ObjectProvider provider : _configuration)
         {

@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry.ioc.ModuleBuilderSource;
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 public class ServiceDecoratorImplTest extends IOCInternalTestCase
 {
@@ -39,7 +39,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
     /**
      * Also, test logging of decorator method invocation.
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -66,7 +66,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         // decorator method is the return value of the ServiceDecorator.
 
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
-                getClassFactory());
+                                                                  getClassFactory());
 
         Object interceptor = decorator.createInterceptor(fixture._expectedDelegate);
 
@@ -93,7 +93,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         Method m = findMethod(fixture, "decorateReturnNull");
 
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
-                getClassFactory());
+                                                                  getClassFactory());
 
         Object interceptor = decorator.createInterceptor(delegate);
 
@@ -127,7 +127,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         replay();
 
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
-                getClassFactory());
+                                                                  getClassFactory());
 
         Object interceptor = decorator.createInterceptor(fixture._expectedDelegate);
 
@@ -155,7 +155,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         Method m = findMethod(fixture, "decoratorThrowsException");
 
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
-                getClassFactory());
+                                                                  getClassFactory());
 
         try
         {

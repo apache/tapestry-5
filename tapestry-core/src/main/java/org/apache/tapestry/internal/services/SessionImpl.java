@@ -15,15 +15,13 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.services.Session;
 
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.Session;
 
 /**
  * A thin wrapper around {@link HttpSession}.

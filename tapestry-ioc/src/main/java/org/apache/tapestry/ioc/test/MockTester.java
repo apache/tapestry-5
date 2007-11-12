@@ -53,11 +53,9 @@ public final class MockTester
     /**
      * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong>
      * check order, but does fail on any unexpected method invocations.
-     * 
-     * @param <T>
-     *            the type of the mock object
-     * @param mockClass
-     *            the class to mock
+     *
+     * @param <T>       the type of the mock object
+     * @param mockClass the class to mock
      * @return the mock object, ready for training
      */
     public <T> T newMock(Class<T> mockClass)

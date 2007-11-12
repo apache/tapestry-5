@@ -21,7 +21,7 @@ import java.util.NoSuchElementException;
 /**
  * Used in a wide variety of resource searches. Generates a series of name variations from a path
  * (which must include a suffix) and locale.
- * <P>
+ * <p/>
  * This class is not threadsafe.
  */
 public class LocalizedNameGenerator implements Iterator<String>, Iterable<String>
@@ -136,9 +136,8 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
     /**
      * Returns the next localized variant.
-     * 
-     * @throws NoSuchElementException
-     *             if all variants have been returned.
+     *
+     * @throws NoSuchElementException if all variants have been returned.
      */
 
     public String next()
@@ -208,13 +207,17 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
         }
     }
 
-    /** @throws UnsupportedOperationException */
+    /**
+     * @throws UnsupportedOperationException
+     */
     public void remove()
     {
         throw new UnsupportedOperationException();
     }
 
-    /** So that LNG may be used with the for loop. */
+    /**
+     * So that LNG may be used with the for loop.
+     */
     public Iterator<String> iterator()
     {
         return this;

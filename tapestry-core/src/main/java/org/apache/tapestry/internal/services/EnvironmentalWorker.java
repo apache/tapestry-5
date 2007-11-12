@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.TransformMethodSignature;
+
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 /**
  * Obtains a value from the {@link Environment} service based on the field type. This is triggered
@@ -66,7 +66,7 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
             String methodName = transformation.newMemberName("environment_read", name);
 
             TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, type, methodName, null,
-                    null);
+                                                                        null);
 
             String body = String.format(
                     "return ($r) %s.%s($type);",

@@ -14,25 +14,18 @@
 
 package org.apache.tapestry.internal.model;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.Resource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.IdAllocator;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.model.*;
+import org.slf4j.Logger;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.model.EmbeddedComponentModel;
-import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.model.MutableEmbeddedComponentModel;
-import org.apache.tapestry.model.ParameterModel;
-import org.slf4j.Logger;
 
 /**
  * Internal implementation of {@link org.apache.tapestry.model.MutableComponentModel}.
@@ -53,7 +46,9 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     private Map<String, EmbeddedComponentModel> _embeddedComponents;
 
-    /** Maps from field name to strategy. */
+    /**
+     * Maps from field name to strategy.
+     */
     private Map<String, String> _persistentFields;
 
     private List<String> _mixinClassNames;
@@ -65,7 +60,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     private Map<String, String> _metaData;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
-            ComponentModel parentModel)
+                                     ComponentModel parentModel)
     {
         _componentClassName = componentClassName;
         _logger = logger;
@@ -153,7 +148,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     }
 
     public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
-            String componentClassName, Location location)
+                                                              String componentClassName, Location location)
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
@@ -165,7 +160,8 @@ public final class MutableComponentModelImpl implements MutableComponentModel
                     _componentClassName));
 
         MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type,
-                componentClassName, _componentClassName, location);
+                                                                                       componentClassName,
+                                                                                       _componentClassName, location);
 
         _embeddedComponents.put(id, embedded);
 

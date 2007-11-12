@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.services;
 
-import java.net.URL;
-
 import org.apache.tapestry.internal.services.ClasspathAssetFactory;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 
+import java.net.URL;
+
 /**
  * Responsible for determining which classpath resources require checksums, and for generating
  * checksums for such resources.
- * 
+ *
  * @see ClasspathResource
  * @see ClasspathAssetFactory
  */
@@ -41,7 +41,7 @@ public interface ResourceDigestGenerator
      * digest of its content. This digest will be incorporated into the URL provided to the
      * client, to verify that the client has been "granted" access to this resource. This is only
      * used for resources where {@link #requiresDigest(String)} is true.
-     * 
+     *
      * @param url
      * @return the digest for the resource
      */

@@ -19,8 +19,9 @@ import org.apache.tapestry.integration.app2.FortyTwo;
 public class TestPrefixMethod
 {
     @FortyTwo
-    public int getValue() {
+    public int getValue()
+    {
         return 0;
     }
-    
+
 }

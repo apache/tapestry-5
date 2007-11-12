@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.services.PropertyConduitSource;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Base class for {@link PropertyConduit} instances created by the {@link PropertyConduitSource}.
@@ -32,7 +32,7 @@ public abstract class BasePropertyConduit implements PropertyConduit
     private final String _description;
 
     public BasePropertyConduit(final Class propertyType,
-            final AnnotationProvider annotationProvider, final String description)
+                               final AnnotationProvider annotationProvider, final String description)
     {
         _propertyType = propertyType;
         _annotationProvider = annotationProvider;

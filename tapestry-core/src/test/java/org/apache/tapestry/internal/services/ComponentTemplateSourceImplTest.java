@@ -14,13 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.UUID;
-
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
@@ -29,6 +22,13 @@ import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Locale;
+import java.util.UUID;
 
 public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 {
@@ -41,7 +41,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
     /**
      * Creates a new class loader, whose parent is the thread's context class loader, but adds a
      * single classpath root from the filesystem.
-     * 
+     *
      * @see #createClasspathRoot()
      */
     protected final URLClassLoader newLoaderWithClasspathRoot(File rootDir)
@@ -52,12 +52,12 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         URL url = new URL(urlPath + "/");
 
         return new URLClassLoader(new URL[]
-        { url }, _loader);
+                {url}, _loader);
     }
 
     /**
      * Creates a new temporary directory which can act as a classpath root.
-     * 
+     *
      * @see #newLoaderWithClasspathRoot(File)
      */
     protected final File createClasspathRoot()
@@ -98,7 +98,9 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** Tests resource invalidation. */
+    /**
+     * Tests resource invalidation.
+     */
     @Test
     public void invalidation() throws Exception
     {
@@ -171,7 +173,9 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** Checks that localization to the same resource works (w/ caching). */
+    /**
+     * Checks that localization to the same resource works (w/ caching).
+     */
     @Test
     public void localization_to_same()
     {

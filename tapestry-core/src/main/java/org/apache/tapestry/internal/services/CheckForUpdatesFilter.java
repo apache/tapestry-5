@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry.ioc.internal.util.Invokable;
@@ -24,6 +21,9 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implements a barrier that periodically asks the
@@ -64,12 +64,9 @@ public class CheckForUpdatesFilter implements RequestFilter
     };
 
     /**
-     * @param updateListenerHub
-     *            invoked, at intervals, to spur the process of detecting changes
-     * @param checkInterval
-     *            interval, in milliseconds, between checks
-     * @param updateTimeout
-     *            time, in  milliseconds, to wait to obtain update lock.
+     * @param updateListenerHub invoked, at intervals, to spur the process of detecting changes
+     * @param checkInterval     interval, in milliseconds, between checks
+     * @param updateTimeout     time, in  milliseconds, to wait to obtain update lock.
      */
     public CheckForUpdatesFilter(UpdateListenerHub updateListenerHub, long checkInterval, long updateTimeout)
     {
@@ -79,7 +76,7 @@ public class CheckForUpdatesFilter implements RequestFilter
     }
 
     public boolean service(final Request request, final Response response,
-            final RequestHandler handler) throws IOException
+                           final RequestHandler handler) throws IOException
     {
         final Holder<IOException> exceptionHolder = new Holder<IOException>();
 
@@ -91,7 +88,7 @@ public class CheckForUpdatesFilter implements RequestFilter
                     _barrier.tryWithWrite(_checker, _updateTimeout, TimeUnit.MILLISECONDS);
 
                 // And, now, back to code within the read lock.
-                
+
                 try
                 {
                     return handler.service(request, response);
@@ -106,7 +103,7 @@ public class CheckForUpdatesFilter implements RequestFilter
 
         // Obtain a read lock while handling the request. This will not impair parallel operations, except when a file check
         // is needed (the exclusive write lock will block threads attempting to get a read lock).
-        
+
         boolean result = _barrier.withRead(invokable);
 
         IOException ex = exceptionHolder.get();

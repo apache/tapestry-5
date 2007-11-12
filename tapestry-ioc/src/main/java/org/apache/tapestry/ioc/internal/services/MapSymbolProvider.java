@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry.ioc.services.SymbolProvider;
+
+import java.util.Map;
 
 /**
  * Provides symbol values from a Map of symbol names and symbol values (typically provided by a

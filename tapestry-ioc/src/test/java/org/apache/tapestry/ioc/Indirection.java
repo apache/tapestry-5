@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.ioc;
 
-/** Used to demonstrate indirection via symbols. */
+/**
+ * Used to demonstrate indirection via symbols.
+ */
 public interface Indirection
 {
     String getName();

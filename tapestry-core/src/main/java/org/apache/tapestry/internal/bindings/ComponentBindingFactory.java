@@ -19,11 +19,13 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.services.BindingFactory;
 
-/** The "component:" binding prefix, which allows access to a child component via its id. */
+/**
+ * The "component:" binding prefix, which allows access to a child component via its id.
+ */
 public class ComponentBindingFactory implements BindingFactory
 {
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-            String expression, Location location)
+                              String expression, Location location)
     {
         return new ComponentBinding(description, container, expression, location);
     }

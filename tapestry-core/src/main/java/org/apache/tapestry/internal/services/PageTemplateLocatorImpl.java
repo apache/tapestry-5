@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
-import java.util.Locale;
-
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentClassResolver;
+
+import static java.lang.String.format;
+import java.util.Locale;
 
 public class PageTemplateLocatorImpl implements PageTemplateLocator
 {

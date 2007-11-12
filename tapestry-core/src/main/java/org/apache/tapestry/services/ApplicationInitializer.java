@@ -16,8 +16,7 @@ package org.apache.tapestry.services;
 
 /**
  * Service interface for initializing Tapestry for the application.
- * 
- * 
+ *
  * @see org.apache.tapestry.services.ApplicationInitializerFilter
  */
 public interface ApplicationInitializer

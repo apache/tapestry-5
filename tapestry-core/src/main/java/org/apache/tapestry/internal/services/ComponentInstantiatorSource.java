@@ -20,11 +20,11 @@ import org.apache.tapestry.ioc.services.ClassFactory;
 /**
  * Creates {@link org.apache.tapestry.internal.services.Instantiator}s for components, based on
  * component class name. This will involve transforming the component's class before it is loaded.
- * <p>
+ * <p/>
  * In addition, a source acts as an event hub for
  * {@link org.apache.tapestry.internal.events.InvalidationListener}s, so that any information derived from
  * loaded classes can be discarded and rebuilt when classes change.
- * <p>
+ * <p/>
  * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire
  * class loader is discarded, along with any instances derived from those classes. A new class
  * loader is created, and then invalidation events are fired to listeners.
@@ -37,9 +37,8 @@ public interface ComponentInstantiatorSource extends InvalidationEventHub
      * Instantiators are cached, so repeated calls to this method with the same class name will
      * return the same instance; however, callers should also be aware that the instantiators may
      * lose validity after an invalidation (caused by changes to external Java class files).
-     * 
-     * @param classname
-     *            FQCN to find (and perhaps transform and load)
+     *
+     * @param classname FQCN to find (and perhaps transform and load)
      * @return an object which can instantiate an instance of the component
      */
     Instantiator findInstantiator(String classname);
@@ -47,17 +46,15 @@ public interface ComponentInstantiatorSource extends InvalidationEventHub
     /**
      * Adds a controlled package. Only classes within controlled packages are subject to
      * transformation.
-     * 
-     * @param packageName
-     *            the package name to add (must not be blank)
+     *
+     * @param packageName the package name to add (must not be blank)
      */
     void addPackage(String packageName);
 
     /**
      * Checks to see if a fully qualfied class name exists.
-     * 
-     * @param className
-     *            name of class to check
+     *
+     * @param className name of class to check
      * @return true if the class exists (there's a ".class" file), false otherwise
      */
     boolean exists(String className);

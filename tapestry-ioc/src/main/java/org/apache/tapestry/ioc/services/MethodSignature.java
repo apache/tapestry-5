@@ -25,12 +25,12 @@ import java.lang.reflect.Method;
  * parameter types and exception types. Actual Method objects are tied to a particular class, and
  * don't compare well with other otherwise identical Methods from other classes or interface;
  * MethodSignatures are distinct from classes and compare well.
- * <p>
+ * <p/>
  * Because the intended purpose is to compare methods from interfaces (which are always public and
  * abstract) we don't bother to actually track the modifiers. In addition, at this time,
  * MethodSignature <em>does not distinguish between instance and static
  * methods</em>.
- * <p>
+ * <p/>
  * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the
  * context of {@link org.apache.tapestry.ioc.services.ClassFab} to create new classes and
  * subclasses.
@@ -48,7 +48,7 @@ public class MethodSignature
     private Class[] _exceptionTypes;
 
     public MethodSignature(Class returnType, String name, Class[] parameterTypes,
-            Class[] exceptionTypes)
+                           Class[] exceptionTypes)
     {
         _returnType = notNull(returnType, "returnType");
         _name = notBlank(name, "name");
@@ -118,7 +118,7 @@ public class MethodSignature
     /**
      * Returns true if the other object is an instance of MethodSignature with <em>identical</em>
      * values for return type, name, parameter types and exception types.
-     * 
+     *
      * @see #isOverridingSignatureOf(MethodSignature)
      */
     @Override
@@ -192,7 +192,7 @@ public class MethodSignature
      * similar to {@link #toString()}, but omits the return type and information about thrown
      * exceptions. A unique id is used by {@link MethodIterator} to identify overlapping methods
      * (methods with the same name and parameter types but with different thrown exceptions).
-     * 
+     *
      * @see #isOverridingSignatureOf(MethodSignature)
      */
     public String getUniqueId()

@@ -28,14 +28,15 @@ public interface ApplicationStatePersistenceStrategy
 
     /**
      * Stores a new ASO, possibly replacing the existing one.
-     * 
+     *
      * @param <T>
      * @param asoClass
-     * @param aso
-     *            instance to store, or null to delete existing
+     * @param aso      instance to store, or null to delete existing
      */
     <T> void set(Class<T> asoClass, T aso);
 
-    /** Returns true if the ASO already exists, false if null. */
+    /**
+     * Returns true if the ASO already exists, false if null.
+     */
     <T> boolean exists(Class<T> asoClass);
 }

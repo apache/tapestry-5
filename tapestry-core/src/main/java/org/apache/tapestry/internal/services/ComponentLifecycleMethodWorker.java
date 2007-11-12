@@ -14,10 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.annotation.Annotation;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.util.MethodInvocationBuilder;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -27,6 +23,10 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.MethodFilter;
 import org.apache.tapestry.services.TransformMethodSignature;
+
+import java.lang.annotation.Annotation;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Converts one of the methods of {@link org.apache.tapestry.runtime.Component} into a chain of
@@ -50,16 +50,13 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
     /**
      * Normal method invocation: parent class, then methods in ascending alphabetical order. Reverse
      * order: method in descending alphabetical order, then parent class.
-     * 
-     * @param lifecycleMethodSignature
-     *            the signature of the method to be implemented in the component class
-     * @param methodAnnotation
-     *            the class of the corresponding annotation
-     * @param reverse
-     *            if true, the normal method invocation order is reversed
+     *
+     * @param lifecycleMethodSignature the signature of the method to be implemented in the component class
+     * @param methodAnnotation         the class of the corresponding annotation
+     * @param reverse                  if true, the normal method invocation order is reversed
      */
     public ComponentLifecycleMethodWorker(TransformMethodSignature lifecycleMethodSignature,
-            Class<? extends Annotation> methodAnnotation, boolean reverse)
+                                          Class<? extends Annotation> methodAnnotation, boolean reverse)
     {
         _lifecycleMethodSignature = lifecycleMethodSignature;
         _methodAnnotation = methodAnnotation;
@@ -138,7 +135,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
     }
 
     private void addMethodCallToBody(BodyBuilder builder, TransformMethodSignature sig,
-            ClassTransformation transformation)
+                                     ClassTransformation transformation)
     {
         boolean isVoid = sig.getReturnType().equals("void");
 

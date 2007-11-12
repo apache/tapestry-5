@@ -16,7 +16,9 @@ package org.apache.tapestry.ioc;
 
 public class ConcreteServiceBuilderModule
 {
-    /** Of course, this is silly to do now that there is {@link ServiceBinder}. */
+    /**
+     * Of course, this is silly to do now that there is {@link ServiceBinder}.
+     */
     public StringHolderImpl buildStringHolder()
     {
         return new StringHolderImpl();

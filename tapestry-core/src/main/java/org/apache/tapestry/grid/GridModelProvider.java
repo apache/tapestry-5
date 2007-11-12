@@ -29,6 +29,8 @@ public interface GridModelProvider
      */
     BeanModel getDataModel();
 
-    /** Returns the source for the data to be presented in the Grid. */
+    /**
+     * Returns the source for the data to be presented in the Grid.
+     */
     GridDataSource getDataSource();
 }

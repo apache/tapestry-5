@@ -27,7 +27,7 @@ public interface ComponentDefaultProvider
 {
     /**
      * Computes the default label for the component (which will generally be a {@link Field}).
-     * 
+     *
      * @param resources
      * @return the label, either extracted from the component's container's message catalog, or
      *         derived from the component's {@link ComponentResourcesCommon#getId()}.
@@ -38,11 +38,9 @@ public interface ComponentDefaultProvider
      * Checks to see if the container of the component (identified by its resources) contains a
      * property matching the component's id. If so, a binding for that property is returned. This is
      * usually the default for a {@link Field}'s value parameter (or equivalent).
-     * 
-     * @param parameterName
-     *            the name of the parameter
-     * @param resources
-     *            the resources of the component for which a binding is needed
+     *
+     * @param parameterName the name of the parameter
+     * @param resources     the resources of the component for which a binding is needed
      * @return the binding, or null if the container does not have a matching property
      */
     Binding defaultBinding(String parameterName, ComponentResources resources);

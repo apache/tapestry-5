@@ -18,17 +18,23 @@ import org.apache.tapestry.annotations.Parameter;
 
 /**
  * Model for a <em>formal</em> parameter of a component.
- * 
+ *
  * @see Parameter
  */
 public interface ParameterModel
 {
-    /** The name of the parameter. */
+    /**
+     * The name of the parameter.
+     */
     String getName();
 
-    /** If true, the parameter is required. */
+    /**
+     * If true, the parameter is required.
+     */
     boolean isRequired();
 
-    /** The default binding prefix for the parameter, usually "prop". */
+    /**
+     * The default binding prefix for the parameter, usually "prop".
+     */
     String getDefaultBindingPrefix();
 }

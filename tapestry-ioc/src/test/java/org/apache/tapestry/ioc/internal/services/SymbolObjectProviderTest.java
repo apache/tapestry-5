@@ -74,7 +74,7 @@ public class SymbolObjectProviderTest extends IOCTestCase
     }
 
     protected final void train_valueForSymbol(SymbolSource source, String symbolName,
-            String symbolValue)
+                                              String symbolValue)
     {
         expect(source.valueForSymbol(symbolName)).andReturn(symbolValue);
     }

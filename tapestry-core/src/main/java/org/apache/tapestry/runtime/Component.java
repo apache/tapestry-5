@@ -22,10 +22,10 @@ import org.apache.tapestry.annotations.OnEvent;
  * the component for many different events. This interface is part of the public API for Tapestry,
  * but is <em>not</em> expected to be directly implemented by component classes; it should only be
  * implemented as part of the component class transformation process.
- * <p>
+ * <p/>
  * Most of the methods are related to render phases; see the corresponding annotations and component
  * rendering documentation to see how they relate to each other.
- * <p>
+ * <p/>
  * This interface is likely to change without notice.
  */
 public interface Component extends ComponentResourcesAware, PageLifecycleListener
@@ -54,7 +54,9 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
      */
     void beforeRenderTemplate(MarkupWriter writer, Event event);
 
-    /** Invoked after rendering the template for a component (only for components with a template). */
+    /**
+     * Invoked after rendering the template for a component (only for components with a template).
+     */
     void afterRenderTemplate(MarkupWriter writer, Event event);
 
     /**
@@ -62,7 +64,9 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
      */
     void beforeRenderBody(MarkupWriter writer, Event event);
 
-    /** Invoked just after rendering the body of the component. */
+    /**
+     * Invoked just after rendering the body of the component.
+     */
     void afterRenderBody(MarkupWriter writer, Event event);
 
     /**
@@ -79,7 +83,7 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
     /**
      * Invoked to handle a component event. Methods with the {@link OnEvent} annotation will be
      * invoked until one returns a non-null value.
-     * 
+     *
      * @param event
      * @return true if any handler was found (and invoked), false otherwise
      */

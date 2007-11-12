@@ -16,8 +16,6 @@ package org.apache.tapestry.ioc;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.RegistryBuilderTest}.
- * 
- * 
  */
 public interface Square
 {

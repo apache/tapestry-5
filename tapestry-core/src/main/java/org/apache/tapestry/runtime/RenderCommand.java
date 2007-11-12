@@ -25,7 +25,7 @@ public interface RenderCommand
      * Invoked on an object to request that it render itself. This involves a mix of invoking
      * methods on the writer, and queueing up additional commands (often, representing children of
      * the object that was invoked) to perform additional rendering.
-     * <p>
+     * <p/>
      * In this way, rendering is a tail recursive algorithm, but is not implemented using tail
      * recursion.
      */

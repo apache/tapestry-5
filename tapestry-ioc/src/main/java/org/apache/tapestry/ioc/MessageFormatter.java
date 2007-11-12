@@ -17,8 +17,6 @@ package org.apache.tapestry.ioc;
 /**
  * Obtained from a {@link org.apache.tapestry.ioc.Messages}, used to format messages for a specific
  * localized message key.
- * 
- * 
  */
 public interface MessageFormatter
 {
@@ -26,7 +24,7 @@ public interface MessageFormatter
      * Formats the message. The arguments are passed to {@link java.util.Formatter} as is with one
      * exception: Object of type {@link Throwable} are converted to their
      * {@link Throwable#getMessage()} (or, if that is null, to the name of the class).
-     * 
+     *
      * @param args
      * @return formatted string
      */

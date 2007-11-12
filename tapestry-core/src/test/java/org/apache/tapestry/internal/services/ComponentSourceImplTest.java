@@ -91,6 +91,7 @@ public class ComponentSourceImplTest extends InternalBaseTestCase
 
     @Test
     public void get_page_by_class()
-    {}
+    {
+    }
 
 }

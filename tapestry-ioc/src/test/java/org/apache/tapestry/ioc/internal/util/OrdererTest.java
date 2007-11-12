@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ioc.Orderable;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class OrdererTest extends IOCInternalTestCase
 {
@@ -286,7 +286,7 @@ public class OrdererTest extends IOCInternalTestCase
         assertEquals(simple.toString(), "Orderable[simple SIMPLE]");
 
         Orderable<String> complex = new Orderable<String>("complex", "COMPLEX", "after:foo",
-                "before:bar");
+                                                          "before:bar");
 
         assertEquals(complex.toString(), "Orderable[complex after:foo before:bar COMPLEX]");
     }
@@ -300,21 +300,21 @@ public class OrdererTest extends IOCInternalTestCase
         replay();
 
         DependencyNode<String> node1 = new DependencyNode<String>(logger, new Orderable("node1",
-                "NODE1"));
+                                                                                        "NODE1"));
 
         assertEquals(node1.toString(), "[node1]");
 
         DependencyNode<String> node2 = new DependencyNode<String>(logger, new Orderable("node2",
-                "NODE2"));
+                                                                                        "NODE2"));
 
         DependencyNode<String> node3 = new DependencyNode<String>(logger, new Orderable("node3",
-                "NODE3"));
+                                                                                        "NODE3"));
 
         DependencyNode<String> node4 = new DependencyNode<String>(logger, new Orderable("node4",
-                "NODE4"));
+                                                                                        "NODE4"));
 
         DependencyNode<String> node5 = new DependencyNode<String>(logger, new Orderable("node5",
-                "NODE5"));
+                                                                                        "NODE5"));
 
         node2.addDependency(node1);
         node1.addDependency(node3);

@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.ioc.annotations.Inject;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Used in conjunction with the {@link Inject} annotation to identify a service <em>by name</em>
@@ -30,11 +29,13 @@ import org.apache.tapestry.ioc.annotations.Inject;
  * interface and a particular one needs to be selected.
  */
 @Target(
-{ FIELD, PARAMETER })
+        {FIELD, PARAMETER})
 @Documented
 @Retention(RUNTIME)
 public @interface Service
 {
-    /** The name of the service. Symbols will be expanded and case is not relevant. */
+    /**
+     * The name of the service. Symbols will be expanded and case is not relevant.
+     */
     String value();
 }

@@ -14,18 +14,17 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.services.PipelineBuilder;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Integration tests for the PipelineBuilder service.

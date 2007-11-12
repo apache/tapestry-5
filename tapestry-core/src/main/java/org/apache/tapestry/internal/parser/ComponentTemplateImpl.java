@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal.parser;
 
+import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 
 import java.util.List;
 import java.util.Set;
-
-import org.apache.tapestry.ioc.Resource;
 
 public class ComponentTemplateImpl implements ComponentTemplate
 {
@@ -31,15 +30,12 @@ public class ComponentTemplateImpl implements ComponentTemplate
     private final Set<String> _componentIds;
 
     /**
-     * @param resource
-     *            the resource from which the template was parsed
-     * @param tokens
-     *            the tokens of the template, a copy of this list will be made
-     * @param componentIds
-     *            TODO
+     * @param resource     the resource from which the template was parsed
+     * @param tokens       the tokens of the template, a copy of this list will be made
+     * @param componentIds TODO
      */
     public ComponentTemplateImpl(Resource resource, List<TemplateToken> tokens,
-            Set<String> componentIds)
+                                 Set<String> componentIds)
     {
         _resource = resource;
         _tokens = newList(tokens);
@@ -61,7 +57,9 @@ public class ComponentTemplateImpl implements ComponentTemplate
         return _componentIds;
     }
 
-    /** Returns false. */
+    /**
+     * Returns false.
+     */
     public boolean isMissing()
     {
         return false;

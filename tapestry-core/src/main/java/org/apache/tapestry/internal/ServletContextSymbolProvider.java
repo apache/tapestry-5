@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Map;
-
-import javax.servlet.ServletContext;
-
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.SymbolProvider;
+
+import javax.servlet.ServletContext;
+import java.util.Map;
 
 /**
  * A wrapper around {@link ServletContext} that makes init-parameters accessible as symbols.

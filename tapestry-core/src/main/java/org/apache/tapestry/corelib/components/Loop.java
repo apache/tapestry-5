@@ -14,25 +14,19 @@
 
 package org.apache.tapestry.corelib.components;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.io.Serializable;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.PrimaryKeyEncoder;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SetupRender;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.ioc.annotations.Inject;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
+
+import java.io.Serializable;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Basic looping class; loops over a number of items (provided by its source parameter), rendering
@@ -45,7 +39,9 @@ import org.apache.tapestry.services.Heartbeat;
 @SupportsInformalParameters
 public class Loop
 {
-    /** Setup command for non-volatile rendering. */
+    /**
+     * Setup command for non-volatile rendering.
+     */
     private static final ComponentAction<Loop> RESET_INDEX = new ComponentAction<Loop>()
     {
         private static final long serialVersionUID = 6477493424977597345L;
@@ -67,7 +63,9 @@ public class Loop
         public void execute(Loop component)
         {
             component.setupForVolatile();
-        };
+        }
+
+        ;
     };
 
     /**
@@ -96,7 +94,9 @@ public class Loop
         public void execute(Loop component)
         {
             component.endHeartbeat();
-        };
+        }
+
+        ;
     };
 
     /**
@@ -118,7 +118,9 @@ public class Loop
         {
             component.restoreState(_storedValue);
         }
-    };
+    }
+
+    ;
 
     /**
      * Restores the value using a stored primary key via
@@ -139,7 +141,9 @@ public class Loop
         {
             component.restoreStateViaEncodedPrimaryKey(_primaryKey);
         }
-    };
+    }
+
+    ;
 
     /**
      * Stores a list of keys to be passed to {@link PrimaryKeyEncoder#prepareForKeys(List)}.
@@ -148,7 +152,9 @@ public class Loop
     {
         private static final long serialVersionUID = -6515255627142956828L;
 
-        /** The variable is final, the contents are mutable while the Loop renders. */
+        /**
+         * The variable is final, the contents are mutable while the Loop renders.
+         */
         private final List<Serializable> _keys;
 
         public PrepareForKeys(final List<Serializable> keys)
@@ -160,7 +166,9 @@ public class Loop
         {
             component.prepareForKeys(_keys);
         }
-    };
+    }
+
+    ;
 
     /**
      * Defines the collection of values for the loop to iterate over.
@@ -271,7 +279,9 @@ public class Loop
         startHeartbeat();
     }
 
-    /** Begins a new heartbeat. */
+    /**
+     * Begins a new heartbeat.
+     */
     @BeginRender
     void begin()
     {
@@ -314,7 +324,9 @@ public class Loop
         if (_elementName != null) writer.end();
     }
 
-    /** Ends the current heartbeat. */
+    /**
+     * Ends the current heartbeat.
+     */
     @AfterRender
     boolean after()
     {
@@ -337,7 +349,9 @@ public class Loop
         _index = 0;
     }
 
-    /** Restores state previously stored by the Loop into a Form. */
+    /**
+     * Restores state previously stored by the Loop into a Form.
+     */
     private void restoreState(Object storedValue)
     {
         _value = storedValue;
@@ -345,7 +359,9 @@ public class Loop
         startHeartbeat();
     }
 
-    /** Restores state previously encoded by the Loop and stored into the Form. */
+    /**
+     * Restores state previously encoded by the Loop and stored into the Form.
+     */
     private void restoreStateViaEncodedPrimaryKey(Serializable primaryKey)
     {
         // We assume that if a encoder is available when we rendered, that one will be available

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCase
 {
@@ -103,7 +103,7 @@ public class ValidatingOrderedConfigurationWrapperTest extends IOCInternalTestCa
         replay();
 
         OrderedConfiguration wrapper = new ValidatingOrderedConfigurationWrapper("Service", def,
-                log, Runnable.class, configuration);
+                                                                                 log, Runnable.class, configuration);
 
         wrapper.add("id", "string");
 

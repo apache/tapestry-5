@@ -14,9 +14,8 @@
 
 package org.apache.tapestry.services;
 
-import java.util.List;
-
 import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /**
  * Generic version of {@link HttpSession}, used to bridge the gaps between the Servlet API and the
@@ -36,10 +35,14 @@ public interface Session
      */
     List<String> getAttributeNames(String prefix);
 
-    /** Returns the value previously stored in the session. */
+    /**
+     * Returns the value previously stored in the session.
+     */
     Object getAttribute(String name);
 
-    /** Sets the value of an attribute. If the value is null, then the attribute is deleted. */
+    /**
+     * Sets the value of an attribute. If the value is null, then the attribute is deleted.
+     */
     void setAttribute(String name, Object value);
 
     /**
@@ -58,9 +61,8 @@ public interface Session
 
     /**
      * Invalidates this session then unbinds any objects bound to it.
-     * 
-     * @throws IllegalStateException
-     *             if this method is called on an already invalidated session
+     *
+     * @throws IllegalStateException if this method is called on an already invalidated session
      */
     void invalidate();
 }

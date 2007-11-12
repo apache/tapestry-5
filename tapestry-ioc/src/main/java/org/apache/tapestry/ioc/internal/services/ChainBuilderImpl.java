@@ -1,4 +1,5 @@
 // Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,22 +15,15 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.services.*;
+import org.apache.tapestry.ioc.util.BodyBuilder;
 
+import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ChainBuilder;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodIterator;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.util.BodyBuilder;
 
 public class ChainBuilderImpl implements ChainBuilder
 {
@@ -114,7 +108,7 @@ public class ChainBuilderImpl implements ChainBuilder
         builder.addln("_commands = (%s[]) $1.toArray(new %<s[0]);", commandInterface.getName());
 
         cf.addConstructor(new Class[]
-        { List.class }, null, builder.toString());
+                {List.class}, null, builder.toString());
     }
 
     @SuppressWarnings("unchecked")

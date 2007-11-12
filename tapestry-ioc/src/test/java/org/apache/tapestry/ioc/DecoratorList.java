@@ -18,8 +18,6 @@ import java.util.List;
 
 /**
  * Used to track the order in which decorators are invoked.
- * 
- * 
  */
 public interface DecoratorList
 {

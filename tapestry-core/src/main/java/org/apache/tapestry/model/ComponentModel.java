@@ -14,19 +14,19 @@
 
 package org.apache.tapestry.model;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.MixinAfter;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.Resource;
 import org.slf4j.Logger;
 
+import java.util.List;
+
 /**
  * Defines a component in terms of its capabilities, parameters, sub-components, etc. During
  * <em>runtime</em>, the component model is immutable. During <em>construction</em> time, when
  * the class is being transformed and loaded, the model is mutable.
- * 
+ *
  * @see MutableComponentModel
  */
 public interface ComponentModel
@@ -37,7 +37,9 @@ public interface ComponentModel
      */
     Resource getBaseResource();
 
-    /** The FQCN of the component. */
+    /**
+     * The FQCN of the component.
+     */
     String getComponentClassName();
 
     /**
@@ -48,33 +50,35 @@ public interface ComponentModel
 
     /**
      * Returns an embedded component.
-     * 
-     * @param componentId
-     *            the id of the embedded component
+     *
+     * @param componentId the id of the embedded component
      * @return the embedded component model, or null if no component exists with that id
      */
     EmbeddedComponentModel getEmbeddedComponentModel(String componentId);
 
     /**
      * Returns the persistent strategy associated with the field.
-     * 
+     *
      * @param fieldName
      * @return the corresponding strategy, or the empty string
      * @throw IllegalArgumentException if the named field is not marked as persistent
      */
     String getFieldPersistenceStrategy(String fieldName);
 
-    /** Returns object that will be used to log warnings and errors related to this component. */
+    /**
+     * Returns object that will be used to log warnings and errors related to this component.
+     */
     Logger getLogger();
 
-    /** Returns a list of the class names of mixins that are part of the component's implementation. */
+    /**
+     * Returns a list of the class names of mixins that are part of the component's implementation.
+     */
     List<String> getMixinClassNames();
 
     /**
      * Return a single parameter model by parameter name, or null if the parameter is not defined.
-     * 
-     * @param parameterName
-     *            the name of the parameter (case is ignored)
+     *
+     * @param parameterName the name of the parameter (case is ignored)
      */
     ParameterModel getParameterModel(String parameterName);
 
@@ -94,7 +98,7 @@ public interface ComponentModel
     /**
      * Returns a list of the names of all persistent fields (within this class, or any super-class).
      * The names are sorted alphabetically.
-     * 
+     *
      * @see Persist
      */
     List<String> getPersistentFieldNames();
@@ -103,7 +107,7 @@ public interface ComponentModel
      * Returns true if the modeled component is a root class, a component class whose parent does
      * not have the {@link ComponentClass} annotation. This is often used to determine whether to
      * invoke the super-class implementation of certain methods.
-     * 
+     *
      * @return true if a root class, false if a subclass
      */
     boolean isRootClass();
@@ -113,7 +117,7 @@ public interface ComponentModel
      * the formal parameter defined for the component, are supported. This is false in most cases,
      * but may be set to true for specific classes (when the {@link SupportsInformalParameters}
      * annotation is present, or inherited from a super-class).
-     * 
+     *
      * @return true if this component model supports informal parameters
      */
     boolean getSupportsInformalParameters();
@@ -122,7 +126,7 @@ public interface ComponentModel
      * Returns the component model for this component's super-class, if it exists. Remember that
      * only classes with the {@link ComponentClass} annotation, and in the correct packages, are
      * considered component classes.
-     * 
+     *
      * @return the parent class model, or null if this component's super class is not itself a
      *         component class
      */
@@ -132,7 +136,7 @@ public interface ComponentModel
      * Relevant for component mixins only. Indicates that the mixin behavior should occur
      * <em>after</em> (not before) the component. Normally, this flag is set by the presence of
      * the {@link MixinAfter} annotation.
-     * 
+     *
      * @return true if the mixin should operate after, not before, the component
      */
     boolean isMixinAfter();
@@ -140,9 +144,8 @@ public interface ComponentModel
     /**
      * Gets a meta value identified by the given key. If the current model does not provide a value
      * for the key, then the parent component model (if any) is searched.
-     * 
-     * @param key
-     *            identifies the value to be accessed
+     *
+     * @param key identifies the value to be accessed
      * @return the value for the key (possibly inherited from a parent model), or null
      */
     String getMeta(String key);

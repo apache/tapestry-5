@@ -15,19 +15,18 @@
 package org.apache.tapestry.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.Coercion;
+
+import java.util.Map;
 
 /**
  * A {@link Coercion} for converting strings into an instance of a particular enumerated type. The
  * {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
  * fashion.
- * 
+ *
  * @param <T>
- *            the type of enumeration
+ * the type of enumeration
  */
 public final class StringToEnumCoercion<T extends Enum> implements Coercion<String, T>
 {

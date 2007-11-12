@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.lang.reflect.Method;
-
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 public class FilterMethodAnalyzerTest extends IOCInternalTestCase
 {

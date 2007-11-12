@@ -23,11 +23,9 @@ public interface MarkupModel
     /**
      * Encodes the characters into the buffer, converting control characters (such as '&lt;') into
      * corresponding entities (such as &amp;lt;).
-     * 
-     * @param content
-     *            to be filtered
-     * @param buffer
-     *            to receive the filtered content
+     *
+     * @param content to be filtered
+     * @param buffer  to receive the filtered content
      */
     void encode(String content, StringBuilder buffer);
 
@@ -35,11 +33,9 @@ public interface MarkupModel
      * Encodes the characters into the buffer for use in a quoted value (that is, an attribute
      * value), converting control characters (such as '&lt;') into corresponding entities (such as
      * &amp;lt;). In addition, double quotes must be quoted or otherwise escaped.
-     * 
-     * @param content
-     *            to be filtered
-     * @param buffer
-     *            to receive the filtered content
+     *
+     * @param content to be filtered
+     * @param buffer  to receive the filtered content
      */
     void encodeQuoted(String content, StringBuilder buffer);
 

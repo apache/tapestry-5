@@ -14,47 +14,18 @@
 
 package org.apache.tapestry.ioc.services;
 
+import org.apache.tapestry.ioc.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.annotations.Marker;
+import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.internal.services.*;
+import org.apache.tapestry.services.MasterObjectProvider;
 
 import java.io.File;
 import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.annotations.Marker;
-import org.apache.tapestry.ioc.annotations.Value;
-import org.apache.tapestry.ioc.internal.services.ChainBuilderImpl;
-import org.apache.tapestry.ioc.internal.services.DefaultImplementationBuilderImpl;
-import org.apache.tapestry.ioc.internal.services.ExceptionAnalyzerImpl;
-import org.apache.tapestry.ioc.internal.services.ExceptionTrackerImpl;
-import org.apache.tapestry.ioc.internal.services.LoggingDecoratorImpl;
-import org.apache.tapestry.ioc.internal.services.MapSymbolProvider;
-import org.apache.tapestry.ioc.internal.services.MasterObjectProviderImpl;
-import org.apache.tapestry.ioc.internal.services.PerThreadServiceLifecycle;
-import org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl;
-import org.apache.tapestry.ioc.internal.services.PropertyAccessImpl;
-import org.apache.tapestry.ioc.internal.services.PropertyShadowBuilderImpl;
-import org.apache.tapestry.ioc.internal.services.RegistryStartup;
-import org.apache.tapestry.ioc.internal.services.StrategyBuilderImpl;
-import org.apache.tapestry.ioc.internal.services.SymbolObjectProvider;
-import org.apache.tapestry.ioc.internal.services.SymbolSourceImpl;
-import org.apache.tapestry.ioc.internal.services.SystemPropertiesSymbolProvider;
-import org.apache.tapestry.ioc.internal.services.ThreadLocaleImpl;
-import org.apache.tapestry.ioc.internal.services.TypeCoercerImpl;
-import org.apache.tapestry.ioc.internal.services.ValueObjectProvider;
-import org.apache.tapestry.services.MasterObjectProvider;
+import java.util.*;
 
 /**
  * Defines the base set of services for the Tapestry IOC container.
@@ -101,7 +72,9 @@ public final class TapestryIOCModule
         };
     }
 
-    /** Contributes the "perthread" scope. */
+    /**
+     * Contributes the "perthread" scope.
+     */
     public void contributeServiceLifecycleSource(
             MappedConfiguration<String, ServiceLifecycle> configuration, ObjectLocator locator)
     {
@@ -111,7 +84,7 @@ public final class TapestryIOCModule
     /**
      * Contributes "DefaultProvider", ordered last, that delegates to
      * {@link ObjectLocator#getService(Class)}.
-     * <p>
+     * <p/>
      * Contributes "Value", which injects values (not services) triggered by the {@link Value}
      * annotation.
      */
@@ -156,7 +129,7 @@ public final class TapestryIOCModule
      * <li>Null to BigInteger (zero)</li>
      * <li>String to File</li>
      * </ul>
-     * <p>
+     * <p/>
      * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches
      * when attempting to add coercions from null to various numeric types: we end up having to have
      * many more coercions for the null case to prevent null --> String --> BigInteger. This may
@@ -416,7 +389,7 @@ public final class TapestryIOCModule
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
-            Class<T> targetType, Coercion<S, T> coercion)
+                                   Class<T> targetType, Coercion<S, T> coercion)
     {
         CoercionTuple<S, T> tuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
 
@@ -424,11 +397,11 @@ public final class TapestryIOCModule
     }
 
     public static void contributeSymbolSource(OrderedConfiguration<SymbolProvider> configuration,
-            @ApplicationDefaults
-            SymbolProvider applicationDefaults,
+                                              @ApplicationDefaults
+                                              SymbolProvider applicationDefaults,
 
-            @FactoryDefaults
-            SymbolProvider factoryDefaults)
+                                              @FactoryDefaults
+                                              SymbolProvider factoryDefaults)
     {
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider());
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");

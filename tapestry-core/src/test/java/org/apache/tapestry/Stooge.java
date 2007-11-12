@@ -14,6 +14,7 @@
 
 package org.apache.tapestry;
 
-public enum Stooge {
+public enum Stooge
+{
     MOE, LARRY, CURLY_JOE
 }

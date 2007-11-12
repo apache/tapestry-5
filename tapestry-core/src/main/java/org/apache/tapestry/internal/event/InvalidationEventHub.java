@@ -19,7 +19,7 @@ import org.apache.tapestry.internal.events.InvalidationListener;
 /**
  * An object which manages a list of
  * {@link org.apache.tapestry.internal.events.InvalidationListener}s.
- * <p>
+ * <p/>
  * TODO: This interface need to move to the public side (as it is extended by other public
  * interfaces), or we need to come up with an alternate mechanism for propogating invalidation data.
  */

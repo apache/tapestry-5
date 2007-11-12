@@ -22,9 +22,8 @@ public interface RequestEncodingInitializer
 {
     /**
      * Initializes the request encoding to match the encoding defined for the page.
-     * 
-     * @param pageName
-     *            logical name of the page
+     *
+     * @param pageName logical name of the page
      */
     void initializeRequestEncoding(String pageName);
 }

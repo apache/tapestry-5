@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.Map;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.events.InvalidationListener;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.ValueEncoderFactory;
 import org.apache.tapestry.services.ValueEncoderSource;
+
+import java.util.Map;
 
 public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationListener
 {

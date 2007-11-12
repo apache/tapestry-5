@@ -18,11 +18,11 @@ import org.apache.tapestry.MarkupWriter;
 
 /**
  * Source for {@link org.apache.tapestry.MarkupWriter} instances.
- * 
- * 
  */
 public interface MarkupWriterFactory
 {
-    /** This will likely expand in the future to control things like output format and encoding, etc. */
+    /**
+     * This will likely expand in the future to control things like output format and encoding, etc.
+     */
     MarkupWriter newMarkupWriter();
 }

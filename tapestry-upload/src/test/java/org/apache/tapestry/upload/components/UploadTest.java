@@ -14,20 +14,13 @@
 
 package org.apache.tapestry.upload.components;
 
-import static org.easymock.EasyMock.expectLastCall;
-
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ValidationTracker;
+import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.apache.tapestry.upload.services.MultipartDecoder;
 import org.apache.tapestry.upload.services.UploadedFile;
+import static org.easymock.EasyMock.expectLastCall;
 import org.testng.annotations.Test;
 
 public class UploadTest extends TapestryTestCase
@@ -83,7 +76,7 @@ public class UploadTest extends TapestryTestCase
 
         FormSupport formSupport = mockFormSupport();
         formSupport.setEncodingType(Upload.MULTIPART_ENCTYPE);
-        
+
         component.injectFormSupport(formSupport);
 
         ValidationDecorator decorator = mockValidationDecorator();

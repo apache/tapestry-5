@@ -15,16 +15,15 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.services.Environment;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.Environment;
 
 /**
  * A non-threadsafe implementation (expects to use the "perthread" service lifecyle).

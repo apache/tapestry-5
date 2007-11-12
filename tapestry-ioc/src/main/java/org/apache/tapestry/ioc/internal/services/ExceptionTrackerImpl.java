@@ -15,12 +15,11 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.annotations.Scope;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.services.ExceptionTracker;
 
 import java.util.Set;
-
-import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.services.ExceptionTracker;
 
 @Scope(PERTHREAD_SCOPE)
 public class ExceptionTrackerImpl implements ExceptionTracker

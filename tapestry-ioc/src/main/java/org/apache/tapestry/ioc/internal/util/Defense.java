@@ -28,16 +28,12 @@ public final class Defense
      * situations where some of the parameters to a method are allowed to be null and other's arent.
      * In that situation, the method will be annotated with {@link SuppressNullCheck}, and the
      * relevent null checks will occur inside the method implementation.
-     * 
-     * @param <T>
-     *            the value type
-     * @param value
-     *            the value (which is checked to ensure non-nullness)
-     * @param parameterName
-     *            the name of the parameter, used for exception messages
+     *
+     * @param <T>           the value type
+     * @param value         the value (which is checked to ensure non-nullness)
+     * @param parameterName the name of the parameter, used for exception messages
      * @return the value
-     * @throws IllegalArgumentException
-     *             if the value is null
+     * @throws IllegalArgumentException if the value is null
      */
     public static <T> T notNull(T value, String parameterName)
     {
@@ -49,14 +45,11 @@ public final class Defense
 
     /**
      * Checks that a parameter value is not null and not empty.
-     * 
-     * @param value
-     *            value to check (which is returned)
-     * @param parameterName
-     *            the name of the parameter, used for exception messages
+     *
+     * @param value         value to check (which is returned)
+     * @param parameterName the name of the parameter, used for exception messages
      * @return the value, trimmed, if non-blank
-     * @throws IllegalArgumentException
-     *             if the value is null or empty
+     * @throws IllegalArgumentException if the value is null or empty
      */
     public static String notBlank(String value, String parameterName)
     {
@@ -73,14 +66,13 @@ public final class Defense
 
     /**
      * Checks that the provided value is not null, and may be cast to the desired type.
-     * 
+     *
      * @param <T>
      * @param parameterValue
      * @param type
      * @param parameterName
-     * @throws IllegalArgumentException
-     *             if the value is null, or is not assignable to the indicated type
      * @return the casted value
+     * @throws IllegalArgumentException if the value is null, or is not assignable to the indicated type
      */
     public static <T> T cast(Object parameterValue, Class<T> type, String parameterName)
     {

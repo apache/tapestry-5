@@ -14,15 +14,7 @@
 
 package org.apache.tapestry.upload.components;
 
-import java.util.Locale;
-
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.ValidationTracker;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
@@ -31,6 +23,8 @@ import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.upload.services.MultipartDecoder;
 import org.apache.tapestry.upload.services.UploadedFile;
+
+import java.util.Locale;
 
 /**
  * A component to upload a file.
@@ -97,7 +91,7 @@ public class Upload extends AbstractField
 
     // For testing
     Upload(UploadedFile value, FieldValidator<Object> validate, MultipartDecoder decoder,
-            ValidationTracker tracker, ComponentResources resources)
+           ValidationTracker tracker, ComponentResources resources)
     {
         _value = value;
         if (validate != null) _validate = validate;
@@ -131,9 +125,8 @@ public class Upload extends AbstractField
 
     /**
      * Render the upload tags.
-     * 
-     * @param writer
-     *            Writer to output markup
+     *
+     * @param writer Writer to output markup
      */
     protected void beginRender(MarkupWriter writer)
     {

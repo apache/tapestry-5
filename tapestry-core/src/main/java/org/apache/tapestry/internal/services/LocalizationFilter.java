@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 /**
  * Responsible for determining the locale for the current request. Currently, this is based on the
@@ -29,7 +29,7 @@ import org.apache.tapestry.services.Response;
 public class LocalizationFilter implements RequestFilter
 {
     private final LocalizationSetter _setter;
-    
+
     public LocalizationFilter(LocalizationSetter setter)
     {
         _setter = setter;

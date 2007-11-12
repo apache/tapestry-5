@@ -27,12 +27,10 @@ public interface TranslatorDefaultSource
      * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained
      * via {@link Binding#getBindingType()}. Performs an inheritanced-based search for the best
      * match.
-     * 
-     * @param valueType
-     *            the type of value for which a default translator is needed
+     *
+     * @param valueType the type of value for which a default translator is needed
      * @return the matching translator
-     * @throws IllegalArgumentException
-     *             if no translator may be found
+     * @throws IllegalArgumentException if no translator may be found
      */
     Translator find(Class valueType);
 }

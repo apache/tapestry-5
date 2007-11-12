@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 /**
  * Startup service for Tapestry IoC: automatically invoked at

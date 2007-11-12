@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.TranslatorSource;
+
+import java.util.Map;
 
 public class TranslatorSourceImpl implements TranslatorSource
 {

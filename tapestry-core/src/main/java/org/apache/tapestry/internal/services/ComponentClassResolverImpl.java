@@ -14,24 +14,20 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.events.InvalidationListener;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Symbol;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry.ioc.internal.util.Invokable;
+import org.apache.tapestry.services.ComponentClassResolver;
+import org.apache.tapestry.services.LibraryMapping;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Symbol;
-import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
-import org.apache.tapestry.ioc.internal.util.Invokable;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.LibraryMapping;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
@@ -69,7 +65,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private final Map<String, String> _mixinToClassName = newCaseInsensitiveMap();
 
-    /** This one is case sensitive, since class names do always have a particular case. */
+    /**
+     * This one is case sensitive, since class names do always have a particular case.
+     */
     private final Map<String, String> _pageClassNameToLogicalName = newMap();
 
     private final Map<String, String> _pageNameToCanonicalPageName = newCaseInsensitiveMap();
@@ -77,13 +75,13 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
 
     public ComponentClassResolverImpl(ComponentInstantiatorSource componentInstantiatorSource,
-            ClassNameLocator classNameLocator,
+                                      ClassNameLocator classNameLocator,
 
-            @Inject
-            @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-            String appRootPackage,
+                                      @Inject
+                                      @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                      String appRootPackage,
 
-            Collection<LibraryMapping> mappings)
+                                      Collection<LibraryMapping> mappings)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _classNameLocator = classNameLocator;
@@ -127,7 +125,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         _componentInstantiatorSource.addPackage(rootPackage + ".base");
     }
 
-    /** When the class loader is invalidated, clear any cached page names or component types. */
+    /**
+     * When the class loader is invalidated, clear any cached page names or component types.
+     */
     public synchronized void objectWasInvalidated()
     {
         _barrier.withWrite(new Runnable()
@@ -183,7 +183,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     }
 
     private void fillNameToClassNameMap(String pathPrefix, String rootPackage, String subPackage,
-            Map<String, String> logicalNameToClassName)
+                                        Map<String, String> logicalNameToClassName)
     {
         String searchPackage = rootPackage + "." + subPackage;
         boolean isPage = subPackage.equals(PAGES_SUBPACKAGE);
@@ -208,15 +208,12 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     /**
      * Converts a fully qualified class name to a logical name
-     * 
-     * @param className
-     *            fully qualified class name
-     * @param pathPrefix
-     *            prefix to be placed on the logical name (to identify the library from in which the
-     *            class lives)
-     * @param startPos
-     *            start position within the class name to extract the logical name (i.e., after the
-     *            final '.' in "rootpackage.pages.").
+     *
+     * @param className  fully qualified class name
+     * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the
+     *                   class lives)
+     * @param startPos   start position within the class name to extract the logical name (i.e., after the
+     *                   final '.' in "rootpackage.pages.").
      * @return a short logical name in folder format ('.' replaced with '/')
      */
     private String toLogicalName(String className, String pathPrefix, int startPos)
@@ -317,8 +314,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 if (result == null)
                     throw new IllegalArgumentException(ServicesMessages
                             .couldNotResolveComponentType(
-                                    componentType,
-                                    presentableNames(_componentToClassName)));
+                            componentType,
+                            presentableNames(_componentToClassName)));
 
                 return result;
             }
@@ -365,11 +362,9 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     /**
      * Locates a class name within the provided map, given its logical name. If not found naturally,
      * a search inside the "core" library is included.
-     * 
-     * @param logicalName
-     *            name to search for
-     * @param logicalNameToClassName
-     *            mapping from logical name to class name
+     *
+     * @param logicalName            name to search for
+     * @param logicalNameToClassName mapping from logical name to class name
      * @return the located class name or null
      */
     private String locate(String logicalName, Map<String, String> logicalNameToClassName)
@@ -416,8 +411,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
                 if (result == null)
                     throw new IllegalArgumentException(ServicesMessages
                             .couldNotCanonicalizePageName(
-                                    pageName,
-                                    presentableNames(_pageNameToCanonicalPageName)));
+                            pageName,
+                            presentableNames(_pageNameToCanonicalPageName)));
 
                 return result;
             }

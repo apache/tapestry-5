@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class ResourceCacheImplTest extends InternalBaseTestCase
 {

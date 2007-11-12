@@ -29,9 +29,9 @@ import org.apache.tapestry.test.PageTester;
  * This class is used to build the {@link Registry}. The Registry contains
  * {@link org.apache.tapestry.ioc.services.TapestryIOCModule} and {@link TapestryModule}, any
  * modules identified by {@link #addModules(RegistryBuilder)}, plus the application module.
- * <p>
+ * <p/>
  * The application module is optional.
- * <p>
+ * <p/>
  * The application module is identified as <em>package</em>.services.<em>appName</em>Module,
  * where <em>package</em> and the <em>appName</em> are specified by the caller.
  */
@@ -54,21 +54,16 @@ public class TapestryAppInitializer
     public TapestryAppInitializer(String appPackage, String appName, String aliasMode)
     {
         this(new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage),
-                appName, aliasMode);
+             appName, aliasMode);
     }
 
     /**
-     * @param appProvider
-     *            provides symbols for the application (normally, from the ServletContext init
-     *            parameters)
-     * @param appName
-     *            the name of the application (i.e., the name of the application servlet)
-     * @param aliasMode
-     *            the mode, used by the {@link Alias} service, normally "servlet"
-     * @param serviceOverrides
-     *            specific service overrides (used by {@link PageTester}
-     * @param moduleDefs
-     *            additional module definitions to be mixed in to those automatically located
+     * @param appProvider      provides symbols for the application (normally, from the ServletContext init
+     *                         parameters)
+     * @param appName          the name of the application (i.e., the name of the application servlet)
+     * @param aliasMode        the mode, used by the {@link Alias} service, normally "servlet"
+     * @param serviceOverrides specific service overrides (used by {@link PageTester}
+     * @param moduleDefs       additional module definitions to be mixed in to those automatically located
      */
     public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode)
     {
@@ -113,7 +108,7 @@ public class TapestryAppInitializer
 
     /**
      * Adds additional modules.
-     * 
+     *
      * @param moduleDefs
      */
     public void addModules(ModuleDef... moduleDefs)
@@ -134,15 +129,17 @@ public class TapestryAppInitializer
 
         ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef(
                 "AliasMode", new SingleKeySymbolProvider(
-                        InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, _aliasMode),
+                InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, _aliasMode),
                 "before:ServletContext");
 
         ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
-                new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_NAME_SYMBOL, _appName),
-                "before:ServletContext");
+                                                                                       new SingleKeySymbolProvider(
+                                                                                               InternalConstants.TAPESTRY_APP_NAME_SYMBOL,
+                                                                                               _appName),
+                                                                                       "before:ServletContext");
 
         _builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution,
-                appNameContribution));
+                                            appNameContribution));
     }
 
     public Registry getRegistry()

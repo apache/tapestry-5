@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.ioc.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry.ioc.internal.util.Invokable;
 import org.apache.tapestry.ioc.internal.util.MessageFormatterImpl;
+
+import java.util.Map;
 
 /**
  * Abstract implementation of {@link Messages} that doesn't know where values come from (that
@@ -32,15 +31,16 @@ public abstract class AbstractMessages implements Messages
 {
     private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
 
-    /** String key to MF instance. */
+    /**
+     * String key to MF instance.
+     */
     private final Map<String, MessageFormatter> _cache = newCaseInsensitiveMap();
 
     /**
      * Invoked to provide the value for a particular key. This may be invoked multiple times even
      * for the same key. The implementation should <em>ignore the case of the key</em>.
-     * 
-     * @param key
-     *            the key to obtain a value for (case insensitive)
+     *
+     * @param key the key to obtain a value for (case insensitive)
      * @return the value for the key, or null if this instance can not provide the value
      */
     protected abstract String valueForKey(String key);
@@ -76,7 +76,9 @@ public abstract class AbstractMessages implements Messages
             public void run()
             {
                 _cache.put(key, newFormatter);
-            };
+            }
+
+            ;
         });
 
         return newFormatter;
