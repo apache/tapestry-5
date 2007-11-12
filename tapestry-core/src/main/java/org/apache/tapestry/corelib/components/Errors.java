@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.List;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
@@ -23,6 +21,8 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.services.FormSupport;
+
+import java.util.List;
 
 /**
  * Standard validation error presenter. Must be enclosed by a {@link Form} component. If errors are
@@ -38,7 +38,9 @@ public class Errors
     @Parameter("message:default-banner")
     private String _banner;
 
-    /** The CSS class for the div element rendered by the component. The default value is "t-error". */
+    /**
+     * The CSS class for the div element rendered by the component. The default value is "t-error".
+     */
     @Parameter
     private String _class = InternalConstants.TAPESTRY_ERROR_CLASS;
 

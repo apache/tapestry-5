@@ -16,7 +16,9 @@ package org.apache.tapestry.internal.structure;
 
 import org.apache.tapestry.runtime.Component;
 
-/** Callback interface, used when invoking lifecycle methods on components. */
+/**
+ * Callback interface, used when invoking lifecycle methods on components.
+ */
 public interface ComponentCallback
 {
     /**

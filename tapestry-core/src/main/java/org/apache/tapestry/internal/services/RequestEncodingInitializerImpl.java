@@ -30,7 +30,7 @@ public class RequestEncodingInitializerImpl implements RequestEncodingInitialize
     private final Request _request;
 
     public RequestEncodingInitializerImpl(RequestPageCache cache, MetaDataLocator locator,
-            Request request)
+                                          Request request)
     {
         _cache = cache;
         _locator = locator;

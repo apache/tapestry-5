@@ -26,7 +26,7 @@ public class BlockBinding extends AbstractBinding
     private final String _blockId;
 
     public BlockBinding(final String description, final ComponentResources component,
-            final String blockId, Location location)
+                        final String blockId, Location location)
     {
         super(location);
 

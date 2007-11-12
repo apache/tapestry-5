@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.corelib.pages;
 
-import java.text.DateFormat;
-import java.util.Locale;
-
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.PropertyOutputContext;
+
+import java.text.DateFormat;
+import java.util.Locale;
 
 public class PropertyDisplayBlocks
 {

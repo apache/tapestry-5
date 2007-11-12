@@ -14,24 +14,24 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.TYPE;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Attached to a module class, this annotation identifies other module classes that should also be
  * added to the Registry. This is often easier than updating the JAR Manifest.
- * 
- * 
  */
 @Target(TYPE)
 @Retention(RUNTIME)
 @Documented
-public @interface SubModule {
+public @interface SubModule
+{
 
-    /** One or more classes that are also modules and should also be loaded. */
+    /**
+     * One or more classes that are also modules and should also be loaded.
+     */
     Class[] value();
 }

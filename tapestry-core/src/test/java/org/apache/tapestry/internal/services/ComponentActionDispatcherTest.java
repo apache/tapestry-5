@@ -14,20 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.eq;
-
-import java.io.IOException;
-
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.ActionResponseGenerator;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
+import static org.easymock.EasyMock.aryEq;
+import static org.easymock.EasyMock.eq;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 public class ComponentActionDispatcherTest extends InternalBaseTestCase
 {
@@ -142,7 +137,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
                         eq("eventname"),
                         aryEq(new String[0]),
                         aryEq(new String[]
-                        { "alpha", "beta" }))).andReturn(generator);
+                                {"alpha", "beta"}))).andReturn(generator);
 
         generator.sendClientResponse(response);
 
@@ -156,7 +151,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     }
 
     private void test(String requestPath, String logicalPageName, String nestedComponentId,
-            String eventType, String... context) throws IOException
+                      String eventType, String... context) throws IOException
     {
         ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();

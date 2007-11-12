@@ -28,9 +28,8 @@ public interface PageRenderSupport
     /**
      * Allocates a unique id based on the component's id. In some cases, the return value will not
      * precisely match the input value (an underscore and a unique index value may be appended).
-     * 
-     * @param id
-     *            the component id from which a unique id will be generated
+     *
+     * @param id the component id from which a unique id will be generated
      * @return a unqiue id for this rendering of the page
      * @see IdAllocator
      */
@@ -40,9 +39,8 @@ public interface PageRenderSupport
      * Adds one or more new script assets to the page. Assets are added uniquely, and appear as
      * &lt;script&gt; elements just inside the &lt;body&gt; element of the rendered page. Duplicate
      * requests to add the same script are quietly ignored.
-     * 
-     * @param scriptAssets
-     *            asset to the script to add
+     *
+     * @param scriptAssets asset to the script to add
      */
     void addScriptLink(Asset... scriptAssets);
 
@@ -50,10 +48,9 @@ public interface PageRenderSupport
      * Used to add scripts that are stored on the classpath. Each element has
      * {@linkplain SymbolSource symbols expanded}, then is
      * {@linkplain AssetSource converted to an asset} and added as a script link.
-     * 
-     * @param classpaths
-     *            array of paths. Symbols in the paths are expanded, then the paths are each
-     *            converted into an asset.
+     *
+     * @param classpaths array of paths. Symbols in the paths are expanded, then the paths are each
+     *                   converted into an asset.
      */
     void addClasspathScriptLink(String... classpaths);
 
@@ -61,11 +58,9 @@ public interface PageRenderSupport
      * Adds a link to a CSS stylesheet. As with JavaScript libraries, each stylesheet is added at
      * most once. Stylesheets added this way will be ordered before any other content in the
      * &lt;head&gt; element of the document. The &lt;head&gt; element will be created, if necessary.
-     * 
-     * @param stylesheet
-     *            the asset referencing the stylesheet
-     * @param media
-     *            the media value for the stylesheet, or null to not specify a specific media type
+     *
+     * @param stylesheet the asset referencing the stylesheet
+     * @param media      the media value for the stylesheet, or null to not specify a specific media type
      */
 
     void addStylesheetLink(Asset stylesheet, String media);
@@ -73,11 +68,9 @@ public interface PageRenderSupport
     /**
      * Adds a script statement to the page's script block (which appears at the end of the page,
      * just before the &lt/body&gt; tag).
-     * 
-     * @param format
-     *            base string format, to be passed through String.format
-     * @param arguments
-     *            additional arguments formatted to form the final script
+     *
+     * @param format    base string format, to be passed through String.format
+     * @param arguments additional arguments formatted to form the final script
      */
     void addScript(String format, Object... arguments);
 }

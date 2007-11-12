@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.net.URL;
-
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.AbstractResource;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.services.Context;
+
+import java.net.URL;
 
 /**
  * A resource stored with in the web application context.

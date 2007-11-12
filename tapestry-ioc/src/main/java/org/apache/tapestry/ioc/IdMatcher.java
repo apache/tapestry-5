@@ -16,16 +16,13 @@ package org.apache.tapestry.ioc;
 
 /**
  * A matcher of <em>fully qualified<em> ids.
- * 
- * 
  */
 public interface IdMatcher
 {
     /**
      * Returns true if the provided input id matches the pattern defined by this matcher instance.
-     * 
-     * @param id
-     *            the fully qualfied id
+     *
+     * @param id the fully qualfied id
      * @return true on match, false otherwise
      */
     boolean matches(String id);

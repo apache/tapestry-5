@@ -12,14 +12,14 @@
 
 // full day names
 Calendar._DN = new Array
-("\u5468\u65e5",//\u5468\u65e5
- "\u5468\u4e00",//\u5468\u4e00
- "\u5468\u4e8c",//\u5468\u4e8c
- "\u5468\u4e09",//\u5468\u4e09
- "\u5468\u56db",//\u5468\u56db
- "\u5468\u4e94",//\u5468\u4e94
- "\u5468\u516d",//\u5468\u516d
- "\u5468\u65e5");//\u5468\u65e5
+        ("\u5468\u65e5", //\u5468\u65e5
+                "\u5468\u4e00", //\u5468\u4e00
+                "\u5468\u4e8c", //\u5468\u4e8c
+                "\u5468\u4e09", //\u5468\u4e09
+                "\u5468\u56db", //\u5468\u56db
+                "\u5468\u4e94", //\u5468\u4e94
+                "\u5468\u516d", //\u5468\u516d
+                "\u5468\u65e5");//\u5468\u65e5
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -35,44 +35,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("\u5468\u65e5",
- "\u5468\u4e00",
- "\u5468\u4e8c",
- "\u5468\u4e09",
- "\u5468\u56db",
- "\u5468\u4e94",
- "\u5468\u516d",
- "\u5468\u65e5");
+        ("\u5468\u65e5",
+                "\u5468\u4e00",
+                "\u5468\u4e8c",
+                "\u5468\u4e09",
+                "\u5468\u56db",
+                "\u5468\u4e94",
+                "\u5468\u516d",
+                "\u5468\u65e5");
 
 // full month names
 Calendar._MN = new Array
-("\u4e00\u6708",
- "\u4e8c\u6708",
- "\u4e09\u6708",
- "\u56db\u6708",
- "\u4e94\u6708",
- "\u516d\u6708",
- "\u4e03\u6708",
- "\u516b\u6708",
- "\u4e5d\u6708",
- "\u5341\u6708",
- "\u5341\u4e00\u6708",
- "\u5341\u4e8c\u6708");
+        ("\u4e00\u6708",
+                "\u4e8c\u6708",
+                "\u4e09\u6708",
+                "\u56db\u6708",
+                "\u4e94\u6708",
+                "\u516d\u6708",
+                "\u4e03\u6708",
+                "\u516b\u6708",
+                "\u4e5d\u6708",
+                "\u5341\u6708",
+                "\u5341\u4e00\u6708",
+                "\u5341\u4e8c\u6708");
 
 // short month names
 Calendar._SMN = new Array
-("\u4e00\u6708",
- "\u4e8c\u6708",
- "\u4e09\u6708",
- "\u56db\u6708",
- "\u4e94\u6708",
- "\u516d\u6708",
- "\u4e03\u6708",
- "\u516b\u6708",
- "\u4e5d\u6708",
- "\u5341\u6708",
- "\u5341\u4e00\u6708",
- "\u5341\u4e8c\u6708");
+        ("\u4e00\u6708",
+                "\u4e8c\u6708",
+                "\u4e09\u6708",
+                "\u56db\u6708",
+                "\u4e94\u6708",
+                "\u516d\u6708",
+                "\u4e03\u6708",
+                "\u516b\u6708",
+                "\u4e5d\u6708",
+                "\u5341\u6708",
+                "\u5341\u4e00\u6708",
+                "\u5341\u4e8c\u6708");
 
 // tooltips
 Calendar._TT = {};
@@ -89,9 +89,9 @@ Calendar._TT["ABOUT"] =
 "- \u70b9\u51fb" + String.fromCharCode(0x2039) + "(" + String.fromCharCode(0x203a) + ")\u6309\u94ae\u9009\u62e9\u4e0a(\u4e0b)\u4e2a\u6708\u4efd.\n" +
 "- \u957f\u65f6\u95f4\u6309\u7740\u6309\u94ae\u5c06\u51fa\u73b0\u66f4\u591a\u9009\u62e9\u9879.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"\u65f6\u95f4\u9009\u62e9:\n" +
-"-\u5728\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2)\u4e0a\u5355\u51fb\u9f20\u6807\u5de6\u952e\u6765\u589e\u52a0\u5f53\u524d\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2)\n" +
-"-\u5728\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2)\u4e0a\u6309\u4f4fShift\u952e\u540e\u5355\u51fb\u9f20\u6807\u5de6\u952e\u6765\u51cf\u5c11\u5f53\u524d\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2).";
+                             "\u65f6\u95f4\u9009\u62e9:\n" +
+                             "-\u5728\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2)\u4e0a\u5355\u51fb\u9f20\u6807\u5de6\u952e\u6765\u589e\u52a0\u5f53\u524d\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2)\n" +
+                             "-\u5728\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2)\u4e0a\u6309\u4f4fShift\u952e\u540e\u5355\u51fb\u9f20\u6807\u5de6\u952e\u6765\u51cf\u5c11\u5f53\u524d\u65f6\u95f4\u90e8\u5206(\u5206\u6216\u8005\u79d2).";
 
 Calendar._TT["PREV_YEAR"] = "\u4e0a\u4e00\u5e74";
 Calendar._TT["PREV_MONTH"] = "\u4e0a\u4e2a\u6708";

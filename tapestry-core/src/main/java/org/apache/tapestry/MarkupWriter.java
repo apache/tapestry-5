@@ -14,12 +14,12 @@
 
 package org.apache.tapestry;
 
-import java.io.PrintWriter;
-
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.dom.MarkupModel;
 import org.apache.tapestry.dom.Raw;
+
+import java.io.PrintWriter;
 
 /**
  * An interface used by objects, such as Tapestry components, that need to render themselves as some
@@ -36,15 +36,13 @@ public interface MarkupWriter
      * Begins a new element as a child of the current element. The new element becomes the current
      * element. The new Element is returned and can be directly manipulated (possibly at a later
      * date). Optionally, attributes for the new element can be specified directly.
-     * <p>
+     * <p/>
      * If the element is intended to be clickable or submittable in the
      * {@link org.apache.tapestry.test.PageTester}, you should call
      * {@link #linkElement(String, Link, Object[])} instead.
-     * 
-     * @param name
-     *            the name of the element to create
-     * @param attributes
-     *            an even number of values, alternating names and values
+     *
+     * @param name       the name of the element to create
+     * @param attributes an even number of values, alternating names and values
      * @return the new DOM Element node
      * @see #attributes(Object[])
      */
@@ -59,20 +57,22 @@ public interface MarkupWriter
 
     /**
      * Writes the text as a child of the current element.
-     * <p>
+     * <p/>
      * TODO: Filtering of XML entities.
      */
 
     void write(String text);
 
-    /** Writes a formatted string. */
+    /**
+     * Writes a formatted string.
+     */
     void writef(String format, Object... args);
 
     /**
      * Writes <em>raw</em> text, text with existing markup that should be passed through the
      * client without change. This can be useful when the markup is read from an external source (a
      * file or a database) and is simply to be included.
-     * 
+     *
      * @param text
      * @see Raw
      */
@@ -96,9 +96,13 @@ public interface MarkupWriter
      */
     void toMarkup(PrintWriter writer);
 
-    /** Returns the Document into which this writer creates elements or other nodes. */
+    /**
+     * Returns the Document into which this writer creates elements or other nodes.
+     */
     Document getDocument();
 
-    /** Returns the currently active element. */
+    /**
+     * Returns the currently active element.
+     */
     Element getElement();
 }

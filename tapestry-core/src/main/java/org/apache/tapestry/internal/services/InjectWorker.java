@@ -23,7 +23,7 @@ import org.apache.tapestry.services.InjectionProvider;
 
 /**
  * Performs injection triggered by any field annotated with the {@link Inject} annotation.
- * <p>
+ * <p/>
  * The implementation of this worker mostly delegates to a chain of command of
  * {@link InjectionProvider}s.
  */

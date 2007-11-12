@@ -14,12 +14,12 @@
 
 package org.apache.tapestry;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * Standard implmentation of {@link ValidationTracker}. Works pretty hard to ensure a minimum

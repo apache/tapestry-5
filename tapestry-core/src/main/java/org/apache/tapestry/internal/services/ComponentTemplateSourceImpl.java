@@ -14,14 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.UpdateListener;
@@ -30,13 +22,20 @@ import org.apache.tapestry.internal.parser.TemplateToken;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Resource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.model.ComponentModel;
+
+import java.net.URL;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Service implementation that manages a cache of parsed component templates.
  */
 public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements
-        ComponentTemplateSource, UpdateListener
+                                                                                ComponentTemplateSource, UpdateListener
 {
 
     private final TemplateParser _parser;
@@ -87,7 +86,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     }
 
     ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator,
-            URLChangeTracker tracker)
+                                URLChangeTracker tracker)
     {
         _parser = parser;
         _locator = locator;
@@ -98,7 +97,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
      * Resolves the component name to a {@link Resource} and finds the localization of that resource
      * (the combination of component name and locale is resolved to a resource). The localized
      * resource is used as the key to a cache of {@link ComponentTemplate}s.
-     * <p>
+     * <p/>
      * If a template doesn't exist, then the missing ComponentTemplate is returned.
      */
     public ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale)

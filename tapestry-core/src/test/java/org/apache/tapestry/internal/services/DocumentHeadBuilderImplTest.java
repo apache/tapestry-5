@@ -154,7 +154,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         builder.updateDocument(document);
 
-      assertEquals(document.toString(), readFile("add_script.txt", false).trim());
+        assertEquals(document.toString(), readFile("add_script.txt", false).trim());
     }
 
     /**

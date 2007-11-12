@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.Serializable;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.internal.bindings.PropBindingFactoryTest;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -26,6 +24,8 @@ import org.apache.tapestry.services.PropertyConduitSource;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.Serializable;
 
 /**
  * Most of the testing occurs inside {@link PropBindingFactoryTest} (due to historical reasons).

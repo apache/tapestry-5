@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc;
 
 /**
- * 
+ *
  */
 public class StringHolderImpl implements StringHolder
 {

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.util.AbstractSelectModel;
+
+import java.util.Arrays;
+import java.util.List;
 
 public final class SelectModelImpl extends AbstractSelectModel
 {
@@ -28,7 +28,7 @@ public final class SelectModelImpl extends AbstractSelectModel
     private final List<OptionModel> _optionModels;
 
     public SelectModelImpl(final List<OptionGroupModel> optionGroups,
-            final List<OptionModel> optionModels)
+                           final List<OptionModel> optionModels)
     {
         _optionGroups = optionGroups;
         _optionModels = optionModels;

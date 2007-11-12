@@ -16,16 +16,17 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Link;
 
-/** Listener interface for objects that need to be notified about newly created links. */
+/**
+ * Listener interface for objects that need to be notified about newly created links.
+ */
 public interface LinkFactoryListener
 {
     /**
      * Invoked when a page link (a link that renders a page) is created. The listener may decide to
      * encode additional query parameters into the link (via
      * {@link Link#addParameter(String, String)}).
-     * 
-     * @param link
-     *            the newly created link
+     *
+     * @param link the newly created link
      */
     void createdPageLink(Link link);
 
@@ -33,9 +34,8 @@ public interface LinkFactoryListener
      * Invoked when an action link (a link that asks a component to perform an action) is created.
      * The listener may decide to encode additional query parameters into the link (via
      * {@link Link#addParameter(String, String)}).
-     * 
-     * @param link
-     *            the newly created link
+     *
+     * @param link the newly created link
      */
     void createdActionLink(Link link);
 }

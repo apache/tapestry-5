@@ -22,8 +22,6 @@ package org.apache.tapestry.ioc;
  * needed. This allows Tapestry IOC to work around a tricky chicken-and-the-egg problem, whereby the
  * constructor of a module builder instance requires contributions that originate in the same
  * module.
- * 
- * 
  */
 public interface ModuleBuilderSource
 {

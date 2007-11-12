@@ -14,10 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.isNull;
-
 import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.TapestryConstants;
@@ -30,6 +26,7 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 import org.easymock.EasyMock;
+import static org.easymock.EasyMock.*;
 import org.easymock.IAnswer;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -297,7 +294,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
     @SuppressWarnings("unchecked")
     private void train_triggerPassivateEventForPageLink(ComponentPageElement rootElement,
-            LinkFactoryListener listener, Holder<Link> holder)
+                                                        LinkFactoryListener listener, Holder<Link> holder)
     {
         IAnswer<Boolean> triggerEventAnswer = newAnswerForPassivateEventTrigger();
 
@@ -318,7 +315,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
     @SuppressWarnings("unchecked")
     private void train_triggerPassivateEventForActionLink(ComponentPageElement rootElement,
-            LinkFactoryListener listener, Holder<Link> holder)
+                                                          LinkFactoryListener listener, Holder<Link> holder)
     {
         IAnswer<Boolean> triggerEventAnswer = newAnswerForPassivateEventTrigger();
 
@@ -363,7 +360,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                         .getCurrentArguments()[2];
 
                 handler.handleResult(new Object[]
-                { "foo", "bar" }, null, null);
+                        {"foo", "bar"}, null, null);
 
                 return true;
             }
@@ -372,7 +369,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
     @SuppressWarnings("unchecked")
     private void testActionLink(String contextPath, String logicalPageName, String nestedId,
-            String eventName, String expectedURI, Object... context)
+                                String eventName, String expectedURI, Object... context)
     {
         Request request = mockRequest();
         Response response = mockResponse();

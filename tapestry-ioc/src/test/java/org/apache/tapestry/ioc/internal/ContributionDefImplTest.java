@@ -14,21 +14,15 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-
-import java.lang.reflect.Method;
-
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ModuleBuilderSource;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.OrderedConfiguration;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
 
 public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilderSource
 {
@@ -171,22 +165,22 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     }
 
     public void contributeUnorderedParameter(Configuration<UpcaseService> configuration,
-            @InjectService("zip.Zap")
-            UpcaseService service)
+                                             @InjectService("zip.Zap")
+                                             UpcaseService service)
     {
         configuration.add(service);
     }
 
     public void contributeOrderedParameter(OrderedConfiguration<UpcaseService> configuration,
-            @InjectService("zip.Zap")
-            UpcaseService service)
+                                           @InjectService("zip.Zap")
+                                           UpcaseService service)
     {
         configuration.add("fred", service);
     }
 
     public void contributeMappedParameter(MappedConfiguration<String, UpcaseService> configuration,
-            @InjectService("zip.Zap")
-            UpcaseService service)
+                                          @InjectService("zip.Zap")
+                                          UpcaseService service)
     {
         configuration.add("upcase", service);
     }

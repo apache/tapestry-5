@@ -195,7 +195,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         replay();
 
         PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer,
-                bindingSource, messagesSource);
+                                                                bindingSource, messagesSource);
 
         try
         {

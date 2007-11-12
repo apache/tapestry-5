@@ -14,34 +14,34 @@
 
 package org.apache.tapestry.ioc.test;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.easymock.EasyMock;
 import org.easymock.IExpectationSetters;
 import org.easymock.IMocksControl;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Manages a set of EasyMock mock objects. Used as a base class for test cases.
- * <p>
+ * <p/>
  * Extends from {@link org.testng.Assert} to bring in all the public static assert methods without
  * requiring extra imports.
- * <p>
+ * <p/>
  * Provides a common mock factory method, {@link #newMock(Class)}. A single <em>standard</em>
  * mock control is used for all mock objects. Standard mocks do not care about the exact order in
  * which methods are invoked, though they are as rigourous as strict mocks when checking that
  * parameters are the correct values.
- * <p>
+ * <p/>
  * This base class is created with the intention of use within a TestNG test suite; if using JUnit,
  * you can get the same functionality using {@link MockTester}.
- * <p>
+ * <p/>
  * This class is thread safe (it uses a thread local to store the mock control). In theory, this
  * should allow TestNG to execute tests in parallel. Unfortunately, as of this writing (TestNG 5.1
  * and maven-surefire 2.8-SNAPSHOT) parallel execution does not always work fully and consistently,
  * some tests are dropped, and so Tapestry does not make use of TestNG parallel execution.
- * 
+ *
  * @see EasyMock#createControl()
  * @see MockTester
  */
@@ -78,11 +78,9 @@ public class TestBase extends Assert
     /**
      * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong>
      * check order, but does fail on any unexpected method invocations.
-     * 
-     * @param <T>
-     *            the type of the mock object
-     * @param mockClass
-     *            the class to mock
+     *
+     * @param <T>       the type of the mock object
+     * @param mockClass the class to mock
      * @return the mock object, ready for training
      */
     protected final <T> T newMock(Class<T> mockClass)
@@ -111,9 +109,8 @@ public class TestBase extends Assert
     /**
      * Convienience for {@link EasyMock#expectLastCall()} with
      * {@link IExpectationSetters#andThrow(Throwable)}.
-     * 
-     * @param throwable
-     *            the exception to be thrown by the most recent method call on any mock
+     *
+     * @param throwable the exception to be thrown by the most recent method call on any mock
      */
     protected final void setThrowable(Throwable throwable)
     {
@@ -132,7 +129,7 @@ public class TestBase extends Assert
 
     /**
      * Convienience for {@link EasyMock#expect(Object)}.
-     * 
+     *
      * @param <T>
      * @param value
      * @return expectation setter, for setting return value, etc.
@@ -145,11 +142,9 @@ public class TestBase extends Assert
 
     /**
      * Asserts that the message property of the throwable contains each of the provided substrings.
-     * 
-     * @param t
-     *            throwable to check
-     * @param substrings
-     *            some number of expected substrings
+     *
+     * @param t          throwable to check
+     * @param substrings some number of expected substrings
      */
     protected final void assertMessageContains(Throwable t, String... substrings)
     {
@@ -163,13 +158,10 @@ public class TestBase extends Assert
      * Compares two lists for equality; first all the elements are individually compared for
      * equality (if the lists are of unequal length, only elements up to the shorter length are
      * compared). Then the length of the lists are compared. This generally gives
-     * 
-     * @param <T>
-     *            type of objects to compare
-     * @param actual
-     *            actual values to check
-     * @param expected
-     *            expected values
+     *
+     * @param <T>      type of objects to compare
+     * @param actual   actual values to check
+     * @param expected expected values
      */
     protected final <T> void assertListsEquals(List<T> actual, List<T> expected)
     {
@@ -185,13 +177,10 @@ public class TestBase extends Assert
 
     /**
      * Convenience for {@link #assertListsEquals(List, List)}.
-     * 
-     * @param <T>
-     *            tyoe of objects to compare
-     * @param actual
-     *            actual values to check
-     * @param expected
-     *            expected values
+     *
+     * @param <T>      tyoe of objects to compare
+     * @param actual   actual values to check
+     * @param expected expected values
      */
     protected final <T> void assertListsEquals(List<T> actual, T... expected)
     {
@@ -200,13 +189,10 @@ public class TestBase extends Assert
 
     /**
      * Convenience for {@link #assertListsEquals(List, List)}.
-     * 
-     * @param <T>
-     *            tyoe of objects to compare
-     * @param actual
-     *            actual values to check
-     * @param expected
-     *            expected values
+     *
+     * @param <T>      tyoe of objects to compare
+     * @param actual   actual values to check
+     * @param expected expected values
      */
     protected final <T> void assertArraysEqual(T[] actual, T... expected)
     {

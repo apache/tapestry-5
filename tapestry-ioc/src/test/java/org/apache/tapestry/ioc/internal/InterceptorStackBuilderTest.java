@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static java.util.Arrays.asList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceDecorator;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.testng.annotations.Test;
+
+import static java.util.Arrays.asList;
+import java.util.List;
 
 public class InterceptorStackBuilderTest extends IOCInternalTestCase
 {

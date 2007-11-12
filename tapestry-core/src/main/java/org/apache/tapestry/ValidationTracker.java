@@ -14,9 +14,9 @@
 
 package org.apache.tapestry;
 
-import java.util.List;
-
 import org.apache.tapestry.corelib.components.Loop;
+
+import java.util.List;
 
 /**
  * Tracks information related to user input validations. This information is:
@@ -24,19 +24,19 @@ import org.apache.tapestry.corelib.components.Loop;
  * <li>The input values provided by the user.
  * <li>Any validation exceptions associated with input fields.
  * </ul>
- * <p>
+ * <p/>
  * The tracker must differentiate between components (which will implement the {@link Field}
  * interfaces) and fields. It is a one to many relationship, because each field may be called upon
  * to render itself multiple times within a request, because of {@link Loop} or other similar
  * components.
- * <p>
+ * <p/>
  * Internally, the tracker indexes its information in terms of the {@link Field#getElementName()}
  * for each rendering of the component (the mechanics of Tapestry ensures that this is unique within
  * the form).
- * <p>
+ * <p/>
  * Validation trackers must be serializable, as they will almost always be stored into the
  * HttpSession.
- * <p>
+ * <p/>
  * Trackers are used by only a single form within a single page; they are not threadsafe.
  */
 public interface ValidationTracker
@@ -45,21 +45,21 @@ public interface ValidationTracker
      * Called by a field to record the exact input from the user, prior to any validation. If the
      * form is redisplayed (to present errors), the input value will be sent back to the user for
      * correction.
-     * 
-     * @param field
-     *            the field recording the input
-     * @param input
-     *            the value obtained from the forms submission
+     *
+     * @param field the field recording the input
+     * @param input the value obtained from the forms submission
      */
     void recordInput(Field field, String input);
 
-    /** Returns a previously recorded input value. */
+    /**
+     * Returns a previously recorded input value.
+     */
     String getInput(Field field);
 
     /**
      * Records an error message for a field. The error message is primarily derived from a
      * {@link ValidationException} thrown by a {@link Validator} or {@link Translator}.
-     * 
+     *
      * @param field
      * @param errorMessage
      */
@@ -68,7 +68,7 @@ public interface ValidationTracker
     /**
      * Records an error message that is not associated with any specific field. This often reflects
      * some amount of cross-form validation.
-     * 
+     *
      * @param errorMessage
      */
     void recordError(String errorMessage);
@@ -76,16 +76,20 @@ public interface ValidationTracker
     /**
      * For a given field, determines if the field is "in error", meaning that an error message has
      * been previously recorded for the field.
-     * 
+     *
      * @param field
      * @return true if an error message is present
      */
     boolean inError(Field field);
 
-    /** Returns a previously recorded error message. */
+    /**
+     * Returns a previously recorded error message.
+     */
     String getError(Field field);
 
-    /** Returns true if any field contains an error. */
+    /**
+     * Returns true if any field contains an error.
+     */
     boolean getHasErrors();
 
     /**
@@ -95,6 +99,8 @@ public interface ValidationTracker
      */
     List<String> getErrors();
 
-    /** Clears all information stored by the tracker. */
+    /**
+     * Clears all information stored by the tracker.
+     */
     void clear();
 }

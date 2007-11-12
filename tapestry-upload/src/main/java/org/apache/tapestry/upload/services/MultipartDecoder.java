@@ -23,8 +23,7 @@ public interface MultipartDecoder
 {
 
     /**
-     * @param parameterName
-     *            Name of the query parameter associated with the uploaded file
+     * @param parameterName Name of the query parameter associated with the uploaded file
      * @return a file upload with the given name, or null if no such file upload was in the request.
      */
     UploadedFile getFileUpload(String parameterName);
@@ -33,9 +32,8 @@ public interface MultipartDecoder
      * Decodes the request, returning a new {@link javax.servlet.http.HttpServletRequest}
      * implementation that will allow access to the form fields submitted in the request (but omits
      * uploaded files).
-     * 
-     * @param request
-     *            The incoming servlet request
+     *
+     * @param request The incoming servlet request
      * @return decoded http request
      */
     HttpServletRequest decode(HttpServletRequest request);

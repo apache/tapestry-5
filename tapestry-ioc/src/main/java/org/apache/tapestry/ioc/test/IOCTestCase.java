@@ -14,30 +14,7 @@
 
 package org.apache.tapestry.ioc.test;
 
-import static org.easymock.EasyMock.isA;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Locale;
-
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.LoggerSource;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.MessageFormatter;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceResources;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
@@ -46,9 +23,17 @@ import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.MasterObjectProvider;
+import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 
-/** Add factory and trainer methods for the public interfaces of Tapestry IOC. */
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Locale;
+
+/**
+ * Add factory and trainer methods for the public interfaces of Tapestry IOC.
+ */
 public class IOCTestCase extends TestBase
 {
     protected final Registry buildRegistry(Class... moduleClasses)
@@ -83,7 +68,9 @@ public class IOCTestCase extends TestBase
         return findMethod(this, methodName);
     }
 
-    /** Combines a series of lines by forming a string with a line separator after each line. */
+    /**
+     * Combines a series of lines by forming a string with a line separator after each line.
+     */
     protected final String join(String... lines)
     {
         StringBuilder result = new StringBuilder();
@@ -170,7 +157,9 @@ public class IOCTestCase extends TestBase
         return newMock(Resource.class);
     }
 
-    /** Frequently used as a placeholder for an arbitrary service (but its nice and simple). */
+    /**
+     * Frequently used as a placeholder for an arbitrary service (but its nice and simple).
+     */
     protected final Runnable mockRunnable()
     {
         return newMock(Runnable.class);
@@ -222,7 +211,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected <S, T> void train_coerce(TypeCoercer coercer, S input, Class<T> expectedType,
-            T coercedValue)
+                                       T coercedValue)
     {
         expect(coercer.coerce(input, expectedType)).andReturn(coercedValue);
     }
@@ -233,7 +222,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected final void train_createInterceptor(ServiceDecorator decorator, Object coreObject,
-            Object interceptor)
+                                                 Object interceptor)
     {
         expect(decorator.createInterceptor(coreObject)).andReturn(interceptor);
     }
@@ -264,7 +253,9 @@ public class IOCTestCase extends TestBase
         expect(base.forLocale(locale)).andReturn(resource);
     }
 
-    /** Have to put the result before the varargs. */
+    /**
+     * Have to put the result before the varargs.
+     */
     protected void train_format(MessageFormatter formatter, String result, Object... arguments)
     {
         expect(formatter.format(arguments)).andReturn(result);
@@ -286,7 +277,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected final void train_getMessageFormatter(Messages messages, String key,
-            MessageFormatter formatter)
+                                                   MessageFormatter formatter)
     {
         expect(messages.getFormatter(key)).andReturn(formatter).atLeastOnce();
     }
@@ -297,13 +288,13 @@ public class IOCTestCase extends TestBase
     }
 
     protected final <T> void train_getService(ObjectLocator locator, Class<T> serviceInterface,
-            T service)
+                                              T service)
     {
         expect(locator.getService(serviceInterface)).andReturn(service);
     }
 
     protected final <T> void train_getService(ObjectLocator locator, String serviceId,
-            Class<T> serviceInterface, T service)
+                                              Class<T> serviceInterface, T service)
     {
         expect(locator.getService(serviceId, serviceInterface)).andReturn(service);
     }
@@ -325,7 +316,7 @@ public class IOCTestCase extends TestBase
     }
 
     protected final void train_getServiceInterface(ServiceResources resources,
-            Class serviceInterface)
+                                                   Class serviceInterface)
     {
         expect(resources.getServiceInterface()).andReturn(serviceInterface).atLeastOnce();
     }
@@ -347,13 +338,13 @@ public class IOCTestCase extends TestBase
     }
 
     protected final void train_matches(DecoratorDef decoratorDef, ServiceDef serviceDef,
-            boolean matches)
+                                       boolean matches)
     {
         expect(decoratorDef.matches(serviceDef)).andReturn(matches);
     }
 
     protected final <T> void train_provide(ObjectProvider provider, Class<T> objectType,
-            AnnotationProvider annotationProvider, ObjectLocator locator, T object)
+                                           AnnotationProvider annotationProvider, ObjectLocator locator, T object)
     {
         expect(provider.provide(objectType, annotationProvider, locator)).andReturn(object);
     }

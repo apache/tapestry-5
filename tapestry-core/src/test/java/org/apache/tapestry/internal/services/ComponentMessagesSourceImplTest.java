@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Messages;
@@ -24,6 +22,8 @@ import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 /**
  * Tests {@link ComponentMessagesSourceImpl} as well as {@link MessagesSourceImpl} (which contains
@@ -206,7 +206,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         forceCacheClear();
 
         ComponentMessagesSource source = new ComponentMessagesSourceImpl(_simpleComponentResource,
-                "NoSuchAppCatalog.properties");
+                                                                         "NoSuchAppCatalog.properties");
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);
 

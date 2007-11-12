@@ -14,35 +14,34 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.ioc.ObjectProvider;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.ioc.ObjectProvider;
 
 /**
  * This annotation serves two similar purposes: it marks parameters that should be injected in the
  * IoC container, and it marks fields that should be injected inside Tapestry components.
- * <p>
+ * <p/>
  * In terms of the IoC container; normally, resources take precedence over annotations when
  * injecting. The Inject annotation overrides this default, forcing the resolution of the parameters
  * value via the master {@link ObjectProvider}, even when the parameter's type matches a type that
  * is normally a resource. This is most often used in conjunction with {@link Value} annotation when
  * injecting a string, as normally, the String would be matched as the service id.
- * <p>
+ * <p/>
  * In terms of the IoC container, the Inject annotation is only used on parameters to service
  * builder methods and constructors. However, inside Tapestry components (<em>and only inside components</em>),
  * it may be applied to fields. On fields that require injection, the Inject annotation is
  * <em>required</em>.
- * 
+ *
  * @see ObjectProvider
  */
 @Target(
-{ PARAMETER, FIELD })
+        {PARAMETER, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface Inject

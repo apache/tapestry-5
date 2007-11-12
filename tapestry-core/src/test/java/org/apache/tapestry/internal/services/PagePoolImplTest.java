@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.contains;
-
-import java.util.Locale;
-
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.ComponentClassResolver;
+import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class PagePoolImplTest extends InternalBaseTestCase
 {

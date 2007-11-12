@@ -21,13 +21,13 @@ import org.apache.tapestry.services.BindingFactory;
 
 /**
  * Binding factory that treats the expression as a literal string. The simplest form of binding.
- * 
+ *
  * @see org.apache.tapestry.internal.bindings.LiteralBinding
  */
 public class LiteralBindingFactory implements BindingFactory
 {
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-            String expression, Location location)
+                              String expression, Location location)
     {
         return new LiteralBinding(description, expression, location);
     }

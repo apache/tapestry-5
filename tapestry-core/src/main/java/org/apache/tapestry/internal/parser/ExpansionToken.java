@@ -20,8 +20,6 @@ import org.apache.tapestry.ioc.Location;
  * A token containing an expression expansion from the template. Expression expansions look like Ant
  * variables, i.e., "${xyz}", where xyz is a binding expression. It may have a prefix or not
  * ("prop:" will be the default prefix if not specified).
- * 
- * 
  */
 public class ExpansionToken extends TemplateToken
 {

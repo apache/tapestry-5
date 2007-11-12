@@ -14,12 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 
 import java.util.Map;
-
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 
 public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupListener
 {

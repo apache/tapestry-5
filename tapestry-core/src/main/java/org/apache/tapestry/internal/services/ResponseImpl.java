@@ -14,16 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.services.Response;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.services.Response;
 
 /**
  * Implementation of {@link Response} that wraps around an underlying {@link HttpServletResponse}.
@@ -89,14 +87,13 @@ public class ResponseImpl implements Response
 
     public void setHeader(String name, String value)
     {
-        _response.setHeader(name,value);
+        _response.setHeader(name, value);
     }
 
     public void setIntHeader(String name, int value)
     {
         _response.setIntHeader(name, value);
     }
-
 
 
 }

@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.UnsupportedEncodingException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
 
 public class RequestImplTest extends InternalBaseTestCase
 {
@@ -125,10 +124,10 @@ public class RequestImplTest extends InternalBaseTestCase
     public Object[][] xhr_inputs()
     {
         return new Object[][]
-        {
-        { null, false },
-        { "", false },
-        { "some other value", false },
-        { "XmlHttpRequest", true } };
+                {
+                        {null, false},
+                        {"", false},
+                        {"some other value", false},
+                        {"XmlHttpRequest", true}};
     }
 }

@@ -20,12 +20,12 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Service used to store the current request objects, both the Servlet API versions, and the
  * Tapestry generic versions.
- * 
- * 
  */
 public interface RequestGlobals
 {
-    /** Stores the servlet API request and response objects, for access via the properties. */
+    /**
+     * Stores the servlet API request and response objects, for access via the properties.
+     */
     void store(HttpServletRequest request, HttpServletResponse response);
 
     HttpServletRequest getHTTPServletRequest();
@@ -34,9 +34,13 @@ public interface RequestGlobals
 
     void store(Request request, Response response);
 
-    /** Accessible as injected object "alias:Request". */
+    /**
+     * Accessible as injected object "alias:Request".
+     */
     Request getRequest();
 
-    /** Accessible as injected object "alias:Response". */
+    /**
+     * Accessible as injected object "alias:Response".
+     */
     Response getResponse();
 }

@@ -14,19 +14,18 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.Asset;
+import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.AssetFactory;
 import org.apache.tapestry.services.AssetSource;
+
+import java.util.Locale;
+import java.util.Map;
 
 public class AssetSourceImpl implements AssetSource
 {
@@ -42,7 +41,7 @@ public class AssetSourceImpl implements AssetSource
 
     public AssetSourceImpl(ThreadLocale threadLocale,
 
-    Map<String, AssetFactory> configuration)
+                           Map<String, AssetFactory> configuration)
     {
         _threadLocale = threadLocale;
 

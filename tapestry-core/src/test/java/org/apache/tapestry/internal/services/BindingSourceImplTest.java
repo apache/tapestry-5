@@ -14,18 +14,17 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.BindingSource;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class BindingSourceImplTest extends InternalBaseTestCase
 {

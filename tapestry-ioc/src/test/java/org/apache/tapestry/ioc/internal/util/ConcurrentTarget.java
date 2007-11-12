@@ -117,7 +117,7 @@ public class ConcurrentTarget
             {
                 _counter++;
             }
-        },20, TimeUnit.MILLISECONDS);
+        }, 20, TimeUnit.MILLISECONDS);
     }
 
     public void tryIncrementCounterHard()
@@ -128,7 +128,7 @@ public class ConcurrentTarget
             {
                 _counter = getCounter() + 1;
             }
-        },20,TimeUnit.MILLISECONDS);
+        }, 20, TimeUnit.MILLISECONDS);
     }
 
     public void tryIncrementIfNonNegative()
@@ -144,7 +144,8 @@ public class ConcurrentTarget
     }
 
 
-    public void withRead(Runnable runnable ) {
-        _barrier.withRead(runnable);        
+    public void withRead(Runnable runnable)
+    {
+        _barrier.withRead(runnable);
     }
 }

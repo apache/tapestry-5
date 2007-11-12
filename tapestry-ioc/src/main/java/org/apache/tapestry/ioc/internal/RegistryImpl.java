@@ -14,33 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.IOCConstants;
-import org.apache.tapestry.ioc.LoggerSource;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceLifecycle;
-import org.apache.tapestry.ioc.ServiceResources;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
@@ -48,23 +22,18 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.RegistryShutdownHubImpl;
 import org.apache.tapestry.ioc.internal.services.ThreadCleanupHubImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.Orderer;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.RegistryShutdownHub;
-import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
-import org.apache.tapestry.ioc.services.Status;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.ioc.services.TapestryIOCModule;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
+import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.services.MasterObjectProvider;
 import org.slf4j.Logger;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class RegistryImpl implements Registry, InternalRegistry
 {
@@ -76,7 +45,9 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     private static final String SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID = "ServiceActivityScoreboard";
 
-    /** The set of marker annotations for a builtin service. */
+    /**
+     * The set of marker annotations for a builtin service.
+     */
     private final static Set<Class> BUILTIN = CollectionFactory.newSet();
 
     static
@@ -104,7 +75,9 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     private final LoggerSource _loggerSource;
 
-    /** Map from service id to the Module that contains the service. */
+    /**
+     * Map from service id to the Module that contains the service.
+     */
     private final Map<String, Module> _serviceIdToModule = newCaseInsensitiveMap();
 
     private final Map<String, ServiceLifecycle> _lifecycles = newCaseInsensitiveMap();
@@ -125,7 +98,7 @@ public class RegistryImpl implements Registry, InternalRegistry
     private final Map<Class, List<ServiceDef>> _markerToServiceDef = newMap();
 
     public static final class OrderedConfigurationToOrdererAdaptor<T> implements
-            OrderedConfiguration<T>
+                                                                      OrderedConfiguration<T>
     {
         private final Orderer<T> _orderer;
 
@@ -142,16 +115,13 @@ public class RegistryImpl implements Registry, InternalRegistry
 
     /**
      * Constructs the registry from a set of module definitions and other resources.
-     * 
-     * @param moduleDefs
-     *            defines the modules (and builders, decorators, etc., within)
-     * @param classFactory
-     *            TODO
-     * @param loggerSource
-     *            used to obtain Logger instances
+     *
+     * @param moduleDefs   defines the modules (and builders, decorators, etc., within)
+     * @param classFactory TODO
+     * @param loggerSource used to obtain Logger instances
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory,
-            LoggerSource loggerSource)
+                        LoggerSource loggerSource)
     {
         _loggerSource = loggerSource;
 
@@ -313,7 +283,9 @@ public class RegistryImpl implements Registry, InternalRegistry
         _registryShutdownHub.fireRegistryDidShutdown();
     }
 
-    /** Internal access, usually from another module. */
+    /**
+     * Internal access, usually from another module.
+     */
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
         _lock.check();
@@ -411,7 +383,7 @@ public class RegistryImpl implements Registry, InternalRegistry
             ObjectProvider contribution = new ObjectProvider()
             {
                 public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                        ObjectLocator locator)
+                                     ObjectLocator locator)
                 {
                     return findServiceByMarkerAndType(objectType, annotationProvider);
                 }
@@ -424,7 +396,7 @@ public class RegistryImpl implements Registry, InternalRegistry
     }
 
     public <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType,
-            Class<V> objectType)
+                                                   Class<V> objectType)
     {
         _lock.check();
 
@@ -469,8 +441,9 @@ public class RegistryImpl implements Registry, InternalRegistry
     }
 
     private <K, V> void addToMappedConfiguration(MappedConfiguration<K, V> configuration,
-            Map<K, ContributionDef> keyToContribution, Class<K> keyClass, Class<V> valueType,
-            ServiceDef serviceDef, Module module)
+                                                 Map<K, ContributionDef> keyToContribution, Class<K> keyClass,
+                                                 Class<V> valueType,
+                                                 ServiceDef serviceDef, Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
@@ -482,7 +455,7 @@ public class RegistryImpl implements Registry, InternalRegistry
         boolean debug = logger.isDebugEnabled();
 
         ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory,
-                logger);
+                                                         logger);
 
         for (ContributionDef def : contributions)
         {
@@ -497,7 +470,7 @@ public class RegistryImpl implements Registry, InternalRegistry
     }
 
     private <T> void addToUnorderedConfiguration(Configuration<T> configuration,
-            Class<T> valueType, ServiceDef serviceDef, Module module)
+                                                 Class<T> valueType, ServiceDef serviceDef, Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
@@ -509,12 +482,12 @@ public class RegistryImpl implements Registry, InternalRegistry
         boolean debug = logger.isDebugEnabled();
 
         ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory,
-                logger);
+                                                         logger);
 
         for (ContributionDef def : contributions)
         {
             Configuration<T> validating = new ValidatingConfigurationWrapper<T>(serviceId, logger,
-                    valueType, def, configuration);
+                                                                                valueType, def, configuration);
 
             if (debug) logger.debug(IOCMessages.invokingMethod(def));
 
@@ -523,7 +496,7 @@ public class RegistryImpl implements Registry, InternalRegistry
     }
 
     private <T> void addToOrderedConfiguration(OrderedConfiguration<T> configuration,
-            Class<T> valueType, ServiceDef serviceDef, Module module)
+                                               Class<T> valueType, ServiceDef serviceDef, Module module)
     {
         String serviceId = serviceDef.getServiceId();
         Set<ContributionDef> contributions = module.getContributorDefsForService(serviceId);
@@ -534,7 +507,7 @@ public class RegistryImpl implements Registry, InternalRegistry
         boolean debug = logger.isDebugEnabled();
 
         ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory,
-                logger);
+                                                         logger);
 
         for (ContributionDef def : contributions)
         {
@@ -630,7 +603,7 @@ public class RegistryImpl implements Registry, InternalRegistry
             if (decorators.isEmpty()) continue;
 
             ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef,
-                    _classFactory, logger);
+                                                                  _classFactory, logger);
 
             for (DecoratorDef dd : decorators)
             {
@@ -651,12 +624,12 @@ public class RegistryImpl implements Registry, InternalRegistry
     }
 
     private <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider,
-            ObjectLocator locator)
+                            ObjectLocator locator)
     {
         _lock.check();
 
         AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider
-                : new NullAnnotationProvider();
+                                               : new NullAnnotationProvider();
 
         // We do a check here for known marker/type combinations, so that you can use a marker
         // annotation
@@ -749,7 +722,9 @@ public class RegistryImpl implements Registry, InternalRegistry
         return getSymbolSource().expandSymbols(input);
     }
 
-    /** Defers obtaining the symbol source until actually needed. */
+    /**
+     * Defers obtaining the symbol source until actually needed.
+     */
     private synchronized SymbolSource getSymbolSource()
     {
         if (_symbolSource == null)
@@ -794,7 +769,7 @@ public class RegistryImpl implements Registry, InternalRegistry
         String description = _classFactory.getConstructorLocation(constructor).toString();
 
         throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure),
-                failure);
+                                   failure);
     }
 
     public <T> T proxy(Class<T> interfaceClass, final Class<? extends T> implementationClass)

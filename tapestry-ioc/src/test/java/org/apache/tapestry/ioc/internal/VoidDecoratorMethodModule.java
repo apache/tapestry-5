@@ -16,14 +16,12 @@ package org.apache.tapestry.ioc.internal;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImplTest}.
- * 
- * 
  */
 public class VoidDecoratorMethodModule
 {
     /**
      * Decorator methods are not supposed to return void. They can return null.
-     * 
+     *
      * @param delegate
      */
     public void decorateVoid(Object delegate)

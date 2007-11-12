@@ -20,7 +20,8 @@ import org.apache.tapestry.ioc.StringHolderImpl;
 
 public class NonStaticBindMethodModule
 {
-    public void bind(ServiceBinder binder) {
+    public void bind(ServiceBinder binder)
+    {
         binder.bind(StringHolder.class, StringHolderImpl.class);
     }
 }

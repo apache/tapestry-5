@@ -14,16 +14,11 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.lang.reflect.Modifier;
-
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodIterator;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.services.StrategyBuilder;
+import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
+
+import java.lang.reflect.Modifier;
 
 public class StrategyBuilderImpl implements StrategyBuilder
 {
@@ -63,7 +58,7 @@ public class StrategyBuilderImpl implements StrategyBuilder
 
         cf.addField("_registry", Modifier.PRIVATE | Modifier.FINAL, StrategyRegistry.class);
         cf.addConstructor(new Class[]
-        { StrategyRegistry.class }, null, "_registry = $1;");
+                {StrategyRegistry.class}, null, "_registry = $1;");
 
         BodyBuilder builder = new BodyBuilder();
 

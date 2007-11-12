@@ -26,14 +26,11 @@ public interface TypeCoercer
      * primitive, the actual conversion will be to the equivalent wrapper type. In some cases, the
      * TypeCoercer will need to search for an appropriate coercion, and may even combine existing
      * coercions to form new ones; in those cases, the results of the search are cached.
-     * 
-     * @param <S>
-     *            source type (input)
-     * @param <T>
-     *            target type (output)
+     *
+     * @param <S>        source type (input)
+     * @param <T>        target type (output)
      * @param input
-     * @param targetType
-     *            defines the target type
+     * @param targetType defines the target type
      * @return the coerced value
      */
     <S, T> T coerce(S input, Class<T> targetType);
@@ -42,20 +39,18 @@ public interface TypeCoercer
      * Used primarily inside test suites, this method performs the same steps as
      * {@link #coerce(Object, Class)}, but returns a string describing the series of coercision,
      * such as "Object --&gt; String --&gt; Long --&gt; Integer".
-     * 
-     * @param <S>
-     *            source type (input)
-     * @param <T>
-     *            target type (output)
-     * @param inputType
-     *            the source coercion type (use void.class for coercions from null)
-     * @param targetType
-     *            defines the target type
+     *
+     * @param <S>        source type (input)
+     * @param <T>        target type (output)
+     * @param inputType  the source coercion type (use void.class for coercions from null)
+     * @param targetType defines the target type
      * @return a string identifying the series of coercions, or the empty string if no coercion is
      *         necessary
      */
     <S, T> String explain(Class<S> inputType, Class<T> targetType);
 
-    /** Clears cached information stored by the TypeCoercer. */
+    /**
+     * Clears cached information stored by the TypeCoercer.
+     */
     void clearCache();
 }

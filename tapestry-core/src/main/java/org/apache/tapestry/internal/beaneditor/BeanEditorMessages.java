@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.beaneditor;
 
-import java.util.Collection;
-
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+
+import java.util.Collection;
 
 class BeanEditorMessages
 {
@@ -30,7 +30,7 @@ class BeanEditorMessages
     }
 
     static String unknownProperty(Class beanType, String propertyName,
-            Collection<String> propertyNames)
+                                  Collection<String> propertyNames)
     {
         return MESSAGES.format("unknown-property", beanType.getName(), propertyName, InternalUtils
                 .joinSorted(propertyNames));

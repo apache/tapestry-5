@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
@@ -23,6 +21,8 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentMessagesSource;
+
+import java.util.Locale;
 
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
@@ -89,23 +89,23 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
         // If the application catalog exists, set it up as the root, otherwise use null.
 
         MessagesBundle appCatalogBundle = appCatalogResource.toURL() == null ? null
-                : new MessagesBundle()
-                {
-                    public Resource getBaseResource()
-                    {
-                        return appCatalogResource;
-                    }
+                                          : new MessagesBundle()
+        {
+            public Resource getBaseResource()
+            {
+                return appCatalogResource;
+            }
 
-                    public Object getId()
-                    {
-                        return _appCatalog;
-                    }
+            public Object getId()
+            {
+                return _appCatalog;
+            }
 
-                    public MessagesBundle getParent()
-                    {
-                        return null;
-                    }
-                };
+            public MessagesBundle getParent()
+            {
+                return null;
+            }
+        };
 
         MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
 

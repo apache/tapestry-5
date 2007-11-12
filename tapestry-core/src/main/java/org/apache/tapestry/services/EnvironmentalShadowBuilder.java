@@ -30,10 +30,9 @@ public interface EnvironmentalShadowBuilder
      * {@link Environment#peekRequired(Class)}. Note that at the time this method is invoked, the
      * Environment service may still be virtual, and will often not yet have been loaded with
      * values, and that's OK, the resolution is deferred to the instant a method is invoked.
-     * 
+     *
      * @param <T>
-     * @param serviceType
-     *            the service type, which is used to obtained the delegate instance
+     * @param serviceType the service type, which is used to obtained the delegate instance
      * @return a proxy to the service
      */
     <T> T build(Class<T> serviceType);

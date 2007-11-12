@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class ObjectComponentEventResultProcessorTest extends TapestryTestCase
 {

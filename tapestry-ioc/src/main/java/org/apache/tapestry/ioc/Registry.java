@@ -24,7 +24,7 @@ public interface Registry extends ObjectLocator
     /**
      * Invoked at the end of a request to discard any thread-specific information accumulated during
      * the current request.
-     * 
+     *
      * @see org.apache.tapestry.ioc.services.ThreadCleanupHub
      * @see org.apache.tapestry.ioc.services.ThreadCleanupListener
      */
@@ -34,7 +34,7 @@ public interface Registry extends ObjectLocator
      * Shuts down a Registry instance. Notifies all listeners that the registry has shutdown.
      * Further method invocations on the Registry are no longer allowed, and the Registry instance
      * should be discarded.
-     * 
+     *
      * @see org.apache.tapestry.ioc.services.RegistryShutdownHub
      * @see org.apache.tapestry.ioc.services.RegistryShutdownListener
      */

@@ -37,13 +37,10 @@ public interface Cookies
 
     /**
      * As with {@link #writeCookieValue(String, String)} but an explicit maximum age may be set.
-     * 
-     * @param name
-     *            the name of the cookie
-     * @param value
-     *            the value to be stored in the cookie
-     * @param maxAge
-     *            the maximum age, in seconds, to store the cookie
+     *
+     * @param name   the name of the cookie
+     * @param value  the value to be stored in the cookie
+     * @param maxAge the maximum age, in seconds, to store the cookie
      */
 
     void writeCookieValue(String name, String value, int maxAge);

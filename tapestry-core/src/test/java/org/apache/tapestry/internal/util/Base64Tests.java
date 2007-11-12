@@ -15,15 +15,14 @@
 package org.apache.tapestry.internal.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.io.EOFException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * Tests for {@link Base64InputStream} and {@link Base64OutputStream}, etc.
@@ -86,7 +85,7 @@ public class Base64Tests extends Assert
     public void checks_for_eof() throws Exception
     {
         String[] values =
-        { "fred", "barney", "wilma" };
+                {"fred", "barney", "wilma"};
 
         Base64ObjectOutputStream os = new Base64ObjectOutputStream();
 

@@ -14,40 +14,23 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static java.lang.String.format;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.ServiceDecorator;
-import org.apache.tapestry.ioc.ServiceResources;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.services.JustInTimeObjectCreator;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.Status;
-import org.apache.tapestry.ioc.services.TapestryIOCModule;
+import org.apache.tapestry.ioc.services.*;
 import org.slf4j.Logger;
+
+import static java.lang.String.format;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 public class ModuleImpl implements Module
 {
@@ -76,11 +59,13 @@ public class ModuleImpl implements Module
     // the constructor. Guarded by MUTEX.
     private boolean _insideConstructor;
 
-    /** Keyed on fully qualified service id; values are instantiated services (proxies). */
+    /**
+     * Keyed on fully qualified service id; values are instantiated services (proxies).
+     */
     private final Map<String, Object> _services = newCaseInsensitiveMap();
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker,
-            ModuleDef moduleDef, ClassFactory classFactory, Logger logger)
+                      ModuleDef moduleDef, ClassFactory classFactory, Logger logger)
     {
         _registry = registry;
         _tracker = tracker;
@@ -155,13 +140,11 @@ public class ModuleImpl implements Module
 
     /**
      * Locates the service proxy for a particular service (from the service definition).
-     * <p>
+     * <p/>
      * Access is synchronized via {@link #MUTEX}.
-     * 
-     * @param def
-     *            defines the service
-     * @param eagerLoadProxies
-     *            TODO
+     *
+     * @param def              defines the service
+     * @param eagerLoadProxies TODO
      * @return the service proxy
      */
     private Object findOrCreate(ServiceDef def, List<EagerLoadServiceProxy> eagerLoadProxies)
@@ -203,9 +186,8 @@ public class ModuleImpl implements Module
     /**
      * Creates the service and updates the cache of created services. Access is synchronized via
      * {@link #MUTEX}.
-     * 
-     * @param eagerLoadProxies
-     *            a list into which any eager loaded proxies should be added
+     *
+     * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
     private Object create(ServiceDef def, List<EagerLoadServiceProxy> eagerLoadProxies)
     {
@@ -218,7 +200,7 @@ public class ModuleImpl implements Module
         try
         {
             ServiceBuilderResources resources = new ServiceResourcesImpl(_registry, this, def,
-                    _classFactory, logger);
+                                                                         _classFactory, logger);
 
             // Build up a stack of operations that will be needed to realize the service
             // (by the proxy, at a later date).
@@ -234,7 +216,7 @@ public class ModuleImpl implements Module
             if (!serviceInterface.isInterface()) return creator.createObject();
 
             creator = new LifecycleWrappedServiceCreator(_registry, def.getServiceScope(),
-                    resources, creator);
+                                                         resources, creator);
 
             // Don't allow the core IOC services services to be decorated.
 
@@ -246,7 +228,7 @@ public class ModuleImpl implements Module
             creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
 
             JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(_tracker, creator,
-                    serviceId);
+                                                                           serviceId);
 
             Object proxy = createProxy(resources, delegate);
 
@@ -280,7 +262,9 @@ public class ModuleImpl implements Module
         }
     }
 
-    /** Access synchronized by MUTEX. */
+    /**
+     * Access synchronized by MUTEX.
+     */
     private Object instantiateModuleBuilder()
     {
         Class builderClass = _moduleDef.getBuilderClass();
@@ -363,7 +347,7 @@ public class ModuleImpl implements Module
     }
 
     private Object createProxyInstance(ObjectCreator creator, String serviceId,
-            Class serviceInterface, String description)
+                                       Class serviceInterface, String description)
     {
         ClassFab cf = _registry.newClass(serviceInterface);
 

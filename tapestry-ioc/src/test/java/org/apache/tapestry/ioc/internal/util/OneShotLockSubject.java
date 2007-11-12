@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * 
+ *
  */
 package org.apache.tapestry.ioc.internal.util;
 

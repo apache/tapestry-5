@@ -14,19 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.PersistentFieldBundle;
-import org.apache.tapestry.services.TransformConstants;
-import org.apache.tapestry.services.TransformMethodSignature;
-import org.apache.tapestry.services.TransformUtils;
+import org.apache.tapestry.services.*;
+
+import static java.lang.String.format;
+import java.lang.reflect.Modifier;
 
 /**
  * Converts fields with the {@link Persist} annotation into persistent fields.
@@ -52,13 +46,13 @@ public class PersistWorker implements ComponentClassTransformWorker
      * <li>When the page attaches, pull the persisted value for the field out of the
      * {@link PersistentFieldBundle}</li>
      * </ul>
-     * 
+     *
      * @param fieldName
      * @param transformation
      * @param model
      */
     private void makeFieldPersistent(String fieldName, ClassTransformation transformation,
-            MutableComponentModel model)
+                                     MutableComponentModel model)
     {
         String fieldType = transformation.getFieldType(fieldName);
         Persist annotation = transformation.getFieldAnnotation(fieldName, Persist.class);
@@ -94,8 +88,8 @@ public class PersistWorker implements ComponentClassTransformWorker
         builder.end();
 
         transformation.addMethod(new TransformMethodSignature(Modifier.PRIVATE, "void", writeMethodName,
-                new String[]
-                { fieldType }, null), builder.toString());
+                                                              new String[]
+                                                                      {fieldType}, null), builder.toString());
 
         transformation.replaceWriteAccess(fieldName, writeMethodName);
 

@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.services.Heartbeat;
+
+import java.util.List;
 
 public class HeartbeatImpl implements Heartbeat
 {

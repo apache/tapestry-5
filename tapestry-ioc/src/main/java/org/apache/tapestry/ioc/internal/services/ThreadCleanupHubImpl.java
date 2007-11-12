@@ -15,12 +15,11 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 public class ThreadCleanupHubImpl implements ThreadCleanupHub
 {

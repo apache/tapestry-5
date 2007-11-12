@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.Link;
 import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 /**
  * The standard response generator which converts a {@link Link} into a

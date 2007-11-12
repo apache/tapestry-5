@@ -41,9 +41,8 @@ public class PageLinkInvoker implements ComponentInvoker
 
     /**
      * Click on the page link.
-     * 
-     * @param invocation
-     *            The ComponentInvocation object corresponding to the page link.
+     *
+     * @param invocation The ComponentInvocation object corresponding to the page link.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document invoke(ComponentInvocation invocation)

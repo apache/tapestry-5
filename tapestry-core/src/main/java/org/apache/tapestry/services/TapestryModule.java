@@ -14,51 +14,9 @@
 
 package org.apache.tapestry.services;
 
-import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.net.URL;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.logging.Log;
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.SelectModel;
-import org.apache.tapestry.StreamResponse;
-import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.Translator;
-import org.apache.tapestry.Validator;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.AfterRenderBody;
-import org.apache.tapestry.annotations.AfterRenderTemplate;
-import org.apache.tapestry.annotations.BeforeRenderBody;
-import org.apache.tapestry.annotations.BeforeRenderTemplate;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.CleanupRender;
-import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.annotations.PageAttached;
-import org.apache.tapestry.annotations.PageDetached;
-import org.apache.tapestry.annotations.PageLoaded;
-import org.apache.tapestry.annotations.Path;
-import org.apache.tapestry.annotations.Service;
-import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.*;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
 import org.apache.tapestry.dom.Document;
@@ -67,51 +25,18 @@ import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry.internal.beaneditor.ValidateAnnotationConstraintGenerator;
-import org.apache.tapestry.internal.bindings.AssetBindingFactory;
-import org.apache.tapestry.internal.bindings.BlockBindingFactory;
-import org.apache.tapestry.internal.bindings.ComponentBindingFactory;
-import org.apache.tapestry.internal.bindings.LiteralBinding;
-import org.apache.tapestry.internal.bindings.LiteralBindingFactory;
-import org.apache.tapestry.internal.bindings.MessageBindingFactory;
-import org.apache.tapestry.internal.bindings.PropBindingFactory;
-import org.apache.tapestry.internal.bindings.TranslateBindingFactory;
-import org.apache.tapestry.internal.bindings.ValidateBindingFactory;
+import org.apache.tapestry.internal.bindings.*;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.grid.ListGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
 import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.util.IntegerRange;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.InjectService;
-import org.apache.tapestry.ioc.annotations.Marker;
-import org.apache.tapestry.ioc.annotations.Primary;
-import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.annotations.Symbol;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.*;
+import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.annotations.*;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ChainBuilder;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.Coercion;
-import org.apache.tapestry.ioc.services.CoercionTuple;
-import org.apache.tapestry.ioc.services.PipelineBuilder;
-import org.apache.tapestry.ioc.services.PropertyAccess;
-import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry.ioc.services.StrategyBuilder;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
@@ -121,13 +46,19 @@ import org.apache.tapestry.translator.IntegerTranslator;
 import org.apache.tapestry.translator.LongTranslator;
 import org.apache.tapestry.translator.StringTranslator;
 import org.apache.tapestry.util.StringToEnumCoercion;
-import org.apache.tapestry.validator.Max;
-import org.apache.tapestry.validator.MaxLength;
-import org.apache.tapestry.validator.Min;
-import org.apache.tapestry.validator.MinLength;
-import org.apache.tapestry.validator.Regexp;
-import org.apache.tapestry.validator.Required;
+import org.apache.tapestry.validator.*;
 import org.slf4j.Logger;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * The root module for Tapestry.
@@ -182,14 +113,14 @@ public final class TapestryModule
 
     public static Alias build(Logger logger,
 
-    @Inject
-    @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
-    String mode,
+                              @Inject
+                              @Symbol(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL)
+                              String mode,
 
-    @InjectService("AliasOverrides")
-    AliasManager overridesManager,
+                              @InjectService("AliasOverrides")
+                              AliasManager overridesManager,
 
-    Collection<AliasContribution> configuration)
+                              Collection<AliasContribution> configuration)
     {
         AliasManager manager = new AliasManagerImpl(logger, configuration);
 
@@ -215,13 +146,13 @@ public final class TapestryModule
      * </dl>
      */
     public static void contributeAlias(Configuration<AliasContribution> configuration,
-            ObjectLocator locator,
+                                       ObjectLocator locator,
 
-            @ComponentLayer
-            ClassFactory componentClassFactory,
+                                       @ComponentLayer
+                                       ClassFactory componentClassFactory,
 
-            @InjectService("DefaultDataTypeAnalyzer")
-            DataTypeAnalyzer dataTypeAnalyzer)
+                                       @InjectService("DefaultDataTypeAnalyzer")
+                                       DataTypeAnalyzer dataTypeAnalyzer)
     {
         add(configuration, locator, ComponentEventResultProcessor.class, ObjectRenderer.class);
 
@@ -231,7 +162,7 @@ public final class TapestryModule
 
     @SuppressWarnings("unchecked")
     private static void add(Configuration<AliasContribution> configuration, ObjectLocator locator,
-            Class... serviceInterfaces)
+                            Class... serviceInterfaces)
     {
         for (Class serviceInterface : serviceInterfaces)
         {
@@ -250,7 +181,7 @@ public final class TapestryModule
      * whose configuration contribution define spot overrides to specific services.
      */
     public static AliasManager buildAliasOverrides(Logger logger,
-            Collection<AliasContribution> configuration)
+                                                   Collection<AliasContribution> configuration)
     {
         return new AliasManagerImpl(logger, configuration);
     }
@@ -488,16 +419,16 @@ public final class TapestryModule
     }
 
     private static void addEditBlock(Configuration<BeanBlockContribution> configuration,
-            String dataType, String blockId)
+                                     String dataType, String blockId)
     {
         configuration.add(new BeanBlockContribution(dataType, "PropertyEditBlocks", blockId, true));
     }
 
     private static void addDisplayBlock(Configuration<BeanBlockContribution> configuration,
-            String dataType, String blockId)
+                                        String dataType, String blockId)
     {
         configuration.add(new BeanBlockContribution(dataType, "PropertyDisplayBlocks", blockId,
-                false));
+                                                    false));
     }
 
     /**
@@ -595,7 +526,7 @@ public final class TapestryModule
         ObjectProvider wrapper = new ObjectProvider()
         {
             public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                    ObjectLocator locator)
+                                 ObjectLocator locator)
             {
                 return alias.getObjectProvider().provide(objectType, annotationProvider, locator);
             }
@@ -614,7 +545,7 @@ public final class TapestryModule
      * this filter.
      */
     public static void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-            Context context, final RequestExceptionHandler exceptionHandler)
+                                                Context context, final RequestExceptionHandler exceptionHandler)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -791,7 +722,7 @@ public final class TapestryModule
     }
 
     private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
-            Class<T> targetType, Coercion<S, T> coercion)
+                                   Class<T> targetType, Coercion<S, T> coercion)
     {
         CoercionTuple<S, T> tuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
 
@@ -799,11 +730,11 @@ public final class TapestryModule
     }
 
     private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            Class<? extends Annotation> annotationClass,
-            TransformMethodSignature lifecycleMethodSignature, String methodAlias)
+                            Class<? extends Annotation> annotationClass,
+                            TransformMethodSignature lifecycleMethodSignature, String methodAlias)
     {
         ComponentClassTransformWorker worker = new PageLifecycleAnnotationWorker(annotationClass,
-                lifecycleMethodSignature, methodAlias);
+                                                                                 lifecycleMethodSignature, methodAlias);
 
         String name = TapestryInternalUtils.lastTerm(annotationClass.getName());
 
@@ -811,15 +742,15 @@ public final class TapestryModule
     }
 
     private static void add(OrderedConfiguration<ComponentClassTransformWorker> configuration,
-            TransformMethodSignature signature, Class<? extends Annotation> annotationClass,
-            boolean reverse)
+                            TransformMethodSignature signature, Class<? extends Annotation> annotationClass,
+                            boolean reverse)
     {
         // make the name match the annotation class name.
 
         String name = TapestryInternalUtils.lastTerm(annotationClass.getName());
 
         configuration.add(name, new ComponentLifecycleMethodWorker(signature, annotationClass,
-                reverse));
+                                                                   reverse));
     }
 
     private final PipelineBuilder _pipelineBuilder;
@@ -858,36 +789,36 @@ public final class TapestryModule
 
     public TapestryModule(PipelineBuilder pipelineBuilder,
 
-    PropertyShadowBuilder shadowBuilder,
+                          PropertyShadowBuilder shadowBuilder,
 
-    RequestGlobals requestGlobals,
+                          RequestGlobals requestGlobals,
 
-    ApplicationGlobals applicationGlobals,
+                          ApplicationGlobals applicationGlobals,
 
-    ChainBuilder chainBuilder,
+                          ChainBuilder chainBuilder,
 
-    RequestPageCache requestPageCache,
+                          RequestPageCache requestPageCache,
 
-    Environment environment,
+                          Environment environment,
 
-    StrategyBuilder strategyBuilder,
+                          StrategyBuilder strategyBuilder,
 
-    ComponentInstantiatorSource componentInstantiatorSource,
+                          ComponentInstantiatorSource componentInstantiatorSource,
 
-    LinkFactory linkFactory,
+                          LinkFactory linkFactory,
 
-    PropertyAccess propertyAccess,
+                          PropertyAccess propertyAccess,
 
-    @ComponentLayer
-    ClassFactory componentClassFactory,
+                          @ComponentLayer
+                          ClassFactory componentClassFactory,
 
-    UpdateListenerHub updateListenerHub, ThreadCleanupHub threadCleanupHub,
+                          UpdateListenerHub updateListenerHub, ThreadCleanupHub threadCleanupHub,
 
-    ComponentTemplateSource componentTemplateSource,
+                          ComponentTemplateSource componentTemplateSource,
 
-    Request request,
+                          Request request,
 
-    ThreadLocale threadLocale)
+                          ThreadLocale threadLocale)
     {
         _pipelineBuilder = pipelineBuilder;
         _shadowBuilder = shadowBuilder;
@@ -931,13 +862,13 @@ public final class TapestryModule
      * "org/apache/tapestry/internal/ValidationMessages".
      */
     public ValidationMessagesSource build(Collection<String> configuration,
-            UpdateListenerHub updateListenerHub,
+                                          UpdateListenerHub updateListenerHub,
 
-            @ClasspathProvider
-            AssetFactory classpathAssetFactory)
+                                          @ClasspathProvider
+                                          AssetFactory classpathAssetFactory)
     {
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
-                classpathAssetFactory.getRootResource());
+                                                                                classpathAssetFactory.getRootResource());
 
         updateListenerHub.addUpdateListener(service);
 
@@ -1016,9 +947,11 @@ public final class TapestryModule
         };
     }
 
-    /** Initializes the application. */
+    /**
+     * Initializes the application.
+     */
     public ApplicationInitializer build(Logger logger,
-            List<ApplicationInitializerFilter> configuration)
+                                        List<ApplicationInitializerFilter> configuration)
     {
         ApplicationInitializer terminator = new ApplicationInitializer()
         {
@@ -1037,10 +970,10 @@ public final class TapestryModule
     }
 
     public HttpServletRequestHandler build(Logger logger,
-            List<HttpServletRequestFilter> configuration,
+                                           List<HttpServletRequestFilter> configuration,
 
-            @InjectService("RequestHandler")
-            final RequestHandler handler)
+                                           @InjectService("RequestHandler")
+                                           final RequestHandler handler)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandler()
         {
@@ -1062,8 +995,8 @@ public final class TapestryModule
     }
 
     public RequestHandler build(Logger logger, List<RequestFilter> configuration,
-            @InjectService("MasterDispatcher")
-            final Dispatcher masterDispatcher)
+                                @InjectService("MasterDispatcher")
+                                final Dispatcher masterDispatcher)
     {
         RequestHandler terminator = new RequestHandler()
         {
@@ -1084,9 +1017,9 @@ public final class TapestryModule
     }
 
     public ServletApplicationInitializer build(Logger logger,
-            List<ServletApplicationInitializerFilter> configuration,
-            @InjectService("ApplicationInitializer")
-            final ApplicationInitializer initializer)
+                                               List<ServletApplicationInitializerFilter> configuration,
+                                               @InjectService("ApplicationInitializer")
+                                               final ApplicationInitializer initializer)
     {
         ServletApplicationInitializer terminator = new ServletApplicationInitializer()
         {
@@ -1149,7 +1082,7 @@ public final class TapestryModule
     }
 
     public ObjectRenderer build(StrategyBuilder strategyBuilder,
-            Map<Class, ObjectRenderer> configuration)
+                                Map<Class, ObjectRenderer> configuration)
     {
         StrategyRegistry<ObjectRenderer> registry = StrategyRegistry.newInstance(
                 ObjectRenderer.class,
@@ -1160,12 +1093,12 @@ public final class TapestryModule
 
     public static ComponentMessagesSource build(UpdateListenerHub updateListenerHub,
 
-    @ContextProvider
-    AssetFactory contextAssetFactory,
+                                                @ContextProvider
+                                                AssetFactory contextAssetFactory,
 
-    @Inject
-    @Value("WEB-INF/${tapestry.app-name}.properties")
-    String appCatalog)
+                                                @Inject
+                                                @Value("WEB-INF/${tapestry.app-name}.properties")
+                                                String appCatalog)
     {
         ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
                 .getRootResource(), appCatalog);
@@ -1209,7 +1142,7 @@ public final class TapestryModule
     public PropertyConduitSource buildPropertyConduitSource()
     {
         PropertyConduitSourceImpl service = new PropertyConduitSourceImpl(_propertyAccess,
-                _componentClassFactory);
+                                                                          _componentClassFactory);
 
         _componentInstantiatorSource.addInvalidationListener(service);
 
@@ -1234,7 +1167,9 @@ public final class TapestryModule
         return _shadowBuilder.build(_requestGlobals, "response", Response.class);
     }
 
-    /** Contributes the default "session" strategy. */
+    /**
+     * Contributes the default "session" strategy.
+     */
     public void contributeApplicationStatePersistenceStrategySource(
             MappedConfiguration<String, ApplicationStatePersistenceStrategy> configuration,
 
@@ -1244,11 +1179,11 @@ public final class TapestryModule
     }
 
     public void contributeAssetSource(MappedConfiguration<String, AssetFactory> configuration,
-            @ContextProvider
-            AssetFactory contextAssetFactory,
+                                      @ContextProvider
+                                      AssetFactory contextAssetFactory,
 
-            @ClasspathProvider
-            AssetFactory classpathAssetFactory)
+                                      @ClasspathProvider
+                                      AssetFactory classpathAssetFactory)
     {
         configuration.add("context", contextAssetFactory);
         configuration.add("classpath", classpathAssetFactory);
@@ -1271,12 +1206,12 @@ public final class TapestryModule
      */
     public void contributeComponentEventResultProcessor(
 
-    @InjectService("ComponentInstanceResultProcessor")
-    ComponentEventResultProcessor componentInstanceProcessor,
+            @InjectService("ComponentInstanceResultProcessor")
+            ComponentEventResultProcessor componentInstanceProcessor,
 
-    ComponentClassResolver componentClassResolver,
+            ComponentClassResolver componentClassResolver,
 
-    MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
+            MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
         configuration.add(
                 ActionResponseGenerator.class,
@@ -1294,7 +1229,7 @@ public final class TapestryModule
         {
 
             public ActionResponseGenerator processComponentEvent(Link value, Component component,
-                    String methodDescripion)
+                                                                 String methodDescripion)
             {
                 return new LinkActionResponseGenerator(value);
             }
@@ -1303,7 +1238,7 @@ public final class TapestryModule
         configuration.add(String.class, new StringResultProcessor(_requestPageCache, _linkFactory));
 
         configuration.add(Class.class, new ClassResultProcessor(componentClassResolver,
-                _requestPageCache, _linkFactory));
+                                                                _requestPageCache, _linkFactory));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
@@ -1312,25 +1247,25 @@ public final class TapestryModule
 
     public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
 
-    ClasspathAssetAliasManager aliasManager,
+                                           ClasspathAssetAliasManager aliasManager,
 
-    ResourceCache resourceCache,
+                                           ResourceCache resourceCache,
 
-    ResourceStreamer streamer,
+                                           ResourceStreamer streamer,
 
-    PageRenderRequestHandler pageRenderRequestHandler,
+                                           PageRenderRequestHandler pageRenderRequestHandler,
 
-    ComponentActionRequestHandler componentActionRequestHandler,
+                                           ComponentActionRequestHandler componentActionRequestHandler,
 
-    ComponentClassResolver componentClassResolver,
+                                           ComponentClassResolver componentClassResolver,
 
-    @Symbol("tapestry.start-page-name")
-    String startPageName)
+                                           @Symbol("tapestry.start-page-name")
+                                           String startPageName)
     {
         // Looks for the root path and renders the start page
 
         configuration.add("RootPath", new RootPathDispatcher(componentClassResolver,
-                pageRenderRequestHandler, startPageName), "before:Asset");
+                                                             pageRenderRequestHandler, startPageName), "before:Asset");
 
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.
@@ -1341,7 +1276,7 @@ public final class TapestryModule
                 "before:PageRender");
 
         configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver,
-                pageRenderRequestHandler));
+                                                                 pageRenderRequestHandler));
 
         configuration.add("ComponentAction", new ComponentActionDispatcher(
                 componentActionRequestHandler), "after:PageRender");
@@ -1357,7 +1292,7 @@ public final class TapestryModule
      * <dt>{@link TapestryConstants#RESPONSE_ENCODING}
      * <dd>UTF-8
      * </dl>
-     * 
+     *
      * @param configuration
      */
     public void contributeMetaDataLocator(MappedConfiguration<String, String> configuration)
@@ -1376,10 +1311,10 @@ public final class TapestryModule
      */
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
-    @InjectService("LocationRenderer")
-    ObjectRenderer locationRenderer,
+                                         @InjectService("LocationRenderer")
+                                         ObjectRenderer locationRenderer,
 
-    final TypeCoercer typeCoercer)
+                                         final TypeCoercer typeCoercer)
     {
         configuration.add(Object.class, new ObjectRenderer()
         {
@@ -1443,14 +1378,14 @@ public final class TapestryModule
                 environment.push(DocumentHeadBuilder.class, builder);
 
                 PageRenderSupportImpl support = new PageRenderSupportImpl(builder,
-                        symbolSource,
-                        assetSource,
+                                                                          symbolSource,
+                                                                          assetSource,
 
-                        // Core scripts added to any page that uses scripting
+                                                                          // Core scripts added to any page that uses scripting
 
-                        "${tapestry.scriptaculous}/prototype.js",
-                        "${tapestry.scriptaculous}/scriptaculous.js",
-                        "org/apache/tapestry/tapestry.js");
+                                                                          "${tapestry.scriptaculous}/prototype.js",
+                                                                          "${tapestry.scriptaculous}/scriptaculous.js",
+                                                                          "org/apache/tapestry/tapestry.js");
 
                 support.addStylesheetLink(stylesheetAsset, null);
 
@@ -1523,7 +1458,7 @@ public final class TapestryModule
      * <li>String
      * <li>Enum
      * </ul>
-     * 
+     *
      * @param configuration
      */
     @SuppressWarnings("unchecked")
@@ -1561,13 +1496,12 @@ public final class TapestryModule
      * Configures the extensions that will require a digest to be downloaded via the asset
      * dispatcher. Most resources are "safe", they don't require a digest. For unsafe resources, the
      * digest is incorporated into the URL to ensure that the client side isn't just "fishing".
-     * <p>
+     * <p/>
      * The extensions must be all lower case.
-     * <p>
+     * <p/>
      * This contributes "class" and "tml" (the template extension).
-     * 
-     * @param configuration
-     *            collection of extensions
+     *
+     * @param configuration collection of extensions
      */
     public static void contributeResourceDigestGenerator(Configuration<String> configuration)
     {
@@ -1599,7 +1533,7 @@ public final class TapestryModule
 
     /**
      * Contributes factory defaults that map be overridden.
-     * 
+     *
      * @see TapestryModule#contributeClasspathAssetAliasManager(MappedConfiguration, String, String)
      */
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)
@@ -1635,18 +1569,18 @@ public final class TapestryModule
     public PageTemplateLocator build(@ContextProvider
     AssetFactory contextAssetFactory,
 
-    ComponentClassResolver componentClassResolver)
+                                     ComponentClassResolver componentClassResolver)
     {
         return new PageTemplateLocatorImpl(contextAssetFactory.getRootResource(),
-                componentClassResolver);
+                                           componentClassResolver);
     }
 
     public ComponentInstantiatorSource build(@Builtin
     ClassFactory classFactory,
 
-    ComponentClassTransformer transformer,
+                                             ComponentClassTransformer transformer,
 
-    Logger logger)
+                                             Logger logger)
     {
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(classFactory
                 .getClassLoader(), transformer, logger);
@@ -1667,7 +1601,7 @@ public final class TapestryModule
     }
 
     public PagePool build(Logger logger, PageLoader pageLoader,
-            ComponentMessagesSource componentMessagesSource, ComponentClassResolver resolver)
+                          ComponentMessagesSource componentMessagesSource, ComponentClassResolver resolver)
     {
         PagePoolImpl service = new PagePoolImpl(logger, pageLoader, _threadLocale, resolver);
 
@@ -1729,7 +1663,7 @@ public final class TapestryModule
     @Marker(ClasspathProvider.class)
     public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
 
-    ClasspathAssetAliasManager aliasManager)
+                                                   ClasspathAssetAliasManager aliasManager)
     {
         ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager);
 
@@ -1774,13 +1708,12 @@ public final class TapestryModule
      * Builds the PropBindingFactory as a chain of command. The terminator of the chain is
      * responsible for ordinary property names (and property paths). Contributions to the service
      * cover additional special cases, such as simple literal values.
-     * 
-     * @param configuration
-     *            contributions of special factories for some constants, each contributed factory
-     *            may return a binding if applicable, or null otherwise
+     *
+     * @param configuration contributions of special factories for some constants, each contributed factory
+     *                      may return a binding if applicable, or null otherwise
      */
     public BindingFactory buildPropBindingFactory(List<BindingFactory> configuration,
-            PropertyConduitSource propertyConduitSource)
+                                                  PropertyConduitSource propertyConduitSource)
     {
         PropBindingFactory service = new PropBindingFactory(propertyConduitSource);
 
@@ -1845,7 +1778,7 @@ public final class TapestryModule
             }
 
             public Binding newBinding(String description, ComponentResources container,
-                    ComponentResources component, String expression, Location location)
+                                      ComponentResources component, String expression, Location location)
             {
                 String key = expression.trim();
 
@@ -1860,7 +1793,7 @@ public final class TapestryModule
         {
 
             public Binding newBinding(String description, ComponentResources container,
-                    ComponentResources component, String expression, Location location)
+                                      ComponentResources component, String expression, Location location)
             {
                 if ("this".equalsIgnoreCase(expression.trim()))
                     return new LiteralBinding(description, container.getComponent(), location);
@@ -1874,7 +1807,7 @@ public final class TapestryModule
             private final Pattern _pattern = Pattern.compile("^\\s*(-?\\d+)\\s*$");
 
             public Binding newBinding(String description, ComponentResources container,
-                    ComponentResources component, String expression, Location location)
+                                      ComponentResources component, String expression, Location location)
             {
                 Matcher matcher = _pattern.matcher(expression);
 
@@ -1895,7 +1828,7 @@ public final class TapestryModule
                     .compile("^\\s*(-?\\d+)\\s*\\.\\.\\s*(-?\\d+)\\s*$");
 
             public Binding newBinding(String description, ComponentResources container,
-                    ComponentResources component, String expression, Location location)
+                                      ComponentResources component, String expression, Location location)
             {
                 Matcher matcher = _pattern.matcher(expression);
 
@@ -1920,7 +1853,7 @@ public final class TapestryModule
                     .compile("^\\s*(\\-?((\\d+\\.)|(\\d*\\.\\d+)))\\s*$");
 
             public Binding newBinding(String description, ComponentResources container,
-                    ComponentResources component, String expression, Location location)
+                                      ComponentResources component, String expression, Location location)
             {
                 Matcher matcher = _pattern.matcher(expression);
 
@@ -1942,7 +1875,7 @@ public final class TapestryModule
             private final Pattern _pattern = Pattern.compile("^\\s*'(.*)'\\s*$");
 
             public Binding newBinding(String description, ComponentResources container,
-                    ComponentResources component, String expression, Location location)
+                                      ComponentResources component, String expression, Location location)
             {
                 Matcher matcher = _pattern.matcher(expression);
 
@@ -1971,25 +1904,25 @@ public final class TapestryModule
      * Adds a filter that checks for updates to classes and other resources. It is ordered before:*.
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-            RequestGlobals requestGlobals,
+                                         RequestGlobals requestGlobals,
 
-            // @Inject not needed because its a long, not a String
-            @Symbol("tapestry.file-check-interval")
-            long checkInterval,
+                                         // @Inject not needed because its a long, not a String
+                                         @Symbol("tapestry.file-check-interval")
+                                         long checkInterval,
 
-            @Symbol("tapestry.file-check-update-timeout")
-            long updateTimeout,
+                                         @Symbol("tapestry.file-check-update-timeout")
+                                         long updateTimeout,
 
-            LocalizationSetter localizationSetter)
+                                         LocalizationSetter localizationSetter)
     {
         configuration.add("CheckForUpdates", new CheckForUpdatesFilter(_updateListenerHub,
-                checkInterval, updateTimeout), "before:*");
+                                                                       checkInterval, updateTimeout), "before:*");
 
         configuration.add("Localization", new LocalizationFilter(localizationSetter));
     }
 
     public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkFactory linkFactory,
-            ServiceResources resources)
+                                                                      ServiceResources resources)
     {
         ClientPersistentFieldStrategy service = resources
                 .autobuild(ClientPersistentFieldStrategy.class);
@@ -2006,8 +1939,8 @@ public final class TapestryModule
         ComponentActionRequestFilter filter = new ComponentActionRequestFilter()
         {
             public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-                    String eventType, String[] context, String[] activationContext,
-                    ComponentActionRequestHandler handler)
+                                                  String eventType, String[] context, String[] activationContext,
+                                                  ComponentActionRequestHandler handler)
             {
                 encodingInitializer.initializeRequestEncoding(logicalPageName);
 

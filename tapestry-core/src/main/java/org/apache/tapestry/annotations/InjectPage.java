@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
@@ -28,7 +27,8 @@ import java.lang.annotation.Target;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface InjectPage {
+public @interface InjectPage
+{
     /**
      * The name of the page to inject, which is used when the field type is not sufficient to
      * identify the page (for example, when the field type is an interface implemented by the page).

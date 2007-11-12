@@ -29,7 +29,7 @@ public interface Field extends ClientElement
      * Returns a user presentable (localized) label for the field, which may be used inside
      * &lt;label&gt; elements on the client, and inside client or server-side validation error
      * messages.
-     * 
+     *
      * @return the label
      */
     String getLabel();

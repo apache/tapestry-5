@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.tutorial.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Marker;
@@ -24,6 +22,8 @@ import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
 import org.apache.tapestry.services.Response;
 import org.slf4j.Logger;
+
+import java.io.IOException;
 
 /**
  * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
@@ -85,8 +85,8 @@ public class AppModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
 
-    @Local
-    RequestFilter filter)
+                                         @Local
+                                         RequestFilter filter)
     {
         // Each contribution to an ordered configuration has a name, When necessary, you may
         // set constraints to precisely control the invocation order of the contributed filter

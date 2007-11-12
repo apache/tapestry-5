@@ -16,7 +16,7 @@ package org.apache.tapestry.services;
 
 /**
  * Used to provide access to stategies via a logical name for the stategy, such as "session".
- * <p>
+ * <p/>
  * Note: Ideally, this would just be internal to {@link ApplicationStateManager}, but Tapestry
  * IOC's one-configuration-per-service makes that awkward, so this part of that functionality
  * becomes its own service.
@@ -25,12 +25,10 @@ public interface ApplicationStatePersistenceStrategySource
 {
     /**
      * Returns the named strategy.
-     * 
-     * @param name
-     *            of strategy to access
+     *
+     * @param name of strategy to access
      * @return the strategy
-     * @throws RuntimeException
-     *             if the name does not match a configured strategy
+     * @throws RuntimeException if the name does not match a configured strategy
      */
     ApplicationStatePersistenceStrategy get(String name);
 }

@@ -30,17 +30,17 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
     private Object[] build(String propertyNames, String... expected)
     {
         return new Object[]
-        { propertyNames, expected };
+                {propertyNames, expected};
     }
 
     @DataProvider(name = "split_inputs")
     public Object[][] split_inputs()
     {
         return new Object[][]
-        { build("fred", "fred"), build("fred,barney", "fred", "barney"),
-                build(" fred, barney, wilma, betty ", "fred", "barney", "wilma", "betty"),
-                new Object[]
-                { "   ", new String[0] } };
+                {build("fred", "fred"), build("fred,barney", "fred", "barney"),
+                 build(" fred, barney, wilma, betty ", "fred", "barney", "wilma", "betty"),
+                 new Object[]
+                         {"   ", new String[0]}};
     }
 
     @Test

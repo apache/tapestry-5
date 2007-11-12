@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.Set;
-
 import org.apache.tapestry.ioc.IOCConstants;
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.def.ServiceDef;
+
+import java.util.Set;
 
 public class ServiceDefImpl implements ServiceDef
 {
@@ -36,22 +36,16 @@ public class ServiceDefImpl implements ServiceDef
     private final Set<Class> _markers;
 
     /**
-     * @param serviceInterface
-     *            interface implemented by the service (or the service implementation class, for
-     *            non-proxied services)
-     * @param serviceId
-     *            unique id for the service
-     * @param markers
-     *            set of marker annotation classes (will be retained not copied)
-     * @param scope
-     *            scope of the service (i.e., {@link IOCConstants#DEFAULT_SCOPE}).
-     * @param eagerLoad
-     *            if true, the service is realized at startup, rather than on-demand
-     * @param source
-     *            used to create the service implementation when needed
+     * @param serviceInterface interface implemented by the service (or the service implementation class, for
+     *                         non-proxied services)
+     * @param serviceId        unique id for the service
+     * @param markers          set of marker annotation classes (will be retained not copied)
+     * @param scope            scope of the service (i.e., {@link IOCConstants#DEFAULT_SCOPE}).
+     * @param eagerLoad        if true, the service is realized at startup, rather than on-demand
+     * @param source           used to create the service implementation when needed
      */
     ServiceDefImpl(Class serviceInterface, String serviceId, Set<Class> markers, String scope,
-            boolean eagerLoad, ObjectCreatorSource source)
+                   boolean eagerLoad, ObjectCreatorSource source)
     {
         _serviceInterface = serviceInterface;
         _serviceId = serviceId;

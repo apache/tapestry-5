@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-/** Converts an object to a string describing the kind of the object. */
+/**
+ * Converts an object to a string describing the kind of the object.
+ */
 public interface KindOf
 {
     String kindOf(Object value);

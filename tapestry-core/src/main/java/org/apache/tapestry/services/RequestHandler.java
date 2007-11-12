@@ -18,12 +18,14 @@ import java.io.IOException;
 
 /**
  * Service interface for the RequestHandler pipeline service.
- * 
+ *
  * @see RequestFilter
  */
 
 public interface RequestHandler
 {
-    /** Returns true if the request has been handled, false otherwise. */
+    /**
+     * Returns true if the request has been handled, false otherwise.
+     */
     boolean service(Request request, Response response) throws IOException;
 }

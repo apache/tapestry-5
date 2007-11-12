@@ -16,8 +16,6 @@ package org.apache.tapestry.internal.transform.pages;
 
 /**
  * A subclass for TargetObject, used to check that values can be inherited from a base class.
- * 
- * 
  */
 public class TargetObjectSubclass extends TargetObject
 {

@@ -16,11 +16,11 @@ package org.apache.tapestry.ioc.services;
 
 /**
  * Event hub for notifications when the IOC {@link org.apache.tapestry.ioc.Registry} shuts down.
- * 
- * 
  */
 public interface RegistryShutdownHub
 {
-    /** Adds a listener for eventual notification. */
+    /**
+     * Adds a listener for eventual notification.
+     */
     void addRegistryShutdownListener(RegistryShutdownListener listener);
 }

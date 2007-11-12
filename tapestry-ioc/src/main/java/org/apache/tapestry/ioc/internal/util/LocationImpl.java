@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import java.util.Formatter;
-
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
+
+import java.util.Formatter;
 
 /**
  * Implementation class for {@link org.apache.tapestry.ioc.Location}.

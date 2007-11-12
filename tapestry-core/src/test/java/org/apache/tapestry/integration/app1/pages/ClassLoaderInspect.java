@@ -14,6 +14,12 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
+import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.corelib.components.Form;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,12 +29,6 @@ import java.net.URLConnection;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
-
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.corelib.components.Form;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 public class ClassLoaderInspect
 {

@@ -14,14 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Map;
-
 import javassist.CtClass;
-
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.slf4j.Logger;
+
+import java.util.Map;
 
 /**
  * Base class for {@link org.apache.tapestry.ioc.internal.services.ClassFabImpl}. This code is a

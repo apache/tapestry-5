@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.io.Serializable;
-
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.io.Serializable;
 
 public class BridgeBuilderTest extends IOCInternalTestCase
 {

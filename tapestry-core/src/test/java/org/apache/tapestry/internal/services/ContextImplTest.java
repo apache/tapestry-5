@@ -14,18 +14,17 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.services.Context;
+import org.testng.annotations.Test;
+
+import javax.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.ServletContext;
-
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.Context;
-import org.testng.annotations.Test;
 
 public class ContextImplTest extends InternalBaseTestCase
 {
@@ -126,7 +125,9 @@ public class ContextImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** Tomcat 5.5.20 appears to sometimes return null if it can't find a match. */
+    /**
+     * Tomcat 5.5.20 appears to sometimes return null if it can't find a match.
+     */
     @Test
     public void ignore_null_from_get_resource_paths() throws Exception
     {
@@ -150,7 +151,7 @@ public class ContextImplTest extends InternalBaseTestCase
     }
 
     protected final void train_getResourcePaths(ServletContext context, String path,
-            String... paths)
+                                                String... paths)
     {
         Set<String> set = CollectionFactory.newSet(Arrays.asList(paths));
 

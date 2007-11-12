@@ -33,7 +33,7 @@ public final class InternalMessages
     }
 
     public static String failureInstantiatingObject(Class objectType, String componentId,
-            Throwable cause)
+                                                    Throwable cause)
     {
         return MESSAGES.format("failure-instantitating-object", ClassFabUtils
                 .toJavaClassName(objectType), componentId, cause);

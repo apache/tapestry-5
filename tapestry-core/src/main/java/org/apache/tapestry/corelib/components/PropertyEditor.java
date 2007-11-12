@@ -14,14 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.Locale;
-
-import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.Translator;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.BeanModel;
@@ -29,12 +22,9 @@ import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.services.BeanBlockSource;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.PropertyEditContext;
-import org.apache.tapestry.services.TranslatorDefaultSource;
+import org.apache.tapestry.services.*;
+
+import java.util.Locale;
 
 /**
  * Used to edit a single property of a bean. This is used primarily by {@link BeanEditForm}. Unlike
@@ -61,7 +51,9 @@ public class PropertyEditor
         {
             component.setupEnvironment(_property);
         }
-    };
+    }
+
+    ;
 
     static class CleanupEnvironment implements ComponentAction<PropertyEditor>
     {
@@ -71,7 +63,9 @@ public class PropertyEditor
         {
             component.cleanupEnvironment();
         }
-    };
+    }
+
+    ;
 
     /**
      * The object to be edited by the BeanEditor. This will be read when the component renders and
@@ -129,7 +123,9 @@ public class PropertyEditor
 
     private PropertyModel _propertyModel;
 
-    /** Creates a {@link PropertyEditContext} and pushes it onto the {@link Environment} stack. */
+    /**
+     * Creates a {@link PropertyEditContext} and pushes it onto the {@link Environment} stack.
+     */
     void setupEnvironment(final String propertyName)
     {
         _propertyModel = _model.get(propertyName);
@@ -225,7 +221,10 @@ public class PropertyEditor
     {
         Block override = _overrides.getBlockParameter(_propertyModel.getId());
 
-        if (override != null) { return override; }
+        if (override != null)
+        {
+            return override;
+        }
 
         String dataType = _propertyModel.getDataType();
 
@@ -256,10 +255,12 @@ public class PropertyEditor
         return false;
     }
 
-    /** Used for testing. */
+    /**
+     * Used for testing.
+     */
     void inject(ComponentResources resources, ComponentResources overrides,
-            PropertyModel propertyModel, BeanBlockSource beanBlockSource, Messages messages,
-            Object object)
+                PropertyModel propertyModel, BeanBlockSource beanBlockSource, Messages messages,
+                Object object)
     {
         _resources = resources;
         _overrides = overrides;

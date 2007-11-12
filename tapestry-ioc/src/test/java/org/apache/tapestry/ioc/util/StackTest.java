@@ -15,7 +15,6 @@
 package org.apache.tapestry.ioc.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
-
 import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.Test;
 

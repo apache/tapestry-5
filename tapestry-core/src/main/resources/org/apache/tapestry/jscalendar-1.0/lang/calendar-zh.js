@@ -7,14 +7,14 @@
 
 // full day names
 Calendar._DN = new Array
-("星期日",
- "星期一",
- "星期二",
- "星期三",
- "星期四",
- "星期五",
- "星期六",
- "星期日");
+        ("星期日",
+                "星期一",
+                "星期二",
+                "星期三",
+                "星期四",
+                "星期五",
+                "星期六",
+                "星期日");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -30,44 +30,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("日",
- "一",
- "二",
- "三",
- "四",
- "五",
- "六",
- "日");
+        ("日",
+                "一",
+                "二",
+                "三",
+                "四",
+                "五",
+                "六",
+                "日");
 
 // full month names
 Calendar._MN = new Array
-("一月",
- "二月",
- "三月",
- "四月",
- "五月",
- "六月",
- "七月",
- "八月",
- "九月",
- "十月",
- "十一月",
- "十二月");
+        ("一月",
+                "二月",
+                "三月",
+                "四月",
+                "五月",
+                "六月",
+                "七月",
+                "八月",
+                "九月",
+                "十月",
+                "十一月",
+                "十二月");
 
 // short month names
 Calendar._SMN = new Array
-("一月",
- "二月",
- "三月",
- "四月",
- "五月",
- "六月",
- "七月",
- "八月",
- "九月",
- "十月",
- "十一月",
- "十二月");
+        ("一月",
+                "二月",
+                "三月",
+                "四月",
+                "五月",
+                "六月",
+                "七月",
+                "八月",
+                "九月",
+                "十月",
+                "十一月",
+                "十二月");
 
 // tooltips
 Calendar._TT = {};
@@ -84,10 +84,10 @@ Calendar._TT["ABOUT"] =
 "- 点击 " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " 按钮选择月份\n" +
 "- 长按以上按钮可从菜单中快速选择年份或月份";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"选择时间:\n" +
-"- 点击小时或分钟可使改数值加一\n" +
-"- 按住Shift键点击小时或分钟可使改数值减一\n" +
-"- 点击拖动鼠标可进行快速选择";
+                             "选择时间:\n" +
+                             "- 点击小时或分钟可使改数值加一\n" +
+                             "- 按住Shift键点击小时或分钟可使改数值减一\n" +
+                             "- 点击拖动鼠标可进行快速选择";
 
 Calendar._TT["PREV_YEAR"] = "上一年 (按住出菜单)";
 Calendar._TT["PREV_MONTH"] = "上一月 (按住出菜单)";

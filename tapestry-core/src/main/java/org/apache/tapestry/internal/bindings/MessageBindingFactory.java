@@ -27,7 +27,7 @@ public class MessageBindingFactory implements BindingFactory
 {
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
-            String expression, Location location)
+                              String expression, Location location)
     {
         String messageValue = container.getMessages().get(expression);
 

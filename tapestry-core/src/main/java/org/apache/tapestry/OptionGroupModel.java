@@ -23,13 +23,15 @@ import java.util.Map;
  */
 public interface OptionGroupModel
 {
-    /** Localized, user-presentable label for the group. */
+    /**
+     * Localized, user-presentable label for the group.
+     */
     String getLabel();
 
     /**
      * If true, the group (and all options within it) will be disabled. Note that some browsers do
      * not honor the disabled attribute property.
-     * 
+     *
      * @return true if a disabled attribute should be rendered.
      */
     boolean isDisabled();
@@ -40,6 +42,8 @@ public interface OptionGroupModel
      */
     Map<String, String> getAttributes();
 
-    /** The list of options within the group. */
+    /**
+     * The list of options within the group.
+     */
     List<OptionModel> getOptions();
 }

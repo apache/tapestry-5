@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.structure;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.List;
-
 import org.apache.tapestry.Block;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
+
+import java.util.List;
 
 public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, RenderCommand
 {

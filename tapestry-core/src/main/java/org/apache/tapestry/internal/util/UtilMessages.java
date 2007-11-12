@@ -26,7 +26,7 @@ class UtilMessages
     }
 
     static String noReturnValueAccepted(String eventType, String componentId, Object returnValue,
-            String methodDescription)
+                                        String methodDescription)
     {
         return MESSAGES.format("no-return-value-accepted", eventType, componentId, String
                 .valueOf(returnValue), methodDescription);

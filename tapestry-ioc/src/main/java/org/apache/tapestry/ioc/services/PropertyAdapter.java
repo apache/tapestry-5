@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 
 /**
  * Provides access to a single property within a class.
- * 
+ *
  * @see org.apache.tapestry.ioc.services.ClassPropertyAdapter
  */
 public interface PropertyAdapter
@@ -51,24 +51,19 @@ public interface PropertyAdapter
 
     /**
      * Reads the property value.
-     * 
-     * @param instance
-     *            to read from
-     * @throws UnsupportedOperationException
-     *             if the property is write only
+     *
+     * @param instance to read from
+     * @throws UnsupportedOperationException if the property is write only
      */
     Object get(Object instance);
 
     /**
      * Updates the property value. The provided value must not be null if the property type is
      * primitive, and must otherwise be of the proper type.
-     * 
-     * @param instance
-     *            to update
-     * @param value
-     *            new value for the property
-     * @throws UnsupportedOperationException
-     *             if the property is read only
+     *
+     * @param instance to update
+     * @param value    new value for the property
+     * @throws UnsupportedOperationException if the property is read only
      */
     void set(Object instance, Object value);
 
@@ -80,10 +75,9 @@ public interface PropertyAdapter
     /**
      * Returns an annotation on the property. The read method (if present) is checked first,
      * followed by the write method.
-     * 
+     *
      * @param <T>
-     * @param annotationClass
-     *            the annotation to retrieve
+     * @param annotationClass the annotation to retrieve
      * @return the annotation on the read or write method, or null if not present on either method
      */
     <T extends Annotation> T getAnnotation(Class<T> annotationClass);

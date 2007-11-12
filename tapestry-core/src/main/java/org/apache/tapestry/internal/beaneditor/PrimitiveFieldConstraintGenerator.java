@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.beaneditor;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.services.ValidationConstraintGenerator;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Adds a "required" constraint for any property of whose type is a primitive (not a wrapper or

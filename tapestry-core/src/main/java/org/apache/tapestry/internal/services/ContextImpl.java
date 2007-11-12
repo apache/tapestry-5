@@ -16,17 +16,15 @@ package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
+import org.apache.tapestry.ioc.util.Stack;
+import org.apache.tapestry.services.Context;
 
+import javax.servlet.ServletContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.servlet.ServletContext;
-
-import org.apache.tapestry.ioc.util.Stack;
-import org.apache.tapestry.services.Context;
 
 public class ContextImpl implements Context
 {

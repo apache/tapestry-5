@@ -14,21 +14,20 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.AnnotationProvider;
+import org.apache.tapestry.ioc.ObjectCreator;
+import org.apache.tapestry.ioc.ServiceBuilderResources;
 import static org.apache.tapestry.ioc.internal.AbstractServiceCreator.findParameterizedTypeFromGenericType;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
+import org.slf4j.Logger;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.slf4j.Logger;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 {
@@ -54,7 +53,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         replay();
 
         ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                findMethod(fixture, "build_noargs"));
+                                                           findMethod(fixture, "build_noargs"));
 
         Object actual = sc.createObject();
 
@@ -165,7 +164,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         replay();
 
         ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                findMethod(fixture, "build_injected"));
+                                                           findMethod(fixture, "build_injected"));
 
         Object actual = sc.createObject();
 
@@ -197,7 +196,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         replay();
 
         ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                findMethod(fixture, "buildWithOrderedConfiguration"));
+                                                           findMethod(fixture, "buildWithOrderedConfiguration"));
 
         Object actual = sc.createObject();
 
@@ -230,7 +229,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         replay();
 
         ObjectCreator sc = new ServiceBuilderMethodInvoker(resources, CREATOR_DESCRIPTION,
-                findMethod(fixture, "buildWithUnorderedConfiguration"));
+                                                           findMethod(fixture, "buildWithUnorderedConfiguration"));
 
         Object actual = sc.createObject();
 
@@ -347,7 +346,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
     }
 
     protected final void train_getModuleBuilder(ServiceBuilderResources resources,
-            Object moduleBuilder)
+                                                Object moduleBuilder)
     {
         expect(resources.getModuleBuilder()).andReturn(moduleBuilder);
     }

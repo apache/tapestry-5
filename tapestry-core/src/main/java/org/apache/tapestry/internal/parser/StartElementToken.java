@@ -24,8 +24,6 @@ import org.apache.tapestry.ioc.Location;
  * associated with the element. A start element token will always be balanced by a
  * {@link org.apache.tapestry.internal.parser.EndElementToken} (though there will likely be some
  * amount of intermediate tokens).
- * 
- * 
  */
 public class StartElementToken extends TemplateToken
 {
@@ -38,7 +36,9 @@ public class StartElementToken extends TemplateToken
         _name = name;
     }
 
-    /** Returns local name for the element. */
+    /**
+     * Returns local name for the element.
+     */
     public String getName()
     {
         return _name;

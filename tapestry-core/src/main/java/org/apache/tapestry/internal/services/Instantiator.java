@@ -33,6 +33,8 @@ public interface Instantiator
      */
     Component newInstance(InternalComponentResources resources);
 
-    /** Returns the model that defines the behavior of the component. */
+    /**
+     * Returns the model that defines the behavior of the component.
+     */
     ComponentModel getModel();
 }

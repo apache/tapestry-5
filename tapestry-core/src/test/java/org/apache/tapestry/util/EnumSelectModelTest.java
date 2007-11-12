@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.util;
 
-import java.util.List;
-
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.Stooge;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 public class EnumSelectModelTest extends TapestryTestCase
 {

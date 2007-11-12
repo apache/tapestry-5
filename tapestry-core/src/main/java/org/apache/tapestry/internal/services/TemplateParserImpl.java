@@ -14,9 +14,21 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.parser.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.annotations.Scope;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.internal.util.LocationImpl;
+import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.ioc.util.Stack;
+import org.slf4j.Logger;
+import org.xml.sax.*;
+import org.xml.sax.ext.LexicalHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,45 +38,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.BlockToken;
-import org.apache.tapestry.internal.parser.BodyToken;
-import org.apache.tapestry.internal.parser.CDATAToken;
-import org.apache.tapestry.internal.parser.CommentToken;
-import org.apache.tapestry.internal.parser.ComponentTemplate;
-import org.apache.tapestry.internal.parser.ComponentTemplateImpl;
-import org.apache.tapestry.internal.parser.DTDToken;
-import org.apache.tapestry.internal.parser.EndElementToken;
-import org.apache.tapestry.internal.parser.ExpansionToken;
-import org.apache.tapestry.internal.parser.ParameterToken;
-import org.apache.tapestry.internal.parser.StartComponentToken;
-import org.apache.tapestry.internal.parser.StartElementToken;
-import org.apache.tapestry.internal.parser.TemplateToken;
-import org.apache.tapestry.internal.parser.TextToken;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.LocationImpl;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.util.Stack;
-import org.slf4j.Logger;
-import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
-import org.xml.sax.Locator;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.ext.LexicalHandler;
-import org.xml.sax.helpers.XMLReaderFactory;
-
 /**
  * Non-threadsafe implementation; the IOC service uses the perthread lifecycle.
  */
 @Scope(PERTHREAD_SCOPE)
 public class TemplateParserImpl implements TemplateParser, LexicalHandler, ContentHandler,
-        EntityResolver
+                                           EntityResolver
 {
     private static final String MIXINS_ATTRIBUTE_NAME = "mixins";
 
@@ -178,7 +157,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             catch (Exception ex)
             {
                 throw new RuntimeException(ServicesMessages.newParserError(templateResource, ex),
-                        ex);
+                                           ex);
             }
         }
 
@@ -205,7 +184,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             _reader = null;
 
             throw new TapestryException(ServicesMessages.templateParseError(templateResource, ex),
-                    getCurrentLocation(), ex);
+                                        getCurrentLocation(), ex);
         }
         finally
         {
@@ -218,7 +197,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         _locator = locator;
     }
 
-    /** Accumulates the characters into a text buffer. */
+    /**
+     * Accumulates the characters into a text buffer.
+     */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
         if (_ignoreEvents) return;
@@ -255,7 +236,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     /**
      * Scans the text, using a regular expression pattern, for expansion patterns, and adds
      * appropriate tokens for what it finds.
-     * 
+     *
      * @param text
      */
     private void addTokensForText(String text)
@@ -323,7 +304,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * Checks to see if currently inside a t:body element (which should always be empty). Content is
      * ignored inside a body. If inside a body, then a warning is logged (but only one warning per
      * body element).
-     * 
+     *
      * @return true if inside t:body, false otherwise
      */
     private boolean insideBody()
@@ -399,14 +380,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         if (InternalUtils.isBlank(parameterName))
             throw new TapestryException(ServicesMessages.parameterElementNameRequired(),
-                    getCurrentLocation(), null);
+                                        getCurrentLocation(), null);
 
         _tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
         _endTagHandlerStack.push(_addEndElementToken);
     }
 
     private String findSingleParameter(String elementName, String attributeName,
-            Attributes attributes)
+                                       Attributes attributes)
     {
         String result = null;
 
@@ -437,17 +418,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     }
 
     /**
-     * @param attributes
-     *            the attributes for the element
-     * @param elementName
-     *            the name of the element (to be assigned to the new token), may be null for a
-     *            component in the Tapestry namespace
-     * @param identifiedType
-     *            the type of the element, usually null, but may be the component type derived from
-     *            the element name (for an element in the Tapestry namespace)
+     * @param attributes     the attributes for the element
+     * @param elementName    the name of the element (to be assigned to the new token), may be null for a
+     *                       component in the Tapestry namespace
+     * @param identifiedType the type of the element, usually null, but may be the component type derived from
+     *                       the element name (for an element in the Tapestry namespace)
      */
     private void startPossibleComponent(Attributes attributes, String elementName,
-            String identifiedType)
+                                        String identifiedType)
     {
         String id = null;
         String type = identifiedType;
@@ -501,7 +479,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         if (mixins != null && !isComponent)
             throw new TapestryException(ServicesMessages.mixinsInvalidWithoutIdOrType(elementName),
-                    location, null);
+                                        location, null);
 
         if (isComponent)
         {
@@ -662,7 +640,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     }
 
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-            IOException
+                                                                              IOException
     {
         URL url = _configuration.get(publicId);
 

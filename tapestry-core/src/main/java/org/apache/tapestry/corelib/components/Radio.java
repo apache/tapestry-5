@@ -14,12 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.RadioContainer;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
@@ -32,7 +27,7 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
 /**
  * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate
  * within a {@link RadioContainer} (normally, the {@link RadioGroup} component).
- * <p>
+ * <p/>
  * If the value parameter is not bound, then the default value is a property of the container
  * component whose name matches the Radio component's id.
  */

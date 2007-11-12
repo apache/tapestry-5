@@ -17,8 +17,6 @@ package org.apache.tapestry;
 /**
  * Base interface for objects that can render markup output using a
  * {@link org.apache.tapestry.MarkupWriter}.
- * 
- * 
  */
 public interface Renderable
 {

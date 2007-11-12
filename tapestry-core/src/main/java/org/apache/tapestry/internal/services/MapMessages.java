@@ -16,12 +16,13 @@ package org.apache.tapestry.internal.services;
 
 /**
  * An implementation  of {@link Messages} that is based on a map.
- * 
+ *
  */
-import java.util.Map;
 
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.util.AbstractMessages;
+
+import java.util.Map;
 
 /**
  * Implementation of {@link Messages} based on a simple Map (of string keys and values).

@@ -14,15 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.services.ActionResponseGenerator;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.PageRenderRequestHandler;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
+
+import java.io.IOException;
 
 /**
  * Dispatches incoming requests for render requests. Render requests consist of either just a
@@ -37,7 +32,7 @@ public class PageRenderDispatcher implements Dispatcher
     private final PageRenderRequestHandler _handler;
 
     public PageRenderDispatcher(ComponentClassResolver componentClassResolver,
-            PageRenderRequestHandler handler)
+                                PageRenderRequestHandler handler)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;
@@ -88,7 +83,7 @@ public class PageRenderDispatcher implements Dispatcher
      * Converts the "extra path", the portion after the page name (and after the slash seperating
      * the page name from the activation context) into an array of strings. LinkFactory and friends
      * URL encode each value, so we URL decode the value (we assume that page names are "URL safe").
-     * 
+     *
      * @param extraPath
      * @return
      */

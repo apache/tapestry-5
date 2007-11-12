@@ -20,8 +20,6 @@ import java.util.List;
  * Used for testing of ordered and unordered contributions. The names are contributed in from
  * multiple modules. For unordered contributions, the values are sorted alphabetically. For ordered
  * contributions, the values are ordered as per the contributions.
- * 
- * 
  */
 public interface NameListHolder
 {

@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.corelib.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.ioc.Registry;
@@ -24,11 +22,13 @@ import org.apache.tapestry.ioc.services.ServiceActivity;
 import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry.services.BeanModelSource;
 
+import java.util.List;
+
 /**
  * Page used to see the status of all services defined by the {@link Registry}.
- * <p>
+ * <p/>
  * TODO: Add filters to control which services are displayed.
- * <p>
+ * <p/>
  * TODO: Disable this page if in production mode (or not, as it does no harm).
  */
 public class ServiceStatus

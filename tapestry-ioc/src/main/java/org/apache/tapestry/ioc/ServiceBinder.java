@@ -31,7 +31,7 @@ public interface ServiceBinder
      * {@link ServiceDef#getServiceInterface()} will return the implementation class. In this
      * situation, the service will not be proxied; it will be instantiated fully on first reference
      * (ignoring its scope, if any) and will not be decorated.
-     * 
+     *
      * @param <T>
      * @param implementationClass
      * @return
@@ -42,14 +42,12 @@ public interface ServiceBinder
      * Binds the service interface to a service implementation class. The default service name is
      * the unqualified name of the service interface. The default service scope is "singleton",
      * unless the service implementation class includes the {@link Scope} annotation.
-     * 
+     *
      * @param <T>
-     * @param serviceInterface
-     *            service interface (used when locating services, and when building proxies)
-     * @param serviceImplementation
-     *            implementation class that implements the service interface
+     * @param serviceInterface      service interface (used when locating services, and when building proxies)
+     * @param serviceImplementation implementation class that implements the service interface
      * @return binding options, used to specify additional details about the service.
      */
     <T> ServiceBindingOptions bind(Class<T> serviceInterface,
-            Class<? extends T> serviceImplementation);
+                                   Class<? extends T> serviceImplementation);
 }

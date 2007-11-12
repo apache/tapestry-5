@@ -17,20 +17,18 @@ package org.apache.tapestry.ioc.services;
 /**
  * Responsible for converting from one type to another. This is used primarily around component
  * parameters.
- * 
- * 
+ *
  * @param <S>
- *            the source type (input)
+ * the source type (input)
  * @param <T>
- *            the target type (output)
+ * the target type (output)
  */
 public interface Coercion<S, T>
 {
     /**
      * Converts an input value.
-     * 
-     * @param input
-     *            the input value
+     *
+     * @param input the input value
      */
     T coerce(S input);
 }

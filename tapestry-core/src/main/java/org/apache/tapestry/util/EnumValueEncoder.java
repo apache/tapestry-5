@@ -14,9 +14,8 @@
 
 package org.apache.tapestry.util;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
 import org.apache.tapestry.ValueEncoder;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 /**
  * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client

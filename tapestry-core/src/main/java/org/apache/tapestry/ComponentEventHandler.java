@@ -20,7 +20,7 @@ import org.apache.tapestry.runtime.ComponentEvent;
 /**
  * Handler for a {@link ComponentEvent}, notified when a non-null value is returned from some event
  * handler method.
- * <p>
+ * <p/>
  * TODO: Multiple handlers for different result types / strategy pattern?
  */
 public interface ComponentEventHandler<T>
@@ -28,13 +28,10 @@ public interface ComponentEventHandler<T>
     /**
      * Invoked to handle a non-null event handler method result. The handler should determine
      * whether the value is acceptible, and throw an exception if not.
-     * 
-     * @param result
-     *            the result value provided by a method
-     * @param component
-     *            the component from which the result was obtained
-     * @param methodDescription
-     *            a string description of the class and method name (used when errors occur).
+     *
+     * @param result            the result value provided by a method
+     * @param component         the component from which the result was obtained
+     * @param methodDescription a string description of the class and method name (used when errors occur).
      * @return true if the event is aborted, false if the event may continue
      */
     boolean handleResult(T result, Component component, String methodDescription);

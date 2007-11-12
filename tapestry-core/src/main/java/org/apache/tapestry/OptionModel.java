@@ -22,13 +22,19 @@ import java.util.Map;
  */
 public interface OptionModel
 {
-    /** The localized, user-presentable label for the option. */
+    /**
+     * The localized, user-presentable label for the option.
+     */
     String getLabel();
 
-    /** If true, then a disabled attribute will be rendered with the &lt;option&gt;. */
+    /**
+     * If true, then a disabled attribute will be rendered with the &lt;option&gt;.
+     */
     boolean isDisabled();
 
-    /** Additional attributes to render within the &lt;option&gt;. May return null. */
+    /**
+     * Additional attributes to render within the &lt;option&gt;. May return null.
+     */
     Map<String, String> getAttributes();
 
     /**

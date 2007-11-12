@@ -11,14 +11,14 @@
 
 // full day names
 Calendar._DN = new Array
-("Svçtdiena",
- "Pirmdiena",
- "Otrdiena",
- "Treðdiena",
- "Ceturdiena",
- "Piektdiena",
- "Sestdiena",
- "Svçtdiena");
+        ("Svçtdiena",
+                "Pirmdiena",
+                "Otrdiena",
+                "Treðdiena",
+                "Ceturdiena",
+                "Piektdiena",
+                "Sestdiena",
+                "Svçtdiena");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -34,44 +34,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("Sv",
- "Pr",
- "Ot",
- "Tr",
- "Ce",
- "Pk",
- "Se",
- "Sv");
+        ("Sv",
+                "Pr",
+                "Ot",
+                "Tr",
+                "Ce",
+                "Pk",
+                "Se",
+                "Sv");
 
 // full month names
 Calendar._MN = new Array
-("Janvâris",
- "Februâris",
- "Marts",
- "Aprîlis",
- "Maijs",
- "Jûnijs",
- "Jûlijs",
- "Augusts",
- "Septembris",
- "Oktobris",
- "Novembris",
- "Decembris");
+        ("Janvâris",
+                "Februâris",
+                "Marts",
+                "Aprîlis",
+                "Maijs",
+                "Jûnijs",
+                "Jûlijs",
+                "Augusts",
+                "Septembris",
+                "Oktobris",
+                "Novembris",
+                "Decembris");
 
 // short month names
 Calendar._SMN = new Array
-("Jan",
- "Feb",
- "Mar",
- "Apr",
- "Mai",
- "Jûn",
- "Jûl",
- "Aug",
- "Sep",
- "Okt",
- "Nov",
- "Dec");
+        ("Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "Mai",
+                "Jûn",
+                "Jûl",
+                "Aug",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Dec");
 
 // tooltips
 Calendar._TT = {};
@@ -88,10 +88,10 @@ Calendar._TT["ABOUT"] =
 "- Izmanto " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "pogas, lai izvçlçtos mçnesi\n" +
 "- Turi nospiestu peles pogu uz jebkuru no augstâk minçtajâm pogâm, lai paâtrinâtu izvçli.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Laika izvçle:\n" +
-"- Uzklikðíini uz jebkuru no laika daïâm, lai palielinâtu to\n" +
-"- vai Shift-klikðíis, lai samazinâtu to\n" +
-"- vai noklikðíini un velc uz attiecîgo virzienu lai mainîtu âtrâk.";
+                             "Laika izvçle:\n" +
+                             "- Uzklikðíini uz jebkuru no laika daïâm, lai palielinâtu to\n" +
+                             "- vai Shift-klikðíis, lai samazinâtu to\n" +
+                             "- vai noklikðíini un velc uz attiecîgo virzienu lai mainîtu âtrâk.";
 
 Calendar._TT["PREV_YEAR"] = "Iepr. gads (turi izvçlnei)";
 Calendar._TT["PREV_MONTH"] = "Iepr. mçnesis (turi izvçlnei)";

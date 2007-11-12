@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class PageLocatorTest extends Assert
 {

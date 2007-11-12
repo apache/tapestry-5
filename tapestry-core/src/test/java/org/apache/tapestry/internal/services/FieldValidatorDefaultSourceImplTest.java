@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -25,6 +23,8 @@ import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FieldValidatorSource;
 import org.apache.tapestry.services.ValidationConstraintGenerator;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class FieldValidatorDefaultSourceImplTest extends InternalBaseTestCase
 {
@@ -74,7 +74,7 @@ public class FieldValidatorDefaultSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorDefaultSource fieldValidatorSource = new FieldValidatorDefaultSourceImpl(gen,
-                source);
+                                                                                               source);
 
         FieldValidator composite = fieldValidatorSource.createDefaultValidator(
                 field,
@@ -110,7 +110,7 @@ public class FieldValidatorDefaultSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorDefaultSource fieldValidatorSource = new FieldValidatorDefaultSourceImpl(gen,
-                source);
+                                                                                               source);
 
         FieldValidator composite = fieldValidatorSource.createDefaultValidator(
                 field,
@@ -144,7 +144,7 @@ public class FieldValidatorDefaultSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorDefaultSource fieldValidatorSource = new FieldValidatorDefaultSourceImpl(gen,
-                source);
+                                                                                               source);
 
         FieldValidator composite = fieldValidatorSource.createDefaultValidator(
                 field,

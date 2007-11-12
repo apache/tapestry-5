@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class ThreadLocaleImplTest extends IOCInternalTestCase
 {

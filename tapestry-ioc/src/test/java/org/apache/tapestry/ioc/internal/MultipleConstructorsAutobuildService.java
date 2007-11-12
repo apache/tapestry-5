@@ -26,7 +26,7 @@ public class MultipleConstructorsAutobuildService implements StringHolder
         this(null);
     }
 
-    public MultipleConstructorsAutobuildService(@InjectService("ToUpperCaseStringHolder") StringHolder delegate)
+    public MultipleConstructorsAutobuildService(@InjectService("ToUpperCaseStringHolder")StringHolder delegate)
     {
         _delegate = delegate;
     }

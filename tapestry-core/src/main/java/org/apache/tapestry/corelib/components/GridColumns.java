@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.List;
-
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Parameter;
@@ -24,6 +22,8 @@ import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridModelProvider;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
+
+import java.util.List;
 
 /**
  * Renders out the column headers for the grid. Eventually, this will include control over column
@@ -48,13 +48,15 @@ public class GridColumns
     @Parameter(required = true)
     private String _sortColumnId;
 
-    /** If true, then the sort is ascending (A - Z), if false the descending (Z - A). */
+    /**
+     * If true, then the sort is ascending (A - Z), if false the descending (Z - A).
+     */
     @Parameter(required = true)
     private boolean _sortAscending;
 
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass" })
+            {"disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
     private ActionLink _sort, _sort2;
 
     @Inject
@@ -118,7 +120,7 @@ public class GridColumns
     public String getIconLabel()
     {
         String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending")
-                : "sortable";
+                     : "sortable";
 
         return _messages.get(key);
     }

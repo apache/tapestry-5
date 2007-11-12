@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.integration.app2;
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
-/** Indicates that a method should return the answer to life, the universe, and everything.
+/**
+ * Indicates that a method should return the answer to life, the universe, and everything.
  * Used for testing.
  */
 @Target(ElementType.METHOD)

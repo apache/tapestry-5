@@ -14,16 +14,6 @@
 
 package org.apache.tapestry.internal;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.io.Closeable;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
@@ -34,14 +24,25 @@ import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.internal.util.Defense;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.Orderer;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.slf4j.Logger;
 
-/** Shared utility methods used by various implementation classes. */
+import java.io.Closeable;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Shared utility methods used by various implementation classes.
+ */
 public class TapestryInternalUtils
 {
     private static final URLCodec CODEC = new URLCodec();
@@ -126,7 +127,7 @@ public class TapestryInternalUtils
     /**
      * Converts a string to an {@link OptionModel}. The string is of the form "value=label". If the
      * equals sign is omitted, then the same value is used for both value and label.
-     * 
+     *
      * @param input
      * @return
      */
@@ -147,9 +148,8 @@ public class TapestryInternalUtils
     /**
      * Parses a string input into a series of value=label pairs compatible with
      * {@link #toOptionModel(String)}. Splits on commas. Ignores whitespace around commas.
-     * 
-     * @param input
-     *            comma seperated list of terms
+     *
+     * @param input comma seperated list of terms
      * @return list of option models
      */
     public static List<OptionModel> toOptionModels(String input)
@@ -167,7 +167,7 @@ public class TapestryInternalUtils
     /**
      * Wraps the result of {@link #toOptionModels(String)} as a {@link SelectModel} (with no option
      * groups).
-     * 
+     *
      * @param input
      * @return
      */
@@ -180,7 +180,7 @@ public class TapestryInternalUtils
 
     /**
      * Converts a map entry to an {@link OptionModel}.
-     * 
+     *
      * @param input
      * @return
      */
@@ -196,9 +196,8 @@ public class TapestryInternalUtils
     /**
      * Processes a map input into a series of map entries compatible with
      * {@link #toOptionModel(Map.Entry)}.
-     * 
-     * @param input
-     *            map of elements
+     *
+     * @param input map of elements
      * @return list of option models
      */
     public static <K, V> List<OptionModel> toOptionModels(Map<K, V> input)
@@ -216,7 +215,7 @@ public class TapestryInternalUtils
     /**
      * Wraps the result of {@link #toOptionModels(Map)} as a {@link SelectModel} (with no option
      * groups).
-     * 
+     *
      * @param input
      * @return
      */
@@ -229,7 +228,7 @@ public class TapestryInternalUtils
 
     /**
      * Converts an object to an {@link OptionModel}.
-     * 
+     *
      * @param input
      * @return
      */
@@ -243,9 +242,8 @@ public class TapestryInternalUtils
     /**
      * Processes a list input into a series of objects compatible with
      * {@link #toOptionModel(Object)}.
-     * 
-     * @param input
-     *            list of elements
+     *
+     * @param input list of elements
      * @return list of option models
      */
     public static <E> List<OptionModel> toOptionModels(List<E> input)
@@ -263,7 +261,7 @@ public class TapestryInternalUtils
     /**
      * Wraps the result of {@link #toOptionModels(List)} as a {@link SelectModel} (with no option
      * groups).
-     * 
+     *
      * @param input
      * @return
      */
@@ -277,7 +275,7 @@ public class TapestryInternalUtils
     /**
      * Parses a key/value pair where the key and the value are seperated by an equals sign. The key
      * and value are trimmed of leading and trailing whitespace, and returned as a {@link KeyValue}.
-     * 
+     *
      * @param input
      * @return
      */
@@ -297,7 +295,7 @@ public class TapestryInternalUtils
      * Used to convert a property expression into a key that can be used to locate various resources
      * (Blocks, messages, etc.). Strips out any punctuation characters, leaving just words
      * characters (letters, number and the underscore).
-     * 
+     *
      * @param expression
      * @return
      */
@@ -362,17 +360,14 @@ public class TapestryInternalUtils
      * explicit {@link OrderBefore}, leaving the remainder. Estimates each propertie's position
      * based on the relative position of the property's getter. The code assumes that all methods
      * are readable (have a getter method).
-     * 
-     * @param classAdapter
-     *            defines the bean that contains the properties
-     * @param classFactory
-     *            used to access method line number information
-     * @param propertyNames
-     *            the initial set of property names
+     *
+     * @param classAdapter  defines the bean that contains the properties
+     * @param classFactory  used to access method line number information
+     * @param propertyNames the initial set of property names
      * @return propertyNames filtered and sorted
      */
     public static List<String> orderProperties(Logger logger, ClassPropertyAdapter classAdapter,
-            ClassFactory classFactory, List<String> propertyNames)
+                                               ClassFactory classFactory, List<String> propertyNames)
     {
 
         // Property name to a list of constraints.
@@ -458,11 +453,9 @@ public class TapestryInternalUtils
     }
 
     /**
-     * @param messages
-     *            the messages to search for the label
+     * @param messages the messages to search for the label
      * @param prefix
-     * @param value
-     *            to get a label for
+     * @param value    to get a label for
      * @return the label
      */
     public static String getLabelForEnum(Messages messages, String prefix, Enum value)
@@ -512,7 +505,7 @@ public class TapestryInternalUtils
     /**
      * Determines if the two values are equal. They are equal if they are the exact same value
      * (including if they are both null). Otherwise standard equals() comparison is used.
-     * 
+     *
      * @param <T>
      * @param left
      * @param right

@@ -20,8 +20,6 @@ package org.apache.tapestry.services;
  * the path is mapped to a package. Prefixes should start with a character and end with a slash, as
  * in "core". The root package name should have two sub-packages: "pages" to contain named pages,
  * and "components" to contain named components.
- * 
- * 
  */
 public final class LibraryMapping
 {

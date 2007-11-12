@@ -36,7 +36,7 @@ public class ValidatingConfigurationWrapper<T> implements Configuration<T>
     // Need a strategy for determing the right order for this mass of parameters!
 
     public ValidatingConfigurationWrapper(String serviceId, Logger logger, Class expectedType,
-            ContributionDef contributionDef, Configuration<T> delegate)
+                                          ContributionDef contributionDef, Configuration<T> delegate)
     {
         _serviceId = serviceId;
         _logger = logger;

@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.test;
 
 import static org.easymock.EasyMock.reportMatcher;
-
 import org.easymock.IArgumentMatcher;
 
 /**
@@ -23,8 +22,6 @@ import org.easymock.IArgumentMatcher;
  * simpleminded (it certainly doesn't understand about literal strings in quotes). It works by
  * eliminating unecessary whitespace around curly braces, then reducing all whitespace to a single
  * space.
- * 
- * 
  */
 public class CodeEq implements IArgumentMatcher
 {

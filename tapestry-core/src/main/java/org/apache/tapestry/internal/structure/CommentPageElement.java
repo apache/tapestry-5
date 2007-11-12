@@ -21,7 +21,7 @@ import org.apache.tapestry.runtime.RenderQueue;
 
 /**
  * Renders a text comment.
- * 
+ *
  * @see CommentToken
  * @see PageElementFactory#newCommentElement(CommentToken)
  */

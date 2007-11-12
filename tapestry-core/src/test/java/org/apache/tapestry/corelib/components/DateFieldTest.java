@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.text.SimpleDateFormat;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.text.SimpleDateFormat;
 
 public class DateFieldTest extends TapestryTestCase
 {

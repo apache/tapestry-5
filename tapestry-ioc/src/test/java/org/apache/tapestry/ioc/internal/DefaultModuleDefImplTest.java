@@ -14,34 +14,26 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.IOCMessages.buildMethodConflict;
-import static org.easymock.EasyMock.and;
-import static org.easymock.EasyMock.contains;
-
-import java.lang.reflect.Method;
-import java.util.Set;
-
-import org.apache.tapestry.ioc.AutobuildModule;
-import org.apache.tapestry.ioc.BlueMarker;
-import org.apache.tapestry.ioc.IOCConstants;
-import org.apache.tapestry.ioc.MarkerModule;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.RedMarker;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.StringHolder;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import static org.apache.tapestry.ioc.internal.IOCMessages.buildMethodConflict;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.test.IOCTestCase;
+import static org.easymock.EasyMock.and;
+import static org.easymock.EasyMock.contains;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
+import java.util.Set;
 
 public class DefaultModuleDefImplTest extends IOCTestCase
 {
@@ -127,7 +119,9 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         verify();
     }
 
-    /** Two different methods both claim to build the same service. */
+    /**
+     * Two different methods both claim to build the same service.
+     */
     @Test
     public void service_id_conflict() throws Exception
     {
@@ -146,7 +140,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         // BigDecimal is arbitrary, any class would do.
 
         ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger,
-                _classFactory);
+                                                _classFactory);
 
         Set<String> ids = md.getServiceIds();
 
@@ -284,7 +278,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     }
 
     private void attemptConfigurationMethod(Class moduleClass, String expectedServiceId,
-            String expectedMethodSignature)
+                                            String expectedMethodSignature)
     {
         Logger logger = mockLogger();
 
@@ -394,7 +388,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         try
         {
             new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger,
-                    _classFactory);
+                                     _classFactory);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -419,7 +413,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger,
-                _classFactory);
+                                                _classFactory);
 
         // Prove that the bind method was not invoke
 
@@ -439,7 +433,8 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         // The point is, we're choosing the constructor with the largest number of parameters.
 
         logger
-                .debug(contains("Invoking constructor org.apache.tapestry.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
+                .debug(contains(
+                        "Invoking constructor org.apache.tapestry.ioc.internal.MultipleConstructorsAutobuildService(StringHolder)"));
 
         train_getServiceId(resources, "StringHolder");
         train_getLogger(resources, logger);
@@ -453,7 +448,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class,
-                logger, _classFactory);
+                                                 logger, _classFactory);
 
         ServiceDef sd = def.getServiceDef("StringHolder");
 
@@ -486,8 +481,8 @@ public class DefaultModuleDefImplTest extends IOCTestCase
             assertTrue(ex
                     .getMessage()
                     .matches(
-                            "Error invoking service binder method org.apache.tapestry.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) "
-                                    + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
+                    "Error invoking service binder method org.apache.tapestry.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) "
+                            + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
         }
 
         verify();
@@ -501,7 +496,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger,
-                _classFactory);
+                                                _classFactory);
 
         ServiceDef sd = md.getServiceDef("Runnable");
 

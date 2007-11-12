@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
-import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ApplicationStateManager;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformMethodSignature;
+
+import static java.lang.String.format;
+import java.lang.reflect.Modifier;
+import java.util.List;
 
 /**
  * Looks for the {@link ApplicationState} annotation and converts read and write access on such
@@ -90,12 +89,12 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     }
 
     private void replaceFlagRead(ClassTransformation transformation, String booleanFieldName,
-            String typeFieldName, String managerFieldName)
+                                 String typeFieldName, String managerFieldName)
     {
         String readMethodName = transformation.newMemberName("read", booleanFieldName);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "boolean", readMethodName,
-                null, null);
+                                                                    null, null);
 
         String body = format("return %s.exists(%s);", managerFieldName, typeFieldName);
 
@@ -107,13 +106,13 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     }
 
     private void replaceWrite(ClassTransformation transformation, String fieldName,
-            String fieldType, String managerFieldName, String typeFieldName)
+                              String fieldType, String managerFieldName, String typeFieldName)
     {
         String writeMethodName = transformation.newMemberName("write", fieldName);
 
         TransformMethodSignature writeSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                writeMethodName, new String[]
-                { fieldType }, null);
+                                                                               writeMethodName, new String[]
+                {fieldType}, null);
 
         String body = format("%s.set(%s, $1);", managerFieldName, typeFieldName);
 
@@ -123,13 +122,13 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     }
 
     private void replaceRead(ClassTransformation transformation, String fieldName,
-            String fieldType, String managerFieldName, String typeFieldName)
+                             String fieldType, String managerFieldName, String typeFieldName)
     {
 
         String readMethodName = transformation.newMemberName("read", fieldName);
 
         TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, fieldType,
-                readMethodName, null, null);
+                                                                                    readMethodName, null, null);
 
         String body = format("return (%s) %s.get(%s);", fieldType, managerFieldName, typeFieldName);
 

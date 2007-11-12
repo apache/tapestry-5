@@ -21,13 +21,17 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 public class StringTranslator implements Translator<String>
 {
-    /** Returns the client value (or null, if the client value is blank). */
+    /**
+     * Returns the client value (or null, if the client value is blank).
+     */
     public String parseClient(String clientValue, Messages messages) throws ValidationException
     {
         return InternalUtils.isBlank(clientValue) ? null : clientValue;
     }
 
-    /** Returns the value, or the empty string if value is null. */
+    /**
+     * Returns the value, or the empty string if value is null.
+     */
     public String toClient(String value)
     {
         return value == null ? "" : value;

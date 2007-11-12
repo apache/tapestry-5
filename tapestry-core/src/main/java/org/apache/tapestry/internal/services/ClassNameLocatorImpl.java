@@ -14,14 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.util.Stack;
+
+import java.io.*;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,10 +26,6 @@ import java.util.Collection;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.ioc.util.Stack;
 
 public class ClassNameLocatorImpl implements ClassNameLocator
 {
@@ -139,7 +132,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
     /**
      * Check whether container supports opening a stream on a dir/package to get a list of its
      * contents.
-     * 
+     *
      * @param packageURL
      * @return
      */
@@ -166,7 +159,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
     }
 
     private void scanDirStream(String packagePath, URL packageURL,
-            Collection<String> componentClassNames, Stack<Queued> queue) throws IOException
+                               Collection<String> componentClassNames, Stack<Queued> queue) throws IOException
     {
         InputStream is = null;
 
@@ -235,7 +228,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
     }
 
     private void scanJarFile(String packagePath, Collection<String> componentClassNames,
-            JarFile jarFile) throws IOException
+                             JarFile jarFile) throws IOException
     {
         Enumeration<JarEntry> e = jarFile.entries();
 
@@ -262,13 +255,10 @@ public class ClassNameLocatorImpl implements ClassNameLocator
     /**
      * Scan a dir for classes. Will recursively look in the supplied directory and all sub
      * directories.
-     * 
-     * @param packageName
-     *            Name of package that this directory corresponds to.
-     * @param dir
-     *            Dir to scan for clases.
-     * @param componentClassNames
-     *            List of class names that have been found.
+     *
+     * @param packageName         Name of package that this directory corresponds to.
+     * @param dir                 Dir to scan for clases.
+     * @param componentClassNames List of class names that have been found.
      */
     private void scanDir(String packageName, File dir, Collection<String> componentClassNames)
     {
@@ -296,12 +286,10 @@ public class ClassNameLocatorImpl implements ClassNameLocator
      * produce a JarFile object all the same. Known servlet engines that function like this include
      * Weblogic and OC4J. This is not a full solution, since an unpacked WAR or EAR will not have
      * JAR "files" as such.
-     * 
-     * @param url
-     *            URL of jar
+     *
+     * @param url URL of jar
      * @return JarFile or null
-     * @throws java.io.IOException
-     *             If error occurs creating jar file
+     * @throws java.io.IOException If error occurs creating jar file
      */
     private JarFile getAlternativeJarFile(URL url) throws IOException
     {

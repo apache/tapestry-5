@@ -16,7 +16,9 @@ package org.apache.tapestry.ioc;
 
 public class RegistryBuilderTestModule
 {
-    /** Arbitrary interface and service name. */
+    /**
+     * Arbitrary interface and service name.
+     */
     public Square buildSquare()
     {
         return new Square()

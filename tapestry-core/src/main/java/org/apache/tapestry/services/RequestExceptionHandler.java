@@ -19,17 +19,14 @@ import java.io.IOException;
 /**
  * Service invoked when an uncaught exception occurs. The error handler is responsible for providing
  * a response to the user to describe the error.
- * 
- * 
  */
 public interface RequestExceptionHandler
 {
     /**
      * Reponsible for handling the error <em>in some way</em> and providing <em>some response</em>
      * to the client. A default implementation may render an error response page.
-     * 
-     * @param exception
-     *            uncaught exception to be reported
+     *
+     * @param exception uncaught exception to be reported
      * @throws IOException
      */
     void handleRequestException(Throwable exception) throws IOException;

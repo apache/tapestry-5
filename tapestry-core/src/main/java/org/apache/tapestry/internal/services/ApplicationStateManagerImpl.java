@@ -15,14 +15,9 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.services.*;
 
 import java.util.Map;
-
-import org.apache.tapestry.services.ApplicationStateContribution;
-import org.apache.tapestry.services.ApplicationStateCreator;
-import org.apache.tapestry.services.ApplicationStateManager;
-import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
-import org.apache.tapestry.services.ApplicationStatePersistenceStrategySource;
 
 public class ApplicationStateManagerImpl implements ApplicationStateManager
 {
@@ -37,7 +32,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
         private final ApplicationStateCreator<T> _creator;
 
         ApplicationStateAdapter(Class<T> asoClass, ApplicationStatePersistenceStrategy strategy,
-                ApplicationStateCreator<T> creator)
+                                ApplicationStateCreator<T> creator)
         {
             _asoClass = asoClass;
             _strategy = strategy;
@@ -58,7 +53,9 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
         {
             return _strategy.exists(_asoClass);
         }
-    };
+    }
+
+    ;
 
     /**
      * The map will be extended periodically as new ASOs, not in the configuration, are encountered.
@@ -70,7 +67,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     @SuppressWarnings("unchecked")
     public ApplicationStateManagerImpl(Map<Class, ApplicationStateContribution> configuration,
-            ApplicationStatePersistenceStrategySource source)
+                                       ApplicationStatePersistenceStrategySource source)
     {
         _source = source;
 
@@ -90,7 +87,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     @SuppressWarnings("unchecked")
     private <T> ApplicationStateAdapter<T> newAdapter(final Class<T> asoClass, String strategyName,
-            ApplicationStateCreator<T> creator)
+                                                      ApplicationStateCreator<T> creator)
     {
         if (creator == null) creator = new ApplicationStateCreator<T>()
         {

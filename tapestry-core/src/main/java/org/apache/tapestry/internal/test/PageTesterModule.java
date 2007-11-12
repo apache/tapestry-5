@@ -41,7 +41,7 @@ public class PageTesterModule
     }
 
     public static void contributeAlias(Configuration<AliasContribution> configuration,
-            ObjectLocator locator)
+                                       ObjectLocator locator)
     {
         add(configuration, ComponentInvocationMap.class, new PageTesterComponentInvocationMap());
         add(configuration, Response.class, new TestableResponseImpl());
@@ -56,7 +56,7 @@ public class PageTesterModule
     }
 
     private static <T> void add(Configuration<AliasContribution> configuration,
-            ObjectLocator locator, Class<T> serviceClass, String serviceId)
+                                ObjectLocator locator, Class<T> serviceClass, String serviceId)
     {
         T service = locator.getService(serviceId, serviceClass);
 
@@ -64,7 +64,7 @@ public class PageTesterModule
     }
 
     private static <T> void add(Configuration<AliasContribution> configuration,
-            Class<T> serviceClass, T service)
+                                Class<T> serviceClass, T service)
     {
         AliasContribution<T> contribution = AliasContribution.create(
                 serviceClass,

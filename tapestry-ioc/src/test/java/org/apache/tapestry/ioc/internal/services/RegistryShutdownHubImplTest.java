@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.same;
-
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.same;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 

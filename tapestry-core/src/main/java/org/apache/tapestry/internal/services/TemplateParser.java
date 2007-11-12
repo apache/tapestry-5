@@ -19,19 +19,17 @@ import org.apache.tapestry.ioc.Resource;
 
 /**
  * Parses a resource into a {@link org.apache.tapestry.internal.parser.ComponentTemplate}.
- * 
+ *
  * @see PageLoader
  */
 public interface TemplateParser
 {
     /**
      * Parses the given resource into a component template.
-     * 
-     * @param templateResource
-     *            the path
+     *
+     * @param templateResource the path
      * @return the parsed template contents
-     * @throws RuntimeException
-     *             if the resource does not exist, or if there is any kind of parse error
+     * @throws RuntimeException if the resource does not exist, or if there is any kind of parse error
      */
     ComponentTemplate parseTemplate(Resource templateResource);
 }

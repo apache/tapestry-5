@@ -14,22 +14,18 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.anyInt;
-import static org.easymock.EasyMock.anyLong;
-import static org.easymock.EasyMock.eq;
-
-import java.io.IOException;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.Response;
+import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
+
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Tests for the {@link ResourceStreamerImpl} class.

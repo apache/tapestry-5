@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-
-import javax.servlet.http.HttpSession;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Session;
 import org.testng.annotations.Test;
+
+import javax.servlet.http.HttpSession;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 
 public class SessionImplTest extends InternalBaseTestCase
 {

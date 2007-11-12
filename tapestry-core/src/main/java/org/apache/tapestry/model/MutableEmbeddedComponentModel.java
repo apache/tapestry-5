@@ -22,6 +22,8 @@ public interface MutableEmbeddedComponentModel extends EmbeddedComponentModel
 {
     void addParameter(String name, String value);
 
-    /** Adds a mixin to the component in terms of its fully qualified class name. */
+    /**
+     * Adds a mixin to the component in terms of its fully qualified class name.
+     */
     void addMixin(String mixinClassName);
 }

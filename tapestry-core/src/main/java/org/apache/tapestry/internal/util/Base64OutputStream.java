@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.io.ByteArrayOutputStream;
-
 import org.apache.commons.codec.binary.Base64;
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * An extension of {@link ByteArrayOutputStream} that allows the final byte array to be converted to

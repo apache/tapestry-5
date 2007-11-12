@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
+
+import static java.lang.String.format;
 
 /**
  * Allows for the injection of the component's {@link org.apache.tapestry.ComponentResources}.
@@ -28,7 +28,7 @@ import org.apache.tapestry.services.InjectionProvider;
 public class ComponentResourcesInjectionProvider implements InjectionProvider
 {
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
-            ClassTransformation transformation, MutableComponentModel componentModel)
+                                    ClassTransformation transformation, MutableComponentModel componentModel)
     {
         if (fieldType.equals(ComponentResources.class))
         {

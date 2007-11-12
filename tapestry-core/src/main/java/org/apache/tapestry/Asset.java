@@ -20,7 +20,7 @@ import org.apache.tapestry.ioc.Resource;
  * An Asset is any kind of resource that can be exposed to the client web browser. Although quite
  * often an Asset is a resource in a web application's context folder, within Tapestry, Assets may
  * also be resources on the classpath (i.e., packaged inside JARs).
- * <p>
+ * <p/>
  * An Asset's toString() will return the URL for the resource (the same value as
  * {@link #toClientURL()}).
  */
@@ -32,6 +32,8 @@ public interface Asset
      */
     String toClientURL();
 
-    /** Returns the underlying Resource for the Asset. */
+    /**
+     * Returns the underlying Resource for the Asset.
+     */
     Resource getResource();
 }

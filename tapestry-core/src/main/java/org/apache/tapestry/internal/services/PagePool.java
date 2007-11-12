@@ -24,16 +24,14 @@ public interface PagePool
     /**
      * Obtains a page instance from the pool via a logical page name. A page instance is created if
      * no such page is currently available.
-     * 
-     * @param logicalPageName
-     *            logical name used to identify the page
+     *
+     * @param logicalPageName logical name used to identify the page
      * @return a page instance
      */
     Page checkout(String logicalPageName);
 
     /**
-     * @param page
-     *            a previously checked-out page
+     * @param page a previously checked-out page
      */
     void release(Page page);
 }

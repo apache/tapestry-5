@@ -21,7 +21,7 @@ import java.lang.reflect.Modifier;
 /**
  * A representation of a method signature, which consists of its name, modifiers (primarily,
  * visibility), return type, parameter types, and declared exception types.
- * <p>
+ * <p/>
  * Types are stored as class names (or primitive names) because the signature is used with
  * {@link ClassTransformation} (which operates on as-yet unloaded classes).
  */
@@ -41,7 +41,9 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     private static final String[] EMPTY_STRINGS = new String[0];
 
-    /** Convenience for adding a public void method with no parameters or exception types. */
+    /**
+     * Convenience for adding a public void method with no parameters or exception types.
+     */
 
     public TransformMethodSignature(String name)
     {
@@ -49,7 +51,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     public TransformMethodSignature(int modifiers, String type, String name,
-            String[] parameterTypes, String[] exceptionTypes)
+                                    String[] parameterTypes, String[] exceptionTypes)
     {
         _modifiers = modifiers;
 
@@ -77,7 +79,9 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
         return _exceptionTypes;
     }
 
-    /** Returns the name of the method. */
+    /**
+     * Returns the name of the method.
+     */
     public String getMethodName()
     {
         return _methodName;
@@ -85,7 +89,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     /**
      * Returns the set of modifier flags for this method.
-     * 
+     *
      * @see java.lang.reflect.Modifier
      */
     public int getModifiers()
@@ -102,7 +106,9 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
         return _parameterTypes;
     }
 
-    /** Return the type name of the return type of the method. */
+    /**
+     * Return the type name of the return type of the method.
+     */
     public String getReturnType()
     {
         return _returnType;
@@ -225,7 +231,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      * Returns a shortened form of the string representation of the method. It lists just the name
      * of the method and the types of any parameters, omitting return type, exceptions and
      * modifiers.
-     * 
+     *
      * @return
      */
     public String getMediumDescription()

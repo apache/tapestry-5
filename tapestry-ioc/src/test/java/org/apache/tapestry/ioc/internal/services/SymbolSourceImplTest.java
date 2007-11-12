@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class SymbolSourceImplTest extends IOCInternalTestCase
 {
@@ -287,14 +287,14 @@ public class SymbolSourceImplTest extends IOCInternalTestCase
         SymbolSource source = getService(SymbolSource.class);
 
         // SystemPropertiesSymbolProvider is available by default
-        
+
         String userName = System.getProperty("user.name");
 
         assertEquals(source.valueForSymbol("user.name"), userName);
     }
 
     protected final void train_valueForSymbol(SymbolProvider provider, String symbolName,
-            String value)
+                                              String value)
     {
         expect(provider.valueForSymbol(symbolName)).andReturn(value);
     }

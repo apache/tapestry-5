@@ -14,17 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.net.URL;
+import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.services.*;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.services.Context;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestFilter;
-import org.apache.tapestry.services.RequestHandler;
-import org.apache.tapestry.services.Response;
+import java.io.IOException;
+import java.net.URL;
 
 /**
  * Identifies requests that are for actual resource files in the context. For those, Tapestry allows

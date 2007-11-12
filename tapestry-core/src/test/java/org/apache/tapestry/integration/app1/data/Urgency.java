@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-public enum Urgency {
+public enum Urgency
+{
     LOW, MEDIUM, HIGH
 }

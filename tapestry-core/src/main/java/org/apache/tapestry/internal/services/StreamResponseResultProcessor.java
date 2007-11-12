@@ -14,11 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.apache.tapestry.StreamResponse;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.runtime.Component;
@@ -26,12 +21,17 @@ import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+
 public class StreamResponseResultProcessor implements ComponentEventResultProcessor<StreamResponse>
 {
     private static final int BUFFER_SIZE = 5000;
 
     public ActionResponseGenerator processComponentEvent(final StreamResponse streamResponse,
-            Component component, final String methodDescripion)
+                                                         Component component, final String methodDescripion)
     {
         return new ActionResponseGenerator()
         {

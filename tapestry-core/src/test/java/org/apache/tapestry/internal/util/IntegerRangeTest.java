@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.util.Iterator;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Iterator;
 
 public class IntegerRangeTest extends Assert
 {

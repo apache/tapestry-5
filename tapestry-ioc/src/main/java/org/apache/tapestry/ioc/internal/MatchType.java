@@ -13,10 +13,11 @@
 // limitations under the License.
 
 /**
- * 
+ *
  */
 package org.apache.tapestry.ioc.internal;
 
-enum MatchType {
+enum MatchType
+{
     EXACT, PREFIX, SUFFIX, INFIX, ANY
 }

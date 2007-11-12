@@ -16,15 +16,14 @@ package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Base class for strategies that store their values as keys in the session. Implements a uniform
@@ -67,11 +66,9 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
     /**
      * Called after each key is read by {@link #gatherFieldChanges(String)}. This implementation
      * does nothing, subclasses may override.
-     * 
-     * @param session
-     *            the session from which a value was just read
-     * @param attributeName
-     *            the name of the attribute used to read a value
+     *
+     * @param session       the session from which a value was just read
+     * @param attributeName the name of the attribute used to read a value
      */
     protected void didReadChange(Session session, String attributeName)
     {
@@ -92,7 +89,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
     }
 
     public final void postChange(String pageName, String componentId, String fieldName,
-            Object newValue)
+                                 Object newValue)
     {
         notBlank(pageName, "pageName");
         notBlank(fieldName, "fieldName");

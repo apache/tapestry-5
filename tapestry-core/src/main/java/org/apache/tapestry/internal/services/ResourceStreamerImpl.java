@@ -14,6 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.services.Response;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,10 +25,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
-
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.services.Response;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {

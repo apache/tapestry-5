@@ -28,7 +28,7 @@ public interface Event
     /**
      * Returns true if the event has been aborted (meaning that the return value from some event
      * handler method was accepted, and processing of the event was terminated).
-     * 
+     *
      * @return true if no further event handler methods should be invoked
      */
     boolean isAborted();
@@ -36,9 +36,8 @@ public interface Event
     /**
      * Invoke to identify, to the event, what component and method is being acted upon (used for
      * some kinds of exception reporting).
-     * 
-     * @param component
-     *            the component instance from which the result was obtained
+     *
+     * @param component         the component instance from which the result was obtained
      * @param methodDescription
      */
     void setSource(Component component, String methodDescription);
@@ -46,9 +45,8 @@ public interface Event
     /**
      * Stores a result for the event. Storing a non-null result value may abort the event (at the
      * discretion of the {@link ComponentEventHandler}).
-     * 
-     * @param result
-     *            the result obtained from a method invocations
+     *
+     * @param result the result obtained from a method invocations
      * @return true if the event is now aborted
      */
     boolean storeResult(Object result);

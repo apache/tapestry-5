@@ -14,19 +14,18 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-
-import java.net.URL;
-import java.util.Map;
-
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Resource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 
+import java.net.URL;
+import java.util.Map;
+
 public class ResourceCacheImpl extends InvalidationEventHubImpl implements ResourceCache,
-        UpdateListener
+                                                                           UpdateListener
 {
     private final URLChangeTracker _tracker;
 
@@ -57,7 +56,7 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
             // to an actual resource.
 
             _digest = (_requiresDigest && url != null) ? _digestGenerator.generateDigest(url)
-                    : null;
+                      : null;
 
             _timeModified = url != null ? _tracker.add(url) : MISSING_RESOURCE_TIME_MODIFIED;
         }

@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
+
+import java.util.List;
+import java.util.Map;
 
 public final class OptionGroupModelImpl implements OptionGroupModel
 {
@@ -31,14 +31,14 @@ public final class OptionGroupModelImpl implements OptionGroupModel
     private final Map<String, String> _attributes;
 
     public OptionGroupModelImpl(String label, boolean disabled, List<OptionModel> options,
-            String... attributeKeysAndValues)
+                                String... attributeKeysAndValues)
     {
         this(label, disabled, options, attributeKeysAndValues.length == 0 ? null : TapestryInternalUtils
                 .mapFromKeysAndValues(attributeKeysAndValues));
     }
 
     public OptionGroupModelImpl(String label, boolean disabled, List<OptionModel> options,
-            Map<String, String> attributes)
+                                Map<String, String> attributes)
     {
         _label = label;
         _disabled = disabled;

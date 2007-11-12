@@ -31,7 +31,7 @@ import org.apache.tapestry.services.PersistentFieldManager;
  * are, in fact, components (rather than just static markup).
  */
 public interface ComponentPageElement extends ComponentResourcesCommon,
-        InternalComponentResourcesCommon, PageElement, BodyPageElement
+                                              InternalComponentResourcesCommon, PageElement, BodyPageElement
 {
     /**
      * Returns the core component associated with this page element (as opposed to any mixins
@@ -39,10 +39,14 @@ public interface ComponentPageElement extends ComponentResourcesCommon,
      */
     Component getComponent();
 
-    /** Returns the resources associated with the core component. */
+    /**
+     * Returns the resources associated with the core component.
+     */
     InternalComponentResources getComponentResources();
 
-    /** Returns the page which contains this component. */
+    /**
+     * Returns the page which contains this component.
+     */
     Page getContainingPage();
 
     /**
@@ -61,7 +65,7 @@ public interface ComponentPageElement extends ComponentResourcesCommon,
 
     /**
      * Used during the contruction of a page to add a non-anonymous Block to the component.
-     * 
+     *
      * @see ComponentResourcesCommon#getBlock(String)
      */
     void addBlock(String blockId, Block block);
@@ -74,32 +78,30 @@ public interface ComponentPageElement extends ComponentResourcesCommon,
 
     /**
      * Adds a mixin.
-     * 
-     * @param instantiator
-     *            used to instantiate an instance of the mixin
+     *
+     * @param instantiator used to instantiate an instance of the mixin
      */
     void addMixin(Instantiator instantiator);
 
     /**
      * Retrieves a component page element by its id. The search is caseless.
-     * 
-     * @param id
-     *            used to locate the element
+     *
+     * @param id used to locate the element
      * @return the page element
-     * @throws IllegalArgumentException
-     *             if no component exists with the given id
+     * @throws IllegalArgumentException if no component exists with the given id
      */
     ComponentPageElement getEmbeddedElement(String id);
 
-    /** Invoked when the component should render its body. */
+    /**
+     * Invoked when the component should render its body.
+     */
     void enqueueBeforeRenderBody(RenderQueue queue);
 
     /**
      * Asks each mixin and component to {@link Component#handleComponentEvent(ComponentEvent)},
      * returning true if any handler was found.
-     * 
-     * @param event
-     *            to be handled
+     *
+     * @param event to be handled
      * @return true if a handler was found
      */
     boolean handleEvent(ComponentEvent event);
@@ -108,9 +110,8 @@ public interface ComponentPageElement extends ComponentResourcesCommon,
      * Searches the component (and its mixins) for a formal parameter matching the given name. If
      * found, the {@link ParameterModel#getDefaultBindingPrefix() default binding prefix} is
      * returned. Otherwise the parameter is an informal parameter, and null is returned.
-     * 
-     * @param parameterName
-     *            the name of the parameter, possibly qualified with the mixin class name
+     *
+     * @param parameterName the name of the parameter, possibly qualified with the mixin class name
      * @return the default binding prefix, or null
      */
     String getDefaultBindingPrefix(String parameterName);

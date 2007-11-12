@@ -23,9 +23,8 @@ public class DoubleTranslator implements Translator<Double>
 {
     /**
      * Parses blank values to null, otherwise parses the client value to a double
-     * 
-     * @throws ValidationException
-     *             if the clientValue can not be parsed
+     *
+     * @throws ValidationException if the clientValue can not be parsed
      */
     public Double parseClient(String clientValue, Messages messages) throws ValidationException
     {

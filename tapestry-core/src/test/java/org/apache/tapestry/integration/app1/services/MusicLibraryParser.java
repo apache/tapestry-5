@@ -14,16 +14,9 @@
 
 package org.apache.tapestry.integration.app1.services;
 
-import static java.lang.String.format;
+import org.apache.tapestry.integration.app1.data.Track;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
-
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.List;
-
-import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.util.Stack;
 import org.slf4j.Logger;
 import org.xml.sax.Attributes;
@@ -32,6 +25,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import static java.lang.String.format;
+import java.net.URL;
+import java.util.List;
 
 /**
  * Reads an iTunes music library file into a list of
@@ -97,10 +96,14 @@ public class MusicLibraryParser
 
         private int _state = STATE_START;
 
-        /** Most recently seen key. */
+        /**
+         * Most recently seen key.
+         */
         private String _key;
 
-        /** Currently building Track. */
+        /**
+         * Currently building Track.
+         */
         private Track _track;
 
         public List<Track> getTracks()

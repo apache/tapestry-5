@@ -20,8 +20,6 @@ import org.apache.tapestry.model.MutableComponentModel;
  * Interface for a set of objects that can perform component class transformations. Implementations
  * should be multithreaded, ideally they should be stateless (all necessary state can be stored in
  * the {@link org.apache.tapestry.services.ClassTransformation}).
- * 
- * 
  */
 public interface ComponentClassTransformWorker
 {

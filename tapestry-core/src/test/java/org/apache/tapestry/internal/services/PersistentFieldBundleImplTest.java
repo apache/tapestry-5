@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-import java.util.Collection;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.PersistentFieldBundle;
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collection;
 
 public class PersistentFieldBundleImplTest extends InternalBaseTestCase
 {

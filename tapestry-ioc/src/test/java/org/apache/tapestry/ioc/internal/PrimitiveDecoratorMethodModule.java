@@ -16,8 +16,6 @@ package org.apache.tapestry.ioc.internal;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImplTest}.
- * 
- * 
  */
 public class PrimitiveDecoratorMethodModule
 {

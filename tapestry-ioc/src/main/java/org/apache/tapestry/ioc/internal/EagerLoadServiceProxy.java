@@ -17,8 +17,6 @@ package org.apache.tapestry.ioc.internal;
 /**
  * Interface implemented by all service proxies. Service proxies are always
  * {@link org.apache.tapestry.ioc.services.RegistryShutdownListener}s, they also can be eager-load
- * 
- * 
  */
 public interface EagerLoadServiceProxy
 {

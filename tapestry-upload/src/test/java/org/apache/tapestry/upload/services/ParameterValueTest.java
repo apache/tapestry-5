@@ -14,11 +14,7 @@
 
 package org.apache.tapestry.upload.services;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-
+import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 
 public class ParameterValueTest
@@ -36,7 +32,7 @@ public class ParameterValueTest
     {
         ParameterValue value = new ParameterValue("foo");
         assertEquals(value.multi(), new String[]
-        { "foo" });
+                {"foo"});
     }
 
     @Test
@@ -52,7 +48,7 @@ public class ParameterValueTest
         ParameterValue value = new ParameterValue("foo");
         value.add("blah");
         assertEquals(value.multi(), new String[]
-        { "foo", "blah" });
+                {"foo", "blah"});
     }
 
     @Test

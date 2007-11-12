@@ -14,23 +14,16 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.toList;
-
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.InternalUtils.toList;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Method;
+import java.util.*;
 
 public class InternalUtilsTest extends IOCTestCase
 {
@@ -85,7 +78,7 @@ public class InternalUtilsTest extends IOCTestCase
     public void array_size_when_non_null()
     {
         Object[] array =
-        { 1, 2, 3 };
+                {1, 2, 3};
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -100,11 +93,11 @@ public class InternalUtilsTest extends IOCTestCase
     public Object[][] memberPrefixData()
     {
         return new Object[][]
-        {
-        { "simple", "simple" },
-        { "_name", "name" },
-        { "$name", "name" },
-        { "$_$__$__$_$___$_$_$_$$name$", "name$" } };
+                {
+                        {"simple", "simple"},
+                        {"_name", "name"},
+                        {"$name", "name"},
+                        {"$_$__$__$_$___$_$_$_$$name$", "name$"}};
     }
 
     @Test
@@ -164,12 +157,12 @@ public class InternalUtilsTest extends IOCTestCase
     public Object[][] capitalize_inputs()
     {
         return new Object[][]
-        {
-        { "hello", "Hello" },
-        { "Goodbye", "Goodbye" },
-        { "", "" },
-        { "a", "A" },
-        { "A", "A" } };
+                {
+                        {"hello", "Hello"},
+                        {"Goodbye", "Goodbye"},
+                        {"", ""},
+                        {"a", "A"},
+                        {"A", "A"}};
     }
 
     @Test

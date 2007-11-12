@@ -14,19 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.TransformConstants;
-import org.apache.tapestry.services.TransformMethodSignature;
-import org.apache.tapestry.services.TransformUtils;
+import org.apache.tapestry.services.*;
+
+import java.util.List;
 
 /**
  * Provides implementations of the
@@ -47,7 +42,9 @@ public class OnEventWorker implements ComponentClassTransformWorker
             {
                 return signature.getMethodName().startsWith("on")
                         || transformation.getMethodAnnotation(signature, OnEvent.class) != null;
-            };
+            }
+
+            ;
         };
 
         List<TransformMethodSignature> methods = transformation.findMethods(filter);
@@ -70,7 +67,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
     }
 
     private void addCodeForMethod(BodyBuilder builder, TransformMethodSignature method,
-            ClassTransformation transformation)
+                                  ClassTransformation transformation)
     {
         // $1 is the event
 

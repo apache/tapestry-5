@@ -14,11 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.eq;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
@@ -27,7 +22,11 @@ import org.apache.tapestry.services.ClasspathAssetAliasManager;
 import org.apache.tapestry.services.Dispatcher;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.eq;
 import org.testng.annotations.Test;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class AssetDispatcherTest extends InternalBaseTestCase
 {

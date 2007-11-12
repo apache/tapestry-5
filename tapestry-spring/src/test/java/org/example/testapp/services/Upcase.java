@@ -19,5 +19,5 @@ package org.example.testapp.services;
  */
 public interface Upcase
 {
-  String toUpperCase(String input);
+    String toUpperCase(String input);
 }

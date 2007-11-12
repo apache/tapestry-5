@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.integration.pagelevel;
 
-import java.util.Map;
-
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
@@ -24,6 +22,8 @@ import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class SubmitTest extends Assert
 {

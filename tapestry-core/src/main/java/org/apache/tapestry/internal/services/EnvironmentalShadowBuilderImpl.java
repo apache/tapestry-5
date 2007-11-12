@@ -14,11 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -26,17 +21,23 @@ import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.EnvironmentalShadowBuilder;
 
+import static java.lang.String.format;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+
 public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilder
 {
     private final ClassFactory _classFactory;
 
     private final Environment _environment;
 
-    /** Construct using the default builtin factory, not the component layer version. */
+    /**
+     * Construct using the default builtin factory, not the component layer version.
+     */
     public EnvironmentalShadowBuilderImpl(@Builtin
     ClassFactory classFactory,
 
-    Environment environment)
+                                          Environment environment)
     {
         _classFactory = classFactory;
         _environment = environment;
@@ -70,10 +71,11 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
         classFab.addField("_serviceType", Class.class);
 
         classFab.addConstructor(new Class[]
-        { Environment.class, Class.class }, null, "{ _environment = $1; _serviceType = $2; }");
+                {Environment.class, Class.class}, null, "{ _environment = $1; _serviceType = $2; }");
 
         classFab.addMethod(Modifier.PRIVATE, new MethodSignature(serviceType, "_delegate", null,
-                null), "return ($r) _environment.peekRequired(_serviceType); ");
+                                                                 null),
+                           "return ($r) _environment.peekRequired(_serviceType); ");
 
         classFab.proxyMethodsToDelegate(serviceType, "_delegate()", format(
                 "<EnvironmentalProxy for %s>",

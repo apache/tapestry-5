@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.util;
 
+import org.apache.tapestry.StreamResponse;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.services.Response;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.tapestry.StreamResponse;
-import org.apache.tapestry.services.Response;
 
 public class TextStreamResponse implements StreamResponse
 {

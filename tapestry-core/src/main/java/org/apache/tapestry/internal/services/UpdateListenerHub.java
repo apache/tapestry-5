@@ -24,8 +24,7 @@ import org.apache.tapestry.internal.events.UpdateListener;
  * as classes or template files) can check to see if any file they've used has changed. If so, the
  * service can invalidate its internal cache, or notify other services (typically via
  * {@link org.apache.tapestry.internal.events.InvalidationListener} that they should do the same.
- * 
- * 
+ *
  * @see org.apache.tapestry.internal.util.URLChangeTracker
  */
 public interface UpdateListenerHub

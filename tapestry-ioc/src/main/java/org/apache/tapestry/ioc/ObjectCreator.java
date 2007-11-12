@@ -17,11 +17,11 @@ package org.apache.tapestry.ioc;
 /**
  * Interface used to encapsulate any strategy used defer the creation of some object until just as
  * needed.
- * 
- * 
  */
 public interface ObjectCreator
 {
-    /** Create and return the object. */
+    /**
+     * Create and return the object.
+     */
     Object createObject();
 }

@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.util;
 
-import static java.lang.System.out;
+import org.apache.tapestry.ioc.internal.util.Orderer;
 
+import static java.lang.System.out;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.util.Orderer;
 
 public class FindTheParameterizedType
 {

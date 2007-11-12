@@ -14,17 +14,6 @@
 
 package org.apache.tapestry.internal;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.regex.Pattern;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.SelectModel;
@@ -39,6 +28,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class TapestryInternalUtilsTest extends InternalBaseTestCase
 {
@@ -105,11 +99,11 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     public Object[][] to_user_presentable_data()
     {
         return new Object[][]
-        {
-        { "hello", "Hello" },
-        { "userId", "User Id" },
-        { "useHTML", "Use HTML" },
-        { "underscored_name", "Underscored Name" }, };
+                {
+                        {"hello", "Hello"},
+                        {"userId", "User Id"},
+                        {"useHTML", "Use HTML"},
+                        {"underscored_name", "Underscored Name"},};
     }
 
     @Test

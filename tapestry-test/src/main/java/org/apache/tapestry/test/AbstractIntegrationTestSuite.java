@@ -14,29 +14,28 @@
 
 package org.apache.tapestry.test;
 
+import com.thoughtworks.selenium.CommandProcessor;
+import com.thoughtworks.selenium.DefaultSelenium;
+import com.thoughtworks.selenium.HttpCommandProcessor;
+import com.thoughtworks.selenium.Selenium;
 import org.openqa.selenium.server.SeleniumServer;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
-import com.thoughtworks.selenium.CommandProcessor;
-import com.thoughtworks.selenium.DefaultSelenium;
-import com.thoughtworks.selenium.HttpCommandProcessor;
-import com.thoughtworks.selenium.Selenium;
-
 /**
  * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of
  * Jetty, and in-process copy of {@link SeleniumServer}, and a Selenium client.
- * <p>
+ * <p/>
  * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG
  * tends to run them in an arbitrary order unless you explicitly set the order. If you have managed
  * to get TestNG to run tests in parallel, you may see further problems caused by a single client
  * jumping all over your web application in an unpredictable order.
- * <p>
+ * <p/>
  * This class implements the {@link Selenium} interface, and delegates all those methods to the
  * {@link DefaultSelenium} instance it creates. It also extends the normal exception reporting for
  * any failed command or query to produce a more detailed report to the main console.
- * 
+ *
  * @see JettyRunner
  */
 public abstract class AbstractIntegrationTestSuite extends Assert implements Selenium
@@ -47,10 +46,14 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
      */
     public static final String DEFAULT_WEB_APP_ROOT = "src/main/webapp";
 
-    /** 60 seconds */
+    /**
+     * 60 seconds
+     */
     public static final String PAGE_LOAD_TIMEOUT = "600000";
 
-    /** The port on which the internal copy of Jetty is executed. */
+    /**
+     * The port on which the internal copy of Jetty is executed.
+     */
     public static final int JETTY_PORT = 9999;
 
     // This is likely to be a problem, since may want to test with a context path, rather than as
@@ -76,8 +79,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     }
 
     /**
-     * @param webAppRoot
-     *            the directory containing the web application to be tested.
+     * @param webAppRoot the directory containing the web application to be tested.
      */
     protected AbstractIntegrationTestSuite(String webAppRoot)
     {
@@ -196,7 +198,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _server.start();
 
         CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT,
-                "*firefox", BASE_URL);
+                                                       "*firefox", BASE_URL);
 
         _selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
 
@@ -540,7 +542,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     protected final void start(String... linkText)
     {
         open(BASE_URL);
-    
+
         for (String s : linkText)
             clickAndWait(String.format("link=%s", s));
     }

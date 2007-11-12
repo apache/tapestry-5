@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.ioc.services;
 
-import static java.lang.String.format;
+import org.apache.tapestry.ioc.ObjectCreator;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
+import static java.lang.String.format;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.ObjectCreator;
 
 /**
  * Handy method useful when creating new classes using
@@ -125,7 +124,7 @@ public final class ClassFabUtils
     }
 
     private static void add(String primitiveType, String typeCode, Class wrapperType,
-            String unwrapMethod)
+                            String unwrapMethod)
     {
         PRIMITIVE_INFO.put(primitiveType, new PrimitiveInfo(typeCode, wrapperType, unwrapMethod));
     }
@@ -172,7 +171,9 @@ public final class ClassFabUtils
         return PRIMITIVE_INFO.get(primitiveTypeName).getUnwrapMethod();
     }
 
-    /** Given the name of a primitive type, returns the name of the corresponding wrapper class. */
+    /**
+     * Given the name of a primitive type, returns the name of the corresponding wrapper class.
+     */
 
     public static String getWrapperTypeName(String primitiveType)
     {
@@ -207,25 +208,21 @@ public final class ClassFabUtils
      * provide (on demand) an object (implementing the service interface) to delegate to. The
      * ObjectCreator will be invoked on every method invocation ( if it is caching, that should be
      * internal to its implementation).
-     * 
+     *
      * @param <T>
-     * @param classFab
-     *            used to create the new class
-     * @param serviceInterface
-     *            the interface the proxy will implement
-     * @param creator
-     *            the createor which will provide an instance of the interface
-     * @param description
-     *            description to be returned from the proxy's toString() method
+     * @param classFab         used to create the new class
+     * @param serviceInterface the interface the proxy will implement
+     * @param creator          the createor which will provide an instance of the interface
+     * @param description      description to be returned from the proxy's toString() method
      * @return the instantiated proxy object
      */
     public static <T> T createObjectCreatorProxy(ClassFab classFab, Class<T> serviceInterface,
-            ObjectCreator creator, String description)
+                                                 ObjectCreator creator, String description)
     {
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
 
         classFab.addConstructor(new Class[]
-        { ObjectCreator.class }, null, "_creator = $1;");
+                {ObjectCreator.class}, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

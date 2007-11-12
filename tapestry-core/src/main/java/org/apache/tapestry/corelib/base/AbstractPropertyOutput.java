@@ -30,16 +30,18 @@ import org.apache.tapestry.services.PropertyOutputContext;
  * relationship between such a component and its container, as the container may provide messages in
  * its message catalog needed by the {@link Block}s that render the values. In addition, the
  * component may be passed Block parameters that are output overrides for specified properties.
- * <p>
+ * <p/>
  * Subclasses will implement a <code>beginRender()</code> method that invokes
  * {@link #renderPropertyValue(MarkupWriter, String)}.
- * 
+ *
  * @see BeanBlockSource
  */
 public class AbstractPropertyOutput
 {
 
-    /** Model for property displayed by the cell. */
+    /**
+     * Model for property displayed by the cell.
+     */
     @Parameter(required = true)
     private PropertyModel _model;
 

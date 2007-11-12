@@ -14,9 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
 import org.apache.tapestry.ComponentEventHandler;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.Event;
 

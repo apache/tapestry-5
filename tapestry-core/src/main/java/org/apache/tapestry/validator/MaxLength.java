@@ -14,13 +14,8 @@
 
 package org.apache.tapestry.validator;
 
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryUtils.quote;
-
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 
 public final class MaxLength implements Validator<Integer, String>
@@ -46,7 +41,7 @@ public final class MaxLength implements Validator<Integer, String>
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter,
-            String value) throws ValidationException
+                         String value) throws ValidationException
     {
         if (value.length() > constraintValue)
             throw new ValidationException(buildMessage(formatter, field, constraintValue));
@@ -58,11 +53,11 @@ public final class MaxLength implements Validator<Integer, String>
     }
 
     public void render(Field field, Integer constraintValue, MessageFormatter formatter,
-            MarkupWriter writer, PageRenderSupport pageRenderSupport)
+                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
     {
         // TODO: write a maxlength attribute into the element?  But that's only for
         // textfield, not for textarea.
-        
+
         pageRenderSupport.addScript(
                 "Tapestry.Field.maxlength('%s', %d, %s);",
                 field.getClientId(),

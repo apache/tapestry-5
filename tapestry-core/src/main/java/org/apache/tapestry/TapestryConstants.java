@@ -19,7 +19,9 @@ package org.apache.tapestry;
  */
 public final class TapestryConstants
 {
-    /** Default client event name, "action", used in most situations. */
+    /**
+     * Default client event name, "action", used in most situations.
+     */
     public static final String ACTION_EVENT = "action";
 
     /**
@@ -40,10 +42,14 @@ public final class TapestryConstants
      */
     public static final String ASSET_PATH_PREFIX = "/assets/";
 
-    /** Binding expression prefix used for literal strings. */
+    /**
+     * Binding expression prefix used for literal strings.
+     */
     public static final String LITERAL_BINDING_PREFIX = "literal";
 
-    /** Binding expression prefix used to bind to a property of the component. */
+    /**
+     * Binding expression prefix used to bind to a property of the component.
+     */
     public static final String PROP_BINDING_PREFIX = "prop";
 
     /**

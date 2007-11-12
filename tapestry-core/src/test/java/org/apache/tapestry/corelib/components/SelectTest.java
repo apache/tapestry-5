@@ -14,15 +14,6 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.io.BufferedInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
@@ -37,6 +28,15 @@ import org.apache.tapestry.internal.services.StringValueEncoder;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.testng.annotations.Test;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Mostly, this is about how the Select component renders its {@link SelectModel}. The real nuts
@@ -106,7 +106,7 @@ public class SelectTest extends InternalBaseTestCase
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
         List<OptionModel> options = Arrays.asList((OptionModel) new OptionModelImpl("Fred", false,
-                "fred", "class", "pixie"));
+                                                                                    "fred", "class", "pixie"));
 
         Select select = new Select();
 
@@ -155,7 +155,7 @@ public class SelectTest extends InternalBaseTestCase
     public void option_groups() throws Exception
     {
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
-                TapestryInternalUtils.toOptionModels("Fred,Barney"));
+                                                             TapestryInternalUtils.toOptionModels("Fred,Barney"));
         OptionGroupModel wives = new OptionGroupModelImpl("Wives", true, TapestryInternalUtils
                 .toOptionModels("Wilma,Betty"));
         List<OptionGroupModel> groupModels = CollectionFactory.newList(husbands, wives);
@@ -181,12 +181,12 @@ public class SelectTest extends InternalBaseTestCase
     public void option_groups_precede_ungroup_options() throws Exception
     {
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
-                TapestryInternalUtils.toOptionModels("Fred,Barney"));
+                                                             TapestryInternalUtils.toOptionModels("Fred,Barney"));
 
         Select select = new Select();
 
         select.setModel(new SelectModelImpl(Collections.singletonList(husbands),
-                TapestryInternalUtils.toOptionModels("Wilma,Betty")));
+                                            TapestryInternalUtils.toOptionModels("Wilma,Betty")));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
@@ -207,7 +207,8 @@ public class SelectTest extends InternalBaseTestCase
         Map<String, String> attributes = Collections.singletonMap("class", "pixie");
 
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
-                TapestryInternalUtils.toOptionModels("Fred,Barney"), attributes);
+                                                             TapestryInternalUtils.toOptionModels("Fred,Barney"),
+                                                             attributes);
 
         Select select = new Select();
 

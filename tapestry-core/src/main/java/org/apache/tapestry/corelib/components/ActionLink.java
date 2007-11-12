@@ -14,19 +14,14 @@
 
 package org.apache.tapestry.corelib.components;
 
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryConstants.ACTION_EVENT;
-
-import java.util.List;
-
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.annotations.Inject;
+
+import java.util.List;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.

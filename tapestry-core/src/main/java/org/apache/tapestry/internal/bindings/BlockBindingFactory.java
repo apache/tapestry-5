@@ -19,11 +19,13 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.services.BindingFactory;
 
-/** Accesses a named block from the container. The block must exist. */
+/**
+ * Accesses a named block from the container. The block must exist.
+ */
 public class BlockBindingFactory implements BindingFactory
 {
     public Binding newBinding(String description, ComponentResources container,
-            ComponentResources component, String expression, Location location)
+                              ComponentResources component, String expression, Location location)
     {
         return new BlockBinding(description, container, expression, location);
     }

@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.TapestryInternalUtils;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.test.PageTester;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.test.PageTester;
 
 /**
  * Represents an invocation for a page or a component in the current application. This information
@@ -40,16 +39,13 @@ public class ComponentInvocation
     private Map<String, String> _parameters;
 
     /**
-     * @param target
-     *            identifies the target of the event: a component with a page
-     * @param context
-     *            context information supplied by the component to be provided back when the event
-     *            on the component is triggered, or contains the activation context when the
-     *            invocation is for a page render request
-     * @param activationContext
-     *            page activation context for the page containing the component, supplied via a
-     *            passivate event to the page's root component (used when an action component
-     *            invocation is for a page with an activation context)
+     * @param target            identifies the target of the event: a component with a page
+     * @param context           context information supplied by the component to be provided back when the event
+     *                          on the component is triggered, or contains the activation context when the
+     *                          invocation is for a page render request
+     * @param activationContext page activation context for the page containing the component, supplied via a
+     *                          passivate event to the page's root component (used when an action component
+     *                          invocation is for a page with an activation context)
      */
     public ComponentInvocation(InvocationTarget target, String[] context, String[] activationContext)
     {

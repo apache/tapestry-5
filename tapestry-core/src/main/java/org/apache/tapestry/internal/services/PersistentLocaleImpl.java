@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.PersistentLocale;
+
+import java.util.Locale;
 
 public class PersistentLocaleImpl implements PersistentLocale
 {

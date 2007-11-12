@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.MatchType.ANY;
-import static org.apache.tapestry.ioc.internal.MatchType.INFIX;
-import static org.apache.tapestry.ioc.internal.MatchType.PREFIX;
-import static org.apache.tapestry.ioc.internal.MatchType.SUFFIX;
+import static org.apache.tapestry.ioc.internal.MatchType.*;
 
 public class GlobPatternMatcher
 {

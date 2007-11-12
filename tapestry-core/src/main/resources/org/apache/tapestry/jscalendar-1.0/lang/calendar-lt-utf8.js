@@ -11,14 +11,14 @@
 
 // full day names
 Calendar._DN = new Array
-("Sekmadienis",
- "Pirmadienis",
- "Antradienis",
- "Trečiadienis",
- "Ketvirtadienis",
- "Pentadienis",
- "Šeštadienis",
- "Sekmadienis");
+        ("Sekmadienis",
+                "Pirmadienis",
+                "Antradienis",
+                "Trečiadienis",
+                "Ketvirtadienis",
+                "Pentadienis",
+                "Šeštadienis",
+                "Sekmadienis");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -34,44 +34,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("Sek",
- "Pir",
- "Ant",
- "Tre",
- "Ket",
- "Pen",
- "Šeš",
- "Sek");
+        ("Sek",
+                "Pir",
+                "Ant",
+                "Tre",
+                "Ket",
+                "Pen",
+                "Šeš",
+                "Sek");
 
 // full month names
 Calendar._MN = new Array
-("Sausis",
- "Vasaris",
- "Kovas",
- "Balandis",
- "Gegužė",
- "Birželis",
- "Liepa",
- "Rugpjūtis",
- "Rugsėjis",
- "Spalis",
- "Lapkritis",
- "Gruodis");
+        ("Sausis",
+                "Vasaris",
+                "Kovas",
+                "Balandis",
+                "Gegužė",
+                "Birželis",
+                "Liepa",
+                "Rugpjūtis",
+                "Rugsėjis",
+                "Spalis",
+                "Lapkritis",
+                "Gruodis");
 
 // short month names
 Calendar._SMN = new Array
-("Sau",
- "Vas",
- "Kov",
- "Bal",
- "Geg",
- "Bir",
- "Lie",
- "Rgp",
- "Rgs",
- "Spa",
- "Lap",
- "Gru");
+        ("Sau",
+                "Vas",
+                "Kov",
+                "Bal",
+                "Geg",
+                "Bir",
+                "Lie",
+                "Rgp",
+                "Rgs",
+                "Spa",
+                "Lap",
+                "Gru");
 
 // tooltips
 Calendar._TT = {};
@@ -88,10 +88,10 @@ Calendar._TT["ABOUT"] =
 "- Mėnesio pasirinkimas: " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "\n" +
 "- Nuspauskite ir laikykite pelės klavišą greitesniam pasirinkimui.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Laiko pasirinkimas:\n" +
-"- Spustelkite ant valandų arba minučių - skaičius padidės vienetu.\n" +
-"- Jei spausite kartu su Shift, skaičius sumažės.\n" +
-"- Greitam pasirinkimui spustelkite ir pajudinkite pelę.";
+                             "Laiko pasirinkimas:\n" +
+                             "- Spustelkite ant valandų arba minučių - skaičius padidės vienetu.\n" +
+                             "- Jei spausite kartu su Shift, skaičius sumažės.\n" +
+                             "- Greitam pasirinkimui spustelkite ir pajudinkite pelę.";
 
 Calendar._TT["PREV_YEAR"] = "Ankstesni metai (laikykite, jei norite meniu)";
 Calendar._TT["PREV_MONTH"] = "Ankstesnis mėnuo (laikykite, jei norite meniu)";

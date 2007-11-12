@@ -28,38 +28,40 @@ public interface InternalComponentResourcesCommon
 {
     /**
      * Get the current persisted value of the field.
-     * 
-     * @param fieldName
-     *            the name of the field to access
+     *
+     * @param fieldName the name of the field to access
      * @return the value stored for the field, or null if no value is currently stored
      */
     Object getFieldChange(String fieldName);
 
-    /** Checks to see if there is a value stored for the indicated field. */
+    /**
+     * Checks to see if there is a value stored for the indicated field.
+     */
     boolean hasFieldChange(String fieldName);
 
     /**
      * Returns true if the component has finished loading. Initially, this value will be false.
-     * 
+     *
      * @see org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()
      */
     boolean isLoaded();
 
     /**
      * Used during construction of the page to identify the binding for a particular parameter.
-     * <p>
+     * <p/>
      */
     void bindParameter(String parameterName, Binding binding);
 
     /**
      * Returns the mixin instance for the fully qualfied mixin class name.
-     * 
-     * @param mixinClassName
-     *            fully qualified class name
+     *
+     * @param mixinClassName fully qualified class name
      * @return IllegalArgumentException if no such mixin is associated with the core component
      */
     Component getMixinByClassName(String mixinClassName);
 
-    /** Invoked to make the receiver queue itself to be rendered. */
+    /**
+     * Invoked to make the receiver queue itself to be rendered.
+     */
     void queueRender(RenderQueue queue);
 }

@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.util.Collections.unmodifiableList;
-
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ExceptionInfo;
+
+import static java.util.Collections.unmodifiableList;
+import java.util.List;
+import java.util.Map;
 
 public class ExceptionInfoImpl implements ExceptionInfo
 {

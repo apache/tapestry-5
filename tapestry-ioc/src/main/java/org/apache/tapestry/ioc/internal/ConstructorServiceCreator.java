@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.ServiceBuilderResources;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * A service creator based on an implementation class' constructor, rather than a service builder
@@ -30,7 +30,7 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
     private final Constructor _constructor;
 
     public ConstructorServiceCreator(ServiceBuilderResources resources, String creatorDescription,
-            Constructor constructor)
+                                     Constructor constructor)
     {
         super(resources, creatorDescription);
 

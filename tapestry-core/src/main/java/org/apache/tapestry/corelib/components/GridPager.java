@@ -36,11 +36,15 @@ public class GridPager
     @Parameter(required = true)
     private GridDataSource _source;
 
-    /** The number of rows displayed per page. */
+    /**
+     * The number of rows displayed per page.
+     */
     @Parameter(required = true)
     private int _rowsPerPage;
 
-    /** The current page number (indexed from 1). */
+    /**
+     * The current page number (indexed from 1).
+     */
     @Parameter(required = true)
     private int _currentPage;
 

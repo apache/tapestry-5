@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.ioc;
 
-/** Interface used as a stand-in for testing for more complicated services. */
+/**
+ * Interface used as a stand-in for testing for more complicated services.
+ */
 public interface Pingable
 {
     void ping();

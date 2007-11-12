@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.upload.services;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.io.FilenameUtils;
 
 /**
  * Implentation of {@link UploadedFile} for FileItems.

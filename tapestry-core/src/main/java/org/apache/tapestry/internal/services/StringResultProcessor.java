@@ -23,7 +23,7 @@ import org.apache.tapestry.services.ComponentEventResultProcessor;
 /**
  * Used when a component event handler returns a string value. The value is interpreted as the
  * logical name of a page. A link to the page will be sent.
- * 
+ *
  * @see LinkActionResponseGenerator
  */
 public class StringResultProcessor implements ComponentEventResultProcessor<String>
@@ -39,7 +39,7 @@ public class StringResultProcessor implements ComponentEventResultProcessor<Stri
     }
 
     public ActionResponseGenerator processComponentEvent(String value, Component component,
-            String methodDescripion)
+                                                         String methodDescripion)
     {
         Page page = _requestPageCache.get(value);
 

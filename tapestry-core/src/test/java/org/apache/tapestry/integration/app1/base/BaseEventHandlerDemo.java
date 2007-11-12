@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.integration.app1.base;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
+import java.util.List;
 
 public abstract class BaseEventHandlerDemo
 {

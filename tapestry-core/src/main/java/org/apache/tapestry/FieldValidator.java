@@ -16,7 +16,7 @@ package org.apache.tapestry;
 
 /**
  * Responsible for validation of a single field.
- * 
+ *
  * @param <T>
  * @see Validator
  */
@@ -26,18 +26,16 @@ public interface FieldValidator<T>
      * Invoked after the client-submitted value has been {@link Translator translated} to check that
      * the value conforms to expectations (often, in terms of minimum or maximum value). If and only
      * if the value is approved by all Validators is the value applied by the field.
-     * 
-     * @param value
-     *            the translated value supplied by the user
-     * @throws ValidationException
-     *             if the value violates the constraint
+     *
+     * @param value the translated value supplied by the user
+     * @throws ValidationException if the value violates the constraint
      */
     void validate(T value) throws ValidationException;
 
     /**
      * Invokes
      * {@link Validator#render(Field, Object, org.apache.tapestry.ioc.MessageFormatter, MarkupWriter, PageRenderSupport)}.
-     * 
+     *
      * @param writer
      */
     void render(MarkupWriter writer);

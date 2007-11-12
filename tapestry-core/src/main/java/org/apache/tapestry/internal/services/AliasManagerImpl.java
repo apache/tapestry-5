@@ -15,13 +15,12 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Collection;
-import java.util.Map;
-
 import org.apache.tapestry.services.AliasContribution;
 import org.apache.tapestry.services.AliasManager;
 import org.slf4j.Logger;
+
+import java.util.Collection;
+import java.util.Map;
 
 public class AliasManagerImpl implements AliasManager
 {

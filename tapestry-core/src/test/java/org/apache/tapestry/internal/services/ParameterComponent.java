@@ -24,7 +24,7 @@ public class ParameterComponent
     @Parameter
     private String _object;
 
-    @Parameter(cache = false, name = "uncached", defaultPrefix="literal")
+    @Parameter(cache = false, name = "uncached", defaultPrefix = "literal")
     private String _uncachedObject;
 
     @Parameter(required = true)

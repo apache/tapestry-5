@@ -24,7 +24,7 @@ import org.testng.annotations.Test;
  * totally ready, it is moved up to IntegrationTests.
  */
 @Test(timeOut = 50000, sequential = true, enabled = false, groups =
-{ "integration" })
+        {"integration"})
 public class NewIntegrationTests extends AbstractIntegrationTestSuite
 {
     public NewIntegrationTests()

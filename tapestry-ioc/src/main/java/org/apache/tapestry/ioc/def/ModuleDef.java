@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.def;
 
-import java.util.Set;
-
 import org.slf4j.Logger;
+
+import java.util.Set;
 
 /**
  * Defines the contents of a module. In the default case, this is information about the services
@@ -24,14 +24,15 @@ import org.slf4j.Logger;
  */
 public interface ModuleDef
 {
-    /** Returns the ids of the services built/provided by the module. */
+    /**
+     * Returns the ids of the services built/provided by the module.
+     */
     Set<String> getServiceIds();
 
     /**
      * Returns a service definition via the service's id.
-     * 
-     * @param serviceId
-     *            the id of the service to retrieve
+     *
+     * @param serviceId the id of the service to retrieve
      * @return service definition or null if it doesn't exist
      */
     ServiceDef getServiceDef(String serviceId);

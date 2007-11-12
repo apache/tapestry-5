@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.Collection;
-
 import org.apache.tapestry.Block;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.services.BeanBlockContribution;
 import org.apache.tapestry.services.BeanBlockSource;
 import org.testng.annotations.Test;
+
+import java.util.Collection;
 
 public class BeanBlockSourceImplTest extends InternalBaseTestCase
 {
@@ -35,7 +34,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
         BeanBlockContribution contribution = new BeanBlockContribution("mydata", "MyPage",
-                "mydisplay", false);
+                                                                       "mydisplay", false);
         Collection<BeanBlockContribution> configuration = newList(contribution);
 
         train_get(cache, "MyPage", page);
@@ -112,7 +111,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
         BeanBlockContribution contribution = new BeanBlockContribution("mydata", "MyPage",
-                "mydisplay", true);
+                                                                       "mydisplay", true);
         Collection<BeanBlockContribution> configuration = newList(contribution);
 
         train_get(cache, "MyPage", page);

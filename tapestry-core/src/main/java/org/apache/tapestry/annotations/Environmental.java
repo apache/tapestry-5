@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.services.Environment;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.services.Environment;
 
 /**
  * Defines a field that is replaced at runtime with a read-only value obtained from the
@@ -30,7 +29,8 @@ import org.apache.tapestry.services.Environment;
 @Target(FIELD)
 @Documented
 @Retention(RUNTIME)
-public @interface Environmental {
+public @interface Environmental
+{
     /**
      * The value determines if the environmental service to be injected is required or not. In most
      * cases, it is, so the default is true.

@@ -16,8 +16,6 @@ package org.apache.tapestry.services;
 
 /**
  * Filter interface for {@link org.apache.tapestry.services.ApplicationInitializer}.
- * 
- * 
  */
 public interface ApplicationInitializerFilter
 {

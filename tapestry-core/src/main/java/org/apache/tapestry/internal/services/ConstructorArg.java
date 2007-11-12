@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import javassist.CtClass;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 /**
  * Stores transformation type data about one argument to a class constructor.
@@ -28,11 +28,9 @@ public class ConstructorArg
 
     /**
      * Constructs new instance.
-     * 
-     * @param type
-     *            type of the parameter to be created (may not be null)
-     * @param value
-     *            value to be injected via the constructor (may be null)
+     *
+     * @param type  type of the parameter to be created (may not be null)
+     * @param value value to be injected via the constructor (may be null)
      */
     ConstructorArg(CtClass type, Object value)
     {
@@ -45,7 +43,9 @@ public class ConstructorArg
         return _type;
     }
 
-    /** The value to be injected (may be null). */
+    /**
+     * The value to be injected (may be null).
+     */
     public Object getValue()
     {
         return _value;

@@ -24,7 +24,7 @@ public class Render
     /**
      * Returns the value parameter, which allows another object (presumably, a component) to render
      * first.
-     * 
+     *
      * @return
      */
     Object beginRender()

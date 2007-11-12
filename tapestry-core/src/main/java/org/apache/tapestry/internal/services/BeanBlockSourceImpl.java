@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.Block;
+import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.services.BeanBlockContribution;
+import org.apache.tapestry.services.BeanBlockSource;
 
 import java.util.Collection;
 import java.util.Map;
-
-import org.apache.tapestry.Block;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.BeanBlockContribution;
-import org.apache.tapestry.services.BeanBlockSource;
 
 public class BeanBlockSourceImpl implements BeanBlockSource
 {
@@ -33,7 +32,7 @@ public class BeanBlockSourceImpl implements BeanBlockSource
     private final Map<String, BeanBlockContribution> _edit = newCaseInsensitiveMap();
 
     public BeanBlockSourceImpl(RequestPageCache pageCache,
-            Collection<BeanBlockContribution> configuration)
+                               Collection<BeanBlockContribution> configuration)
     {
         _pageCache = pageCache;
 

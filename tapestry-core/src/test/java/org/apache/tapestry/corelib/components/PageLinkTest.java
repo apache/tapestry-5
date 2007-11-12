@@ -30,7 +30,7 @@ public class PageLinkTest extends TapestryTestCase
         MarkupWriter writer = mockMarkupWriter();
 
         PageLink component = new PageLink();
-        
+
         component.setDisabled(true);
 
         replay();

@@ -18,12 +18,13 @@ import javax.servlet.ServletContext;
 
 /**
  * Filter interface for {@link org.apache.tapestry.services.ServletApplicationInitializer}.
- * 
- * 
+ *
  * @see org.apache.tapestry.services.ServletApplicationInitializer
  */
 public interface ServletApplicationInitializerFilter
 {
-    /** Peforms one step of initializing the application before passing off to the next step. */
+    /**
+     * Peforms one step of initializing the application before passing off to the next step.
+     */
     void initializeApplication(ServletContext context, ServletApplicationInitializer initializer);
 }

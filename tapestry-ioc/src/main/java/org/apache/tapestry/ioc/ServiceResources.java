@@ -23,10 +23,14 @@ import org.slf4j.Logger;
  */
 public interface ServiceResources extends ObjectLocator
 {
-    /** Returns the fully qualified id of the service. */
+    /**
+     * Returns the fully qualified id of the service.
+     */
     String getServiceId();
 
-    /** Returns the service interface implemented by the service. */
+    /**
+     * Returns the service interface implemented by the service.
+     */
     Class getServiceInterface();
 
     /**

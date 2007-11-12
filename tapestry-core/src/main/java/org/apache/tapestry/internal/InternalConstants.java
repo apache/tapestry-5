@@ -42,7 +42,9 @@ public final class InternalConstants
      */
     public static final String TEMPLATE_EXTENSION = "tml";
 
-    /** All purpose CSS class name for anything related to Tapestry errors. */
+    /**
+     * All purpose CSS class name for anything related to Tapestry errors.
+     */
     public static final String TAPESTRY_ERROR_CLASS = "t-error";
 
     /**

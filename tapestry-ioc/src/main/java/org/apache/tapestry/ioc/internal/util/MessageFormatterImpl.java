@@ -17,7 +17,7 @@ package org.apache.tapestry.ioc.internal.util;
 import org.apache.tapestry.ioc.MessageFormatter;
 
 /**
- * 
+ *
  */
 public class MessageFormatterImpl implements MessageFormatter
 {

@@ -14,21 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry.services.*;
+import org.testng.annotations.Test;
 
 import java.util.Collection;
 import java.util.Map;
-
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.MetaDataLocator;
-import org.apache.tapestry.services.PersistentFieldBundle;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.PersistentFieldManager;
-import org.apache.tapestry.services.PersistentFieldStrategy;
-import org.testng.annotations.Test;
 
 public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 {
@@ -101,7 +96,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         verify();
     }
-    
+
     public void strategy_name_is_case_insensitive()
     {
         String pageName = "foo.Bar";
@@ -131,7 +126,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         manager.postChange(pageName, resources, fieldName, value);
 
-        verify();     
+        verify();
     }
 
     @Test
@@ -212,7 +207,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
     }
 
     protected void train_findMeta(MetaDataLocator locator, String key,
-            ComponentResources resources, String value)
+                                  ComponentResources resources, String value)
     {
         expect(locator.findMeta(key, resources)).andReturn(value).atLeastOnce();
     }

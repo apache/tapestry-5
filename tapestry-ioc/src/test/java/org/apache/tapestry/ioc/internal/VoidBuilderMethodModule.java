@@ -16,12 +16,12 @@ package org.apache.tapestry.ioc.internal;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImplTest}.
- * 
- * 
  */
 public class VoidBuilderMethodModule
 {
-    /** Builder methods should not return void. */
+    /**
+     * Builder methods should not return void.
+     */
     public void buildNull()
     {
     }

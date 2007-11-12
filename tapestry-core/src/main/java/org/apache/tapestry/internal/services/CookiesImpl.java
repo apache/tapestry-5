@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import javax.servlet.http.Cookie;
-
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.Request;
+
+import javax.servlet.http.Cookie;
 
 /**
  * Implementation of the {@link org.apache.tapestry.services.Cookies} service interface.
@@ -35,12 +35,12 @@ public class CookiesImpl implements Cookies
 
     public CookiesImpl(Request request,
 
-    CookieSource cookieSource,
+                       CookieSource cookieSource,
 
-    CookieSink cookieSink,
+                       CookieSink cookieSink,
 
-    @Symbol("tapestry.default-cookie-max-age")
-    int defaultMaxAge)
+                       @Symbol("tapestry.default-cookie-max-age")
+                       int defaultMaxAge)
     {
         _request = request;
         _cookieSource = cookieSource;

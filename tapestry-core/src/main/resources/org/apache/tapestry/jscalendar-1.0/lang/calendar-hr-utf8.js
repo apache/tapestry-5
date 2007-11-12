@@ -4,27 +4,27 @@
 * Public License, as long as you do not remove or alter this notice.
 */
 Calendar._DN = new Array
-("Nedjelja",
- "Ponedjeljak",
- "Utorak",
- "Srijeda",
- "Četvrtak",
- "Petak",
- "Subota",
- "Nedjelja");
+        ("Nedjelja",
+                "Ponedjeljak",
+                "Utorak",
+                "Srijeda",
+                "Četvrtak",
+                "Petak",
+                "Subota",
+                "Nedjelja");
 Calendar._MN = new Array
-("Siječanj",
- "Veljača",
- "Ožujak",
- "Travanj",
- "Svibanj",
- "Lipanj",
- "Srpanj",
- "Kolovoz",
- "Rujan",
- "Listopad",
- "Studeni",
- "Prosinac");
+        ("Siječanj",
+                "Veljača",
+                "Ožujak",
+                "Travanj",
+                "Svibanj",
+                "Lipanj",
+                "Srpanj",
+                "Kolovoz",
+                "Rujan",
+                "Listopad",
+                "Studeni",
+                "Prosinac");
 
 // tooltips
 Calendar._TT = {};

@@ -14,14 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.util.Collections.singletonMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
@@ -29,18 +21,27 @@ import org.apache.tapestry.Validator;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FieldValidatorSource;
 import org.apache.tapestry.services.ValidationMessagesSource;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
+import static java.util.Collections.singletonMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 {
     public interface FieldComponent extends Field, Component
     {
 
-    };
+    }
+
+    ;
 
     @Test
     public void unknown_validator_type()
@@ -64,7 +65,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         try
         {
@@ -119,7 +120,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -160,7 +161,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -212,7 +213,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         FieldValidator fieldValidator = source.createValidators(field, "minlength");
 
@@ -246,7 +247,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         try
         {
@@ -301,7 +302,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         FieldValidator fieldValidator = source.createValidators(field, "required");
 
@@ -365,7 +366,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         FieldValidator fieldValidator = source.createValidators(field, "required,minLength=15");
 
@@ -414,7 +415,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                map);
+                                                                   map);
 
         FieldValidator fieldValidator = source.createValidator(field, "minLength", "5");
 
@@ -472,7 +473,8 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
     public void whitespace_ignored_around_value()
     {
         test("minLength=  5 , sameAs  = otherComponentId ", new ValidatorSpecification("minLength",
-                "5"), new ValidatorSpecification("sameAs", "otherComponentId"));
+                                                                                       "5"),
+             new ValidatorSpecification("sameAs", "otherComponentId"));
     }
 
     @Test

@@ -43,7 +43,9 @@ public class DOMTest extends InternalBaseTestCase
         assertEquals(d.toString(), "<empty/>");
     }
 
-    /** Also demonstrates that attributes are provided in alphabetical order. */
+    /**
+     * Also demonstrates that attributes are provided in alphabetical order.
+     */
     @Test
     public void document_with_root_element_and_attributes() throws Exception
     {

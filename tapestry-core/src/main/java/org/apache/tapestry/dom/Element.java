@@ -14,25 +14,18 @@
 
 package org.apache.tapestry.dom;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
-import java.util.Collections;
-import java.util.Formatter;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import java.util.*;
 
 /**
  * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as
  * a factory for enclosed Element, Text and Comment nodes.
- * <p>
+ * <p/>
  * TODO: Support for CDATA nodes. Do we need Entity nodes?
  */
 public final class Element extends Node
@@ -79,12 +72,10 @@ public final class Element extends Node
 
     /**
      * Adds an attribute to the element, but only if the attribute name does not already exist.
-     * 
-     * @param name
-     *            the name of the attribute to add
-     * @param value
-     *            the value for the attribute. A value of null is allowed, and no attribute will be
-     *            added to the element.
+     *
+     * @param name  the name of the attribute to add
+     * @param value the value for the attribute. A value of null is allowed, and no attribute will be
+     *              added to the element.
      */
     public void attribute(String name, String value)
     {
@@ -99,9 +90,8 @@ public final class Element extends Node
 
     /**
      * Convenience for invoking {@link #attribute(String, String)} multiple times.
-     * 
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param namesAndValues alternating attribute names and attribute values
      */
     public void attributes(String... namesAndValues)
     {
@@ -142,11 +132,9 @@ public final class Element extends Node
 
     /**
      * Creates and returns a new Element node as a child of this node.
-     * 
-     * @param name
-     *            the name of the element to create
-     * @param namesAndValues
-     *            alternating attribute names and attribute values
+     *
+     * @param name           the name of the element to create
+     * @param namesAndValues alternating attribute names and attribute values
      */
     public Element element(String name, String... namesAndValues)
     {
@@ -171,7 +159,9 @@ public final class Element extends Node
         return child;
     }
 
-    /** Adds the comment and returns this element for further construction. */
+    /**
+     * Adds the comment and returns this element for further construction.
+     */
     public Element comment(String text)
     {
         newChild(new Comment(this, text));
@@ -179,7 +169,9 @@ public final class Element extends Node
         return this;
     }
 
-    /** Adds the raw text and returns this element for further construction. */
+    /**
+     * Adds the raw text and returns this element for further construction.
+     */
     public Element raw(String text)
     {
         newChild(new Raw(this, text));
@@ -190,9 +182,8 @@ public final class Element extends Node
     /**
      * Adds and returns a new text node (the text node is returned so that
      * {@link Text#write(String)} or [@link {@link Text#writef(String, Object[])} may be invoked .
-     * 
-     * @param text
-     *            initial text for the node
+     *
+     * @param text initial text for the node
      * @return the new Text node
      */
     public Text text(String text)
@@ -258,9 +249,8 @@ public final class Element extends Node
     /**
      * Tries to find an element under this element (including itself) whose id is specified.
      * Performs a width-first search of the document tree.
-     * 
-     * @param id
-     *            the value of the id attribute of the element being looked for
+     *
+     * @param id the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
      */
     public Element getElementById(String id)
@@ -295,7 +285,7 @@ public final class Element extends Node
     /**
      * Searchs for a child element with a particular name below this element. The path parameter is
      * a slash separated series of element names.
-     * 
+     *
      * @param path
      * @return
      */
@@ -339,7 +329,9 @@ public final class Element extends Node
         return _name;
     }
 
-    /** All other implementations of Node return null except this one. */
+    /**
+     * All other implementations of Node return null except this one.
+     */
     @Override
     Element asElement()
     {

@@ -14,26 +14,29 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.TapestryConstants;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.services.ClasspathAssetAliasManager;
+import org.apache.tapestry.services.Request;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.services.ClasspathAssetAliasManager;
-import org.apache.tapestry.services.Request;
-
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
     private final Request _request;
 
-    /** Map from alias to path. */
+    /**
+     * Map from alias to path.
+     */
     private final Map<String, String> _aliasToPathPrefix = newMap();
 
-    /** Map from path to alias. */
+    /**
+     * Map from path to alias.
+     */
     private final Map<String, String> _pathPrefixToAlias = newMap();
 
     private final List<String> _sortedAliases;
@@ -46,7 +49,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      */
     public ClasspathAssetAliasManagerImpl(Request request,
 
-    Map<String, String> configuration)
+                                          Map<String, String> configuration)
     {
         _request = request;
 
@@ -112,8 +115,11 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
         for (String alias : _sortedAliases)
         {
-            if (basePath.startsWith(alias)) { return _aliasToPathPrefix.get(alias)
-                    + basePath.substring(alias.length()); }
+            if (basePath.startsWith(alias))
+            {
+                return _aliasToPathPrefix.get(alias)
+                        + basePath.substring(alias.length());
+            }
         }
 
         return basePath;

@@ -14,6 +14,9 @@
 
 package org.apache.tapestry.mojo;
 
+import com.sun.javadoc.*;
+import com.sun.javadoc.AnnotationDesc.ElementValuePair;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -22,27 +25,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import com.sun.javadoc.AnnotationDesc;
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.ConstructorDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.DocErrorReporter;
-import com.sun.javadoc.Doclet;
-import com.sun.javadoc.FieldDoc;
-import com.sun.javadoc.LanguageVersion;
-import com.sun.javadoc.RootDoc;
-import com.sun.javadoc.SeeTag;
-import com.sun.javadoc.Tag;
-import com.sun.javadoc.AnnotationDesc.ElementValuePair;
-
 /**
  * Generates an XML file that identifies all the classes that contain parameters, and all the
  * parameters within each component class. This XML is later converted into part of the Maven
  * generated HTML site.
- * <p>
+ * <p/>
  * To keep the -doclet parameter passed to javadoc simple, this class should not have any outside
  * dependencies.
- * <p>
+ * <p/>
  * Works in two passes: First we find any classes that have a field that has the parameter
  * annotation. Second we locate any subclasses of the initial set of classes, regardless of whether
  * they have a parameter or not.
@@ -266,7 +256,9 @@ public class ParametersDoclet extends Doclet
         }
     }
 
-    /** Yes we are interested in annotations, etc. */
+    /**
+     * Yes we are interested in annotations, etc.
+     */
     public static LanguageVersion languageVersion()
     {
         return LanguageVersion.JAVA_1_5;

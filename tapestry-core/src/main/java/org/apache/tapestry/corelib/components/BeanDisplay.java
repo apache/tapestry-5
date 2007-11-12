@@ -122,7 +122,9 @@ public class BeanDisplay
         _propertyName = propertyName;
     }
 
-    /** Returns the property model for the current property. */
+    /**
+     * Returns the property model for the current property.
+     */
     public PropertyModel getPropertyModel()
     {
         return _model.get(_propertyName);

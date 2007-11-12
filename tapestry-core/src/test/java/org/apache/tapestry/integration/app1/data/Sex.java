@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-public enum Sex {
+public enum Sex
+{
     MALE, FEMALE, TRANSGENDERED, MARTIAN
 }

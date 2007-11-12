@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.PersistentLocale;
 import org.apache.tapestry.services.PersistentLocaleImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
 
 public class PersistentLocaleImplTest extends Assert
 {
@@ -43,6 +43,7 @@ public class PersistentLocaleImplTest extends Assert
         PersistentLocale persistentLocale = new PersistentLocaleImpl(cookieSource);
         assertEquals(persistentLocale.get(), Locale.FRENCH);
     }
+
     @Test
     public void get_none() throws IOException
     {
@@ -59,6 +60,7 @@ public class PersistentLocaleImplTest extends Assert
         PersistentLocale persistentLocale = new PersistentLocaleImpl(cookieSource);
         assertNull(persistentLocale.get());
     }
+
     @Test
     public void set() throws IOException
     {

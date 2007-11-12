@@ -14,25 +14,25 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.METHOD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Method annotation used for methods that should be invoked when the page is detached at the end of
  * a request, before it is returned to the page pool for later reuse.
- * <p>
+ * <p/>
  * PageDetached methods should take no parameters and return void. They must either have this
  * annotation, or be named "pageDetached".
- * 
+ *
  * @see PageAttached
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface PageDetached {
+public @interface PageDetached
+{
 
 }

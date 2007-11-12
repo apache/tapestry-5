@@ -24,9 +24,8 @@ public class OneShotLock
 
     /**
      * Checks to see if the lock has been set (via {@link #lock()}).
-     * 
-     * @throws IllegalStateException
-     *             if the lock is set
+     *
+     * @throws IllegalStateException if the lock is set
      */
     public synchronized void check()
     {
@@ -48,7 +47,9 @@ public class OneShotLock
         }
     }
 
-    /** Checks the lock, then sets it. */
+    /**
+     * Checks the lock, then sets it.
+     */
     public synchronized void lock()
     {
         innerCheck();

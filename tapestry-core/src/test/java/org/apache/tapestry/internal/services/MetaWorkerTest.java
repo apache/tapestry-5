@@ -47,7 +47,7 @@ public class MetaWorkerTest extends InternalBaseTestCase
         train_getAnnotation(ct, Meta.class, annotation);
 
         expect(annotation.value()).andReturn(new String[]
-        { "foo=bar", "baz=biff" });
+                {"foo=bar", "baz=biff"});
 
         model.setMeta("foo", "bar");
         model.setMeta("baz", "biff");

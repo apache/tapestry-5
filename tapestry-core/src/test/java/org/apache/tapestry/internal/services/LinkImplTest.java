@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.Response;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 public class LinkImplTest extends InternalBaseTestCase
 {

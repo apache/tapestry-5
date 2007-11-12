@@ -18,11 +18,16 @@ package org.apache.tapestry.dom;
  * Part of a {@link MarkupModel}, used to define how end tags are handled when the {@link Document}
  * in rendered out as a text stream.
  */
-public enum EndTagStyle {
+public enum EndTagStyle
+{
 
-    /** Omit the end tag. Examples for HTML include the input, br and img elements. */
+    /**
+     * Omit the end tag. Examples for HTML include the input, br and img elements.
+     */
     OMIT,
-    /** Require an end tag always. This is the default for most elements in HTML. */
+    /**
+     * Require an end tag always. This is the default for most elements in HTML.
+     */
     REQUIRE,
     /**
      * Require an end tag, but abbreviate it if the element has no children. This is the only value

@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Map;
-
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.DataTypeAnalyzer;
+
+import java.util.Map;
 
 /**
  * The default data type analyzer, which is based entirely on the type of the property (and not on

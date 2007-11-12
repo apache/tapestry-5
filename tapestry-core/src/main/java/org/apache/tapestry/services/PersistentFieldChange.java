@@ -20,12 +20,18 @@ package org.apache.tapestry.services;
  */
 public interface PersistentFieldChange
 {
-    /** Returns the nested id of the component, or the empty string for the page's root component. */
+    /**
+     * Returns the nested id of the component, or the empty string for the page's root component.
+     */
     String getComponentId();
 
-    /** Returns the name of the field for which a change was recorded. */
+    /**
+     * Returns the name of the field for which a change was recorded.
+     */
     String getFieldName();
 
-    /** Returns the new value for the field (which may be null). */
+    /**
+     * Returns the new value for the field (which may be null).
+     */
     Object getValue();
 }

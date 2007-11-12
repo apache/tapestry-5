@@ -14,23 +14,22 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.Link;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.util.Base64ObjectInputStream;
+import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
+import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.services.PersistentFieldChange;
+import org.apache.tapestry.services.Request;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-
-import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.util.Base64ObjectInputStream;
-import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
-import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.PersistentFieldChange;
-import org.apache.tapestry.services.Request;
 
 /**
  * Manages client-persistent values on behalf of a {@link ClientPersistentFieldStorageImpl}. Some
@@ -67,7 +66,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         public PersistentFieldChange toChange(Object value)
         {
             return new PersistentFieldChangeImpl(_componentId == null ? "" : _componentId,
-                    _fieldName, value);
+                                                 _fieldName, value);
         }
 
         @Override

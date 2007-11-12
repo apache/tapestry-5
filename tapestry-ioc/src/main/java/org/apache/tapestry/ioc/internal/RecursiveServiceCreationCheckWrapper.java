@@ -36,7 +36,7 @@ public class RecursiveServiceCreationCheckWrapper implements ObjectCreator
     private boolean _locked;
 
     public RecursiveServiceCreationCheckWrapper(ServiceDef serviceDef, ObjectCreator delegate,
-            Logger logger)
+                                                Logger logger)
     {
         _serviceDef = serviceDef;
         _delegate = delegate;

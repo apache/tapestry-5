@@ -14,12 +14,12 @@
 
 package org.apache.tapestry;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class TapestryUtilsTest extends Assert
 {
@@ -33,12 +33,12 @@ public class TapestryUtilsTest extends Assert
     public Object[][] string_quoting_input()
     {
         return new Object[][]
-        {
-                { "Suzy said: \"It's not the proper time\".",
-                        "'Suzy said: \\\"It\\'s not the proper time\\\".'" },
-                { "regexp: \\d{4}", "'regexp: \\\\d{4}'" },
+                {
+                        {"Suzy said: \"It's not the proper time\".",
+                         "'Suzy said: \\\"It\\'s not the proper time\\\".'"},
+                        {"regexp: \\d{4}", "'regexp: \\\\d{4}'"},
 
-        };
+                };
     }
 
     @Test(dataProvider = "join_input")
@@ -59,11 +59,11 @@ public class TapestryUtilsTest extends Assert
     public Object[][] join_input()
     {
         return new Object[][]
-        {
-        { new String[0], "" },
-        { new String[]
-        { "fred" }, "fred" },
-        { new String[]
-        { "fred", "barney", "wilma" }, "barney fred wilma" } };
+                {
+                        {new String[0], ""},
+                        {new String[]
+                                {"fred"}, "fred"},
+                        {new String[]
+                                {"fred", "barney", "wilma"}, "barney fred wilma"}};
     }
 }

@@ -28,7 +28,7 @@ public interface SelectModelVisitor
 
     /**
      * Invoked for each option within a group, and at the end, for each ungrouped option.
-     * 
+     *
      * @param optionModel
      */
     void option(OptionModel optionModel);

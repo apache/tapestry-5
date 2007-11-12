@@ -16,11 +16,11 @@ package org.apache.tapestry.ioc.services;
 
 /**
  * Used when fabricating a new class. Represents a wrapper around the Javassist library.
- * <p>
+ * <p/>
  * The core concept of Javassist is how method bodies (as well as constructor bodies, etc.) are
  * specified ... as a very Java-like scripting language. Details are available at the <a
  * href="http://jboss.org/products/javassist">Javassist home page</a>.
- * <p>
+ * <p/>
  * Method bodies look largely like Java. References to java classes must be fully qualified. Several
  * special variables are used:
  * <ul>
@@ -36,9 +36,9 @@ package org.apache.tapestry.ioc.services;
  * is needed
  * <li>
  * </ul>
- * <p>
+ * <p/>
  * ClassFab instances are not thread safe.
- * <p>
+ * <p/>
  * ClassFab instances are created by a {@link org.apache.tapestry.ioc.services.ClassFactory}.
  */
 public interface ClassFab
@@ -55,38 +55,35 @@ public interface ClassFab
      */
     void addField(String name, Class type);
 
-    /** Adds a new field with the provided modifiers. */
+    /**
+     * Adds a new field with the provided modifiers.
+     */
     void addField(String name, int modifiers, Class Type);
 
     /**
      * Adds a method. The method is a public instance method.
-     * 
+     *
+     * @param modifiers Modifiers for the method (see {@link java.lang.reflect.Modifier}).
+     * @param signature defines the name, return type, parameters and exceptions thrown
+     * @param body      The body of the method.
      * @return a method fabricator, used to add catch handlers.
-     * @param modifiers
-     *            Modifiers for the method (see {@link java.lang.reflect.Modifier}).
-     * @param signature
-     *            defines the name, return type, parameters and exceptions thrown
-     * @param body
-     *            The body of the method.
-     * @throws RuntimeException
-     *             if a method with that signature has already been added, or if there is a
-     *             Javassist compilation error
+     * @throws RuntimeException if a method with that signature has already been added, or if there is a
+     *                          Javassist compilation error
      */
     void addMethod(int modifiers, MethodSignature signature, String body);
 
     /**
      * Adds a constructor to the class. The constructor will be public.
-     * 
-     * @param parameterTypes
-     *            the type of each parameter, or null if the constructor takes no parameters.
-     * @param exceptions
-     *            the type of each exception, or null if the constructor throws no exceptions.
-     * @param body
-     *            The body of the constructor.
+     *
+     * @param parameterTypes the type of each parameter, or null if the constructor takes no parameters.
+     * @param exceptions     the type of each exception, or null if the constructor throws no exceptions.
+     * @param body           The body of the constructor.
      */
     void addConstructor(Class[] parameterTypes, Class[] exceptions, String body);
 
-    /** Adds an implementation of toString, as a method that returns a fixed string. */
+    /**
+     * Adds an implementation of toString, as a method that returns a fixed string.
+     */
     void addToString(String toString);
 
     /**
@@ -95,15 +92,12 @@ public interface ClassFab
      * of the delegate interface, then an implementation will be supplied that returns the provided
      * string. This method is used when creating objects that proxy their behavior to some other
      * object.
-     * 
-     * @param serviceInterface
-     *            the interface to implement
-     * @param delegateExpression
-     *            the expression used to find the delegate on which methods should be invoked.
-     *            Typically a field name, such as "_delegate", or a method to invoke, such as
-     *            "_service()".
-     * @param toString
-     *            fixed value to be returned as the description of the resultant object
+     *
+     * @param serviceInterface   the interface to implement
+     * @param delegateExpression the expression used to find the delegate on which methods should be invoked.
+     *                           Typically a field name, such as "_delegate", or a method to invoke, such as
+     *                           "_service()".
+     * @param toString           fixed value to be returned as the description of the resultant object
      */
     void proxyMethodsToDelegate(Class serviceInterface, String delegateExpression, String toString);
 

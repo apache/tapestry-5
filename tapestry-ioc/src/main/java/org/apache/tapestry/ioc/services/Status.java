@@ -22,15 +22,23 @@ import org.apache.tapestry.ioc.Registry;
  */
 public enum Status
 {
-    /** A builtin service that exists before the {@link Registry} is constructed. */
+    /**
+     * A builtin service that exists before the {@link Registry} is constructed.
+     */
     BUILTIN,
 
-    /** The service is defined in a module, but has not yet been referenced. */
+    /**
+     * The service is defined in a module, but has not yet been referenced.
+     */
     DEFINED,
 
-    /** A proxy has been created for the service, but no methods of the proxy have been invoked. */
+    /**
+     * A proxy has been created for the service, but no methods of the proxy have been invoked.
+     */
     VIRTUAL,
 
-    /** A service implementation for the service has been created. */
+    /**
+     * A service implementation for the service has been created.
+     */
     REAL;
 }

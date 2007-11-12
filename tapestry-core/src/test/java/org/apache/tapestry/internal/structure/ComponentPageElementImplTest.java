@@ -254,7 +254,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         replay();
 
         ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null,
-                ins, coercer, null, l);
+                                                                    ins, coercer, null, l);
 
         try
         {

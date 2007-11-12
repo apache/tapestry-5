@@ -14,10 +14,6 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.ServiceDecorator;
 import org.apache.tapestry.ioc.ServiceLifecycle;
@@ -26,6 +22,10 @@ import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.slf4j.Logger;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Internal view of the module registry, adding additional methods needed by modules.
  */
@@ -33,12 +33,10 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
 {
     /**
      * Returns a service lifecycle by service scope name.
-     * 
-     * @param scope
-     *            the name of the service scope (case insensitive)
+     *
+     * @param scope the name of the service scope (case insensitive)
      * @return the lifecycle corresponding to the scope
-     * @throws RuntimeException
-     *             if the lifecycle name does not match a known lifecycle
+     * @throws RuntimeException if the lifecycle name does not match a known lifecycle
      */
     ServiceLifecycle getServiceLifecycle(String scope);
 
@@ -52,12 +50,10 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     /**
      * Builds up an unordered collection by invoking service contributor methods that target the
      * service (from any module, unless the service is private).
-     * 
+     *
      * @param <T>
-     * @param serviceDef
-     *            defines the service for which configuration data is being assembled
-     * @param valueType
-     *            identifies the type of object allowed into the collection
+     * @param serviceDef defines the service for which configuration data is being assembled
+     * @param valueType  identifies the type of object allowed into the collection
      * @return the final collection
      */
     <T> Collection<T> getUnorderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
@@ -67,12 +63,10 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
      * service (from any module, unless the service is private). Once all values have been added
      * (each with an id, and pre/post constraints), the values are ordered, null values dropped, and
      * the final sorted list is returned.
-     * 
+     *
      * @param <T>
-     * @param serviceDef
-     *            defines the service for which configuration data is being assembled
-     * @param valueType
-     *            identifies the type of object allowed into the collection
+     * @param serviceDef defines the service for which configuration data is being assembled
+     * @param valueType  identifies the type of object allowed into the collection
      * @return the final ordered list
      */
     <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> valueType);
@@ -82,33 +76,28 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
      * service (from any module, unless the service is private). Values and keys may not be null.
      * Invalid values (keys or values that are the wrong type, or duplicate keys) result in warnings
      * and are ignored.
-     * 
-     * @param <K,
-     *            V>
-     * @param serviceDef
-     *            defines the service for which configuration data is being assembled
-     * @param keyType
-     *            identifies the type of key object allowed into the map
-     * @param valueType
-     *            identifies the type of value object allowed into the map
+     *
+     * @param <K,        V>
+     * @param serviceDef defines the service for which configuration data is being assembled
+     * @param keyType    identifies the type of key object allowed into the map
+     * @param valueType  identifies the type of value object allowed into the map
      * @return the final ordered list
      */
     <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType,
-            Class<V> valueType);
+                                            Class<V> valueType);
 
     /**
      * Convieience for creating a new {@link ClassFab} instance using a
      * {@link org.apache.tapestry.ioc.services.ClassFactory}.
-     * 
-     * @param serviceInterface
-     *            the interface to be implemented by the provided class
+     *
+     * @param serviceInterface the interface to be implemented by the provided class
      */
     ClassFab newClass(Class serviceInterface);
 
     /**
      * Given an input string that <em>may</em> contain symbols, returns the string with any and
      * all symbols fully expanded.
-     * 
+     *
      * @param input
      * @return expanded input
      */
@@ -117,7 +106,7 @@ public interface InternalRegistry extends Registry, RegistryShutdownHub
     /**
      * Returns a logger for the service, which consists of the Module's
      * {@link Module#getLoggerName() log name} suffixed with a period and the service id.
-     * 
+     *
      * @param serviceId
      * @return the logger for the service
      */

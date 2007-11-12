@@ -14,14 +14,12 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.Collection;
-
 import org.apache.tapestry.ioc.IdMatcher;
+
+import java.util.Collection;
 
 /**
  * A wrapper around a collection of IdMatchers. A match occurs if <em>any</em> matcher matches.
- * 
- * 
  */
 public final class OrIdMatcher implements IdMatcher
 {

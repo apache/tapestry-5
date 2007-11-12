@@ -14,22 +14,20 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
-
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.services.ClassFactory}.
@@ -57,13 +55,17 @@ public class ClassFactoryImpl implements ClassFactory
         this(Thread.currentThread().getContextClassLoader());
     }
 
-    /** Main constructor where a specific class loader and log is provided. */
+    /**
+     * Main constructor where a specific class loader and log is provided.
+     */
     public ClassFactoryImpl(ClassLoader classLoader, Logger log)
     {
         this(classLoader, new ClassFactoryClassPool(classLoader), log);
     }
 
-    /** Special constructor used when the class pool is provided externally. */
+    /**
+     * Special constructor used when the class pool is provided externally.
+     */
     public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, Logger logger)
     {
         _loader = classLoader;
@@ -101,7 +103,7 @@ public class ClassFactoryImpl implements ClassFactory
         catch (Exception ex)
         {
             throw new RuntimeException(ServiceMessages.unableToCreateClass(name, superClass, ex),
-                    ex);
+                                       ex);
         }
     }
 

@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.ioc;
 
+import org.apache.tapestry.ioc.annotations.Match;
+import org.apache.tapestry.ioc.annotations.Order;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.annotations.Match;
-import org.apache.tapestry.ioc.annotations.Order;
 
 /**
  * Module used to demonstrate decorator ordering.
@@ -31,7 +30,7 @@ import org.apache.tapestry.ioc.annotations.Order;
 public class BarneyModule
 {
     @Match(
-    { "UnorderedNames", "Fred", "PrivateFredAlias" })
+            {"UnorderedNames", "Fred", "PrivateFredAlias"})
     @Order("after:Beta")
     public Object decorateGamma(Object delegate, DecoratorList list)
     {

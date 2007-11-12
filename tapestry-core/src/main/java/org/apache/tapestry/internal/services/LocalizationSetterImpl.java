@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.services.ThreadLocale;
+import org.apache.tapestry.services.PersistentLocale;
 
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Symbol;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.services.PersistentLocale;
 
 /**
  * Given a set of supported locales, for a specified desired locale, sets the current thread's
@@ -43,9 +42,9 @@ public class LocalizationSetterImpl implements LocalizationSetter
     private final PersistentLocale _persistentLocale;
 
     public LocalizationSetterImpl(PersistentLocale persistentLocale, ThreadLocale threadLocale,
-            @Inject
-            @Symbol("tapestry.supported-locales")
-            String acceptedLocaleNames)
+                                  @Inject
+                                  @Symbol("tapestry.supported-locales")
+                                  String acceptedLocaleNames)
     {
         _persistentLocale = persistentLocale;
 

@@ -51,12 +51,12 @@ public class ConcurrentBarrier
      * Invokes the object after acquiring the read lock (if necessary). If invoked when the read
      * lock has not yet been acquired, then the lock is acquired for the duration of the call. If
      * the lock has already been acquired, then the status of the lock is not changed.
-     * <p>
+     * <p/>
      * TODO: Check to see if the write lock is acquired and <em>not</em> acquire the read lock in
      * that situation. Currently this code is not re-entrant. If a write lock is already acquired
      * and the thread attempts to get the read lock, then the thread will hang. For the moment, all
      * the uses of ConcurrentBarrier are coded in such a way that reentrant locks are not a problem.
-     * 
+     *
      * @param <T>
      * @param invokable
      * @return the result of invoking the invokable
@@ -117,7 +117,7 @@ public class ConcurrentBarrier
      * This usually manifests as race conditions where either a) some parallel unrelated bit of work
      * has occured or b) duplicate work has occured. The latter is only problematic if the operation
      * is very expensive.
-     * 
+     *
      * @param <T>
      * @param invokable
      */
@@ -189,13 +189,10 @@ public class ConcurrentBarrier
      * within the specfied timeout, then this method behaves as {@link #withWrite(Runnable)} and
      * will return true. If the write lock is not obtained within the timeout then the runnable is
      * never invoked and the method will return false.
-     * 
-     * @param runnable
-     *            Runnable object to execute inside the write lock.
-     * @param timeout
-     *            Time to wait for write lock.
-     * @param timeoutUnit
-     *            Units of timeout.
+     *
+     * @param runnable    Runnable object to execute inside the write lock.
+     * @param timeout     Time to wait for write lock.
+     * @param timeoutUnit Units of timeout.
      * @return true if lock was obtained & runnabled executed. False otherwise.
      */
     public boolean tryWithWrite(final Runnable runnable, long timeout, TimeUnit timeoutUnit)

@@ -22,9 +22,13 @@ import org.slf4j.Logger;
  */
 public interface LoggerSource
 {
-    /** Creates or retrieves a log based on Class. This is rarely used in Tapestry IOC. */
+    /**
+     * Creates or retrieves a log based on Class. This is rarely used in Tapestry IOC.
+     */
     Logger getLogger(Class clazz);
 
-    /** Creates or retrieves a log based on name. Typically, the name will be a service id. */
+    /**
+     * Creates or retrieves a log based on name. Typically, the name will be a service id.
+     */
     Logger getLogger(String name);
 }

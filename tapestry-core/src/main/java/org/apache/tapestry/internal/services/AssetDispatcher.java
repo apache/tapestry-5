@@ -14,11 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-import java.net.URL;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
@@ -27,10 +22,14 @@ import org.apache.tapestry.services.Dispatcher;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URL;
+
 /**
  * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a
  * bytestream. Also handles requests that are simply polling for a change to the file.
- * 
+ *
  * @see ResourceStreamer
  * @see ClasspathAssetAliasManager
  * @see ResourceCache
@@ -46,7 +45,7 @@ public class AssetDispatcher implements Dispatcher
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
 
     public AssetDispatcher(ResourceStreamer streamer, ClasspathAssetAliasManager aliasManager,
-            ResourceCache resourceCache)
+                           ResourceCache resourceCache)
     {
         _streamer = streamer;
         _aliasManager = aliasManager;
@@ -98,10 +97,8 @@ public class AssetDispatcher implements Dispatcher
     }
 
     /**
-     * @param response
-     *            used to send errors back to the client
-     * @param resourcePath
-     *            the path to the requested resource, from the request
+     * @param response     used to send errors back to the client
+     * @param resourcePath the path to the requested resource, from the request
      * @return the resource for the path, with the digest stripped out of the URL, or null if the
      *         digest is invalid (and an error has been sent back to the client)
      * @throws IOException

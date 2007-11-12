@@ -14,18 +14,14 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.text.DecimalFormat;
-import java.text.FieldPosition;
-import java.text.Format;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
-import java.util.Locale;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.text.*;
+import java.util.Locale;
 
 public class OutputTest extends TapestryTestCase
 {

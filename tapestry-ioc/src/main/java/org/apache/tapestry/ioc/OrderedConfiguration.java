@@ -17,7 +17,7 @@ package org.apache.tapestry.ioc;
 /**
  * Object passed into a service contributor method that allows the method provide contributed values
  * to the service's configuration.
- * <p>
+ * <p/>
  * A service can <em>collect</em> contributions in three different ways:
  * <ul>
  * <li>As an un-ordered collection of values</li>
@@ -25,11 +25,9 @@ package org.apache.tapestry.ioc;
  * post-requisites)</li>
  * <li>As a map of keys and values
  * </ul>
- * <p>
+ * <p/>
  * The service defines the <em>type</em> of contribution, in terms of a base class or service
  * interface. Contributions must be compatible with the type.
- * 
- * 
  */
 public interface OrderedConfiguration<T>
 {
@@ -37,13 +35,11 @@ public interface OrderedConfiguration<T>
      * Adds an ordered object to a service's contribution. Each object has an id (which must be
      * unique). Optionally, pre-requisites (a list of ids that must precede this object) and
      * post-requisites (ids that must follow) can be provided.
-     * 
-     * @param id
-     *            a unique id for the object; the id will be fully qualified with the contributing
-     *            module's id
+     *
+     * @param id          a unique id for the object; the id will be fully qualified with the contributing
+     *                    module's id
+     * @param constraints used to order the object relative to other contributed objects
      * @parm object to add to the service's configuration
-     * @param constraints
-     *            used to order the object relative to other contributed objects
      */
     void add(String id, T object, String... constraints);
 }

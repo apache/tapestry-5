@@ -11,14 +11,14 @@
 
 // full day names
 Calendar._DN = new Array
-("Domingo",
- "Segunda",
- "Terca",
- "Quarta",
- "Quinta",
- "Sexta",
- "Sabado",
- "Domingo");
+        ("Domingo",
+                "Segunda",
+                "Terca",
+                "Quarta",
+                "Quinta",
+                "Sexta",
+                "Sabado",
+                "Domingo");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -34,44 +34,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("Dom",
- "Seg",
- "Ter",
- "Qua",
- "Qui",
- "Sex",
- "Sab",
- "Dom");
+        ("Dom",
+                "Seg",
+                "Ter",
+                "Qua",
+                "Qui",
+                "Sex",
+                "Sab",
+                "Dom");
 
 // full month names
 Calendar._MN = new Array
-("Janeiro",
- "Fevereiro",
- "Marco",
- "Abril",
- "Maio",
- "Junho",
- "Julho",
- "Agosto",
- "Setembro",
- "Outubro",
- "Novembro",
- "Dezembro");
+        ("Janeiro",
+                "Fevereiro",
+                "Marco",
+                "Abril",
+                "Maio",
+                "Junho",
+                "Julho",
+                "Agosto",
+                "Setembro",
+                "Outubro",
+                "Novembro",
+                "Dezembro");
 
 // short month names
 Calendar._SMN = new Array
-("Jan",
- "Fev",
- "Mar",
- "Abr",
- "Mai",
- "Jun",
- "Jul",
- "Ago",
- "Set",
- "Out",
- "Nov",
- "Dez");
+        ("Jan",
+                "Fev",
+                "Mar",
+                "Abr",
+                "Mai",
+                "Jun",
+                "Jul",
+                "Ago",
+                "Set",
+                "Out",
+                "Nov",
+                "Dez");
 
 // tooltips
 Calendar._TT = {};
@@ -88,10 +88,10 @@ Calendar._TT["ABOUT"] =
 "- Use os botoes " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " para selecionar o mes\n" +
 "- Segure o botao do mouse em qualquer um desses botoes para selecao rapida.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Selecao de hora:\n" +
-"- Clique em qualquer parte da hora para incrementar\n" +
-"- ou Shift-click para decrementar\n" +
-"- ou clique e segure para selecao rapida.";
+                             "Selecao de hora:\n" +
+                             "- Clique em qualquer parte da hora para incrementar\n" +
+                             "- ou Shift-click para decrementar\n" +
+                             "- ou clique e segure para selecao rapida.";
 
 Calendar._TT["PREV_YEAR"] = "Ant. ano (segure para menu)";
 Calendar._TT["PREV_MONTH"] = "Ant. mes (segure para menu)";

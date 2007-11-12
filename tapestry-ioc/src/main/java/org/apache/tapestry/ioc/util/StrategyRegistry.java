@@ -14,21 +14,18 @@
 
 package org.apache.tapestry.ioc.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.InheritanceSearch;
 
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.internal.util.InheritanceSearch;
-
 /**
  * A key component in implementing the "Gang of Four" Strategy pattern. A StrategyRegistry will
  * match up a given input type with a registered strategy for that type.
- * 
+ *
  * @param <A>
- *            the type of the strategy adapter
+ * the type of the strategy adapter
  */
 public final class StrategyRegistry<A>
 {
@@ -40,11 +37,9 @@ public final class StrategyRegistry<A>
 
     /**
      * Creates a strategy registry for the given adapter type.
-     * 
-     * @param adapterType
-     *            the type of adapter retrieved from the registry
-     * @param registrations
-     *            map of registrations (the contents of the map are copied)
+     *
+     * @param adapterType   the type of adapter retrieved from the registry
+     * @param registrations map of registrations (the contents of the map are copied)
      */
     public StrategyRegistry(final Class<A> adapterType, Map<Class, A> registrations)
     {
@@ -53,7 +48,7 @@ public final class StrategyRegistry<A>
     }
 
     public static <A> StrategyRegistry<A> newInstance(Class<A> adapterType,
-            Map<Class, A> registrations)
+                                                      Map<Class, A> registrations)
     {
         return new StrategyRegistry<A>(adapterType, registrations);
     }
@@ -71,12 +66,10 @@ public final class StrategyRegistry<A>
     /**
      * Gets an adapter for an object. Searches based on the value's class, unless the value is null,
      * in which case, a search on class void is used.
-     * 
-     * @param value
-     *            for which an adapter is needed
+     *
+     * @param value for which an adapter is needed
      * @return the adaptoer for the value
-     * @throws IllegalArgumentException
-     *             if no matching adapter may be found
+     * @throws IllegalArgumentException if no matching adapter may be found
      */
 
     public A getByInstance(Object value)
@@ -86,12 +79,10 @@ public final class StrategyRegistry<A>
 
     /**
      * Searches for an adapter corresponding to the given input type.
-     * 
-     * @param type
-     *            the type to search
+     *
+     * @param type the type to search
      * @return the corresponding adapter
-     * @throws IllegalArgumentException
-     *             if no matching adapter may be found
+     * @throws IllegalArgumentException if no matching adapter may be found
      */
     public A get(Class type)
     {

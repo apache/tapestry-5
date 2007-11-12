@@ -21,7 +21,7 @@ public class Countdown
 {
     @SuppressWarnings("unused")
     @Component(parameters =
-    { "start=10", "end=1", "value=countValue" })
+            {"start=10", "end=1", "value=countValue"})
     private Count _count;
 
     private int _countValue;

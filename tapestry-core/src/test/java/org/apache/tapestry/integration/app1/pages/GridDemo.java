@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.integration.app1.services.MusicLibrary;
 import org.apache.tapestry.ioc.annotations.Inject;
+
+import java.util.List;
 
 public class GridDemo
 {

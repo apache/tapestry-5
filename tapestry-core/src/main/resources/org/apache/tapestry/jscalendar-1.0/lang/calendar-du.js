@@ -1,26 +1,26 @@
 // ** I18N
 Calendar._DN = new Array
-("Zondag",
- "Maandag",
- "Dinsdag",
- "Woensdag",
- "Donderdag",
- "Vrijdag",
- "Zaterdag",
- "Zondag");
+        ("Zondag",
+                "Maandag",
+                "Dinsdag",
+                "Woensdag",
+                "Donderdag",
+                "Vrijdag",
+                "Zaterdag",
+                "Zondag");
 Calendar._MN = new Array
-("Januari",
- "Februari",
- "Maart",
- "April",
- "Mei",
- "Juni",
- "Juli",
- "Augustus",
- "September",
- "Oktober",
- "November",
- "December");
+        ("Januari",
+                "Februari",
+                "Maart",
+                "April",
+                "Mei",
+                "Juni",
+                "Juli",
+                "Augustus",
+                "September",
+                "Oktober",
+                "November",
+                "December");
 
 // tooltips
 Calendar._TT = {};

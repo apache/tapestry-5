@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collection;
-import java.util.Iterator;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 import org.testng.annotations.Test;
+
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * A more minimal test, since common behavior is already tested by

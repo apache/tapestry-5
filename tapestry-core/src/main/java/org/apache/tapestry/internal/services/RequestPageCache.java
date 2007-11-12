@@ -25,13 +25,11 @@ public interface RequestPageCache
     /**
      * Gets the page via its page name, in the current locale. The page name is resolved to a class
      * name, which is used to obtain the page (from the page pool).
-     * 
-     * @param logicalPageName
-     *            the name of the page to retrieve (this is the logical page name, not the fully
-     *            qualified class name)
+     *
+     * @param logicalPageName the name of the page to retrieve (this is the logical page name, not the fully
+     *                        qualified class name)
      * @return a page instance reserved for this request
-     * @throws IllegalArgumentException
-     *             if the name can not be resolved to a page instance
+     * @throws IllegalArgumentException if the name can not be resolved to a page instance
      */
     Page get(String logicalPageName);
 }

@@ -14,32 +14,33 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  * Used in conjunction with {@link Inject} to inject a literal value, rather than a service. Symbols
  * in the value are expanded and the resulting string is coerced to the desired type. For IoC, this
  * annotation is only applied to parameters (on service builder methods, and on service
  * constructors); for components, it may also be applied to field.
- * 
+ *
  * @see SymbolSource
  * @see TypeCoercer
  */
 @Target(
-{ PARAMETER, FIELD })
+        {PARAMETER, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface Value
 {
-    /** The value to be coerced and injected. */
+    /**
+     * The value to be coerced and injected.
+     */
     String value();
 }

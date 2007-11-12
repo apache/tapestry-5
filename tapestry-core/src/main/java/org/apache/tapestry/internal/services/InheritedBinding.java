@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Wraps another binding, adjusting the description of the binding and the location of the binding

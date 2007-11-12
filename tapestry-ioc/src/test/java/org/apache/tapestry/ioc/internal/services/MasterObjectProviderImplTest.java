@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.apache.tapestry.services.MasterObjectProvider;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class MasterObjectProviderImplTest extends IOCTestCase
 {

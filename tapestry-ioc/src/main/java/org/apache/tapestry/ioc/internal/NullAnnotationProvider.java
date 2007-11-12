@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
+
+import java.lang.annotation.Annotation;
 
 /**
  * A null implementation of {@link AnnotationProvider}, used when there is not appropriate source
@@ -24,7 +24,9 @@ import org.apache.tapestry.ioc.AnnotationProvider;
  */
 public class NullAnnotationProvider implements AnnotationProvider
 {
-    /** Always returns null. */
+    /**
+     * Always returns null.
+     */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
         return null;

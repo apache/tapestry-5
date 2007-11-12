@@ -16,14 +16,14 @@
 -->
 
 <suite name="Tapestry IOC" parallel="false" annotations="1.5" verbose="0">
-  <test name="Tapestry IOC">
-    <packages>
-      <package name="org.apache.tapestry.ioc"/>
-      <package name="org.apache.tapestry.ioc.services"/>
-      <package name="org.apache.tapestry.ioc.util"/>
-      <package name="org.apache.tapestry.ioc.internal"/>
-      <package name="org.apache.tapestry.ioc.internal.services"/>
-      <package name="org.apache.tapestry.ioc.internal.util"/>
-    </packages>
-  </test>
+    <test name="Tapestry IOC">
+        <packages>
+            <package name="org.apache.tapestry.ioc"/>
+            <package name="org.apache.tapestry.ioc.services"/>
+            <package name="org.apache.tapestry.ioc.util"/>
+            <package name="org.apache.tapestry.ioc.internal"/>
+            <package name="org.apache.tapestry.ioc.internal.services"/>
+            <package name="org.apache.tapestry.ioc.internal.util"/>
+        </packages>
+    </test>
 </suite>

@@ -14,30 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.TapestryConstants.PROP_BINDING_PREFIX;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.List;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.CommentToken;
-import org.apache.tapestry.internal.parser.DTDToken;
-import org.apache.tapestry.internal.parser.ExpansionToken;
-import org.apache.tapestry.internal.parser.StartElementToken;
-import org.apache.tapestry.internal.parser.TextToken;
-import org.apache.tapestry.internal.structure.CommentPageElement;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.ComponentPageElementImpl;
-import org.apache.tapestry.internal.structure.DTDPageElement;
-import org.apache.tapestry.internal.structure.ExpansionPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.internal.structure.StartElementPageElement;
-import org.apache.tapestry.internal.structure.TextPageElement;
+import static org.apache.tapestry.TapestryConstants.PROP_BINDING_PREFIX;
+import org.apache.tapestry.internal.parser.*;
+import org.apache.tapestry.internal.structure.*;
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.services.TypeCoercer;
@@ -46,6 +30,8 @@ import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentMessagesSource;
+
+import java.util.List;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
@@ -77,8 +63,8 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
-            ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
-            ComponentMessagesSource messagesSource)
+                                  ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
+                                  ComponentMessagesSource messagesSource)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _componentClassResolver = resolver;
@@ -87,7 +73,9 @@ public class PageElementFactoryImpl implements PageElementFactory
         _messagesSource = messagesSource;
     }
 
-    /** Singleton instance that represents any close tag of any element in any template. */
+    /**
+     * Singleton instance that represents any close tag of any element in any template.
+     */
     private final PageElement _endElement = new PageElement()
     {
         public void render(MarkupWriter writer, RenderQueue queue)
@@ -118,7 +106,7 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public PageElement newAttributeElement(ComponentResources componentResources,
-            final AttributeToken token)
+                                           final AttributeToken token)
     {
         final StringProvider provider = parseAttributeExpansionExpression(
                 token.getValue(),
@@ -137,7 +125,7 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     private StringProvider parseAttributeExpansionExpression(String expression,
-            ComponentResources resources, final Location location)
+                                                             ComponentResources resources, final Location location)
     {
         final List<StringProvider> providers = newList();
 
@@ -223,7 +211,7 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public PageElement newExpansionElement(ComponentResources componentResources,
-            ExpansionToken token)
+                                           ExpansionToken token)
     {
         Binding binding = _bindingSource.newBinding(
                 "expansion",
@@ -237,8 +225,9 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public ComponentPageElement newComponentElement(Page page, ComponentPageElement container,
-            String id, String componentType, String componentClassName, String elementName,
-            Location location)
+                                                    String id, String componentType, String componentClassName,
+                                                    String elementName,
+                                                    Location location)
     {
         try
         {
@@ -279,7 +268,8 @@ public class PageElementFactoryImpl implements PageElementFactory
             // template.
 
             ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id,
-                    elementName, instantiator, _typeCoercer, _messagesSource, location);
+                                                                           elementName, instantiator, _typeCoercer,
+                                                                           _messagesSource, location);
 
             page.addLifecycleListener(result);
 
@@ -296,7 +286,7 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     private void checkForRecursion(String componentClassName, ComponentPageElement container,
-            Location location)
+                                   Location location)
     {
         // Container may be null for a root element;
 
@@ -319,7 +309,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         Instantiator instantiator = _componentInstantiatorSource.findInstantiator(componentType);
 
         ComponentPageElementImpl result = new ComponentPageElementImpl(page, instantiator,
-                _typeCoercer, _messagesSource);
+                                                                       _typeCoercer, _messagesSource);
 
         addMixins(result, instantiator);
 
@@ -378,8 +368,8 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,
-            ComponentResources embeddedComponentResources, String defaultBindingPrefix,
-            String expression, Location location)
+                              ComponentResources embeddedComponentResources, String defaultBindingPrefix,
+                              String expression, Location location)
     {
 
         if (expression.contains(EXPANSION_START))

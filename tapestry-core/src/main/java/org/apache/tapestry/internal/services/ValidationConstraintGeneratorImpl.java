@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.services.ValidationConstraintGenerator;
+
+import java.util.List;
 
 public class ValidationConstraintGeneratorImpl implements ValidationConstraintGenerator
 {

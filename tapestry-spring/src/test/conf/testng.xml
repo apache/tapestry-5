@@ -16,9 +16,9 @@
 -->
 
 <suite name="Tapesty Spring Integration" parallel="false" thread-count="10" annotations="1.5" verbose="2">
-  <test name="Tapestry Spring Integration">
-     <packages>
-      <package name="org.apache.tapestry.spring"/>
-    </packages>
-  </test>
+    <test name="Tapestry Spring Integration">
+        <packages>
+            <package name="org.apache.tapestry.spring"/>
+        </packages>
+    </test>
 </suite>

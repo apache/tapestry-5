@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-/** One track from a music library. */
+/**
+ * One track from a music library.
+ */
 public class Track implements SimpleTrack
 {
     private String _album;
@@ -54,7 +56,9 @@ public class Track implements SimpleTrack
         return _playCount;
     }
 
-    /** Rating as a value between 0 and 100. */
+    /**
+     * Rating as a value between 0 and 100.
+     */
     public int getRating()
     {
         return _rating;

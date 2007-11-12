@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.tapestry.OptionModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.Map;
 
 public class OptionModelImplTest extends Assert
 {
@@ -45,7 +45,7 @@ public class OptionModelImplTest extends Assert
     public void attributes_as_extra_parameters()
     {
         OptionModel model = new OptionModelImpl("Label", false, this, "fred", "flintstone",
-                "barney", "rubble");
+                                                "barney", "rubble");
 
         Map<String, String> attributes = model.getAttributes();
 

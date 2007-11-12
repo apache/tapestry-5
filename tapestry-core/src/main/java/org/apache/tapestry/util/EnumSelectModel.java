@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.io.Serializable;
-import java.util.List;
-
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.internal.OptionModelImpl;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum
@@ -40,7 +39,8 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
 {
     private static final long serialVersionUID = -3590412082766899684L;
 
-    private final List<OptionModel> _options = newList();;
+    private final List<OptionModel> _options = newList();
+    ;
 
     public <T extends Enum> EnumSelectModel(Class<T> enumClass, Messages messages)
     {
@@ -62,13 +62,17 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
         }
     }
 
-    /** Returns null. */
+    /**
+     * Returns null.
+     */
     public List<OptionGroupModel> getOptionGroups()
     {
         return null;
     }
 
-    /** Returns the option groupos created in the constructor. */
+    /**
+     * Returns the option groupos created in the constructor.
+     */
     public List<OptionModel> getOptions()
     {
         return _options;

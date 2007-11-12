@@ -25,18 +25,16 @@ public interface PageRenderInitializer
     /**
      * Perform any initial setup, by invoking {@link PageRenderCommand#setup(Environment)}.
      * Execution occurs in normal order.
-     * 
-     * @param writer
-     *            the markup writer that will be used to generate all output markup
+     *
+     * @param writer the markup writer that will be used to generate all output markup
      */
     void setup(MarkupWriter writer);
 
     /**
      * Peform any post-render cleanup, by invoking {@link PageRenderCommand#cleanup(Environment)}.
      * Execution order is reversed.
-     * 
-     * @param writer
-     *            the markup writer used to generate all output markup in the document
+     *
+     * @param writer the markup writer used to generate all output markup in the document
      */
     void cleanup(MarkupWriter writer);
 }

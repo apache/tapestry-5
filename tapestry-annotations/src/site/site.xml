@@ -16,28 +16,28 @@
 -->
 
 <project name="Tapestry Annotations">
-  <bannerLeft>
-    <name>Tapestry 5</name>
-    <href>http://tapestry.apache.org/tapestry5/</href>
-    <src>images/tapestry_banner.gif</src>
-  </bannerLeft>
-  <bannerRight>
-    <name>Apache</name>
-    <href>http://www.apache.org</href>
-    <src>images/asf_logo_wide.gif</src>
-  </bannerRight>
-  <skin>
-    <groupId>org.apache.tapestry</groupId>
-    <artifactId>maven-skin</artifactId>
-    <version>1.1</version>
-  </skin>
+    <bannerLeft>
+        <name>Tapestry 5</name>
+        <href>http://tapestry.apache.org/tapestry5/</href>
+        <src>images/tapestry_banner.gif</src>
+    </bannerLeft>
+    <bannerRight>
+        <name>Apache</name>
+        <href>http://www.apache.org</href>
+        <src>images/asf_logo_wide.gif</src>
+    </bannerRight>
+    <skin>
+        <groupId>org.apache.tapestry</groupId>
+        <artifactId>maven-skin</artifactId>
+        <version>1.1</version>
+    </skin>
 
-  <publishDate format="dd MMM yyyy" />
+    <publishDate format="dd MMM yyyy"/>
 
-  <body>
+    <body>
 
 
-    <menu ref="reports" />
+        <menu ref="reports"/>
 
-  </body>
+    </body>
 </project>

@@ -21,8 +21,6 @@ import org.apache.tapestry.ioc.ServiceResources;
 /**
  * The basic implementation of a service lifecycle, which simply uses the
  * {@link org.apache.tapestry.ioc.ObjectCreator} to create an instance of the service when asked.
- * 
- * 
  */
 public class SingletonServiceLifecycle implements ServiceLifecycle
 {

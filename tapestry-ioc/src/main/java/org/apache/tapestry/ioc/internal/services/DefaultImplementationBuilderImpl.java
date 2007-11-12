@@ -14,20 +14,14 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.services.*;
 
+import static java.lang.String.format;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.DefaultImplementationBuilder;
-import org.apache.tapestry.ioc.services.MethodIterator;
-import org.apache.tapestry.ioc.services.MethodSignature;
-
 /**
- * 
+ *
  */
 public class DefaultImplementationBuilderImpl implements DefaultImplementationBuilder
 {

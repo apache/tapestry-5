@@ -35,7 +35,9 @@ public interface ComponentResources extends ComponentResourcesCommon
      */
     Resource getBaseResource();
 
-    /** Returns the component model object that defines the behavior of the component. */
+    /**
+     * Returns the component model object that defines the behavior of the component.
+     */
     ComponentModel getComponentModel();
 
     /**
@@ -71,28 +73,29 @@ public interface ComponentResources extends ComponentResourcesCommon
 
     /**
      * Returns an embedded component, given the component's id.
-     * 
-     * @param embeddedId
-     *            selects the embedded component (case is ignored)
-     * @throws IllegalArgumentException
-     *             if this component does not contain a component with the given id
+     *
+     * @param embeddedId selects the embedded component (case is ignored)
+     * @throws IllegalArgumentException if this component does not contain a component with the given id
      */
 
     Component getEmbeddedComponent(String embeddedId);
 
-    /** Returns true if the named parameter is bound, false if not. */
+    /**
+     * Returns true if the named parameter is bound, false if not.
+     */
     boolean isBound(String parameterName);
 
     /**
      * Indentifies all parameters that are not formal parameters and writes each as a
      * attribute/value pair into the current element of the markup writer.
-     * 
-     * @param writer
-     *            to which {@link MarkupWriter#attributes(Object[]) attributes} will be written
+     *
+     * @param writer to which {@link MarkupWriter#attributes(Object[]) attributes} will be written
      */
     void renderInformalParameters(MarkupWriter writer);
 
-    /** Returns the message catalog for this component. */
+    /**
+     * Returns the message catalog for this component.
+     */
     Messages getMessages();
 
     /**
@@ -101,28 +104,25 @@ public interface ComponentResources extends ComponentResourcesCommon
      * property, rather than the type of parameter (remember that type coercion automatically
      * occurs, which can mask significant differences between the parameter type and the bound
      * property type).
-     * 
-     * @see Binding#getBindingType()
-     * @param parameterName
-     *            used to select the parameter (case is ignored)
+     *
+     * @param parameterName used to select the parameter (case is ignored)
      * @return the type of the bound parameter, or null if the parameter is not bound
+     * @see Binding#getBindingType()
      */
     Class getBoundType(String parameterName);
 
     /**
      * Returns an annotation provider, used to obtain annotations related to the parameter.
-     * 
-     * @param parameterName
-     *            used to select the parameter (case is ignored)
+     *
+     * @param parameterName used to select the parameter (case is ignored)
      * @return the annotation provider, or null if the parameter is not bound
      */
     AnnotationProvider getAnnotationProvider(String parameterName);
 
     /**
      * Used to access an informal parameter that's a Block.
-     * 
-     * @param parameterName
-     *            the name of the informal parameter (case is ignored)
+     *
+     * @param parameterName the name of the informal parameter (case is ignored)
      * @return the informal Block parameter, or null if not bound
      */
     Block getBlockParameter(String parameterName);

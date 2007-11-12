@@ -14,46 +14,24 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.ConfigurationType.MAPPED;
-import static org.apache.tapestry.ioc.internal.ConfigurationType.ORDERED;
-import static org.apache.tapestry.ioc.internal.ConfigurationType.UNORDERED;
-import static org.apache.tapestry.ioc.internal.IOCMessages.buildMethodConflict;
-import static org.apache.tapestry.ioc.internal.IOCMessages.buildMethodWrongReturnType;
-import static org.apache.tapestry.ioc.internal.IOCMessages.decoratorMethodWrongReturnType;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.IOCConstants;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.ServiceBuilderResources;
-import org.apache.tapestry.ioc.annotations.EagerLoad;
-import org.apache.tapestry.ioc.annotations.Marker;
-import org.apache.tapestry.ioc.annotations.Match;
-import org.apache.tapestry.ioc.annotations.Order;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.*;
+import org.apache.tapestry.ioc.annotations.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import static org.apache.tapestry.ioc.internal.ConfigurationType.*;
+import static org.apache.tapestry.ioc.internal.IOCMessages.*;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.slf4j.Logger;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 /**
  * Starting from the Class for a module builder, identifies all the services (service builder
@@ -62,13 +40,19 @@ import org.slf4j.Logger;
  */
 public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 {
-    /** The prefix used to identify service builder methods. */
+    /**
+     * The prefix used to identify service builder methods.
+     */
     private static final String BUILD_METHOD_NAME_PREFIX = "build";
 
-    /** The prefix used to identify service decorator methods. */
+    /**
+     * The prefix used to identify service decorator methods.
+     */
     private static final String DECORATE_METHOD_NAME_PREFIX = "decorate";
 
-    /** The prefix used to identify service contribution methods. */
+    /**
+     * The prefix used to identify service contribution methods.
+     */
     private static final String CONTRIBUTE_METHOD_NAME_PREFIX = "contribute";
 
     private final Class _builderClass;
@@ -77,10 +61,14 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     private final ClassFactory _classFactory;
 
-    /** Keyed on service id. */
+    /**
+     * Keyed on service id.
+     */
     private final Map<String, ServiceDef> _serviceDefs = newCaseInsensitiveMap();
 
-    /** Keyed on decorator id. */
+    /**
+     * Keyed on decorator id.
+     */
     private final Map<String, DecoratorDef> _decoratorDefs = newCaseInsensitiveMap();
 
     private final Set<ContributionDef> _contributionDefs = newSet();
@@ -97,11 +85,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
     }
 
     /**
-     * @param builderClass
-     *            the class that is responsible for building services, etc.
+     * @param builderClass the class that is responsible for building services, etc.
      * @param logger
-     * @param classFactory
-     *            TODO
+     * @param classFactory TODO
      */
     public DefaultModuleDefImpl(Class<?> builderClass, Logger logger, ClassFactory classFactory)
     {
@@ -117,7 +103,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         bind();
     }
 
-    /** Identifies the module builder class and a list of service ids within the module. */
+    /**
+     * Identifies the module builder class and a list of service ids within the module.
+     */
     @Override
     public String toString()
     {
@@ -258,10 +246,10 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         // TODO: Validate constraints here?
 
         String[] patterns = match == null ? new String[]
-        { decoratorId } : match.value();
+                {decoratorId} : match.value();
 
         DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints,
-                _classFactory);
+                                                _classFactory);
 
         _decoratorDefs.put(decoratorId, def);
     }
@@ -284,7 +272,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         return method.getName().substring(prefix.length());
     }
 
-    /** Invoked for public methods that have the proper prefix. */
+    /**
+     * Invoked for public methods that have the proper prefix.
+     */
     private void addServiceDef(final Method method)
     {
         String serviceId = stripMethodPrefix(method, BUILD_METHOD_NAME_PREFIX);
@@ -326,7 +316,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         markers.addAll(extractMarkers(method));
 
         ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope,
-                eagerLoad, source);
+                                                       eagerLoad, source);
 
         addServiceDef(serviceDef);
     }
@@ -377,7 +367,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         return _builderClass.getName();
     }
 
-    /** See if the build class defined a bind method and invoke it. */
+    /**
+     * See if the build class defined a bind method and invoke it.
+     */
     private void bind()
     {
         Throwable failure = null;

@@ -16,19 +16,20 @@ package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
+import org.apache.tapestry.ioc.services.SymbolProvider;
+import org.apache.tapestry.ioc.services.SymbolSource;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tapestry.ioc.services.SymbolProvider;
-import org.apache.tapestry.ioc.services.SymbolSource;
-
 public class SymbolSourceImpl implements SymbolSource
 {
     private final List<SymbolProvider> _providers;
 
-    /** Cache of symbol name to fully expanded symbol value. */
+    /**
+     * Cache of symbol name to fully expanded symbol value.
+     */
     private final Map<String, String> _cache = newConcurrentMap();
 
     /**

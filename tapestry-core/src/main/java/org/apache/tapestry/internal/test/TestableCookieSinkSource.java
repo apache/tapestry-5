@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-
 import org.apache.tapestry.internal.services.CookieSink;
 import org.apache.tapestry.internal.services.CookieSource;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
+import javax.servlet.http.Cookie;
+import java.util.Map;
 
 public class TestableCookieSinkSource implements CookieSource, CookieSink
 {

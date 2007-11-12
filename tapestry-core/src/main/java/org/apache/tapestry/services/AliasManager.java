@@ -27,7 +27,7 @@ public interface AliasManager
      * identify a mode. Only contributions where the mode is blank or the mode matches the provided
      * mode are returned. Mode specific contributions quietly override non-specific contributions
      * (where the mode is blank).
-     * 
+     *
      * @param mode
      * @return map from contribution type to contribution object
      */

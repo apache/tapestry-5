@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
+
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 public class EnvironmentImplTest extends TapestryTestCase
 {

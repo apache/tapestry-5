@@ -17,9 +17,9 @@ package org.example.testapp.services;
 public class UpcaseImpl implements Upcase
 {
 
-  public String toUpperCase(String input)
-  {
-    return input.toUpperCase();
-  }
+    public String toUpperCase(String input)
+    {
+        return input.toUpperCase();
+    }
 
 }

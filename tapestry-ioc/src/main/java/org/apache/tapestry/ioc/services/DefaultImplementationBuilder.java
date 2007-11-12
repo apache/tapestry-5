@@ -16,8 +16,7 @@ package org.apache.tapestry.ioc.services;
 
 /**
  * Creates default implementatons of a class.
- * 
- * 
+ *
  * @see org.apache.tapestry.ioc.services.ClassFab#addNoOpMethod(MethodSignature)
  */
 public interface DefaultImplementationBuilder
@@ -26,7 +25,7 @@ public interface DefaultImplementationBuilder
      * Creates a new implementation of the provided interface. Each method in the interface will be
      * implemented as a noop method. The method will ignore any parameters and return null, or 0, or
      * false (or return nothing if the method is void).
-     * 
+     *
      * @param <S>
      * @param serviceInterface
      * @return

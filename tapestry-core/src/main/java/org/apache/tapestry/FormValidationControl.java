@@ -14,7 +14,9 @@
 
 package org.apache.tapestry;
 
-/** Allows control over validation concerns of a Form component. */
+/**
+ * Allows control over validation concerns of a Form component.
+ */
 public interface FormValidationControl
 {
     /**

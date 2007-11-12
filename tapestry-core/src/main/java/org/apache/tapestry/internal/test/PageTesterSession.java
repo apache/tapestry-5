@@ -16,12 +16,11 @@ package org.apache.tapestry.internal.test;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.services.Session;
 
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.Session;
 
 public class PageTesterSession implements Session
 {

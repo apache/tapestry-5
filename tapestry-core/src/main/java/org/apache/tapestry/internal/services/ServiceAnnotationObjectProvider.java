@@ -27,7 +27,7 @@ import org.apache.tapestry.ioc.ObjectProvider;
 public class ServiceAnnotationObjectProvider implements ObjectProvider
 {
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-            ObjectLocator locator)
+                         ObjectLocator locator)
     {
         Service annotation = annotationProvider.getAnnotation(Service.class);
 

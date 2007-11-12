@@ -27,7 +27,7 @@ public class TapestryAppInitializerTest extends Assert
     public void testLoadAppModule()
     {
         Registry registry = new TapestryAppInitializer("org.apache.tapestry.integration.app0",
-                "foo", "").getRegistry();
+                                                       "foo", "").getRegistry();
 
         Transformer<String> s1 = registry.getService("Service1", Transformer.class);
         assertEquals(s1.transform("a"), "A");

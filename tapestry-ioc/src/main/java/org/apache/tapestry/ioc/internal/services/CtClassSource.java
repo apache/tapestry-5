@@ -14,12 +14,11 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import java.security.ProtectionDomain;
-
 import javassist.CtClass;
 import javassist.NotFoundException;
-
 import org.apache.tapestry.ioc.services.ClassFabUtils;
+
+import java.security.ProtectionDomain;
 
 /**
  * Wrapper around Javassist's {@link javassist.ClassPool} that manages the creation of new instances

@@ -15,7 +15,6 @@
 package org.apache.tapestry.util;
 
 import junit.framework.AssertionFailedError;
-
 import org.apache.tapestry.Stooge;
 import org.testng.Assert;
 import org.testng.annotations.Test;

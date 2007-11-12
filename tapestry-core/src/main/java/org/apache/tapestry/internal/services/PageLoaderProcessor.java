@@ -14,40 +14,17 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
-import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
-
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
-import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.BlockToken;
-import org.apache.tapestry.internal.parser.BodyToken;
-import org.apache.tapestry.internal.parser.CommentToken;
-import org.apache.tapestry.internal.parser.ComponentTemplate;
-import org.apache.tapestry.internal.parser.DTDToken;
-import org.apache.tapestry.internal.parser.EndElementToken;
-import org.apache.tapestry.internal.parser.ExpansionToken;
-import org.apache.tapestry.internal.parser.ParameterToken;
-import org.apache.tapestry.internal.parser.StartComponentToken;
-import org.apache.tapestry.internal.parser.StartElementToken;
-import org.apache.tapestry.internal.parser.TemplateToken;
-import org.apache.tapestry.internal.parser.TextToken;
-import org.apache.tapestry.internal.structure.BlockImpl;
-import org.apache.tapestry.internal.structure.BodyPageElement;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
-import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.internal.structure.PageImpl;
+import org.apache.tapestry.internal.parser.*;
+import org.apache.tapestry.internal.structure.*;
 import org.apache.tapestry.ioc.Location;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
+import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
+import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.util.Stack;
@@ -56,6 +33,9 @@ import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.PersistentFieldManager;
 import org.slf4j.Logger;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * Contains all the work-state related to the {@link PageLoaderImpl}.
@@ -110,8 +90,8 @@ class PageLoaderProcessor
     private final ComponentTemplateSource _templateSource;
 
     public PageLoaderProcessor(ComponentTemplateSource templateSource,
-            PageElementFactory pageElementFactory, LinkFactory linkFactory,
-            PersistentFieldManager persistentFieldManager)
+                               PageElementFactory pageElementFactory, LinkFactory linkFactory,
+                               PersistentFieldManager persistentFieldManager)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
@@ -156,7 +136,7 @@ class PageLoaderProcessor
     }
 
     private void addMixinsToComponent(ComponentPageElement component, EmbeddedComponentModel model,
-            String mixins)
+                                      String mixins)
     {
         if (model != null)
         {
@@ -172,8 +152,8 @@ class PageLoaderProcessor
     }
 
     private void bindParametersFromModel(EmbeddedComponentModel model,
-            ComponentPageElement loadingComponent, ComponentPageElement component,
-            Map<String, Binding> bindingMap)
+                                         ComponentPageElement loadingComponent, ComponentPageElement component,
+                                         Map<String, Binding> bindingMap)
     {
         for (String name : model.getParameterNames())
         {
@@ -206,13 +186,13 @@ class PageLoaderProcessor
      * Creates a new binding, or returns an existing binding (or null) for the "inherit:" binding
      * prefix. Mostly a wrapper around
      * {@link BindingSource#newBinding(String, ComponentResources, ComponentResources, String, String, Location)
-     * 
+     *
      * @return the new binding, or an existing binding (if inherited), or null (if inherited, and
      *         the containing parameter is not bound)
      */
     private Binding findBinding(ComponentPageElement loadingComponent,
-            ComponentPageElement component, String name, String value, String defaultBindingPrefix,
-            Location location)
+                                ComponentPageElement component, String name, String value, String defaultBindingPrefix,
+                                Location location)
     {
         if (value.startsWith(INHERIT_PREFIX))
         {
@@ -251,17 +231,14 @@ class PageLoaderProcessor
 
     /**
      * Determines the default binding prefix for a particular parameter.
-     * 
-     * @param component
-     *            the component which will have a parameter bound
-     * @param parameterName
-     *            the name of the parameter
-     * @param informalParameterBindingPrefix
-     *            the default to use for informal parameters
+     *
+     * @param component                      the component which will have a parameter bound
+     * @param parameterName                  the name of the parameter
+     * @param informalParameterBindingPrefix the default to use for informal parameters
      * @return the binding prefix
      */
     private String determineDefaultBindingPrefix(ComponentPageElement component,
-            String parameterName, String informalParameterBindingPrefix)
+                                                 String parameterName, String informalParameterBindingPrefix)
     {
         String defaultBindingPrefix = component.getDefaultBindingPrefix(parameterName);
 
@@ -315,13 +292,11 @@ class PageLoaderProcessor
     /**
      * Invoked whenever a token (start, startComponent, etc.) is encountered that will eventually
      * have a matching end token. Sets up the behavior for the end token.
-     * 
-     * @param discard
-     *            if true, the end is discarded (if false the end token is added to the active body
-     *            element)
-     * @param command
-     *            command to execute to return processor state back to what it was before the
-     *            command executed
+     *
+     * @param discard if true, the end is discarded (if false the end token is added to the active body
+     *                element)
+     * @param command command to execute to return processor state back to what it was before the
+     *                command executed
      */
     private void configureEnd(boolean discard, Runnable command)
     {
@@ -704,7 +679,9 @@ class PageLoaderProcessor
         _dtdAdded = true;
     }
 
-    /** Works the component queue, until exausted. */
+    /**
+     * Works the component queue, until exausted.
+     */
     private void workComponentQueue()
     {
         while (!_componentQueue.isEmpty())

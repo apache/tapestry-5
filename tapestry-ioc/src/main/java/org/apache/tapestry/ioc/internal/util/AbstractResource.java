@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
+import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.net.URL;
 import java.util.Locale;
-
-import org.apache.tapestry.ioc.Resource;
 
 /**
  * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods
@@ -132,6 +131,8 @@ public abstract class AbstractResource implements Resource
         return newResource(path);
     }
 
-    /** Factory method provided by subclasses. */
+    /**
+     * Factory method provided by subclasses.
+     */
     protected abstract Resource newResource(String path);
 }

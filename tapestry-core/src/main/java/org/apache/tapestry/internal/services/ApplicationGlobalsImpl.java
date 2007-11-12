@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import javax.servlet.ServletContext;
-
 import org.apache.tapestry.services.ApplicationGlobals;
 import org.apache.tapestry.services.Context;
+
+import javax.servlet.ServletContext;
 
 public class ApplicationGlobalsImpl implements ApplicationGlobals
 {

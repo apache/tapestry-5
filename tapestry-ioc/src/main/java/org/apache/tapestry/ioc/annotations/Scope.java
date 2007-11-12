@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.ioc.ServiceLifecycle;
 import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
+
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  * An optional annotation that may be placed on a service building method of a module. The
@@ -34,16 +33,18 @@ import org.apache.tapestry.ioc.services.ServiceLifecycleSource;
  * scope should have a corresponding {@link ServiceLifecycle} implementation. The linkage from scope
  * name to service lifecycle occurs via a contribution to the {@link ServiceLifecycleSource} service
  * configuration.
- * <p>
+ * <p/>
  * The annotation may also be placed directly on a service implementation class, when using service
  * autobuilding (via the {@link ServiceBinder}.
  */
 @Target(
-{ TYPE, METHOD })
+        {TYPE, METHOD})
 @Retention(RUNTIME)
 @Documented
 public @interface Scope
 {
-    /** An identifier used to look up a non-default lifecycle. */
+    /**
+     * An identifier used to look up a non-default lifecycle.
+     */
     String value();
 }

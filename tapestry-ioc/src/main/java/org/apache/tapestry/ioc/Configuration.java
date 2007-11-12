@@ -17,7 +17,7 @@ package org.apache.tapestry.ioc;
 /**
  * Object passed into a service contributor method that allows the method provide contributed values
  * to the service's configuration.
- * <p>
+ * <p/>
  * A service can <em>collect</em> contributions in three different ways:
  * <ul>
  * <li>As an un-ordered collection of values</li>
@@ -25,21 +25,18 @@ package org.apache.tapestry.ioc;
  * post-requisites)</li>
  * <li>As a map of keys and values
  * </ul>
- * <p>
+ * <p/>
  * This implementation is used for un-ordered configuration data.
- * <p>
+ * <p/>
  * The service defines the <em>type</em> of contribution, in terms of a base class or service
  * interface. Contributions must be compatible with the type.
- * 
- * 
  */
 public interface Configuration<T>
 {
     /**
      * Adds an object to the service's contribution.
-     * 
-     * @param object
-     *            to add to the service's configuration
+     *
+     * @param object to add to the service's configuration
      */
     void add(T object);
 }

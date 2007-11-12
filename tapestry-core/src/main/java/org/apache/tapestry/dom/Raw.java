@@ -31,7 +31,9 @@ public final class Raw extends Node
         _text = text;
     }
 
-    /** Prints the text exactly as is, no translations, filtering, etc. */
+    /**
+     * Prints the text exactly as is, no translations, filtering, etc.
+     */
     @Override
     public void toMarkup(PrintWriter writer)
     {

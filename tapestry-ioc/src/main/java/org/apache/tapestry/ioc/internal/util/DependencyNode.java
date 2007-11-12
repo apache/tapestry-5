@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
+import org.apache.tapestry.ioc.Orderable;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.slf4j.Logger;
 
 import java.util.List;
-
-import org.apache.tapestry.ioc.Orderable;
-import org.slf4j.Logger;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.util.Orderer} to establish backward dependencies
  * for {@link org.apache.tapestry.ioc.Orderable} objects.
- * 
+ *
  * @param <T>
  */
 

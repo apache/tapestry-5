@@ -14,23 +14,15 @@
 
 package org.apache.tapestry.ioc;
 
-import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.internal.ExceptionInConstructorModule;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ServiceActivity;
-import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
-import org.apache.tapestry.ioc.services.Status;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.ioc.services.*;
 import org.easymock.EasyMock;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.sql.PreparedStatement;
+import java.util.*;
 
 /**
  * A few tests that are easiest (or even just possible) by building a Registry and trying out a few
@@ -663,7 +655,7 @@ public class IntegrationTest extends IOCInternalTestCase
         // On the build server, the order of keys inside the RegistryImpl's _markerToServiceDef
         // is different, and so it *may* query ofr a number of other annotations
         // besides Builtin.
-        
+
         expect(ap.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
 
         replay();

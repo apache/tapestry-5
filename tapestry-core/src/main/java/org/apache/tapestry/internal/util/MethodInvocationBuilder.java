@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.util.Map;
-
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
+
+import java.util.Map;
 
 /**
  * A utility class for building part of a method body to invoke a method. Analyzes the method and
@@ -41,7 +41,7 @@ public final class MethodInvocationBuilder
 
     /**
      * Maps a parameter type to a literal string to be used for the parameter expression.
-     * 
+     *
      * @see StringParameterBuilder
      */
     public void addParameter(String parameterType, String expression)
@@ -53,15 +53,14 @@ public final class MethodInvocationBuilder
      * Builds the method invocation. Analyzes the type of each parameter to the method, and uses a
      * {@link ParameterBuilder} to provide the expression. Supplies a default value (usually null)
      * for any parameters that do not have parameter builders.
-     * 
-     * @param signature
-     *            of the method to invoke
+     *
+     * @param signature      of the method to invoke
      * @param transformation
      * @return method invocation expression
      * @see TransformUtils#getDefaultValue(String)
      */
     public String buildMethodInvocation(TransformMethodSignature signature,
-            ClassTransformation transformation)
+                                        ClassTransformation transformation)
     {
         StringBuilder builder = new StringBuilder(signature.getMethodName());
 

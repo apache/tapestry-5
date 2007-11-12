@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
+import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.net.URL;
-
-import org.apache.tapestry.ioc.Resource;
 
 /**
  * Implementation of {@link Resource} for files on the classpath (as defined by a

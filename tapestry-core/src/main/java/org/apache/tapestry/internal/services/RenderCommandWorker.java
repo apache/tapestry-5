@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -25,6 +23,8 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformMethodSignature;
 
+import java.lang.reflect.Modifier;
+
 /**
  * Ensures that all components implement {@link RenderCommand} by delegating to
  * {@link InternalComponentResourcesCommon#queueRender(org.apache.tapestry.runtime.RenderQueue)}.
@@ -32,8 +32,8 @@ import org.apache.tapestry.services.TransformMethodSignature;
 public class RenderCommandWorker implements ComponentClassTransformWorker
 {
     private final TransformMethodSignature RENDER_SIGNATURE = new TransformMethodSignature(Modifier.PUBLIC, "void",
-            "render", new String[]
-            { MarkupWriter.class.getName(), RenderQueue.class.getName() }, null);
+                                                                                           "render", new String[]
+            {MarkupWriter.class.getName(), RenderQueue.class.getName()}, null);
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {

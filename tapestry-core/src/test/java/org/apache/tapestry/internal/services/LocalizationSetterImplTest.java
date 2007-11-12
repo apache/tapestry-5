@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.PersistentLocale;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Locale;
 
 public class LocalizationSetterImplTest extends Assert
 {
@@ -89,7 +89,7 @@ public class LocalizationSetterImplTest extends Assert
     public void to_locale_is_cached()
     {
         LocalizationSetterImpl filter = new LocalizationSetterImpl(_nullPersistentLocale, null,
-                "en");
+                                                                   "en");
 
         Locale l1 = filter.toLocale("en");
 
@@ -101,7 +101,7 @@ public class LocalizationSetterImplTest extends Assert
     }
 
     private void checkLocale(Locale l, String expectedLanguage, String expectedCountry,
-            String expectedVariant)
+                             String expectedVariant)
     {
         assertEquals(l.getLanguage(), expectedLanguage);
         assertEquals(l.getCountry(), expectedCountry);
@@ -112,7 +112,7 @@ public class LocalizationSetterImplTest extends Assert
     public void to_locale()
     {
         LocalizationSetterImpl filter = new LocalizationSetterImpl(_nullPersistentLocale, null,
-                "en");
+                                                                   "en");
 
         checkLocale(filter.toLocale("en"), "en", "", "");
         checkLocale(filter.toLocale("klingon_Gach"), "klingon", "GACH", "");
@@ -125,7 +125,7 @@ public class LocalizationSetterImplTest extends Assert
         ThreadLocale threadLocale = new ThreadLocaleImpl();
         threadLocale.setLocale(Locale.FRENCH);
         LocalizationSetter setter = new LocalizationSetterImpl(_nullPersistentLocale, threadLocale,
-                "en,fr");
+                                                               "en,fr");
         setter.setThreadLocale(Locale.CANADA_FRENCH);
         assertEquals(threadLocale.getLocale(), Locale.FRENCH);
 
@@ -137,7 +137,7 @@ public class LocalizationSetterImplTest extends Assert
         ThreadLocale threadLocale = new ThreadLocaleImpl();
         threadLocale.setLocale(Locale.FRENCH);
         LocalizationSetter setter = new LocalizationSetterImpl(_nullPersistentLocale, threadLocale,
-                "en,fr");
+                                                               "en,fr");
         setter.setThreadLocale(Locale.JAPANESE);
         assertEquals(threadLocale.getLocale(), Locale.ENGLISH);
     }
@@ -147,7 +147,7 @@ public class LocalizationSetterImplTest extends Assert
     {
         ThreadLocale threadLocale = new ThreadLocaleImpl();
         LocalizationSetter setter = new LocalizationSetterImpl(_frenchPersistentLocale,
-                threadLocale, "en,fr");
+                                                               threadLocale, "en,fr");
         setter.setThreadLocale(Locale.ENGLISH);
         assertEquals(threadLocale.getLocale(), Locale.FRENCH);
     }

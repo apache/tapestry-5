@@ -14,24 +14,23 @@
 
 package org.apache.tapestry.ioc.annotations;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.METHOD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
  * Used with a service decorator method to control the order in which decorations occur. Identifies
  * other decorators which should occur before the annotated decorator.
- * 
- * 
+ *
  * @see org.apache.tapestry.ioc.def.DecoratorDef
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface Order {
+public @interface Order
+{
     /**
      * Any number of ordering constraint strings.
      */

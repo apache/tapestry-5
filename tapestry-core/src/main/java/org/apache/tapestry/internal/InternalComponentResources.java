@@ -24,16 +24,14 @@ import org.apache.tapestry.services.PersistentFieldManager;
  * any need for this interface (we'll see as we go).
  */
 public interface InternalComponentResources extends ComponentResources,
-        InternalComponentResourcesCommon
+                                                    InternalComponentResourcesCommon
 {
     /**
      * Reads the value of a parameter, via the parameter's {@link org.apache.tapestry.Binding}.
-     * 
+     *
      * @param <T>
-     * @param parameterName
-     *            the name of the parameter to read
-     * @param expectedType
-     *            the expected type of parameter
+     * @param parameterName the name of the parameter to read
+     * @param expectedType  the expected type of parameter
      * @return the value for the parameter, or null if the parameter is not bound.
      */
     <T> T readParameter(String parameterName, Class<T> expectedType);
@@ -41,12 +39,10 @@ public interface InternalComponentResources extends ComponentResources,
     /**
      * Updates a parameter. It is an error to update a parameter which is not bound. The parameter
      * {@link org.apache.tapestry.Binding binding} may also not support updates.
-     * 
+     *
      * @param <T>
-     * @param parameterName
-     *            of parameter to update
-     * @param parameterValue
-     *            new value (which may be null)
+     * @param parameterName  of parameter to update
+     * @param parameterValue new value (which may be null)
      */
     <T> void writeParameter(String parameterName, T parameterValue);
 
@@ -54,9 +50,8 @@ public interface InternalComponentResources extends ComponentResources,
      * Returns true if the named parameter's {@link org.apache.tapestry.Binding} is invariant, false
      * if otherwise, or if the parameter is not bound. Invariant bindings are cached more
      * aggressively than variant bindings.
-     * 
-     * @param parameterName
-     *            the name of parameter to check for invariance
+     *
+     * @param parameterName the name of parameter to check for invariance
      * @return
      */
     boolean isInvariant(String parameterName);

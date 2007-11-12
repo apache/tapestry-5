@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.util;
 
-import java.util.Collection;
-
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+
+import java.util.Collection;
 
 final class UtilMessages
 {

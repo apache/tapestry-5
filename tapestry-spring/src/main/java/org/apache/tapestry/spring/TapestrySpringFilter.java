@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.spring;
 
-import javax.servlet.ServletContext;
-
 import org.apache.tapestry.TapestryFilter;
 import org.apache.tapestry.internal.spring.SpringModuleDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.WebApplicationContext;
+
+import javax.servlet.ServletContext;
 
 /**
  * Adds a {@link ModuleDef} that contains all the beans defined by the Spring
@@ -47,6 +47,6 @@ public class TapestrySpringFilter extends TapestryFilter
         if (springContext == null) throw new RuntimeException(SpringMessages.missingContext());
 
         return new ModuleDef[]
-        { new SpringModuleDef(springContext) };
+                {new SpringModuleDef(springContext)};
     }
 }

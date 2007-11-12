@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-import java.util.Date;
-
 import org.apache.tapestry.beaneditor.Validate;
+
+import java.util.Date;
 
 public class BirthdayReminder
 {

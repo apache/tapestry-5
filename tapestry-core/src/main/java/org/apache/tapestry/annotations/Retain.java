@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
@@ -26,17 +25,18 @@ import java.lang.annotation.Target;
  * This is most often associated with fields that are <em>lazily loaded</em>. By marking such
  * fields with the Retain annotation, the fields will <em>not</em> be discarded at the end of the
  * request.
- * <p>
+ * <p/>
  * This is quite different from {@link Persist}, because the value that's allowed to be retained is
  * not stored persistently; it is simply not cleared out. A subsequent request, even from the same
  * user, may be processed by a different instance of the page where the value is still null.
- * <p>
+ * <p/>
  * This annotation should only be used with lazily-evaluated objects that contain no client-specific
  * information.
  */
 @Target(FIELD)
 @Retention(RUNTIME)
 @Documented
-public @interface Retain {
+public @interface Retain
+{
 
 }

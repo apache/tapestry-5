@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Enumeration;
-
-import javax.servlet.ServletContext;
-
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.Test;
+
+import javax.servlet.ServletContext;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Enumeration;
 
 public class ServletContextSymbolProviderTest extends TestBase
 {

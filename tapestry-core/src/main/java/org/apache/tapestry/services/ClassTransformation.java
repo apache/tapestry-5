@@ -14,30 +14,29 @@
 
 package org.apache.tapestry.services;
 
-import java.lang.annotation.Annotation;
-import java.util.List;
-
 import javassist.CtBehavior;
-
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.slf4j.Logger;
+
+import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * Contains class-specific information used when transforming an raw class into an executable class.
  * Much of this information is somewhat like ordinary reflection, but applies to a class that has
  * not yet been loaded.
- * <p>
+ * <p/>
  * Transformation is primarily about identifying annotations on fields and on methods and changing
  * the class, adding new interfaces, fields and methods, and deleting some existing fields.
- * <p>
+ * <p/>
  * A ClassTransformation contains all the state data specific to a particular class being
  * transformed. A number of <em>workers</em> will operate upon the ClassTransformation to effect
  * the desired changes before the true class is loaded into memory.
- * <p>
+ * <p/>
  * Instances of this class are not designed to be thread safe, access to an instance should be
  * restricted to a single thread. In fact, the design of this type is to allow stateless singletons
  * in multiple threads to work on thread-specific data (within the ClassTransformation). *
- * <p>
+ * <p/>
  * The majority of methods concern the <em>declared</em> members (field and methods) of a specific
  * class, rather than any fields or methods inherited from a base class.
  */
@@ -52,9 +51,8 @@ public interface ClassTransformation extends AnnotationProvider
      * Returns the name of a new member (field or method). Ensures that the resulting name does not
      * conflict with any existing member (declared by the underlying class, or inherited from a base
      * class).
-     * 
-     * @param suggested
-     *            the suggested value for the member
+     *
+     * @param suggested the suggested value for the member
      * @return a unique name for the member
      */
     String newMemberName(String suggested);
@@ -62,11 +60,9 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * As with {@link #newMemberName(String)}, but the suggested name is constructed from the
      * prefix and base name. An underscore will seperate the prefix from the base name.
-     * 
-     * @param prefix
-     *            for the generated name
-     * @param baseName
-     *            an name, often of an existing field or method
+     *
+     * @param prefix   for the generated name
+     * @param baseName an name, often of an existing field or method
      * @return a unique name
      */
     String newMemberName(String prefix, String baseName);
@@ -81,7 +77,7 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Finds all methods defined in the class that are marked with the provided annotation.
-     * 
+     *
      * @param annotationClass
      * @return a list of method signature (which may be empty) in ascending order
      * @see #findMethods(MethodFilter)
@@ -90,9 +86,8 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Finds all methods matched by the provided filter.
-     * 
-     * @param filter
-     *            Passed each method signature, it may include or exclude each potential
+     *
+     * @param filter Passed each method signature, it may include or exclude each potential
      * @return a list of matching method signatures (which may be empty) in ascending order (by
      *         method name), but descending order (by parameter count) within overrides of a single
      *         method name.
@@ -102,40 +97,31 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Finds all unclaimed fields matched by the provided filter. Only considers unclaimed, private,
      * instance fields.
-     * 
-     * @param filter
-     *            passed each field name and field type
+     *
+     * @param filter passed each field name and field type
      * @return the names of all matched fields, in ascending order
      */
     List<String> findFields(FieldFilter filter);
 
     /**
      * Finds an annotation on a declared instance field.
-     * 
-     * @param <T>
-     *            constrains parameter and return value to Annotation types
-     * @param fieldName
-     *            the name of the field, which must exist
-     * @param annotationClass
-     *            the type of annotation to access
+     *
+     * @param <T>             constrains parameter and return value to Annotation types
+     * @param fieldName       the name of the field, which must exist
+     * @param annotationClass the type of annotation to access
      * @return the annotation if present, or null otherwise
-     * @throws IllegalArgumentException
-     *             if the fieldName does not correspond to a declared field
+     * @throws IllegalArgumentException if the fieldName does not correspond to a declared field
      */
     <T extends Annotation> T getFieldAnnotation(String fieldName, Class<T> annotationClass);
 
     /**
      * Finds an annotation on a declared method.
-     * 
-     * @param <T>
-     *            constrains parameter and return value to Annotation types
-     * @param method
-     *            the method signature to search
-     * @param annotationClass
-     *            the type of annotation to access
+     *
+     * @param <T>             constrains parameter and return value to Annotation types
+     * @param method          the method signature to search
+     * @param annotationClass the type of annotation to access
      * @return the annotation if present, or null otherwise
-     * @throws IllegalArgumentException
-     *             if the method signature does not correspond to a declared method
+     * @throws IllegalArgumentException if the method signature does not correspond to a declared method
      */
     <T extends Annotation> T getMethodAnnotation(TransformMethodSignature method, Class<T> annotationClass);
 
@@ -143,25 +129,20 @@ public interface ClassTransformation extends AnnotationProvider
      * Claims a field so as to ensure that only a single annotation is applied to any single field.
      * When a transformation occurs (driven by a field annotation), the first thing that occurs is
      * to claim the field, on behalf of the annotation.
-     * 
-     * @param fieldName
-     *            the name of the field that is being claimed
-     * @param tag
-     *            a non-null object that represents why the field is being tagged (this is typically
-     *            a specific annotation on the field)
-     * @throws IllegalArgumentException
-     *             if the fieldName does not correspond to a declared instance field
-     * @throws IllegalStateException
-     *             if the field is already claimed for some other tag
+     *
+     * @param fieldName the name of the field that is being claimed
+     * @param tag       a non-null object that represents why the field is being tagged (this is typically
+     *                  a specific annotation on the field)
+     * @throws IllegalArgumentException if the fieldName does not correspond to a declared instance field
+     * @throws IllegalStateException    if the field is already claimed for some other tag
      */
     void claimField(String fieldName, Object tag);
 
     /**
      * Changes the field to be read only. Any existing code that changes the field will cause a
      * runtime exception.
-     * 
-     * @param fieldName
-     *            name of field to so change
+     *
+     * @param fieldName name of field to so change
      */
     void makeReadOnly(String fieldName);
 
@@ -174,17 +155,16 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Obtains the type of a declared instance field.
-     * 
+     *
      * @param fieldName
      * @return the type of the field, as a string
-     * @throws IllegalArgumentException
-     *             if the fieldName does not correspond to a declared instance field
+     * @throws IllegalArgumentException if the fieldName does not correspond to a declared instance field
      */
     String getFieldType(String fieldName);
 
     /**
      * Returns true if the indicated name is a private instance field.
-     * 
+     *
      * @param fieldName
      * @return true if field exists
      */
@@ -193,14 +173,11 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Defines a new declared field for the class. The suggestedName may be modified to ensure
      * uniqueness.
-     * 
-     * @param modifiers
-     *            modifiers for the field (typically, {@link java.lang.reflect.Modifier#PRIVATE})
-     * @param type
-     *            the type for the field, as a string
-     * @param suggestedName
-     *            the desired name for the field, which may be modified (for uniqueness) when
-     *            returned
+     *
+     * @param modifiers     modifiers for the field (typically, {@link java.lang.reflect.Modifier#PRIVATE})
+     * @param type          the type for the field, as a string
+     * @param suggestedName the desired name for the field, which may be modified (for uniqueness) when
+     *                      returned
      * @return the (uniqued) name for the field
      */
     String addField(int modifiers, String type, String suggestedName);
@@ -211,13 +188,10 @@ public interface ClassTransformation extends AnnotationProvider
      * this method repeatedly with the same type and value will return the same field name. Caching
      * extends to the parent transformation, so that a value injected into a parent class will be
      * available (via the protected instance variable) to subclasses.
-     * 
-     * @param type
-     *            the type of object to inject
-     * @param suggestedName
-     *            the suggested name for the new field
-     * @param value
-     *            to be injected. This value is retained.
+     *
+     * @param type          the type of object to inject
+     * @param suggestedName the suggested name for the new field
+     * @param value         to be injected. This value is retained.
      * @return the actual name of the injected field
      */
     String addInjectedField(Class type, String suggestedName, Object value);
@@ -225,11 +199,9 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Converts the field into a read only field whose value is the provided value. This is used
      * when converting an existing field into a read-only injected value.
-     * 
-     * @param fieldName
-     *            name of field to convert
-     * @param value
-     *            the value provided by the field
+     *
+     * @param fieldName name of field to convert
+     * @param value     the value provided by the field
      */
     void injectField(String fieldName, Object value);
 
@@ -237,14 +209,12 @@ public interface ClassTransformation extends AnnotationProvider
      * Transforms the class to implement the indicated interface. If the class (or its super class)
      * does not already implement the interface, then the interface is added, and default
      * implementations of any methods of the interface are added.
-     * <p>
+     * <p/>
      * TODO: Checking that the names of methods in the interface do not conflict with the names of
      * methods present in the (unmodified) class.
-     * 
-     * @param interfaceClass
-     *            the interface to be implemented by the class
-     * @throws IllegalArgumentException
-     *             if the interfaceClass argument does not represent an interface
+     *
+     * @param interfaceClass the interface to be implemented by the class
+     * @throws IllegalArgumentException if the interfaceClass argument does not represent an interface
      */
     void addImplementedInterface(Class interfaceClass);
 
@@ -252,40 +222,37 @@ public interface ClassTransformation extends AnnotationProvider
      * Extends an existing method. The provided method body is inserted at the end of the existing
      * method (i.e. {@link javassist.CtBehavior#insertAfter(java.lang.String)}). To access or
      * change the return value, use the <code>$_</code> pseudo variable.
-     * <p>
+     * <p/>
      * The method may be declared in the class, or may be inherited from a super-class. For
      * inherited methods, a method is added that first invokes the super implementation. Use
      * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
      * super-class method is invoked.
-     * 
-     * @param signature
-     *            the signature of the method to extend
-     * @param methodBody
-     *            the body of code
-     * @throws IllegalArgumentException
-     *             if the provided Javassist method body can not be compiled
+     *
+     * @param signature  the signature of the method to extend
+     * @param methodBody the body of code
+     * @throws IllegalArgumentException if the provided Javassist method body can not be compiled
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
      * Inserts code at the beginning of a method body (i.e. {@link CtBehavior#insertBefore(String)}.
-     * <p>
+     * <p/>
      * The method may be declared in the class, or may be inherited from a super-class. For
      * inherited methods, a method is added that first invokes the super implementation. Use
      * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
      * super-class method is invoked.
-     * 
+     *
      * @param methodSignature
      * @param methodBody
      * @throws IllegalArgumentException If the provided Javassist method body could not be compiled
      */
     void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
-    
+
     /**
      * Returns the name of a field that provides the {@link org.apache.tapestry.ComponentResources}
      * for the transformed component. This will be a protected field, accessible to the class and
      * subclasses.
-     * 
+     *
      * @return name of field
      */
     String getResourcesFieldName();
@@ -301,9 +268,8 @@ public interface ClassTransformation extends AnnotationProvider
 
     /**
      * Adds a statement to the constructor. The statement is added as is, though a newline is added.
-     * 
-     * @param statement
-     *            the statement to add, which should end with a semicolon
+     *
+     * @param statement the statement to add, which should end with a semicolon
      */
     void extendConstructor(String statement);
 
@@ -325,9 +291,8 @@ public interface ClassTransformation extends AnnotationProvider
     /**
      * Removes a field entirely; this is useful for fields that are replaced entirely by computed
      * values.
-     * 
-     * @param fieldName
-     *            the name of the field to remove
+     *
+     * @param fieldName the name of the field to remove
      * @see #replaceReadAccess(String, String)
      * @see #replaceWriteAccess(String, String)
      */
@@ -346,14 +311,16 @@ public interface ClassTransformation extends AnnotationProvider
      */
     Logger getLogger();
 
-    /** Returns the modifiers for the named field. */
+    /**
+     * Returns the modifiers for the named field.
+     */
     int getFieldModifiers(String fieldName);
 
     /**
      * Converts a signature to a string used to identify the method; this consists of the
      * {@link TransformMethodSignature#getMediumDescription()} appended with source file information and line
      * number information (when available).
-     * 
+     *
      * @param signature
      * @return a string that identifies the class, method name, types of parameters, source file and
      *         source line number

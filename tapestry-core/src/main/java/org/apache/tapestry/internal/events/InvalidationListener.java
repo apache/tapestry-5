@@ -16,12 +16,13 @@ package org.apache.tapestry.internal.events;
 
 /**
  * Interface for objects that may cache information that can be invalidated.
- * 
- * 
+ *
  * @see org.apache.tapestry.internal.events.InvalidationEvent
  */
 public interface InvalidationListener
 {
-    /** Invoked to indicate that some object is invalid. The receiver should clear its cache. */
+    /**
+     * Invoked to indicate that some object is invalid. The receiver should clear its cache.
+     */
     void objectWasInvalidated();
 }

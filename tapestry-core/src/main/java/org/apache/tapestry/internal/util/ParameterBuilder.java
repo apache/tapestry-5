@@ -19,8 +19,6 @@ import org.apache.tapestry.services.ClassTransformation;
 /**
  * Builds single parameter value to pass into a method being invoked by a
  * {@link org.apache.tapestry.internal.util.MethodInvocationBuilder}.
- * 
- * 
  */
 public interface ParameterBuilder
 {

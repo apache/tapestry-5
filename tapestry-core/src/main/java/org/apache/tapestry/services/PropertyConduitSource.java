@@ -21,7 +21,7 @@ import org.apache.tapestry.internal.bindings.PropBindingFactory;
  * A source for {@link PropertyConduit}s, which can be thought of as a compiled property path
  * expression. PropertyConduits are the basis of the "prop:" binding factory, thus this service
  * defines the expression format used by the {@link PropBindingFactory}.
- * <p>
+ * <p/>
  * The expression consist of one or more terms, seperated by periods. Each term may be either the
  * name of a JavaBean property, or the name of a method (a method that takes no parameters). Method
  * names are distinguished from property names by appending empty parens. Using a method term as the
@@ -31,9 +31,8 @@ public interface PropertyConduitSource
 {
     /**
      * Creates a new property conduit instance for the given expression.
-     * 
-     * @param rootClass
-     *            the class of the root object to which the expression is applied
+     *
+     * @param rootClass  the class of the root object to which the expression is applied
      * @param expression
      * @return RuntimeException if the expression is invalid (poorly formed, references non-existent
      *         properties, etc.)

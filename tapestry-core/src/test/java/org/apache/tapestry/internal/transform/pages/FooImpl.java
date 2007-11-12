@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.transform.pages;
 import org.apache.tapestry.internal.services.FooInterface;
 
 /**
- * 
+ *
  */
 public class FooImpl implements FooInterface
 {

@@ -15,11 +15,10 @@
 package org.apache.tapestry.ioc.internal.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.Test;
+
+import java.util.List;
 
 /**
  * Test is structured a bit oddly, since it evolved from when the Concurrence annotation and aspect
@@ -167,7 +166,7 @@ public class ConcurrentBarrierTest extends TestBase
             }
         };
 
-        _target.withRead( new Runnable()
+        _target.withRead(new Runnable()
         {
             public void run()
             {
@@ -185,7 +184,6 @@ public class ConcurrentBarrierTest extends TestBase
     }
 
 
-
     private void runOperationAndCheckCounter(Runnable operation) throws InterruptedException
     {
         runOperation(operation);
@@ -194,7 +192,7 @@ public class ConcurrentBarrierTest extends TestBase
     }
 
     private void runOperation(Runnable operation)
-          throws InterruptedException
+            throws InterruptedException
     {
         List<Thread> threads = newList();
         List<Thread> running = newList();

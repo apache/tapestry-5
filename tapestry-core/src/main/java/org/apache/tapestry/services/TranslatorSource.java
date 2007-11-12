@@ -23,12 +23,10 @@ public interface TranslatorSource
 {
     /**
      * Returns the translator with the given logical name.
-     * 
-     * @param name
-     *            name of translator (as configured)
+     *
+     * @param name name of translator (as configured)
      * @return the shared translator instance
-     * @throws RuntimeException
-     *             if no translator is configured for the provided name
+     * @throws RuntimeException if no translator is configured for the provided name
      */
     Translator get(String name);
 }

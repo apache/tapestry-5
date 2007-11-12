@@ -22,7 +22,7 @@ import org.apache.tapestry.services.Request;
 
 /**
  * Implementation of {@link AssetFactory} for assets that are part of the web application context.
- * 
+ *
  * @see ContextResource
  */
 public class ContextAssetFactory implements AssetFactory
@@ -65,7 +65,9 @@ public class ContextAssetFactory implements AssetFactory
         };
     }
 
-    /** Returns the root {@link ContextResource}. */
+    /**
+     * Returns the root {@link ContextResource}.
+     */
     public Resource getRootResource()
     {
         return new ContextResource(_context, "/");

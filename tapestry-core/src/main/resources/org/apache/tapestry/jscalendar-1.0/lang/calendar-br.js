@@ -11,14 +11,14 @@
 
 // full day names
 Calendar._DN = new Array
-("Domingo",
- "Segunda",
- "Terça",
- "Quarta",
- "Quinta",
- "Sexta",
- "Sabádo",
- "Domingo");
+        ("Domingo",
+                "Segunda",
+                "Terça",
+                "Quarta",
+                "Quinta",
+                "Sexta",
+                "Sabádo",
+                "Domingo");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary.  We give it here
@@ -37,18 +37,18 @@ Calendar._DN = new Array
 
 // full month names
 Calendar._MN = new Array
-("Janeiro",
- "Fevereiro",
- "Março",
- "Abril",
- "Maio",
- "Junho",
- "Julho",
- "Agosto",
- "Setembro",
- "Outubro",
- "Novembro",
- "Dezembro");
+        ("Janeiro",
+                "Fevereiro",
+                "Março",
+                "Abril",
+                "Maio",
+                "Junho",
+                "Julho",
+                "Agosto",
+                "Setembro",
+                "Outubro",
+                "Novembro",
+                "Dezembro");
 
 // short month names
 // [No changes using default values]
@@ -72,10 +72,10 @@ Calendar._TT["ABOUT"] =
 "- Clique e segure com o mouse em qualquer botão para selecionar rapidamente.";
 
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Selecionar hora:\n" +
-"- Clique em qualquer uma das partes da hora para aumentar\n" +
-"- ou Shift-clique para diminuir\n" +
-"- ou clique e arraste para selecionar rapidamente.";
+                             "Selecionar hora:\n" +
+                             "- Clique em qualquer uma das partes da hora para aumentar\n" +
+                             "- ou Shift-clique para diminuir\n" +
+                             "- ou clique e arraste para selecionar rapidamente.";
 
 Calendar._TT["PREV_YEAR"] = "Ano anterior (clique e segure para menu)";
 Calendar._TT["PREV_MONTH"] = "Mês anterior (clique e segure para menu)";

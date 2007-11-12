@@ -17,29 +17,25 @@ package org.apache.tapestry.ioc.services;
 /**
  * A wrapper around the JavaBean Introspector that allows more manageable access to JavaBean
  * properties of objects.
- * 
- * <p>
+ * <p/>
+ * <p/>
  * Only provides access to <em>simple</em> properties.  Indexed properties are ignored.
  */
 public interface PropertyAccess
 {
     /**
      * Reads the value of a property.
-     * 
-     * @throws UnsupportedOperationException
-     *             if the property is write only
-     * @throws IllegalArgumentException
-     *             if property does not exist
+     *
+     * @throws UnsupportedOperationException if the property is write only
+     * @throws IllegalArgumentException      if property does not exist
      */
     Object get(Object instance, String propertyName);
 
     /**
      * Updates the value of a property.
-     * 
-     * @throws UnsupportedOperationException
-     *             if the property is read only
-     * @throws IllegalArgumentException
-     *             if property does not exist
+     *
+     * @throws UnsupportedOperationException if the property is read only
+     * @throws IllegalArgumentException      if property does not exist
      */
     void set(Object instance, String propertyName, Object value);
 
@@ -54,6 +50,8 @@ public interface PropertyAccess
      */
     ClassPropertyAdapter getAdapter(Class forClass);
 
-    /** Discards all stored property access information, discarding all created class adapters. */
+    /**
+     * Discards all stored property access information, discarding all created class adapters.
+     */
     void clearCache();
 }

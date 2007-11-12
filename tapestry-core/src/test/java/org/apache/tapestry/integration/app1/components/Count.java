@@ -21,7 +21,7 @@ import org.apache.tapestry.internal.util.IntegerRange;
 
 /**
  * A component that can count up or count down.
- * <p>
+ * <p/>
  * This is useful as a demonstration; now that the prop binding supports
  * {@link IntegerRange integer ranges}, it's much less necessary.
  */

@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.bindings;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+
+import java.lang.annotation.Annotation;
 
 /**
  * Base class for bindings created by the
@@ -34,7 +34,7 @@ public class PropBinding extends AbstractBinding
     private final String _toString;
 
     public PropBinding(final Object root, final PropertyConduit conduit, final String toString,
-            final Location location)
+                       final Location location)
     {
         super(location);
 
@@ -78,7 +78,9 @@ public class PropBinding extends AbstractBinding
         return _toString;
     }
 
-    /** Returns false; these properties are always dynamic. */
+    /**
+     * Returns false; these properties are always dynamic.
+     */
     @Override
     public boolean isInvariant()
     {

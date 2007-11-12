@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
+import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.beaneditor.Validate;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.beaneditor.Validate;
 
 public class DateFieldDemo
 {

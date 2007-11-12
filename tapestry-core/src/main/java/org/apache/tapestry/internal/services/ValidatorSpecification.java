@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
-/** Validator type and constraint values parsed from a validator specification. */
+/**
+ * Validator type and constraint values parsed from a validator specification.
+ */
 class ValidatorSpecification
 {
     private final String _validatorType;

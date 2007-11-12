@@ -18,8 +18,6 @@ import org.testng.Assert;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.ServiceDecoratorImplTest}.
- * 
- * 
  */
 public class ServiceDecoratorFixture extends Assert
 {

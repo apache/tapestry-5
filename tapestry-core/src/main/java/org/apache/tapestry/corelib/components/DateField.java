@@ -14,18 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import org.apache.tapestry.Asset;
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationTracker;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
@@ -38,6 +27,11 @@ import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * A component used to collect a provided date from the user. This is a wrapper around the LGPL <a
@@ -153,11 +147,11 @@ public class DateField extends AbstractField
 
         writer.element("input", "type", "text",
 
-        "name", getElementName(),
+                       "name", getElementName(),
 
-        "id", clientId,
+                       "id", clientId,
 
-        "value", value);
+                       "value", value);
 
         _validate.render(writer);
 
@@ -171,15 +165,15 @@ public class DateField extends AbstractField
 
         writer.element("button",
 
-        "class", "t-calendar-trigger",
+                       "class", "t-calendar-trigger",
 
-        "id", triggerId);
+                       "id", triggerId);
 
         writer.element("img",
 
-        "src", _defaultIcon.toClientURL(),
+                       "src", _defaultIcon.toClientURL(),
 
-        "alt", "[Show]");
+                       "alt", "[Show]");
         writer.end(); // img
         writer.end(); // button
 
@@ -205,9 +199,8 @@ public class DateField extends AbstractField
      * Calendar.setup() function. The values inputField, ifFormat and button are pre-configured.
      * Subclasses may override this method to configure additional features of the client-side
      * Calendar. This implementation does nothing.
-     * 
-     * @param setup
-     *            parameters object
+     *
+     * @param setup parameters object
      */
     protected void configure(JSONObject setup)
     {

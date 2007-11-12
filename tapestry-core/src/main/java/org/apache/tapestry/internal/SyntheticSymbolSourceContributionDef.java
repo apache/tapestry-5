@@ -14,15 +14,13 @@
 
 package org.apache.tapestry.internal;
 
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ModuleBuilderSource;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.OrderedConfiguration;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 
-/** Makes a contribution to the SymbolSource service configuration. */
+/**
+ * Makes a contribution to the SymbolSource service configuration.
+ */
 public class SyntheticSymbolSourceContributionDef implements ContributionDef
 {
     private final String _contributionName;
@@ -32,7 +30,7 @@ public class SyntheticSymbolSourceContributionDef implements ContributionDef
     private final String[] _constraints;
 
     public SyntheticSymbolSourceContributionDef(String contributionName, SymbolProvider provider,
-            String... constraints)
+                                                String... constraints)
     {
         _contributionName = contributionName;
         _provider = provider;
@@ -40,23 +38,25 @@ public class SyntheticSymbolSourceContributionDef implements ContributionDef
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
-            Configuration configuration)
+                           Configuration configuration)
     {
     }
 
     @SuppressWarnings("unchecked")
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
-            OrderedConfiguration configuration)
+                           OrderedConfiguration configuration)
     {
         configuration.add(_contributionName, _provider, _constraints);
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
-            MappedConfiguration configuration)
+                           MappedConfiguration configuration)
     {
     }
 
-    /** Returns "SymbolSource". */
+    /**
+     * Returns "SymbolSource".
+     */
     public String getServiceId()
     {
         return "SymbolSource";

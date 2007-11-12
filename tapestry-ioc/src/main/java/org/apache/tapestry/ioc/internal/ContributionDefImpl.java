@@ -14,20 +14,15 @@
 
 package org.apache.tapestry.ioc.internal;
 
+import org.apache.tapestry.ioc.*;
+import org.apache.tapestry.ioc.def.ContributionDef;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.ClassFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ModuleBuilderSource;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.def.ContributionDef;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
 
 public class ContributionDefImpl implements ContributionDef
 {
@@ -56,25 +51,25 @@ public class ContributionDefImpl implements ContributionDef
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
-            Configuration configuration)
+                           Configuration configuration)
     {
         invokeMethod(moduleBuilderSource, locator, Configuration.class, configuration);
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
-            OrderedConfiguration configuration)
+                           OrderedConfiguration configuration)
     {
         invokeMethod(moduleBuilderSource, locator, OrderedConfiguration.class, configuration);
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
-            MappedConfiguration configuration)
+                           MappedConfiguration configuration)
     {
         invokeMethod(moduleBuilderSource, locator, MappedConfiguration.class, configuration);
     }
 
     private <T> void invokeMethod(ModuleBuilderSource source, ObjectLocator locator,
-            Class<T> parameterType, T parameterValue)
+                                  Class<T> parameterType, T parameterValue)
     {
         Map<Class, Object> parameterDefaults = newMap();
 

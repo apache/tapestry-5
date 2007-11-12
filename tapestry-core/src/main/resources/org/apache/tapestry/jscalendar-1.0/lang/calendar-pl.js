@@ -4,16 +4,16 @@
 // January, 2004
 // Encoding: UTF-8
 Calendar._DN = new Array
-("Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela");
+        ("Niedziela", "Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela");
 
 Calendar._SDN = new Array
-("N", "Pn", "Wt", "Śr", "Cz", "Pt", "So", "N");
+        ("N", "Pn", "Wt", "Śr", "Cz", "Pt", "So", "N");
 
 Calendar._MN = new Array
-("Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień");
+        ("Styczeń", "Luty", "Marzec", "Kwiecień", "Maj", "Czerwiec", "Lipiec", "Sierpień", "Wrzesień", "Październik", "Listopad", "Grudzień");
 
 Calendar._SMN = new Array
-("Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru");
+        ("Sty", "Lut", "Mar", "Kwi", "Maj", "Cze", "Lip", "Sie", "Wrz", "Paź", "Lis", "Gru");
 
 // tooltips
 Calendar._TT = {};
@@ -30,10 +30,10 @@ Calendar._TT["ABOUT"] =
 "- aby wybrać miesiąc użyj przycisków " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + "\n" +
 "- aby przyspieszyć wybór przytrzymaj wciśnięty przycisk myszy nad ww. przyciskami.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Wybór czasu:\n" +
-"- aby zwiększyć wartość kliknij na dowolnym elemencie selekcji czasu\n" +
-"- aby zmniejszyć wartość użyj dodatkowo klawisza Shift\n" +
-"- możesz również poruszać myszkę w lewo i prawo wraz z wciśniętym lewym klawiszem.";
+                             "Wybór czasu:\n" +
+                             "- aby zwiększyć wartość kliknij na dowolnym elemencie selekcji czasu\n" +
+                             "- aby zmniejszyć wartość użyj dodatkowo klawisza Shift\n" +
+                             "- możesz również poruszać myszkę w lewo i prawo wraz z wciśniętym lewym klawiszem.";
 
 Calendar._TT["PREV_YEAR"] = "Poprz. rok (przytrzymaj dla menu)";
 Calendar._TT["PREV_MONTH"] = "Poprz. miesiąc (przytrzymaj dla menu)";

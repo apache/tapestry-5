@@ -19,14 +19,15 @@ import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
-/** A translator for type long. */
+/**
+ * A translator for type long.
+ */
 public class LongTranslator implements Translator<Long>
 {
     /**
      * Parses blank values to null, otherwise parses the client value to a long
-     * 
-     * @throws ValidationException
-     *             if the clientValue can not be parsed
+     *
+     * @throws ValidationException if the clientValue can not be parsed
      */
     public Long parseClient(String clientValue, Messages messages) throws ValidationException
     {

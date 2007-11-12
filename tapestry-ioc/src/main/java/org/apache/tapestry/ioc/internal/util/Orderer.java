@@ -14,18 +14,17 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.ioc.IdMatcher;
 import org.apache.tapestry.ioc.Orderable;
 import org.apache.tapestry.ioc.internal.IdMatcherImpl;
 import org.apache.tapestry.ioc.internal.OrIdMatcher;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.slf4j.Logger;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Used to order objects into an "execution" order. Each object must have a unique id. It may
@@ -82,7 +81,7 @@ public class Orderer<T>
 
     /**
      * Adds an object to be ordered.
-     * 
+     *
      * @param orderable
      */
     public void add(Orderable<T> orderable)
@@ -104,13 +103,10 @@ public class Orderer<T>
 
     /**
      * Adds an object to be ordered.
-     * 
-     * @param id
-     *            unique, qualified id for the target
-     * @param target
-     *            the object to be ordered (or null as a placeholder)
-     * @param constraints
-     *            optional, variable constraints
+     *
+     * @param id          unique, qualified id for the target
+     * @param target      the object to be ordered (or null as a placeholder)
+     * @param constraints optional, variable constraints
      * @see #add(Orderable)
      */
 

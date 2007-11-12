@@ -20,23 +20,17 @@ import org.slf4j.Logger;
  * Service that can create a logging interceptor that wraps around a service implementation (or
  * interceptor). The interceptor works with the service's log to log, at debug level, method entry
  * (with arguments), method exit (with return value, if any) as well as any thrown exceptions.
- * 
- * 
  */
 public interface LoggingDecorator
 {
     /**
      * Builds a logging interceptor instance.
-     * 
+     *
      * @param <T>
-     * @param serviceInterface
-     *            interface implemented by the delegate
-     * @param delegate
-     *            existing object to be wrapped
-     * @param serviceId
-     *            id of service
-     * @param logger
-     *            log used for debug level logging messages by the interceptor
+     * @param serviceInterface interface implemented by the delegate
+     * @param delegate         existing object to be wrapped
+     * @param serviceId        id of service
+     * @param logger           log used for debug level logging messages by the interceptor
      * @return a new object implementing the interface that can be used in place of the delegate,
      *         providing logging behavior around each method call on the service interface
      */

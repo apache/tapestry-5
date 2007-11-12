@@ -18,8 +18,6 @@ import javax.servlet.ServletContext;
 
 /**
  * Service interface for initializing a servlet application.
- * 
- * 
  */
 public interface ServletApplicationInitializer
 {

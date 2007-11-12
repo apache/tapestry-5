@@ -18,7 +18,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
-
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalComponentResources;
@@ -154,7 +153,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
      * <li>Unbound parameters to do not attempt to read or update their bindings (they'll be
      * optional)</li>
      * </ul>
-     * 
+     *
      * @throws Exception
      */
     @Test
@@ -422,7 +421,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     }
 
     protected void train_isBound(InternalComponentResources resources, String parameterName,
-            boolean isBound)
+                                 boolean isBound)
     {
         expect(resources.isBound(parameterName)).andReturn(isBound);
     }
@@ -483,7 +482,9 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
                 train_isInvariant(resources, "value", true);
 
-            };
+            }
+
+            ;
         };
 
         Component component = setupForIntegrationTest(
@@ -528,7 +529,9 @@ public class ParameterWorkerTest extends InternalBaseTestCase
                 resources.bindParameter("value", _binding);
 
                 train_isInvariant(resources, "value", true);
-            };
+            }
+
+            ;
         };
 
         Component component = setupForIntegrationTest(
@@ -556,12 +559,14 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     }
 
     protected final <T> void train_readParameter(InternalComponentResources resources,
-            String parameterName, Class<T> expectedType, T value)
+                                                 String parameterName, Class<T> expectedType, T value)
     {
         expect(resources.readParameter(parameterName, expectedType)).andReturn(value);
     }
 
-    /** This is for the majority of tests. */
+    /**
+     * This is for the majority of tests.
+     */
     private Component setupForIntegrationTest(final InternalComponentResources resources)
             throws Exception
     {
@@ -591,8 +596,9 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     }
 
     private Component setupForIntegrationTest(InternalComponentResources resources, Logger logger,
-            String componentClassName, MutableComponentModel model, BindingSource source,
-            Runnable phaseTwoTraining) throws Exception
+                                              String componentClassName, MutableComponentModel model,
+                                              BindingSource source,
+                                              Runnable phaseTwoTraining) throws Exception
     {
         ClassPool pool = new ClassPool();
         ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
@@ -604,7 +610,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         CtClass ctClass = pool.get(componentClassName);
         InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass,
-                _contextClassLoader, logger, null);
+                                                                                         _contextClassLoader, logger,
+                                                                                         null);
 
         replay();
 
@@ -643,7 +650,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     }
 
     protected final void train_isInvariant(InternalComponentResources resources,
-            String parameterName, boolean invariant)
+                                           String parameterName, boolean invariant)
     {
         expect(resources.isInvariant(parameterName)).andReturn(invariant);
     }

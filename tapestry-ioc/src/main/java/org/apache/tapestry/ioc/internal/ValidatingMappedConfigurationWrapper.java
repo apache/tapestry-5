@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.Map;
-
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.slf4j.Logger;
+
+import java.util.Map;
 
 /**
  * Provides two forms of validation for mapped configurations:
@@ -27,9 +27,9 @@ import org.slf4j.Logger;
  * <li>If the key has previously been stored (by some other
  * {@link org.apache.tapestry.ioc.def.ContributionDef}, then a warning is logged</li>
  * </ul>
- * <p>
+ * <p/>
  * When a warning is logged, the key/value pair is not added to the delegate.
- * 
+ *
  * @param <K>
  * @param <V>
  */
@@ -50,8 +50,9 @@ public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfigu
     private final MappedConfiguration<K, V> _delegate;
 
     public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
-            Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
-            Map<K, ContributionDef> keyToContributor, MappedConfiguration<K, V> delegate)
+                                                Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
+                                                Map<K, ContributionDef> keyToContributor,
+                                                MappedConfiguration<K, V> delegate)
     {
         _serviceId = serviceId;
         _contributionDef = contributionDef;

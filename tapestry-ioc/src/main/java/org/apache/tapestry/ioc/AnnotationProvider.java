@@ -24,10 +24,9 @@ public interface AnnotationProvider
 {
     /**
      * Searches for the specified annotation, returning the matching annotation instance.
-     * 
+     *
      * @param <T>
-     * @param annotationClass
-     *            used to select the annotation to return«
+     * @param annotationClass used to select the annotation to return«
      * @return the annotation, or null if not found
      */
     <T extends Annotation> T getAnnotation(Class<T> annotationClass);

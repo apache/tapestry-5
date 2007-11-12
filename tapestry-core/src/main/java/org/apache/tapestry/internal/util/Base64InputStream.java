@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.io.ByteArrayInputStream;
-
 import org.apache.commons.codec.binary.Base64;
+
+import java.io.ByteArrayInputStream;
 
 /**
  * An extension of {@link ByteArrayInputStream} that is initialized from a Base64 input stream

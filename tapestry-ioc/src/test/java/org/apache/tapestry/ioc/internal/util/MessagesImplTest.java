@@ -43,12 +43,12 @@ public class MessagesImplTest extends IOCTestCase
         assertEquals(_messages.get("no-args"), "No arguments.");
         assertEquals(_messages.get("something-failed"), "Something failed: %s");
     }
-    
+
     @Test
     public void get_message_from_catalog_is_case_insensitive()
     {
         assertEquals(_messages.get("No-args"), "No arguments.");
-        assertEquals(_messages.get("Something-Failed"), "Something failed: %s");        
+        assertEquals(_messages.get("Something-Failed"), "Something failed: %s");
     }
 
     @Test
@@ -68,7 +68,7 @@ public class MessagesImplTest extends IOCTestCase
     {
         assertEquals(_messages.format("Result", "good"), "The result is 'good'.");
     }
-    
+
     @Test
     public void get_formatter()
     {

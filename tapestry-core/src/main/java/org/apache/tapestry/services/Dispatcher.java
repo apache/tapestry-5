@@ -24,7 +24,7 @@ public interface Dispatcher
 {
     /**
      * Analyzes the incoming request and performs an appropriate operation for each.
-     * 
+     *
      * @return true if a response was delivered, false if the servlet container should be allowed to
      *         handle the request
      */

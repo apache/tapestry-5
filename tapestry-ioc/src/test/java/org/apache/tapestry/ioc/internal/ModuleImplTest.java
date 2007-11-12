@@ -14,13 +14,6 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.easymock.EasyMock.contains;
-import static org.easymock.EasyMock.isA;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Set;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
 import org.apache.tapestry.ioc.def.DecoratorDef;
@@ -30,8 +23,14 @@ import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry.ioc.services.Status;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Set;
 
 public class ModuleImplTest extends IOCInternalTestCase
 {
@@ -44,7 +43,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         ServiceActivityTracker tracker = mockServiceActivityTracker();
 
         ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger,
-                getClassFactory());
+                                                       getClassFactory());
 
         Module module = new ModuleImpl(registry, tracker, moduleDef, null, logger);
 
@@ -81,7 +80,7 @@ public class ModuleImplTest extends IOCInternalTestCase
     }
 
     protected final void train_newClass(InternalRegistry registry, ClassFactory factory,
-            Class serviceInterface)
+                                        Class serviceInterface)
     {
         expect(registry.newClass(serviceInterface)).andReturn(factory.newClass(serviceInterface));
     }
@@ -202,7 +201,9 @@ public class ModuleImplTest extends IOCInternalTestCase
         return builder.build();
     }
 
-    /** The following tests work better as integration tests. */
+    /**
+     * The following tests work better as integration tests.
+     */
 
     @Test
     public void integration_tests()

@@ -38,7 +38,9 @@ public final class StringLocation implements Location
         return _description;
     }
 
-    /** Returns 0. */
+    /**
+     * Returns 0.
+     */
     public int getColumn()
     {
         return 0;

@@ -14,19 +14,18 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.services.ApplicationStateManager;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.services.ApplicationStateManager;
 
 /**
  * Marker annotation for a field that is an <em>application state object</em> as controlled by the
  * {@link ApplicationStateManager}.
- * <p>
+ * <p/>
  * An ASO file may have a companion field, of type boolean, used to see if the ASO has been created yet.
  * If another field exists with the same name, suffixed with "Exists" (i.e., "_aso" for the ASO
  * field, and "_asoExists" for the companion field) and the type of that field is boolean, then access

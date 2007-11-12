@@ -16,8 +16,6 @@ package org.apache.tapestry.internal.transform.pages;
 
 /**
  * An empty object to which fields, methods and interfaces are added.
- * 
- * 
  */
 public class TargetObject
 {

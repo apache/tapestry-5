@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry.ioc.services.PropertyAccess;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -25,9 +25,6 @@ import java.beans.PropertyDescriptor;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
-import org.apache.tapestry.ioc.services.PropertyAccess;
 
 public class PropertyAccessImpl implements PropertyAccess
 {
@@ -43,7 +40,9 @@ public class PropertyAccessImpl implements PropertyAccess
         getAdapter(instance).set(instance, propertyName, value);
     }
 
-    /** Clears the cache of adapters and asks the Introspector to clear its cache. */
+    /**
+     * Clears the cache of adapters and asks the Introspector to clear its cache.
+     */
     public synchronized void clearCache()
     {
         _adapters.clear();
@@ -105,7 +104,8 @@ public class PropertyAccessImpl implements PropertyAccess
     }
 
     private void addPropertiesFromExtendedInterfaces(Class forClass,
-            List<PropertyDescriptor> descriptors) throws IntrospectionException
+                                                     List<PropertyDescriptor> descriptors)
+            throws IntrospectionException
     {
         LinkedList<Class> queue = newLinkedList();
 

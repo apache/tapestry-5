@@ -13,27 +13,27 @@
 
 // ** I18N
 Calendar._DN = new Array
-("Pazar",
- "Pazartesi",
- "Salý",
- "Çarþamba",
- "Perþembe",
- "Cuma",
- "Cumartesi",
- "Pazar");
+        ("Pazar",
+                "Pazartesi",
+                "Salý",
+                "Çarþamba",
+                "Perþembe",
+                "Cuma",
+                "Cumartesi",
+                "Pazar");
 Calendar._MN = new Array
-("Ocak",
- "Þubat",
- "Mart",
- "Nisan",
- "Mayýs",
- "Haziran",
- "Temmuz",
- "Aðustos",
- "Eylül",
- "Ekim",
- "Kasým",
- "Aralýk");
+        ("Ocak",
+                "Þubat",
+                "Mart",
+                "Nisan",
+                "Mayýs",
+                "Haziran",
+                "Temmuz",
+                "Aðustos",
+                "Eylül",
+                "Ekim",
+                "Kasým",
+                "Aralýk");
 
 // tooltips
 Calendar._TT = {};

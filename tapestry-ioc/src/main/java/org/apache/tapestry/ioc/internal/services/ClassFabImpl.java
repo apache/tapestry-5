@@ -14,22 +14,9 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
+import javassist.*;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-
-import java.lang.reflect.Modifier;
-import java.util.Formatter;
-import java.util.Map;
-import java.util.Set;
-
-import javassist.CannotCompileException;
-import javassist.CtClass;
-import javassist.CtConstructor;
-import javassist.CtField;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFab;
@@ -37,6 +24,12 @@ import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.MethodIterator;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.slf4j.Logger;
+
+import static java.lang.String.format;
+import java.lang.reflect.Modifier;
+import java.util.Formatter;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Implementation of {@link org.apache.tapestry.ioc.services.ClassFab}. Hides, as much as possible,
@@ -72,7 +65,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     /**
      * Returns a representation of the fabricated class, including inheritance, fields,
      * constructors, methods and method bodies.
-     * 
+     *
      * @since 1.1
      */
     @Override
@@ -164,7 +157,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     }
 
     public void proxyMethodsToDelegate(Class serviceInterface, String delegateExpression,
-            String toString)
+                                       String toString)
     {
         _lock.check();
 
@@ -298,16 +291,13 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     /**
      * Adds a listing of method (or constructor) parameters and thrown exceptions, and the body, to
      * the description
-     * 
-     * @param parameterTypes
-     *            types of method parameters, or null
-     * @param exceptions
-     *            types of throw exceptions, or null
-     * @param body
-     *            body of method or constructor
+     *
+     * @param parameterTypes types of method parameters, or null
+     * @param exceptions     types of throw exceptions, or null
+     * @param body           body of method or constructor
      */
     private void addMethodDetailsToDescription(Class[] parameterTypes, Class[] exceptions,
-            String body)
+                                               String body)
     {
         _description.append("(");
 

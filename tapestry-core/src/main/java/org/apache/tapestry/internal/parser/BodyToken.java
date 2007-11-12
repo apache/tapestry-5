@@ -18,8 +18,6 @@ import org.apache.tapestry.ioc.Location;
 
 /**
  * Placeholder for a component's body (within the component's template).
- * 
- * 
  */
 public class BodyToken extends TemplateToken
 {

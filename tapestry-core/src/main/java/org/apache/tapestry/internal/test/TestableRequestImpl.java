@@ -15,13 +15,12 @@
 package org.apache.tapestry.internal.test;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.services.Session;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.Session;
 
 public class TestableRequestImpl implements TestableRequest
 {
@@ -133,7 +132,9 @@ public class TestableRequestImpl implements TestableRequest
     {
     }
 
-    /** Always returns false. If you need to test Ajax functionality, you need to be using Selenium. */
+    /**
+     * Always returns false. If you need to test Ajax functionality, you need to be using Selenium.
+     */
     public boolean isXHR()
     {
         return false;

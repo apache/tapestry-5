@@ -18,11 +18,10 @@ import java.util.EventListener;
 
 /**
  * Listener interface for object that need to know about thread event cleanup.
- * <p>
+ * <p/>
  * Note that registration with the {@link org.apache.tapestry.ioc.services.ThreadCleanupHub} is a
  * one-shot affair; it lasts no longer than the next cleanup.
- * 
- * 
+ *
  * @see org.apache.tapestry.ioc.services.ThreadCleanupHub
  */
 public interface ThreadCleanupListener extends EventListener

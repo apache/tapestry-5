@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
+import org.apache.tapestry.services.Context;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
-import org.apache.tapestry.services.Context;
 
 public class PageTesterContext implements Context
 {
@@ -39,7 +39,10 @@ public class PageTesterContext implements Context
     {
         File f = new File(_contextRoot + path);
 
-        if (!f.exists() || !f.isFile()) { return null; }
+        if (!f.exists() || !f.isFile())
+        {
+            return null;
+        }
         try
         {
             return f.toURL();

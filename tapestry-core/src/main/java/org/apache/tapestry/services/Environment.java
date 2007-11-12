@@ -19,52 +19,44 @@ import java.util.NoSuchElementException;
 /**
  * Provides access to environment services, which are almost always provided to enclosed components
  * by enclosing components.
- * <p>
+ * <p/>
  * The Environment acts like a collection of stacks. Each stack contains environmental service
  * providers of a given type.
  */
 public interface Environment
 {
     /**
-     * @param <T>
-     *            the type of environmental service
-     * @param type
-     *            class used to select a service
+     * @param <T>  the type of environmental service
+     * @param type class used to select a service
      * @return the current service of that type, or null if no service of that type has been added
      */
     <T> T peek(Class<T> type);
 
     /**
-     * @param <T>
-     *            the type of environmental service
-     * @param type
-     *            class used to select a service
+     * @param <T>  the type of environmental service
+     * @param type class used to select a service
      * @return the current service
-     * @throws RuntimeException
-     *             if no service of that type has been added
+     * @throws RuntimeException if no service of that type has been added
      */
     <T> T peekRequired(Class<T> type);
 
     /**
      * Removes and returns the top environmental service of the selected type.
-     * 
+     *
      * @param <T>
      * @param type
      * @return
-     * @throws NoSuchElementException
-     *             if the environmental stack (for the specified type) is empty
+     * @throws NoSuchElementException if the environmental stack (for the specified type) is empty
      */
     <T> T pop(Class<T> type);
 
     /**
      * Pushes a new service onto the stack. The old service at the top of the stack is returned (it
      * may be null).
-     * 
+     *
      * @param <T>
-     * @param type
-     *            the type of service to store
-     * @param instance
-     *            the service instance
+     * @param type     the type of service to store
+     * @param instance the service instance
      * @return the previous top service
      */
     <T> T push(Class<T> type, T instance);

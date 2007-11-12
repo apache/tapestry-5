@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.ioc.services;
 
-import java.util.Map;
-
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class PropertyShadowBuilderImplTest extends IOCInternalTestCase
 {

@@ -23,7 +23,7 @@ public class TapestrySpringIntegrationTest extends AbstractIntegrationTestSuite
     {
         super("src/test/webapp");
     }
-    
+
     @Test
     public void integration_test() throws Exception
     {

@@ -14,19 +14,13 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
+import javassist.*;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 import java.util.Map;
 import java.util.Set;
-
-import javassist.ClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-
-import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 /**
  * Used to ensure that {@link javassist.ClassPool#appendClassPath(javassist.ClassPath)} is invoked
@@ -54,9 +48,8 @@ public class ClassFactoryClassPool extends ClassPool
      * {@link CtClass}. This is used to filter out Hibernate-style proxies (created as subclasses
      * of oridnary classes). This will automatically add the class' classLoader to the pool's class
      * path.
-     * 
-     * @param clazz
-     *            class to import
+     *
+     * @param clazz class to import
      * @return clazz, or a super-class of clazz
      */
     public Class importClass(Class clazz)
@@ -84,11 +77,10 @@ public class ClassFactoryClassPool extends ClassPool
 
     /**
      * Convienience method for adding to the ClassPath for a particular class loader.
-     * <p>
-     * 
-     * @param loader
-     *            the class loader to add (derived from a loaded class, and may be null for some
-     *            system classes)
+     * <p/>
+     *
+     * @param loader the class loader to add (derived from a loaded class, and may be null for some
+     *               system classes)
      */
     public synchronized void addClassLoaderIfNeeded(ClassLoader loader)
     {

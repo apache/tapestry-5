@@ -14,24 +14,16 @@
 
 package org.apache.tapestry.ioc.util;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import java.util.*;
 
 public class CaseInsensitiveMapTest extends Assert
 {
@@ -158,7 +150,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     @Test(expectedExceptions =
-    { ConcurrentModificationException.class })
+            {ConcurrentModificationException.class})
     public void iterator_fail_fast_after_remove()
     {
         Map<String, String> map = newCaseInsensitiveMap();
@@ -178,7 +170,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     @Test(expectedExceptions =
-    { ConcurrentModificationException.class })
+            {ConcurrentModificationException.class})
     public void iterator_fail_fast_on_next()
     {
         Map<String, String> map = newCaseInsensitiveMap();
@@ -279,7 +271,7 @@ public class CaseInsensitiveMapTest extends Assert
     }
 
     @Test(expectedExceptions =
-    { NoSuchElementException.class })
+            {NoSuchElementException.class})
     public void next_after_last_entry_is_failure()
     {
         Map<String, String> map = newCaseInsensitiveMap();

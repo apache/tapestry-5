@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.tapestry.OptionGroupModel;
 import org.apache.tapestry.OptionModel;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 public class OptionGroupModelImplTest extends Assert
 {
@@ -55,7 +55,7 @@ public class OptionGroupModelImplTest extends Assert
         List<OptionModel> options = Collections.emptyList();
 
         OptionGroupModel group = new OptionGroupModelImpl("Label", true, options, "fred",
-                "flintstone", "barney", "rubble");
+                                                          "flintstone", "barney", "rubble");
 
         Map<String, String> attributes = group.getAttributes();
 

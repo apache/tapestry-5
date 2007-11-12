@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collection;
-
 import org.apache.tapestry.Link;
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.PersistentFieldStrategy;
+
+import java.util.Collection;
 
 /**
  * Implements simple client-persistent properties. Most of the logic is delegated to an instance of

@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.ServiceBuilderMethodInvokerTest}.
@@ -99,7 +99,7 @@ public class ServiceBuilderMethodFixture extends Assert
     }
 
     public FieService build_args(String serviceId, ServiceResources resources,
-            Class serviceInterface, Logger log)
+                                 Class serviceInterface, Logger log)
     {
         assertEquals(serviceId, _expectedServiceId);
         assertSame(resources, _expectedServiceResources);

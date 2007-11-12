@@ -14,12 +14,14 @@
 
 package org.apache.tapestry.integration.app1.services;
 
-import java.util.List;
-
 import org.apache.tapestry.integration.app1.data.Track;
+
+import java.util.List;
 
 public interface MusicLibrary
 {
-    /** Provides a list of all tracks in an indeterminate order. */
+    /**
+     * Provides a list of all tracks in an indeterminate order.
+     */
     List<Track> getTracks();
 }

@@ -22,6 +22,8 @@ import java.util.List;
  */
 public interface ServiceActivityScoreboard
 {
-    /** Returns the status of all services, sorted alphabetically by service id. */
+    /**
+     * Returns the status of all services, sorted alphabetically by service id.
+     */
     List<ServiceActivity> getServiceActivity();
 }

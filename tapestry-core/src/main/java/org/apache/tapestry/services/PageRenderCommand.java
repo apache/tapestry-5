@@ -20,18 +20,22 @@ import org.apache.tapestry.dom.Document;
 /**
  * Page render commands are invoked at the start of the page render cycle and at the end. This
  * allows them to perform initial startup or final cleanup (or both).
- * <p>
+ * <p/>
  * When commands are invoked (by the default {@link PageRenderInitializer}), the
  * {@link MarkupWriter} and {@link Document} will have already been set. Most commands deal with
  * storing new environmental services into the Environment.
- * 
+ *
  * @see PageRenderInitializer
  */
 public interface PageRenderCommand
 {
-    /** Invoked to perform an initial setup. */
+    /**
+     * Invoked to perform an initial setup.
+     */
     void setup(Environment environment);
 
-    /** Invoked to peform final cleanup. */
+    /**
+     * Invoked to peform final cleanup.
+     */
     void cleanup(Environment environment);
 }

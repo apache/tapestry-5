@@ -21,11 +21,11 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
  * contribution type when buildign the TypeCoercer service. Wraps a {@link Coercion} object that
  * performs the work with additional properties that describe the input and output types of the
  * coercion, needed when searching for an appropriate coercion (or combination of coercions).
- * 
+ *
  * @param <S>
- *            source (input) type
+ * source (input) type
  * @param <T>
- *            target (output) type
+ * target (output) type
  */
 public final class CoercionTuple<S, T>
 {
@@ -86,18 +86,14 @@ public final class CoercionTuple<S, T>
 
     /**
      * Internal-use constructor.
-     * 
-     * @param sourceType
-     *            the source (or input) type of the coercion
-     * @param targetType
-     *            the target (or output) type of the coercion
-     * @param coercion
-     *            the object that performs the coercion
-     * @param wrap
-     *            if true, the coercion is wrapped to provide a useful toString()
+     *
+     * @param sourceType the source (or input) type of the coercion
+     * @param targetType the target (or output) type of the coercion
+     * @param coercion   the object that performs the coercion
+     * @param wrap       if true, the coercion is wrapped to provide a useful toString()
      */
     public CoercionTuple(Class<S> sourceType, Class<T> targetType, Coercion<S, T> coercion,
-            boolean wrap)
+                         boolean wrap)
     {
         notNull(sourceType, "sourceType");
         notNull(targetType, "targetType");

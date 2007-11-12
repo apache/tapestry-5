@@ -14,13 +14,8 @@
 
 package org.apache.tapestry.test;
 
+import java.io.*;
 import static java.lang.String.format;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -97,7 +92,9 @@ public final class RandomDataSource
         return _random.nextInt(max - min + 1) + min;
     }
 
-    /** Returns a random word frm the dictionary. These words are usually all lowercase. */
+    /**
+     * Returns a random word frm the dictionary. These words are usually all lowercase.
+     */
     public String word()
     {
         int index = _random.nextInt(_words.size());
@@ -105,7 +102,9 @@ public final class RandomDataSource
         return _words.get(index);
     }
 
-    /** Returns a random word, capitalized. Useful when create random names. */
+    /**
+     * Returns a random word, capitalized. Useful when create random names.
+     */
     public String capitalizedWord()
     {
         String word = word();
@@ -117,7 +116,9 @@ public final class RandomDataSource
         return new String(chars);
     }
 
-    /** Returns a word that is "safe" for use in an email address. */
+    /**
+     * Returns a word that is "safe" for use in an email address.
+     */
     public String safeWord()
     {
         String word = word();
@@ -127,7 +128,9 @@ public final class RandomDataSource
         return x < 0 ? word : word.substring(0, x);
     }
 
-    /** Returns a random value from the list of values supplied. */
+    /**
+     * Returns a random value from the list of values supplied.
+     */
     public <T> T oneOf(T... values)
     {
         assert values.length > 0;
@@ -137,7 +140,9 @@ public final class RandomDataSource
         return values[index];
     }
 
-    /** Returns a random enum value, given the enum type. */
+    /**
+     * Returns a random enum value, given the enum type.
+     */
     public <T extends Enum> T oneOf(Class<T> enumClass)
     {
         return oneOf(enumClass.getEnumConstants());
@@ -146,13 +151,10 @@ public final class RandomDataSource
     /**
      * Creates a space-separated list of random words. If in sentence form, then the first word is
      * capitalized, and a period is appended.
-     * 
-     * @param minWords
-     *            minimun number of words in the list
-     * @param maxWords
-     *            maximum number of words in the list
-     * @param asSentence
-     *            if true, the output is "dressed up" as a non-sensical sentence
+     *
+     * @param minWords   minimun number of words in the list
+     * @param maxWords   maximum number of words in the list
+     * @param asSentence if true, the output is "dressed up" as a non-sensical sentence
      * @return the word list / sentence
      */
     public String wordList(int minWords, int maxWords, boolean asSentence)
@@ -183,15 +185,11 @@ public final class RandomDataSource
     /**
      * Strings together a random number of word lists (in sentence form) to create something that
      * looks like a paragraph.
-     * 
-     * @param minSentences
-     *            per paragraph
-     * @param maxSentences
-     *            per paragraph
-     * @param minWords
-     *            per sentence
-     * @param maxWords
-     *            per sentence
+     *
+     * @param minSentences per paragraph
+     * @param maxSentences per paragraph
+     * @param minWords     per sentence
+     * @param maxWords     per sentence
      * @return the random paragraph
      */
     public String paragraph(int minSentences, int maxSentences, int minWords, int maxWords)

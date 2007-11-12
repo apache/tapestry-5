@@ -14,17 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import static java.lang.String.format;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.PageRenderSupport;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.services.AssetSource;
+
+import static java.lang.String.format;
+import java.util.Arrays;
+import java.util.List;
 
 public class PageRenderSupportImpl implements PageRenderSupport
 {
@@ -41,19 +40,15 @@ public class PageRenderSupportImpl implements PageRenderSupport
     private boolean _coreAssetsAdded;
 
     /**
-     * @param builder
-     *            Used to assemble JavaScript includes and snippets
-     * @param symbolSource
-     *            Used to example symbols (in
-     *            {@linkplain #addClasspathScriptLink(String...) in classpath scripts)
-     * @param assetSource
-     *            Used to convert classpath scripts to {@link Asset}s
-     * @param coreScripts
-     *            core scripts (evaluated as classpaths scripts) that are added to any page that
-     *            includes a script link or script block
+     * @param builder      Used to assemble JavaScript includes and snippets
+     * @param symbolSource Used to example symbols (in
+     *                     {@linkplain #addClasspathScriptLink(String...) in classpath scripts)
+     * @param assetSource  Used to convert classpath scripts to {@link Asset}s
+     * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that
+     *                     includes a script link or script block
      */
     public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
-            AssetSource assetSource, String... coreScripts)
+                                 AssetSource assetSource, String... coreScripts)
     {
         _builder = builder;
         _symbolSource = symbolSource;

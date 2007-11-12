@@ -14,18 +14,17 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-
-import java.util.Collection;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.services.ValidationMessagesSource;
+
+import java.util.Collection;
+import java.util.Locale;
+import java.util.Map;
 
 public class ValidationMessagesSourceImpl implements ValidationMessagesSource, UpdateListener
 {
@@ -62,7 +61,9 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
             return _parent;
         }
 
-    };
+    }
+
+    ;
 
     /**
      * Delegates to a {@link Messages} instance obtained from the {@link MessagesSource}. This
@@ -115,7 +116,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
     }
 
     ValidationMessagesSourceImpl(Collection<String> bundles, Resource classpathRoot,
-            URLChangeTracker tracker)
+                                 URLChangeTracker tracker)
     {
         _messagesSource = new MessagesSourceImpl(tracker);
 

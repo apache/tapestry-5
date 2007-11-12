@@ -14,17 +14,17 @@
 
 package org.apache.tapestry.test;
 
-import static java.lang.String.format;
-
 import org.mortbay.http.NCSARequestLog;
 import org.mortbay.http.SocketListener;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.WebApplicationContext;
 
+import static java.lang.String.format;
+
 /**
  * Used to start up an instance of the Jetty servlet container in-process, as part of an integration
  * test suite. The started Jetty is reliant on the file <code>src/test/conf/webdefault.xml</code>.
- * 
+ *
  * @see AbstractIntegrationTestSuite
  */
 public class JettyRunner
@@ -41,7 +41,9 @@ public class JettyRunner
 
     private final Server _jetty;
 
-    /** Defaults the context path to "/" and the port to 80. */
+    /**
+     * Defaults the context path to "/" and the port to 80.
+     */
     public JettyRunner(String warPath)
     {
         this(DEFAULT_CONTEXT_PATH, DEFAULT_PORT, warPath);
@@ -50,13 +52,10 @@ public class JettyRunner
     /**
      * Creates and starts a new instance of Jetty. This should be done from a test case setup
      * method.
-     * 
-     * @param contextPath
-     *            the context path for the deployed application
-     * @param port
-     *            the port number used to access the application
-     * @param warPath
-     *            the path to the exploded web application (typically, "src/main/webapp")
+     *
+     * @param contextPath the context path for the deployed application
+     * @param port        the port number used to access the application
+     * @param warPath     the path to the exploded web application (typically, "src/main/webapp")
      */
     public JettyRunner(String contextPath, int port, String warPath)
     {
@@ -67,7 +66,9 @@ public class JettyRunner
         _jetty = createAndStart();
     }
 
-    /** Stops the Jetty instance. This should be called from a test case tear down method. */
+    /**
+     * Stops the Jetty instance. This should be called from a test case tear down method.
+     */
     public void stop()
     {
         try

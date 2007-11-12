@@ -76,6 +76,6 @@ public class EventHandlerDemo extends BaseEventHandlerDemo
     public Object[] getTwoContext()
     {
         return new Object[]
-        { 1, 2 };
+                {1, 2};
     }
 }

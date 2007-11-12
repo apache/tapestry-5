@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.json;
 
-import java.util.Arrays;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 /**
  * Tests JSONObject, particularily in terms of parsing and writing JSON streams.
@@ -82,13 +82,13 @@ public class JSONObjectTest extends Assert
     public Object[][] boolean_inputs()
     {
         return new Object[][]
-        {
-        { "true", true },
-        { "TRUE", true },
-        { "false", false },
-        { "FALSE", false },
-        { Boolean.TRUE, true },
-        { Boolean.FALSE, false } };
+                {
+                        {"true", true},
+                        {"TRUE", true},
+                        {"false", false},
+                        {"FALSE", false},
+                        {Boolean.TRUE, true},
+                        {Boolean.FALSE, false}};
     }
 
     @Test
@@ -205,13 +205,13 @@ public class JSONObjectTest extends Assert
     public Object[][] double_inputs()
     {
         return new Object[][]
-        {
-        { 3d, "3" },
-        { -22.5d, "-22.5" },
-        { 0d, "0" },
-        { Double.NEGATIVE_INFINITY, "null" },
-        { Double.POSITIVE_INFINITY, "null" },
-        { Double.NaN, "null" }, };
+                {
+                        {3d, "3"},
+                        {-22.5d, "-22.5"},
+                        {0d, "0"},
+                        {Double.NEGATIVE_INFINITY, "null"},
+                        {Double.POSITIVE_INFINITY, "null"},
+                        {Double.NaN, "null"},};
     }
 
     @Test(dataProvider = "get_double_inputs")
@@ -228,10 +228,10 @@ public class JSONObjectTest extends Assert
     public Object[][] getDoubleInputs()
     {
         return new Object[][]
-        {
-        { new Double(3.5), 3.5d },
-        { new Long(1000), 1000d },
-        { "-101.7", -101.7d } };
+                {
+                        {new Double(3.5), 3.5d},
+                        {new Long(1000), 1000d},
+                        {"-101.7", -101.7d}};
     }
 
     @Test
@@ -284,10 +284,10 @@ public class JSONObjectTest extends Assert
     public Object[][] get_int_inputs()
     {
         return new Object[][]
-        {
-        { "3", 3 },
-        { new Long(97), 97 },
-        { "-8.76", -8 } };
+                {
+                        {"3", 3},
+                        {new Long(97), 97},
+                        {"-8.76", -8}};
     }
 
     @Test
@@ -391,7 +391,7 @@ public class JSONObjectTest extends Assert
         Arrays.sort(names);
 
         assertEquals(names, new String[]
-        { "barney", "fred" });
+                {"barney", "fred"});
 
     }
 }

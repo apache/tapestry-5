@@ -38,7 +38,9 @@ public class DefaultMarkupModel implements MarkupModel
             "option",
             "param");
 
-    /** Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged. */
+    /**
+     * Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged.
+     */
     public void encode(String content, StringBuilder buffer)
     {
         encode(content, false, buffer);

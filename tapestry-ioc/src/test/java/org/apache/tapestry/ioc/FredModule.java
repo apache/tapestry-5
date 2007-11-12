@@ -14,14 +14,13 @@
 
 package org.apache.tapestry.ioc;
 
+import org.apache.tapestry.ioc.annotations.Match;
+import org.apache.tapestry.ioc.annotations.Order;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import org.apache.tapestry.ioc.annotations.Match;
-import org.apache.tapestry.ioc.annotations.Order;
 
 /**
  * Module used to demonstrate decorator ordering.
@@ -44,7 +43,7 @@ public class FredModule
     }
 
     @Match(
-    { "UnorderedNames", "Fred" })
+            {"UnorderedNames", "Fred"})
     @Order("before:Beta")
     public Object decorateAlpha(Object delegate, DecoratorList list)
     {
@@ -54,7 +53,7 @@ public class FredModule
     }
 
     @Match(
-    { "UnorderedNames", "Fred" })
+            {"UnorderedNames", "Fred"})
     public Object decorateBeta(Object delegate, DecoratorList list)
     {
         list.add("beta");

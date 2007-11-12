@@ -23,10 +23,9 @@ public final class BeanModelUtils
 {
     /**
      * Removes properties from the bean model.
-     * 
+     *
      * @param model
-     * @param propertyNames
-     *            comma-separated list of property names
+     * @param propertyNames comma-separated list of property names
      * @see BeanModel#remove(String...)
      */
     public static void remove(BeanModel model, String propertyNames)
@@ -36,10 +35,9 @@ public final class BeanModelUtils
 
     /**
      * Reorders properties within the bean model.
-     * 
+     *
      * @param model
-     * @param propertyNames
-     *            comma-separated list of property names
+     * @param propertyNames comma-separated list of property names
      * @see BeanModel#reorder(String...)
      */
     public static void reorder(BeanModel model, String propertyNames)

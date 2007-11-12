@@ -14,9 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Arrays;
-import java.util.Locale;
-
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.parser.EndElementToken;
@@ -31,6 +28,9 @@ import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
+import java.util.Locale;
 
 public class PageLoaderImplTest extends InternalBaseTestCase
 {

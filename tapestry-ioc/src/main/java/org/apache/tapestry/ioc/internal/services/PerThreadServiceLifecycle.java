@@ -14,20 +14,15 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.lang.String.format;
-
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.ioc.ObjectCreator;
 import org.apache.tapestry.ioc.ServiceLifecycle;
 import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.services.Builtin;
-import org.apache.tapestry.ioc.services.ClassFab;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
+import org.apache.tapestry.ioc.services.*;
+
+import static java.lang.String.format;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 
 /**
  * Allows a service to exist "per thread" (in each thread). This involves an inner proxy, with a
@@ -35,7 +30,7 @@ import org.apache.tapestry.ioc.services.ThreadCleanupHub;
  * Method invocations are delegated to the per-thread service instance. The proxy also implements
  * {@link org.apache.tapestry.ioc.services.ThreadCleanupListener} so that it can discard the
  * per-thread implementation.
- * <p>
+ * <p/>
  * This scheme ensures that, although the service builder method will be invoked many times over the
  * life of the application, the service decoration process occurs only once. The final calling chain
  * is: Service Proxy --&gt; Decorator(s) --&gt; PerThread Proxy --&gt; (per thread) instance.
@@ -50,8 +45,8 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
 
     public PerThreadServiceLifecycle(ThreadCleanupHub threadCleanupHub,
 
-    @Builtin
-    ClassFactory classFactory)
+                                     @Builtin
+                                     ClassFactory classFactory)
     {
         _threadCleanupHub = threadCleanupHub;
         _classFactory = classFactory;
@@ -90,12 +85,12 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
         // Constructor takes a ServiceCreator
 
         cf.addConstructor(new Class[]
-        { ObjectCreator.class }, null, "_creator = $1;");
+                {ObjectCreator.class}, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 
         MethodSignature sig = new MethodSignature(serviceInterface, PER_THREAD_METHOD_NAME, null,
-                null);
+                                                  null);
 
         cf.addMethod(Modifier.PRIVATE, sig, body);
 

@@ -17,8 +17,6 @@ package org.apache.tapestry.ioc.internal.util;
 
 /**
  * Used by {@link InheritanceSearchTest}.
- * 
- * 
  */
 public class FooBarImpl extends FooImpl implements Bar, FooBar
 {

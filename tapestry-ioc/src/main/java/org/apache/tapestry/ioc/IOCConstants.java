@@ -17,7 +17,7 @@ package org.apache.tapestry.ioc;
 public class IOCConstants
 {
     public static final String DEFAULT_SCOPE = "singleton";
-    
+
     public static final String PERTHREAD_SCOPE = "perthread";
 
     public static final String MODULE_BUILDER_MANIFEST_ENTRY_NAME = "Tapestry-Module-Classes";

@@ -33,13 +33,13 @@ public class ClassFabUtilsTest extends IOCTestCase
     public Object[][] createInputs()
     {
         return new Object[][]
-        {
-        { "java.lang.Object", "java.lang.Object" },
-        { "int", "int" },
-        { "int[]", "[I" },
-        { "java.lang.Throwable[]", "[Ljava.lang.Throwable;" },
-        { "byte[][]", "[[B" },
-        { "java.lang.Runnable[][]", "[[Ljava.lang.Runnable;" } };
+                {
+                        {"java.lang.Object", "java.lang.Object"},
+                        {"int", "int"},
+                        {"int[]", "[I"},
+                        {"java.lang.Throwable[]", "[Ljava.lang.Throwable;"},
+                        {"byte[][]", "[[B"},
+                        {"java.lang.Runnable[][]", "[[Ljava.lang.Runnable;"}};
     }
 
     @Test(dataProvider = "typeCodeProvider")
@@ -52,15 +52,15 @@ public class ClassFabUtilsTest extends IOCTestCase
     public Object[][] get_type_code_provider()
     {
         return new Object[][]
-        {
-        { int.class, "I" },
-        { int[].class, "[I" },
-        { Thread.class, "Ljava/lang/Thread;" },
-        { Thread[].class, "[Ljava/lang/Thread;" },
-        { Double[][].class, "[[Ljava/lang/Double;" },
-        { void.class, "V" },
+                {
+                        {int.class, "I"},
+                        {int[].class, "[I"},
+                        {Thread.class, "Ljava/lang/Thread;"},
+                        {Thread[].class, "[Ljava/lang/Thread;"},
+                        {Double[][].class, "[[Ljava/lang/Double;"},
+                        {void.class, "V"},
 
-        };
+                };
     }
 
     @Test

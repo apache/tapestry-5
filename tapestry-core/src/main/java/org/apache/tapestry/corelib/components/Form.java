@@ -14,25 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import static java.lang.String.format;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.util.List;
-
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ComponentEventHandler;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Field;
-import org.apache.tapestry.FormValidationControl;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.ValidationTracker;
-import org.apache.tapestry.ValidationTrackerImpl;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
@@ -48,28 +30,28 @@ import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.ComponentSource;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.FormSupport;
-import org.apache.tapestry.services.Heartbeat;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.*;
+
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import static java.lang.String.format;
+import java.util.List;
 
 /**
  * An HTML form, which will enclose other components to render out the various types of fields.
- * <p>
+ * <p/>
  * A Form emits several notification events; when it renders it sends a {@link #PREPARE prepare}
  * notification event, to allow any listeners to set up the state of the page prior to rendering out
  * the form's content.
- * <p>
+ * <p/>
  * When the form is submitted, the component emits four notifications: first another prepare event
  * to allow the page to update its state as necessary to prepare for the form submission, then
  * (after components enclosed by the form have operated), a "validate" event is emitted, to allow
  * for cross-form validation. After that, either a "success" or "failure" event (depending on
  * whether the {@link ValidationTracker} has recorded any errors). Lastly, a "submit" event, for any
  * listeners that care only about form submission, regardless of success or failure.
- * <p>
+ * <p/>
  * For all of these notifications, the event context is derived from the <strong>context</strong>
  * parameter. This context is encoded into the form's action URI (the parameter is not read when the
  * form is submitted, instead the values encoded into the form are used).
@@ -307,7 +289,7 @@ public class Form implements ClientElement, FormValidationControl
             ComponentEventHandler handler = new ComponentEventHandler()
             {
                 public boolean handleResult(Object result, Component component,
-                        String methodDescription)
+                                            String methodDescription)
                 {
                     if (result instanceof Boolean) return ((Boolean) result);
 

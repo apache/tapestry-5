@@ -14,59 +14,22 @@
 
 package org.apache.tapestry.internal.test;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.Reader;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.SingleKeySymbolProvider;
-import org.apache.tapestry.internal.SyntheticModuleDef;
-import org.apache.tapestry.internal.SyntheticSymbolSourceContributionDef;
+import org.apache.tapestry.internal.*;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.internal.parser.TemplateToken;
-import org.apache.tapestry.internal.services.ComponentInstantiatorSource;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.ComponentTemplateSource;
-import org.apache.tapestry.internal.services.DocumentHeadBuilder;
-import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.internal.services.LinkFactory;
-import org.apache.tapestry.internal.services.LinkFactoryListener;
-import org.apache.tapestry.internal.services.PageElementFactory;
-import org.apache.tapestry.internal.services.PageLoader;
-import org.apache.tapestry.internal.services.PagePool;
-import org.apache.tapestry.internal.services.PageResponseRenderer;
-import org.apache.tapestry.internal.services.PageTemplateLocator;
-import org.apache.tapestry.internal.services.RequestPageCache;
-import org.apache.tapestry.internal.services.ResourceCache;
-import org.apache.tapestry.internal.services.ResourceStreamer;
-import org.apache.tapestry.internal.services.TemplateParser;
+import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
-import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.RegistryBuilder;
-import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.InternalRegistry;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.model.ComponentModel;
@@ -78,10 +41,17 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TapestryModule;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
+
+import java.io.*;
+import java.util.Arrays;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 /**
  * Contains additional factory and training methods related to internal interfaces.
@@ -104,7 +74,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         SymbolProvider provider = new SingleKeySymbolProvider(
                 InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
         ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode",
-                provider, "before:ApplicationDefaults");
+                                                                                provider, "before:ApplicationDefaults");
 
         ModuleDef module = new SyntheticModuleDef(contribution);
 
@@ -177,7 +147,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final <T> void train_getService(InternalRegistry registry, String serviceId,
-            Class<T> serviceInterface, T service)
+                                              Class<T> serviceInterface, T service)
     {
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
 
@@ -214,7 +184,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_parseTemplate(TemplateParser parser, Resource resource,
-            ComponentTemplate template)
+                                             ComponentTemplate template)
     {
         expect(parser.parseTemplate(resource)).andReturn(template);
     }
@@ -250,7 +220,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_resolvePageClassNameToPageName(ComponentClassResolver resolver,
-            String pageClassName, String pageName)
+                                                              String pageClassName, String pageName)
     {
         expect(resolver.resolvePageClassNameToPageName(pageClassName)).andReturn(pageName);
     }
@@ -261,7 +231,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_getComponentResources(ComponentPageElement element,
-            InternalComponentResources resources)
+                                                     InternalComponentResources resources)
     {
         expect(element.getComponentResources()).andReturn(resources).atLeastOnce();
     }
@@ -272,7 +242,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_newRenderBodyElement(PageElementFactory elementFactory,
-            ComponentPageElement component, PageElement body)
+                                                    ComponentPageElement component, PageElement body)
     {
         expect(elementFactory.newRenderBodyElement(component)).andReturn(body);
     }
@@ -288,9 +258,10 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_newComponentElement(PageElementFactory elementFactory,
-            ComponentPageElement container, String embeddedId, String embeddedType,
-            String componentClassName, String elementName, Location location,
-            ComponentPageElement embedded)
+                                                   ComponentPageElement container, String embeddedId,
+                                                   String embeddedType,
+                                                   String componentClassName, String elementName, Location location,
+                                                   ComponentPageElement embedded)
     {
         expect(
                 elementFactory.newComponentElement(
@@ -309,7 +280,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_getEmbeddedComponentModel(ComponentModel model, String embeddedId,
-            EmbeddedComponentModel emodel)
+                                                         EmbeddedComponentModel emodel)
     {
         expect(model.getEmbeddedComponentModel(embeddedId)).andReturn(emodel).atLeastOnce();
     }
@@ -350,7 +321,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected void train_getTemplate(ComponentTemplateSource templateSource, ComponentModel model,
-            Locale locale, ComponentTemplate template)
+                                     Locale locale, ComponentTemplate template)
     {
         expect(templateSource.getTemplate(model, locale)).andReturn(template);
     }
@@ -361,7 +332,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_newRootComponentElement(PageElementFactory elementFactory,
-            String className, ComponentPageElement rootElement)
+                                                       String className, ComponentPageElement rootElement)
     {
         expect(elementFactory.newRootComponentElement(isA(Page.class), eq(className))).andReturn(
                 rootElement);
@@ -388,7 +359,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_getComponentElementByNestedId(Page page, String nestedId,
-            ComponentPageElement element)
+                                                             ComponentPageElement element)
     {
         expect(page.getComponentElementByNestedId(nestedId)).andReturn(element).atLeastOnce();
     }
@@ -419,7 +390,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_requiresDigest(ResourceCache cache, Resource resource,
-            boolean requiresChecksum)
+                                              boolean requiresChecksum)
     {
         expect(cache.requiresDigest(resource)).andReturn(requiresChecksum);
     }
@@ -430,7 +401,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_getTimeModified(ResourceCache cache, Resource resource,
-            long timeModified)
+                                               long timeModified)
     {
         expect(cache.getTimeModified(resource)).andReturn(timeModified).atLeastOnce();
     }
@@ -446,7 +417,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_findPageTemplateResource(PageTemplateLocator locator,
-            ComponentModel model, Locale locale, Resource resource)
+                                                        ComponentModel model, Locale locale, Resource resource)
     {
         expect(locator.findPageTemplateResource(model, locale)).andReturn(resource).atLeastOnce();
     }
@@ -456,7 +427,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return newMock(PageTemplateLocator.class);
     }
 
-    /** Returns the default validator messages. */
+    /**
+     * Returns the default validator messages.
+     */
     protected final Messages validationMessages()
     {
         if (_validationMessages == null)
@@ -501,7 +474,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_isPageName(ComponentClassResolver resolver, String pageName,
-            boolean result)
+                                          boolean result)
     {
         expect(resolver.isPageName(pageName)).andReturn(result);
     }
@@ -514,9 +487,8 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     /**
      * Reads the content of a file into a string. Each line is trimmed of line separators and
      * leading/trailing whitespace.
-     * 
-     * @param trim
-     *            trim each line of whitespace
+     *
+     * @param trim trim each line of whitespace
      */
     protected final String readFile(String file, boolean trim) throws Exception
     {
@@ -551,7 +523,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_canonicalizePageName(ComponentClassResolver resolver,
-            String pageName, String canonicalized)
+                                                    String pageName, String canonicalized)
     {
         expect(resolver.canonicalizePageName(pageName)).andReturn(canonicalized);
     }
@@ -562,7 +534,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_resolvePageNameToClassName(ComponentClassResolver resolver,
-            String pageName, String pageClassName)
+                                                          String pageName, String pageClassName)
     {
         expect(resolver.resolvePageNameToClassName(pageName)).andReturn(pageClassName)
                 .atLeastOnce();

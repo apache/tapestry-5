@@ -25,15 +25,15 @@ public interface ComponentClassTransformer
 {
     /**
      * Performs a transformation on the class, accessing the class from the class pool.
-     * 
-     * @param ctClass
-     *            compile time class to be transformed
-     * @param classLoader
-     *            class loader used to resolve references to other classes (both transformed and
-     *            not)
+     *
+     * @param ctClass     compile time class to be transformed
+     * @param classLoader class loader used to resolve references to other classes (both transformed and
+     *                    not)
      */
     void transformComponentClass(CtClass ctClass, ClassLoader classLoader);
 
-    /** Creates a new instantiator instance. */
+    /**
+     * Creates a new instantiator instance.
+     */
     Instantiator createInstantiator(Class componentClass);
 }

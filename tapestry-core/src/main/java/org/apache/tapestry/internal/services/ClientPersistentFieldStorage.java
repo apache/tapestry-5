@@ -26,7 +26,7 @@ public interface ClientPersistentFieldStorage extends PersistentFieldStrategy
 {
     /**
      * Updates a link, adding a query parameter to it (if necessary) to store
-     * 
+     *
      * @param link
      */
     void updateLink(Link link);

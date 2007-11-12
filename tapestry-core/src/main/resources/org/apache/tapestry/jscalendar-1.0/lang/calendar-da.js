@@ -11,14 +11,14 @@
 
 // full day names
 Calendar._DN = new Array
-("Søndag",
-"Mandag",
-"Tirsdag",
-"Onsdag",
-"Torsdag",
-"Fredag",
-"Lørdag",
-"Søndag");
+        ("Søndag",
+                "Mandag",
+                "Tirsdag",
+                "Onsdag",
+                "Torsdag",
+                "Fredag",
+                "Lørdag",
+                "Søndag");
 
 // Please note that the following array of short day names (and the same goes
 // for short month names, _SMN) isn't absolutely necessary. We give it here
@@ -34,44 +34,44 @@ Calendar._DN = new Array
 
 // short day names
 Calendar._SDN = new Array
-("Søn",
-"Man",
-"Tir",
-"Ons",
-"Tor",
-"Fre",
-"Lør",
-"Søn");
+        ("Søn",
+                "Man",
+                "Tir",
+                "Ons",
+                "Tor",
+                "Fre",
+                "Lør",
+                "Søn");
 
 // full month names
 Calendar._MN = new Array
-("Januar",
-"Februar",
-"Marts",
-"April",
-"Maj",
-"Juni",
-"Juli",
-"August",
-"September",
-"Oktober",
-"November",
-"December");
+        ("Januar",
+                "Februar",
+                "Marts",
+                "April",
+                "Maj",
+                "Juni",
+                "Juli",
+                "August",
+                "September",
+                "Oktober",
+                "November",
+                "December");
 
 // short month names
 Calendar._SMN = new Array
-("Jan",
-"Feb",
-"Mar",
-"Apr",
-"Maj",
-"Jun",
-"Jul",
-"Aug",
-"Sep",
-"Okt",
-"Nov",
-"Dec");
+        ("Jan",
+                "Feb",
+                "Mar",
+                "Apr",
+                "Maj",
+                "Jun",
+                "Jul",
+                "Aug",
+                "Sep",
+                "Okt",
+                "Nov",
+                "Dec");
 
 // tooltips
 Calendar._TT = {};
@@ -80,18 +80,19 @@ Calendar._TT["INFO"] = "Om Kalenderen";
 Calendar._TT["ABOUT"] =
 "DHTML Date/Time Selector\n" +
 "(c) dynarch.com 2002-2005 / Author: Mihai Bazon\n" + // don't translate this this ;-)
-"For den seneste version besøg: http://www.dynarch.com/projects/calendar/\n"; +
-"Distribueret under GNU LGPL. Se http://gnu.org/licenses/lgpl.html for detajler." +
+"For den seneste version besøg: http://www.dynarch.com/projects/calendar/\n";
++
+        "Distribueret under GNU LGPL. Se http://gnu.org/licenses/lgpl.html for detajler." +
 "\n\n" +
 "Valg af dato:\n" +
 "- Brug \xab, \xbb knapperne for at vælge år\n" +
 "- Brug " + String.fromCharCode(0x2039) + ", " + String.fromCharCode(0x203a) + " knapperne for at vælge måned\n" +
 "- Hold knappen på musen nede på knapperne ovenfor for hurtigere valg.";
 Calendar._TT["ABOUT_TIME"] = "\n\n" +
-"Valg af tid:\n" +
-"- Klik på en vilkårlig del for større værdi\n" +
-"- eller Shift-klik for for mindre værdi\n" +
-"- eller klik og træk for hurtigere valg.";
+                             "Valg af tid:\n" +
+                             "- Klik på en vilkårlig del for større værdi\n" +
+                             "- eller Shift-klik for for mindre værdi\n" +
+                             "- eller klik og træk for hurtigere valg.";
 
 Calendar._TT["PREV_YEAR"] = "Ét år tilbage (hold for menu)";
 Calendar._TT["PREV_MONTH"] = "Én måned tilbage (hold for menu)";

@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
-import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
-
-import java.lang.reflect.Modifier;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
+import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_DETACH_SIGNATURE;
+import static org.apache.tapestry.services.TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE;
 import org.testng.annotations.Test;
+
+import java.lang.reflect.Modifier;
 
 public class UnclaimedFieldWorkerTest extends InternalBaseTestCase
 {
@@ -84,7 +83,7 @@ public class UnclaimedFieldWorkerTest extends InternalBaseTestCase
     }
 
     protected final void train_getFieldModifiers(ClassTransformation transformation,
-            String fieldName, int modifiers)
+                                                 String fieldName, int modifiers)
     {
         expect(transformation.getFieldModifiers(fieldName)).andReturn(modifiers).atLeastOnce();
     }

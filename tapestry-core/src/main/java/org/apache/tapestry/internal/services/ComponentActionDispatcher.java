@@ -14,16 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
-
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.services.ActionResponseGenerator;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
+
+import java.io.IOException;
 
 /**
  * Processes component action events sent as requests from the client. Action events include an
@@ -66,7 +62,7 @@ public class ComponentActionDispatcher implements Dispatcher
 
             if (slashx < 0)
             {
-                slashx = path.length() ;
+                slashx = path.length();
             }
             else
             {
@@ -106,12 +102,12 @@ public class ComponentActionDispatcher implements Dispatcher
             return false;
 
         String[] eventContext = contextStart > 0 ? decodeContext(path.substring(contextStart))
-                : _emptyString;
+                                : _emptyString;
 
         String activationContextValue = request.getParameter(InternalConstants.PAGE_CONTEXT_NAME);
 
         String[] activationContext = activationContextValue == null ? _emptyString
-                : decodeContext(activationContextValue);
+                                     : decodeContext(activationContextValue);
 
         ActionResponseGenerator responseGenerator = _componentActionRequestHandler.handle(
                 logicalPageName,

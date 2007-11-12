@@ -14,24 +14,20 @@
 
 package org.apache.tapestry.corelib.components;
 
-import java.util.List;
-
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.annotations.Inject;
+
+import java.util.List;
 
 /**
  * Generates a render request link to some other page in the application. If an activation context
  * is supplied (as the context parameter), then the context values will be encoded into the URL. If
  * no context is supplied, then the target page itself will supply the context via a passivate
  * event.
- * <p>
+ * <p/>
  * Pages are not required to have an activation context. When a page does have an activation
  * context, the value typically represents the identity of some object displayed or otherwise
  * manipulated by the page.
@@ -39,7 +35,9 @@ import org.apache.tapestry.ioc.annotations.Inject;
 @SupportsInformalParameters
 public class PageLink implements ClientElement
 {
-    /** The logical name of the page to link to. */
+    /**
+     * The logical name of the page to link to.
+     */
     @Parameter(required = true, defaultPrefix = "literal")
     private String _page;
 

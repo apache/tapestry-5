@@ -14,21 +14,21 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Locale;
-
 import org.apache.tapestry.internal.event.InvalidationEventHub;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
 import org.apache.tapestry.model.ComponentModel;
+
+import java.util.Locale;
 
 /**
  * Provides access to cached {@link org.apache.tapestry.internal.parser.ComponentTemplate}s. The
  * source acts as a invalidation event hub, and will broadcast invalidation events when any loaded
  * template resource changes. The listener for these invalidation events is the page source, which
  * stores cached page instances.
- * <p>
+ * <p/>
  * Any search for a template will end with success (a non-null template), but the template returned
  * may be the {@link ComponentTemplate#isMissing() missing template}.
- * <p>
+ * <p/>
  * TODO: A more sophisticated, finer grained dependency manager.
  */
 public interface ComponentTemplateSource extends InvalidationEventHub
@@ -38,13 +38,11 @@ public interface ComponentTemplateSource extends InvalidationEventHub
      * the exact component is found, then the template for the component's parent is returned. In
      * this way, it is possible for a component to extend the behavior of its super-class without
      * duplicating the super-class component's template.
-     * <p>
+     * <p/>
      * In some cases, the empty template will be returned.
-     * 
-     * @param componentModel
-     *            model for the component whose template is to be accessed
-     * @param locale
-     *            the locale to find the template within
+     *
+     * @param componentModel model for the component whose template is to be accessed
+     * @param locale         the locale to find the template within
      * @return the cached template instance
      */
     ComponentTemplate getTemplate(ComponentModel componentModel, Locale locale);

@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.dom.Document;
+import org.apache.tapestry.dom.Element;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 import java.util.List;
 import java.util.Set;
-
-import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 public class DocumentHeadBuilderImpl implements DocumentHeadBuilder
 {
@@ -50,13 +49,13 @@ public class DocumentHeadBuilderImpl implements DocumentHeadBuilder
         {
             head.elementAt(index, "link",
 
-            "href", _url,
+                           "href", _url,
 
-            "rel", "stylesheet",
+                           "rel", "stylesheet",
 
-            "type", "text/css",
+                           "type", "text/css",
 
-            "media", _media);
+                           "media", _media);
         }
     }
 

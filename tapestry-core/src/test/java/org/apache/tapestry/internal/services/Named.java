@@ -16,8 +16,6 @@ package org.apache.tapestry.internal.services;
 
 /**
  * Used by {@link org.apache.tapestry.internal.services.ComponentInstantiatorSourceImplTest}.
- * 
- * 
  */
 public interface Named
 {

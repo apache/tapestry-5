@@ -202,7 +202,9 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
         verify();
     }
 
-    /** The "preamble" are the non-terminal property or method names. */
+    /**
+     * The "preamble" are the non-terminal property or method names.
+     */
     @Test
     public void property_path_with_explicit_method_in_preamble()
     {
@@ -592,27 +594,27 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
     public Object[][] values()
     {
         return new Object[][]
-        {
-        { "true", true, },
-        { "True", true, },
-        { " true ", true, },
-        { "false", false },
-        { "null", null },
-        { "3", 3l },
-        { " 37 ", 37l },
-        { " -227", -227l },
-        { " 5.", 5d },
-        { " -100.", -100d },
-        { " -0.0 ", -0d },
-        { "1..10", new IntegerRange(1, 10) },
-        { " -20 .. -30 ", new IntegerRange(-20, -30) },
-        { "0.", 0d },
-        { " 227.75", 227.75d },
-        { " -10123.67", -10123.67d },
-        { "'Hello World'", "Hello World" },
-        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
-        { " ' Inside ' ", " Inside " },
-        { " 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside" },
-        { "'''", "'" } };
+                {
+                        {"true", true,},
+                        {"True", true,},
+                        {" true ", true,},
+                        {"false", false},
+                        {"null", null},
+                        {"3", 3l},
+                        {" 37 ", 37l},
+                        {" -227", -227l},
+                        {" 5.", 5d},
+                        {" -100.", -100d},
+                        {" -0.0 ", -0d},
+                        {"1..10", new IntegerRange(1, 10)},
+                        {" -20 .. -30 ", new IntegerRange(-20, -30)},
+                        {"0.", 0d},
+                        {" 227.75", 227.75d},
+                        {" -10123.67", -10123.67d},
+                        {"'Hello World'", "Hello World"},
+                        {" 'Whitespace Ignored' ", "Whitespace Ignored"},
+                        {" ' Inside ' ", " Inside "},
+                        {" 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside"},
+                        {"'''", "'"}};
     }
 }

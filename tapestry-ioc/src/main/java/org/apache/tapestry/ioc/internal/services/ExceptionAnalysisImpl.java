@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static java.util.Collections.unmodifiableList;
-
-import java.util.List;
-
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionInfo;
 
+import static java.util.Collections.unmodifiableList;
+import java.util.List;
+
 /**
- * 
+ *
  */
 public class ExceptionAnalysisImpl implements ExceptionAnalysis
 {

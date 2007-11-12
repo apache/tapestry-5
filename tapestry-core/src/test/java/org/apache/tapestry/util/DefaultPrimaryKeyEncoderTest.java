@@ -14,17 +14,19 @@
 
 package org.apache.tapestry.util;
 
-import java.util.Arrays;
-
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.testng.annotations.Test;
+
+import java.util.Arrays;
 
 public class DefaultPrimaryKeyEncoderTest extends InternalBaseTestCase
 {
     static class IntStringEncoder extends DefaultPrimaryKeyEncoder<Integer, String>
     {
 
-    };
+    }
+
+    ;
 
     private final int FRED_ID = 1;
 

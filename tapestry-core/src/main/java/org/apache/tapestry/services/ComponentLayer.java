@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.services;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.ElementType.PARAMETER;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.apache.tapestry.ioc.services.Builtin;
 
 import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
-
-import org.apache.tapestry.ioc.services.Builtin;
 
 /**
  * Used to identify a service from the component layer that conflicts, in terms of service
@@ -31,7 +30,7 @@ import org.apache.tapestry.ioc.services.Builtin;
  * another with this annotation.
  */
 @Target(
-{ PARAMETER, FIELD })
+        {PARAMETER, FIELD})
 @Retention(RUNTIME)
 @Documented
 public @interface ComponentLayer

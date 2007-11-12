@@ -14,23 +14,23 @@
 
 package org.apache.tapestry.tutorial.pages;
 
-import java.util.Random;
-
 import org.apache.tapestry.annotations.InjectPage;
+
+import java.util.Random;
 
 public class Start
 {
-  private final Random _random = new Random();
+    private final Random _random = new Random();
 
-  @InjectPage
-  private Guess _guess;
+    @InjectPage
+    private Guess _guess;
 
-  Object onAction()
-  {
-    int target = _random.nextInt(10) + 1;
+    Object onAction()
+    {
+        int target = _random.nextInt(10) + 1;
 
-    _guess.setup(target);
+        _guess.setup(target);
 
-    return _guess;
-  }
+        return _guess;
+    }
 }

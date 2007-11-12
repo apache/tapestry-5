@@ -20,7 +20,7 @@ import org.apache.tapestry.ComponentAction;
 /**
  * Services provided by an enclosing Form control component to the various form element components
  * it encloses. Implement {@link ClientElement}, to share the id of the enclosing form.
- * 
+ *
  * @author Howard M. Lewis Ship
  */
 public interface FormSupport extends ClientElement
@@ -28,15 +28,16 @@ public interface FormSupport extends ClientElement
     /**
      * Allocates a unique (within the form) element name for some component enclosed component,
      * based on the component's id.
-     * 
-     * @param id
-     *            the component's id
+     *
+     * @param id the component's id
      * @return a unique string, usually the component's id, but sometime extended with a unique
      *         number or string
      */
     String allocateElementName(String id);
 
-    /** Stores an action for execution during a later request. */
+    /**
+     * Stores an action for execution during a later request.
+     */
     <T> void store(T component, ComponentAction<T> action);
 
     <T> void storeAndExecute(T component, ComponentAction<T> action);
@@ -45,18 +46,16 @@ public interface FormSupport extends ClientElement
      * Defers a command until the end of the form submission. The command will be executed after the
      * Form's validate notification, but before the Form's submit, success or failure notifications.
      * During a form render, runnables are executed after the body of the form has rendered.
-     * 
+     *
      * @param command
      */
     void defer(Runnable command);
 
     /**
      * Sets the encoding type for the Form. This should only be set once, and if
-     * 
-     * @param encodingType
-     *            MIME type indicating type of encoding for the form
-     * @throws IllegalStateException
-     *             if the encoding type has already been set to a value different than the supplied
+     *
+     * @param encodingType MIME type indicating type of encoding for the form
+     * @throws IllegalStateException if the encoding type has already been set to a value different than the supplied
      */
     void setEncodingType(String encodingType);
 }

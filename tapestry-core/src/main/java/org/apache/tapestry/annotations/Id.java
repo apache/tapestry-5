@@ -14,15 +14,14 @@
 
 package org.apache.tapestry.annotations;
 
-import static java.lang.annotation.ElementType.FIELD;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ioc.annotations.Inject;
+
+import java.lang.annotation.Documented;
+import static java.lang.annotation.ElementType.FIELD;
+import java.lang.annotation.Retention;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.lang.annotation.Target;
 
 /**
  * Optional annotation, used with {@link Inject}, which exists to provide the id of an object when
@@ -34,6 +33,8 @@ import org.apache.tapestry.ioc.annotations.Inject;
 @Retention(RUNTIME)
 public @interface Id
 {
-    /** The id. */
+    /**
+     * The id.
+     */
     String value();
 }

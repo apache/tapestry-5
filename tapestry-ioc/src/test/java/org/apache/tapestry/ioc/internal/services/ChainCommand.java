@@ -16,8 +16,6 @@ package org.apache.tapestry.ioc.internal.services;
 
 /**
  * Used with {@link org.apache.tapestry.ioc.internal.services.ChainBuilderImplTest}.
- * 
- * 
  */
 public interface ChainCommand
 {

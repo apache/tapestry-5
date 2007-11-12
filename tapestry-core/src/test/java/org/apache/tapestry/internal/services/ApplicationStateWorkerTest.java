@@ -18,7 +18,6 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
-
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -84,7 +83,8 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         CtClass ctClass = pool.get(componentClassName);
         InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass,
-                _contextClassLoader, logger, null);
+                                                                                         _contextClassLoader, logger,
+                                                                                         null);
 
         replay();
 

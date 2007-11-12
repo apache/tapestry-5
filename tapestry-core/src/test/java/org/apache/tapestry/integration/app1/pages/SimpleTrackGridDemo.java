@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.integration.app1.data.SimpleTrack;
@@ -24,6 +22,8 @@ import org.apache.tapestry.integration.app1.services.MusicLibrary;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.BeanModelSource;
 
+import java.util.List;
+
 public class SimpleTrackGridDemo
 {
     @Inject
@@ -31,10 +31,10 @@ public class SimpleTrackGridDemo
 
     @Inject
     private BeanModelSource _beanModelSource;
-    
+
     @Inject
     private ComponentResources _resources;
-    
+
     private SimpleTrack _track;
 
     public SimpleTrack getTrack()
@@ -51,7 +51,7 @@ public class SimpleTrackGridDemo
     {
         return _library.getTracks();
     }
-    
+
     public BeanModel getSimpleTrackModel()
     {
         return _beanModelSource.create(SimpleTrack.class, false, _resources);

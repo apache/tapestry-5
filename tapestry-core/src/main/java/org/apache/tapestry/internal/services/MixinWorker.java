@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -23,6 +21,8 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformConstants;
+
+import java.util.List;
 
 /**
  * Supports the {@link Mixin} annotation, which allows a mixin to be part of the implementation of a

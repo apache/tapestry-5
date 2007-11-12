@@ -25,9 +25,8 @@ public interface ThreadCleanupHub
      * Adds a listener to the hub. The hub maintains a seperate list of listeners for each thread
      * (i.e., using a ThreadLocal). Further, the listener list is discarded at the end of the
      * request.
-     * 
-     * @param listener
-     *            to add
+     *
+     * @param listener to add
      */
     void addThreadCleanupListener(ThreadCleanupListener listener);
 

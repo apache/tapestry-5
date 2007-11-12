@@ -23,7 +23,7 @@ import org.testng.annotations.Test;
 public class PrefixMethodTest extends Assert
 {
     private PageTester _tester;
-        
+
     @Test
     public void prefix_method() throws Exception
     {
@@ -32,7 +32,7 @@ public class PrefixMethodTest extends Assert
         String appName = "";
         _tester = new PageTester(appPackage, appName, PageTester.DEFAULT_CONTEXT_PATH, LocaleAppModule.class);
         Document doc = _tester.renderPage("TestPrefixMethod");
-        
+
         assertEquals(doc.getElementById("value").getChildText(), "42");
 
         // should override the method in the superclass

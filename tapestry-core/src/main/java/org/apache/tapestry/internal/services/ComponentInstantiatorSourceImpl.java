@@ -14,37 +14,28 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
-
-import java.net.URL;
-import java.util.Map;
-import java.util.Set;
-
-import javassist.CannotCompileException;
-import javassist.ClassPath;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.Loader;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-import javassist.Translator;
-
+import javassist.*;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.slf4j.Logger;
+
+import java.net.URL;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A wrapper around a Javassist class loader that allows certain classes to be modified as they are
  * loaded.
  */
 public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements
-        Translator, ComponentInstantiatorSource, UpdateListener
+                                                                                    Translator, ComponentInstantiatorSource, UpdateListener
 {
     /**
      * Add -Djavassist-write-dir=target/transformed-classes to the command line to force output of
@@ -68,7 +59,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private ClassFactory _classFactory;
 
-    /** Map from class name to Instantiator. */
+    /**
+     * Map from class name to Instantiator.
+     */
     private final Map<String, Instantiator> _instantiatorMap = newMap();
 
     private class PackageAwareLoader extends Loader
@@ -92,7 +85,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     public ComponentInstantiatorSourceImpl(ClassLoader parent,
-            ComponentClassTransformer transformer, Logger logger)
+                                           ComponentClassTransformer transformer, Logger logger)
     {
         _parent = parent;
         _transformer = transformer;
@@ -148,7 +141,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     // This is called from well within a synchronized block.
     public void onLoad(ClassPool pool, String classname) throws NotFoundException,
-            CannotCompileException
+                                                                CannotCompileException
     {
         _logger.debug("BEGIN onLoad " + classname);
 
@@ -219,14 +212,16 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException,
-            ClassNotFoundException
+                                                                  ClassNotFoundException
     {
         CtClass superClass = ctClass.getSuperclass();
 
         findClass(superClass.getName());
     }
 
-    /** Does nothing. */
+    /**
+     * Does nothing.
+     */
     public void start(ClassPool pool) throws NotFoundException, CannotCompileException
     {
     }

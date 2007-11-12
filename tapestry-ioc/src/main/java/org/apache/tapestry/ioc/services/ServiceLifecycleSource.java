@@ -19,14 +19,12 @@ import org.apache.tapestry.ioc.ServiceLifecycle;
 /**
  * Provides access to user defined lifecycles (beyond the two built-in lifecycles: "singleton" and
  * "primitive"). The user defined lifecycles are contributed into the service's configuration.
- * 
- * 
  */
 public interface ServiceLifecycleSource
 {
     /**
      * Used to locate a configuration lifecycle, by name.
-     * 
+     *
      * @param lifecycleName
      * @return the named lifecycle, or null if the name is not found
      */

@@ -26,8 +26,8 @@ import org.apache.tapestry.services.ComponentActionRequestHandler;
 public class AjaxFilter implements ComponentActionRequestFilter
 {
     public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-            String eventType, String[] context, String[] activationContext,
-            ComponentActionRequestHandler handler)
+                                          String eventType, String[] context, String[] activationContext,
+                                          ComponentActionRequestHandler handler)
     {
         return handler.handle(
                 logicalPageName,

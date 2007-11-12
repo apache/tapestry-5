@@ -15,14 +15,13 @@
 package org.apache.tapestry.ioc.util;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.tapestry.ioc.test.IOCTestCase;
-import org.testng.annotations.Test;
 
 public class StrategyRegistryTest extends IOCTestCase
 {

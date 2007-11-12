@@ -20,7 +20,7 @@ import org.apache.tapestry.services.ValidationMessagesSource;
 /**
  * Used by a {@link Field} to enforce a <strong>constraint</strong> related to a form submission.
  * Validators themselves are stateless singletons.
- * <p>
+ * <p/>
  * Validators are usually encapsulated inside a {@link FieldValidator}.
  */
 public interface Validator<C, T>
@@ -44,9 +44,9 @@ public interface Validator<C, T>
      * Returns the message key, within the validiation messages, normally used by this validator.
      * This is used to provide the {@link MessageFormatter} passed to
      * {@link #validate(Field, Object, MessageFormatter, Object)} (unless overridden).
-     * 
-     * @see ValidationMessagesSource
+     *
      * @return a message key
+     * @see ValidationMessagesSource
      */
     String getMessageKey();
 
@@ -54,17 +54,12 @@ public interface Validator<C, T>
      * Invoked after the client-submitted value has been {@link Translator translated} to check that
      * the value conforms to expectations (often, in terms of minimum or maximum value). If and only
      * if the value is approved by all Validators is the value applied by the field.
-     * 
-     * @param field
-     *            the field for which a client submitted value is being validated
-     * @param constraintValue
-     *            the value used to constrain
-     * @param formatter
-     *            Validation messages, in the appropriate locale
-     * @param value
-     *            the translated value supplied by the user
-     * @throws ValidationException
-     *             if the value violates the constraint
+     *
+     * @param field           the field for which a client submitted value is being validated
+     * @param constraintValue the value used to constrain
+     * @param formatter       Validation messages, in the appropriate locale
+     * @param value           the translated value supplied by the user
+     * @throws ValidationException if the value violates the constraint
      */
     void validate(Field field, C constraintValue, MessageFormatter formatter, T value)
             throws ValidationException;
@@ -78,19 +73,14 @@ public interface Validator<C, T>
     /**
      * Hook used by components to allow the validator to contribute additional attribute or (more
      * often) client-side JavaScript (via the {@link PageRenderSupport}).
-     * 
-     * @param field
-     *            the field which is currently being rendered
-     * @param constraintValue
-     *            the value used to constrain input
-     * @param formatter
-     *            validation message, in the appropriate locale
-     * @param writer
-     *            markup writer, allowing additional attributes to be written into the active
-     *            element
-     * @param pageRenderSupport
-     *            used to generate client-side JavaScript to support validation
+     *
+     * @param field             the field which is currently being rendered
+     * @param constraintValue   the value used to constrain input
+     * @param formatter         validation message, in the appropriate locale
+     * @param writer            markup writer, allowing additional attributes to be written into the active
+     *                          element
+     * @param pageRenderSupport used to generate client-side JavaScript to support validation
      */
     void render(Field field, C constraintValue, MessageFormatter formatter, MarkupWriter writer,
-            PageRenderSupport pageRenderSupport);
+                PageRenderSupport pageRenderSupport);
 }

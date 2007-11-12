@@ -27,7 +27,7 @@ import java.util.NoSuchElementException;
  * MethodIterator understands some complications that can occur when a class inherits the same
  * method from multiple interfaces and with slightly different signatures (due to the fact that
  * declared thrown exceptions can vary slightly for the "same" method).
- * 
+ *
  * @see org.apache.tapestry.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
  */
 public class MethodIterator
@@ -75,9 +75,8 @@ public class MethodIterator
      * exhausted. Each method signature is returned exactly once (even if the same method signature
      * is defined in multiple inherited classes or interfaces). The order in which method signatures
      * are returned is not specified.
-     * 
-     * @throws NoSuchElementException
-     *             if there are no more signatures
+     *
+     * @throws NoSuchElementException if there are no more signatures
      */
     public MethodSignature next()
     {

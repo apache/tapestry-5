@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Collections;
-import java.util.Set;
-
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * A synthetic module definition, used to mix in some additional "pre-built" service configuration
@@ -36,37 +36,49 @@ public class SyntheticModuleDef implements ModuleDef
         _contributionDefs = CollectionFactory.newSet(contributionDefs);
     }
 
-    /** Returns null. */
+    /**
+     * Returns null.
+     */
     public Class getBuilderClass()
     {
         return null;
     }
 
-    /** Returns the configured set. */
+    /**
+     * Returns the configured set.
+     */
     public Set<ContributionDef> getContributionDefs()
     {
         return _contributionDefs;
     }
 
-    /** Returns an empty set. */
+    /**
+     * Returns an empty set.
+     */
     public Set<DecoratorDef> getDecoratorDefs()
     {
         return Collections.emptySet();
     }
 
-    /** Returns "SyntheticModule". */
+    /**
+     * Returns "SyntheticModule".
+     */
     public String getLoggerName()
     {
         return "SyntheticModule";
     }
 
-    /** Returns null. */
+    /**
+     * Returns null.
+     */
     public ServiceDef getServiceDef(String serviceId)
     {
         return null;
     }
 
-    /** Returns an empty set. */
+    /**
+     * Returns an empty set.
+     */
     public Set<String> getServiceIds()
     {
         return Collections.emptySet();

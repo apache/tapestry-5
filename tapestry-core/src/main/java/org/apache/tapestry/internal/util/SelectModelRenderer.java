@@ -14,13 +14,9 @@
 
 package org.apache.tapestry.internal.util;
 
-import java.util.Map;
+import org.apache.tapestry.*;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.OptionGroupModel;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModelVisitor;
-import org.apache.tapestry.ValueEncoder;
+import java.util.Map;
 
 public class SelectModelRenderer implements SelectModelVisitor
 {

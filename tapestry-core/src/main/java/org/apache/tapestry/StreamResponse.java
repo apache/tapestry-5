@@ -14,11 +14,11 @@
 
 package org.apache.tapestry;
 
+import org.apache.tapestry.services.Response;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
-import org.apache.tapestry.services.Response;
 
 /**
  * An alternate response from a component event handler method used to directly provide a stream of
@@ -27,7 +27,9 @@ import org.apache.tapestry.services.Response;
  */
 public interface StreamResponse
 {
-    /** Returns the content type to be reported to the client. */
+    /**
+     * Returns the content type to be reported to the client.
+     */
     String getContentType();
 
     /**
@@ -41,6 +43,7 @@ public interface StreamResponse
     /**
      * Prepare response before it is sent to the client.
      * This is the place to set any response headers (e.g. content-disposition)
+     *
      * @param response Response that will be sent.
      */
     void prepareResponse(Response response);

@@ -14,16 +14,15 @@
 
 package org.apache.tapestry.internal.test;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
-import java.util.Map;
-
 import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocation;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.NoOpComponentInvocationMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.test.PageTester;
+
+import java.util.Map;
 
 /**
  * This is the real implementation, used by {@link PageTester}. The typical implementation,

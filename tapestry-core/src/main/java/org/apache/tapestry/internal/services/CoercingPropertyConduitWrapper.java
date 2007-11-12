@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.ioc.services.TypeCoercer;
+
+import java.lang.annotation.Annotation;
 
 public class CoercingPropertyConduitWrapper implements PropertyConduit
 {

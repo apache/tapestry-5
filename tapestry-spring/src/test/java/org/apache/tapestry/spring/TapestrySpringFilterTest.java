@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.spring;
 
-import javax.servlet.ServletContext;
-
 import org.apache.tapestry.test.TapestryTestCase;
 import org.springframework.web.context.WebApplicationContext;
 import org.testng.annotations.Test;
+
+import javax.servlet.ServletContext;
 
 public class TapestrySpringFilterTest extends TapestryTestCase
 {

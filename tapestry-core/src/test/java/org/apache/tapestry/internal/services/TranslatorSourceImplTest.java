@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.Collections;
-import java.util.Map;
-
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.TranslatorSource;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.Map;
 
 public class TranslatorSourceImplTest extends InternalBaseTestCase
 {

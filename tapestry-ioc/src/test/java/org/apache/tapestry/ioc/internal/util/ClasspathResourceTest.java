@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
+import org.apache.tapestry.ioc.Resource;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.util.Locale;
-
-import org.apache.tapestry.ioc.Resource;
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class ClasspathResourceTest extends Assert
 {

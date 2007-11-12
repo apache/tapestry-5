@@ -14,12 +14,6 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.lang.reflect.Method;
-import java.util.List;
-
 import org.apache.tapestry.ioc.IdMatcher;
 import org.apache.tapestry.ioc.ModuleBuilderSource;
 import org.apache.tapestry.ioc.ServiceDecorator;
@@ -27,8 +21,13 @@ import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public class DecoratorDefImpl implements DecoratorDef
 {
@@ -43,7 +42,7 @@ public class DecoratorDefImpl implements DecoratorDef
     private final ClassFactory _classFactory;
 
     public DecoratorDefImpl(String decoratorId, Method decoratorMethod, String[] patterns,
-            String[] constraints, ClassFactory classFactory)
+                            String[] constraints, ClassFactory classFactory)
     {
         _decoratorId = notBlank(decoratorId, "decoratorId");
         _decoratorMethod = notNull(decoratorMethod, "decoratorMethod");
@@ -80,10 +79,10 @@ public class DecoratorDefImpl implements DecoratorDef
     }
 
     public ServiceDecorator createDecorator(ModuleBuilderSource moduleBuilderSource,
-            ServiceResources resources)
+                                            ServiceResources resources)
     {
         return new ServiceDecoratorImpl(_decoratorMethod, moduleBuilderSource, resources,
-                _classFactory);
+                                        _classFactory);
     }
 
     /**

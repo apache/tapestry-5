@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.ioc;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.tapestry.ioc.annotations.EagerLoad;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
 
+import java.lang.annotation.Annotation;
+
 /**
  * Allows additional options for a service to be specified, overriding hard coded defaults or
  * defaults from annotations on the service.
- * 
+ *
  * @see ServiceDef
  */
 public interface ServiceBindingOptions
@@ -32,7 +32,7 @@ public interface ServiceBindingOptions
      * Allows a specific service id for the service to be provided, rather than the default (from
      * the service interface). This is useful when multiple services implement the same interface,
      * since service ids must be unique.
-     * 
+     *
      * @param id
      * @return this binding options, for further configuration
      */
@@ -41,7 +41,7 @@ public interface ServiceBindingOptions
     /**
      * Sets the scope of the service, overriding the {@link Scope} annotation on the service
      * implementation class.
-     * 
+     *
      * @param scope
      * @return this binding options, for further configuration
      */
@@ -50,7 +50,7 @@ public interface ServiceBindingOptions
     /**
      * Turns eager loading on for this service. This may also be accomplished using the
      * {@link EagerLoad} annotation on the service implementation class.
-     * 
+     *
      * @return this binding options, for further configuration
      */
     ServiceBindingOptions eagerLoad();
@@ -61,10 +61,9 @@ public interface ServiceBindingOptions
      * type and marker interface. The containing module will sometimes provide a set of default
      * marker annotations for all services within the module, this method allows that default to be
      * extended.
-     * 
+     *
      * @param <T>
-     * @param marker
-     *            one or more markers to add
+     * @param marker one or more markers to add
      * @return this binding options, for further configuration
      */
     <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker);

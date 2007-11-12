@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 public class PageTesterContextTest extends Assert
 {

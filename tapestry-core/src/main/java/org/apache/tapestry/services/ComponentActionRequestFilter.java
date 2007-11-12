@@ -21,22 +21,16 @@ public interface ComponentActionRequestFilter
 {
     /**
      * Filter for a component action request.
-     * 
-     * @param logicalPageName
-     *            the page name containing the component, and the default component to render the
-     *            response
-     * @param nestedComponentId
-     *            the id of the component within the page
-     * @param eventType
-     *            the type of event to trigger on the component
-     * @param context
-     *            context information to provide to the event handler
-     * @param activationContext
-     *            activation context for the page
-     * @param handler
-     *            to delegate to
+     *
+     * @param logicalPageName   the page name containing the component, and the default component to render the
+     *                          response
+     * @param nestedComponentId the id of the component within the page
+     * @param eventType         the type of event to trigger on the component
+     * @param context           context information to provide to the event handler
+     * @param activationContext activation context for the page
+     * @param handler           to delegate to
      */
     ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-            String eventType, String[] context, String[] activationContext,
-            ComponentActionRequestHandler handler);
+                                   String eventType, String[] context, String[] activationContext,
+                                   ComponentActionRequestHandler handler);
 }

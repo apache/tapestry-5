@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import org.apache.tapestry.ioc.ModuleBuilderSource;
 import org.apache.tapestry.ioc.ServiceDecorator;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A module within the Tapestry IoC registry. Each Module is constructed around a corresponding
@@ -33,15 +33,12 @@ public interface Module extends ModuleBuilderSource
 {
     /**
      * Locates a service given a service id and the corresponding service interface type.
-     * 
+     *
      * @param <T>
-     * @param serviceId
-     *            identifies the service to access
-     * @param serviceInterface
-     *            the interface the service implements
+     * @param serviceId        identifies the service to access
+     * @param serviceInterface the interface the service implements
      * @return the service's proxy
-     * @throws RuntimeException
-     *             if there is an error instantiating the service proxy
+     * @throws RuntimeException if there is an error instantiating the service proxy
      */
     <T> T getService(String serviceId, Class<T> serviceInterface);
 
@@ -49,9 +46,8 @@ public interface Module extends ModuleBuilderSource
      * Locates the ids of all services that implement the provided service interface, or whose
      * service interface is assignable to the provided service interface (is a super-class or
      * super-interface).
-     * 
-     * @param serviceInterface
-     *            the interface to search for
+     *
+     * @param serviceInterface the interface to search for
      * @return a collection of service ids
      */
     Collection<String> findServiceIdsForInterface(Class serviceInterface);
@@ -62,9 +58,8 @@ public interface Module extends ModuleBuilderSource
      * filtering rules. The resulting list is ordered and from the list of
      * {@link org.apache.tapestry.ioc.def.DecoratorDef}s, a list of {@link ServiceDecorator}s is
      * returned.
-     * 
-     * @param serviceId
-     *            identifies the service to be decorated
+     *
+     * @param serviceId identifies the service to be decorated
      * @return the ordered list of service decorators
      */
     List<ServiceDecorator> findDecoratorsForService(String serviceId);
@@ -72,14 +67,15 @@ public interface Module extends ModuleBuilderSource
     /**
      * Iterates over any decorator definitions defined by the module and returns those that apply to
      * the provided service definition.
-     * 
-     * @param serviceDef
-     *            for which decorators are being assembled
+     *
+     * @param serviceDef for which decorators are being assembled
      * @return set of decorators, possibly empty (but not null)
      */
     Set<DecoratorDef> findMatchingDecoratorDefs(ServiceDef serviceDef);
 
-    /** Finds any contributions that are targetted at the indicated service. */
+    /**
+     * Finds any contributions that are targetted at the indicated service.
+     */
     Set<ContributionDef> getContributorDefsForService(String serviceId);
 
     /**
@@ -90,9 +86,8 @@ public interface Module extends ModuleBuilderSource
 
     /**
      * Returns the service definition for the given service id.
-     * 
-     * @param serviceId
-     *            unique id for the service (caseless)
+     *
+     * @param serviceId unique id for the service (caseless)
      * @return the service definition or null
      */
     ServiceDef getServiceDef(String serviceId);
@@ -100,7 +95,7 @@ public interface Module extends ModuleBuilderSource
     /**
      * Returns the name used to obtain a logger for the module. Services within the module suffix
      * this with a period and the service id.
-     * 
+     *
      * @return module logger name
      */
     String getLoggerName();

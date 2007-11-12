@@ -14,13 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.IOException;
+import org.apache.tapestry.services.*;
 
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.PageRenderRequestHandler;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import java.io.IOException;
 
 /**
  * Recognizes a request for the application root (i.e., "/") and handles this the same as a render
@@ -32,13 +28,13 @@ public class RootPathDispatcher implements Dispatcher
 
     private final PageRenderRequestHandler _handler;
 
- 
+
     private final String _startPageName;
 
     private final String[] _emptyContext = new String[0];
 
     public RootPathDispatcher(final ComponentClassResolver componentClassResolver,
-            final PageRenderRequestHandler handler, final String startPageName)
+                              final PageRenderRequestHandler handler, final String startPageName)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;

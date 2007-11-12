@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.internal;
 
-import java.util.Map;
-
 import org.apache.tapestry.OptionModel;
+
+import java.util.Map;
 
 public final class OptionModelImpl implements OptionModel
 {
@@ -35,7 +35,7 @@ public final class OptionModelImpl implements OptionModel
     }
 
     public OptionModelImpl(String label, boolean disabled, Object value,
-            Map<String, String> attributes)
+                           Map<String, String> attributes)
     {
         _label = label;
         _disabled = disabled;

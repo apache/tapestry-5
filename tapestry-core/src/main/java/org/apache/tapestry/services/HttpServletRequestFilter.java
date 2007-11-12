@@ -14,13 +14,11 @@
 
 package org.apache.tapestry.services;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
- * 
  * @see org.apache.tapestry.services.HttpServletRequestHandler
  */
 public interface HttpServletRequestFilter
@@ -29,9 +27,9 @@ public interface HttpServletRequestFilter
      * Filter interface for the tapestry.request.HttpServletRequestHandler pipeline. A filter should
      * delegate to the handler. It may perform operations before or after invoking the handler, and
      * may modify the request and response passed in to the handler.
-     * 
+     *
      * @return true if the request has been handled, false otherwise
      */
     boolean service(HttpServletRequest request, HttpServletResponse response,
-            HttpServletRequestHandler handler) throws IOException;
+                    HttpServletRequestHandler handler) throws IOException;
 }

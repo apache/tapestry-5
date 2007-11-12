@@ -20,7 +20,7 @@ import org.apache.tapestry.ioc.annotations.SubModule;
  * Used by {@link org.apache.tapestry.ioc.RegistryBuilderTest}.
  */
 @SubModule(
-{ FredModule.class, BarneyModule.class })
+        {FredModule.class, BarneyModule.class})
 public final class MasterModule
 {
 

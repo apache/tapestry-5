@@ -14,33 +14,23 @@
 
 package org.apache.tapestry.test;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.dom.Node;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.SingleKeySymbolProvider;
 import org.apache.tapestry.internal.TapestryAppInitializer;
-import org.apache.tapestry.internal.services.ActionLinkTarget;
-import org.apache.tapestry.internal.services.ComponentInvocation;
-import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.internal.services.LocalizationSetter;
-import org.apache.tapestry.internal.services.PageLinkTarget;
-import org.apache.tapestry.internal.test.ActionLinkInvoker;
-import org.apache.tapestry.internal.test.ComponentInvoker;
-import org.apache.tapestry.internal.test.PageLinkInvoker;
-import org.apache.tapestry.internal.test.PageTesterContext;
-import org.apache.tapestry.internal.test.PageTesterModule;
-import org.apache.tapestry.internal.test.TestableRequest;
+import org.apache.tapestry.internal.services.*;
+import org.apache.tapestry.internal.test.*;
 import org.apache.tapestry.ioc.Registry;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.ApplicationGlobals;
+
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This class is used to run a Tapestry app in an in-process testing environment. You can ask it to
@@ -71,7 +61,7 @@ public class PageTester implements ComponentInvoker
     /**
      * Initializes a PageTester without overriding any services and assuming that the context root
      * is in src/main/webapp.
-     * 
+     *
      * @see #PageTester(String, String, String, Map)
      */
     public PageTester(String appPackage, String appName)
@@ -82,19 +72,15 @@ public class PageTester implements ComponentInvoker
     /**
      * Initializes a PageTester that acts as a browser and a servlet container to test drive your
      * Tapestry pages.
-     * 
-     * @param appPackage
-     *            The same value you would specify using the tapestry.app-package context parameter.
-     *            As this testing environment is not run in a servlet container, you need to specify
-     *            it.
-     * @param appName
-     *            The same value you would specify as the filter name. It is used to form the name
-     *            of the module builder for your app. If you don't have one, pass an empty string.
-     * @param contextPath
-     *            The path to the context root so that Tapestry can find the templates (if they're
-     *            put there).
-     * @param modulesClasses
-     *            Classes of additional modules to load
+     *
+     * @param appPackage     The same value you would specify using the tapestry.app-package context parameter.
+     *                       As this testing environment is not run in a servlet container, you need to specify
+     *                       it.
+     * @param appName        The same value you would specify as the filter name. It is used to form the name
+     *                       of the module builder for your app. If you don't have one, pass an empty string.
+     * @param contextPath    The path to the context root so that Tapestry can find the templates (if they're
+     *                       put there).
+     * @param modulesClasses Classes of additional modules to load
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
@@ -105,11 +91,11 @@ public class PageTester implements ComponentInvoker
                 InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
         TapestryAppInitializer initializer = new TapestryAppInitializer(provider, appName,
-                PageTesterModule.TEST_MODE);
+                                                                        PageTesterModule.TEST_MODE);
 
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
-        
+
         _registry = initializer.getRegistry();
 
         _request = _registry.getObject(TestableRequest.class, null);
@@ -129,7 +115,9 @@ public class PageTester implements ComponentInvoker
         _invokerRegistry = new StrategyRegistry<ComponentInvoker>(ComponentInvoker.class, map);
     }
 
-    /** You should call it after use */
+    /**
+     * You should call it after use
+     */
     public void shutdown()
     {
         _registry.shutdown();
@@ -137,9 +125,8 @@ public class PageTester implements ComponentInvoker
 
     /**
      * Renders a page specified by its name.
-     * 
-     * @param pageName
-     *            The name of the page to be rendered.
+     *
+     * @param pageName The name of the page to be rendered.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document renderPage(String pageName)
@@ -149,9 +136,8 @@ public class PageTester implements ComponentInvoker
 
     /**
      * Simulates a click on a link.
-     * 
-     * @param link
-     *            The Link object to be "clicked" on.
+     *
+     * @param link The Link object to be "clicked" on.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickLink(Element link)
@@ -195,11 +181,9 @@ public class PageTester implements ComponentInvoker
     /**
      * Simulates a submission of the form specified. The caller can specify values for the form
      * fields.
-     * 
-     * @param form
-     *            the form to be submitted.
-     * @param parameters
-     *            the query parameter name/value pairs
+     *
+     * @param form       the form to be submitted.
+     * @param parameters the query parameter name/value pairs
      * @return The DOM created. Typically you will assert against it.
      */
     public Document submitForm(Element form, Map<String, String> parameters)
@@ -220,11 +204,9 @@ public class PageTester implements ComponentInvoker
     /**
      * Simulates a submission of the form by clicking the specified submit button. The caller can
      * specify values for the form fields.
-     * 
-     * @param submitButton
-     *            the submit button to be clicked.
-     * @param fieldValues
-     *            the field values keyed on field names.
+     *
+     * @param submitButton the submit button to be clicked.
+     * @param fieldValues  the field values keyed on field names.
      * @return The DOM created. Typically you will assert against it.
      */
     public Document clickSubmit(Element submitButton, Map<String, String> fieldValues)

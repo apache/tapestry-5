@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.ioc.services;
 
-import java.io.IOException;
-import java.util.NoSuchElementException;
-
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
+import java.util.NoSuchElementException;
 
 public class MethodIteratorTest extends IOCTestCase
 {
@@ -140,7 +140,7 @@ public class MethodIteratorTest extends IOCTestCase
         MethodSignature actual = mi.next();
 
         assertEquals(new MethodSignature(void.class, "open", null, new Class[]
-        { IOException.class }), actual);
+                {IOException.class}), actual);
 
         assertEquals(false, mi.hasNext());
     }

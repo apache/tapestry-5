@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-import java.io.Serializable;
-
 import org.apache.tapestry.beaneditor.NonVisual;
 import org.apache.tapestry.beaneditor.Validate;
+
+import java.io.Serializable;
 
 public class ToDoItem implements Serializable, Cloneable
 {

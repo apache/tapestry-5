@@ -43,7 +43,7 @@ class UtilMessages
     {
         return MESSAGES.format("one-shot-lock", element);
     }
-    
+
     static String parameterWasNull(String parameterName)
     {
         return MESSAGES.format("parameter-was-null", parameterName);

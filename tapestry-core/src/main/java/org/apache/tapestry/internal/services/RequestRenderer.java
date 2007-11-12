@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.util.List;
-
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.services.ObjectRenderer;
 import org.apache.tapestry.services.Request;
+
+import java.util.List;
 
 public class RequestRenderer implements ObjectRenderer<Request>
 {

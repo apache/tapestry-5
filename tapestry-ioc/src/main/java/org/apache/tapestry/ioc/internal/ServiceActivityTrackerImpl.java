@@ -14,18 +14,18 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ServiceActivity;
 import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry.ioc.services.Status;
 
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
 public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
-        ServiceActivityTracker
+                                                   ServiceActivityTracker
 {
     public static class MutableServiceActivity implements ServiceActivity
     {
@@ -67,7 +67,9 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
         }
     }
 
-    /** Tree map keeps everything in order by key (serviceId). */
+    /**
+     * Tree map keeps everything in order by key (serviceId).
+     */
     private final Map<String, MutableServiceActivity> _serviceIdToServiceStatus = new TreeMap<String, MutableServiceActivity>();
 
     public synchronized List<ServiceActivity> getServiceActivity()

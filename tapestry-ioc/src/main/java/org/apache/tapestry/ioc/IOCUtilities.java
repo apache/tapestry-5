@@ -15,6 +15,7 @@
 package org.apache.tapestry.ioc;
 
 import static org.apache.tapestry.ioc.IOCConstants.MODULE_BUILDER_MANIFEST_ENTRY_NAME;
+import org.apache.tapestry.ioc.annotations.SubModule;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -22,8 +23,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
-
-import org.apache.tapestry.ioc.annotations.SubModule;
 
 /**
  * A collection of utility methods for a couple of different areas, including creating the initial
@@ -39,7 +38,7 @@ public final class IOCUtilities
      * Construct a default Registry, including modules identifed via the Tapestry-Module-Classes
      * Manifest entry. The registry will have been
      * {@linkplain Registry#performRegistryStartup() started up} before it is returned.
-     * 
+     *
      * @return constructed Registry, after startup
      * @see #addDefaultModules(RegistryBuilder)
      */
@@ -61,9 +60,8 @@ public final class IOCUtilities
      * adds each corresponding class to the RegistryBuilder. In addition, looks for a system
      * property named "tapestry.modules" and adds all of those modules as well. The tapestry.modules
      * approach is intended for development.
-     * 
-     * @param builder
-     *            the builder to which modules will be added
+     *
+     * @param builder the builder to which modules will be added
      * @see SubModule
      * @see RegistryBuilder#add(String)
      */
@@ -127,9 +125,8 @@ public final class IOCUtilities
 
     /**
      * Closes an input stream (or other Closeable), ignoring any exception.
-     * 
-     * @param closeable
-     *            the thing to close, or null to close nothing
+     *
+     * @param closeable the thing to close, or null to close nothing
      */
     private static void close(Closeable closeable)
     {

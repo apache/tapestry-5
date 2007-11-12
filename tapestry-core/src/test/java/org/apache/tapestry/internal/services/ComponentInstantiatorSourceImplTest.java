@@ -14,26 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.URLConnection;
-import java.util.UUID;
-
-import javassist.CannotCompileException;
-import javassist.ClassPool;
-import javassist.CtClass;
-import javassist.CtMethod;
-import javassist.CtNewMethod;
-import javassist.LoaderClassPath;
-import javassist.NotFoundException;
-
-import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.SingleKeySymbolProvider;
-import org.apache.tapestry.internal.SyntheticModuleDef;
-import org.apache.tapestry.internal.SyntheticSymbolSourceContributionDef;
+import javassist.*;
+import org.apache.tapestry.internal.*;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.transform.pages.BasicComponent;
 import org.apache.tapestry.internal.transform.pages.BasicSubComponent;
@@ -49,6 +31,13 @@ import org.slf4j.Logger;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
+import java.util.UUID;
 
 /**
  * Tests for {@link org.apache.tapestry.internal.services.ComponentInstantiatorSourceImpl}. Several
@@ -83,7 +72,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         replay();
 
         ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(_contextLoader,
-                transformer, logger);
+                                                                                transformer, logger);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 
@@ -108,7 +97,9 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** More of an integration test. */
+    /**
+     * More of an integration test.
+     */
     @Test
     public void load_component_via_service() throws Exception
     {
@@ -213,7 +204,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     }
 
     private void createSynthComponentClass(String name) throws CannotCompileException,
-            NotFoundException, IOException
+                                                               NotFoundException, IOException
     {
         ClassPool pool = new ClassPool();
         // Inside Maven Surefire, the system classpath is not sufficient to find all
@@ -277,7 +268,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         URL url = _extraClasspath.toURL();
 
         _extraLoader = new URLClassLoader(new URL[]
-        { url }, _contextLoader);
+                {url}, _contextLoader);
         RegistryBuilder builder = new RegistryBuilder(_extraLoader);
 
         builder.add(TapestryModule.class);
@@ -285,7 +276,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         SymbolProvider provider = new SingleKeySymbolProvider(
                 InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
         ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode",
-                provider, "before:ApplicationDefaults");
+                                                                                provider, "before:ApplicationDefaults");
 
         ModuleDef module = new SyntheticModuleDef(contribution);
 

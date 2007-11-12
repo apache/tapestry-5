@@ -14,13 +14,8 @@
 
 package org.apache.tapestry.validator;
 
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryUtils.quote;
-
-import org.apache.tapestry.Field;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 
 /* A vaidator that enforces that a number is greater than some minimum integer value. */
@@ -59,7 +54,7 @@ public class Min implements Validator<Long, Number>
     }
 
     public void render(Field field, Long constraintValue, MessageFormatter formatter,
-            MarkupWriter writer, PageRenderSupport pageRenderSupport)
+                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
     {
         pageRenderSupport.addScript(
                 "Tapestry.Field.min('%s', %s, %s);",
