@@ -95,7 +95,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     {
         Map<String, String> properties = findBundleProperties(bundle, locale);
 
-        return new MapMessages(properties);
+        return new MapMessages(locale, properties);
     }
 
     /**

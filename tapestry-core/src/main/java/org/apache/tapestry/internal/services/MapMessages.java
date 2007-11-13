@@ -22,6 +22,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.util.AbstractMessages;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -31,13 +32,16 @@ public class MapMessages extends AbstractMessages
 {
     private final Map<String, String> _properties;
 
+
     /**
      * A new instance <strong>retaining</strong> (not copying) the provided map.
      */
-    public MapMessages(final Map<String, String> properties)
+    public MapMessages(Locale locale, Map<String, String> properties)
     {
+        super(locale);
         _properties = properties;
     }
+
 
     @Override
     protected String valueForKey(String key)

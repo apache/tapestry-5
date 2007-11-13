@@ -21,7 +21,7 @@ public class MessageFormatterImplTest extends Assert
 {
     private String run(String format, Object... args)
     {
-        return new MessageFormatterImpl(format).format(args);
+        return new MessageFormatterImpl(format, null).format(args);
     }
 
     @Test
@@ -29,9 +29,7 @@ public class MessageFormatterImplTest extends Assert
     {
         assertEquals(run("Tapestry is %s.", "cool"), "Tapestry is cool.");
         assertEquals(run("Tapestry release #%d.", 5), "Tapestry release #5.");
-        assertEquals(
-                run("%s is %s at version %d.", "Tapestry", "cool", 5),
-                "Tapestry is cool at version 5.");
+        assertEquals(run("%s is %s at version %d.", "Tapestry", "cool", 5), "Tapestry is cool at version 5.");
     }
 
     @Test
@@ -39,9 +37,7 @@ public class MessageFormatterImplTest extends Assert
     {
         Throwable t = new RuntimeException("Just didn't feel right.");
 
-        assertEquals(
-                run("%s failed: %s", "Something", t),
-                "Something failed: Just didn't feel right.");
+        assertEquals(run("%s failed: %s", "Something", t), "Something failed: Just didn't feel right.");
     }
 
     @Test
@@ -49,8 +45,6 @@ public class MessageFormatterImplTest extends Assert
     {
         Throwable t = new NullPointerException();
 
-        assertEquals(
-                run("%s failed: %s", "Something", t),
-                "Something failed: java.lang.NullPointerException");
+        assertEquals(run("%s failed: %s", "Something", t), "Something failed: java.lang.NullPointerException");
     }
 }

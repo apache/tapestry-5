@@ -16,16 +16,19 @@ package org.apache.tapestry.ioc.internal.util;
 
 import org.apache.tapestry.ioc.MessageFormatter;
 
-/**
- *
- */
+import java.util.Locale;
+
+
 public class MessageFormatterImpl implements MessageFormatter
 {
     private final String _format;
 
-    public MessageFormatterImpl(String format)
+    private final Locale _locale;
+
+    public MessageFormatterImpl(String format, Locale locale)
     {
         _format = format;
+        _locale = locale;
     }
 
     public String format(Object... args)
@@ -46,7 +49,7 @@ public class MessageFormatterImpl implements MessageFormatter
         // Might be tempting to create a Formatter object and just keep reusing it ... but
         // Formatters are not threadsafe.
 
-        return String.format(_format, args);
+        return String.format(_locale, _format, args);
     }
 
 }

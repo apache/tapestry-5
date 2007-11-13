@@ -21,6 +21,7 @@ import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry.ioc.internal.util.Invokable;
 import org.apache.tapestry.ioc.internal.util.MessageFormatterImpl;
 
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -36,6 +37,13 @@ public abstract class AbstractMessages implements Messages
      */
     private final Map<String, MessageFormatter> _cache = newCaseInsensitiveMap();
 
+    private final Locale _locale;
+
+    protected AbstractMessages(Locale locale)
+    {
+        _locale = locale;
+    }
+
     /**
      * Invoked to provide the value for a particular key. This may be invoked multiple times even
      * for the same key. The implementation should <em>ignore the case of the key</em>.
@@ -44,6 +52,7 @@ public abstract class AbstractMessages implements Messages
      * @return the value for the key, or null if this instance can not provide the value
      */
     protected abstract String valueForKey(String key);
+
 
     public boolean contains(String key)
     {
@@ -88,7 +97,7 @@ public abstract class AbstractMessages implements Messages
     {
         String format = get(key);
 
-        return new MessageFormatterImpl(format);
+        return new MessageFormatterImpl(format, _locale);
     }
 
     public String format(String key, Object... args)
