@@ -22,9 +22,8 @@ var Tapestry = {
 
         if (form.errorDiv)
         {
-            Tapestry.hideInvisible(form.errorDiv);
-
             form.errorList = form.errorDiv.getElementsBySelector("ul").first();
+
             if (! form.errorList)
             {
                 // create it now
@@ -132,21 +131,7 @@ var Tapestry = {
         });
     },
 
-    // Checks the element; if it has the "t-invisible" CSS class, then
-    // the element is hidden,and the t-invisible CSS class is removed. This is necessary
-    // for Prototype's visible() method, which can't determine visibility when it's defined via
-    // CSS.
 
-    hideInvisible : function(element)
-    {
-        element = $(element);
-
-        if (element.classNames().include("t-invisible"))
-        {
-            element.hide();
-            element.removeClassName("t-invisible");
-        }
-    },
 
     FormEvent : Class.create(),
 
@@ -286,9 +271,6 @@ Tapestry.FieldEventManager.prototype = {
         var id = field.id;
         this.label = $(id + ':label');
         this.icon = $(id + ':icon');
-        if (this.icon)
-            Tapestry.hideInvisible(this.icon);
-
     },
 
     // Adds a validator.  acceptBlank is true if the validator should be invoked regardless of
@@ -379,5 +361,13 @@ Tapestry.FieldEventManager.prototype = {
     }
 };
 
+Event.observe(window, "load", function()
+{
+    $$(".t-invisible").each(function(element)
+    {
+        element.hide();
+        element.removeClassName("t-invisible");
+    });
+});
 
  
