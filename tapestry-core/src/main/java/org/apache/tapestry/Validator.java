@@ -15,6 +15,7 @@
 package org.apache.tapestry;
 
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
 /**
@@ -61,8 +62,7 @@ public interface Validator<C, T>
      * @param value           the translated value supplied by the user
      * @throws ValidationException if the value violates the constraint
      */
-    void validate(Field field, C constraintValue, MessageFormatter formatter, T value)
-            throws ValidationException;
+    void validate(Field field, C constraintValue, MessageFormatter formatter, T value) throws ValidationException;
 
     /**
      * Returns true if the validator should be invoked for null or blank (empty string) values. This
@@ -74,13 +74,13 @@ public interface Validator<C, T>
      * Hook used by components to allow the validator to contribute additional attribute or (more
      * often) client-side JavaScript (via the {@link PageRenderSupport}).
      *
-     * @param field             the field which is currently being rendered
-     * @param constraintValue   the value used to constrain input
-     * @param formatter         validation message, in the appropriate locale
-     * @param writer            markup writer, allowing additional attributes to be written into the active
-     *                          element
-     * @param pageRenderSupport used to generate client-side JavaScript to support validation
+     * @param field           the field which is currently being rendered
+     * @param constraintValue the value used to constrain input
+     * @param formatter       validation message, in the appropriate locale
+     * @param writer          markup writer, allowing additional attributes to be written into the active
+     *                        element
+     * @param formSupport
      */
     void render(Field field, C constraintValue, MessageFormatter formatter, MarkupWriter writer,
-                PageRenderSupport pageRenderSupport);
+                FormSupport formSupport);
 }

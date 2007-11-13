@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.services.FormSupport;
 
 public class FieldValidatorImpl implements FieldValidator
 {
@@ -27,27 +28,24 @@ public class FieldValidatorImpl implements FieldValidator
 
     private final Validator _validator;
 
-    private final PageRenderSupport _pageRenderSupport;
+    private final FormSupport _formSupport;
 
-    public FieldValidatorImpl(Field field, Object constraintValue,
-                              MessageFormatter messageFormatter, Validator validator,
-                              PageRenderSupport pageRenderSupport)
+    public FieldValidatorImpl(Field field, Object constraintValue, MessageFormatter messageFormatter,
+                              Validator validator, FormSupport formSupport)
     {
         _field = field;
         _constraintValue = constraintValue;
         _messageFormatter = messageFormatter;
         _validator = validator;
-        _pageRenderSupport = pageRenderSupport;
+        _formSupport = formSupport;
     }
 
     @SuppressWarnings("unchecked")
     public void validate(Object value) throws ValidationException
     {
-        if (!_validator.invokeIfBlank() && isBlank(value))
-            return;
+        if (!_validator.invokeIfBlank() && isBlank(value)) return;
 
-        if (value != null && !_validator.getValueType().isInstance(value))
-            return;
+        if (value != null && !_validator.getValueType().isInstance(value)) return;
 
         _validator.validate(_field, _constraintValue, _messageFormatter, value);
     }
@@ -55,9 +53,7 @@ public class FieldValidatorImpl implements FieldValidator
     @SuppressWarnings("unchecked")
     public void render(MarkupWriter writer)
     {
-        // TODO: Skip this step if the Form's clientValidation parameter is false?
-
-        _validator.render(_field, _constraintValue, _messageFormatter, writer, _pageRenderSupport);
+        _validator.render(_field, _constraintValue, _messageFormatter, writer, _formSupport);
     }
 
     private boolean isBlank(Object value)

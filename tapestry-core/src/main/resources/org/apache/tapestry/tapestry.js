@@ -14,7 +14,7 @@
 
 var Tapestry = {
 
-    registerForm : function(form)
+    registerForm : function(form, clientValidations)
     {
         form = $(form);
 
@@ -96,12 +96,46 @@ var Tapestry = {
                 new Insertion.Bottom(form.errorList, "<li>" + message + "</li>");
 
         };
+
+        // And handle the validations
+
+        this.registerValidations(form, clientValidations);
     },
 
-// Checks the element; if it has the "t-invisible" CSS class, then
-// the element is hidden,and the t-invisible CSS class is removed. This is necessary
-// for Prototype's visible() method, which can't determine visibility when it's defined via
-// CSS.
+    registerValidations : function(form, clientValidations)
+    {
+        $H(clientValidations).each(function(pair)
+        {
+            var field = $(pair.key);
+            var specs = pair.value;
+
+            specs.each(function(spec)
+            {
+                // spec is a 2 or 3 element array.
+                // validator function name, message, optional constraint
+
+                var name = spec[0];
+                var message = spec[1];
+                var constraint = spec[2];
+
+                var vfunc = Tapestry.Validator[name];
+
+                if (vfunc == undefined)
+                {
+                    var errorMessage = "Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.".interpolate({name:name, fieldName:pair.key});
+
+                    window.alert(errorMessage);
+                }
+
+                vfunc.call(this, field, message, constraint);
+            });
+        });
+    },
+
+    // Checks the element; if it has the "t-invisible" CSS class, then
+    // the element is hidden,and the t-invisible CSS class is removed. This is necessary
+    // for Prototype's visible() method, which can't determine visibility when it's defined via
+    // CSS.
 
     hideInvisible : function(element)
     {
@@ -118,12 +152,12 @@ var Tapestry = {
 
     FieldEventManager : Class.create(),
 
-// Adds a validator for a field.  A FieldEventManager is added, if necessary.
-// The validator will be called only for non-blank values, unless acceptBlank is
-// true (in most cases, acceptBlank is flase). The validator is a function
-// that accepts the current field value as its first parameter, and a
-// Tapestry.FormEvent as its second.  It can invoke recordError() on the event
-// if the input is not valid.
+    // Adds a validator for a field.  A FieldEventManager is added, if necessary.
+    // The validator will be called only for non-blank values, unless acceptBlank is
+    // true (in most cases, acceptBlank is flase). The validator is a function
+    // that accepts the current field value as its first parameter, and a
+    // Tapestry.FormEvent as its second.  It can invoke recordError() on the event
+    // if the input is not valid.
 
     addValidator : function(field, acceptBlank, validator)
     {
@@ -139,9 +173,9 @@ var Tapestry = {
 // New methods added to Element.
 
 Tapestry.ElementAdditions = {
-// This is added to all Elements, but really only applys to form control elements. This method is invoked
-// when a validation error is associated with a field. This gives the field a chance to decorate itself, its label
-// and its icon.
+    // This is added to all Elements, but really only applys to form control elements. This method is invoked
+    // when a validation error is associated with a field. This gives the field a chance to decorate itself, its label
+    // and its icon.
     decorateForValidationError : function (element, event, message)
     {
         $(element).fieldEventManager.addDecorations(event, message);
@@ -150,9 +184,10 @@ Tapestry.ElementAdditions = {
 
 Element.addMethods(Tapestry.ElementAdditions);
 
-// Collection of field based functions related to validation.
+// Collection of field based functions related to validation. Each
+// function takes a field, a message and an optional constraint value.
 
-Tapestry.Field = {
+Tapestry.Validator = {
     required : function(field, message)
     {
         Tapestry.addValidator(field, true, function(value, event)
@@ -162,7 +197,7 @@ Tapestry.Field = {
         });
     },
 
-    minlength : function(field, length, message)
+    minlength : function(field, message, length)
     {
         Tapestry.addValidator(field, false, function(value, event)
         {
@@ -171,7 +206,7 @@ Tapestry.Field = {
         });
     },
 
-    maxlength : function(field, maxlength, message)
+    maxlength : function(field, message, maxlength)
     {
         Tapestry.addValidator(field, false, function(value, event)
         {
@@ -180,7 +215,7 @@ Tapestry.Field = {
         });
     },
 
-    min : function(field, minValue, message)
+    min : function(field, message, minValue)
     {
         Tapestry.addValidator(field, false, function(value, event)
         {
@@ -189,7 +224,7 @@ Tapestry.Field = {
         });
     },
 
-    max : function(field, maxValue, message)
+    max : function(field, message, maxValue)
     {
         Tapestry.addValidator(field, false, function(value, event)
         {
@@ -198,13 +233,12 @@ Tapestry.Field = {
         });
     },
 
-    regexp : function(field, pattern, message)
+    regexp : function(field, message, pattern)
     {
         var regexp = new RegExp(pattern);
 
         Tapestry.addValidator(field, false, function(value, event)
         {
-
             if (! regexp.test(value))
                 event.recordError(message);
         });
@@ -225,11 +259,11 @@ Tapestry.FormEvent.prototype = {
         this.result = true;
     },
 
-// Invoked by a validator function (which is passed the event) to record an error
-// for the associated field. The event knows the field and form and invoke's
-// the (added) form method invalidField().  Sets the event's result field to false
-// (i.e., don't allow the form to submit), and sets the event's error field to
-// true.
+    // Invoked by a validator function (which is passed the event) to record an error
+    // for the associated field. The event knows the field and form and invoke's
+    // the (added) form method invalidField().  Sets the event's result field to false
+    // (i.e., don't allow the form to submit), and sets the event's error field to
+    // true.
 
     recordError : function(message)
     {
@@ -257,19 +291,19 @@ Tapestry.FieldEventManager.prototype = {
 
     },
 
-// Adds a validator.  acceptBlank is true if the validator should be invoked regardless of
-// the value.  Usually acceptBlank is false, meaning that the validator will be skipped if
-// the field's value is blank. The validator itself is a function that is passed the
-// field's value and the Tapestry.FormEvent object.  When a validator invokes event.recordError(),
-// any subsequent validators for that field are skipped.
+    // Adds a validator.  acceptBlank is true if the validator should be invoked regardless of
+    // the value.  Usually acceptBlank is false, meaning that the validator will be skipped if
+    // the field's value is blank. The validator itself is a function that is passed the
+    // field's value and the Tapestry.FormEvent object.  When a validator invokes event.recordError(),
+    // any subsequent validators for that field are skipped.
 
     addValidator : function(acceptBlank, validator)
     {
         this.validators.push([ acceptBlank, validator]);
     },
 
-// Removes decorations on the field and label (the "t-error" CSS class) and makes the icon
-// invisible.  A field that has special decoration needs will override this method.
+    // Removes decorations on the field and label (the "t-error" CSS class) and makes the icon
+    // invisible.  A field that has special decoration needs will override this method.
 
     removeDecorations : function(event)
     {
@@ -282,9 +316,9 @@ Tapestry.FieldEventManager.prototype = {
             this.icon.hide();
     },
 
-// Adds decorations to the field (including label and icon if present).
-// event - the validation event
-// message - error message
+    // Adds decorations to the field (including label and icon if present).
+    // event - the validation event
+    // message - error message
 
     addDecorations : function(event, message)
     {
@@ -303,9 +337,9 @@ Tapestry.FieldEventManager.prototype = {
     },
 
 
-// Invoked from the Form's onsubmit event handler. Gets the fields value and invokes
-// each validator (unless the value is blank) until a validator returns false. Validators
-// should not modify the field's value.
+    // Invoked from the Form's onsubmit event handler. Gets the fields value and invokes
+    // each validator (unless the value is blank) until a validator returns false. Validators
+    // should not modify the field's value.
 
     validateInput : function(event)
     {

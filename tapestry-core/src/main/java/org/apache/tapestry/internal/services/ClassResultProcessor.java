@@ -43,8 +43,7 @@ public class ClassResultProcessor implements ComponentEventResultProcessor<Class
         _linkFactory = linkFactory;
     }
 
-    public ActionResponseGenerator processComponentEvent(Class value, Component component,
-                                                         String methodDescripion)
+    public ActionResponseGenerator processComponentEvent(Class value, Component component, String methodDescripion)
     {
         String className = value.getName();
         String pageName = _resolver.resolvePageClassNameToPageName(className);

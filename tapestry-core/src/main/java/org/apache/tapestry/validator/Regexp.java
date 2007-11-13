@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.validator;
 
-import org.apache.tapestry.*;
-import static org.apache.tapestry.TapestryUtils.quote;
+import org.apache.tapestry.Field;
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ValidationException;
+import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.services.FormSupport;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,24 +51,19 @@ public class Regexp implements Validator<Pattern, String>
         return formatter.format(constraintValue.toString(), field.getLabel());
     }
 
-    public void render(Field field, Pattern constraintValue, MessageFormatter formatter,
-                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
+    public void render(Field field, Pattern constraintValue, MessageFormatter formatter, MarkupWriter writer,
+                       FormSupport formSupport)
     {
-        pageRenderSupport.addScript(
-                "Tapestry.Field.regexp('%s', %s, %s);",
-                field.getClientId(),
-                quote(constraintValue.pattern()),
-                quote(buildMessage(formatter, field, constraintValue)));
-
+        formSupport.addValidation(field, "regexp", buildMessage(formatter, field, constraintValue),
+                                  constraintValue.pattern());
     }
 
-    public void validate(Field field, Pattern constraintValue, MessageFormatter formatter,
-                         String value) throws ValidationException
+    public void validate(Field field, Pattern constraintValue, MessageFormatter formatter, String value)
+            throws ValidationException
     {
         Matcher matcher = constraintValue.matcher(value);
 
-        if (!matcher.matches())
-            throw new ValidationException(buildMessage(formatter, field, constraintValue));
+        if (!matcher.matches()) throw new ValidationException(buildMessage(formatter, field, constraintValue));
     }
 
 }

@@ -41,8 +41,7 @@ public class PersistentFieldBundleImpl implements PersistentFieldBundle
     private String buildKey(String componentId, String fieldName)
     {
         StringBuilder builder = new StringBuilder();
-        if (componentId != null)
-            builder.append(componentId);
+        if (componentId != null) builder.append(componentId);
         builder.append(':');
         builder.append(fieldName);
 

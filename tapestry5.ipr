@@ -13,6 +13,7 @@
   <component name="CodeStyleSettingsManager">
     <option name="PER_PROJECT_SETTINGS">
       <value>
+        <option name="KEEP_LINE_BREAKS" value="false" />
         <option name="BRACE_STYLE" value="2" />
         <option name="CLASS_BRACE_STYLE" value="2" />
         <option name="METHOD_BRACE_STYLE" value="2" />
@@ -50,25 +51,15 @@
     <option name="DEFAULT_COMPILER" value="Javac" />
     <option name="DEPLOY_AFTER_MAKE" value="0" />
     <excludeFromCompile>
-      <file url="file://$PROJECT_DIR$/quickstart/src/main/resources/archetype-resources/src/main/java/pages/Start.java" />
-      <file url="file://$PROJECT_DIR$/quickstart/src/main/resources/archetype-resources/src/main/java/services/AppModule.java" />
+      <directory url="file://$PROJECT_DIR$/quickstart/src/main/resources" includeSubdirectories="true" />
     </excludeFromCompile>
     <resourceExtensions>
-      <entry name=".+\.(properties|xml|html|dtd|tld)" />
+      <entry name=".+\.(properties|xml|html|dtd|tld|tml|js|css)" />
       <entry name=".+\.(gif|png|jpeg|jpg)" />
     </resourceExtensions>
     <wildcardResourcePatterns>
       <entry name="?*.properties" />
       <entry name="?*.xml" />
-      <entry name="?*.gif" />
-      <entry name="?*.png" />
-      <entry name="?*.jpeg" />
-      <entry name="?*.jpg" />
-      <entry name="?*.html" />
-      <entry name="?*.dtd" />
-      <entry name="?*.tld" />
-      <entry name="?*.properties" />
-      <entry name="?*.xml" />
       <entry name="?*.html" />
       <entry name="?*.dtd" />
       <entry name="?*.tld" />
@@ -76,6 +67,9 @@
       <entry name="?*.png" />
       <entry name="?*.jpeg" />
       <entry name="?*.jpg" />
+      <entry name="?*.tml" />
+      <entry name="?*.css" />
+      <entry name="?*.js" />
     </wildcardResourcePatterns>
   </component>
   <component name="DependenciesAnalyzeManager">
@@ -108,6 +102,25 @@
           <module name="tutorial1">
             <files>
               <file url="file://$PROJECT_DIR$/tapestry-tutorial1/src/main/webapp/WEB-INF/web.xml" />
+            </files>
+          </module>
+          <module name="quickstart">
+            <files>
+              <file url="file://$PROJECT_DIR$/quickstart/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml" />
+            </files>
+          </module>
+          <module name="tapestry-core">
+            <files>
+              <file url="file://$PROJECT_DIR$/tapestry-core/src/test/app1/WEB-INF/web.xml" />
+            </files>
+          </module>
+        </modules>
+      </facet-type>
+      <facet-type id="hibernate">
+        <modules>
+          <module name="tapestry-hibernate">
+            <files>
+              <file url="file://$PROJECT_DIR$/tapestry-hibernate/src/test/resources/hibernate.cfg.xml" />
             </files>
           </module>
         </modules>

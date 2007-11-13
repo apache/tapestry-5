@@ -41,8 +41,6 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
     }
 
-    ;
-
     @Test
     public void unknown_validator_type()
     {
@@ -64,8 +62,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         try
         {
@@ -74,9 +71,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Unknown validator type 'foo'.  Configured validators are alpha, beta.");
+            assertEquals(ex.getMessage(), "Unknown validator type 'foo'.  Configured validators are alpha, beta.");
         }
 
         verify();
@@ -119,8 +114,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -160,8 +154,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         FieldValidator fieldValidator = source.createValidator(field, "required", null);
 
@@ -212,8 +205,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         FieldValidator fieldValidator = source.createValidators(field, "minlength");
 
@@ -246,8 +238,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         try
         {
@@ -256,9 +247,8 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Validator \'minlength\' requires a validation constraint (of type java.lang.Integer) but none was provided.");
+            assertEquals(ex.getMessage(),
+                         "Validator \'minlength\' requires a validation constraint (of type java.lang.Integer) but none was provided.");
         }
 
         verify();
@@ -301,8 +291,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         FieldValidator fieldValidator = source.createValidators(field, "required");
 
@@ -365,8 +354,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         FieldValidator fieldValidator = source.createValidators(field, "required,minLength=15");
 
@@ -414,8 +402,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null,
-                                                                   map);
+        FieldValidatorSource source = new FieldValidatorSourceImpl(messagesSource, coercer, null, map);
 
         FieldValidator fieldValidator = source.createValidator(field, "minLength", "5");
 
@@ -439,10 +426,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
     @Test
     public void parse_simple_type_list()
     {
-        test(
-                "required,email",
-                new ValidatorSpecification("required", null),
-                new ValidatorSpecification("email", null));
+        test("required,email", new ValidatorSpecification("required", null), new ValidatorSpecification("email", null));
     }
 
     @Test
@@ -454,26 +438,21 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
     @Test
     public void ignore_whitespace_around_type_name()
     {
-        test(
-                "  required  ,  email  ",
-                new ValidatorSpecification("required", null),
-                new ValidatorSpecification("email", null));
+        test("  required  ,  email  ", new ValidatorSpecification("required", null),
+             new ValidatorSpecification("email", null));
     }
 
     @Test
     public void parse_simple_type_with_value()
     {
-        test(
-                "minLength=5,sameAs=otherComponentId",
-                new ValidatorSpecification("minLength", "5"),
-                new ValidatorSpecification("sameAs", "otherComponentId"));
+        test("minLength=5,sameAs=otherComponentId", new ValidatorSpecification("minLength", "5"),
+             new ValidatorSpecification("sameAs", "otherComponentId"));
     }
 
     @Test
     public void whitespace_ignored_around_value()
     {
-        test("minLength=  5 , sameAs  = otherComponentId ", new ValidatorSpecification("minLength",
-                                                                                       "5"),
+        test("minLength=  5 , sameAs  = otherComponentId ", new ValidatorSpecification("minLength", "5"),
              new ValidatorSpecification("sameAs", "otherComponentId"));
     }
 
@@ -493,9 +472,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Unexpected character '.' at position 9 of input string: required.email");
+            assertEquals(ex.getMessage(), "Unexpected character '.' at position 9 of input string: required.email");
         }
     }
 
@@ -509,9 +486,8 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Unexpected character '.' at position 13 of input string: minLength=3 . email");
+            assertEquals(ex.getMessage(),
+                         "Unexpected character '.' at position 13 of input string: minLength=3 . email");
         }
     }
 }

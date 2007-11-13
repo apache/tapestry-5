@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.validator;
 
-import org.apache.tapestry.*;
-import static org.apache.tapestry.TapestryUtils.quote;
+import org.apache.tapestry.Field;
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ValidationException;
+import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.services.FormSupport;
 
 public final class MaxLength implements Validator<Integer, String>
 {
@@ -40,8 +43,8 @@ public final class MaxLength implements Validator<Integer, String>
         return false;
     }
 
-    public void validate(Field field, Integer constraintValue, MessageFormatter formatter,
-                         String value) throws ValidationException
+    public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)
+            throws ValidationException
     {
         if (value.length() > constraintValue)
             throw new ValidationException(buildMessage(formatter, field, constraintValue));
@@ -52,16 +55,12 @@ public final class MaxLength implements Validator<Integer, String>
         return formatter.format(constraintValue, field.getLabel());
     }
 
-    public void render(Field field, Integer constraintValue, MessageFormatter formatter,
-                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
+    public void render(Field field, Integer constraintValue, MessageFormatter formatter, MarkupWriter writer,
+                       FormSupport formSupport)
     {
         // TODO: write a maxlength attribute into the element?  But that's only for
         // textfield, not for textarea.
 
-        pageRenderSupport.addScript(
-                "Tapestry.Field.maxlength('%s', %d, %s);",
-                field.getClientId(),
-                constraintValue,
-                quote(buildMessage(formatter, field, constraintValue)));
+        formSupport.addValidation(field, "maxlength", buildMessage(formatter, field, constraintValue), constraintValue);
     }
 }

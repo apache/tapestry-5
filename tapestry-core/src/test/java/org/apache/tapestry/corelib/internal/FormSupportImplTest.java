@@ -14,7 +14,10 @@
 
 package org.apache.tapestry.corelib.internal;
 
+import org.apache.tapestry.Field;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.json.JSONObject;
 import org.testng.annotations.Test;
 
 public class FormSupportImplTest extends InternalBaseTestCase
@@ -123,10 +126,50 @@ public class FormSupportImplTest extends InternalBaseTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Encoding type of form has already been set to \'foo\' and may not be changed to \'bar\'.");
+            assertEquals(ex.getMessage(),
+                         "Encoding type of form has already been set to \'foo\' and may not be changed to \'bar\'.");
         }
 
     }
+
+    @Test
+    public void add_validations()
+    {
+        Field barney = newField("barney");
+        Field fred = newField("fred");
+
+        replay();
+
+        FormSupportImpl support = new FormSupportImpl();
+
+        support.addValidation(barney, "required", "Who can live without Barney?", null);
+        support.addValidation(barney, "email", "You know, an e-mail address.", null);
+        support.addValidation(fred, "maxlength", "Up to 10 characters", 10);
+
+        verify();
+
+
+        JSONObject validations = support.getValidations();
+
+        // Tip-toe around the fact that the order of the keys is JDK specific.
+
+        assertEquals(CollectionFactory.newSet(validations.keys()), CollectionFactory.newSet("fred", "barney"));
+
+        assertEquals(validations.get("fred").toString(), "[[\"maxlength\",\"Up to 10 characters\",10]]");
+        assertEquals(validations.get("barney").toString(),
+                     "[[\"required\",\"Who can live without Barney?\"],[\"email\",\"You know, an e-mail address.\"]]");
+
+
+    }
+
+    private Field newField(String clientId)
+    {
+        Field field = newMock(Field.class);
+
+        expect(field.getClientId()).andReturn(clientId).atLeastOnce();
+
+        return field;
+    }
+
+
 }

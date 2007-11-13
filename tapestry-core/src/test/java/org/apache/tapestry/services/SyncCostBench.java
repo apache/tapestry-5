@@ -44,8 +44,7 @@ public class SyncCostBench
      */
     static class Worker implements Runnable
     {
-        private long[] _series =
-                {1, 1};
+        private long[] _series = {1, 1};
 
         public void run()
         {

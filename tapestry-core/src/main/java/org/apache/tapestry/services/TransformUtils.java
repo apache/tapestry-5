@@ -74,11 +74,9 @@ public final class TransformUtils
     {
     }
 
-    private static void add(Class primitiveType, Class wrapperType, String unwrapperMethodName,
-                            String defaultValue)
+    private static void add(Class primitiveType, Class wrapperType, String unwrapperMethodName, String defaultValue)
     {
-        PrimitiveTypeInfo info = new PrimitiveTypeInfo(wrapperType, unwrapperMethodName,
-                                                       defaultValue);
+        PrimitiveTypeInfo info = new PrimitiveTypeInfo(wrapperType, unwrapperMethodName, defaultValue);
 
         _classToInfo.put(primitiveType, info);
         _nameToInfo.put(primitiveType.getName(), info);
