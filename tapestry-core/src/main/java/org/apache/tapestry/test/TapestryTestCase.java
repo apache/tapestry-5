@@ -67,8 +67,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         return new MarkupWriterImpl();
     }
 
-    protected final void train_getAliasesForMode(AliasManager manager, String mode,
-                                                 Map<Class, Object> configuration)
+    protected final void train_getAliasesForMode(AliasManager manager, String mode, Map<Class, Object> configuration)
     {
         expect(manager.getAliasesForMode(mode)).andReturn(configuration);
     }
@@ -325,29 +324,28 @@ public abstract class TapestryTestCase extends IOCTestCase
         }
     }
 
-    protected final void train_addField(ClassTransformation transformation, int modifiers,
-                                        String type, String suggestedName, String actualName)
+    protected final void train_addField(ClassTransformation transformation, int modifiers, String type,
+                                        String suggestedName, String actualName)
     {
         expect(transformation.addField(modifiers, type, suggestedName)).andReturn(actualName);
     }
 
-    protected final void train_addInjectedField(ClassTransformation ct, Class type,
-                                                String suggestedName, Object value, String fieldName)
+    protected final void train_addInjectedField(ClassTransformation ct, Class type, String suggestedName, Object value,
+                                                String fieldName)
     {
         expect(ct.addInjectedField(type, suggestedName, value)).andReturn(fieldName);
     }
 
-    protected final void train_addMethod(ClassTransformation transformation,
-                                         TransformMethodSignature signature, String... body)
+    protected final void train_addMethod(ClassTransformation transformation, TransformMethodSignature signature,
+                                         String... body)
     {
         transformation.addMethod(eq(signature), codeEq(join(body)));
     }
 
-    protected final void train_buildConstraints(ValidationConstraintGenerator generator,
-                                                Class propertyType, AnnotationProvider provider, String... constraints)
+    protected final void train_buildConstraints(ValidationConstraintGenerator generator, Class propertyType,
+                                                AnnotationProvider provider, String... constraints)
     {
-        expect(generator.buildConstraints(propertyType, provider)).andReturn(
-                Arrays.asList(constraints));
+        expect(generator.buildConstraints(propertyType, provider)).andReturn(Arrays.asList(constraints));
     }
 
     protected final <T> void train_create(ApplicationStateCreator<T> creator, T aso)
@@ -360,18 +358,12 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(factory.createAsset(resource)).andReturn(asset);
     }
 
-    protected final void train_createValidator(FieldValidatorSource source, Field field,
-                                               String validatorType, String constraintValue, String overrideId,
-                                               Messages overrideMessages, Locale locale, FieldValidator result)
+    protected final void train_createValidator(FieldValidatorSource source, Field field, String validatorType,
+                                               String constraintValue, String overrideId, Messages overrideMessages,
+                                               Locale locale, FieldValidator result)
     {
-        expect(
-                source.createValidator(
-                        field,
-                        validatorType,
-                        constraintValue,
-                        overrideId,
-                        overrideMessages,
-                        locale)).andReturn(result);
+        expect(source.createValidator(field, validatorType, constraintValue, overrideId, overrideMessages,
+                                      locale)).andReturn(result);
     }
 
     protected final void train_encodeRedirectURL(Response response, String URI, String encoded)
@@ -384,8 +376,8 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(response.encodeURL(inputURL)).andReturn(outputURL);
     }
 
-    protected final <T> void train_exists(ApplicationStatePersistenceStrategy strategy,
-                                          Class<T> asoClass, boolean exists)
+    protected final <T> void train_exists(ApplicationStatePersistenceStrategy strategy, Class<T> asoClass,
+                                          boolean exists)
     {
         expect(strategy.exists(asoClass)).andReturn(exists);
     }
@@ -395,14 +387,13 @@ public abstract class TapestryTestCase extends IOCTestCase
         transformation.extendConstructor(codeEq(join(body)));
     }
 
-    protected final void train_extendMethod(ClassTransformation transformation,
-                                            TransformMethodSignature signature, String... body)
+    protected final void train_extendMethod(ClassTransformation transformation, TransformMethodSignature signature,
+                                            String... body)
     {
         transformation.extendMethod(eq(signature), codeEq(join(body)));
     }
 
-    protected final void train_findAsset(AssetSource source, Resource root, String path,
-                                         Locale locale, Asset asset)
+    protected final void train_findAsset(AssetSource source, Resource root, String path, Locale locale, Asset asset)
     {
         expect(source.findAsset(root, path, locale)).andReturn(asset);
     }
@@ -457,26 +448,24 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(tf.findMethodsWithAnnotation(annotationType)).andReturn(sigs);
     }
 
-    protected final void train_findUnclaimedFields(ClassTransformation transformation,
-                                                   String... fieldNames)
+    protected final void train_findUnclaimedFields(ClassTransformation transformation, String... fieldNames)
     {
         expect(transformation.findUnclaimedFields()).andReturn(Arrays.asList(fieldNames));
     }
 
-    protected final void train_generateChecksum(ResourceDigestGenerator generator, URL url,
-                                                String digest)
+    protected final void train_generateChecksum(ResourceDigestGenerator generator, URL url, String digest)
     {
         expect(generator.generateDigest(url)).andReturn(digest);
     }
 
-    protected final <T> void train_get(ApplicationStatePersistenceStrategy strategy,
-                                       Class<T> asoClass, ApplicationStateCreator<T> creator, T aso)
+    protected final <T> void train_get(ApplicationStatePersistenceStrategy strategy, Class<T> asoClass,
+                                       ApplicationStateCreator<T> creator, T aso)
     {
         expect(strategy.get(asoClass, creator)).andReturn(aso);
     }
 
-    protected final void train_get(ApplicationStatePersistenceStrategySource source,
-                                   String strategyName, ApplicationStatePersistenceStrategy strategy)
+    protected final void train_get(ApplicationStatePersistenceStrategySource source, String strategyName,
+                                   ApplicationStatePersistenceStrategy strategy)
     {
         expect(source.get(strategyName)).andReturn(strategy).atLeastOnce();
     }
@@ -516,8 +505,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(source.getClasspathAsset(path)).andReturn(asset);
     }
 
-    protected final void train_getClasspathAsset(AssetSource source, String path, Locale locale,
-                                                 Asset asset)
+    protected final void train_getClasspathAsset(AssetSource source, String path, Locale locale, Asset asset)
     {
         expect(source.getClasspathAsset(path, locale)).andReturn(asset);
     }
@@ -537,8 +525,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getComponentClassName()).andReturn(className).atLeastOnce();
     }
 
-    protected final void train_getComponentResources(Component component,
-                                                     ComponentResources resources)
+    protected final void train_getComponentResources(Component component, ComponentResources resources)
     {
         expect(component.getComponentResources()).andReturn(resources).atLeastOnce();
     }
@@ -558,8 +545,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(resources.getContainer()).andReturn(container).atLeastOnce();
     }
 
-    protected final void train_getContainerMessages(ComponentResources resources,
-                                                    Messages containerMessages)
+    protected final void train_getContainerMessages(ComponentResources resources, Messages containerMessages)
     {
         expect(resources.getContainerMessages()).andReturn(containerMessages).atLeastOnce();
     }
@@ -575,21 +561,19 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(request.getDateHeader(name)).andReturn(value).atLeastOnce();
     }
 
-    protected final <T extends Annotation> void train_getFieldAnnotation(
-            ClassTransformation transformation, String fieldName, Class<T> annotationClass,
-            T annotation)
+    protected final <T extends Annotation> void train_getFieldAnnotation(ClassTransformation transformation,
+                                                                         String fieldName, Class<T> annotationClass,
+                                                                         T annotation)
     {
         expect(transformation.getFieldAnnotation(fieldName, annotationClass)).andReturn(annotation);
     }
 
-    protected final void train_getFieldPersistenceStrategy(ComponentModel model, String fieldName,
-                                                           String fieldStrategy)
+    protected final void train_getFieldPersistenceStrategy(ComponentModel model, String fieldName, String fieldStrategy)
     {
         expect(model.getFieldPersistenceStrategy(fieldName)).andReturn(fieldStrategy).atLeastOnce();
     }
 
-    protected final void train_getFieldType(ClassTransformation transformation, String fieldName,
-                                            String type)
+    protected final void train_getFieldType(ClassTransformation transformation, String fieldName, String type)
     {
         expect(transformation.getFieldType(fieldName)).andReturn(type).atLeastOnce();
 
@@ -644,8 +628,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(transformation.getMethodIdentifier(signature)).andReturn(id);
     }
 
-    protected final void train_getOutputStream(HttpServletResponse response,
-                                               ServletOutputStream stream)
+    protected final void train_getOutputStream(HttpServletResponse response, ServletOutputStream stream)
     {
         try
         {
@@ -698,8 +681,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(factory.getRootResource()).andReturn(rootResource);
     }
 
-    protected final void train_getSession(HttpServletRequest request, boolean create,
-                                          HttpSession session)
+    protected final void train_getSession(HttpServletRequest request, boolean create, HttpSession session)
     {
         expect(request.getSession(create)).andReturn(session);
     }
@@ -714,8 +696,8 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(model.getSupportsInformalParameters()).andReturn(supports);
     }
 
-    protected final void train_getValidationMessages(ValidationMessagesSource messagesSource,
-                                                     Locale locale, Messages messages)
+    protected final void train_getValidationMessages(ValidationMessagesSource messagesSource, Locale locale,
+                                                     Messages messages)
     {
         expect(messagesSource.getValidationMessages(locale)).andReturn(messages).atLeastOnce();
     }
@@ -726,8 +708,8 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     @SuppressWarnings("unchecked")
-    protected final void train_handleResult(ComponentEventHandler handler, Object result,
-                                            Component component, String methodDescription, boolean abort)
+    protected final void train_handleResult(ComponentEventHandler handler, Object result, Component component,
+                                            String methodDescription, boolean abort)
     {
         expect(handler.handleResult(result, component, methodDescription)).andReturn(abort);
     }
@@ -762,35 +744,27 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(parameter.name()).andReturn(name).atLeastOnce();
     }
 
-    protected final void train_newBinding(BindingFactory factory, String description,
-                                          ComponentResources container, ComponentResources component, String expression,
-                                          Location l, Binding binding)
+    protected final void train_newBinding(BindingFactory factory, String description, ComponentResources container,
+                                          ComponentResources component, String expression, Location l, Binding binding)
     {
-        expect(factory.newBinding(description, container, component, expression, l)).andReturn(
-                binding);
+        expect(factory.newBinding(description, container, component, expression, l)).andReturn(binding);
     }
 
     protected void train_newBinding(BindingSource bindingSource, String description,
                                     ComponentResources componentResources, String defaultBindingPrefix,
-                                    String expression,
-                                    Binding binding)
+                                    String expression, Binding binding)
     {
-        expect(
-                bindingSource.newBinding(
-                        description,
-                        componentResources,
-                        defaultBindingPrefix,
-                        expression)).andReturn(binding);
+        expect(bindingSource.newBinding(description, componentResources, defaultBindingPrefix, expression)).andReturn(
+                binding);
     }
 
-    protected final void train_newMemberName(ClassTransformation transformation, String suggested,
-                                             String name)
+    protected final void train_newMemberName(ClassTransformation transformation, String suggested, String name)
     {
         expect(transformation.newMemberName(suggested)).andReturn(name);
     }
 
-    protected final void train_newMemberName(ClassTransformation transformation, String prefix,
-                                             String baseName, String name)
+    protected final void train_newMemberName(ClassTransformation transformation, String prefix, String baseName,
+                                             String name)
     {
         expect(transformation.newMemberName(prefix, baseName)).andReturn(name);
     }
@@ -805,9 +779,8 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(env.peekRequired(type)).andReturn(value);
     }
 
-    protected final void train_provideInjection(InjectionProvider provider, String fieldName,
-                                                Class fieldType, ObjectLocator locator,
-                                                ClassTransformation transformation,
+    protected final void train_provideInjection(InjectionProvider provider, String fieldName, Class fieldType,
+                                                ObjectLocator locator, ClassTransformation transformation,
                                                 MutableComponentModel model, boolean result)
     {
         expect(provider.provideInjection(fieldName, fieldType, locator, transformation, model))
@@ -815,8 +788,8 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     @SuppressWarnings("unchecked")
-    protected final void train_renderInformalParameters(ComponentResources resources,
-                                                        final MarkupWriter writer, final Object... informals)
+    protected final void train_renderInformalParameters(ComponentResources resources, final MarkupWriter writer,
+                                                        final Object... informals)
     {
         resources.renderInformalParameters(writer);
         IAnswer answer = new IAnswer()
@@ -832,14 +805,13 @@ public abstract class TapestryTestCase extends IOCTestCase
         getMocksControl().andAnswer(answer);
     }
 
-    protected final void train_requiresDigest(ResourceDigestGenerator generator, String path,
-                                              boolean requiresDigest)
+    protected final void train_requiresDigest(ResourceDigestGenerator generator, String path, boolean requiresDigest)
     {
         expect(generator.requiresDigest(path)).andReturn(requiresDigest);
     }
 
-    protected final void train_service(RequestHandler handler, Request request, Response response,
-                                       boolean result) throws IOException
+    protected final void train_service(RequestHandler handler, Request request, Response response, boolean result)
+            throws IOException
     {
         expect(handler.service(request, response)).andReturn(result);
     }
@@ -854,14 +826,12 @@ public abstract class TapestryTestCase extends IOCTestCase
         response.setContentType(contentType);
     }
 
-    protected final void train_setDateHeader(HttpServletResponse response, String headerName,
-                                             long date)
+    protected final void train_setDateHeader(HttpServletResponse response, String headerName, long date)
     {
         response.setDateHeader(headerName, date);
     }
 
-    protected final void train_toClass(ClassTransformation transformation, String type,
-                                       Class classForType)
+    protected final void train_toClass(ClassTransformation transformation, String type, Class classForType)
     {
         expect(transformation.toClass(type)).andReturn(classForType);
     }
@@ -871,8 +841,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(asset.toClientURL()).andReturn(URL).atLeastOnce();
     }
 
-    protected final void train_toClientURL(ClasspathAssetAliasManager manager, String resourcePath,
-                                           String clientURL)
+    protected final void train_toClientURL(ClasspathAssetAliasManager manager, String resourcePath, String clientURL)
     {
         expect(manager.toClientURL(resourcePath)).andReturn(clientURL);
     }
@@ -882,8 +851,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(link.toRedirectURI()).andReturn(URI).atLeastOnce();
     }
 
-    protected final void train_toResourcePath(ClasspathAssetAliasManager manager, String clientURL,
-                                              String resourcePath)
+    protected final void train_toResourcePath(ClasspathAssetAliasManager manager, String clientURL, String resourcePath)
     {
         expect(manager.toResourcePath(clientURL)).andReturn(resourcePath).atLeastOnce();
     }
@@ -898,8 +866,8 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(annotation.value()).andReturn(value).atLeastOnce();
     }
 
-    protected final void train_create(BeanModelSource source, Class beanClass,
-                                      boolean filterReadOnly, ComponentResources containerResources, BeanModel model)
+    protected final void train_create(BeanModelSource source, Class beanClass, boolean filterReadOnly,
+                                      ComponentResources containerResources, BeanModel model)
     {
         expect(source.create(beanClass, filterReadOnly, containerResources)).andReturn(model);
     }
@@ -959,10 +927,8 @@ public abstract class TapestryTestCase extends IOCTestCase
         {
             is = componentClass.getResourceAsStream(file);
 
-            if (is == null)
-                throw new RuntimeException(String.format(
-                        "Class %s does not have a message catalog.",
-                        componentClass.getName()));
+            if (is == null) throw new RuntimeException(
+                    String.format("Class %s does not have a message catalog.", componentClass.getName()));
 
             properties.load(is);
         }
@@ -981,6 +947,6 @@ public abstract class TapestryTestCase extends IOCTestCase
             map.put(skey, properties.getProperty(skey));
         }
 
-        return new MapMessages(map);
+        return new MapMessages(Locale.ENGLISH, map);
     }
 }

@@ -44,16 +44,17 @@ public class MessagesImpl extends AbstractMessages
         String className = forClass.getName();
         String stringsClassName = className.replaceAll("Messages$", "Strings");
 
-        ResourceBundle bundle = ResourceBundle.getBundle(
-                stringsClassName,
-                Locale.getDefault(),
-                forClass.getClassLoader());
+        Locale locale = Locale.getDefault();
 
-        return new MessagesImpl(bundle);
+        ResourceBundle bundle = ResourceBundle.getBundle(stringsClassName, locale, forClass.getClassLoader());
+
+        return new MessagesImpl(locale, bundle);
     }
 
-    public MessagesImpl(ResourceBundle bundle)
+    public MessagesImpl(Locale locale, ResourceBundle bundle)
     {
+        super(locale);
+
         // Our best (threadsafe) chance to determine all the available keys.
         Enumeration<String> e = bundle.getKeys();
         while (e.hasMoreElements())
