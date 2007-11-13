@@ -176,7 +176,7 @@ Adding New Property Editors
 +---+
 public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, String> configuration)
 {
-  configuration.put(BigDecimal.class, "currency");
+  configuration.add(BigDecimal.class, "currency");
 }
 +---+
 
