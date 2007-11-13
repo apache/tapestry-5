@@ -35,8 +35,8 @@ public class MethodInvocationBuilderTest extends TapestryTestCase
 
         replay();
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
-                {MARKUP_WRITER_CLASS_NAME}, null);
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod",
+                                                                    new String[]{MARKUP_WRITER_CLASS_NAME}, null);
 
         MethodInvocationBuilder invoker = new MethodInvocationBuilder();
 
@@ -54,8 +54,8 @@ public class MethodInvocationBuilderTest extends TapestryTestCase
 
         replay();
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
-                {MARKUP_WRITER_CLASS_NAME}, null);
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod",
+                                                                    new String[]{MARKUP_WRITER_CLASS_NAME}, null);
 
         MethodInvocationBuilder invoker = new MethodInvocationBuilder();
 
@@ -71,8 +71,8 @@ public class MethodInvocationBuilderTest extends TapestryTestCase
 
         replay();
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]
-                {MARKUP_WRITER_CLASS_NAME, LOCALE_CLASS_NAME}, null);
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "myMethod", new String[]{
+                MARKUP_WRITER_CLASS_NAME, LOCALE_CLASS_NAME}, null);
 
         MethodInvocationBuilder invoker = new MethodInvocationBuilder();
 

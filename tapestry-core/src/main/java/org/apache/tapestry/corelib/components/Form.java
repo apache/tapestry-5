@@ -190,12 +190,12 @@ public class Form implements ClientElement, FormValidationControl
         _formSupport = new FormSupportImpl(_name, _actions);
 
         // TODO: Forms should not allow to nest. Perhaps a set() method instead of a push() method
-        // for this kind of check?
+        // for this kind of check?  
 
         _environment.push(FormSupport.class, _formSupport);
         _environment.push(ValidationTracker.class, _tracker);
         // Now that the environment is setup, inform the component or other listeners that the form
-        // is about to render.
+        // is about to render.  
 
         Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
 
@@ -222,9 +222,6 @@ public class Form implements ClientElement, FormValidationControl
 
         writer.end(); // div
 
-        if (_clientValidation)
-            _pageRenderSupport.addScript(format("Tapestry.registerForm('%s');", _name));
-
         _environment.peek(Heartbeat.class).begin();
 
     }
@@ -234,6 +231,14 @@ public class Form implements ClientElement, FormValidationControl
         _environment.peek(Heartbeat.class).end();
 
         _formSupport.executeDeferred();
+
+        if (_clientValidation)
+        {
+            // The validations are a JSON object that doesn't need to be enclosed in quotes.
+            // Invoking addScript() will add in the default JavaScript (prototype, scriptaculous, tapestry.js).
+            _pageRenderSupport.addScript(
+                    format("Tapestry.registerForm('%s', %s);", _name, _formSupport.getValidations()));
+        }
 
         String encodingType = _formSupport.getEncodingType();
 
@@ -288,15 +293,11 @@ public class Form implements ClientElement, FormValidationControl
 
             ComponentEventHandler handler = new ComponentEventHandler()
             {
-                public boolean handleResult(Object result, Component component,
-                                            String methodDescription)
+                public boolean handleResult(Object result, Component component, String methodDescription)
                 {
                     if (result instanceof Boolean) return ((Boolean) result);
 
-                    holder.put(_eventResultProcessor.processComponentEvent(
-                            result,
-                            component,
-                            methodDescription));
+                    holder.put(_eventResultProcessor.processComponentEvent(result, component, methodDescription));
 
                     return true; // Abort other event processing.
                 }

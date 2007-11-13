@@ -41,8 +41,7 @@ public class ReflectiveInstantiator implements Instantiator
      * @param parameters     passed to the constructor; the first instance is ignored (and overriden) as the
      *                       {@link org.apache.tapestry.internal.InternalComponentResources} instance.
      */
-    ReflectiveInstantiator(ComponentModel componentModel, Class instanceClass,
-                           Object[] constructorParameters)
+    ReflectiveInstantiator(ComponentModel componentModel, Class instanceClass, Object[] constructorParameters)
     {
         _componentModel = componentModel;
         _constructorParameters = constructorParameters;
@@ -61,8 +60,7 @@ public class ReflectiveInstantiator implements Instantiator
     {
         for (Constructor c : instanceClass.getConstructors())
         {
-            if (c.getParameterTypes().length == parameterCount)
-                return c;
+            if (c.getParameterTypes().length == parameterCount) return c;
         }
 
         throw new RuntimeException(ServicesMessages.noConstructorFound(instanceClass));

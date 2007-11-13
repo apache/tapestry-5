@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.transform.pages;
+package org.apache.tapestry.integration;
 
-import org.apache.tapestry.internal.services.FooInterface;
+import org.apache.tapestry.test.JettyRunner;
 
 /**
- *
+ * Temporary "shim" to run Demo App #1 inside IntelliJ.  Eventually, we should write a "Jetty InPlace Integration Plugin"
+ * that works like JettyLauncher for Eclipse.
  */
-public class FooImpl implements FooInterface
+public class RunJetty
 {
-
-    public void foo()
+    public static void main(String[] args) throws InterruptedException
     {
-    }
+        JettyRunner runner = new JettyRunner("/", 8080, "src/test/app1");
 
+        Thread.sleep(Long.MAX_VALUE);
+
+        runner.stop();
+    }
 }

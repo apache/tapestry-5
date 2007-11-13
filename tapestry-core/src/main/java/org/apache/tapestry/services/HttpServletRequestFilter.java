@@ -30,6 +30,6 @@ public interface HttpServletRequestFilter
      *
      * @return true if the request has been handled, false otherwise
      */
-    boolean service(HttpServletRequest request, HttpServletResponse response,
-                    HttpServletRequestHandler handler) throws IOException;
+    boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
+            throws IOException;
 }

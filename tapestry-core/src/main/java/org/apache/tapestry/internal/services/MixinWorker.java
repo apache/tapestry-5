@@ -57,12 +57,8 @@ public class MixinWorker implements ComponentClassTransformWorker
 
             transformation.makeReadOnly(fieldName);
 
-            String body = String.format(
-                    "%s = (%s) %s.getMixinByClassName(\"%s\");",
-                    fieldName,
-                    fieldType,
-                    transformation.getResourcesFieldName(),
-                    mixinClassName);
+            String body = String.format("%s = (%s) %s.getMixinByClassName(\"%s\");", fieldName, fieldType,
+                                        transformation.getResourcesFieldName(), mixinClassName);
 
             transformation
                     .extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);

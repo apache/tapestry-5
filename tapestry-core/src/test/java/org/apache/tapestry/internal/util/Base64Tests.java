@@ -84,8 +84,7 @@ public class Base64Tests extends Assert
     @Test
     public void checks_for_eof() throws Exception
     {
-        String[] values =
-                {"fred", "barney", "wilma"};
+        String[] values = {"fred", "barney", "wilma"};
 
         Base64ObjectOutputStream os = new Base64ObjectOutputStream();
 

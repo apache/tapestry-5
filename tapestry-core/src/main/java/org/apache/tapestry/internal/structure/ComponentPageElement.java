@@ -30,8 +30,7 @@ import org.apache.tapestry.services.PersistentFieldManager;
  * Extended version of {@link org.apache.tapestry.internal.structure.PageElement} for elements that
  * are, in fact, components (rather than just static markup).
  */
-public interface ComponentPageElement extends ComponentResourcesCommon,
-                                              InternalComponentResourcesCommon, PageElement, BodyPageElement
+public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, PageElement, BodyPageElement
 {
     /**
      * Returns the core component associated with this page element (as opposed to any mixins

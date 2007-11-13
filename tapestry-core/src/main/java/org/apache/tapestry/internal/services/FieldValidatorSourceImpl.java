@@ -14,7 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.*;
+import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.Field;
+import org.apache.tapestry.FieldValidator;
+import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
@@ -24,6 +27,7 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FieldValidatorSource;
+import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
 import java.util.List;
@@ -38,15 +42,14 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
     private final TypeCoercer _typeCoercer;
 
-    private final PageRenderSupport _pageRenderSupport;
+    private final FormSupport _formSupport;
 
-    public FieldValidatorSourceImpl(ValidationMessagesSource messagesSource,
-                                    TypeCoercer typeCoercer, PageRenderSupport pageRenderSupport,
-                                    Map<String, Validator> validators)
+    public FieldValidatorSourceImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer,
+                                    FormSupport formSupport, Map<String, Validator> validators)
     {
         _messagesSource = messagesSource;
         _typeCoercer = typeCoercer;
-        _pageRenderSupport = pageRenderSupport;
+        _formSupport = formSupport;
         _validators = validators;
     }
 
@@ -64,27 +67,18 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
         Messages overrideMessages = componentResources.getContainerMessages();
 
-        return createValidator(
-                field,
-                validatorType,
-                constraintValue,
-                overrideId,
-                overrideMessages,
-                locale);
+        return createValidator(field, validatorType, constraintValue, overrideId, overrideMessages, locale);
     }
 
-    public FieldValidator createValidator(Field field, String validatorType,
-                                          String constraintValue, String overrideId, Messages overrideMessages,
-                                          Locale locale)
+    public FieldValidator createValidator(Field field, String validatorType, String constraintValue, String overrideId,
+                                          Messages overrideMessages, Locale locale)
     {
         notBlank(validatorType, "validatorType");
 
         Validator validator = _validators.get(validatorType);
 
-        if (validator == null)
-            throw new IllegalArgumentException(ServicesMessages.unknownValidatorType(
-                    validatorType,
-                    InternalUtils.sortedKeys(_validators)));
+        if (validator == null) throw new IllegalArgumentException(
+                ServicesMessages.unknownValidatorType(validatorType, InternalUtils.sortedKeys(_validators)));
 
         // I just have this thing about always treating parameters as finals, so
         // we introduce a second variable to treat a mutable.
@@ -98,36 +92,27 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         {
             String key = overrideId + "-" + validatorType;
 
-            if (overrideMessages.contains(key))
-                finalConstraintValue = overrideMessages.get(key);
-            else
-                throw new IllegalArgumentException(ServicesMessages.missingValidatorConstraint(
-                        validatorType,
-                        validator.getConstraintType()));
+            if (overrideMessages.contains(key)) finalConstraintValue = overrideMessages.get(key);
+            else throw new IllegalArgumentException(
+                    ServicesMessages.missingValidatorConstraint(validatorType, validator.getConstraintType()));
         }
 
         Object coercedConstraintValue = coerceConstraintValue(finalConstraintValue, validator
                 .getConstraintType());
 
-        MessageFormatter formatter = findMessageFormatter(
-                overrideId,
-                overrideMessages,
-                locale,
-                validatorType,
-                validator);
+        MessageFormatter formatter = findMessageFormatter(overrideId, overrideMessages, locale, validatorType,
+                                                          validator);
 
-        return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator,
-                                      _pageRenderSupport);
+        return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator, _formSupport);
     }
 
-    private MessageFormatter findMessageFormatter(String overrideId, Messages overrideMessages,
-                                                  Locale locale, String validatorType, Validator validator)
+    private MessageFormatter findMessageFormatter(String overrideId, Messages overrideMessages, Locale locale,
+                                                  String validatorType, Validator validator)
     {
 
         String overrideKey = overrideId + "-" + validatorType + "-message";
 
-        if (overrideMessages.contains(overrideKey))
-            return overrideMessages.getFormatter(overrideKey);
+        if (overrideMessages.contains(overrideKey)) return overrideMessages.getFormatter(overrideKey);
 
         Messages messages = _messagesSource.getValidationMessages(locale);
 
@@ -192,8 +177,6 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
          */
         COMMA
     }
-
-    ;
 
     static List<ValidatorSpecification> parse(String specification)
     {
@@ -345,8 +328,6 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
     private static void parseError(int cursor, String specification)
     {
-        throw new RuntimeException(ServicesMessages.validatorSpecificationParseError(
-                cursor,
-                specification));
+        throw new RuntimeException(ServicesMessages.validatorSpecificationParseError(cursor, specification));
     }
 }

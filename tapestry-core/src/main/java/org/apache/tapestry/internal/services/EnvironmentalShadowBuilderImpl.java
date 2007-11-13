@@ -34,8 +34,7 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
     /**
      * Construct using the default builtin factory, not the component layer version.
      */
-    public EnvironmentalShadowBuilderImpl(@Builtin
-    ClassFactory classFactory,
+    public EnvironmentalShadowBuilderImpl(@Builtin ClassFactory classFactory,
 
                                           Environment environment)
     {
@@ -70,16 +69,14 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
         classFab.addField("_environment", Environment.class);
         classFab.addField("_serviceType", Class.class);
 
-        classFab.addConstructor(new Class[]
-                {Environment.class, Class.class}, null, "{ _environment = $1; _serviceType = $2; }");
+        classFab.addConstructor(new Class[]{Environment.class, Class.class}, null,
+                                "{ _environment = $1; _serviceType = $2; }");
 
-        classFab.addMethod(Modifier.PRIVATE, new MethodSignature(serviceType, "_delegate", null,
-                                                                 null),
+        classFab.addMethod(Modifier.PRIVATE, new MethodSignature(serviceType, "_delegate", null, null),
                            "return ($r) _environment.peekRequired(_serviceType); ");
 
-        classFab.proxyMethodsToDelegate(serviceType, "_delegate()", format(
-                "<EnvironmentalProxy for %s>",
-                serviceType.getName()));
+        classFab.proxyMethodsToDelegate(serviceType, "_delegate()",
+                                        format("<EnvironmentalProxy for %s>", serviceType.getName()));
 
         return classFab.createClass();
     }

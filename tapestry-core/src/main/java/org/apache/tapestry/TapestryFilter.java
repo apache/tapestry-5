@@ -64,8 +64,7 @@ public class TapestryFilter implements Filter
 
         SymbolProvider provider = new ServletContextSymbolProvider(context);
 
-        TapestryAppInitializer appInitializer = new TapestryAppInitializer(provider, filterName,
-                                                                           "servlet");
+        TapestryAppInitializer appInitializer = new TapestryAppInitializer(provider, filterName, "servlet");
 
         appInitializer.addModules(provideExtraModuleDefs(context));
 
@@ -75,17 +74,14 @@ public class TapestryFilter implements Filter
 
         long toRegistry = appInitializer.getRegistryCreatedTime();
 
-        ServletApplicationInitializer ai = _registry.getService(
-                "ServletApplicationInitializer",
-                ServletApplicationInitializer.class);
+        ServletApplicationInitializer ai = _registry.getService("ServletApplicationInitializer",
+                                                                ServletApplicationInitializer.class);
 
         ai.initializeApplication(filterConfig.getServletContext());
 
         _registry.performRegistryStartup();
 
-        _handler = _registry.getService(
-                "HttpServletRequestHandler",
-                HttpServletRequestHandler.class);
+        _handler = _registry.getService("HttpServletRequestHandler", HttpServletRequestHandler.class);
 
         init(_registry);
 
@@ -94,8 +90,8 @@ public class TapestryFilter implements Filter
         StringBuilder buffer = new StringBuilder("Startup status:\n\n");
         Formatter f = new Formatter(buffer);
 
-        f.format("Startup time: %,d ms to build IoC Registry, %,d ms overall."
-                + "\n\nStartup services status:\n", toRegistry - start, toFinish - start);
+        f.format("Startup time: %,d ms to build IoC Registry, %,d ms overall." + "\n\nStartup services status:\n",
+                 toRegistry - start, toFinish - start);
 
         int unrealized = 0;
 
@@ -104,21 +100,31 @@ public class TapestryFilter implements Filter
 
         List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
 
+        int longest = 0;
+
+        // One pass to find the longest name, and to count the unrealized services.
+
         for (ServiceActivity activity : serviceActivity)
         {
             Status status = activity.getStatus();
 
-            f.format("%40s: %s\n", activity.getServiceId(), status.name());
+            longest = Math.max(longest, activity.getServiceId().length());
 
             if (status == Status.DEFINED || status == Status.VIRTUAL) unrealized++;
 
         }
 
-        f.format(
-                "\n%d/%d unrealized services (%4.2f%%)\n",
-                unrealized,
-                serviceActivity.size(),
-                100. * unrealized / serviceActivity.size());
+        String formatString = "%" + longest + "s: %s\n";
+
+        // A second pass to output all the services
+
+        for (ServiceActivity activity : serviceActivity)
+        {
+            f.format(formatString, activity.getServiceId(), activity.getStatus().name());
+        }
+
+        f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized / serviceActivity.size(), unrealized,
+                 serviceActivity.size());
 
         _logger.info(buffer.toString());
     }
@@ -155,9 +161,7 @@ public class TapestryFilter implements Filter
     {
         try
         {
-            boolean handled = _handler.service(
-                    (HttpServletRequest) request,
-                    (HttpServletResponse) response);
+            boolean handled = _handler.service((HttpServletRequest) request, (HttpServletResponse) response);
 
             if (!handled) chain.doFilter(request, response);
         }

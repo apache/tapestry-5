@@ -47,9 +47,9 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     public static final String DEFAULT_WEB_APP_ROOT = "src/main/webapp";
 
     /**
-     * 60 seconds
+     * 15 seconds
      */
-    public static final String PAGE_LOAD_TIMEOUT = "600000";
+    public static final String PAGE_LOAD_TIMEOUT = "15000";
 
     /**
      * The port on which the internal copy of Jetty is executed.
@@ -110,23 +110,16 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         }
         catch (RuntimeException ex)
         {
-            System.err.printf(
-                    "Error accessing %s: %s, in:\n\n%s\n\n",
-                    locator,
-                    ex.getMessage(),
-                    _selenium.getHtmlSource());
+            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
+                              _selenium.getHtmlSource());
 
             throw ex;
         }
 
         if (actual.equals(expected)) return;
 
-        System.err.printf(
-                "Text for %s should be '%s' but is '%s', in:\n\n%s\n\n",
-                locator,
-                expected,
-                actual,
-                getHtmlSource());
+        System.err.printf("Text for %s should be '%s' but is '%s', in:\n\n%s\n\n", locator, expected, actual,
+                          getHtmlSource());
 
         throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
     }
@@ -197,8 +190,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
 
         _server.start();
 
-        CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT,
-                                                       "*firefox", BASE_URL);
+        CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT, "*firefox", BASE_URL);
 
         _selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
 

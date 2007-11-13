@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.validator;
 
-import org.apache.tapestry.*;
-import static org.apache.tapestry.TapestryUtils.quote;
+import org.apache.tapestry.Field;
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ValidationException;
+import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.services.FormSupport;
 
 /**
  * A validator that enforces that the value is not null and not the empty string. This validator is
@@ -32,8 +35,7 @@ public final class Required implements Validator<Void, Object>
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, Object value)
             throws ValidationException
     {
-        if (value == null || value.toString().equals(""))
-            throw new ValidationException(buildMessage(formatter, field));
+        if (value == null || value.toString().equals("")) throw new ValidationException(buildMessage(formatter, field));
     }
 
     private String buildMessage(MessageFormatter formatter, Field field)
@@ -56,13 +58,9 @@ public final class Required implements Validator<Void, Object>
         return Object.class;
     }
 
-    public void render(Field field, Void constraintValue, MessageFormatter formatter,
-                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
+    public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter writer,
+                       FormSupport formSupport)
     {
-        pageRenderSupport.addScript(
-                "Tapestry.Field.required('%s', %s);",
-                field.getClientId(),
-                quote(buildMessage(formatter, field)));
-
+        formSupport.addValidation(field, "required", buildMessage(formatter, field), null);
     }
 }

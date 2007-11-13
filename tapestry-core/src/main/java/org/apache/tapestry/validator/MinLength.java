@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.validator;
 
-import org.apache.tapestry.*;
-import static org.apache.tapestry.TapestryUtils.quote;
+import org.apache.tapestry.Field;
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ValidationException;
+import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.services.FormSupport;
 
 /**
  * Validates that a string value has a minimum length.
@@ -28,8 +31,8 @@ public final class MinLength implements Validator<Integer, String>
         return "minimum-string-length";
     }
 
-    public void validate(Field field, Integer constraintValue, MessageFormatter formatter,
-                         String value) throws ValidationException
+    public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)
+            throws ValidationException
     {
         if (value.length() < constraintValue)
             throw new ValidationException(buildMessage(formatter, field, constraintValue));
@@ -55,13 +58,9 @@ public final class MinLength implements Validator<Integer, String>
         return String.class;
     }
 
-    public void render(Field field, Integer constraintValue, MessageFormatter formatter,
-                       MarkupWriter writer, PageRenderSupport pageRenderSupport)
+    public void render(Field field, Integer constraintValue, MessageFormatter formatter, MarkupWriter writer,
+                       FormSupport formSupport)
     {
-        pageRenderSupport.addScript(
-                "Tapestry.Field.minlength('%s', %d, %s);",
-                field.getClientId(),
-                constraintValue,
-                quote(buildMessage(formatter, field, constraintValue)));
+        formSupport.addValidation(field, "minlength", buildMessage(formatter, field, constraintValue), constraintValue);
     }
 }

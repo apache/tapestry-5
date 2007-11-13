@@ -49,9 +49,7 @@ public class ParserExperiment extends DefaultHandler
         // factory.setFeature("http://xml.org/sax/features/namespaces", true);
 
         // Doesn't seem to do anything:
-        factory.setFeature(
-                "http://apache.org/xml/features/validation/schema/normalized-value",
-                true);
+        factory.setFeature("http://apache.org/xml/features/validation/schema/normalized-value", true);
 
         // Doesn't seem to do anything:
         factory.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
@@ -138,8 +136,7 @@ public class ParserExperiment extends DefaultHandler
     {
         _locator = locator;
 
-        log("setDocumentLocator", "publicId=" + locator.getPublicId(), "systemId="
-                + locator.getSystemId());
+        log("setDocumentLocator", "publicId=" + locator.getPublicId(), "systemId=" + locator.getSystemId());
     }
 
     @Override
@@ -155,8 +152,7 @@ public class ParserExperiment extends DefaultHandler
     }
 
     @Override
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
         log("startElement", localName, "uri=" + uri, "qName=" + qName);
 
@@ -164,11 +160,8 @@ public class ParserExperiment extends DefaultHandler
 
         for (int i = 0; i < count; i++)
         {
-            log(
-                    "attribute",
-                    attributes.getLocalName(i),
-                    "value=" + attributes.getValue(i),
-                    "qName=" + attributes.getQName(i));
+            log("attribute", attributes.getLocalName(i), "value=" + attributes.getValue(i),
+                "qName=" + attributes.getQName(i));
         }
     }
 
@@ -179,8 +172,8 @@ public class ParserExperiment extends DefaultHandler
     }
 
     @Override
-    public void unparsedEntityDecl(String name, String publicId, String systemId,
-                                   String notationName) throws SAXException
+    public void unparsedEntityDecl(String name, String publicId, String systemId, String notationName)
+            throws SAXException
     {
         log("unparsedEntityDecl", name, "publicId=" + publicId, "systemId=" + systemId);
     }

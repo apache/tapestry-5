@@ -46,8 +46,7 @@ public final class IntegerRange implements Iterable<Integer>
 
         public Integer next()
         {
-            if (!_hasNext)
-                throw new IllegalStateException();
+            if (!_hasNext) throw new IllegalStateException();
 
             int result = _value;
 
@@ -114,17 +113,12 @@ public final class IntegerRange implements Iterable<Integer>
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
         final IntegerRange other = (IntegerRange) obj;
-        if (_finish != other._finish)
-            return false;
-        if (_start != other._start)
-            return false;
+        if (_finish != other._finish) return false;
+        if (_start != other._start) return false;
         return true;
     }
 

@@ -15,9 +15,12 @@
 package org.apache.tapestry.corelib.internal;
 
 import org.apache.tapestry.ComponentAction;
+import org.apache.tapestry.Field;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.*;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
+import org.apache.tapestry.json.JSONArray;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FormSupport;
 
@@ -39,6 +42,9 @@ public class FormSupportImpl implements FormSupport
     private final String _clientId;
 
     private final ObjectOutputStream _actions;
+
+    private final JSONObject _validations = new JSONObject();
+
 
     private List<Runnable> _commands;
 
@@ -82,9 +88,7 @@ public class FormSupportImpl implements FormSupport
         }
         catch (IOException ex)
         {
-            throw new RuntimeException(InternalMessages.componentActionNotSerializable(
-                    completeId,
-                    ex), ex);
+            throw new RuntimeException(InternalMessages.componentActionNotSerializable(completeId, ex), ex);
         }
     }
 
@@ -127,11 +131,46 @@ public class FormSupportImpl implements FormSupport
         notBlank(encodingType, "encodingType");
 
         if (_encodingType != null && !_encodingType.equals(encodingType))
-            throw new IllegalStateException(InternalMessages.conflictingEncodingType(
-                    _encodingType,
-                    encodingType));
+            throw new IllegalStateException(InternalMessages.conflictingEncodingType(_encodingType, encodingType));
 
         _encodingType = encodingType;
+    }
+
+    public void addValidation(Field field, String validationName, String message, Object constraint)
+    {
+        String fieldId = field.getClientId();
+
+        JSONArray specs = null;
+
+        if (_validations.has(fieldId)) specs = _validations.getJSONArray(fieldId);
+        else
+        {
+            specs = new JSONArray();
+            _validations.put(fieldId, specs);
+        }
+
+        JSONArray thisSpec = new JSONArray();
+
+        thisSpec.put(validationName);
+        thisSpec.put(message);
+
+        if (constraint != null) thisSpec.put(constraint);
+
+        specs.put(thisSpec);
+    }
+
+    /**
+     * Returns the combined validation data collected via {@link #addValidation(org.apache.tapestry.Field, String, String, Object)}.
+     * The keys of this object are the client ids of the {@link org.apache.tapestry.Field}s, the values
+     * are an array of validation specifications for that field. Each validation specification is itself
+     * an array of two or three values: the validation name (i.e., a method of the client-side Tapestry.Validation
+     * object), the message if the field is invalid and, optionally, the constraint value.
+     *
+     * @return the validation object
+     */
+    public JSONObject getValidations()
+    {
+        return _validations;
     }
 
 }

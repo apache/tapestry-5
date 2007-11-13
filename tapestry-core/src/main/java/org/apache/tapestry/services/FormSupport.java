@@ -16,12 +16,11 @@ package org.apache.tapestry.services;
 
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentAction;
+import org.apache.tapestry.Field;
 
 /**
  * Services provided by an enclosing Form control component to the various form element components
  * it encloses. Implement {@link ClientElement}, to share the id of the enclosing form.
- *
- * @author Howard M. Lewis Ship
  */
 public interface FormSupport extends ClientElement
 {
@@ -40,6 +39,15 @@ public interface FormSupport extends ClientElement
      */
     <T> void store(T component, ComponentAction<T> action);
 
+    /**
+     * As with {@link #store(Object, org.apache.tapestry.ComponentAction)}}, but the
+     * action is also invoked immediately. This is useful for defining an action that
+     * should occur symmetrically in both the render request and the form submission's
+     * action request.
+     *
+     * @param component component against which to trigger the action
+     * @param action    the action that will be triggered (and passed the component)
+     */
     <T> void storeAndExecute(T component, ComponentAction<T> action);
 
     /**
@@ -58,4 +66,15 @@ public interface FormSupport extends ClientElement
      * @throws IllegalStateException if the encoding type has already been set to a value different than the supplied
      */
     void setEncodingType(String encodingType);
+
+    /**
+     * Collects field validation information.
+     *
+     * @param field          for which validation is being generated
+     * @param validationName name of validation method (see Tapestry.Validation in tapestry.js)
+     * @param message        the error message to display if the field is invalid
+     * @param constraint     additional constraint value, or null for validations that don't require a constraint
+     */
+    void addValidation(Field field, String validationName, String message, Object constraint);
+
 }
