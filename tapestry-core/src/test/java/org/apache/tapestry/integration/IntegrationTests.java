@@ -30,8 +30,7 @@ import java.net.URL;
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on
  * my system, Skype is listening on localhost:80.
  */
-@Test(timeOut = 50000, sequential = true, groups =
-        {"integration"})
+@Test(timeOut = 50000, sequential = true, groups = {"integration"})
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     public IntegrationTests()
@@ -141,11 +140,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BadTemplate Page");
 
-        assertTextPresent(
-                "org.apache.tapestry.ioc.internal.util.TapestryException",
-                "Failure parsing template classpath:org/apache/tapestry/integration/app1/pages/BadTemplate.tml, line 7, column 15",
-                "<t:foobar>content from template</t:foobar>",
-                "Element <t:foobar> is in the Tapestry namespace, but is not a recognized Tapestry template element.");
+        assertTextPresent("org.apache.tapestry.ioc.internal.util.TapestryException",
+                          "Failure parsing template classpath:org/apache/tapestry/integration/app1/pages/BadTemplate.tml, line 7, column 15",
+                          "<t:foobar>content from template</t:foobar>",
+                          "Element <t:foobar> is in the Tapestry namespace, but is not a recognized Tapestry template element.");
     }
 
     @Test
@@ -196,8 +194,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("InstanceMixin");
 
-        final String[] dates =
-                {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
+        final String[] dates = {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
 
         for (String date : dates)
         {
@@ -414,12 +411,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Tried to use "email:" and "exact:email:" but Selenium 0.8.1 doesn't seem to accept that.
 
-        assertTextPresent(
-                "[foo@bar.baz]",
-                "[Message for you, sir!]",
-                "[false]",
-                "[winnt]",
-                "[RESEARCH_AND_DESIGN]");
+        assertTextPresent("[foo@bar.baz]", "[Message for you, sir!]", "[false]", "[winnt]", "[RESEARCH_AND_DESIGN]");
 
         // Haven't figured out how to get selenium to check that fields are disabled.
     }
@@ -530,11 +522,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("BeanEditor Demo", "Clear Data");
         clickAndWait(SUBMIT);
 
-        assertTextPresent(
-                "(First Name is Required)",
-                "You must provide a value for First Name.",
-                "Everyone has to have a last name!",
-                "Year of Birth requires a value of at least 1900.");
+        assertTextPresent("(First Name is Required)", "You must provide a value for First Name.",
+                          "Everyone has to have a last name!", "Year of Birth requires a value of at least 1900.");
 
         // Part of the override for the firstName property
 
@@ -552,10 +541,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        assertTextPresent(
-                "You must provide at least 3 characters for First Name.",
-                "You must provide at least 5 characters for Last Name.",
-                "You must provide a value for Year of Birth.");
+        assertTextPresent("You must provide at least 3 characters for First Name.",
+                          "You must provide at least 5 characters for Last Name.",
+                          "You must provide a value for Year of Birth.");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -605,15 +593,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Strange: I thought tr[1] was the header row ???
 
-        assertTextSeries(
-                "//tr[1]/td[%d]",
-                1,
-                "Bug Juice",
-                "Late Lounge (2 of 2)",
-                "45 Dip",
-                "Electronica",
-                "4",
-                "-");
+        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
 
         // Here were checking that the page splits are correct
 
@@ -630,15 +610,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Here's one with a customized rating cell
 
-        assertTextSeries(
-                "//tr[25]/td[%d]",
-                1,
-                "Smoked",
-                "London (Original Motion Picture Soundtrack)",
-                "The Crystal Method",
-                "Soundtrack",
-                "30",
-                "****");
+        assertTextSeries("//tr[25]/td[%d]", 1, "Smoked", "London (Original Motion Picture Soundtrack)",
+                         "The Crystal Method", "Soundtrack", "30", "****");
 
         clickAndWait("link=69");
 
@@ -648,37 +621,24 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText(
-                "//img[@id='rating:sort']/@src",
-                "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='rating:sort']/@alt", "[Asc]");
 
-        assertTextSeries(
-                "//tr[22]/td[%d]",
-                1,
-                "Mona Lisa Overdrive",
-                "Labyrinth",
-                "Juno Reactor",
-                "Dance",
-                "31",
-                "*****");
+        assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor", "Dance", "31",
+                         "*****");
 
         // Toggle to sort descending
 
         clickAndWait("link=Rating");
 
-        assertText(
-                "//img[@id='rating:sort']/@src",
-                "/assets/tapestry/corelib/components/sort-desc.png");
+        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-desc.png");
         assertText("//img[@id='rating:sort']/@alt", "[Desc]");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "Hey Blondie", "Out from Out Where");
 
         clickAndWait("link=Title");
 
-        assertText(
-                "//img[@id='title:sort']/@src",
-                "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText("//img[@id='title:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -789,11 +749,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Client Validation Demo");
 
-        assertTextSeries(
-                "//script[%d]/@src",
-                1,
-                "/assets/scriptaculous/prototype.js",
-                "/assets/scriptaculous/scriptaculous.js");
+        assertTextSeries("//script[%d]/@src", 1, "/assets/scriptaculous/prototype.js",
+                         "/assets/scriptaculous/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 
@@ -801,12 +758,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click(SUBMIT);
 
-        assertTextSeries(
-                "//li[%d]",
-                1,
-                "You must provide a value for First Name.",
-                "Everyone has to have a last name!",
-                "Year of Birth requires a value of at least 1900.");
+        assertTextSeries("//li[%d]", 1, "You must provide a value for First Name.", "Everyone has to have a last name!",
+                         "Year of Birth requires a value of at least 1900.");
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
@@ -828,10 +781,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Recursive Demo");
 
-        assertTextPresent(
-                "An unexpected application exception has occurred.",
-                "The template for component org.apache.tapestry.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry.integration.app1.components.Recursive). is not supported (components may not contain themselves).",
-                "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
+        assertTextPresent("An unexpected application exception has occurred.",
+                          "The template for component org.apache.tapestry.integration.app1.components.Recursive is recursive (contains another direct or indirect reference to component org.apache.tapestry.integration.app1.components.Recursive). is not supported (components may not contain themselves).",
+                          "component is <t:recursive>recursive</t:recursive>, so we\'ll see a failure.");
     }
 
     @Test
@@ -878,9 +830,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Inherited Bindings Demo");
 
-        assertTextPresent(
-                "Bound: [ value: the-bound-value, bound: true ]",
-                "Unbound: [ value: null, bound: false ]");
+        assertTextPresent("Bound: [ value: the-bound-value, bound: true ]", "Unbound: [ value: null, bound: false ]");
     }
 
     @Test
@@ -904,9 +854,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("//div[@id='single']/@class", "red");
         assertText("//div[@id='consecutive']/@class", "goober-red");
         assertText("//div[@id='trailer']/@class", "goober-green");
-        assertText(
-                "//div[@id='formal']/text()",
-                "ALERT-expansions work inside formal component parameters as well");
+        assertText("//div[@id='formal']/text()", "ALERT-expansions work inside formal component parameters as well");
 
         // An unrelated test, but fills in a bunch of minor gaps.
 
@@ -1001,9 +949,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         waitForPageToLoad();
 
         clickAndWait("link=bad");
-        assertTextPresent(
-                "An unexpected application exception has occurred.",
-                "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
+        assertTextPresent("An unexpected application exception has occurred.",
+                          "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
 
     }
 
@@ -1091,13 +1038,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         waitForPageToLoad("30000");
 
-        assertTextSeries(
-                "//li[%d]",
-                1,
-                "First Name: [Howard]",
-                "Last Name: [Lewis Ship]",
-                "Path: [/var/www]",
-                "Role: [GRANT]");
+        assertTextSeries("//li[%d]", 1, "First Name: [Howard]", "Last Name: [Lewis Ship]", "Path: [/var/www]",
+                         "Role: [GRANT]");
     }
 
     @Test
@@ -1177,5 +1119,37 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         open(BASE_URL + "servicestatus");
 
         assertTextPresent("Tapestry IoC Services Status");
+    }
+
+    @Test
+    public void event_based_translate() throws Exception
+    {
+        start("EventMethod Translator");
+
+        type("count", "123");
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Count: [123]");
+
+        type("count", "0");
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Count: [0]");
+
+        assertFieldValue("count", "zero");
+
+        type("count", "456");
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Count: [456]");
+
+        assertFieldValue("count", "456");
+
+        type("count", "ZERO");
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Count: [0]");
+
+        assertFieldValue("count", "zero");
     }
 }

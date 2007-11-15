@@ -237,5 +237,65 @@ Errors and Decorations
   This is nice and seamless; the same look and feel and behavior for both the built-in validators, and for errors generated based on
   application logic.
 
-  
-  
+Overriding the Translator with Events
+
+  The TextField, PasswordField and TextArea components all have a translate parameter, a
+  {{{../../apidocs/org/apache/tapestry/Translator.html}Translator}} object that is used to convert values on the server
+  side to strings on the client side.
+
+  In most cases, the translate parameter is not set explicitly; Tapestry derives an appropriate value
+  based on the type of property being editted by the field.
+
+  In certain cases, you may want to override the translator.  This can be accomplished using two events
+  triggered on the component, "toclient" and "parseclient".
+
+  The "toclient" event is passed the current object value and returns a string, which will be the default
+  value for the field. When there is no event handler, or when the event handler returns null, the default
+  Translator is used to convert the server side value to a string.
+
+  For example, you may have a quantity field that you wish to display as blank, rather than zero,
+  initially:
+
++---+
+  <t:textfield t:id="quantity" size="10"/>
+
+  . . .
+
+  private int _quantity;
+
+  String onToClientFromQuantity()
+  {
+    if (_quantity == 0) return "";
+
+    return null;
+  }
++---+
+
+  This is good so far, but if the field is optional and the user submits the form,
+  you'll get a validation error, because the empty string is not valid as an integer.
+
+  That's where the "parseclient" event comes in:
+
++---+
+  Object onParseClientFromQuantity(String input)
+  {
+    if ("".equals(input)) return 0;
+
+    return null;
+  }
++---+
+
+  The event handler has precendence over the translator.  Here it checks for the empty string
+  (and note that the input may be null!) and evaluates that as zero.
+
+  Again, returning null lets the normal translator do its work.
+
+  The event handler may also throw
+  {{{../../apidocs/org/apache/tapestry/ValidationException.html}ValidationException}} to indicate a value
+  that can't be parsed.
+
+  <<Caution:>> These two events are exclusively on the <server side>. Client side validations, in particular,
+  will not have access to the "parseclient" event.  This means that, in certain circumstances,
+  an input value will be rejected on the client side even though it is valid on the server side.
+
+  <Coming soon: an additional event for validating the parsed value.>

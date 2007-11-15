@@ -58,18 +58,7 @@
       <entry name=".+\.(gif|png|jpeg|jpg)" />
     </resourceExtensions>
     <wildcardResourcePatterns>
-      <entry name="?*.properties" />
-      <entry name="?*.xml" />
-      <entry name="?*.html" />
-      <entry name="?*.dtd" />
-      <entry name="?*.tld" />
-      <entry name="?*.gif" />
-      <entry name="?*.png" />
-      <entry name="?*.jpeg" />
-      <entry name="?*.jpg" />
-      <entry name="?*.tml" />
-      <entry name="?*.css" />
-      <entry name="?*.js" />
+      <entry name="!?*.java" />
     </wildcardResourcePatterns>
   </component>
   <component name="DependenciesAnalyzeManager">

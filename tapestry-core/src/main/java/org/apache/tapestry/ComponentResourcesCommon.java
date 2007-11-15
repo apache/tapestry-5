@@ -94,6 +94,9 @@ public interface ComponentResourcesCommon extends Locatable
      *                  allowed even if the handler is null).
      * @return true if any event handler was invoked (even if no event handler method returns a
      *         non-null value)
+     * @throws org.apache.tapestry.runtime.ComponentEventException
+     *          if an event handler method throws a checked
+     *          or unchecked exception
      * @see OnEventWorker
      * @see OnEvent
      */

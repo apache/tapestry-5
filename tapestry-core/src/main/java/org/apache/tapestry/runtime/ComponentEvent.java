@@ -55,10 +55,8 @@ public interface ComponentEvent extends Event
      * Coerces a context value to a particular type. The context is an array of objects; typically
      * it is an array of strings of extra path information encoded into the action URL.
      *
-     * @param <T>
-     * @param index             the index of the context value
-     * @param desiredTypeName   the desired type
-     * @param methodDescription the method for which the conversion will take place (used if reporting an error)
+     * @param index           the index of the context value
+     * @param desiredTypeName the desired type
      * @return the coerced value (a wrapper type if the desired type is a primitive)
      */
     Object coerceContext(int index, String desiredTypeName);

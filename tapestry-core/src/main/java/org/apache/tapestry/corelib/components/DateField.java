@@ -122,13 +122,10 @@ public class DateField extends AbstractField
     final FieldValidator defaultValidate()
     {
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(
-                this,
-                _resources.getId(),
-                _resources.getContainerMessages(),
-                _locale,
-                Date.class,
-                _resources.getAnnotationProvider("value"));
+        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
+                                                                   _resources.getContainerMessages(), _locale,
+                                                                   Date.class,
+                                                                   _resources.getAnnotationProvider("value"));
     }
 
     void beginRender(MarkupWriter writer)
@@ -145,7 +142,9 @@ public class DateField extends AbstractField
 
         // TODO: Support a disabled parameter
 
-        writer.element("input", "type", "text",
+        writer.element("input",
+
+                       "type", "text",
 
                        "name", getElementName(),
 

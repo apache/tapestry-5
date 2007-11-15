@@ -19,6 +19,7 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.runtime.ComponentEventException;
 import org.apache.tapestry.services.*;
 
 import java.util.List;
@@ -40,11 +41,9 @@ public class OnEventWorker implements ComponentClassTransformWorker
         {
             public boolean accept(TransformMethodSignature signature)
             {
-                return signature.getMethodName().startsWith("on")
-                        || transformation.getMethodAnnotation(signature, OnEvent.class) != null;
+                return signature.getMethodName().startsWith("on") || transformation.getMethodAnnotation(signature,
+                                                                                                        OnEvent.class) != null;
             }
-
-            ;
         };
 
         List<TransformMethodSignature> methods = transformation.findMethods(filter);
@@ -58,8 +57,23 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         builder.addln("if ($1.isAborted()) return $_;");
 
+        builder.addln("String methodDescription = null;");
+
+        // Because we track the methodDescription inside a local variable, we can have a single
+        // encompassing try..catch for all possible events for this component.
+
+        builder.addln("try");
+        builder.begin();
+
         for (TransformMethodSignature method : methods)
             addCodeForMethod(builder, method, transformation);
+
+        builder.end(); // try
+
+        builder.addln("catch (Exception ex)");
+        builder.begin();
+        builder.addln("throw new %s(ex.getMessage(), methodDescription, ex);", ComponentEventException.class.getName());
+        builder.end();
 
         builder.end();
 
@@ -112,7 +126,9 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         // Several subsequent calls need to know the method name.
 
-        builder.addln("$1.setSource(this, \"%s\");", transformation.getMethodIdentifier(method));
+        builder.addln("methodDescription = \"%s\";", transformation.getMethodIdentifier(method));
+        builder.addln("$1.setSource(this, methodDescription);");
+
 
         boolean isNonVoid = !method.getReturnType().equals("void");
 
@@ -124,10 +140,8 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         buildMethodParameters(builder, method);
 
-        if (isNonVoid)
-            builder.addln("))) return true;");
-        else
-            builder.addln(");");
+        if (isNonVoid) builder.addln("))) return true;");
+        else builder.addln(");");
 
         for (int i = 0; i < closeCount; i++)
             builder.end();
