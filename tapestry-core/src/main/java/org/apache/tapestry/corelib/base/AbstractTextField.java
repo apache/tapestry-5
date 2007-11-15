@@ -19,6 +19,7 @@ import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.corelib.internal.ComponentTranslatorWrapper;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
@@ -28,6 +29,18 @@ import java.util.Locale;
 /**
  * Abstract class for a variety of components that render some variation of a text field. Most of
  * the hooks for user input validation are in this class.
+ * <p/>
+ * In particular, all subclasses support the "toclient" and "parseclient" events.  These two events
+ * allow the normal {@link Translator} (specified by the translate parameter, but often automatically
+ * derived by Tapestry) to be augmented.
+ * <p/>
+ * If the component container (i.e., the page) provides an event handler method for the "toclient" event,
+ * and that handler returns a non-null string, that will be the string value sent to the client. The context
+ * passed to the event handler method is the current value of the value parameter.
+ * <p/>
+ * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided
+ * by the client, and may provide a non-null value as the parsed value.  Returning null allows the normal
+ * translator to operate.  The event handler may also throw {@link org.apache.tapestry.ValidationException}.
  */
 public abstract class AbstractTextField extends AbstractField
 {
@@ -103,13 +116,9 @@ public abstract class AbstractTextField extends AbstractField
 
         if (type == null) return null;
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(
-                this,
-                _resources.getId(),
-                _resources.getContainerMessages(),
-                _locale,
-                type,
-                _resources.getAnnotationProvider("value"));
+        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
+                                                                   _resources.getContainerMessages(), _locale, type,
+                                                                   _resources.getAnnotationProvider("value"));
     }
 
     /**
@@ -121,12 +130,19 @@ public abstract class AbstractTextField extends AbstractField
         return createDefaultParameterBinding("value");
     }
 
+    @SuppressWarnings({"unchecked"})
     @BeginRender
     final void begin(MarkupWriter writer)
     {
         String value = _tracker.getInput(this);
 
-        if (value == null) value = _translate.toClient(_value);
+        if (value == null)
+        {
+
+            Translator wrapper = new ComponentTranslatorWrapper(_resources, _translate);
+
+            value = wrapper.toClient(_value);
+        }
 
         writeFieldTag(writer, value);
 
@@ -164,7 +180,11 @@ public abstract class AbstractTextField extends AbstractField
 
         try
         {
-            Object translated = _translate.parseClient(rawValue, messages);
+            Translator wrapper = new ComponentTranslatorWrapper(_resources, _translate);
+
+            Object translated = wrapper.parseClient(rawValue, messages);
+
+            // TODO: A wrapper for validation as well?
 
             _validate.validate(translated);
 
@@ -173,7 +193,6 @@ public abstract class AbstractTextField extends AbstractField
         catch (ValidationException ex)
         {
             _tracker.recordError(this, ex.getMessage());
-            return;
         }
     }
 }

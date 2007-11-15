@@ -38,7 +38,7 @@ public interface Event
      * some kinds of exception reporting).
      *
      * @param component         the component instance from which the result was obtained
-     * @param methodDescription
+     * @param methodDescription describes the location (i.e. file name, method name and line number) of the method
      */
     void setSource(Component component, String methodDescription);
 

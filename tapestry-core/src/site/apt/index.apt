@@ -12,7 +12,10 @@ New And Of Note
 
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
-  
+
+  * You may now customize how the TextField, PasswordField and TextArea component converts between server side values
+    and client side strings, using specialized events.
+
   * We finally have a DateField component, built on top of the {{{http://www.dynarch.com/projects/calendar/}dynarch.com DHTML/JavaScript Calendar}}.
   
   * The Grid component may now be used inside a Form.

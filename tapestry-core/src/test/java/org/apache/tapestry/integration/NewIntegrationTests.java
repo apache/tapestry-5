@@ -23,13 +23,13 @@ import org.testng.annotations.Test;
  * disable all of those when adding a new test, the new test is added and debugged here. Once it is
  * totally ready, it is moved up to IntegrationTests.
  */
-@Test(timeOut = 50000, sequential = true, enabled = false, groups =
-        {"integration"})
+@Test(timeOut = 50000, sequential = true, enabled = false, groups = {"integration"})
 public class NewIntegrationTests extends AbstractIntegrationTestSuite
 {
     public NewIntegrationTests()
     {
         super("src/test/app1");
     }
+
 
 }

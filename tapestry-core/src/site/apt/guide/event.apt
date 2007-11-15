@@ -27,7 +27,9 @@ Component Events
   In Tapestry 4, you would configure a parameter of a component with the name of a method to invoke
   when a certain event occured, usually a request from the client.
   
-  This has some limitations, including the fact that only a single method could be invoked.
+  This has some limitations, including the fact that only a single method could be invoked, and that
+  it tied together a component and a method based on a method name, which required careful coordination
+  between the template and the Java code.
   
   Tapestry 5 introduces the concept of <event handler methods>, identified via a naming convention, or
   via the 
@@ -64,7 +66,8 @@ Component Events
   This URL doesn't say what happens when the link is clicked, it identifies <which component is responsible>.
 
   There's no simple mapping from URL to a piece of code; instead the component sends notifications, in the form
-  of invocations of event handler methods,   
+  of invocations of event handler methods, and Tapestry ensures that the correct bit of code, that you supply,
+  gts invoked.
   
    
   A Java method can be invoked when the link for the component is clicked by the user:
@@ -104,6 +107,8 @@ Component Events
   "action" is the name of the default event type; the ActionLink and Form components each use this event type.
   If you omit the component part of the OnEvent annotation, then you'll recieve notifications from
   <all> contained components, possibly including nested components (due to event bubbling).
+
+  As elsewhere, the comparison of event type and component id is caseless.
   
   You should qualify exactly which component(s) you wish to recieve events from.
   
@@ -112,7 +117,7 @@ Event Handler Method Convention Names
   As an alternative to the use of annotations, you may name your events in a specific fashion, and Tapestry will invoke your methods just as if
   they were annotated.  
   
-  This style of event handler methods start with the prefix "on", followed by the name of the action (capitalized).  You may then continue by adding "From" and
+  This style of event handler methods start with the prefix "on", followed by the name of the action.  You may then continue by adding "From" and
   a capitalized component id.
   
   The previous example may be rewritten as:
@@ -124,14 +129,30 @@ Event Handler Method Convention Names
   }
 +---+  
   
-  If you method is named "onAnyEvent", it will be invoked for all types of events. This is rarely what you want!
+  If your method is named "onAnyEvent", it will be invoked for all types of events. This is rarely what you want!
     
   Note from Howard: I've found that I prefer the naming convention approach, and reserve the annotation just for situations that don't otherwise fit.  
   
 Event Handler Method Return Values
   
   For page navigation events, the value returned from an event handler method {{{pagenav.html}determines how Tapestry will render a response}}.
-  
+
+Multiple Method Matches
+
+ In some cases, you may have multiple event methods match a single event.
+
+ The order is as follows:
+
+ * Base class methods before sub-class methods.
+
+ * Matching methods within a class in alphabetical order.
+
+ * For a single method name with multiple overrides, by number of parameters, descending.
+
+ []
+
+ There's only rare cases where it makes sense for more than one method to handle an event.
+
 Event Context
 
   The context values (the context parameter to the ActionLink component) can be any object.
@@ -158,4 +179,38 @@ Event Bubbling
 
   The event will bubble up the hierarchy, until it is aborted. The event is aborted
   when an event handler method returns a non-null value.
+
+Event Method Exceptions
+
+  Event methods are allow to throw any exception (not just runtime exceptions). If an event method does
+  throw an exception, Tapestry will catch the thrown exception and ultimately display the exception report
+  page.
+
+  In other words, there's no need to do this:
+
++---+
+  void onActionFromRunQuery()
+  {
+    try
+    {
+      _dao.executeQuery();
+    }
+    catch (JDBCException ex)
+    {
+      throw new RuntimeException(ex);
+    }
+  }
++---+
+
+  Instead, you may simply say:
+
++---+
+  void onActionFromRunQuery() throws JDBCException
+  {
+    _dao.executeQuery();
+  }
++----+
+
+
+  Your event handler method may even declare that it "throws Exception" if that is more convienient.
 

@@ -18,7 +18,7 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.OnEvent;
 
 /**
- * Interface that defining the lifecycle of a component, within a page, allowing for callbacks into
+ * Interface that defines the lifecycle of a component, within a page, allowing for callbacks into
  * the component for many different events. This interface is part of the public API for Tapestry,
  * but is <em>not</em> expected to be directly implemented by component classes; it should only be
  * implemented as part of the component class transformation process.
@@ -81,11 +81,12 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
     void cleanupRender(MarkupWriter writer, Event event);
 
     /**
-     * Invoked to handle a component event. Methods with the {@link OnEvent} annotation will be
-     * invoked until one returns a non-null value.
+     * Invoked to handle a component event. Methods with the {@link OnEvent} annotation (or the matching
+     * naming convention) will be invoked until one returns a non-null value.
      *
      * @param event
      * @return true if any handler was found (and invoked), false otherwise
+     * @throws ComponentEventException if an event handler throws an exception
      */
     boolean handleComponentEvent(ComponentEvent event);
 }

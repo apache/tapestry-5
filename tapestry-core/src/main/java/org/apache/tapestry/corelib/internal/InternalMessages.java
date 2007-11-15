@@ -32,8 +32,7 @@ public final class InternalMessages
         return MESSAGES.get("enclose-errors-in-form");
     }
 
-    public static String failureInstantiatingObject(Class objectType, String componentId,
-                                                    Throwable cause)
+    public static String failureInstantiatingObject(Class objectType, String componentId, Throwable cause)
     {
         return MESSAGES.format("failure-instantitating-object", ClassFabUtils
                 .toJavaClassName(objectType), componentId, cause);
@@ -42,5 +41,10 @@ public final class InternalMessages
     public static String conflictingEncodingType(String existing, String conflicting)
     {
         return MESSAGES.format("conflicting-encoding-type", existing, conflicting);
+    }
+
+    public static String toClientShouldReturnString()
+    {
+        return MESSAGES.format("to-client-should-return-string");
     }
 }

@@ -27,16 +27,15 @@ public class PasswordField extends AbstractTextField
     @Override
     protected final void writeFieldTag(MarkupWriter writer, String value)
     {
-        writer.element(
-                "input",
-                "type",
-                "password",
-                "name",
-                getElementName(),
-                "id",
-                getClientId(),
-                "value",
-                "");
+        writer.element("input",
+
+                       "type", "password",
+
+                       "name", getElementName(),
+
+                       "id", getClientId(),
+
+                       "value", "");
     }
 
     final void afterRender(MarkupWriter writer)
