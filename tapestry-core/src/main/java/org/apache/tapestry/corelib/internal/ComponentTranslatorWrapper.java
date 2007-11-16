@@ -68,11 +68,9 @@ public class ComponentTranslatorWrapper implements Translator
         }
         catch (ComponentEventException ex)
         {
-            Throwable cause = ex.getCause();
+            ValidationException ve = ex.get(ValidationException.class);
 
-            if (cause instanceof ValidationException) throw (ValidationException) cause;
-
-            // Rethrow the event exception for reporting higher up.
+            if (ve != null) throw ve;
 
             throw ex;
         }
