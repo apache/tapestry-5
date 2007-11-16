@@ -1151,5 +1151,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Count: [0]");
 
         assertFieldValue("count", "zero");
+
+        // Try the server-side custom exception reporting.
+
+        type("count", "13");
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Thirteen is an unlucky number.");
     }
 }

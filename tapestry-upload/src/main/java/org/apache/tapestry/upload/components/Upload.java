@@ -18,6 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.corelib.internal.ComponentValidatorWrapper;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
@@ -76,13 +77,9 @@ public class Upload extends AbstractField
 
         if (type == null) return null;
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(
-                this,
-                _resources.getId(),
-                _resources.getContainerMessages(),
-                _locale,
-                type,
-                _resources.getAnnotationProvider("value"));
+        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
+                                                                   _resources.getContainerMessages(), _locale, type,
+                                                                   _resources.getAnnotationProvider("value"));
     }
 
     public Upload()
@@ -90,8 +87,8 @@ public class Upload extends AbstractField
     }
 
     // For testing
-    Upload(UploadedFile value, FieldValidator<Object> validate, MultipartDecoder decoder,
-           ValidationTracker tracker, ComponentResources resources)
+    Upload(UploadedFile value, FieldValidator<Object> validate, MultipartDecoder decoder, ValidationTracker tracker,
+           ComponentResources resources)
     {
         _value = value;
         if (validate != null) _validate = validate;
@@ -100,6 +97,7 @@ public class Upload extends AbstractField
         _resources = resources;
     }
 
+    @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
     {
@@ -107,13 +105,14 @@ public class Upload extends AbstractField
 
         if (uploaded != null)
         {
-            if (uploaded.getFileName() == null || uploaded.getFileName().length() == 0)
-                uploaded = null;
+            if (uploaded.getFileName() == null || uploaded.getFileName().length() == 0) uploaded = null;
         }
+
+        FieldValidator wrappedValidator = new ComponentValidatorWrapper(_resources, _validate);
 
         try
         {
-            _validate.validate(uploaded);
+            wrappedValidator.validate(uploaded);
         }
         catch (ValidationException ex)
         {

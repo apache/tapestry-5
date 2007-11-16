@@ -294,8 +294,25 @@ Overriding the Translator with Events
   {{{../../apidocs/org/apache/tapestry/ValidationException.html}ValidationException}} to indicate a value
   that can't be parsed.
 
-  <<Caution:>> These two events are exclusively on the <server side>. Client side validations, in particular,
-  will not have access to the "parseclient" event.  This means that, in certain circumstances,
+  Now, what if you want to perform your own custom validation?  That's another event: "validate":
+
++---+
+  void onValidateFromCount(Integer value) throws ValidationException
+  {
+    if (value == null) return;
+
+    if (value.equals(13)) throw new ValidationException("Thirteen is an unlucky number.");
+  }
++---+
+
+  This event gets fired <<before>> the normal validators, therefore you have to watch out
+  for nulls, even if the field is marked as required.  It gets the <parsed> value (not the string from
+  the client, but the object value from the translator, or from the "parseclient" event handler).
+
+  The method may not return value, but may throw a ValidationException to indicate a problem with
+  the value.
+
+  <<Caution:>> These events are exclusively on the <server side>.
+  This means that, in certain circumstances,
   an input value will be rejected on the client side even though it is valid on the server side.
 
-  <Coming soon: an additional event for validating the parsed value.>

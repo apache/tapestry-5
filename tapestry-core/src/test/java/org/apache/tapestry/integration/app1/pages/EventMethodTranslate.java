@@ -52,4 +52,12 @@ public class EventMethodTranslate
 
         return null;
     }
+
+    void onValidateFromCount(Integer count) throws ValidationException
+    {
+        // count may be null
+        if (count == null) return;
+
+        if (count.equals(13)) throw new ValidationException("Thirteen is an unlucky number.");
+    }
 }

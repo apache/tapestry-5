@@ -20,6 +20,7 @@ import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.internal.ComponentTranslatorWrapper;
+import org.apache.tapestry.corelib.internal.ComponentValidatorWrapper;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
@@ -169,6 +170,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
+    @SuppressWarnings({"unchecked"})
     @Override
     protected final void processSubmission(FormSupport formSupport, String elementName)
     {
@@ -180,13 +182,13 @@ public abstract class AbstractTextField extends AbstractField
 
         try
         {
-            Translator wrapper = new ComponentTranslatorWrapper(_resources, _translate);
+            Translator translatorWrapper = new ComponentTranslatorWrapper(_resources, _translate);
 
-            Object translated = wrapper.parseClient(rawValue, messages);
+            Object translated = translatorWrapper.parseClient(rawValue, messages);
 
-            // TODO: A wrapper for validation as well?
+            FieldValidator validatorWrapper = new ComponentValidatorWrapper(_resources, _validate);
 
-            _validate.validate(translated);
+            validatorWrapper.validate(translated);
 
             _value = translated;
         }

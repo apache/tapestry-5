@@ -37,4 +37,21 @@ public class ComponentEventException extends RuntimeException
     {
         return _methodDescription;
     }
+
+    /**
+     * Checks to see if the root cause of this exception is assignable to the provided type. Returns the
+     * root cause, cast to the given value if so, or null otherwise.
+     *
+     * @param exceptionType type of exception to check for
+     * @return the root cause, or null if the root cause is null or not assignable to the provided exception type
+     */
+    public <T extends Exception> T get(Class<T> exceptionType)
+    {
+        Throwable cause = getCause();
+
+        if (cause != null && exceptionType.isAssignableFrom(cause.getClass())) return exceptionType.cast(cause);
+
+        return null;
+    }
+
 }
