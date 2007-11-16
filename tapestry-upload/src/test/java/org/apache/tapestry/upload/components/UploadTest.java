@@ -20,7 +20,7 @@ import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.apache.tapestry.upload.services.MultipartDecoder;
 import org.apache.tapestry.upload.services.UploadedFile;
-import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
 
 public class UploadTest extends TapestryTestCase
@@ -151,11 +151,14 @@ public class UploadTest extends TapestryTestCase
         FormSupport formSupport = mockFormSupport();
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
+        ComponentResources resources = mockComponentResources();
 
-        Upload component = new Upload(null, null, decoder, null, null);
+        Upload component = new Upload(null, null, decoder, null, resources);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("foo").anyTimes();
+
+        train_validate(resources, uploadedFile);
 
         replay();
 
@@ -166,17 +169,27 @@ public class UploadTest extends TapestryTestCase
         assertSame(component.getValue(), uploadedFile);
     }
 
+    protected final void train_validate(ComponentResources resources, Object... context)
+    {
+        ComponentEventHandler handler = null;
+        expect(resources.triggerEvent(eq("validate"), aryEq(context), eq(handler))).andReturn(false);
+    }
+
     @Test
     public void process_submission_ignores_null_value() throws Exception
     {
         FormSupport formSupport = mockFormSupport();
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
+        ComponentResources resources = mockComponentResources();
 
-        Upload component = new Upload(null, null, decoder, null, null);
+        Upload component = new Upload(null, null, decoder, null, resources);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("").atLeastOnce();
+
+
+        train_validate(resources, new Object[]{null});
 
         replay();
 
@@ -195,12 +208,17 @@ public class UploadTest extends TapestryTestCase
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         FieldValidator<Object> validate = mockFieldValidator();
+        ComponentResources resources = mockComponentResources();
 
-        Upload component = new Upload(null, validate, decoder, null, null);
+        Upload component = new Upload(null, validate, decoder, null, resources);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("test").atLeastOnce();
+
+        train_validate(resources, uploadedFile);
+
         validate.validate(uploadedFile);
+
         replay();
 
         component.processSubmission(formSupport, "test");
@@ -217,13 +235,17 @@ public class UploadTest extends TapestryTestCase
         UploadedFile uploadedFile = mockUploadedFile();
         FieldValidator<Object> validate = mockFieldValidator();
         ValidationTracker tracker = mockValidationTracker();
+        ComponentResources resources = mockComponentResources();
 
-        Upload component = new Upload(null, validate, decoder, tracker, null);
+        Upload component = new Upload(null, validate, decoder, tracker, resources);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("test").atLeastOnce();
+
         validate.validate(uploadedFile);
+
         expectLastCall().andThrow(new ValidationException("an error"));
+
         tracker.recordError(component, "an error");
         replay();
 

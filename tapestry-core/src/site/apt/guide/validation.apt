@@ -299,17 +299,14 @@ Overriding the Translator with Events
 +---+
   void onValidateFromCount(Integer value) throws ValidationException
   {
-    if (value == null) return;
-
     if (value.equals(13)) throw new ValidationException("Thirteen is an unlucky number.");
   }
 +---+
 
-  This event gets fired <<before>> the normal validators, therefore you have to watch out
-  for nulls, even if the field is marked as required.  It gets the <parsed> value (not the string from
+  This event gets fired <<after>> the normal validators. It is passed the <parsed> value (not the string from
   the client, but the object value from the translator, or from the "parseclient" event handler).
 
-  The method may not return value, but may throw a ValidationException to indicate a problem with
+  The method may not return a value, but may throw a ValidationException to indicate a problem with
   the value.
 
   <<Caution:>> These events are exclusively on the <server side>.
