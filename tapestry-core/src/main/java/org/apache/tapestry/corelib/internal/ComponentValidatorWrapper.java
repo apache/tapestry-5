@@ -25,13 +25,17 @@ public class ComponentValidatorWrapper implements FieldValidator
     }
 
     /**
-     * Invokes a "validate" event on the component, passing the value as context.
+     * Invokes a "validate" event on the component, passing the value as context. The
+     * delegate {@link org.apache.tapestry.FieldValidator} is invoked <em>first</em>, so
+     * the event based validation occurs only if the default validations are passed.
      *
      * @param value
      * @throws ValidationException
      */
     public void validate(Object value) throws ValidationException
     {
+        _validator.validate(value);
+
         try
         {
             _resources.triggerEvent(VALIDATE_EVENT, new Object[]{value}, null);
@@ -44,8 +48,6 @@ public class ComponentValidatorWrapper implements FieldValidator
 
             throw ex;
         }
-
-        _validator.validate(value);
     }
 
     public void render(MarkupWriter writer)

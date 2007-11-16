@@ -28,7 +28,7 @@ public class ComponentValidatorWrapperTest extends TapestryTestCase
 
     @SuppressWarnings({"unchecked"})
     @Test
-    public void event_triggered_before_delegate_invoked() throws Exception
+    public void event_triggered_after_delegate_invoked() throws Exception
     {
         getMocksControl().checkOrder(true);
 
@@ -37,12 +37,14 @@ public class ComponentValidatorWrapperTest extends TapestryTestCase
 
         Object value = new Object();
 
+        fv.validate(value);
+
+
         ComponentEventHandler handler = null;
 
         expect(resources.triggerEvent(EasyMock.eq(ComponentValidatorWrapper.VALIDATE_EVENT),
                                       EasyMock.aryEq(new Object[]{value}), EasyMock.eq(handler))).andReturn(true);
 
-        fv.validate(value);
 
         replay();
 
@@ -66,6 +68,8 @@ public class ComponentValidatorWrapperTest extends TapestryTestCase
         ComponentEventException cee = new ComponentEventException(ve.getMessage(), null, ve);
 
         ComponentEventHandler handler = null;
+
+        fv.validate(value);
 
         expect(resources.triggerEvent(EasyMock.eq(ComponentValidatorWrapper.VALIDATE_EVENT),
                                       EasyMock.aryEq(new Object[]{value}), EasyMock.eq(handler))).andThrow(cee);
