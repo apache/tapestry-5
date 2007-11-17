@@ -19,9 +19,6 @@ import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.corelib.internal.ComponentTranslatorWrapper;
-import org.apache.tapestry.corelib.internal.ComponentValidatorWrapper;
-import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
 
@@ -75,9 +72,6 @@ public abstract class AbstractTextField extends AbstractField
     private ValidationTracker _tracker;
 
     @Inject
-    private ValidationMessagesSource _messagesSource;
-
-    @Inject
     private TranslatorDefaultSource _translatorDefaultSource;
 
     @Inject
@@ -91,6 +85,9 @@ public abstract class AbstractTextField extends AbstractField
 
     @Inject
     private Request _request;
+
+    @Inject
+    private FieldValidationSupport _fieldValidationSupport;
 
     /**
      * Computes a default value for the "translate" parameter using {@link TranslatorDefaultSource}.
@@ -137,13 +134,7 @@ public abstract class AbstractTextField extends AbstractField
     {
         String value = _tracker.getInput(this);
 
-        if (value == null)
-        {
-
-            Translator wrapper = new ComponentTranslatorWrapper(_resources, _translate);
-
-            value = wrapper.toClient(_value);
-        }
+        if (value == null) value = _fieldValidationSupport.toClient(_value, _resources, _translate);
 
         writeFieldTag(writer, value);
 
@@ -178,17 +169,11 @@ public abstract class AbstractTextField extends AbstractField
 
         _tracker.recordInput(this, rawValue);
 
-        Messages messages = _messagesSource.getValidationMessages(_locale);
-
         try
         {
-            Translator translatorWrapper = new ComponentTranslatorWrapper(_resources, _translate);
+            Object translated = _fieldValidationSupport.parseClient(rawValue, _resources, _translate);
 
-            Object translated = translatorWrapper.parseClient(rawValue, messages);
-
-            FieldValidator validatorWrapper = new ComponentValidatorWrapper(_resources, _validate);
-
-            validatorWrapper.validate(translated);
+            _fieldValidationSupport.validate(translated, _resources, _validate);
 
             _value = translated;
         }

@@ -16,11 +16,12 @@ package org.apache.tapestry.upload.components;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
+import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.apache.tapestry.upload.services.MultipartDecoder;
 import org.apache.tapestry.upload.services.UploadedFile;
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.expectLastCall;
 import org.testng.annotations.Test;
 
 public class UploadTest extends TapestryTestCase
@@ -46,7 +47,7 @@ public class UploadTest extends TapestryTestCase
 
         replay();
 
-        Upload component = new Upload(null, null, null, null, resources);
+        Upload component = new Upload(null, null, null, null, resources, null);
 
         component.injectDecorator(new StubValidationDecorator());
         component.injectFormSupport(formSupport);
@@ -70,7 +71,7 @@ public class UploadTest extends TapestryTestCase
         getMocksControl().checkOrder(true);
 
         ComponentResources resources = mockComponentResources();
-        Upload component = new Upload(null, null, null, null, resources);
+        Upload component = new Upload(null, null, null, null, resources, null);
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
 
@@ -106,7 +107,7 @@ public class UploadTest extends TapestryTestCase
 
         FieldValidator<Object> validate = mockFieldValidator();
         ComponentResources resources = mockComponentResources();
-        Upload component = new Upload(null, validate, null, null, resources);
+        Upload component = new Upload(null, validate, null, null, resources, null);
         MarkupWriter writer = createMarkupWriter();
         writer.element("form");
 
@@ -145,6 +146,7 @@ public class UploadTest extends TapestryTestCase
 
     }
 
+    @SuppressWarnings({"unchecked"})
     @Test
     public void process_submission_extracts_value_from_decoder() throws Exception
     {
@@ -152,13 +154,15 @@ public class UploadTest extends TapestryTestCase
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         ComponentResources resources = mockComponentResources();
+        FieldValidationSupport support = mockFieldValidationSupport();
+        FieldValidator validate = mockFieldValidator();
 
-        Upload component = new Upload(null, null, decoder, null, resources);
+        Upload component = new Upload(null, validate, decoder, null, resources, support);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("foo").anyTimes();
 
-        train_validate(resources, uploadedFile);
+        support.validate(uploadedFile, resources, validate);
 
         replay();
 
@@ -169,12 +173,7 @@ public class UploadTest extends TapestryTestCase
         assertSame(component.getValue(), uploadedFile);
     }
 
-    protected final void train_validate(ComponentResources resources, Object... context)
-    {
-        ComponentEventHandler handler = null;
-        expect(resources.triggerEvent(eq("validate"), aryEq(context), eq(handler))).andReturn(false);
-    }
-
+    @SuppressWarnings({"unchecked"})
     @Test
     public void process_submission_ignores_null_value() throws Exception
     {
@@ -182,14 +181,16 @@ public class UploadTest extends TapestryTestCase
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         ComponentResources resources = mockComponentResources();
+        FieldValidationSupport support = mockFieldValidationSupport();
+        FieldValidator validate = mockFieldValidator();
 
-        Upload component = new Upload(null, null, decoder, null, resources);
+        Upload component = new Upload(null, validate, decoder, null, resources, support);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("").atLeastOnce();
 
+        support.validate(null, resources, validate);
 
-        train_validate(resources, new Object[]{null});
 
         replay();
 
@@ -209,15 +210,14 @@ public class UploadTest extends TapestryTestCase
         UploadedFile uploadedFile = mockUploadedFile();
         FieldValidator<Object> validate = mockFieldValidator();
         ComponentResources resources = mockComponentResources();
+        FieldValidationSupport support = mockFieldValidationSupport();
 
-        Upload component = new Upload(null, validate, decoder, null, resources);
+        Upload component = new Upload(null, validate, decoder, null, resources, support);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("test").atLeastOnce();
 
-        train_validate(resources, uploadedFile);
-
-        validate.validate(uploadedFile);
+        support.validate(uploadedFile, resources, validate);
 
         replay();
 
@@ -226,7 +226,7 @@ public class UploadTest extends TapestryTestCase
         verify();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "ThrowableInstanceNeverThrown"})
     @Test
     public void process_submission_tracks_validator_errors() throws Exception
     {
@@ -236,14 +236,14 @@ public class UploadTest extends TapestryTestCase
         FieldValidator<Object> validate = mockFieldValidator();
         ValidationTracker tracker = mockValidationTracker();
         ComponentResources resources = mockComponentResources();
+        FieldValidationSupport support = mockFieldValidationSupport();
 
-        Upload component = new Upload(null, validate, decoder, tracker, resources);
+        Upload component = new Upload(null, validate, decoder, tracker, resources, support);
 
         expect(decoder.getFileUpload("test")).andReturn(uploadedFile);
         expect(uploadedFile.getFileName()).andReturn("test").atLeastOnce();
 
-        validate.validate(uploadedFile);
-
+        support.validate(uploadedFile, resources, validate);
         expectLastCall().andThrow(new ValidationException("an error"));
 
         tracker.recordError(component, "an error");

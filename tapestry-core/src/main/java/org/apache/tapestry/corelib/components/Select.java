@@ -19,7 +19,6 @@ import org.apache.tapestry.annotations.BeforeRenderTemplate;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.corelib.internal.ComponentValidatorWrapper;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
@@ -105,6 +104,9 @@ public final class Select extends AbstractField
     @Inject
     private ValueEncoderSource _valueEncoderSource;
 
+    @Inject
+    private FieldValidationSupport _fieldValidationSupport;
+
     @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(FormSupport formSupport, String elementName)
@@ -113,11 +115,9 @@ public final class Select extends AbstractField
 
         Object selectedValue = _encoder.toValue(primaryKey);
 
-        FieldValidator wrappedValidator = new ComponentValidatorWrapper(_resources, _validate);
-
         try
         {
-            wrappedValidator.validate(selectedValue);
+            _fieldValidationSupport.validate(selectedValue, _resources, _validate);
 
             _value = selectedValue;
         }

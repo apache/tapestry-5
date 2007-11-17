@@ -91,7 +91,7 @@ public final class TapestryModule
         binder.bind(BeanBlockSource.class, BeanBlockSourceImpl.class);
         binder.bind(ComponentDefaultProvider.class, ComponentDefaultProviderImpl.class);
         binder.bind(MarkupWriterFactory.class, MarkupWriterFactoryImpl.class);
-
+        binder.bind(FieldValidationSupport.class, FieldValidationSupportImpl.class);
         binder.bind(TemplateParser.class, TemplateParserImpl.class);
         binder.bind(PageResponseRenderer.class, PageResponseRendererImpl.class);
         binder.bind(PageMarkupRenderer.class, PageMarkupRendererImpl.class);
@@ -107,7 +107,6 @@ public final class TapestryModule
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
         binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);
         binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
-
     }
 
     public static Alias build(Logger logger,

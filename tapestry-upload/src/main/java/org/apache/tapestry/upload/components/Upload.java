@@ -18,8 +18,8 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
-import org.apache.tapestry.corelib.internal.ComponentValidatorWrapper;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.upload.services.MultipartDecoder;
@@ -67,6 +67,9 @@ public class Upload extends AbstractField
     @Inject
     private Locale _locale;
 
+    @Inject
+    private FieldValidationSupport _fieldValidationSupport;
+
     /**
      * Computes a default value for the "validate" parameter using
      * {@link FieldValidatorDefaultSource}.
@@ -88,13 +91,14 @@ public class Upload extends AbstractField
 
     // For testing
     Upload(UploadedFile value, FieldValidator<Object> validate, MultipartDecoder decoder, ValidationTracker tracker,
-           ComponentResources resources)
+           ComponentResources resources, FieldValidationSupport fieldValidationSupport)
     {
         _value = value;
         if (validate != null) _validate = validate;
         _decoder = decoder;
         _tracker = tracker;
         _resources = resources;
+        _fieldValidationSupport = fieldValidationSupport;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -108,11 +112,9 @@ public class Upload extends AbstractField
             if (uploaded.getFileName() == null || uploaded.getFileName().length() == 0) uploaded = null;
         }
 
-        FieldValidator wrappedValidator = new ComponentValidatorWrapper(_resources, _validate);
-
         try
         {
-            wrappedValidator.validate(uploaded);
+            _fieldValidationSupport.validate(uploaded, _resources, _validate);
         }
         catch (ValidationException ex)
         {
