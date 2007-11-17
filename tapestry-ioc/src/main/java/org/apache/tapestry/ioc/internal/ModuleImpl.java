@@ -27,9 +27,12 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.*;
 import org.slf4j.Logger;
 
+import java.io.ObjectStreamException;
+import java.io.Serializable;
 import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.*;
 
 public class ModuleImpl implements Module
@@ -64,8 +67,8 @@ public class ModuleImpl implements Module
      */
     private final Map<String, Object> _services = newCaseInsensitiveMap();
 
-    public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker,
-                      ModuleDef moduleDef, ClassFactory classFactory, Logger logger)
+    public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
+                      ClassFactory classFactory, Logger logger)
     {
         _registry = registry;
         _tracker = tracker;
@@ -199,8 +202,7 @@ public class ModuleImpl implements Module
 
         try
         {
-            ServiceBuilderResources resources = new ServiceResourcesImpl(_registry, this, def,
-                                                                         _classFactory, logger);
+            ServiceBuilderResources resources = new ServiceResourcesImpl(_registry, this, def, _classFactory, logger);
 
             // Build up a stack of operations that will be needed to realize the service
             // (by the proxy, at a later date).
@@ -215,8 +217,7 @@ public class ModuleImpl implements Module
 
             if (!serviceInterface.isInterface()) return creator.createObject();
 
-            creator = new LifecycleWrappedServiceCreator(_registry, def.getServiceScope(),
-                                                         resources, creator);
+            creator = new LifecycleWrappedServiceCreator(_registry, def.getServiceScope(), resources, creator);
 
             // Don't allow the core IOC services services to be decorated.
 
@@ -227,8 +228,7 @@ public class ModuleImpl implements Module
 
             creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
 
-            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(_tracker, creator,
-                                                                           serviceId);
+            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(_tracker, creator, serviceId);
 
             Object proxy = createProxy(resources, delegate);
 
@@ -271,8 +271,7 @@ public class ModuleImpl implements Module
 
         Constructor[] constructors = builderClass.getConstructors();
 
-        if (constructors.length == 0)
-            throw new RuntimeException(IOCMessages.noPublicConstructors(builderClass));
+        if (constructors.length == 0) throw new RuntimeException(IOCMessages.noPublicConstructors(builderClass));
 
         if (constructors.length > 1)
         {
@@ -296,9 +295,7 @@ public class ModuleImpl implements Module
         Constructor constructor = constructors[0];
 
         if (_insideConstructor)
-            throw new RuntimeException(IOCMessages.recursiveModuleConstructor(
-                    builderClass,
-                    constructor));
+            throw new RuntimeException(IOCMessages.recursiveModuleConstructor(builderClass, constructor));
 
         ObjectLocator locator = new ObjectLocatorImpl(_registry, this);
         Map<Class, Object> parameterDefaults = newMap();
@@ -312,11 +309,9 @@ public class ModuleImpl implements Module
         {
             _insideConstructor = true;
 
-            Object[] parameterValues = InternalUtils.calculateParameters(
-                    locator,
-                    parameterDefaults,
-                    constructor.getParameterTypes(),
-                    constructor.getParameterAnnotations());
+            Object[] parameterValues = InternalUtils.calculateParameters(locator, parameterDefaults,
+                                                                         constructor.getParameterTypes(),
+                                                                         constructor.getParameterAnnotations());
 
             return constructor.newInstance(parameterValues);
         }
@@ -346,12 +341,52 @@ public class ModuleImpl implements Module
         return createProxyInstance(creator, serviceId, serviceInterface, toString);
     }
 
-    private Object createProxyInstance(ObjectCreator creator, String serviceId,
-                                       Class serviceInterface, String description)
+    private Object createProxyInstance(ObjectCreator creator, String serviceId, Class serviceInterface,
+                                       String description)
     {
-        ClassFab cf = _registry.newClass(serviceInterface);
+        ServiceProxyToken token = SerializationSupport.createToken(serviceId);
 
-        return ClassFabUtils.createObjectCreatorProxy(cf, serviceInterface, creator, description);
+        ClassFab classFab = _registry.newClass(serviceInterface);
+
+        classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
+        classFab.addField("_token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
+
+        classFab.addConstructor(new Class[]{ObjectCreator.class, ServiceProxyToken.class}, null,
+                                "{ _creator = $1; _token = $2; }");
+
+        // Make proxies serializable by writing the token to the stream.
+
+        classFab.addInterface(Serializable.class);
+
+        // This is the "magic" signature that allows an object to substitute some other
+        // object for itself.
+        MethodSignature writeReplaceSig = new MethodSignature(Object.class, "writeReplace", null,
+                                                              new Class[]{ObjectStreamException.class});
+
+        classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return _token;");
+
+        // Now delegate all the methods.
+
+        String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
+
+        MethodSignature sig = new MethodSignature(serviceInterface, "_delegate", null, null);
+
+        classFab.addMethod(Modifier.PRIVATE, sig, body);
+
+        classFab.proxyMethodsToDelegate(serviceInterface, "_delegate()", description);
+
+        Class proxyClass = classFab.createClass();
+
+        try
+        {
+            return proxyClass.getConstructors()[0].newInstance(creator, token);
+        }
+        catch (Exception ex)
+        {
+            // Exceptions should not happen.
+
+            throw new RuntimeException(ex.getMessage(), ex);
+        }
     }
 
     public Set<ContributionDef> getContributorDefsForService(String serviceId)

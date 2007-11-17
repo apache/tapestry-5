@@ -66,6 +66,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
         assertFalse(StaticModule.isInstantiated());
         assertTrue(StaticModule.getFredRan());
+
+        r.shutdown();
     }
 
     @Test
@@ -82,6 +84,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
         assertFalse(StaticModule.isInstantiated());
         assertTrue(StaticModule.getDecoratorRan());
+
+        r.shutdown();
     }
 
     @Test
@@ -98,6 +102,8 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(names, Arrays.asList("Fred"));
 
         assertFalse(StaticModule.isInstantiated());
+
+        r.shutdown();
     }
 
     @Test
@@ -118,9 +124,8 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
+            assertEquals(ex.getMessage(),
+                         "Proxy for service Fred is no longer active because the IOC Registry has been shut down.");
         }
 
         // Show that toString() still works, even for a shutdown proxy.
@@ -208,6 +213,8 @@ public class IntegrationTest extends IOCInternalTestCase
         // Random objects are size 1
 
         assertEquals(sizer.size(this), 1);
+
+        r.shutdown();
     }
 
     @Test
@@ -225,11 +232,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (Exception ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Exception constructing service 'UnknownScope'",
-                    "Unknown service scope 'magic'");
+            assertMessageContains(ex, "Exception constructing service 'UnknownScope'", "Unknown service scope 'magic'");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -269,6 +275,8 @@ public class IntegrationTest extends IOCInternalTestCase
         assertEquals(holder.getValue(), "fred");
 
         r.cleanupThread();
+
+        r.shutdown();
     }
 
     /**
@@ -315,6 +323,8 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertTrue(ex.getMessage().contains("has failed due to recursion"));
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -322,13 +332,13 @@ public class IntegrationTest extends IOCInternalTestCase
     {
         Registry r = buildRegistry(EagerLoadModule.class);
 
-        assertFalse(
-                EagerLoadModule._eagerLoadDidHappen,
-                "EagerLoadModule is not in correct initial state.");
+        assertFalse(EagerLoadModule._eagerLoadDidHappen, "EagerLoadModule is not in correct initial state.");
 
         r.performRegistryStartup();
 
         assertTrue(EagerLoadModule._eagerLoadDidHappen);
+
+        r.shutdown();
     }
 
     @Test
@@ -339,6 +349,8 @@ public class IntegrationTest extends IOCInternalTestCase
         Runnable fred = r.getService("Fred", Runnable.class);
 
         assertSame(r.getService("FRED", Runnable.class), fred);
+
+        r.shutdown();
     }
 
     @Test
@@ -351,6 +363,8 @@ public class IntegrationTest extends IOCInternalTestCase
         sh.setValue("Foo");
 
         assertEquals(sh.getValue(), "Foo");
+
+        r.shutdown();
     }
 
     @Test
@@ -367,13 +381,12 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Error invoking constructor",
-                    "ExceptionInConstructorServiceImpl() (at ExceptionInConstructorServiceImpl.java",
-                    "for service 'Pingable'",
-                    "Yes, we have no tomatoes.");
+            assertMessageContains(ex, "Error invoking constructor",
+                                  "ExceptionInConstructorServiceImpl() (at ExceptionInConstructorServiceImpl.java",
+                                  "for service 'Pingable'", "Yes, we have no tomatoes.");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -387,6 +400,8 @@ public class IntegrationTest extends IOCInternalTestCase
         StringHolder holder = r.getService(StringHolder.class);
 
         assertTrue(holder instanceof StringHolderImpl);
+
+        r.shutdown();
     }
 
     @Test
@@ -401,6 +416,8 @@ public class IntegrationTest extends IOCInternalTestCase
         holder.setValue("Foo");
 
         assertEquals(holder.getValue(), "Foo");
+
+        r.shutdown();
     }
 
     @Test
@@ -417,6 +434,8 @@ public class IntegrationTest extends IOCInternalTestCase
         holder.setValue("Foo");
 
         assertEquals(holder.getValue(), "Foo");
+
+        r.shutdown();
     }
 
     @Test
@@ -438,15 +457,15 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
+            assertMessageContains(ex,
+                                  "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
 
             // Like to check that the message includes the source location
 
-            assertTrue(ex.getMessage().matches(
-                    ".*\\(at ServiceBuilderAutobuilderModule.java:\\d+\\).*"));
+            assertTrue(ex.getMessage().matches(".*\\(at ServiceBuilderAutobuilderModule.java:\\d+\\).*"));
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -462,10 +481,11 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
+            assertMessageContains(ex,
+                                  "Class org.apache.tapestry.ioc.UnbuildablePingable does not contain a public constructor needed to autobuild.");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -481,15 +501,15 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Error invoking constructor org.apache.tapestry.ioc.FailInConstructorRunnable()",
-                    "Failure in Runnable constructor.");
+            assertMessageContains(ex, "Error invoking constructor org.apache.tapestry.ioc.FailInConstructorRunnable()",
+                                  "Failure in Runnable constructor.");
 
             // Like to check that the message includes the source location
 
             assertTrue(ex.getMessage().matches(".*\\(at FailInConstructorRunnable.java:\\d+\\).*"));
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -506,6 +526,8 @@ public class IntegrationTest extends IOCInternalTestCase
         {
             assertMessageContains(ex, "Service id \'PeekABoo\' is not defined by any module.");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -521,10 +543,10 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "No service implements the interface java.sql.PreparedStatement.");
+            assertEquals(ex.getMessage(), "No service implements the interface java.sql.PreparedStatement.");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -539,10 +561,11 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Service interface org.apache.tapestry.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
+            assertEquals(ex.getMessage(),
+                         "Service interface org.apache.tapestry.ioc.Pingable is matched by 2 services: Barney, Fred.  Automatic dependency resolution requires that exactly one service implement the interface.");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -559,6 +582,8 @@ public class IntegrationTest extends IOCInternalTestCase
         // But the implementation is cached
 
         assertSame(r.getService(StringHolder.class), holder);
+
+        r.shutdown();
     }
 
     @Test
@@ -570,6 +595,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
         assertEquals(g.getGreeting(), "Hello");
         assertEquals(g.toString(), "<Proxy for Greeter(org.apache.tapestry.ioc.Greeter)>");
+
+        r.shutdown();
     }
 
     @Test
@@ -581,6 +608,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
         assertEquals(g.getGreeting(), "Hello");
         assertEquals(g.toString(), "<Proxy for HelloGreeter(org.apache.tapestry.ioc.Greeter)>");
+
+        r.shutdown();
     }
 
     @Test
@@ -591,6 +620,8 @@ public class IntegrationTest extends IOCInternalTestCase
         Greeter g = r.getService("InjectedBlueGreeter", Greeter.class);
 
         assertEquals(g.getGreeting(), "Blue");
+
+        r.shutdown();
     }
 
     @Test
@@ -607,13 +638,13 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Error invoking service builder method",
-                    "Unable to locate a single service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.RedMarker",
-                    "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter1()",
-                    "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter2()");
+            assertMessageContains(ex, "Error invoking service builder method",
+                                  "Unable to locate a single service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.RedMarker",
+                                  "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter1()",
+                                  "org.apache.tapestry.ioc.GreeterModule.buildRedGreeter2()");
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -630,12 +661,11 @@ public class IntegrationTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Error invoking service builder method",
-                    " Unable to locate any service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.YellowMarker.");
+            assertMessageContains(ex, "Error invoking service builder method",
+                                  " Unable to locate any service assignable to type org.apache.tapestry.ioc.Greeter with marker annotation org.apache.tapestry.ioc.YellowMarker.");
         }
 
+        r.shutdown();
     }
 
     @SuppressWarnings("unchecked")
@@ -665,6 +695,8 @@ public class IntegrationTest extends IOCInternalTestCase
         assertSame(tc1, tc2);
 
         verify();
+
+        r.shutdown();
     }
 
     /**
@@ -704,6 +736,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
             if (serviceId.equals("BlueGreeter")) assertEquals(a.getStatus(), Status.VIRTUAL);
         }
+
+        r.shutdown();
     }
 
     @Test
@@ -717,9 +751,8 @@ public class IntegrationTest extends IOCInternalTestCase
 
         assertEquals(CountingGreeterImpl._instantiationCount, 0);
 
-        assertEquals(
-                g.toString(),
-                "<Autobuild proxy org.apache.tapestry.ioc.CountingGreeterImpl(org.apache.tapestry.ioc.Greeter)>");
+        assertEquals(g.toString(),
+                     "<Autobuild proxy org.apache.tapestry.ioc.CountingGreeterImpl(org.apache.tapestry.ioc.Greeter)>");
 
         assertEquals(CountingGreeterImpl._instantiationCount, 0);
 
@@ -731,5 +764,9 @@ public class IntegrationTest extends IOCInternalTestCase
             assertEquals(g.getGreeting(), "Hello");
             assertEquals(CountingGreeterImpl._instantiationCount, 1);
         }
+
+        r.shutdown();
     }
+
+
 }

@@ -39,6 +39,8 @@ public class RegistryBuilderTest extends IOCTestCase
         List<String> names = service.getNames();
 
         assertEquals(names, Arrays.asList("Beta", "Gamma", "UnorderedNames"));
+
+        r.shutdown();
     }
 
     @Test
@@ -61,5 +63,7 @@ public class RegistryBuilderTest extends IOCTestCase
         // ClassFactory service was accessed and used.
 
         assertEquals(service.toString(), "<Proxy for Square(org.apache.tapestry.ioc.Square)>");
+
+        registry.shutdown();
     }
 }

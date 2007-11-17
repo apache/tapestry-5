@@ -56,14 +56,10 @@ final class IOCMessages
         return MESSAGES.get("builder-locked");
     }
 
-    static String serviceWrongInterface(String serviceId, Class actualInterface,
-                                        Class requestedInterface)
+    static String serviceWrongInterface(String serviceId, Class actualInterface, Class requestedInterface)
     {
-        return MESSAGES.format(
-                "service-wrong-interface",
-                serviceId,
-                actualInterface.getName(),
-                requestedInterface.getName());
+        return MESSAGES.format("service-wrong-interface", serviceId, actualInterface.getName(),
+                               requestedInterface.getName());
     }
 
     static String instantiateBuilderError(Class builderClass, Throwable cause)
@@ -107,11 +103,7 @@ final class IOCMessages
             buffer.append(ids.get(i));
         }
 
-        return MESSAGES.format(
-                "many-service-matches",
-                serviceInterface.getName(),
-                ids.size(),
-                buffer.toString());
+        return MESSAGES.format("many-service-matches", serviceInterface.getName(), ids.size(), buffer.toString());
     }
 
     static String unknownScope(String name)
@@ -124,15 +116,10 @@ final class IOCMessages
         return MESSAGES.format("decorator-method-needs-delegate-parameter", asString(method));
     }
 
-    static String decoratorReturnedWrongType(Method method, String serviceId, Object returned,
-                                             Class serviceInterface)
+    static String decoratorReturnedWrongType(Method method, String serviceId, Object returned, Class serviceInterface)
     {
-        return MESSAGES.format(
-                "decorator-returned-wrong-type",
-                asString(method),
-                serviceId,
-                returned,
-                serviceInterface.getName());
+        return MESSAGES.format("decorator-returned-wrong-type", asString(method), serviceId, returned,
+                               serviceInterface.getName());
     }
 
     static String creatingService(String serviceId)
@@ -163,10 +150,8 @@ final class IOCMessages
 
     static String contributionWrongReturnType(Method method)
     {
-        return MESSAGES.format(
-                "contribution-wrong-return-type",
-                asString(method),
-                toJavaClassName(method.getReturnType()));
+        return MESSAGES.format("contribution-wrong-return-type", asString(method),
+                               toJavaClassName(method.getReturnType()));
     }
 
     static String tooManyContributionParameters(Method method)
@@ -194,22 +179,18 @@ final class IOCMessages
         return MESSAGES.format("contribution-key-was-null", serviceId, def);
     }
 
-    static String contributionWrongValueType(String serviceId, ContributionDef def,
-                                             Class actualClass, Class expectedClass)
+    static String contributionWrongValueType(String serviceId, ContributionDef def, Class actualClass,
+                                             Class expectedClass)
     {
         return MESSAGES.format("contribution-wrong-value-type", serviceId, def, actualClass
                 .getName(), expectedClass.getName());
     }
 
-    static String contributionWrongKeyType(String serviceId, ContributionDef def,
-                                           Class actualClass, Class expectedClass)
+    static String contributionWrongKeyType(String serviceId, ContributionDef def, Class actualClass,
+                                           Class expectedClass)
     {
-        return MESSAGES.format(
-                "contribution-wrong-key-type",
-                serviceId,
-                def,
-                actualClass.getName(),
-                expectedClass.getName());
+        return MESSAGES.format("contribution-wrong-key-type", serviceId, def, actualClass.getName(),
+                               expectedClass.getName());
     }
 
     static String tooManyConfigurationParameters(String methodId)
@@ -225,11 +206,7 @@ final class IOCMessages
     static String contributionDuplicateKey(String serviceId, ContributionDef contributionDef,
                                            ContributionDef existingDef)
     {
-        return MESSAGES.format(
-                "contribution-duplicate-key",
-                serviceId,
-                contributionDef,
-                existingDef);
+        return MESSAGES.format("contribution-duplicate-key", serviceId, contributionDef, existingDef);
     }
 
     static String errorBuildingService(String serviceId, ServiceDef serviceDef, Throwable cause)
@@ -244,10 +221,7 @@ final class IOCMessages
 
     static String tooManyPublicConstructors(Class moduleBuilderClass, Constructor constructor)
     {
-        return MESSAGES.format(
-                "too-many-public-constructors",
-                moduleBuilderClass.getName(),
-                constructor);
+        return MESSAGES.format("too-many-public-constructors", moduleBuilderClass.getName(), constructor);
     }
 
     static String recursiveModuleConstructor(Class builderClass, Constructor constructor)
@@ -311,11 +285,25 @@ final class IOCMessages
                 .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker));
     }
 
-    static String manyServicesMatchMarker(Class objectType, Class marker,
-                                          Collection<ServiceDef> matchingServices)
+    static String manyServicesMatchMarker(Class objectType, Class marker, Collection<ServiceDef> matchingServices)
     {
         return MESSAGES.format("many-services-match-marker", ClassFabUtils
                 .toJavaClassName(objectType), ClassFabUtils.toJavaClassName(marker), InternalUtils
                 .joinSorted(matchingServices));
+    }
+
+    static String overlappingServiceProxyProviders()
+    {
+        return MESSAGES.get("overlapping-service-proxy-providers");
+    }
+
+    static String unexpectedServiceProxyProvider()
+    {
+        return MESSAGES.get("unexpected-service-proxy-provider");
+    }
+
+    static String noProxyProvider(String serviceId)
+    {
+        return MESSAGES.format("no-proxy-provider", serviceId);
     }
 }

@@ -42,8 +42,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         ClassFactory factory = new ClassFactoryImpl();
         ServiceActivityTracker tracker = mockServiceActivityTracker();
 
-        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger,
-                                                       getClassFactory());
+        ModuleDef moduleDef = new DefaultModuleDefImpl(ModuleImplTestModule.class, logger, getClassFactory());
 
         Module module = new ModuleImpl(registry, tracker, moduleDef, null, logger);
 
@@ -79,8 +78,7 @@ public class ModuleImplTest extends IOCInternalTestCase
         verify();
     }
 
-    protected final void train_newClass(InternalRegistry registry, ClassFactory factory,
-                                        Class serviceInterface)
+    protected final void train_newClass(InternalRegistry registry, ClassFactory factory, Class serviceInterface)
     {
         expect(registry.newClass(serviceInterface)).andReturn(factory.newClass(serviceInterface));
     }
@@ -156,10 +154,8 @@ public class ModuleImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Module builder class org.apache.tapestry.ioc.internal.PrivateConstructorModule "
-                            + "does not contain any public constructors.");
+            assertEquals(ex.getMessage(),
+                         "Module builder class org.apache.tapestry.ioc.internal.PrivateConstructorModule " + "does not contain any public constructors.");
         }
 
         verify();
@@ -213,13 +209,13 @@ public class ModuleImplTest extends IOCInternalTestCase
         UpcaseService us = registry.getService(UpcaseService.class);
 
         assertEquals(us.upcase("hello"), "HELLO");
-        assertEquals(
-                us.toString(),
-                "<Proxy for Upcase(org.apache.tapestry.ioc.internal.UpcaseService)>");
+        assertEquals(us.toString(), "<Proxy for Upcase(org.apache.tapestry.ioc.internal.UpcaseService)>");
 
         ToStringService ts = registry.getService(ToStringService.class);
 
         assertEquals(ts.toString(), "<ToStringService: ToString>");
+
+        registry.shutdown();
     }
 
     @Test
@@ -238,6 +234,8 @@ public class ModuleImplTest extends IOCInternalTestCase
         {
             // The details are checked elsewhere.
         }
+
+        registry.shutdown();
     }
 
 }

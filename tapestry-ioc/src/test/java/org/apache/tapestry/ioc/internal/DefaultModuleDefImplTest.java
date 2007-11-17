@@ -139,8 +139,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger,
-                                                _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, _classFactory);
 
         Set<String> ids = md.getServiceIds();
 
@@ -204,8 +203,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         invalidDecoratorMethod(VoidDecoratorMethodModule.class, "decorateVoid");
     }
 
-    private void invalidDecoratorMethod(Class moduleClass, String methodName)
-            throws NoSuchMethodException
+    private void invalidDecoratorMethod(Class moduleClass, String methodName) throws NoSuchMethodException
     {
         Method m = moduleClass.getMethod(methodName, Object.class);
 
@@ -262,23 +260,17 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     @Test
     public void ordered_contribution_method()
     {
-        attemptConfigurationMethod(
-                OrderedConfigurationModule.class,
-                "Ordered",
-                "contributeOrdered(OrderedConfiguration)");
+        attemptConfigurationMethod(OrderedConfigurationModule.class, "Ordered",
+                                   "contributeOrdered(OrderedConfiguration)");
     }
 
     @Test
     public void mapped_contribution_method()
     {
-        attemptConfigurationMethod(
-                MappedConfigurationModule.class,
-                "Mapped",
-                "contributeMapped(MappedConfiguration)");
+        attemptConfigurationMethod(MappedConfigurationModule.class, "Mapped", "contributeMapped(MappedConfiguration)");
     }
 
-    private void attemptConfigurationMethod(Class moduleClass, String expectedServiceId,
-                                            String expectedMethodSignature)
+    private void attemptConfigurationMethod(Class moduleClass, String expectedServiceId, String expectedMethodSignature)
     {
         Logger logger = mockLogger();
 
@@ -387,15 +379,13 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger,
-                                     _classFactory);
+            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, _classFactory);
             unreachable();
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Class org.apache.tapestry.ioc.internal.RunnableServiceImpl (implementation of service \'Runnable\') does not contain any public constructors.");
+            assertEquals(ex.getMessage(),
+                         "Class org.apache.tapestry.ioc.internal.RunnableServiceImpl (implementation of service \'Runnable\') does not contain any public constructors.");
         }
 
         verify();
@@ -406,14 +396,11 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     {
         Logger logger = mockLogger();
 
-        logger.error(and(
-                contains(NonStaticBindMethodModule.class.getName()),
-                contains("but is an instance method")));
+        logger.error(and(contains(NonStaticBindMethodModule.class.getName()), contains("but is an instance method")));
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger,
-                                                _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, _classFactory);
 
         // Prove that the bind method was not invoke
 
@@ -439,16 +426,12 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         train_getServiceId(resources, "StringHolder");
         train_getLogger(resources, logger);
         train_getServiceInterface(resources, StringHolder.class);
-        train_getService(
-                resources,
-                "ToUpperCaseStringHolder",
-                StringHolder.class,
-                new ToUpperCaseStringHolder());
+        train_getService(resources, "ToUpperCaseStringHolder", StringHolder.class, new ToUpperCaseStringHolder());
 
         replay();
 
-        ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class,
-                                                 logger, _classFactory);
+        ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class, logger,
+                                                 _classFactory);
 
         ServiceDef sd = def.getServiceDef("StringHolder");
 
@@ -481,8 +464,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
             assertTrue(ex
                     .getMessage()
                     .matches(
-                    "Error invoking service binder method org.apache.tapestry.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) "
-                            + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
+                    "Error invoking service binder method org.apache.tapestry.ioc.internal.ExceptionInBindMethod.bind\\(ServiceBinder\\) " + "\\(at ExceptionInBindMethod.java:\\d+\\): Really, how often is this going to happen\\?"));
         }
 
         verify();
@@ -495,8 +477,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger,
-                                                _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger, _classFactory);
 
         ServiceDef sd = md.getServiceDef("Runnable");
 
@@ -566,7 +547,12 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         ServiceDef sd = md.getServiceDef("SurprisinglyBlueGreeter");
 
         // BlueMarker from ServiceBindingOptions, RedMarker from @Marker on class
-        assertEquals(sd.getMarkers(), CollectionFactory.newSet(RedMarker.class, BlueMarker.class));
+
+        Set<Class> markers = sd.getMarkers();
+
+        assertTrue(markers.contains(RedMarker.class));
+        assertTrue(markers.contains(BlueMarker.class));
+        assertEquals(markers.size(), 2);
 
         verify();
     }
