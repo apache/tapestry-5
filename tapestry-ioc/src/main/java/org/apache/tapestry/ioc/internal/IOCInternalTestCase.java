@@ -91,6 +91,7 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         throw new UnsupportedOperationException("No registry shutdown until @AfterSuite.");
     }
 
+
     @AfterSuite
     public final void shutdown_registry()
     {
@@ -133,14 +134,13 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
         expect(source.getDescription()).andReturn(description).atLeastOnce();
     }
 
-    protected final void train_getLifecycle(InternalRegistry registry, String scope,
-                                            ServiceLifecycle lifecycle)
+    protected final void train_getLifecycle(InternalRegistry registry, String scope, ServiceLifecycle lifecycle)
     {
         expect(registry.getServiceLifecycle(scope)).andReturn(lifecycle);
     }
 
-    protected final <T> void train_getService(InternalRegistry registry, String serviceId,
-                                              Class<T> serviceInterface, T service)
+    protected final <T> void train_getService(InternalRegistry registry, String serviceId, Class<T> serviceInterface,
+                                              T service)
     {
         expect(registry.getService(serviceId, serviceInterface)).andReturn(service);
     }

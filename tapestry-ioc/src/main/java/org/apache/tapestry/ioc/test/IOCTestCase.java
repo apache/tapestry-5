@@ -36,6 +36,10 @@ import java.util.Locale;
  */
 public class IOCTestCase extends TestBase
 {
+
+    /**
+     * Builds a Registry for the provided modules; caller should shutdown the Registry when done.
+     */
     protected final Registry buildRegistry(Class... moduleClasses)
     {
         RegistryBuilder builder = new RegistryBuilder();
@@ -52,10 +56,8 @@ public class IOCTestCase extends TestBase
             if (method.getName().equals(methodName)) return method;
         }
 
-        throw new IllegalArgumentException(String.format(
-                "Class %s does not provide a method named '%s'.",
-                clazz.getName(),
-                methodName));
+        throw new IllegalArgumentException(
+                String.format("Class %s does not provide a method named '%s'.", clazz.getName(), methodName));
     }
 
     protected final Method findMethod(Object subject, String methodName)
@@ -210,8 +212,7 @@ public class IOCTestCase extends TestBase
         expect(messages.contains(isA(String.class))).andStubReturn(contained);
     }
 
-    protected <S, T> void train_coerce(TypeCoercer coercer, S input, Class<T> expectedType,
-                                       T coercedValue)
+    protected <S, T> void train_coerce(TypeCoercer coercer, S input, Class<T> expectedType, T coercedValue)
     {
         expect(coercer.coerce(input, expectedType)).andReturn(coercedValue);
     }
@@ -221,8 +222,7 @@ public class IOCTestCase extends TestBase
         expect(messages.contains(key)).andReturn(result).atLeastOnce();
     }
 
-    protected final void train_createInterceptor(ServiceDecorator decorator, Object coreObject,
-                                                 Object interceptor)
+    protected final void train_createInterceptor(ServiceDecorator decorator, Object coreObject, Object interceptor)
     {
         expect(decorator.createInterceptor(coreObject)).andReturn(interceptor);
     }
@@ -276,8 +276,7 @@ public class IOCTestCase extends TestBase
         expect(source.getLogger(serviceId)).andReturn(logger).atLeastOnce();
     }
 
-    protected final void train_getMessageFormatter(Messages messages, String key,
-                                                   MessageFormatter formatter)
+    protected final void train_getMessageFormatter(Messages messages, String key, MessageFormatter formatter)
     {
         expect(messages.getFormatter(key)).andReturn(formatter).atLeastOnce();
     }
@@ -287,14 +286,13 @@ public class IOCTestCase extends TestBase
         expect(r.getPath()).andReturn(path).atLeastOnce();
     }
 
-    protected final <T> void train_getService(ObjectLocator locator, Class<T> serviceInterface,
-                                              T service)
+    protected final <T> void train_getService(ObjectLocator locator, Class<T> serviceInterface, T service)
     {
         expect(locator.getService(serviceInterface)).andReturn(service);
     }
 
-    protected final <T> void train_getService(ObjectLocator locator, String serviceId,
-                                              Class<T> serviceInterface, T service)
+    protected final <T> void train_getService(ObjectLocator locator, String serviceId, Class<T> serviceInterface,
+                                              T service)
     {
         expect(locator.getService(serviceId, serviceInterface)).andReturn(service);
     }
@@ -315,8 +313,7 @@ public class IOCTestCase extends TestBase
         expect(def.getServiceInterface()).andReturn(serviceInterface).atLeastOnce();
     }
 
-    protected final void train_getServiceInterface(ServiceResources resources,
-                                                   Class serviceInterface)
+    protected final void train_getServiceInterface(ServiceResources resources, Class serviceInterface)
     {
         expect(resources.getServiceInterface()).andReturn(serviceInterface).atLeastOnce();
     }
@@ -337,8 +334,7 @@ public class IOCTestCase extends TestBase
         expect(log.isTraceEnabled()).andReturn(traceEnabled);
     }
 
-    protected final void train_matches(DecoratorDef decoratorDef, ServiceDef serviceDef,
-                                       boolean matches)
+    protected final void train_matches(DecoratorDef decoratorDef, ServiceDef serviceDef, boolean matches)
     {
         expect(decoratorDef.matches(serviceDef)).andReturn(matches);
     }
@@ -354,8 +350,8 @@ public class IOCTestCase extends TestBase
         expect(resource.toURL()).andReturn(url).atLeastOnce();
     }
 
-    protected final <T extends Annotation> void train_getAnnotation(
-            AnnotationProvider annotationProvider, Class<T> annotationClass, T annotation)
+    protected final <T extends Annotation> void train_getAnnotation(AnnotationProvider annotationProvider,
+                                                                    Class<T> annotationClass, T annotation)
     {
         expect(annotationProvider.getAnnotation(annotationClass)).andReturn(annotation);
     }

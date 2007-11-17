@@ -15,24 +15,35 @@
 package org.apache.tapestry.ioc.services;
 
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry.ioc.test.IOCTestCase;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Map;
 
-public class PropertyShadowBuilderImplTest extends IOCInternalTestCase
+public class PropertyShadowBuilderImplTest extends IOCTestCase
 {
+    private Registry _registry;
     private PropertyShadowBuilder _builder;
 
     private final String CLASS_NAME = getClass().getName();
 
     @BeforeClass
-    public void setupBuilder()
+    public void setup_registry()
     {
-        Registry registry = buildRegistry();
+        _registry = buildRegistry();
 
-        _builder = registry.getService("PropertyShadowBuilder", PropertyShadowBuilder.class);
+        _builder = _registry.getService("PropertyShadowBuilder", PropertyShadowBuilder.class);
+    }
+
+    @AfterClass
+    public void shutdown_registry()
+    {
+        _registry.shutdown();
+
+        _registry = null;
+        _builder = null;
     }
 
     public class FooHolder
@@ -113,8 +124,8 @@ public class PropertyShadowBuilderImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Class " + CLASS_NAME
-                    + "$FooHolder does not contain a property named 'bar'.");
+            assertEquals(ex.getMessage(),
+                         "Class " + CLASS_NAME + "$FooHolder does not contain a property named 'bar'.");
         }
     }
 
@@ -130,8 +141,8 @@ public class PropertyShadowBuilderImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Property 'count' of class " + CLASS_NAME
-                    + "$FooHolder is of type int, which is not assignable to type java.util.Map.");
+            assertEquals(ex.getMessage(),
+                         "Property 'count' of class " + CLASS_NAME + "$FooHolder is of type int, which is not assignable to type java.util.Map.");
         }
     }
 
@@ -147,11 +158,8 @@ public class PropertyShadowBuilderImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Class "
-                            + CLASS_NAME
-                            + "$FooHolder does not provide an accessor ('getter') method for property 'writeOnly'.");
+            assertEquals(ex.getMessage(),
+                         "Class " + CLASS_NAME + "$FooHolder does not provide an accessor ('getter') method for property 'writeOnly'.");
         }
     }
 }

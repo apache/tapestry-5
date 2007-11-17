@@ -209,8 +209,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(), "Class " + CLASS_NAME + "$Bean does not "
-                    + "contain a property named 'zaphod'.");
+            assertEquals(ex.getMessage(),
+                         "Class " + CLASS_NAME + "$Bean does not " + "contain a property named 'zaphod'.");
         }
     }
 
@@ -226,8 +226,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (UnsupportedOperationException ex)
         {
-            assertEquals(ex.getMessage(), "Class " + CLASS_NAME
-                    + "$Bean does not provide an mutator ('setter') method for property 'class'.");
+            assertEquals(ex.getMessage(),
+                         "Class " + CLASS_NAME + "$Bean does not provide an mutator ('setter') method for property 'class'.");
         }
     }
 
@@ -243,11 +243,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (UnsupportedOperationException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Class "
-                            + CLASS_NAME
-                            + "$Bean does not provide an accessor ('getter') method for property 'writeOnly'.");
+            assertEquals(ex.getMessage(),
+                         "Class " + CLASS_NAME + "$Bean does not provide an accessor ('getter') method for property 'writeOnly'.");
         }
     }
 
@@ -263,9 +260,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Error reading property 'failure' of PropertyUtilsExceptionBean: getFailure");
+            assertEquals(ex.getMessage(), "Error reading property 'failure' of PropertyUtilsExceptionBean: getFailure");
         }
     }
 
@@ -281,9 +276,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Error updating property 'failure' of PropertyUtilsExceptionBean: setFailure");
+            assertEquals(ex.getMessage(),
+                         "Error updating property 'failure' of PropertyUtilsExceptionBean: setFailure");
         }
     }
 
@@ -326,8 +320,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
 
-        assertEquals(cpa.toString(), "<ClassPropertyAdaptor " + CLASS_NAME
-                + "$Bean : class, readOnly, value, writeOnly>");
+        assertEquals(cpa.toString(),
+                     "<ClassPropertyAdaptor " + CLASS_NAME + "$Bean : class, readOnly, value, writeOnly>");
     }
 
     @Test
@@ -379,11 +373,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
 
-        assertEquals(cpa.getPropertyNames(), Arrays.asList(
-                "class",
-                "readOnly",
-                "value",
-                "writeOnly"));
+        assertEquals(cpa.getPropertyNames(), Arrays.asList("class", "readOnly", "value", "writeOnly"));
     }
 
     @Test
@@ -400,6 +390,8 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         pa.set(b, "value", value);
 
         assertEquals(b.getValue(), value);
+
+        registry.shutdown();
     }
 
     @Test
@@ -407,10 +399,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         ClassPropertyAdapter cpa = _access.getAdapter(SubInterface.class);
 
-        assertEquals(cpa.getPropertyNames(), Arrays.asList(
-                "grandParentProperty",
-                "parentProperty",
-                "subProperty"));
+        assertEquals(cpa.getPropertyNames(), Arrays.asList("grandParentProperty", "parentProperty", "subProperty"));
     }
 
     @Test
@@ -433,8 +422,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void get_annotation_with_annotation_on_write_method()
     {
-        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter(
-                "annotationOnWrite");
+        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter("annotationOnWrite");
 
         Scope annotation = pa.getAnnotation(Scope.class);
         assertNotNull(annotation);
@@ -445,8 +433,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void read_method_annotation_overrides_write_method_annotation()
     {
-        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter(
-                "annotationOnRead");
+        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter("annotationOnRead");
 
         Scope annotation = pa.getAnnotation(Scope.class);
         assertNotNull(annotation);

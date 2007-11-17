@@ -109,10 +109,8 @@ public class RegistryStartupTest extends IOCTestCase
         }
         catch (IllegalStateException ex)
         {
-            assertMessageContains(
-                    ex,
-                    "Method org.apache.tapestry.ioc.internal.services.RegistryStartup.run(",
-                    "may no longer be invoked.");
+            assertMessageContains(ex, "Method org.apache.tapestry.ioc.internal.services.RegistryStartup.run(",
+                                  "may no longer be invoked.");
 
         }
 
@@ -132,5 +130,7 @@ public class RegistryStartupTest extends IOCTestCase
 
         // Ideally we'd have a way to show that the ThreadCleanupHub was notified after
         // RegistryStartup did its thing, but ...
+
+        r.shutdown();
     }
 }
