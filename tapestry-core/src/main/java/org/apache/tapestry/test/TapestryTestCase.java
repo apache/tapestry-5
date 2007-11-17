@@ -949,4 +949,9 @@ public abstract class TapestryTestCase extends IOCTestCase
 
         return new MapMessages(Locale.ENGLISH, map);
     }
+
+    protected final FieldValidationSupport mockFieldValidationSupport()
+    {
+        return newMock(FieldValidationSupport.class);
+    }
 }
