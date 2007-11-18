@@ -1617,12 +1617,13 @@ public final class TapestryModule
     }
 
     /**
-     * Adds a filter that sets the application package (for class loading purposes). The filter is
-     * ordered before:*.*".
+     * Adds a listener to the {@link org.apache.tapestry.internal.services.ComponentInstantiatorSource} that clears
+     * the {@link PropertyAccess} and {@link TypeCoercer} caches on a class loader invalidation.  In addition, forces
+     * the realization of {@link ComponentClassResolver} at startup.
      */
     public void contributeApplicationInitializer(OrderedConfiguration<ApplicationInitializerFilter> configuration,
-                                                 final ApplicationGlobals applicationGlobals,
-                                                 final PropertyAccess propertyAccess, final TypeCoercer typeCoercer)
+                                                 final PropertyAccess propertyAccess, final TypeCoercer typeCoercer,
+                                                 final ComponentClassResolver componentClassResolver)
     {
         final InvalidationListener listener = new InvalidationListener()
         {
@@ -1643,6 +1644,11 @@ public final class TapestryModule
                 _componentInstantiatorSource.addInvalidationListener(listener);
 
                 initializer.initializeApplication(context);
+
+                // We don't care about the result, but this forces a load of the service
+                // at application startup, rather than on first request.
+
+                componentClassResolver.isPageName("ForceLoadAtStartup");
             }
         };
 

@@ -18,16 +18,16 @@ import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.Invokable;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.LibraryMapping;
+import org.slf4j.Logger;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
@@ -38,6 +38,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private static final String COMPONENTS_SUBPACKAGE = "components";
 
     private static final String PAGES_SUBPACKAGE = "pages";
+
+    private final Logger _logger;
 
     private final ComponentInstantiatorSource _componentInstantiatorSource;
 
@@ -59,30 +61,47 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private boolean _needsRebuild = true;
 
+    /**
+     * Logical page name to class name.
+     */
     private final Map<String, String> _pageToClassName = newCaseInsensitiveMap();
 
+    /**
+     * Component type to class name.
+     */
     private final Map<String, String> _componentToClassName = newCaseInsensitiveMap();
 
+    /**
+     * Mixing type to class name.
+     */
     private final Map<String, String> _mixinToClassName = newCaseInsensitiveMap();
 
     /**
-     * This one is case sensitive, since class names do always have a particular case.
+     * Page class name to logical name (needed to build URLs). This one is case sensitive, since class names do always have a particular case.
      */
     private final Map<String, String> _pageClassNameToLogicalName = newMap();
 
+
+    /**
+     * Used to convert an logical page name to the canonical form of the page name; this ensures that uniform case for page
+     * names is used.
+     */
     private final Map<String, String> _pageNameToCanonicalPageName = newCaseInsensitiveMap();
 
     private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
 
-    public ComponentClassResolverImpl(ComponentInstantiatorSource componentInstantiatorSource,
+    public ComponentClassResolverImpl(Logger logger,
+
+                                      ComponentInstantiatorSource componentInstantiatorSource,
+
                                       ClassNameLocator classNameLocator,
 
-                                      @Inject
-                                      @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+                                      @Inject @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
                                       String appRootPackage,
 
                                       Collection<LibraryMapping> mappings)
     {
+        _logger = logger;
         _componentInstantiatorSource = componentInstantiatorSource;
         _classNameLocator = classNameLocator;
 
@@ -135,17 +154,15 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             public void run()
             {
                 _needsRebuild = true;
-
-                _pageToClassName.clear();
-                _componentToClassName.clear();
-                _mixinToClassName.clear();
-                _pageClassNameToLogicalName.clear();
-                _pageNameToCanonicalPageName.clear();
             }
         });
 
     }
 
+    /**
+     * Invoked from within a withRead() block, checks to see if a rebuild is needed,
+     * and then performs the rebuild within a withWrite() block.
+     */
     private void rebuild()
     {
         if (!_needsRebuild) return;
@@ -154,31 +171,105 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             public void run()
             {
-                rebuild("", _appRootPackage);
-
-                for (String prefix : _mappings.keySet())
-                {
-                    List<String> packages = _mappings.get(prefix);
-
-                    String folder = prefix + "/";
-
-                    for (String packageName : packages)
-                        rebuild(folder, packageName);
-                }
-
-                _needsRebuild = false;
+                performRebuild();
             }
         });
+    }
+
+    private void performRebuild()
+    {
+
+        Map<String, String> savedPages = CollectionFactory.newMap(_pageToClassName);
+        Map<String, String> savedComponents = CollectionFactory.newMap(_componentToClassName);
+        Map<String, String> savedMixins = CollectionFactory.newMap(_mixinToClassName);
+
+        _pageToClassName.clear();
+        _componentToClassName.clear();
+        _mixinToClassName.clear();
+        _pageClassNameToLogicalName.clear();
+        _pageNameToCanonicalPageName.clear();
+
+        rebuild("", _appRootPackage);
+
+        for (String prefix : _mappings.keySet())
+        {
+            List<String> packages = _mappings.get(prefix);
+
+            String folder = prefix + "/";
+
+            for (String packageName : packages)
+                rebuild(folder, packageName);
+        }
+
+
+        showChanges("pages", savedPages, _pageToClassName);
+        showChanges("components", savedComponents, _componentToClassName);
+        showChanges("mixins", savedMixins, _mixinToClassName);
+
+        _needsRebuild = false;
+    }
+
+    private void showChanges(String title, Map<String, String> savedMap, Map<String, String> newMap)
+    {
+        if (savedMap.equals(newMap)) return;
+
+        Map<String, String> fixed = CollectionFactory.newMap();
+
+        int maxLength = 0;
+
+        // Pass # 1: Get all the stuff in the core library
+
+        for (String name : newMap.keySet())
+        {
+            if (name.startsWith(CORE_LIBRARY_PREFIX))
+            {
+
+                // Strip of the "core/" prefix.
+
+                String key = name.substring(CORE_LIBRARY_PREFIX.length());
+
+                maxLength = Math.max(maxLength, key.length());
+
+                fixed.put(key, newMap.get(name));
+            }
+        }
+
+        // Pass #2: Get everything else (may overwrite some of  pass #1).
+
+        for (String name : newMap.keySet())
+        {
+            if (name.startsWith(CORE_LIBRARY_PREFIX)) continue;
+
+            maxLength = Math.max(maxLength, name.length());
+
+            fixed.put(name, newMap.get(name));
+        }
+
+
+        StringBuilder builder = new StringBuilder(2000);
+        Formatter f = new Formatter(builder);
+
+        f.format("Available %s:\n", title);
+
+        String formatString = "%" + maxLength + "s: %s\n";
+
+        List<String> sorted = InternalUtils.sortedKeys(fixed);
+
+        for (String name : sorted)
+        {
+            String className = fixed.get(name);
+
+            f.format(formatString, name, className);
+        }
+
+        _logger.info(builder.toString());
+
     }
 
     private void rebuild(String pathPrefix, String rootPackage)
     {
         fillNameToClassNameMap(pathPrefix, rootPackage, PAGES_SUBPACKAGE, _pageToClassName);
-        fillNameToClassNameMap(
-                pathPrefix,
-                rootPackage,
-                COMPONENTS_SUBPACKAGE,
-                _componentToClassName);
+        fillNameToClassNameMap(pathPrefix, rootPackage, COMPONENTS_SUBPACKAGE, _componentToClassName);
         fillNameToClassNameMap(pathPrefix, rootPackage, MIXINS_SUBPACKAGE, _mixinToClassName);
     }
 
@@ -281,10 +372,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(pageName, _pageToClassName);
 
-                if (result == null)
-                    throw new IllegalArgumentException(ServicesMessages.couldNotResolvePageName(
-                            pageName,
-                            presentableNames(_pageToClassName)));
+                if (result == null) throw new IllegalArgumentException(
+                        ServicesMessages.couldNotResolvePageName(pageName, presentableNames(_pageToClassName)));
 
                 return result;
             }
@@ -311,11 +400,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(componentType, _componentToClassName);
 
-                if (result == null)
-                    throw new IllegalArgumentException(ServicesMessages
-                            .couldNotResolveComponentType(
-                            componentType,
-                            presentableNames(_componentToClassName)));
+                if (result == null) throw new IllegalArgumentException(ServicesMessages
+                        .couldNotResolveComponentType(componentType, presentableNames(_componentToClassName)));
 
                 return result;
             }
@@ -349,10 +435,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(mixinType, _mixinToClassName);
 
-                if (result == null)
-                    throw new IllegalArgumentException(ServicesMessages.couldNotResolveMixinType(
-                            mixinType,
-                            presentableNames(_mixinToClassName)));
+                if (result == null) throw new IllegalArgumentException(
+                        ServicesMessages.couldNotResolveMixinType(mixinType, presentableNames(_mixinToClassName)));
 
                 return result;
             }
@@ -391,9 +475,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
                 String result = _pageClassNameToLogicalName.get(pageClassName);
 
-                if (result == null)
-                    throw new IllegalArgumentException(ServicesMessages
-                            .pageNameUnresolved(pageClassName));
+                if (result == null) throw new IllegalArgumentException(ServicesMessages
+                        .pageNameUnresolved(pageClassName));
 
                 return result;
             }
@@ -408,11 +491,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             {
                 String result = locate(pageName, _pageNameToCanonicalPageName);
 
-                if (result == null)
-                    throw new IllegalArgumentException(ServicesMessages
-                            .couldNotCanonicalizePageName(
-                            pageName,
-                            presentableNames(_pageNameToCanonicalPageName)));
+                if (result == null) throw new IllegalArgumentException(ServicesMessages
+                        .couldNotCanonicalizePageName(pageName, presentableNames(_pageNameToCanonicalPageName)));
 
                 return result;
             }
