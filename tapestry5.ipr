@@ -49,7 +49,7 @@
   </component>
   <component name="CompilerConfiguration">
     <option name="DEFAULT_COMPILER" value="Javac" />
-    <option name="DEPLOY_AFTER_MAKE" value="0" />
+    <option name="DEPLOY_AFTER_MAKE" value="1" />
     <excludeFromCompile>
       <directory url="file://$PROJECT_DIR$/quickstart/src/main/resources" includeSubdirectories="true" />
     </excludeFromCompile>
