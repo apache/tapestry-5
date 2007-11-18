@@ -17,17 +17,13 @@ package org.apache.tapestry.integration;
 import org.apache.tapestry.test.JettyRunner;
 
 /**
- * Temporary "shim" to run Demo App #1 inside IntelliJ.  Eventually, we should write a "Jetty InPlace Integration Plugin"
- * that works like JettyLauncher for Eclipse.
+ * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to
+ * export test classes and resources into a web facet.
  */
 public class RunJetty
 {
     public static void main(String[] args) throws InterruptedException
     {
-        JettyRunner runner = new JettyRunner("/", 8080, "src/test/app1");
-
-        Thread.sleep(Long.MAX_VALUE);
-
-        runner.stop();
+        new JettyRunner("/", 8080, "src/test/app1");
     }
 }
