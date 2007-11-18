@@ -19,6 +19,7 @@ package org.apache.tapestry;
  *
  * @param <T>
  * @see Validator
+ * @see org.apache.tapestry.services.FieldValidatorDefaultSource
  */
 public interface FieldValidator<T>
 {
@@ -34,9 +35,11 @@ public interface FieldValidator<T>
 
     /**
      * Invokes
-     * {@link Validator#render(Field,C,org.apache.tapestry.ioc.MessageFormatter, MarkupWriter, PageRenderSupport,org.apache.tapestry.services.FormSupport)}.
+     * {@link Validator#render(Field, Object, org.apache.tapestry.ioc.MessageFormatter, MarkupWriter, org.apache.tapestry.services.FormSupport)}.
+     * This is called at a point "inside" the tag, so that additional attributes may be added.
      *
-     * @param writer
+     * @param writer markup writer to direct output to.
+     * @see org.apache.tapestry.MarkupWriter#attributes(Object[])
      */
     void render(MarkupWriter writer);
 }

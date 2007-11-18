@@ -23,6 +23,9 @@ import org.apache.tapestry.services.ValidationMessagesSource;
  * Validators themselves are stateless singletons.
  * <p/>
  * Validators are usually encapsulated inside a {@link FieldValidator}.
+ *
+ * @see org.apache.tapestry.services.FieldValidationSupport
+ * @see org.apache.tapestry.services.FieldValidatorDefaultSource
  */
 public interface Validator<C, T>
 {

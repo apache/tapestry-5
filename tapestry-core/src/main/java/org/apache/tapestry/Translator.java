@@ -21,6 +21,8 @@ import org.apache.tapestry.services.ValidationMessagesSource;
  * Translates between client-side and server-side values. Client-side values are always strings.
  *
  * @param <T>
+ * @see org.apache.tapestry.services.TranslatorDefaultSource
+ * @see org.apache.tapestry.services.FieldValidationSupport
  */
 public interface Translator<T>
 {
