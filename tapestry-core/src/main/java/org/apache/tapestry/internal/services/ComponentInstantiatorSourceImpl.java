@@ -34,8 +34,7 @@ import java.util.Set;
  * A wrapper around a Javassist class loader that allows certain classes to be modified as they are
  * loaded.
  */
-public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements
-                                                                                    Translator, ComponentInstantiatorSource, UpdateListener
+public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements Translator, ComponentInstantiatorSource, UpdateListener
 {
     /**
      * Add -Djavassist-write-dir=target/transformed-classes to the command line to force output of
@@ -48,8 +47,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     private final URLChangeTracker _changeTracker = new URLChangeTracker();
 
     private final ClassLoader _parent;
-
-    private ClassFactoryClassPool _classPool;
 
     private Loader _loader;
 
@@ -74,8 +71,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         @Override
         protected Class findClass(String className) throws ClassNotFoundException
         {
-            if (inControlledPackage(className))
-                return super.findClass(className);
+            if (inControlledPackage(className)) return super.findClass(className);
 
             // Returning null forces delegation to the parent class loader.
 
@@ -84,8 +80,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     }
 
-    public ComponentInstantiatorSourceImpl(ClassLoader parent,
-                                           ComponentClassTransformer transformer, Logger logger)
+    public ComponentInstantiatorSourceImpl(ClassLoader parent, ComponentClassTransformer transformer, Logger logger)
     {
         _parent = parent;
         _transformer = transformer;
@@ -96,8 +91,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     public synchronized void checkForUpdates()
     {
-        if (!_changeTracker.containsChanges())
-            return;
+        if (!_changeTracker.containsChanges()) return;
 
         _changeTracker.clear();
         _instantiatorMap.clear();
@@ -119,29 +113,28 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private void initializeService()
     {
-        _classPool = new ClassFactoryClassPool(_parent);
+        ClassFactoryClassPool classPool = new ClassFactoryClassPool(_parent);
 
-        _loader = new PackageAwareLoader(_parent, _classPool);
+        _loader = new PackageAwareLoader(_parent, classPool);
 
         ClassPath path = new LoaderClassPath(_loader);
 
-        _classPool.appendClassPath(path);
+        classPool.appendClassPath(path);
 
         try
         {
-            _loader.addTranslator(_classPool, this);
+            _loader.addTranslator(classPool, this);
         }
         catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _classFactory = new ClassFactoryImpl(_loader, _classPool, _logger);
+        _classFactory = new ClassFactoryImpl(_loader, classPool, _logger);
     }
 
     // This is called from well within a synchronized block.
-    public void onLoad(ClassPool pool, String classname) throws NotFoundException,
-                                                                CannotCompileException
+    public void onLoad(ClassPool pool, String classname) throws NotFoundException, CannotCompileException
     {
         _logger.debug("BEGIN onLoad " + classname);
 
@@ -185,8 +178,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private void writeClassToFileSystemForHardCoreDebuggingPurposesOnly(CtClass ctClass)
     {
-        if (JAVASSIST_WRITE_DIR == null)
-            return;
+        if (JAVASSIST_WRITE_DIR == null) return;
 
         try
         {
@@ -211,8 +203,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         _changeTracker.add(url);
     }
 
-    private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException,
-                                                                  ClassNotFoundException
+    private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException, ClassNotFoundException
     {
         CtClass superClass = ctClass.getSuperclass();
 
@@ -265,8 +256,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         while (packageName != null)
         {
-            if (_controlledPackageNames.contains(packageName))
-                return true;
+            if (_controlledPackageNames.contains(packageName)) return true;
 
             packageName = stripTail(packageName);
         }
@@ -278,8 +268,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         int lastdot = input.lastIndexOf('.');
 
-        if (lastdot < 0)
-            return null;
+        if (lastdot < 0) return null;
 
         return input.substring(0, lastdot);
     }
