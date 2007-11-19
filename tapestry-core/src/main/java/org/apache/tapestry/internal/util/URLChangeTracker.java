@@ -72,12 +72,23 @@ public class URLChangeTracker
             URI resourceURI = url.toURI();
             File resourceFile = new File(resourceURI);
 
-            if (_fileToTimestamp.containsKey(resourceFile))
-                return _fileToTimestamp.get(resourceFile);
+            if (_fileToTimestamp.containsKey(resourceFile)) return _fileToTimestamp.get(resourceFile);
 
             long timestamp = readTimestamp(resourceFile);
 
+            // A quick and imperfect fix for TAPESTRY-1918.  When a file
+            // is added, add the directory containing the file as well.
+
             _fileToTimestamp.put(resourceFile, timestamp);
+
+            File dir = resourceFile.getParentFile();
+
+            if (!_fileToTimestamp.containsKey(dir))
+            {
+                long dirTimestamp = readTimestamp(dir);
+                _fileToTimestamp.put(dir, dirTimestamp);
+            }
+
 
             return timestamp;
         }
@@ -130,7 +141,14 @@ public class URLChangeTracker
         if (!file.exists()) return FILE_DOES_NOT_EXIST_TIMESTAMP;
 
         long timestamp = file.lastModified();
+
+        // For coarse granularity (accurate only to the last second), remove the milliseconds since
+        // the last full second. This is for compatibility with client HTTP requests, which
+        // are only accurate to one second. The extra level of detail creates false positives
+        // for changes, and undermines HTTP response caching in the client.
+
         if (_granularitySeconds) timestamp -= timestamp % 1000;
+
         return timestamp;
     }
 

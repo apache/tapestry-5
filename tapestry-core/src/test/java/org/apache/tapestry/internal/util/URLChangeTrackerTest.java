@@ -40,7 +40,9 @@ public class URLChangeTrackerTest extends TapestryTestCase
 
         t.add(url);
 
-        assertEquals(t.trackedFileCount(), 1);
+        // The file, and the directory containing the file.
+
+        assertEquals(t.trackedFileCount(), 2);
 
         assertFalse(t.containsChanges());
 
@@ -64,6 +66,40 @@ public class URLChangeTrackerTest extends TapestryTestCase
         // And, once a change has been observed ...
 
         assertFalse(t.containsChanges());
+    }
+
+    @Test
+    public void creating_a_new_file_is_a_change() throws Exception
+    {
+        URLChangeTracker t = new URLChangeTracker();
+
+        File f = File.createTempFile("changetracker0", ".tmp");
+        URL url = f.toURL();
+
+        t.add(url);
+
+        assertFalse(t.containsChanges());
+
+        File dir = f.getParentFile();
+
+        // Create another file in the temporary directory.
+
+        long timestamp = dir.lastModified();
+
+        while (true)
+        {
+            File.createTempFile("changetracker1", ".tmp");
+
+            if (dir.lastModified() != timestamp) break;
+
+            // Sometime Java need a moment to catch up in terms of
+            // file system changes. Sleep for a few milliseconds
+            // and wait for it to catch up.
+
+            Thread.sleep(100);
+        }
+
+        assertTrue(t.containsChanges());
     }
 
     @Test
@@ -115,7 +151,8 @@ public class URLChangeTrackerTest extends TapestryTestCase
 
         assertTrue(timeModified > 0);
 
-        assertEquals(t.trackedFileCount(), 1);
+        // File + Directory
+        assertEquals(t.trackedFileCount(), 2);
 
         assertFalse(t.containsChanges());
 
