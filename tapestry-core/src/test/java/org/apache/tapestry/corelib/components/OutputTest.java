@@ -57,6 +57,27 @@ public class OutputTest extends TapestryTestCase
     }
 
     @Test
+    public void null_output()
+    {
+        MarkupWriter writer = createMarkupWriter();
+        ComponentResources resources = mockComponentResources();
+
+        replay();
+
+        Output component = new Output();
+
+        component.setup(null, _format, null, resources);
+
+        writer.element("root");
+        assertFalse(component.beginRender(writer));
+        writer.end();
+
+        verify();
+
+        assertEquals(writer.toString(), "<root></root>");
+    }
+
+    @Test
     public void output_with_element_and_informals()
     {
         String elementName = "span";
