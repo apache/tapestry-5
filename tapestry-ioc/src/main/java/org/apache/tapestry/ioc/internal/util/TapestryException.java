@@ -66,8 +66,7 @@ public class TapestryException extends RuntimeException implements Locatable
     @Override
     public String toString()
     {
-        if (_location == null)
-            return super.toString();
+        if (_location == null) return super.toString();
 
         return String.format("%s [at %s]", super.toString(), _location);
     }

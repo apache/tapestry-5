@@ -126,8 +126,7 @@ public class ParametersServletRequestWrapperTest
         wrapper.addParameter("foo", "blah");
         wrapper.addParameter("foo", "another");
 
-        assertEquals(wrapper.getParameterValues("foo"), new String[]
-                {"blah", "another"});
+        assertEquals(wrapper.getParameterValues("foo"), new String[]{"blah", "another"});
         verify(request);
     }
 
@@ -167,8 +166,7 @@ public class ParametersServletRequestWrapperTest
         Map parameters = wrapper.getParameterMap();
         assertEquals(parameters.size(), 2);
         assertEquals(parameters.get("single"), "blah");
-        assertEquals((String[]) parameters.get("multi"), new String[]
-                {"one", "two"});
+        assertEquals((String[]) parameters.get("multi"), new String[]{"one", "two"});
 
         verify(request);
     }

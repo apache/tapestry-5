@@ -139,8 +139,7 @@ public class MethodIteratorTest extends IOCTestCase
 
         MethodSignature actual = mi.next();
 
-        assertEquals(new MethodSignature(void.class, "open", null, new Class[]
-                {IOException.class}), actual);
+        assertEquals(new MethodSignature(void.class, "open", null, new Class[]{IOException.class}), actual);
 
         assertEquals(false, mi.hasNext());
     }

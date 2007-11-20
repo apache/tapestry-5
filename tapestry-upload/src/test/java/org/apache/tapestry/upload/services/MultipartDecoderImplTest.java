@@ -75,9 +75,7 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1);
-        List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem(
-                "two",
-                "second"));
+        List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem("two", "second"));
         replay();
 
         HttpServletRequest decodedRequest = decoder.processFileItems(request, fileItems);
@@ -95,9 +93,8 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1);
-        List<FileItem> fileItems = Arrays.asList(
-                createFileItem("one", "first.txt"),
-                createFileItem("two", "second.txt"));
+        List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
+                                                 createFileItem("two", "second.txt"));
         replay();
 
         HttpServletRequest decodedRequest = decoder.processFileItems(request, fileItems);
@@ -115,9 +112,8 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     {
         HttpServletRequest request = mockHttpServletRequest();
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1);
-        List<FileItem> fileItems = Arrays.asList(
-                createFileItem("one", "first.txt"),
-                createFileItem("two", "second.txt"));
+        List<FileItem> fileItems = Arrays.asList(createFileItem("one", "first.txt"),
+                                                 createFileItem("two", "second.txt"));
         replay();
 
         decoder.processFileItems(request, fileItems);

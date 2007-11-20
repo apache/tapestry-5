@@ -24,8 +24,7 @@ import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 /**
  * Provides per-thread implementations of services, along with end-of-request thread cleanup.
  */
-public class PerThreadServiceCreator extends ThreadLocal implements ThreadCleanupListener,
-                                                                    ObjectCreator
+public class PerThreadServiceCreator extends ThreadLocal implements ThreadCleanupListener, ObjectCreator
 {
     private final ThreadCleanupHub _threadCleanupHub;
 

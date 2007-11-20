@@ -118,9 +118,7 @@ public class DefenseTest extends TestBase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Parameter fred (fred-value) is not assignable to type java.lang.String.");
+            assertEquals(ex.getMessage(), "Parameter fred (fred-value) is not assignable to type java.lang.String.");
         }
     }
 }

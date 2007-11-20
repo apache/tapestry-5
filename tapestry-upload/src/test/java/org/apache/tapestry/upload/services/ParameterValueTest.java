@@ -31,8 +31,7 @@ public class ParameterValueTest
     public void multiReturnsArrayWithConstructedParameterByDefault() throws Exception
     {
         ParameterValue value = new ParameterValue("foo");
-        assertEquals(value.multi(), new String[]
-                {"foo"});
+        assertEquals(value.multi(), new String[]{"foo"});
     }
 
     @Test
@@ -47,8 +46,7 @@ public class ParameterValueTest
     {
         ParameterValue value = new ParameterValue("foo");
         value.add("blah");
-        assertEquals(value.multi(), new String[]
-                {"foo", "blah"});
+        assertEquals(value.multi(), new String[]{"foo", "blah"});
     }
 
     @Test

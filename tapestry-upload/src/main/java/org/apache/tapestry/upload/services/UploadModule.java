@@ -41,29 +41,26 @@ public class UploadModule
     }
 
     @Scope("perthread")
-    public synchronized static MultipartDecoder buildMultipartDecoder(
-            ThreadCleanupHub threadCleanupHub,
+    public synchronized static MultipartDecoder buildMultipartDecoder(ThreadCleanupHub threadCleanupHub,
 
-            RegistryShutdownHub shutdownHub,
+                                                                      RegistryShutdownHub shutdownHub,
 
-            @Inject
-            @Symbol(UploadSymbols.REPOSITORY_LOCATION)
-            String repositoryPath,
+                                                                      @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
+                                                                      String repositoryPath,
 
-            @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
-            int repositoryThreshold,
+                                                                      @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
+                                                                      int repositoryThreshold,
 
-            @Symbol(UploadSymbols.REQUESTSIZE_MAX)
-            long maxRequestSize,
+                                                                      @Symbol(UploadSymbols.REQUESTSIZE_MAX)
+                                                                      long maxRequestSize,
 
-            @Symbol(UploadSymbols.FILESIZE_MAX)
-            long maxFileSize,
+                                                                      @Symbol(UploadSymbols.FILESIZE_MAX)
+                                                                      long maxFileSize,
 
-            SymbolSource symbolSource)
+                                                                      SymbolSource symbolSource)
     {
-        MultipartDecoderImpl multipartDecoder = new MultipartDecoderImpl(repositoryPath,
-                                                                         repositoryThreshold, maxRequestSize,
-                                                                         maxFileSize);
+        MultipartDecoderImpl multipartDecoder = new MultipartDecoderImpl(repositoryPath, repositoryThreshold,
+                                                                         maxRequestSize, maxFileSize);
 
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.
@@ -85,9 +82,8 @@ public class UploadModule
         return multipartDecoder;
     }
 
-    public static void contributeHttpServletRequestHandler(
-            OrderedConfiguration<HttpServletRequestFilter> configuration,
-            MultipartDecoder multipartDecoder)
+    public static void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
+                                                           MultipartDecoder multipartDecoder)
     {
         configuration.add("MultipartFilter", new MultipartServletRequestFilter(multipartDecoder));
     }
