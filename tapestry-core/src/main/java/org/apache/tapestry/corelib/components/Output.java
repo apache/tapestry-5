@@ -66,6 +66,8 @@ public class Output
 
     boolean beginRender(MarkupWriter writer)
     {
+        if (_value == null) return false;
+
         String formatted = _format.format(_value);
 
         if (InternalUtils.isNonBlank(formatted))
