@@ -27,16 +27,15 @@ public final class TextField extends AbstractTextField
     @Override
     protected final void writeFieldTag(MarkupWriter writer, String value)
     {
-        writer.element(
-                "input",
-                "type",
-                "text",
-                "name",
-                getElementName(),
-                "id",
-                getClientId(),
-                "value",
-                value);
+        writer.element("input",
+
+                       "type", "text",
+
+                       "name", getElementName(),
+
+                       "id", getClientId(),
+
+                       "value", value);
     }
 
     final void afterRender(MarkupWriter writer)

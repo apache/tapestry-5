@@ -18,6 +18,7 @@ import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Marker;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;
@@ -56,8 +57,7 @@ public class AppModule
     {
         return new RequestFilter()
         {
-            public boolean service(Request request, Response response, RequestHandler handler)
-                    throws IOException
+            public boolean service(Request request, Response response, RequestHandler handler) throws IOException
             {
                 long startTime = System.currentTimeMillis();
 
@@ -77,14 +77,12 @@ public class AppModule
 
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
 
-                                         @Local
-                                         RequestFilter filter)
+                                         @Local RequestFilter filter)
     {
         configuration.add("Timing", filter);
     }
 
-    public void contributeClasspathAssetAliasManager(
-            MappedConfiguration<String, String> configuration)
+    public void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration)
     {
         configuration.add("app1/", "org/apache/tapestry/integration/app1/");
     }
@@ -100,8 +98,7 @@ public class AppModule
         };
     }
 
-    public static void contributeApplicationDefaults(
-            MappedConfiguration<String, String> configuration)
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add("tapestry.supported-locales", "en,fr");
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
@@ -123,6 +120,20 @@ public class AppModule
             public List<Track> getTracks()
             {
                 return tracks;
+            }
+
+            public List<Track> findByMatchingTitle(String title)
+            {
+                String titleLower = title.toLowerCase();
+
+                List<Track> result = CollectionFactory.newList();
+
+                for (Track t : tracks)
+                {
+                    if (t.getTitle().toLowerCase().contains(titleLower)) result.add(t);
+                }
+
+                return result;
             }
         };
     }

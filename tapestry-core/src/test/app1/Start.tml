@@ -277,6 +277,11 @@
                         -- Demo ability to provide toclient and parseclient event handler methods
                     </li>
 
+                    <li>
+                        <t:pagelink page="autocompletedemo">Autocomplete Mixin Demo</t:pagelink>
+                        -- Demo the autocomplete mixin for text fields.
+                    </li>
+
                 </ul>
             </td>
         </tr>

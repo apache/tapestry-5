@@ -314,3 +314,26 @@ BUTTON.t-calendar-trigger {
     padding: none;
 }
 
+DIV.t-autocomplete-menu UL {
+    border: 2px outset #cc9933;
+    background-color: #cc9933;
+    magin-left: 12px;
+    padding: 4px 6px;
+    width: 300px;
+    height: 360px;
+    overflow: auto;
+}
+
+DIV.t-autocomplete-menu LI {
+    color: white;
+    list-style-type: none;
+    padding: 0px;
+    margin: 0px;
+    border-bottom: 1px solid black;
+    cursor: pointer;
+}
+
+DIV.t-autocomplete-menu LI.selected {
+    color: black;
+    font-weight: bold;
+}

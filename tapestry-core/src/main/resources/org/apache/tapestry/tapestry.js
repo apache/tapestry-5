@@ -369,5 +369,3 @@ Event.observe(window, "load", function()
         element.removeClassName("t-invisible");
     });
 });
-
- 
