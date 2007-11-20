@@ -58,4 +58,9 @@ class UtilMessages
     {
         return MESSAGES.format("bad-cast", parameterName, parameterValue, type.getName());
     }
+
+    static String badMarkerAnnotation(Class annotationClass)
+    {
+        return MESSAGES.format("bad-marker-annotation", annotationClass.getName());
+    }
 }

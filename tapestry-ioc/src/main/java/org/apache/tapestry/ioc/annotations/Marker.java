@@ -24,13 +24,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used to define a {@linkplain ServiceDef#getMarkers() marker annotation} for a service
+ * Used to define one or more {@linkplain ServiceDef#getMarkers() marker annotations} for a service
  * implementation. This allows for injection based on the combination of type and marker interface.
  * These marker interfaces should not have any values. The mere presence of the marker annotation is
  * all that is needed.
  * <p/>
- * When applied to a module class, this sets the default marker for all services within the module
- * (whereas the normal default marker is null).
+ * When applied to a module class, this sets the default markers for all services within the module.  Markers
+ * are additive, so a Marker annotation on the implementation class and/or specified with
+ * {@link org.apache.tapestry.ioc.ServiceBindingOptions#withMarker(Class[])} will accumulate; a service may
+ * have any number of markers.  Generally one or two is enough.
  */
 @Target(
         {TYPE, METHOD})
@@ -41,5 +43,5 @@ public @interface Marker
     /**
      * The type of annotation (which will be present at the injection point).
      */
-    Class value();
+    Class[] value();
 }

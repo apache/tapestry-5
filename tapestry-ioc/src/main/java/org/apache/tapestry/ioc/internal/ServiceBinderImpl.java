@@ -41,8 +41,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     private final Set<Class> _defaultMarkers;
 
-    public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory,
-                             Set<Class> defaultMarkers)
+    public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory, Set<Class> defaultMarkers)
     {
         _accumulator = accumulator;
         _classFactory = classFactory;
@@ -91,8 +90,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         Set<Class> markers = CollectionFactory.newSet(_defaultMarkers);
         markers.addAll(_markers);
 
-        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, markers, _scope,
-                                                   _eagerLoad, source);
+        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, markers, _scope, _eagerLoad, source);
 
         _accumulator.addServiceDef(serviceDef);
 
@@ -108,9 +106,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     {
         Constructor result = InternalUtils.findAutobuildConstructor(_serviceImplementation);
 
-        if (result == null)
-            throw new RuntimeException(IOCMessages
-                    .noConstructor(_serviceImplementation, _serviceId));
+        if (result == null) throw new RuntimeException(IOCMessages
+                .noConstructor(_serviceImplementation, _serviceId));
 
         return result;
     }
@@ -120,8 +117,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         return bind(implementationClass, implementationClass);
     }
 
-    public <T> ServiceBindingOptions bind(Class<T> serviceInterface,
-                                          Class<? extends T> serviceImplementation)
+    public <T> ServiceBindingOptions bind(Class<T> serviceInterface, Class<? extends T> serviceImplementation)
     {
         notNull(serviceInterface, "serviceIterface");
         notNull(serviceImplementation, "serviceImplementation");
@@ -144,7 +140,11 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         Marker marker = serviceImplementation.getAnnotation(Marker.class);
 
-        if (marker != null) _markers.addAll(Arrays.asList(marker.value()));
+        if (marker != null)
+        {
+            InternalUtils.validateMarkerAnnotations(marker.value());
+            _markers.addAll(Arrays.asList(marker.value()));
+        }
 
         return this;
     }
@@ -183,6 +183,8 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     public <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker)
     {
         _lock.check();
+
+        InternalUtils.validateMarkerAnnotations(marker);
 
         _markers.addAll(Arrays.asList(marker));
 
