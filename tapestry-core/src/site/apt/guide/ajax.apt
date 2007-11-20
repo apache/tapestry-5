@@ -1,0 +1,145 @@
+ ---
+ Tapestry Ajax Support
+ ---
+
+Tapestry Ajax Support
+
+  Tapestry includes sophisticated JavaScript and Ajax support, based on the
+  {{{http://www.prototypejs.org/}Prototype}} and
+  {{{http://script.aculo.us/}Scriptaculous}} libraries.  These libraries are
+  all packaged with Tapestry itself ... no extra download required.
+
+  The goal for Tapestry is to have many basic and useful components available within the
+  application itself, and make it easy for other JavaScript widgets to be encapsulated as
+  Tapestry components.
+
+  Ajax support takes the form of new components and, occasionally,
+  {{{mixins.html}component mixins}}.  
+
+Basic JavaScript
+
+  The general strategy in Tapestry is that any significant amount of JavaScript should be packaged up
+  as a static JavaScript library, a .js file that can be downloaded to the client.
+
+  Page specific JavaScript should be in the form of minimal statements to initialize objects, referencing
+  the JavaScript libraries.
+
+  Most of this is accomplished via the
+  {{{../../apidocs/org/apache/tapestry/PageRenderSupport.html}PageRenderSupport}} object.
+
+  PageRenderSupport include a number of methods that will be used by components, or event by
+  services that are called from components.
+
+* addScriptLink()
+
+  <<<void addScriptLink(Asset... scriptAssets);>>>
+
+  This method adds a link to a script file, a JavaScript library.  A component can inject such a script and
+  pass one or more of assets to this method.  Tapestry will ensure that the necessary \<link\> elements
+  are added to the <top> of the document (just inside the \<head\> element).
+
+  Adding the same asset multiple times does <not> create duplicate links.  The subsequent ones are simply
+  ignored.  In this way, each component can add the assets it needs, without worrying about conflicts
+  with other components.
+
+  Note that the Prototype, Scriptaculous and the base Tapestry library (which largely consists of
+  support for form input validation) are included automatically.
+
+* addScript()
+
+  <<<void addScript(String format, Object... arguments);>>>
+
+  This method adds some initialization JavaScript to the page.  By <initialization> we mean that
+  it goes at the bottom of the document, and will only be executed when the document has finished loading
+  on the client (i.e., from the window.onload event handler).
+  
+  When calling the method, the format string can include standard substitutions (such as '%s')
+  for arguments.  This saves you the trouble of calling String.format() yourself.  In any case, the
+  formatting JavaScript is added to the script block.
+
+* Injecting PageRenderSupport
+
+  PageRenderSupport is an <environmental> object, so you will normally inject it via the
+  {{{../../apidocs/org/apache/tapestry/annotations/Environmental.html}Environmental}} annotation:
+
++---+
+  @Environmental
+  private PageRenderSupport _pageRenderSupport;
++---+
+
+  Environmental only works inside components and occasionally a service may want to
+  inject PageRenderSupport.  Fortunately, a proxy of PageRenderSupport has been set up.  The upshot of which
+  is, you may also:
+
++---+
+  @Inject
+  private PageRenderSupport _pageRenderSupport;
++----+
+
+  ... or, in a service implementation constructor:
+
++---+
+  public MyServiceImpl(PageRenderSupport support)
+  {
+    . . .
+  }
++---+
+
+  Inside a component, you should use Environmental, to highlight the fact that PageRenderSupport (like most
+  environmental objects) is only available during rendering, not during action requests.
+
+Autocomplete Mixin
+
+  The
+  {{{../../apidocs/org/apache/tapestry/corelib/mixins/Autocomplete.html}Autocomplete}}
+   mixin exists to allow a text field to query the server for completions for a partially
+  entered phrase.  It is often used in situations where the field exists to select a single value from
+  a large set, too large to succesfully download to the client as a drop down list; for example, when the
+  number of values to select from is numbered in the thousands.
+
+  Autocomplete can be added to an existing text field:
+
++---+
+  <t:textfield t:id="accountName" t:mixins="autocomplete" size="100"/>
++---+
+
+
+  The mixin can be configured in a number of ways, see the
+  {{{../component-parameters.html}component reference}}.
+
+  When the user types into the field, the client-side JavaScript will send a request to the server to
+  get completions.
+
+  You must write an event handler to provide these completions.  The name of the event is "providecompletions".
+  The context is the partial input value, and the return value will be converted into the selections
+  for the user.
+
+  For example:
+
++---+
+  List<String> onProvideCompletionsFromAccountName(String partial)
+  {
+    List<Account> matches = _accountDAO.findByPartialAccountName(partial);
+
+    List<String> result = new ArrayList<String>():
+
+    for (Account a : matches)
+    {
+      result.add(a.getName());
+    }
+
+    return result;
+  }
++---+
+
+  This presumes that <<<findByPartialAccountName()>>> will sort the values, otherwise you will probably
+  want to sort them.  Certainly the Autocomplete mixin does <not> do any sorting.
+
+  You can return an object array, a list, even a single object.  You may return objects instead of strings ... and
+  <<<toString()>>> will be used to convert them into client-side strings.
+
+  Tapestry's default stylesheet includes entries for controlling the look of the floating popup of selections.
+
+  You may override <<<DIV.t-autocomplete-menu UL>>> to change the main look and feel,
+  <<<DIV.t-autocomplete-menu LI>>> for a normal item in the popup list, and
+   <<<DIV.t-autocomplete-menu LI.selected>>> for the element under the cursor (or selecting using the arrow keys).

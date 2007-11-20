@@ -13,6 +13,9 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
 
+  * We're finally starting to see some Ajax support, beginning with the
+  {{{../apidocs/org/apache/tapestry/corelib/mixins/Autocomplete.html}Autocomplete mixin}}.
+
   * You may now customize how the TextField, PasswordField and TextArea component converts between server side values
     and client side strings, using specialized events.
 
@@ -49,68 +52,7 @@ New And Of Note
   * Explicit \<!DOCTYPE\> declarations inside page and component templates will now be forwarded through to the client
     web browser.
     
-  * The mapping from class names to page names (or component types) has been tweaked to remove some redundancy;
-    For example,
-    class org.example.myapp.pages.edit.EditUser will now have the name "edit/User" rather than "edit/EditUser". This
-    results in shorter, clearer, more natural URLs.
-    
-  * The type of component may now be specified in a template using the element name, rather than the
-    t:type attribute (this represents an incompatible change from 5.0.2).
-    
-  * Form validation now runs on the client side (as well as on the server side) with some basic effects,
-    built on {{{http://script.taculo.us}script.taculo.us}}.
-  
-  * The default ExceptionReport page has been improved to show details of the incoming request,
-    to filter out repetitive and unnecessary data, 
-    and to display file content when an exception includes a location.
-  
-  * Action request URLs have been shortened and simplified for the common case. They may also include a query
-    parameter to identify the page's activation context.
-  
-  * {{{component-parameters.html}Component Reference Documentation}}, generated via a Maven plugin, is now available.
-  
-  * The return values for the "after" set of {{{guide/rendering.html}render phase methods}} have changed: all render phase 
-    methods return true (or void) to progress down the default path, and return false to either skip stages or return to earlier 
-    stages. This may break some existing code.
-  
-  * Component event handlers may now return a {{{../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}
-    to directly send a stream to the client web browser (this is intended for components that need to render
-    images, PDF, or other non-page oriented content).
-  
-  * The root URL for an application now renders the application's start page (it used to let the
-    servlet container render the static welcome page, if any). 
-  
-  * Named-based lookups of messages, resources, etc., are all case-insensitive.
-  
-  * Fast, smart, fully customizable Grid component for displaying tabular data.
-  
-  * Validating form components will use the same system as BeanEditForm to determine default validation for fields.
-  
-  * Select component will automatically provide a ValueEncoder and SelectModel when the value parameter is bound to an Enum type.
-  
-  * BeanEditForm component that creates a form and related controls to edit the properties of any JavaBean, automatically.
-    Inspired by {{{http://www.trailsframework.org/}Trails}} and {{{http://beanform.sourceforge.net/}BeanForm}} (both for Tapestry 4).
-  
-  * Case insensitve URLs.  Tapestry no longer cares about the case of the page names and component ids it puts
-    into URLs, and they are now generated in all lower-case for that clean "Web 2.0" look.  And they're 
-    shorter and "prettier", too!
-  
-  * Initial support for {{{guide/appstate.html}application state objects}}.
-  
-  * Input validation messages may now be overridden by providing a particular message key in the containing component's message catalog.
-  
-  * Property expressions may now reference public methods (with no parameters) in addition to traditional property names.
-  
-  * Page templates are now allowed to be stored in the WEB-INF , as well as on the classpath.
-  
-  * Invisible instrumentation, hiding Tapestry components inside ordinary HTML elements (a favorite feature of Tapestry 4), has been added to Tapestry 5.
-  
-  * Component parameter defaults may be computed on the fly.
-
-  * Component parameters may have default values.
-  
-  * The @ComponentClass annotation, seen in the earlier {{{../screencast.html}screencasts}} has been removed.
-  
+ 
 Changes from Tapestry 4 to Tapestry 5
 
   Tapestry 5 represents a significant advance over Tapestry 4.  The goal is to make Tapestry 5

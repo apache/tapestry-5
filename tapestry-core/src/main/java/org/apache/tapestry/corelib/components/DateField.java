@@ -188,8 +188,6 @@ public class DateField extends AbstractField
 
         configure(setup);
 
-        // TODO: protected method to let subclasses provide more setup.
-
         _support.addScript("Calendar.setup(%s);", setup);
     }
 

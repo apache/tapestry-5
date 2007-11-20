@@ -15,7 +15,6 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.corelib.base.AbstractTextField;
 
 /**
@@ -29,20 +28,22 @@ public final class TextArea extends AbstractTextField
     @Override
     protected final void writeFieldTag(MarkupWriter writer, String value)
     {
-        writer.element("textarea", "name", getElementName(), "id", getClientId());
+        writer.element("textarea",
+
+                       "name", getElementName(),
+
+                       "id", getClientId());
 
         // Save until needed in after()
 
         _value = value;
     }
 
-    @AfterRender
-    final void after(MarkupWriter writer)
+    final void afterRender(MarkupWriter writer)
     {
         // TextArea will not have a template.
 
-        if (_value != null)
-            writer.write(_value.toString());
+        if (_value != null) writer.write(_value);
 
         writer.end(); // textarea
     }
