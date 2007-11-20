@@ -33,8 +33,7 @@ public final class OrIdMatcher implements IdMatcher
     public boolean matches(String id)
     {
         for (IdMatcher m : _matchers)
-            if (m.matches(id))
-                return true;
+            if (m.matches(id)) return true;
 
         return false;
     }

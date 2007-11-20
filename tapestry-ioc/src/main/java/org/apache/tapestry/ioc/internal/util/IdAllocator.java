@@ -155,14 +155,12 @@ public final class IdAllocator
             g = new NameGenerator(key);
             result = key;
         }
-        else
-            result = g.nextId();
+        else result = g.nextId();
 
         // Handle the degenerate case, where a base name of the form "foo_0" has been
         // requested. Skip over any duplicates thus formed.
 
-        while (_generatorMap.containsKey(result))
-            result = g.nextId();
+        while (_generatorMap.containsKey(result)) result = g.nextId();
 
         _generatorMap.put(result, g);
 

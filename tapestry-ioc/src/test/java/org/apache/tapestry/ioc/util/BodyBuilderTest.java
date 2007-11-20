@@ -119,17 +119,8 @@ public class BodyBuilderTest extends IOCTestCase
         b.end();
         b.end();
 
-        assertEquals(b.toString(), join(
-                "{",
-                "  if (debug)",
-                "    log.debug(\"foo\");",
-                "  while (true)",
-                "  {",
-                "    if (i > 10)",
-                "      return;",
-                "    i++;",
-                "  }",
-                "}"
+        assertEquals(b.toString(), join("{", "  if (debug)", "    log.debug(\"foo\");", "  while (true)", "  {",
+                                        "    if (i > 10)", "      return;", "    i++;", "  }", "}"
 
         ));
 

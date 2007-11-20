@@ -1,5 +1,4 @@
 // Copyright 2006, 2007 The Apache Software Foundation
-// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -35,8 +34,7 @@ public class ChainBuilderImpl implements ChainBuilder
 
     private Map<Class, Class> _cache = newConcurrentMap();
 
-    public ChainBuilderImpl(@Builtin
-    ClassFactory classFactory)
+    public ChainBuilderImpl(@Builtin ClassFactory classFactory)
     {
         _classFactory = classFactory;
     }
@@ -107,8 +105,7 @@ public class ChainBuilderImpl implements ChainBuilder
         BodyBuilder builder = new BodyBuilder();
         builder.addln("_commands = (%s[]) $1.toArray(new %<s[0]);", commandInterface.getName());
 
-        cf.addConstructor(new Class[]
-                {List.class}, null, builder.toString());
+        cf.addConstructor(new Class[]{List.class}, null, builder.toString());
     }
 
     @SuppressWarnings("unchecked")
@@ -139,8 +136,7 @@ public class ChainBuilderImpl implements ChainBuilder
             addMethod(cf, commandInterface, sig);
         }
 
-        if (!mi.getToString())
-            cf.addToString(format("<Command chain of %s>", commandInterface.getName()));
+        if (!mi.getToString()) cf.addToString(format("<Command chain of %s>", commandInterface.getName()));
     }
 
     private void addMethod(ClassFab cf, Class commandInterface, MethodSignature sig)

@@ -51,8 +51,7 @@ public interface PipelineBuilder
      * @param terminator       end of the pipeline
      * @return an object that encapsulates the filters and the terminator
      */
-    <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
-                   S terminator);
+    <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters, S terminator);
 
     /**
      * Creates a pipeline from just the filters. A

@@ -53,8 +53,7 @@ class UploadMessages
         return MESSAGES.get("enclose-upload-in-form");
     }
 
-    static String encodingTypeAlreadySet(String formId, String requiredEncType,
-                                         String existingEncType)
+    static String encodingTypeAlreadySet(String formId, String requiredEncType, String existingEncType)
     {
         return MESSAGES.format("enctype-already-set", formId, requiredEncType, existingEncType);
     }

@@ -42,8 +42,8 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 
     private final long _maxFileSize;
 
-    public MultipartDecoderImpl(String repositoryLocation, int repositoryThreshold,
-                                long maxRequestSize, long maxFileSize)
+    public MultipartDecoderImpl(String repositoryLocation, int repositoryThreshold, long maxRequestSize,
+                                long maxFileSize)
     {
         _repositoryLocation = repositoryLocation;
         _repositoryThreshold = repositoryThreshold;
@@ -87,8 +87,7 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 
     protected ServletFileUpload createFileUpload()
     {
-        FileItemFactory factory = new DiskFileItemFactory(_repositoryThreshold, new File(
-                _repositoryLocation));
+        FileItemFactory factory = new DiskFileItemFactory(_repositoryThreshold, new File(_repositoryLocation));
         ServletFileUpload upload = new ServletFileUpload(factory);
 
         // set maximum file upload size
@@ -98,8 +97,7 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
         return upload;
     }
 
-    protected HttpServletRequest processFileItems(HttpServletRequest request,
-                                                  List<FileItem> fileItems)
+    protected HttpServletRequest processFileItems(HttpServletRequest request, List<FileItem> fileItems)
     {
         if (fileItems == null || fileItems.isEmpty())
         {
