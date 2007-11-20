@@ -86,8 +86,8 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
     /**
      * @param builderClass the class that is responsible for building services, etc.
-     * @param logger
-     * @param classFactory TODO
+     * @param logger       based on the class name of the module
+     * @param classFactory factory used to create new classes at runtime or locate method line numbers for error reporting
      */
     public DefaultModuleDefImpl(Class<?> builderClass, Logger logger, ClassFactory classFactory)
     {
@@ -97,7 +97,11 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         Marker annotation = builderClass.getAnnotation(Marker.class);
 
-        if (annotation != null) _defaultMarkers.addAll(Arrays.asList(annotation.value()));
+        if (annotation != null)
+        {
+            InternalUtils.validateMarkerAnnotations(annotation.value());
+            _defaultMarkers.addAll(Arrays.asList(annotation.value()));
+        }
 
         grind();
         bind();
@@ -140,8 +144,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
             {
                 int result = o1.getName().compareTo(o2.getName());
 
-                if (result == 0)
-                    result = o2.getParameterTypes().length - o1.getParameterTypes().length;
+                if (result == 0) result = o2.getParameterTypes().length - o1.getParameterTypes().length;
 
                 return result;
             }
@@ -180,8 +183,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         String serviceId = stripMethodPrefix(method, CONTRIBUTE_METHOD_NAME_PREFIX);
 
         Class returnType = method.getReturnType();
-        if (!returnType.equals(void.class))
-            _logger.warn(IOCMessages.contributionWrongReturnType(method));
+        if (!returnType.equals(void.class)) _logger.warn(IOCMessages.contributionWrongReturnType(method));
 
         ConfigurationType type = null;
 
@@ -245,11 +247,9 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
         // TODO: Validate constraints here?
 
-        String[] patterns = match == null ? new String[]
-                {decoratorId} : match.value();
+        String[] patterns = match == null ? new String[]{decoratorId} : match.value();
 
-        DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints,
-                                                _classFactory);
+        DecoratorDef def = new DecoratorDefImpl(decoratorId, method, patterns, constraints, _classFactory);
 
         _decoratorDefs.put(decoratorId, def);
     }
@@ -315,8 +315,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
         Set<Class> markers = newSet(_defaultMarkers);
         markers.addAll(extractMarkers(method));
 
-        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope,
-                                                       eagerLoad, source);
+        ServiceDefImpl serviceDef = new ServiceDefImpl(returnType, serviceId, markers, scope, eagerLoad, source);
 
         addServiceDef(serviceDef);
     }
@@ -381,9 +380,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
 
             if (!Modifier.isStatic(bindMethod.getModifiers()))
             {
-                _logger.error(IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(
-                        bindMethod,
-                        _classFactory)));
+                _logger.error(IOCMessages.bindMethodMustBeStatic(InternalUtils.asString(bindMethod, _classFactory)));
 
                 return;
             }

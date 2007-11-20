@@ -16,6 +16,7 @@ package org.apache.tapestry.ioc.internal.util;
 
 import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.annotations.Inject;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.toList;
 import org.apache.tapestry.ioc.test.IOCTestCase;
@@ -77,8 +78,7 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_non_null()
     {
-        Object[] array =
-                {1, 2, 3};
+        Object[] array = {1, 2, 3};
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -92,12 +92,8 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "memberPrefixData")
     public Object[][] memberPrefixData()
     {
-        return new Object[][]
-                {
-                        {"simple", "simple"},
-                        {"_name", "name"},
-                        {"$name", "name"},
-                        {"$_$__$__$_$___$_$_$_$$name$", "name$"}};
+        return new Object[][]{{"simple", "simple"}, {"_name", "name"}, {"$name", "name"},
+                              {"$_$__$__$_$___$_$_$_$$name$", "name$"}};
     }
 
     @Test
@@ -156,13 +152,7 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "capitalize_inputs")
     public Object[][] capitalize_inputs()
     {
-        return new Object[][]
-                {
-                        {"hello", "Hello"},
-                        {"Goodbye", "Goodbye"},
-                        {"", ""},
-                        {"a", "A"},
-                        {"A", "A"}};
+        return new Object[][]{{"hello", "Hello"}, {"Goodbye", "Goodbye"}, {"", ""}, {"a", "A"}, {"A", "A"}};
     }
 
     @Test
@@ -293,5 +283,27 @@ public class InternalUtilsTest extends IOCTestCase
         InternalUtils.addToMapList(map, "fred", 2);
 
         assertEquals(map.get("fred"), Arrays.asList(1, 2));
+    }
+
+    // Test the check for runtime annotations. This is all well and good, we actually don't have a proper test
+    // that this code is used (ideally we should have tests for @Marker on a module, on a service impl, and passed
+    // to ServiceBindingOptions.withMarker(), to prove that those are wired for checks.
+
+    @Test
+    public void validate_marker_annotation()
+    {
+        InternalUtils.validateMarkerAnnotation(Inject.class);
+
+
+        try
+        {
+            InternalUtils.validateMarkerAnnotations(new Class[]{Inject.class, NotRetainedRuntime.class});
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Marker annotation class org.apache.tapestry.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
+        }
     }
 }

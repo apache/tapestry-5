@@ -25,6 +25,8 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
 import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -158,8 +160,7 @@ public class InternalUtils
      * @param annotationClass to match
      * @return the annotation instance, if found, or null otherwise
      */
-    public static <T extends Annotation> T findAnnotation(Annotation[] annotations,
-                                                          Class<T> annotationClass)
+    public static <T extends Annotation> T findAnnotation(Annotation[] annotations, Class<T> annotationClass)
     {
         for (Annotation a : annotations)
         {
@@ -170,9 +171,8 @@ public class InternalUtils
     }
 
     @SuppressWarnings("unchecked")
-    private static Object calculateParameterValue(Class parameterType,
-                                                  final Annotation[] parameterAnnotations, ObjectLocator locator,
-                                                  Map<Class, Object> parameterDefaults)
+    private static Object calculateParameterValue(Class parameterType, final Annotation[] parameterAnnotations,
+                                                  ObjectLocator locator, Map<Class, Object> parameterDefaults)
     {
         AnnotationProvider provider = new AnnotationProvider()
         {
@@ -220,8 +220,7 @@ public class InternalUtils
         return calculateParameters(locator, parameterDefaults, parameterTypes, annotations);
     }
 
-    public static Object[] calculateParametersForConstructor(Constructor constructor,
-                                                             ObjectLocator locator,
+    public static Object[] calculateParametersForConstructor(Constructor constructor, ObjectLocator locator,
                                                              Map<Class, Object> parameterDefaults)
     {
         Class[] parameterTypes = constructor.getParameterTypes();
@@ -230,9 +229,8 @@ public class InternalUtils
         return calculateParameters(locator, parameterDefaults, parameterTypes, annotations);
     }
 
-    public static Object[] calculateParameters(ObjectLocator locator,
-                                               Map<Class, Object> parameterDefaults, Class[] parameterTypes,
-                                               Annotation[][] parameterAnnotations)
+    public static Object[] calculateParameters(ObjectLocator locator, Map<Class, Object> parameterDefaults,
+                                               Class[] parameterTypes, Annotation[][] parameterAnnotations)
     {
         int parameterCount = parameterTypes.length;
 
@@ -240,11 +238,8 @@ public class InternalUtils
 
         for (int i = 0; i < parameterCount; i++)
         {
-            parameters[i] = calculateParameterValue(
-                    parameterTypes[i],
-                    parameterAnnotations[i],
-                    locator,
-                    parameterDefaults);
+            parameters[i] = calculateParameterValue(parameterTypes[i], parameterAnnotations[i], locator,
+                                                    parameterDefaults);
         }
 
         return parameters;
@@ -487,5 +482,24 @@ public class InternalUtils
         }
 
         list.add(value);
+    }
+
+    /**
+     * Validates that the marker annotation class had a retention policy of runtime.
+     *
+     * @param markerClass the marker annotation class
+     */
+    public static void validateMarkerAnnotation(Class markerClass)
+    {
+        Retention policy = (Retention) markerClass.getAnnotation(Retention.class);
+
+        if (policy != null && policy.value() == RetentionPolicy.RUNTIME) return;
+
+        throw new IllegalArgumentException(UtilMessages.badMarkerAnnotation(markerClass));
+    }
+
+    public static void validateMarkerAnnotations(Class[] markerClasses)
+    {
+        for (Class markerClass : markerClasses) validateMarkerAnnotation(markerClass);
     }
 }
