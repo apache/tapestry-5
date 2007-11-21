@@ -46,8 +46,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         assertTrue(event.matchesByEventType("eventType"));
         assertFalse(event.matchesByEventType("foo"));
@@ -62,8 +61,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         assertTrue(event.matchesByEventType("EVENTTYPE"));
 
@@ -77,8 +75,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         assertTrue(event.matchesByComponentId("someId"));
 
@@ -93,8 +90,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventHandler handler = mockComponentEventHandler();
 
         replay();
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         assertTrue(event.matchesByComponentId("SOMEID"));
 
@@ -108,8 +104,8 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]
-                {"27"}, handler, _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"27"}, handler, _coercer,
+                                                      null);
 
         assertEquals(event.coerceContext(0, "java.lang.Integer"), new Integer(27));
 
@@ -124,8 +120,8 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]
-                {"27"}, handler, _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"27"}, handler, _coercer,
+                                                      null);
 
         event.setSource(component, "foo.Bar.baz()");
 
@@ -135,9 +131,8 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Method foo.Bar.baz() has more parameters than there are context values for this component event.");
+            assertEquals(ex.getMessage(),
+                         "Method foo.Bar.baz() has more parameters than there are context values for this component event.");
         }
 
         verify();
@@ -151,8 +146,8 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]
-                {"abc"}, handler, _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"abc"}, handler, _coercer,
+                                                      null);
 
         event.setSource(component, "foo.Bar.baz()");
 
@@ -166,8 +161,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
             // Different JVMs will report the conversion error slightly differently,
             // so we don't try to check that part of the error message.
 
-            assertTrue(ex.getMessage().startsWith(
-                    "Exception in method foo.Bar.baz(), parameter #1:"));
+            assertTrue(ex.getMessage().startsWith("Exception in method foo.Bar.baz(), parameter #1:"));
         }
 
         verify();
@@ -186,8 +180,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         event.setSource(component, methodDescription);
 
@@ -212,8 +205,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         event.setSource(component, methodDescription);
 
@@ -232,8 +224,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         event.setSource(component, "foo.Bar.baz()");
 
@@ -256,8 +247,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler,
-                                                      _coercer);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
         event.setSource(component, "foo.Bar.baz()");
         event.storeResult(result);

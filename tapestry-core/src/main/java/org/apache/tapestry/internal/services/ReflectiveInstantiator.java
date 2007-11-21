@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ public class ReflectiveInstantiator implements Instantiator
     private final Object[] _constructorParameters;
 
     /**
-     * Creates a new instance that will instantiate the given class. The
+     * Creates a new instance that will instantiate the given class.
      *
-     * @param componentModel model defining the behavior of the component
-     * @param instanceClass  class to instantiate
-     * @param parameters     passed to the constructor; the first instance is ignored (and overriden) as the
-     *                       {@link org.apache.tapestry.internal.InternalComponentResources} instance.
+     * @param componentModel        model defining the behavior of the component
+     * @param instanceClass         class to instantiate
+     * @param constructorParameters passed to the constructor; the first instance is ignored (and overriden) as the
+     *                              {@link org.apache.tapestry.internal.InternalComponentResources} instance.
      */
     ReflectiveInstantiator(ComponentModel componentModel, Class instanceClass, Object[] constructorParameters)
     {

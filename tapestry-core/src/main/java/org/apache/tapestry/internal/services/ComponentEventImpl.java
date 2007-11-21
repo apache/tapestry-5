@@ -30,6 +30,8 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     private final TypeCoercer _typeCoercer;
 
+    private final ClassLoader _classLoader;
+
     /**
      * @param eventType              non blank string used to identify the type of event that was triggered
      * @param originatingComponentId the id of the component that triggered the event (this will likely need to change
@@ -38,9 +40,11 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
      *                               parameters
      * @param handler                invoked when a non-null return value is obtained from an event handler method
      * @param typeCoercer            used when coercing context values to parameter types
+     * @param classLoader            loader used when resolving a class name to a class  (ultimately, this
+     *                               is the class loader used to create the component class; that loader's parent is the Thread's context class loader).
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, Object[] context,
-                              ComponentEventHandler handler, TypeCoercer typeCoercer)
+                              ComponentEventHandler handler, TypeCoercer typeCoercer, ClassLoader classLoader)
     {
         super(handler);
 
@@ -48,13 +52,9 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
         _originatingComponentId = originatingComponentId;
         _context = context != null ? context : new Object[0];
         _typeCoercer = notNull(typeCoercer, "typeCoercer");
+        _classLoader = classLoader;
     }
 
-    /**
-     * TODO: This implementation is broken, but will get the job done for simple cases. It just
-     * doesn't do quite the right think when an event bubbles up past its originating component's
-     * container (can lead to false matches).
-     */
     public boolean matchesByComponentId(String componentId)
     {
         return _originatingComponentId.equalsIgnoreCase(componentId);
@@ -73,22 +73,18 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
     @SuppressWarnings("unchecked")
     public Object coerceContext(int index, String desiredTypeName)
     {
-        if (index >= _context.length)
-            throw new IllegalArgumentException(ServicesMessages
-                    .contextIndexOutOfRange(getMethodDescription()));
-
+        if (index >= _context.length) throw new IllegalArgumentException(ServicesMessages
+                .contextIndexOutOfRange(getMethodDescription()));
         try
         {
-            Class desiredType = Class.forName(desiredTypeName);
+            Class desiredType = Class.forName(desiredTypeName, true, _classLoader);
 
             return _typeCoercer.coerce(_context[index], desiredType);
         }
         catch (Exception ex)
         {
-            throw new IllegalArgumentException(ServicesMessages.exceptionInMethodParameter(
-                    getMethodDescription(),
-                    index,
-                    ex), ex);
+            throw new IllegalArgumentException(
+                    ServicesMessages.exceptionInMethodParameter(getMethodDescription(), index, ex), ex);
         }
     }
 

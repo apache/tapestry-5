@@ -53,8 +53,7 @@ import java.util.Map;
  * {@link org.apache.tapestry.internal.services.PageElementFactoryImpl}.
  * <p/>
  */
-public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement,
-                                                                       PageLifecycleListener
+public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
 {
     private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new ComponentCallback()
     {
@@ -148,9 +147,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 return false;
             }
 
-            throw new TapestryException(StructureMessages.wrongEventResultType(
-                    methodDescription,
-                    Boolean.class), component, null);
+            throw new TapestryException(StructureMessages.wrongEventResultType(methodDescription, Boolean.class),
+                                        component, null);
         }
 
         private void add(RenderCommand command)
@@ -387,8 +385,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 Element current = writer.getElement();
 
                 if (current != _elementAtSetup)
-                    throw new TapestryException(StructureMessages.unbalancedElements(_completeId),
-                                                getLocation(), null);
+                    throw new TapestryException(StructureMessages.unbalancedElements(_completeId), getLocation(), null);
 
                 _elementAtSetup = null;
 
@@ -496,6 +493,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final TypeCoercer _typeCoercer;
 
+    private final ClassLoader _classLoader;
+
     /**
      * Constructor for other components embedded within the root component or at deeper levels of
      * the hierarchy.
@@ -512,8 +511,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * @param location       location of the element (within a template), used as part of exception reporting
      */
 
-    public ComponentPageElementImpl(Page page, ComponentPageElement container, String id,
-                                    String elementName, Instantiator instantiator, TypeCoercer typeCoercer,
+    public ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
+                                    Instantiator instantiator, TypeCoercer typeCoercer,
                                     ComponentMessagesSource messagesSource, Location location)
     {
         super(location);
@@ -528,10 +527,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         ComponentResources containerResources = container == null ? null : container
                 .getComponentResources();
 
-        _coreResources = new InternalComponentResourcesImpl(this, containerResources, instantiator,
-                                                            _typeCoercer, _messagesSource);
+        _coreResources = new InternalComponentResourcesImpl(this, containerResources, instantiator, _typeCoercer,
+                                                            _messagesSource);
 
         _coreComponent = _coreResources.getComponent();
+
+        _classLoader = _coreComponent.getClass().getClassLoader();
 
         String pageName = _page.getLogicalName();
 
@@ -581,8 +582,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         ComponentPageElement existing = _children.get(childId);
         if (existing != null)
-            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId),
-                                        child, null);
+            throw new TapestryException(StructureMessages.duplicateChildComponent(this, childId), child, null);
 
         _children.put(childId, child);
     }
@@ -598,9 +598,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String mixinClassName = instantiator.getModel().getComponentClassName();
         String mixinName = TapestryInternalUtils.lastTerm(mixinClassName);
 
-        InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(this,
-                                                                                      _coreResources, instantiator,
-                                                                                      _typeCoercer, _messagesSource);
+        InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(this, _coreResources,
+                                                                                      instantiator, _typeCoercer,
+                                                                                      _messagesSource);
 
         // TODO: Check for name collision?
 
@@ -618,15 +618,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (dotx > 0)
         {
             String mixinName = parameterName.substring(0, dotx);
-            InternalComponentResources mixinResources = InternalUtils.get(
-                    _mixinsByShortName,
-                    mixinName);
+            InternalComponentResources mixinResources = InternalUtils.get(_mixinsByShortName, mixinName);
 
-            if (mixinResources == null)
-                throw new TapestryException(StructureMessages.missingMixinForParameter(
-                        _completeId,
-                        mixinName,
-                        parameterName), binding, null);
+            if (mixinResources == null) throw new TapestryException(
+                    StructureMessages.missingMixinForParameter(_completeId, mixinName, parameterName), binding, null);
 
             String simpleName = parameterName.substring(dotx + 1);
 
@@ -653,22 +648,19 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 return;
             }
 
-            if (informalParameterResources == null
-                    && resources.getComponentModel().getSupportsInformalParameters())
+            if (informalParameterResources == null && resources.getComponentModel().getSupportsInformalParameters())
                 informalParameterResources = resources;
         }
 
         // An informal parameter
 
-        if (informalParameterResources == null
-                && _coreResources.getComponentModel().getSupportsInformalParameters())
+        if (informalParameterResources == null && _coreResources.getComponentModel().getSupportsInformalParameters())
             informalParameterResources = _coreResources;
 
         // For the moment, informal parameters accumulate in the core component's resources, but
         // that will likely change.
 
-        if (informalParameterResources != null)
-            informalParameterResources.bindParameter(parameterName, binding);
+        if (informalParameterResources != null) informalParameterResources.bindParameter(parameterName, binding);
     }
 
     public void addToBody(PageElement element)
@@ -683,8 +675,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         _template.add(element);
     }
 
-    private void addUnboundParameterNames(String prefix, List<String> unbound,
-                                          InternalComponentResources resource)
+    private void addUnboundParameterNames(String prefix, List<String> unbound, InternalComponentResources resource)
     {
         ComponentModel model = resource.getComponentModel();
 
@@ -812,8 +803,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 .toLowerCase());
 
         if (embeddedElement == null)
-            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId), this,
-                                        null);
+            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId), this, null);
 
         return embeddedElement;
     }
@@ -849,10 +839,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             }
         }
 
-        if (result == null)
-            throw new TapestryException(
-                    StructureMessages.unknownMixin(_completeId, mixinClassName), getLocation(),
-                    null);
+        if (result == null) throw new TapestryException(StructureMessages.unknownMixin(_completeId, mixinClassName),
+                                                        getLocation(), null);
 
         return result;
     }
@@ -906,11 +894,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 return;
             }
 
-            Iterator<Component> i = reverse ? InternalUtils.reverseIterator(_components)
-                                    : _components.iterator();
+            Iterator<Component> i = reverse ? InternalUtils.reverseIterator(_components) : _components.iterator();
 
-            while (i.hasNext())
-                callback.run(i.next());
+            while (i.hasNext()) callback.run(i.next());
         }
         catch (Exception ex)
         {
@@ -978,8 +964,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         while (component != null)
         {
-            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, handler,
-                                                          _typeCoercer);
+            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, handler, _typeCoercer,
+                                                          _classLoader);
 
             result |= component.handleEvent(event);
 
@@ -1030,8 +1016,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         Block result = findBlock(id);
 
         if (result == null)
-            throw new BlockNotFoundException(StructureMessages.blockNotFound(_completeId, id),
-                                             getLocation());
+            throw new BlockNotFoundException(StructureMessages.blockNotFound(_completeId, id), getLocation());
 
         return result;
     }
@@ -1048,8 +1033,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (_blocks == null) _blocks = newCaseInsensitiveMap();
 
         if (_blocks.containsKey(blockId))
-            throw new TapestryException(StructureMessages.duplicateBlock(this, blockId), block,
-                                        null);
+            throw new TapestryException(StructureMessages.duplicateBlock(this, blockId), block, null);
 
         _blocks.put(blockId, block);
     }
@@ -1061,15 +1045,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (dotx > 0)
         {
             String mixinName = parameterName.substring(0, dotx);
-            InternalComponentResources mixinResources = InternalUtils.get(
-                    _mixinsByShortName,
-                    mixinName);
+            InternalComponentResources mixinResources = InternalUtils.get(_mixinsByShortName, mixinName);
 
-            if (mixinResources == null)
-                throw new TapestryException(StructureMessages.missingMixinForParameter(
-                        _completeId,
-                        mixinName,
-                        parameterName), null, null);
+            if (mixinResources == null) throw new TapestryException(
+                    StructureMessages.missingMixinForParameter(_completeId, mixinName, parameterName), null, null);
 
             String simpleName = parameterName.substring(dotx + 1);
 
