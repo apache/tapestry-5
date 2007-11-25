@@ -38,8 +38,7 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
      * @param iconAsset          asset for an icon that will be displayed after each field (marked with the
      *                           "t-invisible" CSS class, if the field is not in error)
      */
-    public DefaultValidationDecorator(final Environment environment, Messages validationMessages,
-                                      Asset iconAsset)
+    public DefaultValidationDecorator(final Environment environment, Messages validationMessages, Asset iconAsset)
     {
         _environment = environment;
         _validationMessages = validationMessages;
@@ -49,18 +48,15 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     @Override
     public void insideField(Field field)
     {
-        if (inError(field))
-            addErrorClassToCurrentElement();
+        if (inError(field)) addErrorClassToCurrentElement();
     }
 
     @Override
     public void insideLabel(Field field, Element element)
     {
-        if (field == null)
-            return;
+        if (field == null) return;
 
-        if (inError(field))
-            addErrorClass(element);
+        if (inError(field)) element.addClassName(TapestryConstants.ERROR_CLASS);
     }
 
     @Override
@@ -88,19 +84,6 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     {
         MarkupWriter writer = _environment.peekRequired(MarkupWriter.class);
 
-        Element element = writer.getElement();
-
-        addErrorClass(element);
+        writer.getElement().addClassName(TapestryConstants.ERROR_CLASS);
     }
-
-    private void addErrorClass(Element element)
-    {
-        String current = element.getAttribute("class");
-
-        String newValue = current == null ? InternalConstants.TAPESTRY_ERROR_CLASS : current + " "
-                + InternalConstants.TAPESTRY_ERROR_CLASS;
-
-        element.forceAttributes("class", newValue);
-    }
-
 }

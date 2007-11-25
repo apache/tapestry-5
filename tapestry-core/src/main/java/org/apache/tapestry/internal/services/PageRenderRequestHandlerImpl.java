@@ -19,7 +19,6 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.PageRenderRequestHandler;
 import org.apache.tapestry.services.Response;
@@ -40,8 +39,7 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
     private final Response _response;
 
-    public PageRenderRequestHandlerImpl(RequestPageCache cache,
-                                        ComponentEventResultProcessor resultProcessor,
+    public PageRenderRequestHandlerImpl(RequestPageCache cache, ComponentEventResultProcessor resultProcessor,
                                         PageResponseRenderer pageResponseRenderer, Response response)
     {
         _cache = cache;
@@ -50,23 +48,27 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
         _response = response;
     }
 
-    public ActionResponseGenerator handle(String logicalPageName, String[] context)
+    public void handle(String logicalPageName, String[] context)
     {
         Page page = _cache.get(logicalPageName);
 
-        final Holder<ActionResponseGenerator> holder = new Holder<ActionResponseGenerator>();
+        final Holder<Boolean> holder = Holder.create();
 
         ComponentEventHandler handler = new ComponentEventHandler()
         {
             @SuppressWarnings("unchecked")
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
-                ActionResponseGenerator generator = _resultProcessor.processComponentEvent(
-                        result,
-                        component,
-                        methodDescription);
+                try
+                {
+                    _resultProcessor.processComponentEvent(result, component, methodDescription);
+                }
+                catch (IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
 
-                holder.put(generator);
+                holder.put(true);
 
                 return true; // abort the event
             }
@@ -74,7 +76,9 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
         page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, context, handler);
 
-        if (holder.hasValue()) return holder.get();
+        // The handler will have asked the result processor to send a response.
+
+        if (holder.hasValue()) return;
 
         try
         {
@@ -85,6 +89,5 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
             throw new RuntimeException(ex);
         }
 
-        return null;
     }
 }

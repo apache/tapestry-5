@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.Link;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.services.Response;
@@ -59,6 +60,15 @@ public class ResponseImpl implements Response
     public void sendRedirect(String URL) throws IOException
     {
         _response.sendRedirect(URL);
+    }
+
+    public void sendRedirect(Link link) throws IOException
+    {
+        Defense.notNull(link, "link");
+
+        String redirectURL = encodeRedirectURL(link.toRedirectURI());
+
+        sendRedirect(redirectURL);
     }
 
     public OutputStream getOutputStream(String contentType) throws IOException

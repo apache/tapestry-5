@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,62 +15,75 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventHandler;
-import org.apache.tapestry.Link;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Response;
-import org.apache.tapestry.services.Traditional;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
-public class ComponentActionRequestHandlerImpl implements ComponentActionRequestHandler
+/**
+ * Similar to {@link ComponentActionRequestHandlerImpl}, but built around the Ajax request cycle, where the action request
+ * sends back an immediate JSON response containing the new content.
+ */
+public class AjaxComponentActionRequestHandler implements ComponentActionRequestHandler
 {
-    private final ComponentEventResultProcessor _resultProcessor;
-
     private final RequestPageCache _cache;
 
-    private final LinkFactory _linkFactory;
+    private final MarkupWriterFactory _factory;
+
+    private final PageMarkupRenderer _renderer;
 
     private final Response _response;
 
-    public ComponentActionRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
-                                             RequestPageCache cache, LinkFactory linkFactory, Response response)
+    public AjaxComponentActionRequestHandler(RequestPageCache cache, MarkupWriterFactory factory,
+                                             PageMarkupRenderer renderer, Response response)
     {
-        _resultProcessor = resultProcessor;
         _cache = cache;
-        _linkFactory = linkFactory;
+        _factory = factory;
+        _renderer = renderer;
         _response = response;
     }
 
     public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
                           String[] activationContext) throws IOException
     {
-        Page page = _cache.get(logicalPageName);
-
-        // This is the active page, until we know better.
+        final Page page = _cache.get(logicalPageName);
 
         ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
 
         final Holder<Boolean> holder = Holder.create();
+        final Holder<IOException> exceptionHolder = Holder.create();
 
         ComponentEventHandler handler = new ComponentEventHandler()
         {
             @SuppressWarnings("unchecked")
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
+                // TODO: Very limiting; event handler should be able to return a component or a StreamResponse
+                // as well.  Perhaps others.  The problem is the page. Maybe we need to store the
+                // page in a global?
+
+                if (!(result instanceof RenderCommand)) throw new IllegalArgumentException(
+                        String.format("Return type %s is not supported.", result.getClass().getName()));
+
+
                 try
                 {
-                    _resultProcessor.processComponentEvent(result, component, methodDescription);
+                    new AjaxResponseGenerator(page, (RenderCommand) result, _factory, _renderer).sendClientResponse(
+                            _response);
                 }
                 catch (IOException ex)
                 {
-                    throw new RuntimeException(ex);
+                    exceptionHolder.put(ex);
                 }
+
 
                 holder.put(true);
 
@@ -78,20 +91,21 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
             }
         };
 
-        // If activating the page returns a "navigational result", then don't trigger the action
-        // on the component.
-
         page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, activationContext, handler);
 
-        if (holder.hasValue()) return true;
+        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+
+        if (holder.hasValue()) return holder.get();
 
         element.triggerEvent(eventType, context, handler);
 
         if (holder.hasValue()) return true;
 
-        Link link = _linkFactory.createPageLink(page, false);
+        PrintWriter pw = _response.getPrintWriter("text/javascript");
 
-        _response.sendRedirect(link);
+        pw.print("{ }");
+
+        pw.flush();
 
         return true;
     }

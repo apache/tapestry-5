@@ -37,16 +37,16 @@ public class PageTesterModule
     public static void bind(ServiceBinder binder)
     {
         binder.bind(TestableRequest.class, TestableRequestImpl.class);
+        binder.bind(TestableResponse.class, TestableResponseImpl.class);
         binder.bind(TestableMarkupWriterFactory.class, TestableMarkupWriterFactoryImpl.class);
     }
 
-    public static void contributeAlias(Configuration<AliasContribution> configuration,
-                                       ObjectLocator locator)
+    public static void contributeAlias(Configuration<AliasContribution> configuration, ObjectLocator locator)
     {
         add(configuration, ComponentInvocationMap.class, new PageTesterComponentInvocationMap());
-        add(configuration, Response.class, new TestableResponseImpl());
 
         add(configuration, locator, Request.class, "TestableRequest");
+        add(configuration, locator, Response.class, "TestableResponse");
         add(configuration, locator, MarkupWriterFactory.class, "TestableMarkupWriterFactory");
 
         TestableCookieSinkSource cookies = new TestableCookieSinkSource();
@@ -55,21 +55,17 @@ public class PageTesterModule
         add(configuration, CookieSource.class, cookies);
     }
 
-    private static <T> void add(Configuration<AliasContribution> configuration,
-                                ObjectLocator locator, Class<T> serviceClass, String serviceId)
+    private static <T> void add(Configuration<AliasContribution> configuration, ObjectLocator locator,
+                                Class<T> serviceClass, String serviceId)
     {
         T service = locator.getService(serviceId, serviceClass);
 
         add(configuration, serviceClass, service);
     }
 
-    private static <T> void add(Configuration<AliasContribution> configuration,
-                                Class<T> serviceClass, T service)
+    private static <T> void add(Configuration<AliasContribution> configuration, Class<T> serviceClass, T service)
     {
-        AliasContribution<T> contribution = AliasContribution.create(
-                serviceClass,
-                TEST_MODE,
-                service);
+        AliasContribution<T> contribution = AliasContribution.create(serviceClass, TEST_MODE, service);
 
         configuration.add(contribution);
     }

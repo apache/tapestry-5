@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import java.io.IOException;
+
 /**
  * Filter interface for {@link ComponentActionRequestHandler}.
  */
@@ -29,8 +31,8 @@ public interface ComponentActionRequestFilter
      * @param context           context information to provide to the event handler
      * @param activationContext activation context for the page
      * @param handler           to delegate to
+     * @return true if the request has been handled (and a response sent to the client), false otherwise
      */
-    ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-                                   String eventType, String[] context, String[] activationContext,
-                                   ComponentActionRequestHandler handler);
+    boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                   String[] activationContext, ComponentActionRequestHandler handler) throws IOException;
 }

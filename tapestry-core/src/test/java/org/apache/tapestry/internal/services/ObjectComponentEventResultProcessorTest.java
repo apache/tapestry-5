@@ -51,11 +51,12 @@ public class ObjectComponentEventResultProcessorTest extends TapestryTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "An event handler for component foo.Bar:gnip.gnop returned the value *INVALID* (from method foo.component.Gnop.blip()).  "
-                            + "Return type java.lang.String can not be handled.  "
-                            + "Configured return types are java.lang.String, java.util.List, java.util.Map.");
+            assertEquals(ex.getMessage(),
+                         "An event handler for component foo.Bar:gnip.gnop returned the value *INVALID* (from method foo.component.Gnop.blip()).  " + "Return type java.lang.String can not be handled.  " + "Configured return types are java.lang.String, java.util.List, java.util.Map.");
+        }
+        catch (java.io.IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
 }

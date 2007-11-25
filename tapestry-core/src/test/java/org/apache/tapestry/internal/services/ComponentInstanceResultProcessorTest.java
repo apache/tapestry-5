@@ -30,8 +30,6 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
 
     private static final String METHOD_DESCRIPTION = "foo.bar.Baz.biff()";
 
-    private static final String LINK_URI = "{LinkURI}";
-
     @Test
     public void result_is_root_component() throws Exception
     {
@@ -52,17 +50,15 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_get(cache, PAGE_NAME, page);
 
         train_createPageLink(factory, page, link);
-        train_toRedirectURI(link, LINK_URI);
 
-        response.sendRedirect(LINK_URI);
+        response.sendRedirect(link);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(
-                cache, factory, logger);
+        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, response,
+                                                                                                  cache, factory);
 
-        processor.processComponentEvent(result, source, METHOD_DESCRIPTION).sendClientResponse(
-                response);
+        processor.processComponentEvent(result, source, METHOD_DESCRIPTION);
 
         verify();
     }
@@ -97,17 +93,15 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_get(cache, PAGE_NAME, page);
 
         train_createPageLink(factory, page, link);
-        train_toRedirectURI(link, LINK_URI);
 
-        response.sendRedirect(LINK_URI);
+        response.sendRedirect(link);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(
-                cache, factory, logger);
+        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, response,
+                                                                                                  cache, factory);
 
-        processor.processComponentEvent(value, source, METHOD_DESCRIPTION).sendClientResponse(
-                response);
+        processor.processComponentEvent(value, source, METHOD_DESCRIPTION);
 
         verify();
     }

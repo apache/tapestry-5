@@ -27,8 +27,6 @@ public interface PageRenderRequestFilter
      * @param logicalPageName the logical name of the page to activate and render
      * @param context         context data, supplied by the page at render time, extracted from the render URL
      * @param handler         to delegate the invocation to
-     * @return an action response generator, or null if the page simply rendered
      */
-    ActionResponseGenerator handle(String logicalPageName, String[] context,
-                                   PageRenderRequestHandler handler);
+    void handle(String logicalPageName, String[] context, PageRenderRequestHandler handler);
 }

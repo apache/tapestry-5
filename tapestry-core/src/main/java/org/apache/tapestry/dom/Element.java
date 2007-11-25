@@ -38,6 +38,8 @@ public final class Element extends Node
 
     private final Document _document;
 
+    private static final String CLASS_ATTRIBUTE = "class";
+
     Element(Document container, String name)
     {
         super(container);
@@ -335,6 +337,34 @@ public final class Element extends Node
     @Override
     Element asElement()
     {
+        return this;
+    }
+
+    /**
+     * Adds one or more CSS class names to the "class" attribute. No check
+     * for duplicates is made. Note that CSS class names are case insensitive
+     * on the client.
+     *
+     * @param className one or more CSS class names
+     * @return the element for further configuration
+     */
+    public Element addClassName(String... className)
+    {
+        String classes = getAttribute(CLASS_ATTRIBUTE);
+
+        StringBuilder builder = new StringBuilder();
+
+        if (classes != null) builder.append(classes);
+
+        for (String name : className)
+        {
+            if (builder.length() > 0) builder.append(" ");
+
+            builder.append(name);
+        }
+
+        forceAttributes(CLASS_ATTRIBUTE, builder.toString());
+
         return this;
     }
 }

@@ -127,7 +127,7 @@ public class Autocomplete
 
                        "src", _loader.toClientURL(),
 
-                       "class", "t-invisible",
+                       "class", TapestryConstants.INVISIBLE_CLASS,
 
                        "id", loaderId);
         writer.end();

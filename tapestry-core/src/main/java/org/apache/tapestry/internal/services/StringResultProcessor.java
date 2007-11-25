@@ -17,14 +17,14 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 /**
  * Used when a component event handler returns a string value. The value is interpreted as the
- * logical name of a page. A link to the page will be sent.
- *
- * @see LinkActionResponseGenerator
+ * logical name of a page. A link to the page will be sent as a redirect.
  */
 public class StringResultProcessor implements ComponentEventResultProcessor<String>
 {
@@ -32,20 +32,22 @@ public class StringResultProcessor implements ComponentEventResultProcessor<Stri
 
     private final LinkFactory _linkFactory;
 
-    public StringResultProcessor(RequestPageCache requestPageCache, LinkFactory linkFactory)
+    private final Response _response;
+
+    public StringResultProcessor(RequestPageCache requestPageCache, LinkFactory linkFactory, Response response)
     {
         _requestPageCache = requestPageCache;
         _linkFactory = linkFactory;
+        _response = response;
     }
 
-    public ActionResponseGenerator processComponentEvent(String value, Component component,
-                                                         String methodDescripion)
+    public void processComponentEvent(String value, Component component, String methodDescripion) throws IOException
     {
         Page page = _requestPageCache.get(value);
 
         Link link = _linkFactory.createPageLink(page, false);
 
-        return new LinkActionResponseGenerator(link);
+        _response.sendRedirect(link);
     }
 
 }

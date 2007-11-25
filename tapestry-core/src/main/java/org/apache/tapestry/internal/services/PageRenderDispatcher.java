@@ -31,8 +31,7 @@ public class PageRenderDispatcher implements Dispatcher
 
     private final PageRenderRequestHandler _handler;
 
-    public PageRenderDispatcher(ComponentClassResolver componentClassResolver,
-                                PageRenderRequestHandler handler)
+    public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;
@@ -64,9 +63,7 @@ public class PageRenderDispatcher implements Dispatcher
                 String[] context = atEnd ? new String[0] : convertActivationContext(path
                         .substring(nextslashx + 1));
 
-                ActionResponseGenerator responseGenerator = _handler.handle(pageName, context);
-
-                if (responseGenerator != null) responseGenerator.sendClientResponse(response);
+                _handler.handle(pageName, context);
 
                 return true;
             }

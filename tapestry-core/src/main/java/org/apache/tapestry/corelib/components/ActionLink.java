@@ -52,6 +52,13 @@ public class ActionLink implements ClientElement
 
     private String _clientId;
 
+    /**
+     * Binding zone turns the link into a an Ajax control that causes the
+     * related zone to be updated.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _zone;
+
     void beginRender(MarkupWriter writer)
     {
         if (_disabled) return;
@@ -65,6 +72,11 @@ public class ActionLink implements ClientElement
         writer.element("a", "href", link, "id", _clientId);
 
         _resources.renderInformalParameters(writer);
+
+        // TODO: Extend PRS or add a new environmental, to collect the link/zone connections
+        // and execute them as a single block (to generate less JavaScript).
+
+        if (_zone != null) _support.addScript("Tapestry.linkZone('%s', '%s');", _clientId, _zone);
     }
 
     void afterRender(MarkupWriter writer)

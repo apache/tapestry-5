@@ -17,6 +17,8 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.corelib.components.ActionLink;
 import org.apache.tapestry.corelib.components.Form;
 
+import java.io.IOException;
+
 /**
  * Handler interface for action requests. Action requests <em>do things</em> such as process a
  * form submission or otherwise change state. In the majority of cases, after the action, a redirect
@@ -29,16 +31,17 @@ import org.apache.tapestry.corelib.components.Form;
 public interface ComponentActionRequestHandler
 {
     /**
-     * Handler for a component action request, which returns a response generator used to send the
-     * final response to the client.
+     * Handler for a component action request which will trigger an event on a component and use
+     * the return value to send a response to the client (typically, a redirect to a page render URL).
      *
      * @param logicalPageName   the page name containing the component, and the default component to render the
      *                          response
      * @param nestedComponentId the id of the component within the page
      * @param eventType         the type of event to trigger on the component
      * @param context           context information to provide to the event handler
-     * @parram activationContext activation context for the page
+     * @param activationContext activation context for the page
+     * @return true if the request has been handled (and a response sent to the client), false otherwise
      */
-    ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-                                   String eventType, String[] context, String[] activationContext);
+    boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                   String[] activationContext) throws IOException;
 }

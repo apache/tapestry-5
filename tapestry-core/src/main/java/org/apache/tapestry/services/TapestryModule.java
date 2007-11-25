@@ -34,6 +34,7 @@ import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.*;
@@ -107,6 +108,8 @@ public final class TapestryModule
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
         binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);
         binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
+        binder.bind(ComponentEventResultProcessor.class, ComponentInstanceResultProcessor.class).withId(
+                "ComponentInstanceResultProcessor");
     }
 
     public static Alias build(Logger logger,
@@ -495,8 +498,20 @@ public final class TapestryModule
      * terminates the pipeline by returning false. Generally, most filters should be ordered after
      * this filter.
      */
-    public static void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
-                                                final RequestExceptionHandler exceptionHandler)
+    public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
+
+                                         final RequestExceptionHandler exceptionHandler,
+
+                                         RequestGlobals requestGlobals,
+
+                                         // @Inject not needed because its a long, not a String
+                                         @Symbol("tapestry.file-check-interval")
+                                         long checkInterval,
+
+                                         @Symbol("tapestry.file-check-update-timeout")
+                                         long updateTimeout,
+
+                                         LocalizationSetter localizationSetter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -528,7 +543,13 @@ public final class TapestryModule
         };
 
         configuration.add("ErrorFilter", errorFilter);
+
+        configuration.add("CheckForUpdates",
+                          new CheckForUpdatesFilter(_updateListenerHub, checkInterval, updateTimeout), "before:*");
+
+        configuration.add("Localization", new LocalizationFilter(localizationSetter));
     }
+
 
     /**
      * Contributes the basic set of default translators:
@@ -724,6 +745,8 @@ public final class TapestryModule
 
     private final Request _request;
 
+    private final Response _response;
+
     private final ThreadLocale _threadLocale;
 
     private final RequestGlobals _requestGlobals;
@@ -758,6 +781,8 @@ public final class TapestryModule
 
                           Request request,
 
+                          Response response,
+
                           ThreadLocale threadLocale)
     {
         _pipelineBuilder = pipelineBuilder;
@@ -777,6 +802,7 @@ public final class TapestryModule
         _threadCleanupHub = threadCleanupHub;
         _componentTemplateSource = componentTemplateSource;
         _request = request;
+        _response = response;
         _threadLocale = threadLocale;
     }
 
@@ -964,13 +990,15 @@ public final class TapestryModule
                                       ServletApplicationInitializerFilter.class, configuration, terminator);
     }
 
-    @Marker(Primary.class)
-    public ComponentEventResultProcessor build(Map<Class, ComponentEventResultProcessor> configuration)
+    @Marker({Primary.class, Traditional.class})
+    public ComponentEventResultProcessor buildComponentEventResultProcessor(
+            Map<Class, ComponentEventResultProcessor> configuration)
     {
+        Set<Class> handledTypes = CollectionFactory.newSet(configuration.keySet());
+
         // A slight hack!
 
-        configuration.put(Object.class, new ObjectComponentEventResultProcessor(configuration
-                .keySet()));
+        configuration.put(Object.class, new ObjectComponentEventResultProcessor(handledTypes));
 
         StrategyRegistry<ComponentEventResultProcessor> registry = StrategyRegistry.newInstance(
                 ComponentEventResultProcessor.class, configuration);
@@ -1038,10 +1066,6 @@ public final class TapestryModule
         return _shadowBuilder.build(_componentInstantiatorSource, "classFactory", ClassFactory.class);
     }
 
-    public ComponentEventResultProcessor buildComponentInstanceResultProcessor(Logger logger)
-    {
-        return new ComponentInstanceResultProcessor(_requestPageCache, _linkFactory, logger);
-    }
 
     /**
      * Ordered contributions to the MasterDispatcher service allow different URL matching strategies
@@ -1104,10 +1128,6 @@ public final class TapestryModule
      * <dl>
      * <dt>Object</dt>
      * <dd>Failure case, added to provide a more useful exception message</dd>
-     * <dt>ActionResponseGenerator</dt>
-     * <dd>Returns the ActionResponseGenerator; this sometimes occurs when a component generates
-     * events whose return values are converted to ActionResponseGenerators (this handles that
-     * bubble up case).</dd>
      * <dt>Link</dt>
      * <dd>Wraps the Link to send a redirect</dd>
      * <dt>String</dt>
@@ -1123,33 +1143,26 @@ public final class TapestryModule
 
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
-        configuration.add(ActionResponseGenerator.class, new ComponentEventResultProcessor<ActionResponseGenerator>()
-        {
-            public ActionResponseGenerator processComponentEvent(ActionResponseGenerator value, Component component,
-                                                                 String methodDescripion)
-            {
-                return value;
-            }
-        });
+
 
         configuration.add(Link.class, new ComponentEventResultProcessor<Link>()
         {
 
-            public ActionResponseGenerator processComponentEvent(Link value, Component component,
-                                                                 String methodDescripion)
+            public void processComponentEvent(Link value, Component component, String methodDescripion)
+                    throws IOException
             {
-                return new LinkActionResponseGenerator(value);
+                _response.sendRedirect(value);
             }
         });
 
-        configuration.add(String.class, new StringResultProcessor(_requestPageCache, _linkFactory));
+        configuration.add(String.class, new StringResultProcessor(_requestPageCache, _linkFactory, _response));
 
         configuration.add(Class.class,
-                          new ClassResultProcessor(componentClassResolver, _requestPageCache, _linkFactory));
+                          new ClassResultProcessor(componentClassResolver, _requestPageCache, _linkFactory, _response));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
-        configuration.add(StreamResponse.class, new StreamResponseResultProcessor());
+        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(_response));
     }
 
     public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
@@ -1162,7 +1175,7 @@ public final class TapestryModule
 
                                            PageRenderRequestHandler pageRenderRequestHandler,
 
-                                           ComponentActionRequestHandler componentActionRequestHandler,
+                                           @Traditional ComponentActionRequestHandler componentActionRequestHandler,
 
                                            ComponentClassResolver componentClassResolver,
 
@@ -1284,6 +1297,7 @@ public final class TapestryModule
 
                                                                           "${tapestry.scriptaculous}/prototype.js",
                                                                           "${tapestry.scriptaculous}/scriptaculous.js",
+                                                                          "${tapestry.scriptaculous}/effects.js",
                                                                           "org/apache/tapestry/tapestry.js");
 
                 support.addStylesheetLink(stylesheetAsset, null);
@@ -1373,11 +1387,31 @@ public final class TapestryModule
                                       configuration, resources.autobuild(PageRenderRequestHandlerImpl.class));
     }
 
+    /**
+     * Builds the component action request handler for traditional (non-Ajax) requests. These typically
+     * result in a redirect to a Tapestry render URL.
+     *
+     * @see org.apache.tapestry.internal.services.ComponentActionRequestHandlerImpl
+     */
+    @Marker(Traditional.class)
     public ComponentActionRequestHandler buildComponentActionRequestHandler(
             List<ComponentActionRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
         return _pipelineBuilder.build(logger, ComponentActionRequestHandler.class, ComponentActionRequestFilter.class,
                                       configuration, resources.autobuild(ComponentActionRequestHandlerImpl.class));
+    }
+
+    /**
+     * Builds the action request handler for Ajax requests, based on
+     * {@link org.apache.tapestry.internal.services.AjaxComponentActionRequestHandler}.  Filters on
+     * the request handler are supported here as well.
+     */
+    @Marker(Ajax.class)
+    public ComponentActionRequestHandler buildAjaxComponentActionRequestHandler(
+            List<ComponentActionRequestFilter> configuration, Logger logger, ServiceResources resources)
+    {
+        return _pipelineBuilder.build(logger, ComponentActionRequestHandler.class, ComponentActionRequestFilter.class,
+                                      configuration, resources.autobuild(AjaxComponentActionRequestHandler.class));
     }
 
     /**
@@ -1442,7 +1476,8 @@ public final class TapestryModule
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
         // delete the old version folder (or keep it around). This should be more manageable than
-        // overwriting the local copy with updates. There's also a ClasspathAliasManager
+        // overwriting the local copy with updates (it's too easy for files deleted between scriptaculous
+        // releases to be accidentally left lying around). There's also a ClasspathAliasManager
         // contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
@@ -1609,7 +1644,12 @@ public final class TapestryModule
 
     /**
      * Adds content types for "css" and "js" file extensions.
+     * <dl>
+     * <dt>css</dt> <dd>test/css</dd>
+     * <dt>js</dt> <dd>text/javascript</dd>
+     * </dl>
      */
+    @SuppressWarnings({"JavaDoc"})
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
     {
         configuration.add("css", "text/css");
@@ -1789,26 +1829,6 @@ public final class TapestryModule
         configuration.add("StringLiteral", stringFactory);
     }
 
-    /**
-     * Adds a filter that checks for updates to classes and other resources. It is ordered before:*.
-     */
-    public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
-                                         RequestGlobals requestGlobals,
-
-                                         // @Inject not needed because its a long, not a String
-                                         @Symbol("tapestry.file-check-interval")
-                                         long checkInterval,
-
-                                         @Symbol("tapestry.file-check-update-timeout")
-                                         long updateTimeout,
-
-                                         LocalizationSetter localizationSetter)
-    {
-        configuration.add("CheckForUpdates",
-                          new CheckForUpdatesFilter(_updateListenerHub, checkInterval, updateTimeout), "before:*");
-
-        configuration.add("Localization", new LocalizationFilter(localizationSetter));
-    }
 
     public PersistentFieldStrategy buildClientPersistentFieldStrategy(LinkFactory linkFactory,
                                                                       ServiceResources resources)
@@ -1821,15 +1841,14 @@ public final class TapestryModule
         return service;
     }
 
-    public static void contributeComponentActionRequestHandler(
+    public void contributeComponentActionRequestHandler(
             OrderedConfiguration<ComponentActionRequestFilter> configuration,
-            final RequestEncodingInitializer encodingInitializer)
+            final RequestEncodingInitializer encodingInitializer, @Ajax ComponentActionRequestHandler ajaxHandler)
     {
-        ComponentActionRequestFilter filter = new ComponentActionRequestFilter()
+        ComponentActionRequestFilter requestEncodingFilter = new ComponentActionRequestFilter()
         {
-            public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId, String eventType,
-                                                  String[] context, String[] activationContext,
-                                                  ComponentActionRequestHandler handler)
+            public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                                  String[] activationContext, ComponentActionRequestHandler handler) throws IOException
             {
                 encodingInitializer.initializeRequestEncoding(logicalPageName);
 
@@ -1838,8 +1857,8 @@ public final class TapestryModule
 
         };
 
-        configuration.add("SetRequestEncoding", filter, "before:*");
+        configuration.add("SetRequestEncoding", requestEncodingFilter, "before:*");
 
-        configuration.add("Ajax", new AjaxFilter());
+        configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
     }
 }

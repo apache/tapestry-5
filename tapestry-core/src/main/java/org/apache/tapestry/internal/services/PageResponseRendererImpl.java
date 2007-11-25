@@ -36,8 +36,8 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
     private final MetaDataLocator _metaDataLocator;
 
-    public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory,
-                                    PageMarkupRenderer markupRenderer, MetaDataLocator metaDataLocator)
+    public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory, PageMarkupRenderer markupRenderer,
+                                    MetaDataLocator metaDataLocator)
     {
         _markupWriterFactory = markupWriterFactory;
         _markupRenderer = markupRenderer;
@@ -46,22 +46,7 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
     public void renderPageResponse(Page page, Response response) throws IOException
     {
-        ComponentResources pageResources = page.getRootComponent().getComponentResources();
-
-        String contentTypeString = _metaDataLocator.findMeta(
-                TapestryConstants.RESPONSE_CONTENT_TYPE,
-                pageResources);
-        ContentType contentType = new ContentType(contentTypeString);
-
-        // Make sure thre's always a charset specified.
-
-        String encoding = contentType.getParameter(CHARSET);
-        if (encoding == null)
-        {
-            encoding = _metaDataLocator
-                    .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
-            contentType.setParameter(CHARSET, encoding);
-        }
+        ContentType contentType = findResponseContentType(page);
 
         // Eventually we'll have to do work to figure out the correct markup type, content type,
         // whatever. Right now its defaulting to plain HTML.
@@ -75,6 +60,26 @@ public class PageResponseRendererImpl implements PageResponseRenderer
         writer.toMarkup(pw);
 
         pw.flush();
+    }
+
+    private ContentType findResponseContentType(Page page)
+    {
+        ComponentResources pageResources = page.getRootComponent().getComponentResources();
+
+        String contentTypeString = _metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources);
+        ContentType contentType = new ContentType(contentTypeString);
+
+        // Make sure thre's always a charset specified.
+
+        String encoding = contentType.getParameter(CHARSET);
+        if (encoding == null)
+        {
+            encoding = _metaDataLocator
+                    .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
+            contentType.setParameter(CHARSET, encoding);
+        }
+
+        return contentType;
     }
 
 }

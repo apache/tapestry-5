@@ -123,11 +123,6 @@ public class RequestImplTest extends InternalBaseTestCase
     @DataProvider(name = "xhr_inputs")
     public Object[][] xhr_inputs()
     {
-        return new Object[][]
-                {
-                        {null, false},
-                        {"", false},
-                        {"some other value", false},
-                        {"XmlHttpRequest", true}};
+        return new Object[][]{{null, false}, {"", false}, {"some other value", false}, {"XMLHttpRequest", true}};
     }
 }

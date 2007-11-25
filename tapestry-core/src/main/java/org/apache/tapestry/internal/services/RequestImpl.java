@@ -32,7 +32,7 @@ public class RequestImpl implements Request
 {
     static final String REQUESTED_WITH_HEADER = "X-Requested-With";
 
-    static final String XML_HTTP_REQUEST = "XmlHttpRequest";
+    static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 
     private final HttpServletRequest _request;
 

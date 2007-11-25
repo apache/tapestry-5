@@ -66,6 +66,15 @@ public final class TapestryConstants
      */
     public static final String RESPONSE_ENCODING = "tapestry.response-encoding";
 
+    /**
+     * CSS class name that causes a rendered element to be invisible on the client side.
+     */
+    public static final String INVISIBLE_CLASS = "t-invisible";
+    /**
+     * All purpose CSS class name for anything related to Tapestry errors.
+     */
+    public static final String ERROR_CLASS = "t-error";
+
     private TapestryConstants()
     {
     }

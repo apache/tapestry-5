@@ -17,9 +17,11 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 /**
  * Used when a component event handler returns a class value. The value is interpreted as the page
@@ -29,27 +31,33 @@ import org.apache.tapestry.services.ComponentEventResultProcessor;
  */
 public class ClassResultProcessor implements ComponentEventResultProcessor<Class>
 {
-    private ComponentClassResolver _resolver;
+    private final ComponentClassResolver _resolver;
 
     private final RequestPageCache _requestPageCache;
 
     private final LinkFactory _linkFactory;
 
+    private final Response _response;
+
     public ClassResultProcessor(ComponentClassResolver resolver, RequestPageCache requestPageCache,
-                                LinkFactory linkFactory)
+                                LinkFactory linkFactory, Response response)
     {
         _resolver = resolver;
         _requestPageCache = requestPageCache;
         _linkFactory = linkFactory;
+        _response = response;
     }
 
-    public ActionResponseGenerator processComponentEvent(Class value, Component component, String methodDescripion)
+    public void processComponentEvent(Class value, Component component, String methodDescripion) throws IOException
     {
         String className = value.getName();
         String pageName = _resolver.resolvePageClassNameToPageName(className);
+
         Page page = _requestPageCache.get(pageName);
+
         Link link = _linkFactory.createPageLink(page, false);
-        return new LinkActionResponseGenerator(link);
+
+        _response.sendRedirect(link);
     }
 
 }

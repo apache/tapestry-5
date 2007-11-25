@@ -16,10 +16,12 @@ package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Document;
-import org.apache.tapestry.internal.services.*;
+import org.apache.tapestry.internal.services.ActionLinkTarget;
+import org.apache.tapestry.internal.services.ComponentInvocation;
+import org.apache.tapestry.internal.services.ComponentInvocationMap;
+import org.apache.tapestry.internal.services.InvocationTarget;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
 
 /**
@@ -35,6 +37,8 @@ public class ActionLinkInvoker implements ComponentInvoker
 
     private final ComponentInvocationMap _componentInvocationMap;
 
+    private final TestableResponse _response;
+
     public ActionLinkInvoker(Registry registry, ComponentInvoker followupInvoker,
                              ComponentInvocationMap componentInvocationMap)
     {
@@ -42,6 +46,9 @@ public class ActionLinkInvoker implements ComponentInvoker
         _followupInvoker = followupInvoker;
         _componentActionRequestHandler = _registry.getService("ComponentActionRequestHandler",
                                                               ComponentActionRequestHandler.class);
+
+        _response = _registry.getObject(TestableResponse.class, null);
+
         _componentInvocationMap = componentInvocationMap;
 
     }
@@ -55,42 +62,35 @@ public class ActionLinkInvoker implements ComponentInvoker
      */
     public Document invoke(ComponentInvocation invocation)
     {
-        ActionResponseGenerator generator = click(invocation);
+        click(invocation);
 
-        if (generator instanceof LinkActionResponseGenerator)
-        {
-            LinkActionResponseGenerator linkGenerator = (LinkActionResponseGenerator) generator;
+        Link link = _response.getRedirectLink();
 
-            Link link = linkGenerator.getLink();
+        _response.clear();
 
-            ComponentInvocation followup = _componentInvocationMap.get(link);
+        if (link == null) throw new RuntimeException("Action did not set a redirect link.");
 
-            return _followupInvoker.invoke(followup);
-        }
 
-        String message = String
-                .format(
-                        "ActionResponseGenerator %s is an instance of class %s, which is not compatible with PageTester.",
-                        generator,
-                        generator.getClass());
+        ComponentInvocation followup = _componentInvocationMap.get(link);
 
-        throw new RuntimeException(message);
+        return _followupInvoker.invoke(followup);
     }
 
-    private ActionResponseGenerator click(ComponentInvocation invocation)
+    private void click(ComponentInvocation invocation)
     {
         try
         {
             InvocationTarget target = invocation.getTarget();
 
-            ActionLinkTarget actionLinkTarget = Defense.cast(
-                    target,
-                    ActionLinkTarget.class,
-                    "target");
+            ActionLinkTarget actionLinkTarget = Defense.cast(target, ActionLinkTarget.class, "target");
 
-            return _componentActionRequestHandler.handle(actionLinkTarget.getPageName(), actionLinkTarget
+            _componentActionRequestHandler.handle(actionLinkTarget.getPageName(), actionLinkTarget
                     .getComponentNestedId(), actionLinkTarget.getEventType(), invocation
                     .getContext(), invocation.getActivationContext());
+        }
+        catch (java.io.IOException e)
+        {
+            throw new RuntimeException(e);
         }
         finally
         {
