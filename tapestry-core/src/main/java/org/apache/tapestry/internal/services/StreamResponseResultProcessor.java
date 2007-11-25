@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.StreamResponse;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
 
@@ -30,48 +29,49 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
 {
     private static final int BUFFER_SIZE = 5000;
 
-    public ActionResponseGenerator processComponentEvent(final StreamResponse streamResponse,
-                                                         Component component, final String methodDescripion)
+    private final Response _response;
+
+    public StreamResponseResultProcessor(Response response)
     {
-        return new ActionResponseGenerator()
+        _response = response;
+    }
+
+    public void processComponentEvent(StreamResponse streamResponse, Component component, String methodDescripion)
+            throws IOException
+    {
+        OutputStream os = null;
+        InputStream is = null;
+
+        streamResponse.prepareResponse(_response);
+
+        try
         {
-            public void sendClientResponse(Response response) throws IOException
+            is = new BufferedInputStream(streamResponse.getStream());
+
+            os = _response.getOutputStream(streamResponse.getContentType());
+
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            while (true)
             {
-                OutputStream os = null;
-                InputStream is = null;
+                int length = is.read(buffer, 0, buffer.length);
+                if (length < 0) break;
 
-                streamResponse.prepareResponse(response);
-                try
-                {
-                    is = new BufferedInputStream(streamResponse.getStream());
-
-                    os = response.getOutputStream(streamResponse.getContentType());
-
-                    byte[] buffer = new byte[BUFFER_SIZE];
-
-                    while (true)
-                    {
-                        int length = is.read(buffer, 0, buffer.length);
-                        if (length < 0)
-                            break;
-
-                        os.write(buffer, 0, length);
-                    }
-
-                    os.close();
-                    os = null;
-
-                    is.close();
-                    is = null;
-                }
-                finally
-                {
-                    TapestryInternalUtils.close(is);
-                    TapestryInternalUtils.close(os);
-                }
+                os.write(buffer, 0, length);
             }
 
-        };
+            os.close();
+            os = null;
+
+            is.close();
+            is = null;
+        }
+        finally
+        {
+            TapestryInternalUtils.close(is);
+            TapestryInternalUtils.close(os);
+        }
+
     }
 
 }

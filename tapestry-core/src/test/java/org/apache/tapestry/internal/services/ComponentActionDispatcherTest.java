@@ -17,7 +17,10 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
+import org.apache.tapestry.services.Dispatcher;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.Response;
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import org.testng.annotations.Test;
@@ -70,27 +73,14 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void default_event_with_nested_id_and_context() throws Exception
     {
-        test(
-                "/foo/MyPage.fred/fee/fie/foe/fum",
-                "foo/MyPage",
-                "fred",
-                TapestryConstants.ACTION_EVENT,
-                "fee",
-                "fie",
-                "foe",
-                "fum");
+        test("/foo/MyPage.fred/fee/fie/foe/fum", "foo/MyPage", "fred", TapestryConstants.ACTION_EVENT, "fee", "fie",
+             "foe", "fum");
     }
 
     @Test
     public void default_event_with_context_that_includes_a_colon() throws Exception
     {
-        test(
-                "/foo/MyPage.underdog/a:b:c/d",
-                "foo/MyPage",
-                "underdog",
-                TapestryConstants.ACTION_EVENT,
-                "a:b:c",
-                "d");
+        test("/foo/MyPage.underdog/a:b:c/d", "foo/MyPage", "underdog", TapestryConstants.ACTION_EVENT, "a:b:c", "d");
     }
 
     @Test
@@ -108,14 +98,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void nested_component_event_with_context() throws Exception
     {
-        test(
-                "/foo/MyPage.nested:trigger/foo/bar/baz",
-                "foo/MyPage",
-                "nested",
-                "trigger",
-                "foo",
-                "bar",
-                "baz");
+        test("/foo/MyPage.nested:trigger/foo/bar/baz", "foo/MyPage", "nested", "trigger", "foo", "bar", "baz");
     }
 
     @Test
@@ -124,22 +107,14 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
-        ActionResponseGenerator generator = newMock(ActionResponseGenerator.class);
 
         train_getPath(request, "/mypage:eventname");
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, "alpha/beta");
 
-        expect(
-                handler.handle(
-                        eq("mypage"),
-                        eq(""),
-                        eq("eventname"),
-                        aryEq(new String[0]),
-                        aryEq(new String[]
-                                {"alpha", "beta"}))).andReturn(generator);
+        expect(handler.handle(eq("mypage"), eq(""), eq("eventname"), aryEq(new String[0]),
+                              aryEq(new String[]{"alpha", "beta"}))).andReturn(true);
 
-        generator.sendClientResponse(response);
 
         replay();
 
@@ -150,27 +125,19 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         verify();
     }
 
-    private void test(String requestPath, String logicalPageName, String nestedComponentId,
-                      String eventType, String... context) throws IOException
+    private void test(String requestPath, String logicalPageName, String nestedComponentId, String eventType,
+                      String... context) throws IOException
     {
         ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
-        ActionResponseGenerator generator = newMock(ActionResponseGenerator.class);
 
         train_getPath(request, requestPath);
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
-        expect(
-                handler.handle(
-                        eq(logicalPageName),
-                        eq(nestedComponentId),
-                        eq(eventType),
-                        aryEq(context),
-                        aryEq(new String[0]))).andReturn(generator);
-
-        generator.sendClientResponse(response);
+        expect(handler.handle(eq(logicalPageName), eq(nestedComponentId), eq(eventType), aryEq(context),
+                              aryEq(new String[0]))).andReturn(true);
 
         replay();
 

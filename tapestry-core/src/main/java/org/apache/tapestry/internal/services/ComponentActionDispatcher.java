@@ -17,7 +17,10 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.ComponentActionRequestHandler;
+import org.apache.tapestry.services.Dispatcher;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.Response;
 
 import java.io.IOException;
 
@@ -98,27 +101,18 @@ public class ComponentActionDispatcher implements Dispatcher
             logicalPageName = path.substring(1, colonx);
         }
 
-        if (logicalPageName == null)
-            return false;
+        if (logicalPageName == null) return false;
 
-        String[] eventContext = contextStart > 0 ? decodeContext(path.substring(contextStart))
-                                : _emptyString;
+        String[] eventContext = contextStart > 0 ? decodeContext(path.substring(contextStart)) : _emptyString;
 
         String activationContextValue = request.getParameter(InternalConstants.PAGE_CONTEXT_NAME);
 
-        String[] activationContext = activationContextValue == null ? _emptyString
-                                     : decodeContext(activationContextValue);
+        String[] activationContext = activationContextValue == null ? _emptyString : decodeContext(
+                activationContextValue);
 
-        ActionResponseGenerator responseGenerator = _componentActionRequestHandler.handle(
-                logicalPageName,
-                nestedComponentId,
-                eventType,
-                eventContext,
-                activationContext);
+        return _componentActionRequestHandler.handle(logicalPageName, nestedComponentId, eventType, eventContext,
+                                                     activationContext);
 
-        responseGenerator.sendClientResponse(response);
-
-        return true;
     }
 
     private String[] decodeContext(String input)

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import org.apache.tapestry.Link;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -48,6 +50,13 @@ public interface Response
      * @see #encodeRedirectURL(String)
      */
     void sendRedirect(String URL) throws IOException;
+
+    /**
+     * Sends a redirect to a link.
+     *
+     * @param link link to redirect to.
+     */
+    void sendRedirect(Link link) throws IOException;
 
     /**
      * Sends an error response to the client using the specified status. The server defaults to

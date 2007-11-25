@@ -126,7 +126,7 @@ public class DocumentHeadBuilderImpl implements DocumentHeadBuilder
 
             // This assumes that Prototype is available.
 
-            e.text("Event.observe(window, \"load\", function() {\n");
+            e.text("Event.observe(window, 'load', function() {\n");
 
             e.text(_scriptBlock.toString());
 

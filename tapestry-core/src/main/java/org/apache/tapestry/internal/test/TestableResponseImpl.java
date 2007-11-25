@@ -14,21 +14,20 @@
 
 package org.apache.tapestry.internal.test;
 
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.Link;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
-public class TestableResponseImpl implements Response
+public class TestableResponseImpl implements TestableResponse
 {
+    private Link _link;
 
     private void nyi(String methodName)
     {
-        throw new RuntimeException(String.format(
-                "TestableResponse: Method %s() not yet implemented.",
-                methodName));
+        throw new RuntimeException(String.format("TestableResponse: Method %s() not yet implemented.", methodName));
     }
 
     public OutputStream getOutputStream(String contentType) throws IOException
@@ -75,6 +74,11 @@ public class TestableResponseImpl implements Response
         nyi("setIntHeader");
     }
 
+    public void sendRedirect(Link link) throws IOException
+    {
+        _link = link;
+    }
+
     public String encodeRedirectURL(String URL)
     {
         return URL;
@@ -85,4 +89,13 @@ public class TestableResponseImpl implements Response
         return URL;
     }
 
+    public Link getRedirectLink()
+    {
+        return _link;
+    }
+
+    public void clear()
+    {
+        _link = null;
+    }
 }

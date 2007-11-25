@@ -288,9 +288,7 @@ public class DOMTest extends InternalBaseTestCase
         root.elementAt(1, "one").element("tiny");
         root.elementAt(2, "two").element("bubbles");
 
-        assertEquals(
-                d.toString(),
-                "<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
+        assertEquals(d.toString(), "<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
     }
 
     @Test
@@ -363,8 +361,22 @@ public class DOMTest extends InternalBaseTestCase
         root.attribute("alpha-only", "abcdef");
         root.attribute("entities", "\"<>&");
 
-        assertEquals(
-                root.toString(),
-                "<prime alpha-only=\"abcdef\" entities=\"&quot;&lt;&gt;&amp;\"/>");
+        assertEquals(root.toString(), "<prime alpha-only=\"abcdef\" entities=\"&quot;&lt;&gt;&amp;\"/>");
+    }
+
+    @Test
+    public void add_class_names()
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        Element root = d.newRootElement("div");
+
+        assertSame(root.addClassName("fred"), root);
+
+        assertEquals(root.toString(), "<div class=\"fred\"/>");
+
+        assertSame(root.addClassName("barney", "wilma"), root);
+
+        assertEquals(root.toString(), "<div class=\"fred barney wilma\"/>");
     }
 }

@@ -18,9 +18,11 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
+import org.apache.tapestry.services.Response;
 import org.slf4j.Logger;
+
+import java.io.IOException;
 
 public class ComponentInstanceResultProcessor implements ComponentEventResultProcessor<Component>
 {
@@ -30,24 +32,23 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
 
     private final Logger _logger;
 
-    public ComponentInstanceResultProcessor(final RequestPageCache requestPageCache,
-                                            LinkFactory linkFactory, Logger logger)
+    private final Response _response;
+
+    public ComponentInstanceResultProcessor(Logger logger, Response response, RequestPageCache requestPageCache,
+                                            LinkFactory linkFactory)
     {
+        _response = response;
         _requestPageCache = requestPageCache;
         _linkFactory = linkFactory;
         _logger = logger;
     }
 
-    public ActionResponseGenerator processComponentEvent(Component value, Component component,
-                                                         String methodDescription)
+    public void processComponentEvent(Component value, Component component, String methodDescription) throws IOException
     {
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
-            _logger.warn(ServicesMessages.componentInstanceIsNotAPage(
-                    methodDescription,
-                    component,
-                    value));
+            _logger.warn(ServicesMessages.componentInstanceIsNotAPage(methodDescription, component, value));
 
         // We have all these layers and layers between us and the page instance, but its easy to
         // extract the page class name and quickly re-resolve that to the page instance.
@@ -56,6 +57,6 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
 
         Link link = _linkFactory.createPageLink(page, false);
 
-        return new LinkActionResponseGenerator(link);
+        _response.sendRedirect(link);
     }
 }

@@ -131,6 +131,34 @@ var Tapestry = {
         });
     },
 
+    // Convert a link into a trigger of an Ajax update that
+    // updates the indicated zone.
+
+    linkZone : function(link, zone)
+    {
+        link = $(link);
+        zone = $(zone);
+
+        var clickHandler = function(event)
+        {
+            var successHandler = function(transport)
+            {
+                var response = transport.responseText;
+                var reply = eval("(" + response + ")");
+
+                zone.innerHTML = reply.content;
+
+                zone.show();
+            };
+
+            var request = new Ajax.Request(link.href, { onSuccess : successHandler });
+
+            return false;
+        };
+
+        link.onclick = clickHandler;
+    },
+
 
 
     FormEvent : Class.create(),
@@ -361,7 +389,7 @@ Tapestry.FieldEventManager.prototype = {
     }
 };
 
-Event.observe(window, "load", function()
+Event.observe(window, 'load', function()
 {
     $$(".t-invisible").each(function(element)
     {

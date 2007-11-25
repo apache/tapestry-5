@@ -16,9 +16,9 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ActionResponseGenerator;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
+import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -28,19 +28,15 @@ public class ObjectComponentEventResultProcessor implements ComponentEventResult
 {
     private final Collection<Class> _configuredClasses;
 
-    public ObjectComponentEventResultProcessor(final Collection<Class> configuredClasses)
+    public ObjectComponentEventResultProcessor(Collection<Class> configuredClasses)
     {
         _configuredClasses = configuredClasses;
     }
 
-    public ActionResponseGenerator processComponentEvent(Object value, Component component,
-                                                         String methodDescripion)
+    public void processComponentEvent(Object value, Component component, String methodDescripion) throws IOException
     {
-        String message = ServicesMessages.invalidComponentEventResult(
-                component,
-                value,
-                methodDescripion,
-                _configuredClasses);
+        String message = ServicesMessages.invalidComponentEventResult(component, value, methodDescripion,
+                                                                      _configuredClasses);
 
         throw new TapestryException(message, component, null);
     }

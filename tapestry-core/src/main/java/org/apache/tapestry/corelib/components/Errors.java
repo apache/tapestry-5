@@ -15,11 +15,12 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.internal.InternalMessages;
-import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.services.FormSupport;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class Errors
      * The CSS class for the div element rendered by the component. The default value is "t-error".
      */
     @Parameter
-    private String _class = InternalConstants.TAPESTRY_ERROR_CLASS;
+    private String _class = TapestryConstants.ERROR_CLASS;
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)
@@ -58,9 +59,9 @@ public class Errors
 
         if (_tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
 
-        String cssClass = _tracker.getHasErrors() ? _class : _class + " t-invisible";
+        Element div = writer.element("div", "class", _class, "id", _formSupport.getClientId() + ":errors");
 
-        writer.element("div", "class", cssClass, "id", _formSupport.getClientId() + ":errors");
+        if (!_tracker.getHasErrors()) div.addClassName(TapestryConstants.INVISIBLE_CLASS);
 
         // Inner div for the banner text
         writer.element("div");

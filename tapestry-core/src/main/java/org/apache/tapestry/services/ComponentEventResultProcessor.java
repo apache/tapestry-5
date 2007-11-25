@@ -16,6 +16,8 @@ package org.apache.tapestry.services;
 
 import org.apache.tapestry.runtime.Component;
 
+import java.io.IOException;
+
 /**
  * Responsible for handling the return value provided by a component event handler.
  *
@@ -24,15 +26,13 @@ import org.apache.tapestry.runtime.Component;
 public interface ComponentEventResultProcessor<T>
 {
     /**
-     * For a given, non-null return value, provide a corresponding Link object (which will
-     * ultimately be transformed into a URL and sent to the client as a redirect).
+     * For a given, non-null return value from a component event method, construct and send a response.
      *
      * @param value            the value returned from a method
      * @param component        the component on which a method was invoked
      * @param methodDescripion a description of method which provided the value
      * @return an object that can send the request to the client
-     * @throws RuntimeException if the value can not be converted into a link
+     * @throws RuntimeException if the value can not be converted into a response
      */
-    ActionResponseGenerator processComponentEvent(T value, Component component,
-                                                  String methodDescripion);
+    void processComponentEvent(T value, Component component, String methodDescripion) throws IOException;
 }

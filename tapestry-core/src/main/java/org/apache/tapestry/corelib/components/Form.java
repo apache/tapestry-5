@@ -210,7 +210,7 @@ public class Form implements ClientElement, FormValidationControl
 
         _resources.renderInformalParameters(writer);
 
-        _div = writer.element("div", "class", "t-invisible");
+        _div = writer.element("div", "class", TapestryConstants.INVISIBLE_CLASS);
 
         for (String parameterName : link.getParameterNames())
         {
@@ -289,7 +289,7 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-            final Holder<ActionResponseGenerator> holder = Holder.create();
+            final Holder<Object> holder = Holder.create();
 
             ComponentEventHandler handler = new ComponentEventHandler()
             {
@@ -297,7 +297,20 @@ public class Form implements ClientElement, FormValidationControl
                 {
                     if (result instanceof Boolean) return ((Boolean) result);
 
-                    holder.put(_eventResultProcessor.processComponentEvent(result, component, methodDescription));
+                    // We want to process the event here, so that the component and method description are
+                    // properly identified. But that's going to cause a headache aborting the
+                    // event.
+
+                    try
+                    {
+                        _eventResultProcessor.processComponentEvent(result, component, methodDescription);
+                    }
+                    catch (IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+
+                    holder.put(true);
 
                     return true; // Abort other event processing.
                 }
@@ -305,6 +318,7 @@ public class Form implements ClientElement, FormValidationControl
 
             _resources.triggerEvent(PREPARE, context, handler);
 
+            //
             if (holder.hasValue()) return holder.get();
 
             // TODO: Ajax stuff will eventually mean there are multiple values for this parameter

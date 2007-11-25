@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.services.ActionResponseGenerator;
+import org.apache.tapestry.services.Ajax;
 import org.apache.tapestry.services.ComponentActionRequestFilter;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
+import org.apache.tapestry.services.Request;
+
+import java.io.IOException;
 
 /**
  * A filter that intercepts Ajax-oriented requests, thos that originate on the client-side using
@@ -25,16 +28,23 @@ import org.apache.tapestry.services.ComponentActionRequestHandler;
  */
 public class AjaxFilter implements ComponentActionRequestFilter
 {
-    public ActionResponseGenerator handle(String logicalPageName, String nestedComponentId,
-                                          String eventType, String[] context, String[] activationContext,
-                                          ComponentActionRequestHandler handler)
+    private final Request _request;
+
+    private final ComponentActionRequestHandler _ajaxHandler;
+
+    public AjaxFilter(Request request, @Ajax ComponentActionRequestHandler ajaxHandler)
     {
-        return handler.handle(
-                logicalPageName,
-                nestedComponentId,
-                eventType,
-                context,
-                activationContext);
+        _request = request;
+        _ajaxHandler = ajaxHandler;
+    }
+
+
+    public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                          String[] activationContext, ComponentActionRequestHandler handler) throws IOException
+    {
+        ComponentActionRequestHandler next = _request.isXHR() ? _ajaxHandler : handler;
+
+        return next.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
     }
 
 }

@@ -14,15 +14,17 @@
 
 package org.apache.tapestry.services;
 
-import java.io.IOException;
+import java.lang.annotation.*;
+
 
 /**
- * An object that can generate the final response sent to the client as part of an action request.
- * This is almost always a redirect request.
+ * Marker annotation for a service that should be used for traditional (non-Ajax) requests.
  *
- * @see ComponentEventResultProcessor
+ * @see org.apache.tapestry.services.ComponentActionRequestHandler
  */
-public interface ActionResponseGenerator
+@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Traditional
 {
-    void sendClientResponse(Response response) throws IOException;
 }

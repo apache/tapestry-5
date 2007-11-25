@@ -22,12 +22,12 @@ package org.apache.tapestry.services;
 public interface PageRenderRequestHandler
 {
     /**
-     * Invoked to activate and render a page. The return value of the event handler method(s) for
-     * the activate event may result in an action response generator being returned.
+     * Invoked to activate and render a page. In certain cases, based on values returned when
+     * activating the page, a {@link org.apache.tapestry.services.ComponentEventResultProcessor} may be used
+     * to send an alternate response (typically, a redirect).
      *
      * @param logicalPageName the logical name of the page to activate and render
      * @param context         context data, supplied by the page at render time, extracted from the render URL
-     * @return an action response generator, or null if the page simply rendered
      */
-    ActionResponseGenerator handle(String logicalPageName, String[] context);
+    void handle(String logicalPageName, String[] context);
 }

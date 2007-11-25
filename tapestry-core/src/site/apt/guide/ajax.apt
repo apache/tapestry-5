@@ -16,6 +16,22 @@ Tapestry Ajax Support
   Ajax support takes the form of new components and, occasionally,
   {{{mixins.html}component mixins}}.  
 
+Changes to Scriptaculous
+
+  Scriptaculous normally has a special {{{http://wiki.script.aculo.us/scriptaculous/show/Usage}script loading option}}.
+  Loading just the Scriptaculous main library, scriptaculous.js, will also load <all> the other scripts in the library. Normally,
+  you can fine-tune this using "load" query parameter.
+
+  This doesn't fit well with the Tapestry; as discussed below, Tapestry has the capability to allow
+  individual components to control which JavaScript libraries are loaded with the page.  Further, the exact set of scripts
+  needed is determined over the course of rendering the page, and depends on the needs of the specific components that have
+  rendered.
+
+  The main Scriptaculous library, scriptaculous.js, is modified to turn off the autoloading behavior.
+  Tapestry will automatically link in prototype.js, scriptaculous.js, effects.js and the Tapestry library, tapestry.js.
+  You can add additional libraries as needed.
+
+
 Basic JavaScript
 
   The general strategy in Tapestry is that any significant amount of JavaScript should be packaged up
@@ -42,8 +58,36 @@ Basic JavaScript
   ignored.  In this way, each component can add the assets it needs, without worrying about conflicts
   with other components.
 
-  Note that the Prototype, Scriptaculous and the base Tapestry library (which largely consists of
+  Note that the Prototype, Scriptaculous main and effects libraries, and the base Tapestry library (which largely consists of
   support for form input validation) are included automatically.
+
+  If you are need access to other Scriptaculous libraries, you can provide them as follows:
+
++---+
+
+  @Inject @Path("${tapestry.scriptaculous}/dragdrop.js")
+  private Asset _dragDropLibrary;
+
+  @Environmental
+  private PageRenderSupport _pageRenderSupport;
+
+  void setupRender()
+  {
+    _pageRenderSupport.addScriptLink(_dragDropLibrary);
+  }
+
++---+
+
+  The Asset is injected, using the ${tapestry.scriptaculous} symbol to reference the location
+  of the Scriptaculous library.
+
+  The PageRenderSupport is accessed as an Environmental service.
+
+  The setupRender() method (the name is specifically linked to a
+  {{{rendering.html}render phase}}) is the correct place to inform the PageRenderSupport service that
+  the library is needed.
+
+  
 
 * addScript()
 

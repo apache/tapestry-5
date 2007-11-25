@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.PageRenderInitializer;
 
 public class PageMarkupRendererImpl implements PageMarkupRenderer
@@ -31,13 +32,7 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
     {
         _pageRenderInitializer.setup(writer);
 
-        RenderQueueImpl queue = new RenderQueueImpl(page.getLogger());
-
-        queue.push(page.getRootElement());
-
-        // Run the queue until empty.
-
-        queue.run(writer);
+        renderPartialPageMarkup(page, page.getRootElement(), writer);
 
         _pageRenderInitializer.cleanup(writer);
 
@@ -45,4 +40,14 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
             throw new RuntimeException(ServicesMessages.noMarkupFromPageRender(page));
     }
 
+    public void renderPartialPageMarkup(Page page, RenderCommand rootRenderCommand, MarkupWriter writer)
+    {
+        RenderQueueImpl queue = new RenderQueueImpl(page.getLogger());
+
+        queue.push(rootRenderCommand);
+
+        // Run the queue until empty.
+
+        queue.run(writer);
+    }
 }

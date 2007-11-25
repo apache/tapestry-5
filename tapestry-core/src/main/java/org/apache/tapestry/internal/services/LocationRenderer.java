@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.Location;
@@ -87,18 +88,21 @@ public class LocationRenderer implements ObjectRenderer<Location>
 
                 writer.element("tr");
 
-                writer.element("td");
-                writer.attributes("class", line == current ? "t-location-line t-location-current"
-                                           : "t-location-line");
+                writer.element("td", "class", "t-location-line");
+
+                if (line == current) writer.getElement().addClassName("t-location-current");
+
                 writer.write(Integer.toString(current));
                 writer.end();
 
                 String css = "t-location-content";
-                if (line == current) css += " t-location-current";
-                if (start == current) css += " t-location-content-first";
 
-                writer.element("td");
-                writer.attributes("class", css);
+                Element td = writer.element("td", "class", "t-location-content");
+
+                if (line == current) td.addClassName("t-location-current");
+
+                if (start == current) td.addClassName("t-location-content-first");
+
                 writer.write(input);
                 writer.end();
 
