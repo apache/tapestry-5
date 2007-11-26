@@ -411,7 +411,7 @@
 
     <properties>
         <!-- Version 2.1 lists everything as 100% covered, wierd. -->
-        <cobertura-plugin-version>2.0</cobertura-plugin-version>
+        <cobertura-plugin-version>2.2-SNAPSHOT</cobertura-plugin-version>
         <update-release-info>false</update-release-info>
     </properties>
 
