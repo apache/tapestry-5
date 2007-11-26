@@ -20,7 +20,7 @@ import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
- * Used to render out all informal parameters, in the {@link PostBeginRender} phase.
+ * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry.annotations.BeginRender} phase.
  * <p/>
  * This mixin can be used with components that render a single tag inside the {@link BeginRender}
  * phase. RenderInformals will activate during the PostBeginRender phase to write additional

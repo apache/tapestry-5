@@ -46,16 +46,14 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         if (names.isEmpty()) return;
 
-        String managerFieldName = transformation.addInjectedField(
-                ApplicationStateManager.class,
-                "applicationStateManager",
-                _applicationStateManager);
+        String managerFieldName = transformation.addInjectedField(ApplicationStateManager.class,
+                                                                  "applicationStateManager", _applicationStateManager);
 
         for (String fieldName : names)
         {
             String fieldType = transformation.getFieldType(fieldName);
 
-            Class fieldClass = null;
+            Class fieldClass;
 
             try
             {
@@ -67,10 +65,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
             }
 
-            String typeFieldName = transformation.addInjectedField(
-                    Class.class,
-                    fieldName + "_type",
-                    fieldClass);
+            String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
 
             replaceRead(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
 
@@ -80,21 +75,21 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
             String booleanFieldName = fieldName + "Exists";
 
-            if (transformation.isField(booleanFieldName)
-                    && transformation.getFieldType(booleanFieldName).equals("boolean"))
+            if (transformation.isField(booleanFieldName) && transformation.getFieldType(booleanFieldName).equals(
+                    "boolean"))
             {
                 replaceFlagRead(transformation, booleanFieldName, typeFieldName, managerFieldName);
             }
         }
     }
 
-    private void replaceFlagRead(ClassTransformation transformation, String booleanFieldName,
-                                 String typeFieldName, String managerFieldName)
+    private void replaceFlagRead(ClassTransformation transformation, String booleanFieldName, String typeFieldName,
+                                 String managerFieldName)
     {
         String readMethodName = transformation.newMemberName("read", booleanFieldName);
 
-        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "boolean", readMethodName,
-                                                                    null, null);
+        TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "boolean", readMethodName, null,
+                                                                    null);
 
         String body = format("return %s.exists(%s);", managerFieldName, typeFieldName);
 
@@ -105,14 +100,14 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
         transformation.removeField(booleanFieldName);
     }
 
-    private void replaceWrite(ClassTransformation transformation, String fieldName,
-                              String fieldType, String managerFieldName, String typeFieldName)
+    private void replaceWrite(ClassTransformation transformation, String fieldName, String fieldType,
+                              String managerFieldName, String typeFieldName)
     {
         String writeMethodName = transformation.newMemberName("write", fieldName);
 
         TransformMethodSignature writeSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
-                                                                               writeMethodName, new String[]
-                {fieldType}, null);
+                                                                               writeMethodName, new String[]{fieldType},
+                                                                               null);
 
         String body = format("%s.set(%s, $1);", managerFieldName, typeFieldName);
 
@@ -121,8 +116,8 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
         transformation.replaceWriteAccess(fieldName, writeMethodName);
     }
 
-    private void replaceRead(ClassTransformation transformation, String fieldName,
-                             String fieldType, String managerFieldName, String typeFieldName)
+    private void replaceRead(ClassTransformation transformation, String fieldName, String fieldType,
+                             String managerFieldName, String typeFieldName)
     {
 
         String readMethodName = transformation.newMemberName("read", fieldName);

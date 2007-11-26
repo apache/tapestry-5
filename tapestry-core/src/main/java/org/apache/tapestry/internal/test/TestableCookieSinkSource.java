@@ -23,12 +23,7 @@ import java.util.Map;
 
 public class TestableCookieSinkSource implements CookieSource, CookieSink
 {
-    private Map<String, Cookie> _cookies;
-
-    public TestableCookieSinkSource()
-    {
-        _cookies = CollectionFactory.newMap();
-    }
+    private final Map<String, Cookie> _cookies = CollectionFactory.newMap();
 
     public Cookie[] getCookies()
     {

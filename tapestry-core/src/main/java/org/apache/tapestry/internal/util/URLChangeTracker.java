@@ -35,7 +35,7 @@ public class URLChangeTracker
 
     private final Map<File, Long> _fileToTimestamp = newConcurrentMap();
 
-    private boolean _granularitySeconds;
+    private final boolean _granularitySeconds;
 
     /**
      * Creates a new URL change tracker with millisecond-level granularity.

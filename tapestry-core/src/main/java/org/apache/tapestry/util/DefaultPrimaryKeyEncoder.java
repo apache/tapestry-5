@@ -55,8 +55,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
         Defense.notNull(value, "value");
 
         V existing = _keyToValue.get(key);
-        if (existing != null)
-            throw new IllegalArgumentException(UtilMessages.duplicateKey(key, value, existing));
+        if (existing != null) throw new IllegalArgumentException(UtilMessages.duplicateKey(key, value, existing));
 
         _keyToValue.put(key, value);
 
@@ -85,16 +84,14 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      */
     protected final List<V> valuesNotInKeySet(Set<K> keySet)
     {
-        if (keySet == null || keySet.isEmpty())
-            return getAllValues();
+        if (keySet == null || keySet.isEmpty()) return getAllValues();
 
         List<V> result = newList();
 
         for (Map.Entry<K, V> entry : _keyToValue.entrySet())
         {
 
-            if (keySet.contains(entry.getKey()))
-                continue;
+            if (keySet.contains(entry.getKey())) continue;
 
             result.add(entry.getValue());
         }
@@ -124,9 +121,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
         _currentKey = _valueToKey.get(value);
 
-        if (_currentKey == null)
-            throw new IllegalArgumentException(UtilMessages.missingValue(value, _valueToKey
-                    .keySet()));
+        if (_currentKey == null) throw new IllegalArgumentException(UtilMessages.missingValue(value, _valueToKey
+                .keySet()));
 
         return _currentKey;
     }
@@ -184,7 +180,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      */
     protected final boolean inKeySet(Set<K> keySet)
     {
-        return keySet != null ? keySet.contains(_currentKey) : false;
+        return keySet != null && keySet.contains(_currentKey);
     }
 
     /**
@@ -207,16 +203,13 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     {
         if (keySet == null)
         {
-            if (!value)
-                return null;
+            if (!value) return null;
 
             keySet = newSet();
         }
 
-        if (value)
-            keySet.add(_currentKey);
-        else
-            keySet.remove(_currentKey);
+        if (value) keySet.add(_currentKey);
+        else keySet.remove(_currentKey);
 
         return keySet;
     }

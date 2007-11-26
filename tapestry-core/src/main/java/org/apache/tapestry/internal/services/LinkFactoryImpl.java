@@ -30,6 +30,7 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -55,8 +56,7 @@ public class LinkFactoryImpl implements LinkFactory
         void handle(T result, List context);
     }
 
-    public LinkFactoryImpl(Request request, Response encoder,
-                           ComponentInvocationMap componentInvocationMap,
+    public LinkFactoryImpl(Request request, Response encoder, ComponentInvocationMap componentInvocationMap,
                            RequestPageCache pageCache, TypeCoercer typeCoercer)
     {
         _request = request;
@@ -82,8 +82,7 @@ public class LinkFactoryImpl implements LinkFactory
             @SuppressWarnings("unchecked")
             public void handle(Object[] result, List context)
             {
-                for (Object o : result)
-                    context.add(o);
+                context.addAll(Arrays.asList(result));
             }
         });
 
@@ -104,8 +103,7 @@ public class LinkFactoryImpl implements LinkFactory
         _listeners.add(listener);
     }
 
-    public Link createActionLink(ComponentPageElement component, String action, boolean forForm,
-                                 Object... context)
+    public Link createActionLink(ComponentPageElement component, String action, boolean forForm, Object... context)
     {
         notBlank(action, "action");
 
@@ -120,8 +118,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         String[] activationContext = collectActivationContextForPage(containingPage);
 
-        ComponentInvocation invocation = new ComponentInvocation(target, contextStrings,
-                                                                 activationContext);
+        ComponentInvocation invocation = new ComponentInvocation(target, contextStrings, activationContext);
 
         Link link = new LinkImpl(_response, _request.getContextPath(), invocation, forForm);
 
@@ -164,8 +161,8 @@ public class LinkFactoryImpl implements LinkFactory
 
         // When override is true, we use the activation context even if empty.
 
-        String[] context = (override || activationContext.length != 0) ? toContextStrings(activationContext)
-                           : collectActivationContextForPage(page);
+        String[] context = (override || activationContext.length != 0) ? toContextStrings(
+                activationContext) : collectActivationContextForPage(page);
 
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
         ComponentInvocation invocation = new ComponentInvocation(target, context, null);

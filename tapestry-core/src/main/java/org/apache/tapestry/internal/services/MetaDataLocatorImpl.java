@@ -99,13 +99,12 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
     private String locateInDefaults(String key, ComponentResources pageResources)
     {
-        String logicalName = pageResources.getPageName();
 
         // We're going to peel this apart, slash by slash. Thus for
         // "mylib/myfolder/mysubfolder/MyPage" we'll be checking: "mylib/myfolder/mysubfolder",
         // then "mylib/myfolder", then "mylib", then "".
 
-        String path = logicalName;
+        String path = pageResources.getPageName();
 
         while (true)
         {

@@ -52,7 +52,7 @@ public class TapestryInternalUtils
         // Prevent instantiation.
     }
 
-    public static final void close(Closeable stream)
+    public static void close(Closeable stream)
     {
         if (stream != null) try
         {
@@ -77,10 +77,8 @@ public class TapestryInternalUtils
         boolean postSpace = true;
         boolean upcaseNext = true;
 
-        for (int i = 0; i < chars.length; i++)
+        for (char ch : chars)
         {
-            char ch = chars[i];
-
             if (upcaseNext)
             {
                 builder.append(Character.toUpperCase(ch));
@@ -383,13 +381,11 @@ public class TapestryInternalUtils
 
             OrderBefore beforeAnnotation = pa.getAnnotation(OrderBefore.class);
 
-            if (beforeAnnotation != null)
-                propertyConstraints.add("before:" + beforeAnnotation.value());
+            if (beforeAnnotation != null) propertyConstraints.add("before:" + beforeAnnotation.value());
 
             OrderAfter afterAnnotation = pa.getAnnotation(OrderAfter.class);
 
-            if (afterAnnotation != null)
-                propertyConstraints.add("after:" + afterAnnotation.value());
+            if (afterAnnotation != null) propertyConstraints.add("after:" + afterAnnotation.value());
 
             if (!propertyConstraints.isEmpty()) constraints.put(name, propertyConstraints);
 
@@ -424,10 +420,8 @@ public class TapestryInternalUtils
                 continue;
             }
 
-            if (prev == null)
-                orderer.add(name, name);
-            else
-                orderer.add(name, name, "after:" + prev);
+            if (prev == null) orderer.add(name, name);
+            else orderer.add(name, name, "after:" + prev);
 
             prev = name;
         }

@@ -271,7 +271,7 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = _environment.pop(ValidationTracker.class);
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
     Object onAction(Object[] context)
     {
         _tracker.clear();

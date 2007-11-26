@@ -408,7 +408,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         });
     }
 
-    public Collection<String> presentableNames(Map<String, ?> map)
+    Collection<String> presentableNames(Map<String, ?> map)
     {
         Set<String> result = newSet();
 

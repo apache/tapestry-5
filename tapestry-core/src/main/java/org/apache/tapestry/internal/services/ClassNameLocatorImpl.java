@@ -56,9 +56,8 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
         try
         {
-            Collection<String> result = findClassesWithinPath(packagePath);
 
-            return result;
+            return findClassesWithinPath(packagePath);
 
         }
         catch (IOException ex)
@@ -83,8 +82,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         return result;
     }
 
-    private void scanURL(String packagePath, Collection<String> componentClassNames, URL url)
-            throws IOException
+    private void scanURL(String packagePath, Collection<String> componentClassNames, URL url) throws IOException
     {
         URLConnection connection = url.openConnection();
 
@@ -158,10 +156,10 @@ public class ClassNameLocatorImpl implements ClassNameLocator
         }
     }
 
-    private void scanDirStream(String packagePath, URL packageURL,
-                               Collection<String> componentClassNames, Stack<Queued> queue) throws IOException
+    private void scanDirStream(String packagePath, URL packageURL, Collection<String> componentClassNames,
+                               Stack<Queued> queue) throws IOException
     {
-        InputStream is = null;
+        InputStream is;
 
         try
         {
@@ -197,8 +195,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
                     // packagePath ends with '/', packageName ends with '.'
 
-                    String fullClassName = packageName
-                            + line.substring(0, line.length() - CLASS_SUFFIX.length());
+                    String fullClassName = packageName + line.substring(0, line.length() - CLASS_SUFFIX.length());
 
                     componentClassNames.add(fullClassName);
 
@@ -227,8 +224,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
     }
 
-    private void scanJarFile(String packagePath, Collection<String> componentClassNames,
-                             JarFile jarFile) throws IOException
+    private void scanJarFile(String packagePath, Collection<String> componentClassNames, JarFile jarFile)
     {
         Enumeration<JarEntry> e = jarFile.entries();
 
@@ -244,9 +240,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 
             // Strip off .class and convert the slashes back to periods.
 
-            String className = name.substring(0, name.length() - CLASS_SUFFIX.length()).replace(
-                    "/",
-                    ".");
+            String className = name.substring(0, name.length() - CLASS_SUFFIX.length()).replace("/", ".");
 
             componentClassNames.add(className);
         }
@@ -273,8 +267,8 @@ public class ClassNameLocatorImpl implements ClassNameLocator
                 }
                 else if (fileName.endsWith(CLASS_SUFFIX))
                 {
-                    String className = packageName + "."
-                            + fileName.substring(0, fileName.length() - CLASS_SUFFIX.length());
+                    String className = packageName + "." + fileName.substring(0,
+                                                                              fileName.length() - CLASS_SUFFIX.length());
                     componentClassNames.add(className);
                 }
             }

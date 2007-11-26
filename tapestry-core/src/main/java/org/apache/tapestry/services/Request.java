@@ -52,8 +52,6 @@ public interface Request
     /**
      * Returns the parameter values for the given name. Returns null if no such parameter is in the
      * request.
-     * <p/>
-     * TODO: Shouldn't this move to {@link FormParameterLookup}?
      */
     String[] getParameters(String name);
 
@@ -85,7 +83,7 @@ public interface Request
      * header can't be converted to a date, the method throws an
      * <code>IllegalArgumentException</code>.
      *
-     * @param nme a <code>String</code> specifying the name of the header
+     * @param name a <code>String</code> specifying the name of the header
      * @return a <code>long</code> value representing the date specified in the header expressed
      *         as the number of milliseconds since January 1, 1970 GMT, or -1 if the named header
      *         was not included with the reqest

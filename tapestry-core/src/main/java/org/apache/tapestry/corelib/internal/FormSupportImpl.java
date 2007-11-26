@@ -140,7 +140,7 @@ public class FormSupportImpl implements FormSupport
     {
         String fieldId = field.getClientId();
 
-        JSONArray specs = null;
+        JSONArray specs;
 
         if (_validations.has(fieldId)) specs = _validations.getJSONArray(fieldId);
         else

@@ -109,7 +109,7 @@ public final class Select extends AbstractField
 
     @SuppressWarnings({"unchecked"})
     @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
+    protected void processSubmission(String elementName)
     {
         String primaryKey = _request.getParameter(elementName);
 

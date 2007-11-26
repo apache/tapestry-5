@@ -53,8 +53,6 @@ public class PropertyEditor
         }
     }
 
-    ;
-
     static class CleanupEnvironment implements ComponentAction<PropertyEditor>
     {
         private static final long serialVersionUID = 7878694042753046523L;
@@ -64,8 +62,6 @@ public class PropertyEditor
             component.cleanupEnvironment();
         }
     }
-
-    ;
 
     /**
      * The object to be edited by the BeanEditor. This will be read when the component renders and
@@ -164,13 +160,10 @@ public class PropertyEditor
 
             public FieldValidator getValidator(Field field)
             {
-                return _fieldValidatorDefaultSource.createDefaultValidator(
-                        field,
-                        propertyName,
-                        _overrides.getContainerMessages(),
-                        _locale,
-                        _propertyModel.getPropertyType(),
-                        _propertyModel.getConduit());
+                return _fieldValidatorDefaultSource.createDefaultValidator(field, propertyName,
+                                                                           _overrides.getContainerMessages(), _locale,
+                                                                           _propertyModel.getPropertyType(),
+                                                                           _propertyModel.getConduit());
             }
 
             public void setPropertyValue(Object value)
@@ -234,12 +227,7 @@ public class PropertyEditor
         }
         catch (RuntimeException ex)
         {
-            String message = _messages.format(
-                    "block-error",
-                    _propertyModel.getPropertyName(),
-                    dataType,
-                    _object,
-                    ex);
+            String message = _messages.format("block-error", _propertyModel.getPropertyName(), dataType, _object, ex);
 
             throw new TapestryException(message, _resources.getLocation(), ex);
         }
@@ -258,9 +246,8 @@ public class PropertyEditor
     /**
      * Used for testing.
      */
-    void inject(ComponentResources resources, ComponentResources overrides,
-                PropertyModel propertyModel, BeanBlockSource beanBlockSource, Messages messages,
-                Object object)
+    void inject(ComponentResources resources, ComponentResources overrides, PropertyModel propertyModel,
+                BeanBlockSource beanBlockSource, Messages messages, Object object)
     {
         _resources = resources;
         _overrides = overrides;

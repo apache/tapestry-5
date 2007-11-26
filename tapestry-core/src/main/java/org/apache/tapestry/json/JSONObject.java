@@ -97,6 +97,7 @@ import java.util.Set;
  * @author JSON.org
  * @version 2
  */
+@SuppressWarnings({"CloneDoesntCallSuperClone"})
 public final class JSONObject
 {
 
@@ -423,7 +424,7 @@ public final class JSONObject
 
             // This is a bit sloppy for the case where value is not a string.
 
-            return Double.valueOf((String) value).doubleValue();
+            return Double.valueOf((String) value);
         }
         catch (Exception e)
         {
@@ -696,11 +697,10 @@ public final class JSONObject
                     buffer.append("\\r");
                     break;
                 default:
-                    if (c < ' ' || (c >= '\u0080' && c < '\u00a0')
-                            || (c >= '\u2000' && c < '\u2100'))
+                    if (c < ' ' || (c >= '\u0080' && c < '\u00a0') || (c >= '\u2000' && c < '\u2100'))
                     {
                         t = "000" + Integer.toHexString(c);
-                        buffer.append("\\u" + t.substring(t.length() - 4));
+                        buffer.append("\\u").append(t.substring(t.length() - 4));
                     }
                     else
                     {
@@ -723,8 +723,8 @@ public final class JSONObject
         return _properties.remove(key);
     }
 
-    private static final Class[] ALLOWED = new Class[]
-            {String.class, Boolean.class, Number.class, JSONObject.class, JSONArray.class, Null.class};
+    private static final Class[] ALLOWED = new Class[]{String.class, Boolean.class, Number.class, JSONObject.class,
+                                                       JSONArray.class, Null.class};
 
     /**
      * Throw an exception if the object is an NaN or infinite number, or not a type which may be
@@ -749,12 +749,10 @@ public final class JSONObject
             }
         }
 
-        if (!found)
-            throw new RuntimeException(
-                    String
-                            .format(
-                            "JSONObject properties may be String, Boolean, Number, JSONObject or JSONArray. Type %s is not allowed.",
-                            actual.getName()));
+        if (!found) throw new RuntimeException(String
+                .format(
+                "JSONObject properties may be String, Boolean, Number, JSONObject or JSONArray. Type %s is not allowed.",
+                actual.getName()));
 
         if (value instanceof Double)
         {
@@ -762,8 +760,7 @@ public final class JSONObject
 
             if (asDouble.isInfinite() || asDouble.isNaN())
             {
-                throw new RuntimeException(
-                        "JSON does not allow non-finite numbers.");
+                throw new RuntimeException("JSON does not allow non-finite numbers.");
             }
 
             return;
@@ -775,11 +772,9 @@ public final class JSONObject
 
             if (asFloat.isInfinite() || asFloat.isNaN())
             {
-                throw new RuntimeException(
-                        "JSON does not allow non-finite numbers.");
+                throw new RuntimeException("JSON does not allow non-finite numbers.");
             }
 
-            return;
         }
 
     }
@@ -805,7 +800,7 @@ public final class JSONObject
         {
             if (comma) buffer.append(',');
 
-            buffer.append(quote(key.toString()));
+            buffer.append(quote(key));
             buffer.append(':');
             buffer.append(valueToString(_properties.get(key)));
 

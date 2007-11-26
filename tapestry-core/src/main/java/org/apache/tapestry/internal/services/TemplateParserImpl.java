@@ -42,8 +42,7 @@ import java.util.regex.Pattern;
  * Non-threadsafe implementation; the IOC service uses the perthread lifecycle.
  */
 @Scope(PERTHREAD_SCOPE)
-public class TemplateParserImpl implements TemplateParser, LexicalHandler, ContentHandler,
-                                           EntityResolver
+public class TemplateParserImpl implements TemplateParser, LexicalHandler, ContentHandler, EntityResolver
 {
     private static final String MIXINS_ATTRIBUTE_NAME = "mixins";
 
@@ -107,9 +106,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     // expansions on the same text line into a single large
     // but invalid expansion.
 
-    private final Pattern EXPANSION_PATTERN = Pattern.compile(
-            "\\$\\{\\s*(.*?)\\s*}",
-            Pattern.MULTILINE);
+    private final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(.*?)\\s*}", Pattern.MULTILINE);
 
     public TemplateParserImpl(Logger logger, Map<String, URL> configuration)
     {
@@ -134,8 +131,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         // Stack needs a clear();
 
-        while (!_endTagHandlerStack.isEmpty())
-            _endTagHandlerStack.pop();
+        while (!_endTagHandlerStack.isEmpty()) _endTagHandlerStack.pop();
     }
 
     public ComponentTemplate parseTemplate(Resource templateResource)
@@ -156,15 +152,13 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             }
             catch (Exception ex)
             {
-                throw new RuntimeException(ServicesMessages.newParserError(templateResource, ex),
-                                           ex);
+                throw new RuntimeException(ServicesMessages.newParserError(templateResource, ex), ex);
             }
         }
 
         URL resourceURL = templateResource.toURL();
 
-        if (resourceURL == null)
-            throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
+        if (resourceURL == null) throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
 
         _templateResource = templateResource;
 
@@ -183,8 +177,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
             _reader = null;
 
-            throw new TapestryException(ServicesMessages.templateParseError(templateResource, ex),
-                                        getCurrentLocation(), ex);
+            throw new TapestryException(ServicesMessages.templateParseError(templateResource, ex), getCurrentLocation(),
+                                        ex);
         }
         finally
         {
@@ -277,21 +271,19 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             _tokens.add(new TextToken(text.substring(startx, text.length()), _textStartLocation));
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes)
-            throws SAXException
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
         _ignoreEvents = false;
 
-        if (_insideBody)
-            throw new IllegalStateException(ServicesMessages
-                    .mayNotNestElementsInsideBody(localName));
+        if (_insideBody) throw new IllegalStateException(ServicesMessages
+                .mayNotNestElementsInsideBody(localName));
 
         // Add any accumulated text into a text token
         processTextBuffer();
 
         if (TAPESTRY_SCHEMA_5_0_0.equals(uri))
         {
-            startTapestryElement(qName, localName, attributes);
+            startTapestryElement(localName, attributes);
             return;
         }
 
@@ -322,7 +314,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         return _insideBody;
     }
 
-    private void startTapestryElement(String qname, String localName, Attributes attributes)
+    private void startTapestryElement(String localName, Attributes attributes)
     {
         if (localName.equalsIgnoreCase("body"))
         {
@@ -379,15 +371,13 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         String parameterName = findSingleParameter("parameter", "name", attributes);
 
         if (InternalUtils.isBlank(parameterName))
-            throw new TapestryException(ServicesMessages.parameterElementNameRequired(),
-                                        getCurrentLocation(), null);
+            throw new TapestryException(ServicesMessages.parameterElementNameRequired(), getCurrentLocation(), null);
 
         _tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
         _endTagHandlerStack.push(_addEndElementToken);
     }
 
-    private String findSingleParameter(String elementName, String attributeName,
-                                       Attributes attributes)
+    private String findSingleParameter(String elementName, String attributeName, Attributes attributes)
     {
         String result = null;
 
@@ -403,10 +393,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
             // Only the name attribute is allowed.
 
-            throw new TapestryException(ServicesMessages.undefinedTapestryAttribute(
-                    elementName,
-                    name,
-                    attributeName), getCurrentLocation(), null);
+            throw new TapestryException(ServicesMessages.undefinedTapestryAttribute(elementName, name, attributeName),
+                                        getCurrentLocation(), null);
         }
 
         return result;
@@ -424,8 +412,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * @param identifiedType the type of the element, usually null, but may be the component type derived from
      *                       the element name (for an element in the Tapestry namespace)
      */
-    private void startPossibleComponent(Attributes attributes, String elementName,
-                                        String identifiedType)
+    private void startPossibleComponent(Attributes attributes, String elementName, String identifiedType)
     {
         String id = null;
         String type = identifiedType;
@@ -478,8 +465,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // If provided t:mixins but not t:id or t:type, then its not quite a component
 
         if (mixins != null && !isComponent)
-            throw new TapestryException(ServicesMessages.mixinsInvalidWithoutIdOrType(elementName),
-                                        location, null);
+            throw new TapestryException(ServicesMessages.mixinsInvalidWithoutIdOrType(elementName), location, null);
 
         if (isComponent)
         {
@@ -639,8 +625,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     {
     }
 
-    public InputSource resolveEntity(String publicId, String systemId) throws SAXException,
-                                                                              IOException
+    public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
     {
         URL url = _configuration.get(publicId);
 

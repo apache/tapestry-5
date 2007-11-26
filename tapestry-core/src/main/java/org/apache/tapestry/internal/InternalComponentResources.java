@@ -23,8 +23,7 @@ import org.apache.tapestry.services.PersistentFieldManager;
  * that are private to the framework and not exposed in any public APIs. Ideally, there will not be
  * any need for this interface (we'll see as we go).
  */
-public interface InternalComponentResources extends ComponentResources,
-                                                    InternalComponentResourcesCommon
+public interface InternalComponentResources extends ComponentResources, InternalComponentResourcesCommon
 {
     /**
      * Reads the value of a parameter, via the parameter's {@link org.apache.tapestry.Binding}.
@@ -59,7 +58,7 @@ public interface InternalComponentResources extends ComponentResources,
     /**
      * Posts a change to a persistent field. If the component is still loading, then this change is
      * ignored. Otherwise, it is propagated, via the
-     * {@link Page#persistFieldChange(org.apache.tapestry.internal.structure.ComponentPageElement, String, Object) page}
+     * {@link Page#persistFieldChange(org.apache.tapestry.ComponentResources, String, Object) page}
      * to the {@link PersistentFieldManager}.
      */
     void persistFieldChange(String fieldName, Object newValue);

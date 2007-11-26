@@ -188,7 +188,6 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         int start = -1;
 
         String type = null;
-        String value = null;
         boolean skipWhitespace = true;
         State state = State.TYPE_START;
 
@@ -262,11 +261,10 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
                     if (Character.isWhitespace(ch) || ch == ',')
                     {
-                        value = specification.substring(start, cursor);
+                        String value = specification.substring(start, cursor);
 
                         result.add(new ValidatorSpecification(type, value));
                         type = null;
-                        value = null;
 
                         skipWhitespace = true;
                         state = State.COMMA;
@@ -312,9 +310,8 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
                 break;
 
             case VALUE_END:
-                value = specification.substring(start);
 
-                result.add(new ValidatorSpecification(type, value));
+                result.add(new ValidatorSpecification(type, specification.substring(start)));
                 break;
 
                 // For better or worse, ending the string with a comma is valid.

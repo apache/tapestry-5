@@ -23,7 +23,6 @@ import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
 
 import java.util.Collections;
@@ -75,16 +74,8 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            writer.element(
-                    "select",
-                    "id",
-                    getClientId() + ":avail",
-                    "multiple",
-                    "multiple",
-                    "size",
-                    getSize(),
-                    "name",
-                    getElementName() + ":avail");
+            writer.element("select", "id", getClientId() + ":avail", "multiple", "multiple", "size", getSize(), "name",
+                           getElementName() + ":avail");
 
             writeDisabled(writer, isDisabled());
 
@@ -144,16 +135,8 @@ public class Palette extends AbstractField
     {
         public void render(MarkupWriter writer)
         {
-            writer.element(
-                    "select",
-                    "id",
-                    getClientId(),
-                    "multiple",
-                    "multiple",
-                    "size",
-                    getSize(),
-                    "name",
-                    getElementName());
+            writer.element("select", "id", getClientId(), "multiple", "multiple", "size", getSize(), "name",
+                           getElementName());
 
             writeDisabled(writer, isDisabled());
 
@@ -297,7 +280,7 @@ public class Palette extends AbstractField
     }
 
     @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
+    protected void processSubmission(String elementName)
     {
         String values = _request.getParameter(elementName + ":values");
 
@@ -305,10 +288,8 @@ public class Palette extends AbstractField
 
         List<Object> selected = _selected;
 
-        if (selected == null)
-            selected = newList();
-        else
-            selected.clear();
+        if (selected == null) selected = newList();
+        else selected.clear();
 
         ValueEncoder encoder = _encoder;
 
@@ -360,22 +341,10 @@ public class Palette extends AbstractField
 
         _renderSupport.addScriptLink(_paletteLibrary);
 
-        _renderSupport.addScript(
-                "new Tapestry.Palette('%s', %s, '%s');",
-                clientId,
-                _reorder,
-                naturalOrder);
+        _renderSupport.addScript("new Tapestry.Palette('%s', %s, '%s');", clientId, _reorder, naturalOrder);
 
-        writer.element(
-                "input",
-                "type",
-                "hidden",
-                "id",
-                clientId + ":values",
-                "name",
-                getElementName() + ":values",
-                "value",
-                selectedValues);
+        writer.element("input", "type", "hidden", "id", clientId + ":values", "name", getElementName() + ":values",
+                       "value", selectedValues);
         writer.end();
     }
 

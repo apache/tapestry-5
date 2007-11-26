@@ -32,7 +32,7 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding
         this(null);
     }
 
-    public AbstractBinding(Location location)
+    protected AbstractBinding(Location location)
     {
         super(location);
     }

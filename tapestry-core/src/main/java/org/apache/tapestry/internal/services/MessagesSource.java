@@ -28,8 +28,8 @@ public interface MessagesSource extends InvalidationEventHub, UpdateListener
      * merge with its parent's properties (with the subclass overriding the super class on any
      * conflicts).
      *
-     * @param MessagesBundle defines the set of properties files to read, as well as a series of parent bundles
-     *                       to extend and override
+     * @param bundle defines the set of properties files to read, as well as a series of parent bundles
+     *               to extend and override
      * @param locale
      * @return the message catalog for the bundle, in the indicated locale
      */

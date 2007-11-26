@@ -30,10 +30,6 @@ public final class Base64OutputStream extends ByteArrayOutputStream
 
         byte[] base64 = Base64.encodeBase64(binary);
 
-        String result = new String(base64);
-
-        // System.out.printf("result = %d characters\n\n", result.length());
-
-        return result;
+        return new String(base64);
     }
 }

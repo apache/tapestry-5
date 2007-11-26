@@ -228,8 +228,8 @@ public interface ClassTransformation extends AnnotationProvider
      * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
      * super-class method is invoked.
      *
-     * @param signature  the signature of the method to extend
-     * @param methodBody the body of code
+     * @param methodSignature the signature of the method to extend
+     * @param methodBody      the body of code
      * @throws IllegalArgumentException if the provided Javassist method body can not be compiled
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);

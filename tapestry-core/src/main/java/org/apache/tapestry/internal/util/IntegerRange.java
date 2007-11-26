@@ -118,8 +118,8 @@ public final class IntegerRange implements Iterable<Integer>
         if (getClass() != obj.getClass()) return false;
         final IntegerRange other = (IntegerRange) obj;
         if (_finish != other._finish) return false;
-        if (_start != other._start) return false;
-        return true;
+
+        return _start == other._start;
     }
 
 }

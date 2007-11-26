@@ -22,7 +22,6 @@ import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
 
 /**
@@ -71,7 +70,7 @@ public class Checkbox extends AbstractField
     }
 
     @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
+    protected void processSubmission(String elementName)
     {
         String postedValue = _request.getParameter(elementName);
 

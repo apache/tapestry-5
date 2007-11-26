@@ -25,7 +25,7 @@ import org.apache.tapestry.services.ValueEncoderFactory;
  */
 public class GenericValueEncoderFactory<V> implements ValueEncoderFactory<V>
 {
-    private ValueEncoder<V> _encoder;
+    private final ValueEncoder<V> _encoder;
 
     public GenericValueEncoderFactory(ValueEncoder<V> encoder)
     {

@@ -183,7 +183,7 @@ public abstract class AbstractField implements Field
 
     private void processSubmission()
     {
-        if (!_disabled) processSubmission(_formSupport, _elementName);
+        if (!_disabled) processSubmission(_elementName);
     }
 
     /**
@@ -203,18 +203,15 @@ public abstract class AbstractField implements Field
      * form. The element's elementName property will already have been set. This method is only
      * invoked if the field is <strong>not {@link #isDisabled() disabled}</strong>.
      *
-     * @param formSupport support for the form submission, used to
-     *                    {@link FormSupport#getParameterValue(String) obtain submitted parameter values}.
-     *                    Passing this value in saves subclasses from having to (re)inject it.
      * @param elementName the name of the element (used to find the correct parameter in the request)
      */
-    protected abstract void processSubmission(FormSupport formSupport, String elementName);
+    protected abstract void processSubmission(String elementName);
 
     /**
      * Allows the validation decorator to write markup before the field itself writes markup.
      */
     @BeginRender
-    final void beforeDecorator(MarkupWriter writer)
+    final void beforeDecorator()
     {
         _decorator.beforeField(this);
     }
@@ -224,7 +221,7 @@ public abstract class AbstractField implements Field
      * markup.
      */
     @AfterRender
-    final void afterDecorator(MarkupWriter writer)
+    final void afterDecorator()
     {
         _decorator.afterField(this);
     }

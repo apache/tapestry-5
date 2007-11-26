@@ -34,17 +34,12 @@ class ServicesMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(ServicesMessages.class);
 
-    static final String duplicateContribution(Object conflict, Class contributionType,
-                                              Object existing)
+    static String duplicateContribution(Object conflict, Class contributionType, Object existing)
     {
-        return MESSAGES.format(
-                "duplicate-contribution",
-                conflict,
-                contributionType.getName(),
-                existing);
+        return MESSAGES.format("duplicate-contribution", conflict, contributionType.getName(), existing);
     }
 
-    static final String markupWriterNoCurrentElement()
+    static String markupWriterNoCurrentElement()
     {
         return MESSAGES.get("markup-writer-no-current-element");
     }
@@ -64,11 +59,9 @@ class ServicesMessages
         return MESSAGES.format("error-adding-method", ctClass.getName(), methodName, cause);
     }
 
-    static String fieldAlreadyClaimed(String fieldName, CtClass ctClass, Object existingTag,
-                                      Object newTag)
+    static String fieldAlreadyClaimed(String fieldName, CtClass ctClass, Object existingTag, Object newTag)
     {
-        return MESSAGES.format("field-already-claimed", new Object[]
-                {fieldName, ctClass.getName(), existingTag, newTag});
+        return MESSAGES.format("field-already-claimed", fieldName, ctClass.getName(), existingTag, newTag);
     }
 
     static String noDeclaredMethod(CtClass ctClass, TransformMethodSignature methodSignature)
@@ -112,8 +105,7 @@ class ServicesMessages
         return MESSAGES.format("may-not-nest-elements-inside-body", elementName);
     }
 
-    static String methodCompileError(TransformMethodSignature signature, String methodBody,
-                                     Throwable cause)
+    static String methodCompileError(TransformMethodSignature signature, String methodBody, Throwable cause)
     {
         return MESSAGES.format("method-compile-error", signature, methodBody, cause);
     }
@@ -145,10 +137,8 @@ class ServicesMessages
 
     static String embeddedComponentsNotInTemplate(Collection<String> ids, String componentClassName)
     {
-        return MESSAGES.format(
-                "embedded-components-not-in-template",
-                InternalUtils.joinSorted(ids),
-                componentClassName);
+        return MESSAGES.format("embedded-components-not-in-template", InternalUtils.joinSorted(ids),
+                               componentClassName);
     }
 
     static String bindingSourceFailure(String expression, Throwable cause)
@@ -177,8 +167,7 @@ class ServicesMessages
         return MESSAGES.format("component-event-is-aborted", methodDescription);
     }
 
-    static String unknownPersistentFieldStrategy(String stategyName,
-                                                 Collection<String> strategyNames)
+    static String unknownPersistentFieldStrategy(String stategyName, Collection<String> strategyNames)
     {
         return MESSAGES.format("unknown-persistent-field-strategy", stategyName, InternalUtils
                 .joinSorted(strategyNames));
@@ -196,8 +185,7 @@ class ServicesMessages
                 .joinSorted(pageNames));
     }
 
-    static String couldNotResolveComponentType(String componentType,
-                                               Collection<String> componentTypes)
+    static String couldNotResolveComponentType(String componentType, Collection<String> componentTypes)
     {
         return MESSAGES.format("could-not-resolve-component-type", componentType, InternalUtils
                 .joinSorted(componentTypes));
@@ -219,8 +207,7 @@ class ServicesMessages
         return MESSAGES.format("page-is-dirty", page);
     }
 
-    static String componentInstanceIsNotAPage(String methodDescription, Component component,
-                                              Component result)
+    static String componentInstanceIsNotAPage(String methodDescription, Component component, Component result)
     {
         return MESSAGES.format("component-instance-is-not-a-page", methodDescription, component
                 .getComponentResources().getCompleteId(), result.getComponentResources()
@@ -247,8 +234,7 @@ class ServicesMessages
         return MESSAGES.format("wrong-asset-digest", resource.getPath());
     }
 
-    static String componentNotAssignableToField(Component component, String fieldName,
-                                                String fieldType)
+    static String componentNotAssignableToField(Component component, String fieldName, String fieldType)
     {
         return MESSAGES.format("component-not-assignable-to-field", component
                 .getComponentResources().getCompleteId(), fieldName, fieldType);
@@ -268,11 +254,8 @@ class ServicesMessages
 
     static String validatorSpecificationParseError(int cursor, String specification)
     {
-        return MESSAGES.format(
-                "validator-specification-parse-error",
-                specification.charAt(cursor),
-                cursor + 1,
-                specification);
+        return MESSAGES.format("validator-specification-parse-error", specification.charAt(cursor), cursor + 1,
+                               specification);
     }
 
     static String mixinsInvalidWithoutIdOrType(String elementName)
@@ -292,8 +275,8 @@ class ServicesMessages
 
     }
 
-    static String invalidComponentEventResult(Component component, Object result,
-                                              String methodDescription, Collection<Class> configuredResultTypes)
+    static String invalidComponentEventResult(Component component, Object result, String methodDescription,
+                                              Collection<Class> configuredResultTypes)
     {
         List<String> classNames = CollectionFactory.newList();
 
@@ -305,14 +288,9 @@ class ServicesMessages
                 .getClass()), InternalUtils.joinSorted(classNames));
     }
 
-    static String undefinedTapestryAttribute(String elementName, String attributeName,
-                                             String allowedAttributeName)
+    static String undefinedTapestryAttribute(String elementName, String attributeName, String allowedAttributeName)
     {
-        return MESSAGES.format(
-                "undefined-tapestry-attribute",
-                elementName,
-                attributeName,
-                allowedAttributeName);
+        return MESSAGES.format("undefined-tapestry-attribute", elementName, attributeName, allowedAttributeName);
     }
 
     static String parameterElementNameRequired()
@@ -320,13 +298,10 @@ class ServicesMessages
         return MESSAGES.get("parameter-element-name-required");
     }
 
-    static String missingApplicationStatePersistenceStrategy(String name,
-                                                             Collection<String> availableNames)
+    static String missingApplicationStatePersistenceStrategy(String name, Collection<String> availableNames)
     {
-        return MESSAGES.format(
-                "missing-application-state-persistence-strategy",
-                name,
-                InternalUtils.joinSorted(availableNames));
+        return MESSAGES.format("missing-application-state-persistence-strategy", name,
+                               InternalUtils.joinSorted(availableNames));
     }
 
     static String methodIsVoid(String methodName, Class inClass, String propertyExpression)
@@ -336,31 +311,19 @@ class ServicesMessages
 
     static String methodNotFound(String methodName, Class inClass, String propertyExpression)
     {
-        return MESSAGES.format(
-                "method-not-found",
-                methodName,
-                inClass.getName(),
-                propertyExpression);
+        return MESSAGES.format("method-not-found", methodName, inClass.getName(), propertyExpression);
     }
 
     static String noSuchProperty(Class targetClass, String propertyName, String propertyExpression,
                                  Collection<String> propertyNames)
     {
-        return MESSAGES.format(
-                "no-such-property",
-                targetClass.getName(),
-                propertyName,
-                propertyExpression,
-                InternalUtils.joinSorted(propertyNames));
+        return MESSAGES.format("no-such-property", targetClass.getName(), propertyName, propertyExpression,
+                               InternalUtils.joinSorted(propertyNames));
     }
 
     static String writeOnlyProperty(String propertyName, Class clazz, String propertyExpression)
     {
-        return MESSAGES.format(
-                "write-only-property",
-                propertyName,
-                clazz.getName(),
-                propertyExpression);
+        return MESSAGES.format("write-only-property", propertyName, clazz.getName(), propertyExpression);
     }
 
     static String requestException(Throwable cause)

@@ -188,8 +188,7 @@ class JSONTokener
                         do
                         {
                             c = next();
-                        }
-                        while (c != '\n' && c != '\r' && c != 0);
+                        } while (c != '\n' && c != '\r' && c != 0);
 
                         break;
                     case '*':
@@ -222,8 +221,7 @@ class JSONTokener
                 do
                 {
                     c = next();
-                }
-                while (c != '\n' && c != '\r' && c != 0);
+                } while (c != '\n' && c != '\r' && c != 0);
             }
             else if (c == 0 || c > ' ')
             {
@@ -423,7 +421,7 @@ class JSONTokener
                 {
                     try
                     {
-                        return new Integer(Integer.parseInt(s.substring(2), 16));
+                        return Integer.parseInt(s.substring(2), 16);
                     }
                     catch (Exception e)
                     {
@@ -434,7 +432,7 @@ class JSONTokener
                 {
                     try
                     {
-                        return new Integer(Integer.parseInt(s, 8));
+                        return Integer.parseInt(s, 8);
                     }
                     catch (Exception e)
                     {
@@ -487,8 +485,7 @@ class JSONTokener
                 _index = index;
                 return c;
             }
-        }
-        while (c != to);
+        } while (c != to);
         back();
         return c;
     }

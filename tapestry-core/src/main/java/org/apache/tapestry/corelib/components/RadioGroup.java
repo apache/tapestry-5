@@ -93,8 +93,6 @@ public class RadioGroup
         }
     }
 
-    ;
-
     private static final ComponentAction<RadioGroup> PROCESS_SUBMISSION = new ComponentAction<RadioGroup>()
     {
         private static final long serialVersionUID = -3857110108918776386L;
@@ -114,9 +112,7 @@ public class RadioGroup
     {
         String clientValue = _request.getParameter(_elementName);
 
-        Object value = _encoder.toValue(clientValue);
-
-        _value = value;
+        _value = _encoder.toValue(clientValue);
     }
 
     /**

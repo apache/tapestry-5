@@ -61,7 +61,7 @@ public interface ComponentModel
      *
      * @param fieldName
      * @return the corresponding strategy, or the empty string
-     * @throw IllegalArgumentException if the named field is not marked as persistent
+     * @throws IllegalArgumentException if the named field is not marked as persistent
      */
     String getFieldPersistenceStrategy(String fieldName);
 
@@ -104,9 +104,9 @@ public interface ComponentModel
     List<String> getPersistentFieldNames();
 
     /**
-     * Returns true if the modeled component is a root class, a component class whose parent does
-     * not have the {@link ComponentClass} annotation. This is often used to determine whether to
-     * invoke the super-class implementation of certain methods.
+     * Returns true if the modeled component is a root class, a component class whose parent
+     * class is not a component class.  We may in the future require that components only extend
+     * from Object.
      *
      * @return true if a root class, false if a subclass
      */
@@ -124,7 +124,7 @@ public interface ComponentModel
 
     /**
      * Returns the component model for this component's super-class, if it exists. Remember that
-     * only classes with the {@link ComponentClass} annotation, and in the correct packages, are
+     * only classes in the correct packages, are
      * considered component classes.
      *
      * @return the parent class model, or null if this component's super class is not itself a

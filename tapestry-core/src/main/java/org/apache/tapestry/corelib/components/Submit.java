@@ -75,7 +75,7 @@ public final class Submit extends AbstractField
     }
 
     @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
+    protected void processSubmission(String elementName)
     {
         String value = _request.getParameter(elementName);
 
@@ -94,10 +94,8 @@ public final class Submit extends AbstractField
         // information will change if we defer. Another option might be to wait until the next
         // heartbeak?
 
-        if (_defer)
-            _formSupport.defer(sendNotification);
-        else
-            _heartbeat.defer(sendNotification);
+        if (_defer) _formSupport.defer(sendNotification);
+        else _heartbeat.defer(sendNotification);
 
     }
 

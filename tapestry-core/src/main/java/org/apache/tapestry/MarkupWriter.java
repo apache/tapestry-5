@@ -37,9 +37,6 @@ public interface MarkupWriter
      * element. The new Element is returned and can be directly manipulated (possibly at a later
      * date). Optionally, attributes for the new element can be specified directly.
      * <p/>
-     * If the element is intended to be clickable or submittable in the
-     * {@link org.apache.tapestry.test.PageTester}, you should call
-     * {@link #linkElement(String, Link, Object[])} instead.
      *
      * @param name       the name of the element to create
      * @param attributes an even number of values, alternating names and values

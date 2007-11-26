@@ -72,19 +72,19 @@
             <name>Tapestry User List</name>
             <subscribe>users-subscribe@tapestry.apache.org</subscribe>
             <unsubscribe>users-unsubscribe@tapestry.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/tapestry-users/</archive>
+            <archive>http://markmail.org/search/list:org.apache.tapestry.users</archive>
         </mailingList>
         <mailingList>
             <name>Tapestry Developer List</name>
             <subscribe>dev-subscribe@tapestry.apache.org</subscribe>
             <unsubscribe>dev-unsubscribe@tapestry.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/tapestry-dev/</archive>
+            <archive>http://markmail.org/search/list:org.apache.tapestry.dev</archive>
         </mailingList>
         <mailingList>
             <name>Tapestry Commits List</name>
             <subscribe>commits-subscribe@tapestry.apache.org</subscribe>
             <unsubscribe>commits-unsubscribe@tapestry.apache.org</unsubscribe>
-            <archive>http://mail-archives.apache.org/mod_mbox/tapestry-commits/</archive>
+            <archive>http://markmail.org/search/list:org.apache.tapestry.commits</archive>
         </mailingList>
     </mailingLists>
 
@@ -94,6 +94,7 @@
         <module>tapestry-annotations</module>
         <module>tapestry-core</module>
 
+        <!-- Integrations -->
 
         <module>tapestry-spring</module>
         <module>tapestry-hibernate</module>

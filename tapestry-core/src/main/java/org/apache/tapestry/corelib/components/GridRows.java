@@ -31,6 +31,8 @@ import java.util.List;
  * {@linkplain FormSupport#store(Object, ComponentAction) as ComponentActions}). This is not ideal
  * ... in a situation where the data set can shift between the form render and the form submission,
  * this can cause unexpected results, including applying changes to the wrong objects.
+ *
+ * @jira TAPESTRY-1650 Tracking issue for Ajax support
  */
 public class GridRows
 {
@@ -50,8 +52,6 @@ public class GridRows
             component.setupForRow(_rowIndex);
         }
     }
-
-    ;
 
     /**
      * Parameter used to set the CSS class for each row (each &lt;tr&gt; element) within the
@@ -98,8 +98,6 @@ public class GridRows
 
     private boolean _recordingStateInsideForm;
 
-    private int _startRow;
-
     private int _endRow;
 
     private int _rowIndex;
@@ -132,10 +130,10 @@ public class GridRows
 
         if (_currentPage > maxPages) _currentPage = maxPages;
 
-        _startRow = (_currentPage - 1) * _rowsPerPage;
-        _endRow = Math.min(availableRows - 1, _startRow + _rowsPerPage - 1);
+        int startRow = (_currentPage - 1) * _rowsPerPage;
+        _endRow = Math.min(availableRows - 1, startRow + _rowsPerPage - 1);
 
-        _rowIndex = _startRow;
+        _rowIndex = startRow;
 
         _recordingStateInsideForm = !_volatile && _formSupport != null;
     }

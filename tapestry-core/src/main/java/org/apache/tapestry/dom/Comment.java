@@ -21,7 +21,7 @@ import java.io.PrintWriter;
  */
 public final class Comment extends Node
 {
-    private String _comment;
+    private final String _comment;
 
     Comment(Node container, String comment)
     {

@@ -54,15 +54,13 @@ public class PageTester implements ComponentInvoker
 
     public static final String DEFAULT_CONTEXT_PATH = "src/main/webapp";
 
-    private final String _contextPath;
-
     private static final String DEFAULT_SUBMIT_VALUE_ATTRIBUTE = "Submit Query";
 
     /**
      * Initializes a PageTester without overriding any services and assuming that the context root
      * is in src/main/webapp.
      *
-     * @see #PageTester(String, String, String, Map)
+     * @see #PageTester(String, String, String, Class[])
      */
     public PageTester(String appPackage, String appName)
     {
@@ -73,25 +71,22 @@ public class PageTester implements ComponentInvoker
      * Initializes a PageTester that acts as a browser and a servlet container to test drive your
      * Tapestry pages.
      *
-     * @param appPackage     The same value you would specify using the tapestry.app-package context parameter.
-     *                       As this testing environment is not run in a servlet container, you need to specify
-     *                       it.
-     * @param appName        The same value you would specify as the filter name. It is used to form the name
-     *                       of the module builder for your app. If you don't have one, pass an empty string.
-     * @param contextPath    The path to the context root so that Tapestry can find the templates (if they're
-     *                       put there).
-     * @param modulesClasses Classes of additional modules to load
+     * @param appPackage    The same value you would specify using the tapestry.app-package context parameter.
+     *                      As this testing environment is not run in a servlet container, you need to specify
+     *                      it.
+     * @param appName       The same value you would specify as the filter name. It is used to form the name
+     *                      of the module builder for your app. If you don't have one, pass an empty string.
+     * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're
+     *                      put there).
+     * @param moduleClasses Classes of additional modules to load
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
         _preferedLanguage = Locale.ENGLISH;
-        _contextPath = contextPath;
 
-        SymbolProvider provider = new SingleKeySymbolProvider(
-                InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
+        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
-        TapestryAppInitializer initializer = new TapestryAppInitializer(provider, appName,
-                                                                        PageTesterModule.TEST_MODE);
+        TapestryAppInitializer initializer = new TapestryAppInitializer(provider, appName, PageTesterModule.TEST_MODE);
 
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
@@ -106,7 +101,7 @@ public class PageTester implements ComponentInvoker
 
         ApplicationGlobals globals = _registry.getObject(ApplicationGlobals.class, null);
 
-        globals.store(new PageTesterContext(_contextPath));
+        globals.store(new PageTesterContext(contextPath));
 
         Map<Class, ComponentInvoker> map = newMap();
         map.put(PageLinkTarget.class, new PageLinkInvoker(_registry));
@@ -154,8 +149,7 @@ public class PageTester implements ComponentInvoker
         ComponentInvocation invocation = _invocationMap.get(element);
 
         if (invocation == null)
-            throw new IllegalArgumentException(
-                    "No component invocation object is associated with the Element.");
+            throw new IllegalArgumentException("No component invocation object is associated with the Element.");
 
         return invocation;
     }
@@ -241,8 +235,7 @@ public class PageTester implements ComponentInvoker
     {
         while (true)
         {
-            if (element == null)
-                throw new IllegalArgumentException("The given element is not contained by a form.");
+            if (element == null) throw new IllegalArgumentException("The given element is not contained by a form.");
 
             if (element.getName().equalsIgnoreCase("form")) return element;
 
@@ -266,8 +259,7 @@ public class PageTester implements ComponentInvoker
 
     private boolean isHiddenFormField(Element element)
     {
-        return element.getName().equalsIgnoreCase("input")
-                && "hidden".equalsIgnoreCase(element.getAttribute("type"));
+        return element.getName().equalsIgnoreCase("input") && "hidden".equalsIgnoreCase(element.getAttribute("type"));
     }
 
     public void setPreferedLanguage(Locale preferedLanguage)
