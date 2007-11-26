@@ -25,11 +25,11 @@ import javax.servlet.http.Cookie;
  */
 public class CookiesImpl implements Cookies
 {
-    private Request _request;
+    private final Request _request;
 
     private CookieSource _cookieSource;
 
-    private CookieSink _cookieSink;
+    private final CookieSink _cookieSink;
 
     private int _defaultMaxAge;
 
@@ -54,9 +54,9 @@ public class CookiesImpl implements Cookies
 
         if (cookies == null) return null;
 
-        for (int i = 0; i < cookies.length; i++)
+        for (Cookie cooky : cookies)
         {
-            if (cookies[i].getName().equals(name)) return cookies[i].getValue();
+            if (cooky.getName().equals(name)) return cooky.getValue();
         }
 
         return null;

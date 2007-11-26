@@ -167,8 +167,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         }
     }
 
-    ;
-
     private final RenderCommand _afterRender = new RenderCommand()
     {
         public void render(final MarkupWriter writer, RenderQueue queue)
@@ -751,7 +749,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     /**
      * Delegates to the
-     * {@link Page#createActionLink(Element, ComponentPageElement, String, boolean, Object[]) the containing page}.
+     * {@link Page#createActionLink(ComponentPageElement, String, boolean, Object[]) the containing page}.
      * Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every
      * component page element).
      */

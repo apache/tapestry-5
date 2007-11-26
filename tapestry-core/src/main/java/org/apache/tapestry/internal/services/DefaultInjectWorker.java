@@ -39,15 +39,14 @@ public class DefaultInjectWorker implements ComponentClassTransformWorker
         {
             Inject annotation = transformation.getFieldAnnotation(fieldName, Inject.class);
 
-            inject(fieldName, transformation, model);
+            inject(fieldName, transformation);
 
             transformation.claimField(fieldName, annotation);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void inject(String fieldName, ClassTransformation transformation,
-                        MutableComponentModel model)
+    private void inject(String fieldName, ClassTransformation transformation)
     {
         String fieldType = transformation.getFieldType(fieldName);
 

@@ -24,7 +24,6 @@ public interface PersistentFieldStrategy
      * @param pageName    the name of the page containing the component
      * @param componentId the nested id path of the component (or null for the page's root component)
      * @param fieldName   the name of the field whose persistent value has changed
-     * @param strategy    the name of the stategy used to persist the property value
      * @param newValue    the new value for the field, possibly null
      */
     void postChange(String pageName, String componentId, String fieldName, Object newValue);

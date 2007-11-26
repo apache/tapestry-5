@@ -45,8 +45,6 @@ public class BeanEditor
         }
     }
 
-    ;
-
     /**
      * The object to be edited by the BeanEditor. This will be read when the component renders and
      * updated when the form for the component is submitted. Typically, the container will listen
@@ -157,7 +155,7 @@ public class BeanEditor
 
         if (_model == null)
         {
-            Class<? extends Object> beanType = _object.getClass();
+            Class<?> beanType = _object.getClass();
 
             _model = _modelSource.create(beanType, true, _overrides.getContainerResources());
         }
@@ -177,10 +175,9 @@ public class BeanEditor
         }
         catch (Exception ex)
         {
-            throw new TapestryException(InternalMessages.failureInstantiatingObject(
-                    type,
-                    _resources.getCompleteId(),
-                    ex), _resources.getLocation(), ex);
+            throw new TapestryException(
+                    InternalMessages.failureInstantiatingObject(type, _resources.getCompleteId(), ex),
+                    _resources.getLocation(), ex);
         }
     }
 

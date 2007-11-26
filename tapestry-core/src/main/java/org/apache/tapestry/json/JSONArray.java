@@ -90,7 +90,6 @@ public class JSONArray
      * The arrayList where the JSONArray's properties are kept.
      */
     private final List<Object> _list = CollectionFactory.newList();
-    ;
 
     /**
      * Construct an empty JSONArray.
@@ -181,9 +180,7 @@ public class JSONArray
 
         if (value instanceof Boolean)
         {
-            Boolean asBoolean = (Boolean) value;
-
-            return asBoolean.booleanValue();
+            return (Boolean) value;
         }
 
         if (value instanceof String)
@@ -203,7 +200,7 @@ public class JSONArray
      *
      * @param index The index must be between 0 and length() - 1.
      * @return The value.
-     * @throws JSONException If the key is not found or if the value cannot be converted to a number.
+     * @throws IllegalArgumentException If the key is not found or if the value cannot be converted to a number.
      */
     public double getDouble(int index)
     {
@@ -217,7 +214,7 @@ public class JSONArray
         }
         catch (Exception e)
         {
-            throw new RuntimeException("JSONArray[" + index + "] is not a number.");
+            throw new IllegalArgumentException("JSONArray[" + index + "] is not a number.");
         }
     }
 
@@ -226,8 +223,8 @@ public class JSONArray
      *
      * @param index The index must be between 0 and length() - 1.
      * @return The value.
-     * @throws JSONException If the key is not found or if the value cannot be converted to a number. if the
-     *                       value cannot be converted to a number.
+     * @throws IllegalArgumentException If the key is not found or if the value cannot be converted to a number. if the
+     *                                  value cannot be converted to a number.
      */
     public int getInt(int index)
     {
@@ -276,7 +273,7 @@ public class JSONArray
      *
      * @param index The index must be between 0 and length() - 1.
      * @return The value.
-     * @throws JSONException If the key is not found or if the value cannot be converted to a number.
+     * @throws IllegalArgumentException If the key is not found or if the value cannot be converted to a number.
      */
     public long getLong(int index)
     {
@@ -386,8 +383,7 @@ public class JSONArray
         }
         else
         {
-            while (index != length())
-                _list.add(JSONObject.NULL);
+            while (index != length()) _list.add(JSONObject.NULL);
 
             _list.add(value);
 

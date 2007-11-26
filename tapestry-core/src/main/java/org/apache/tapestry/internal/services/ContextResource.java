@@ -28,7 +28,7 @@ public class ContextResource extends AbstractResource
 {
     private static final int PRIME = 37;
 
-    private Context _context;
+    private final Context _context;
 
     public ContextResource(Context context, String path)
     {
@@ -69,12 +69,9 @@ public class ContextResource extends AbstractResource
     @Override
     public boolean equals(Object obj)
     {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
 
         final ContextResource other = (ContextResource) obj;
 

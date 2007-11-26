@@ -28,17 +28,20 @@ public final class TransformConstants
 {
     // Shared parameters of a whole bunch of lifecycle methods, representing the different
     // component render states.
-    private static final String[] RENDER_PHASE_METHOD_PARAMETERS =
-            {MarkupWriter.class.getName(), Event.class.getName()};
+    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = {MarkupWriter.class.getName(),
+                                                                    Event.class.getName()};
 
     /**
-     * Signature for {@link org.apache.tapestry.runtime.Component#handleEvent(Event event)
+     * Signature for {@link org.apache.tapestry.runtime.Component#handleComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}.
      *
      * @see org.apache.tapestry.annotations.OnEvent
      */
-    public static final TransformMethodSignature HANDLE_COMPONENT_EVENT = new TransformMethodSignature(
-            Modifier.PUBLIC, "boolean", "handleComponentEvent", new String[]
-            {ComponentEvent.class.getName()}, null);
+    public static final TransformMethodSignature HANDLE_COMPONENT_EVENT = new TransformMethodSignature(Modifier.PUBLIC,
+                                                                                                       "boolean",
+                                                                                                       "handleComponentEvent",
+                                                                                                       new String[]{
+                                                                                                               ComponentEvent.class.getName()},
+                                                                                                       null);
 
     /**
      * Signature for
@@ -87,7 +90,7 @@ public final class TransformConstants
      *
      * @see org.apache.tapestry.annotations.BeforeRenderTemplate
      */
-    public static TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
+    public static final TransformMethodSignature BEFORE_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
             "beforeRenderTemplate");
 
     /**
@@ -96,7 +99,7 @@ public final class TransformConstants
      *
      * @see org.apache.tapestry.annotations.BeforeRenderTemplate
      */
-    public static TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
+    public static final TransformMethodSignature AFTER_RENDER_TEMPLATE_SIGNATURE = renderPhaseSignature(
             "afterRenderTemplate");
 
     /**
@@ -137,7 +140,6 @@ public final class TransformConstants
 
     private static TransformMethodSignature renderPhaseSignature(String name)
     {
-        return new TransformMethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS,
-                                            null);
+        return new TransformMethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS, null);
     }
 }

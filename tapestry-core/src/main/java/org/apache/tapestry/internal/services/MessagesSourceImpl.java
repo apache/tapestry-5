@@ -141,12 +141,10 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         {
             Map<String, String> rawProperties = getRawProperties(localization);
 
-            Map<String, String> properties = extend(previous, rawProperties);
-
             // Woould be nice to write into the _cookedProperties cache here,
             // but we can't because we don't know the locale part of the MultiKey.
 
-            previous = properties;
+            previous = extend(previous, rawProperties);
         }
 
         _cookedProperties.put(key, previous);

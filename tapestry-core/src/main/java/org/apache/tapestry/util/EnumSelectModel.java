@@ -40,7 +40,6 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
     private static final long serialVersionUID = -3590412082766899684L;
 
     private final List<OptionModel> _options = newList();
-    ;
 
     public <T extends Enum> EnumSelectModel(Class<T> enumClass, Messages messages)
     {

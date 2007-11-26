@@ -28,7 +28,6 @@ public class SubmitTest extends InternalBaseTestCase
     @Test
     public void not_trigger_of_submission()
     {
-        FormSupport support = mockFormSupport();
         Request request = mockRequest();
 
         String elementName = "myname";
@@ -39,7 +38,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         Submit submit = new Submit(request);
 
-        submit.processSubmission(support, elementName);
+        submit.processSubmission(elementName);
 
         verify();
     }
@@ -61,7 +60,7 @@ public class SubmitTest extends InternalBaseTestCase
 
         submit.setup(resources, support, null);
 
-        submit.processSubmission(support, elementName);
+        submit.processSubmission(elementName);
 
         verify();
 
@@ -95,7 +94,7 @@ public class SubmitTest extends InternalBaseTestCase
         submit.setup(resources, support, heartbeat);
         submit.setDefer(false);
 
-        submit.processSubmission(support, elementName);
+        submit.processSubmission(elementName);
 
         verify();
 

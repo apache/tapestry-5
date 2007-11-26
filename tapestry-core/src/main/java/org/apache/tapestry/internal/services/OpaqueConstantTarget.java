@@ -19,7 +19,7 @@ package org.apache.tapestry.internal.services;
  */
 public class OpaqueConstantTarget implements InvocationTarget
 {
-    private String _path;
+    private final String _path;
 
     public OpaqueConstantTarget(String path)
     {

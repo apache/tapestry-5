@@ -63,8 +63,6 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
 
     }
 
-    ;
-
     /**
      * Delegates to a {@link Messages} instance obtained from the {@link MessagesSource}. This
      * ensures that changes to the underlying properties files will be reflected.
@@ -115,8 +113,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
         this(bundles, classpathRoot, new URLChangeTracker());
     }
 
-    ValidationMessagesSourceImpl(Collection<String> bundles, Resource classpathRoot,
-                                 URLChangeTracker tracker)
+    ValidationMessagesSourceImpl(Collection<String> bundles, Resource classpathRoot, URLChangeTracker tracker)
     {
         _messagesSource = new MessagesSourceImpl(tracker);
 

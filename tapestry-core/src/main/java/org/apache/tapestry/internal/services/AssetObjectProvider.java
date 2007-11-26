@@ -19,7 +19,6 @@ import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
-import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
@@ -38,14 +37,11 @@ public class AssetObjectProvider implements ObjectProvider
 
     private final SymbolSource _symbolSource;
 
-    public AssetObjectProvider(@Core
-    AssetSource source,
+    public AssetObjectProvider(@Core AssetSource source,
 
-                               @Builtin
-                               TypeCoercer typeCoercer,
+                               @Builtin TypeCoercer typeCoercer,
 
-                               @Builtin
-                               SymbolSource symbolSource)
+                               @Builtin SymbolSource symbolSource)
     {
         _source = source;
         _typeCoercer = typeCoercer;
@@ -56,13 +52,10 @@ public class AssetObjectProvider implements ObjectProvider
      * Provides the asset. If the expression does not identify an asset domain, with a prefix, it is
      * assumed to be a path on the classpath, relative to the root of the classpath.
      *
-     * @param expression expression used to find the asset, passed to
-     *                   {@link AssetSource#findAsset(Resource, String, java.util.Locale)
      * @param objectType the type of object (which must be Object or Asset)
      * @param locator    not used
      */
-    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                         ObjectLocator locator)
+    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
         Path path = annotationProvider.getAnnotation(Path.class);
 

@@ -95,8 +95,6 @@ public class LocationRenderer implements ObjectRenderer<Location>
                 writer.write(Integer.toString(current));
                 writer.end();
 
-                String css = "t-location-content";
-
                 Element td = writer.element("td", "class", "t-location-content");
 
                 if (line == current) td.addClassName("t-location-current");

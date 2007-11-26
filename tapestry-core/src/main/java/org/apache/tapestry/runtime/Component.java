@@ -71,7 +71,7 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
 
     /**
      * Generally used to write the close tag matching any open tag written by
-     * {@link #beginRender(MarkupWriter, LifecycleEvent)}.
+     * {@link #beginRender(org.apache.tapestry.MarkupWriter, Event)}.
      */
     void afterRender(MarkupWriter writer, Event event);
 

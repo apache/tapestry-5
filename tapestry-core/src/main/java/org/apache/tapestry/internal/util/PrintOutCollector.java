@@ -22,7 +22,7 @@ import java.io.StringWriter;
  */
 public class PrintOutCollector
 {
-    private StringWriter _stringWriter;
+    private final StringWriter _stringWriter;
 
     private PrintWriter _printWriter;
 

@@ -166,10 +166,6 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
             diag = "END";
         }
-        catch (ClassNotFoundException ex)
-        {
-            throw new CannotCompileException(ex);
-        }
         finally
         {
             _logger.debug(String.format("%5s onLoad %s", diag, classname));
@@ -203,7 +199,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         _changeTracker.add(url);
     }
 
-    private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException, ClassNotFoundException
+    private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException
     {
         CtClass superClass = ctClass.getSuperclass();
 

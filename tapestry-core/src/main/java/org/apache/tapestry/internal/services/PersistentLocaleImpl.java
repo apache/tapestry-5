@@ -26,7 +26,7 @@ public class PersistentLocaleImpl implements PersistentLocale
      */
     private static final String LOCALE_COOKIE_NAME = "org.apache.tapestry.locale";
 
-    private Cookies _cookieSource;
+    private final Cookies _cookieSource;
 
     public PersistentLocaleImpl(Cookies cookieSource)
     {

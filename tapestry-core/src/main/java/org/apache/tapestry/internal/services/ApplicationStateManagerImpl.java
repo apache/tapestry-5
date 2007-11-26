@@ -55,8 +55,6 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
         }
     }
 
-    ;
-
     /**
      * The map will be extended periodically as new ASOs, not in the configuration, are encountered.
      * Thut is is thread safe.
@@ -75,10 +73,8 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
         {
             ApplicationStateContribution contribution = configuration.get(asoClass);
 
-            ApplicationStateAdapter adapter = newAdapter(
-                    asoClass,
-                    contribution.getStrategy(),
-                    contribution.getCreator());
+            ApplicationStateAdapter adapter = newAdapter(asoClass, contribution.getStrategy(),
+                                                         contribution.getCreator());
 
             _classToAdapter.put(asoClass, adapter);
         }

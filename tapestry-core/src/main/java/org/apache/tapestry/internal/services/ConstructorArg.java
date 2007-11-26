@@ -20,11 +20,11 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 /**
  * Stores transformation type data about one argument to a class constructor.
  */
-public class ConstructorArg
+class ConstructorArg
 {
-    final CtClass _type;
+    private final CtClass _type;
 
-    final Object _value;
+    private final Object _value;
 
     /**
      * Constructs new instance.

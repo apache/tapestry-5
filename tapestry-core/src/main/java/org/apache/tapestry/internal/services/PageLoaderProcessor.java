@@ -44,7 +44,7 @@ class PageLoaderProcessor
 {
     private static final String INHERIT_PREFIX = "inherit:";
 
-    private static Runnable NO_OP = new Runnable()
+    private static final Runnable NO_OP = new Runnable()
     {
         public void run()
         {
@@ -89,9 +89,8 @@ class PageLoaderProcessor
 
     private final ComponentTemplateSource _templateSource;
 
-    public PageLoaderProcessor(ComponentTemplateSource templateSource,
-                               PageElementFactory pageElementFactory, LinkFactory linkFactory,
-                               PersistentFieldManager persistentFieldManager)
+    public PageLoaderProcessor(ComponentTemplateSource templateSource, PageElementFactory pageElementFactory,
+                               LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
@@ -112,18 +111,11 @@ class PageLoaderProcessor
 
         // Meta default of literal for the template.
 
-        String defaultBindingPrefix = determineDefaultBindingPrefix(
-                component,
-                name,
-                TapestryConstants.LITERAL_BINDING_PREFIX);
+        String defaultBindingPrefix = determineDefaultBindingPrefix(component, name,
+                                                                    TapestryConstants.LITERAL_BINDING_PREFIX);
 
-        Binding binding = findBinding(
-                _loadingElement,
-                component,
-                name,
-                token.getValue(),
-                defaultBindingPrefix,
-                token.getLocation());
+        Binding binding = findBinding(_loadingElement, component, name, token.getValue(), defaultBindingPrefix,
+                                      token.getLocation());
 
         if (binding != null)
         {
@@ -135,8 +127,7 @@ class PageLoaderProcessor
         }
     }
 
-    private void addMixinsToComponent(ComponentPageElement component, EmbeddedComponentModel model,
-                                      String mixins)
+    private void addMixinsToComponent(ComponentPageElement component, EmbeddedComponentModel model, String mixins)
     {
         if (model != null)
         {
@@ -151,26 +142,18 @@ class PageLoaderProcessor
         }
     }
 
-    private void bindParametersFromModel(EmbeddedComponentModel model,
-                                         ComponentPageElement loadingComponent, ComponentPageElement component,
-                                         Map<String, Binding> bindingMap)
+    private void bindParametersFromModel(EmbeddedComponentModel model, ComponentPageElement loadingComponent,
+                                         ComponentPageElement component, Map<String, Binding> bindingMap)
     {
         for (String name : model.getParameterNames())
         {
             String value = model.getParameterValue(name);
 
-            String defaultBindingPrefix = determineDefaultBindingPrefix(
-                    component,
-                    name,
-                    TapestryConstants.PROP_BINDING_PREFIX);
+            String defaultBindingPrefix = determineDefaultBindingPrefix(component, name,
+                                                                        TapestryConstants.PROP_BINDING_PREFIX);
 
-            Binding binding = findBinding(
-                    loadingComponent,
-                    component,
-                    name,
-                    value,
-                    defaultBindingPrefix,
-                    component.getLocation());
+            Binding binding = findBinding(loadingComponent, component, name, value, defaultBindingPrefix,
+                                          component.getLocation());
 
             if (binding != null)
             {
@@ -190,9 +173,8 @@ class PageLoaderProcessor
      * @return the new binding, or an existing binding (if inherited), or null (if inherited, and
      *         the containing parameter is not bound)
      */
-    private Binding findBinding(ComponentPageElement loadingComponent,
-                                ComponentPageElement component, String name, String value, String defaultBindingPrefix,
-                                Location location)
+    private Binding findBinding(ComponentPageElement loadingComponent, ComponentPageElement component, String name,
+                                String value, String defaultBindingPrefix, Location location)
     {
         if (value.startsWith(INHERIT_PREFIX))
         {
@@ -206,12 +188,9 @@ class PageLoaderProcessor
 
             if (existing == null) return null;
 
-            String description = String.format(
-                    "InheritedBinding[parameter %s %s(inherited from %s of %s)]",
-                    name,
-                    component.getCompleteId(),
-                    loadingParameterName,
-                    loadingComponent.getCompleteId());
+            String description = String.format("InheritedBinding[parameter %s %s(inherited from %s of %s)]", name,
+                                               component.getCompleteId(), loadingParameterName,
+                                               loadingComponent.getCompleteId());
 
             // This helps with debugging, and re-orients any thrown exceptions
             // to the location of the inherited binding, rather than the container component's
@@ -220,13 +199,8 @@ class PageLoaderProcessor
             return new InheritedBinding(description, existing, location);
         }
 
-        return _pageElementFactory.newBinding(
-                name,
-                loadingComponent.getComponentResources(),
-                component.getComponentResources(),
-                defaultBindingPrefix,
-                value,
-                location);
+        return _pageElementFactory.newBinding(name, loadingComponent.getComponentResources(),
+                                              component.getComponentResources(), defaultBindingPrefix, value, location);
     }
 
     /**
@@ -237,8 +211,8 @@ class PageLoaderProcessor
      * @param informalParameterBindingPrefix the default to use for informal parameters
      * @return the binding prefix
      */
-    private String determineDefaultBindingPrefix(ComponentPageElement component,
-                                                 String parameterName, String informalParameterBindingPrefix)
+    private String determineDefaultBindingPrefix(ComponentPageElement component, String parameterName,
+                                                 String informalParameterBindingPrefix)
     {
         String defaultBindingPrefix = component.getDefaultBindingPrefix(parameterName);
 
@@ -274,7 +248,7 @@ class PageLoaderProcessor
         addToBody(element);
     }
 
-    private void body(BodyToken token)
+    private void body()
     {
         addToBody(newRenderBodyElement());
 
@@ -304,7 +278,7 @@ class PageLoaderProcessor
         _endElementCommandStack.push(command);
     }
 
-    private void endElement(EndElementToken token)
+    private void endElement()
     {
         // discard will be false if the matching start token was for a static element, and will be
         // true otherwise (component, block, parameter).
@@ -377,9 +351,7 @@ class PageLoaderProcessor
 
     private void loadRootComponent(String className)
     {
-        ComponentPageElement rootComponent = _pageElementFactory.newRootComponentElement(
-                _page,
-                className);
+        ComponentPageElement rootComponent = _pageElementFactory.newRootComponentElement(_page, className);
 
         _page.setRootElement(rootComponent);
 
@@ -428,9 +400,7 @@ class PageLoaderProcessor
         }
 
         if (!embeddedIds.isEmpty())
-            logger.error(ServicesMessages.embeddedComponentsNotInTemplate(
-                    embeddedIds.keySet(),
-                    componentClassName));
+            logger.error(ServicesMessages.embeddedComponentsNotInTemplate(embeddedIds.keySet(), componentClassName));
 
         _addAttributesAsComponentBindings = false;
 
@@ -462,7 +432,7 @@ class PageLoaderProcessor
                     break;
 
                 case BODY:
-                    body((BodyToken) token);
+                    body();
                     break;
 
                 case START_ELEMENT:
@@ -478,7 +448,7 @@ class PageLoaderProcessor
                     break;
 
                 case END_ELEMENT:
-                    endElement((EndElementToken) token);
+                    endElement();
                     break;
 
                 case COMMENT:
@@ -585,27 +555,21 @@ class PageLoaderProcessor
             embeddedComponentClassName = embeddedModel.getComponentClassName();
         }
 
-        if (isBlank(embeddedType) && isBlank(embeddedComponentClassName))
-            throw new TapestryException(ServicesMessages.noTypeForEmbeddedComponent(
-                    embeddedId,
-                    _loadingComponentModel.getComponentClassName()), token, null);
+        if (isBlank(embeddedType) && isBlank(embeddedComponentClassName)) throw new TapestryException(
+                ServicesMessages.noTypeForEmbeddedComponent(embeddedId, _loadingComponentModel.getComponentClassName()),
+                token, null);
 
-        ComponentPageElement newComponent = _pageElementFactory.newComponentElement(
-                _page,
-                _loadingElement,
-                embeddedId,
-                embeddedType,
-                embeddedComponentClassName,
-                elementName,
-                token.getLocation());
+        ComponentPageElement newComponent = _pageElementFactory.newComponentElement(_page, _loadingElement, embeddedId,
+                                                                                    embeddedType,
+                                                                                    embeddedComponentClassName,
+                                                                                    elementName, token.getLocation());
 
         addMixinsToComponent(newComponent, embeddedModel, token.getMixins());
 
         Map<String, Binding> bindingMap = newMap();
         _componentIdToBindingMap.put(newComponent.getCompleteId(), bindingMap);
 
-        if (embeddedModel != null)
-            bindParametersFromModel(embeddedModel, _loadingElement, newComponent, bindingMap);
+        if (embeddedModel != null) bindParametersFromModel(embeddedModel, _loadingElement, newComponent, bindingMap);
 
         addToBody(newComponent);
 

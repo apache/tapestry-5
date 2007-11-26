@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.commons.logging.Log;
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.Validate;
@@ -178,7 +177,7 @@ public final class TapestryModule
     }
 
     /**
-     * A companion service to {@linkplain #build(Log, AliasManager, Collection) the Alias service}
+     * A companion service to {@linkplain #build(org.slf4j.Logger, String, AliasManager, java.util.Collection)}  the Alias service}
      * whose configuration contribution define spot overrides to specific services.
      */
     public static AliasManager buildAliasOverrides(Logger logger, Collection<AliasContribution> configuration)
@@ -271,13 +270,7 @@ public final class TapestryModule
 
             RequestPageCache requestPageCache,
 
-            AssetSource assetSource,
-
-            SymbolSource symbolSource,
-
             BindingSource bindingsource,
-
-            MasterObjectProvider masterObjectProvider,
 
             ApplicationStateManager applicationStateManager)
     {
@@ -337,7 +330,7 @@ public final class TapestryModule
     }
 
     /**
-     * Adds the {@link #buildDefaultDataTypeAnalyzer(Map) DefaultDatatTypeAnalyzer} to the
+     * Adds the {@link #build(java.util.List)}  DefaultDatatTypeAnalyzer} to the
      * configuration, ordered explicitly last.
      */
     public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration,
@@ -504,8 +497,6 @@ public final class TapestryModule
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
                                          final RequestExceptionHandler exceptionHandler,
-
-                                         RequestGlobals requestGlobals,
 
                                          // @Inject not needed because its a long, not a String
                                          @Symbol("tapestry.file-check-interval")
@@ -881,7 +872,7 @@ public final class TapestryModule
     }
 
     /**
-     * A chain of command for providing values for {@link org.apache.tapestry.annotations.Inject}-ed
+     * A chain of command for providing values for {@link Inject}-ed
      * fields in component classes. The service's configuration can be extended to allow for
      * different automatic injections (based on some combination of field type and field name).
      */
@@ -1004,7 +995,7 @@ public final class TapestryModule
         return service;
     }
 
-    public ObjectRenderer build(StrategyBuilder strategyBuilder, Map<Class, ObjectRenderer> configuration)
+    public ObjectRenderer build(Map<Class, ObjectRenderer> configuration)
     {
         StrategyRegistry<ObjectRenderer> registry = StrategyRegistry.newInstance(ObjectRenderer.class, configuration);
 
@@ -1240,8 +1231,6 @@ public final class TapestryModule
      * </dl>
      */
     public void contributePageRenderInitializer(OrderedConfiguration<MarkupRendererFilter> configuration,
-
-                                                ThreadLocale threadLocale,
 
                                                 @Path("org/apache/tapestry/default.css")
                                                 final Asset stylesheetAsset,

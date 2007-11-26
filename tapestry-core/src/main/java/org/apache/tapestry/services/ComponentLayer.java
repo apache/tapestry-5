@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
 /**
  * Used to identify a service from the component layer that conflicts, in terms of service
  * interface, with a service from elsewhere. In particular, this is used to disambiguate
- * {@link ComponentClassFactory} which has one implementation (marked with {@link Builtin} and
+ * {@link org.apache.tapestry.ioc.services.ClassFactory} which has one implementation (marked with {@link Builtin} and
  * another with this annotation.
  */
 @Target(

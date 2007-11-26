@@ -65,7 +65,6 @@ public class Loop
             component.setupForVolatile();
         }
 
-        ;
     };
 
     /**
@@ -96,7 +95,6 @@ public class Loop
             component.endHeartbeat();
         }
 
-        ;
     };
 
     /**
@@ -120,8 +118,6 @@ public class Loop
         }
     }
 
-    ;
-
     /**
      * Restores the value using a stored primary key via
      * {@link PrimaryKeyEncoder#toValue(Serializable)}.
@@ -142,8 +138,6 @@ public class Loop
             component.restoreStateViaEncodedPrimaryKey(_primaryKey);
         }
     }
-
-    ;
 
     /**
      * Stores a list of keys to be passed to {@link PrimaryKeyEncoder#prepareForKeys(List)}.
@@ -167,8 +161,6 @@ public class Loop
             component.prepareForKeys(_keys);
         }
     }
-
-    ;
 
     /**
      * Defines the collection of values for the loop to iterate over.
@@ -222,8 +214,6 @@ public class Loop
     @Inject
     private ComponentResources _resources;
 
-    private List<Serializable> _keyList;
-
     @SetupRender
     boolean setup()
     {
@@ -246,12 +236,12 @@ public class Loop
 
             if (_encoder != null)
             {
-                _keyList = newList();
+                List<Serializable> keyList = newList();
 
                 // We'll keep updating the _keyList while the Loop renders, the values will "lock
                 // down" when the Form serializes all the data.
 
-                _formSupport.store(this, new PrepareForKeys(_keyList));
+                _formSupport.store(this, new PrepareForKeys(keyList));
             }
         }
 

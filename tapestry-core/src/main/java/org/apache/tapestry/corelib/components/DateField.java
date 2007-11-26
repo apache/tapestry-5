@@ -25,7 +25,6 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Request;
 
 import java.text.ParseException;
@@ -212,7 +211,7 @@ public class DateField extends AbstractField
     }
 
     @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
+    protected void processSubmission(String elementName)
     {
         // TODO: Validation
 

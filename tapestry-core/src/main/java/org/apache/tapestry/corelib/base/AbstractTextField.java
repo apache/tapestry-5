@@ -20,7 +20,10 @@ import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.FieldValidationSupport;
+import org.apache.tapestry.services.FieldValidatorDefaultSource;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.TranslatorDefaultSource;
 
 import java.util.Locale;
 
@@ -163,7 +166,7 @@ public abstract class AbstractTextField extends AbstractField
 
     @SuppressWarnings({"unchecked"})
     @Override
-    protected final void processSubmission(FormSupport formSupport, String elementName)
+    protected final void processSubmission(String elementName)
     {
         String rawValue = _request.getParameter(elementName);
 

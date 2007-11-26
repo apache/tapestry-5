@@ -58,8 +58,7 @@ public interface PropertyModel
 
     /**
      * Returns an object used to read or update the property. For virtual properties (properties
-     * that do not actually exist on the bean), the conduit may be null until one is provided via
-     * {@link MutablePropertyEditModel#conduit(PropertyConduit)}.
+     * that do not actually exist on the bean), the conduit may be null.
      */
     PropertyConduit getConduit();
 

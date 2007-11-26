@@ -24,12 +24,12 @@ import org.apache.tapestry.services.MasterObjectProvider;
 import java.lang.annotation.Annotation;
 
 /**
- * Worker for the {@link org.apache.tapestry.annotations.Inject} annotation that delegates out to
- * the master {@link MasterObjectProvier} to access the value. This worker must be scheduled after
- * certain other workers, such as {@link InjectBlockWorker} (which is keyed off a combination of
+ * Worker for the {@link org.apache.tapestry.ioc.annotations.Inject} annotation that delegates out to
+ * the master {@link MasterObjectProvider} to access the value. This worker must be scheduled after
+ * certain other workers, such as {@link BlockInjectionProvider} (which is keyed off a combination of
  * type and the Inject annotation).
  *
- * @see MasterObjectProvier
+ * @see org.apache.tapestry.services.MasterObjectProvider
  */
 public class DefaultInjectionProvider implements InjectionProvider
 {
@@ -55,11 +55,7 @@ public class DefaultInjectionProvider implements InjectionProvider
             }
         };
 
-        Object inject = _masterObjectProvider.provide(
-                fieldType,
-                annotationProvider,
-                _locator,
-                false);
+        Object inject = _masterObjectProvider.provide(fieldType, annotationProvider, _locator, false);
 
         // Null means that no ObjectProvider could provide the value. We have set up the chain of
         // command so that InjectResources can give it a try next. Later, we'll try to match against

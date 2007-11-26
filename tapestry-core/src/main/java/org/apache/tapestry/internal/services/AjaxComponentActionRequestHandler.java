@@ -115,7 +115,7 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
         return true;
     }
 
-    public void sendClientResponse(Page page, RenderCommand rootRenderCommand) throws IOException
+    private void sendClientResponse(Page page, RenderCommand rootRenderCommand) throws IOException
     {
         // This may be problematic as the charset of the response is not
         // going to be set properly I think.  We'll loop back to that.
