@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,25 +14,18 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.dom.Document;
+import org.apache.tapestry.MarkupWriter;
 
 /**
- * Default implementation of {@link PageRenderCommand} that does nothing.
+ * An object which will perform rendering of a page (or portion of a page).  This interface
+ * exists to be filtered via {@link org.apache.tapestry.services.MarkupRendererFilter}.
  */
-public abstract class DefaultPageRenderCommand implements PageRenderCommand
+public interface MarkupRenderer
 {
     /**
-     * Does nothing.
+     * Invoked to render some markup.
+     *
+     * @param writer to which markup should be written
      */
-    public void cleanup(Environment environment, Document document)
-    {
-    }
-
-    /**
-     * Does nothing.
-     */
-    public void setup(Environment environment, Document document)
-    {
-    }
-
+    void renderMarkup(MarkupWriter writer);
 }

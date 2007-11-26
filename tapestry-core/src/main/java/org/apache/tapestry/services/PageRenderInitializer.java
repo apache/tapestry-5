@@ -14,27 +14,18 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.MarkupWriter;
-
 /**
- * Responsible for setup and cleanup of the rendering of a page. The implementation of this is based
- * on an ordered list of {@link PageRenderCommand}s.
+ * Service to which an ordered collection of {@link org.apache.tapestry.services.MarkupRendererFilter}s is
+ * provided, which can then merge the filters with an eactual {@link org.apache.tapestry.services.MarkupRenderer}.
  */
 public interface PageRenderInitializer
 {
     /**
-     * Perform any initial setup, by invoking {@link PageRenderCommand#setup(Environment)}.
-     * Execution occurs in normal order.
+     * Creates a new MarkupRenderer by wrapping the provided renderer with
+     * the {@link org.apache.tapestry.services.MarkupRendererFilter}s configured for the service.
      *
-     * @param writer the markup writer that will be used to generate all output markup
+     * @param renderer the renderer at the end of the filter chain
+     * @return a new renderer that encapsulates the filter chain
      */
-    void setup(MarkupWriter writer);
-
-    /**
-     * Peform any post-render cleanup, by invoking {@link PageRenderCommand#cleanup(Environment)}.
-     * Execution order is reversed.
-     *
-     * @param writer the markup writer used to generate all output markup in the document
-     */
-    void cleanup(MarkupWriter writer);
+    MarkupRenderer addFilters(MarkupRenderer renderer);
 }
