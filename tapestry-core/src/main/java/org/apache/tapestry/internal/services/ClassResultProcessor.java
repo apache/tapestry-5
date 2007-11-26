@@ -26,8 +26,6 @@ import java.io.IOException;
 /**
  * Used when a component event handler returns a class value. The value is interpreted as the page
  * class. A link to the page will be sent.
- *
- * @see LinkActionResponseGenerator
  */
 public class ClassResultProcessor implements ComponentEventResultProcessor<Class>
 {

@@ -34,7 +34,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(null, null);
 
@@ -56,7 +56,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         Element e = writer.element("label", "accesskey", "f");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(field, e);
 
@@ -80,7 +80,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         Element e = writer.element("label", "accesskey", "f", "class", "foo");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(field, e);
 
@@ -99,30 +99,17 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         train_peekRequired(env, ValidationTracker.class, tracker);
         train_inError(tracker, field, true);
-        train_peekRequired(env, MarkupWriter.class, writer);
 
         replay();
 
-        writer.element(
-                "input",
-                "type",
-                "text",
-                "name",
-                "ex",
-                "class",
-                "foo",
-                "value",
-                "freddy",
-                "size",
-                "30");
+        writer.element("input", "type", "text", "name", "ex", "class", "foo", "value", "freddy", "size", "30");
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, writer);
 
         decorator.insideField(field);
 
-        assertEquals(
-                writer.toString(),
-                "<input class=\"foo t-error\" name=\"ex\" size=\"30\" type=\"text\" value=\"freddy\"/>");
+        assertEquals(writer.toString(),
+                     "<input class=\"foo t-error\" name=\"ex\" size=\"30\" type=\"text\" value=\"freddy\"/>");
 
         verify();
     }
@@ -139,7 +126,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideField(field);
 
@@ -158,7 +145,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         replay();
 
-        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null);
+        ValidationDecorator decorator = new DefaultValidationDecorator(env, null, null, null);
 
         decorator.insideLabel(field, null);
 

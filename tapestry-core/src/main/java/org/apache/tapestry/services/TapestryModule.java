@@ -19,8 +19,8 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
-import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.grid.GridDataSource;
+import org.apache.tapestry.internal.DefaultValidationDecorator;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator;
@@ -110,6 +110,9 @@ public final class TapestryModule
         binder.bind(RequestEncodingInitializer.class, RequestEncodingInitializerImpl.class);
         binder.bind(ComponentEventResultProcessor.class, ComponentInstanceResultProcessor.class).withId(
                 "ComponentInstanceResultProcessor");
+        binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
+        binder.bind(PageRenderInitializer.class, PageRenderInitializerImpl.class);
+        binder.bind(PartialMarkupRenderer.class, PartialMarkupRendererImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -888,35 +891,6 @@ public final class TapestryModule
         return _chainBuilder.build(InjectionProvider.class, configuration);
     }
 
-    /**
-     * Controls setup and cleanup of the environment during page rendering (the generation of a
-     * markup stream response for the client web browser).
-     */
-    public PageRenderInitializer build(final List<PageRenderCommand> configuration)
-    {
-        return new PageRenderInitializer()
-        {
-            public void cleanup(MarkupWriter writer)
-            {
-                Iterator<PageRenderCommand> i = InternalUtils.reverseIterator(configuration);
-
-                while (i.hasNext()) i.next().cleanup(_environment);
-
-                _environment.clear();
-            }
-
-            public void setup(MarkupWriter writer)
-            {
-                _environment.clear();
-
-                _environment.push(MarkupWriter.class, writer);
-                _environment.push(Document.class, writer.getDocument());
-
-                for (PageRenderCommand command : configuration)
-                    command.setup(_environment);
-            }
-        };
-    }
 
     /**
      * Initializes the application.
@@ -1256,7 +1230,16 @@ public final class TapestryModule
         configuration.add(ClassTransformation.class, preformatted);
     }
 
-    public void contributePageRenderInitializer(OrderedConfiguration<PageRenderCommand> configuration,
+    /**
+     * Adds basic render initializers:
+     * <dl>
+     * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd>
+     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
+     * <dt>DefaultValidationDecorator</dt>
+     * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
+     * </dl>
+     */
+    public void contributePageRenderInitializer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
                                                 ThreadLocale threadLocale,
 
@@ -1264,32 +1247,19 @@ public final class TapestryModule
                                                 final Asset stylesheetAsset,
 
                                                 @Path("org/apache/tapestry/field-error-marker.png")
-                                                Asset fieldErrorIcon,
+                                                final Asset fieldErrorIcon,
 
-                                                ValidationMessagesSource validationMessagesSource,
+                                                final ValidationMessagesSource validationMessagesSource,
 
                                                 final SymbolSource symbolSource,
 
                                                 final AssetSource assetSource)
     {
-        configuration.add("PageRenderSupport", new PageRenderCommand()
+        MarkupRendererFilter pageRenderSupport = new MarkupRendererFilter()
         {
-            public void cleanup(Environment environment)
-            {
-                environment.pop(PageRenderSupport.class);
-
-                Document document = environment.peek(Document.class);
-
-                DocumentHeadBuilder builder = environment.pop(DocumentHeadBuilder.class);
-
-                builder.updateDocument(document);
-            }
-
-            public void setup(Environment environment)
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
                 DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
-
-                environment.push(DocumentHeadBuilder.class, builder);
 
                 PageRenderSupportImpl support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
 
@@ -1298,33 +1268,62 @@ public final class TapestryModule
                                                                           "${tapestry.scriptaculous}/prototype.js",
                                                                           "${tapestry.scriptaculous}/scriptaculous.js",
                                                                           "${tapestry.scriptaculous}/effects.js",
+
+                                                                          // Uses functions defined by the prior three
+
                                                                           "org/apache/tapestry/tapestry.js");
 
                 support.addStylesheetLink(stylesheetAsset, null);
 
-                environment.push(PageRenderSupport.class, support);
-            }
-        });
+                _environment.push(PageRenderSupport.class, support);
 
-        configuration.add("Heartbeat", new PageRenderCommand()
+                renderer.renderMarkup(writer);
+
+                builder.updateDocument(writer.getDocument());
+
+                _environment.pop(PageRenderSupport.class);
+            }
+        };
+
+        MarkupRendererFilter heartbeat = new MarkupRendererFilter()
         {
-            public void cleanup(Environment environment)
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                environment.pop(Heartbeat.class).end();
-            }
-
-            public void setup(Environment environment)
-            {
-                HeartbeatImpl heartbeat = new HeartbeatImpl();
+                Heartbeat heartbeat = new HeartbeatImpl();
 
                 heartbeat.begin();
 
-                environment.push(Heartbeat.class, heartbeat);
-            }
-        });
+                _environment.push(Heartbeat.class, heartbeat);
 
-        configuration.add("DefaultValidationDelegate",
-                          new DefaultValidationDelegateCommand(threadLocale, validationMessagesSource, fieldErrorIcon));
+                renderer.renderMarkup(writer);
+
+                _environment.pop(Heartbeat.class);
+
+                heartbeat.end();
+            }
+        };
+
+        MarkupRendererFilter defaultValidationDecorator = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                Messages messages = validationMessagesSource.getValidationMessages(_threadLocale.getLocale());
+
+                ValidationDecorator decorator = new DefaultValidationDecorator(_environment, messages, fieldErrorIcon,
+                                                                               writer);
+
+                _environment.push(ValidationDecorator.class, decorator);
+
+                renderer.renderMarkup(writer);
+
+                _environment.pop(ValidationDecorator.class);
+            }
+        };
+
+
+        configuration.add("PageRenderSupport", pageRenderSupport);
+        configuration.add("Heartbeat", heartbeat);
+        configuration.add("DefaultValidationDecorator", defaultValidationDecorator);
     }
 
     /**

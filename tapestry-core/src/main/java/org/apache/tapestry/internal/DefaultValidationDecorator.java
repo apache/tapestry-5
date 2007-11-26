@@ -18,7 +18,6 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.ValidationMessagesSource;
 
 /**
  * Default implementation that writes an attribute into fields or labels that are in error.
@@ -27,22 +26,26 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 {
     private final Environment _environment;
 
-    private Asset _iconAsset;
+    private final Asset _iconAsset;
 
-    private Messages _validationMessages;
+    private final Messages _validationMessages;
+
+    private final MarkupWriter _markupWriter;
 
     /**
      * @param environment        used to locate objects and services during the render
-     * @param validationMessages obtained from {@link ValidationMessagesSource}, used to obtain the label for the
+     * @param validationMessages obtained from {@link org.apache.tapestry.services.ValidationMessagesSource}, used to obtain the label for the
      *                           icon
      * @param iconAsset          asset for an icon that will be displayed after each field (marked with the
-     *                           "t-invisible" CSS class, if the field is not in error)
+     * @param markupWriter
      */
-    public DefaultValidationDecorator(final Environment environment, Messages validationMessages, Asset iconAsset)
+    public DefaultValidationDecorator(final Environment environment, Messages validationMessages, Asset iconAsset,
+                                      MarkupWriter markupWriter)
     {
         _environment = environment;
         _validationMessages = validationMessages;
         _iconAsset = iconAsset;
+        _markupWriter = markupWriter;
     }
 
     @Override
@@ -64,13 +67,18 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     {
         String iconId = field.getClientId() + ":icon";
 
-        MarkupWriter writer = _environment.peekRequired(MarkupWriter.class);
-
         String cssClass = inError(field) ? "t-error-icon" : "t-error-icon t-invisible";
 
-        writer.element("img", "src", _iconAsset.toClientURL(), "alt", _validationMessages
-                .get("icon-label"), "class", cssClass, "id", iconId);
-        writer.end();
+        _markupWriter.element("img",
+
+                              "src", _iconAsset.toClientURL(),
+
+                              "alt", _validationMessages.get("icon-label"),
+
+                              "class", cssClass,
+
+                              "id", iconId);
+        _markupWriter.end();
     }
 
     private boolean inError(Field field)
@@ -82,8 +90,7 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
     private void addErrorClassToCurrentElement()
     {
-        MarkupWriter writer = _environment.peekRequired(MarkupWriter.class);
 
-        writer.getElement().addClassName(TapestryConstants.ERROR_CLASS);
+        _markupWriter.getElement().addClassName(TapestryConstants.ERROR_CLASS);
     }
 }

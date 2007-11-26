@@ -16,38 +16,54 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.RenderCommand;
+import org.apache.tapestry.services.Environment;
+import org.apache.tapestry.services.MarkupRenderer;
 import org.apache.tapestry.services.PageRenderInitializer;
 
 public class PageMarkupRendererImpl implements PageMarkupRenderer
 {
-    private final PageRenderInitializer _pageRenderInitializer;
+    private final Environment _environment;
 
-    public PageMarkupRendererImpl(PageRenderInitializer pageRenderInitializer)
+    private final PageRenderQueue _pageRenderQueue;
+
+    private final MarkupRenderer _markupRendererPipeline;
+
+    public PageMarkupRendererImpl(PageRenderInitializer pageRenderInitializer, PageRenderQueue pageRenderQueue,
+                                  Environment environment)
     {
-        _pageRenderInitializer = pageRenderInitializer;
+        // We have to go through some awkward tricks here:
+        // - MarkupRenderer and MarkupRendererFilter are PUBLIC
+        // - Page, PageMarkupRenderer, PageRenderQueue are PRIVATE
+        // - This service is the bridge between public and private
+
+
+        _pageRenderQueue = pageRenderQueue;
+        _environment = environment;
+
+        MarkupRenderer renderer = new MarkupRenderer()
+        {
+            public void renderMarkup(MarkupWriter writer)
+            {
+                _pageRenderQueue.render(writer);
+            }
+        };
+
+        _markupRendererPipeline = pageRenderInitializer.addFilters(renderer);
     }
 
     public void renderPageMarkup(Page page, MarkupWriter writer)
     {
-        _pageRenderInitializer.setup(writer);
+        _environment.clear();
 
-        renderPartialPageMarkup(page, page.getRootElement(), writer);
+        // This is why the PRQ is scope perthread; we tell it what to render here ...
 
-        _pageRenderInitializer.cleanup(writer);
+        _pageRenderQueue.initializeForCompletePage(page);
+
+        // ... then our fixed pipeline is able to (eventually) call into it.
+
+        _markupRendererPipeline.renderMarkup(writer);
 
         if (writer.getDocument().getRootElement() == null)
             throw new RuntimeException(ServicesMessages.noMarkupFromPageRender(page));
-    }
-
-    public void renderPartialPageMarkup(Page page, RenderCommand rootRenderCommand, MarkupWriter writer)
-    {
-        RenderQueueImpl queue = new RenderQueueImpl(page.getLogger());
-
-        queue.push(rootRenderCommand);
-
-        // Run the queue until empty.
-
-        queue.run(writer);
     }
 }

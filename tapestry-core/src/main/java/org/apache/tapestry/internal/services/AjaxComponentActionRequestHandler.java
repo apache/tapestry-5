@@ -15,10 +15,14 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventHandler;
+import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.internal.util.Holder;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
@@ -38,12 +42,12 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
     private final MarkupWriterFactory _factory;
 
-    private final PageMarkupRenderer _renderer;
+    private final PartialMarkupRenderer _renderer;
 
     private final Response _response;
 
     public AjaxComponentActionRequestHandler(RequestPageCache cache, MarkupWriterFactory factory,
-                                             PageMarkupRenderer renderer, Response response)
+                                             PartialMarkupRenderer renderer, Response response)
     {
         _cache = cache;
         _factory = factory;
@@ -76,8 +80,7 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
                 try
                 {
-                    new AjaxResponseGenerator(page, (RenderCommand) result, _factory, _renderer).sendClientResponse(
-                            _response);
+                    sendClientResponse(page, (RenderCommand) result);
                 }
                 catch (IOException ex)
                 {
@@ -95,9 +98,11 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
         if (exceptionHolder.hasValue()) throw exceptionHolder.get();
 
-        if (holder.hasValue()) return holder.get();
+        if (holder.hasValue()) return true;
 
         element.triggerEvent(eventType, context, handler);
+
+        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
 
         if (holder.hasValue()) return true;
 
@@ -108,5 +113,36 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
         pw.flush();
 
         return true;
+    }
+
+    public void sendClientResponse(Page page, RenderCommand rootRenderCommand) throws IOException
+    {
+        // This may be problematic as the charset of the response is not
+        // going to be set properly I think.  We'll loop back to that.
+
+        ContentType contentType = new ContentType("text/javascript");
+
+        MarkupWriter writer = _factory.newMarkupWriter();
+
+        // The partial will quite often contain multiple elements (or just a block of plain text),
+        // so those must be enclosed in a root element.
+
+        Element root = writer.element("ajax-partial");
+
+        _renderer.renderPartialPageMarkup(page, rootRenderCommand, writer);
+
+        writer.end();
+
+        String content = root.getChildText().trim();
+
+        JSONObject reply = new JSONObject();
+
+        reply.put("content", content);
+
+        PrintWriter pw = _response.getPrintWriter(contentType.toString());
+
+        pw.print(reply);
+
+        pw.flush();
     }
 }

@@ -16,31 +16,19 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.RenderCommand;
 
 /**
- * Service used to render page markup using a MarkupWriter.  This is usually used when rendering a complete
+ * Service used to render page markup using a MarkupWriter.  This is  used when rendering a complete
  * page as part of a {@linkplain org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl page render request},
- * but may also be used to render portions of a page as part of an {@linkplain org.apache.tapestry.internal.services.AjaxResponseGenerator Ajax request}.
  */
 public interface PageMarkupRenderer
 {
     /**
      * Initializes the rendering using the
-     * {@link org.apache.tapestry.services.PageRenderInitializer} change of command.
+     * {@link org.apache.tapestry.services.PageRenderInitializer} chain of command.
      *
      * @param page   page to render
      * @param writer receives the markup
      */
     void renderPageMarkup(Page page, MarkupWriter writer);
-
-    /**
-     * Used to render a partial response as part of an Ajax action request.
-     *
-     * @param page              page used to perform the render
-     * @param rootRenderCommand initial object to render
-     * @param writer            writer used to perform the render
-     */
-    void renderPartialPageMarkup(Page page, RenderCommand rootRenderCommand, MarkupWriter writer);
-
 }
