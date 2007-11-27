@@ -112,9 +112,8 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, "alpha/beta");
 
-        expect(handler.handle(eq("mypage"), eq(""), eq("eventname"), aryEq(new String[0]),
-                              aryEq(new String[]{"alpha", "beta"}))).andReturn(true);
-
+        handler.handle(eq("mypage"), eq(""), eq("eventname"), aryEq(new String[0]),
+                       aryEq(new String[]{"alpha", "beta"}));
 
         replay();
 
@@ -136,8 +135,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
-        expect(handler.handle(eq(logicalPageName), eq(nestedComponentId), eq(eventType), aryEq(context),
-                              aryEq(new String[0]))).andReturn(true);
+        handler.handle(eq(logicalPageName), eq(nestedComponentId), eq(eventType), aryEq(context), aryEq(new String[0]));
 
         replay();
 

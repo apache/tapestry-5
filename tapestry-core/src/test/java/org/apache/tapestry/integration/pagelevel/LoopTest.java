@@ -32,7 +32,7 @@ public class LoopTest extends Assert
         _tester = new PageTester(appPackage, appName);
         Document doc = _tester.renderPage("TestPageForLoop");
         assertTrue(doc.toString().contains("abcabcabc"));
-        assertEquals(doc.getElementById("1").getChildText(), "xyz");
+        assertEquals(doc.getElementById("1").getChildMarkup(), "xyz");
     }
 
     @AfterMethod

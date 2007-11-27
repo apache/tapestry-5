@@ -33,9 +33,10 @@ public class PageRenderQueueImpl implements PageRenderQueue
         _rootCommand = page.getRootElement();
     }
 
-    public void initializeForPartialPageRender(Page page, RenderCommand rootCommand)
+    public void initializeForPartialPageRender(RenderCommand rootCommand)
     {
-        _page = page;
+        if (_page == null) throw new IllegalStateException("Page must be specified before root render command.");
+
         _rootCommand = rootCommand;
     }
 

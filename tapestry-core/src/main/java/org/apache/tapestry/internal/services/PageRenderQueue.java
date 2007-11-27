@@ -35,7 +35,7 @@ public interface PageRenderQueue
     /**
      * Initializes the queue for rendering of a portion of a page.
      */
-    void initializeForPartialPageRender(Page page, RenderCommand rootCommand);
+    void initializeForPartialPageRender(RenderCommand rootCommand);
 
     /**
      * Render to the write, as setup by the initialize method.

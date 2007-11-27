@@ -56,16 +56,14 @@ public abstract class Node
 
     void addChild(Node child)
     {
-        if (_children == null)
-            _children = newList();
+        if (_children == null) _children = newList();
 
         _children.add(child);
     }
 
     void insertChildAt(int index, Node child)
     {
-        if (_children == null)
-            _children = newList();
+        if (_children == null) _children = newList();
 
         _children.add(index, child);
     }
@@ -77,8 +75,7 @@ public abstract class Node
 
     void writeChildMarkup(PrintWriter writer)
     {
-        if (_children == null)
-            return;
+        if (_children == null) return;
 
         for (Node child : _children)
             child.toMarkup(writer);
@@ -87,10 +84,12 @@ public abstract class Node
     /**
      * @return the concatenation of the String representations {@link #toString()} of its children.
      */
-    public String getChildText()
+    public final String getChildMarkup()
     {
         PrintOutCollector collector = new PrintOutCollector();
+
         writeChildMarkup(collector.getPrintWriter());
+
         return collector.getPrintOut();
     }
 

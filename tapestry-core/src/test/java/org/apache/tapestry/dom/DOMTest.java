@@ -212,8 +212,8 @@ public class DOMTest extends InternalBaseTestCase
         Element e0 = d.newRootElement("root");
         Element e1 = e0.element("e1");
         e1.text("123");
-        assertEquals(e1.getChildText(), "123");
-        assertEquals(e0.getChildText(), "<e1>123</e1>");
+        assertEquals(e1.getChildMarkup(), "123");
+        assertEquals(e0.getChildMarkup(), "<e1>123</e1>");
     }
 
     @Test

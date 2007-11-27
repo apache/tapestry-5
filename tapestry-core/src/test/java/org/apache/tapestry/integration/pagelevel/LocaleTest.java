@@ -31,7 +31,7 @@ public class LocaleTest extends Assert
     public void no_preferred_language()
     {
         Document doc = _tester.renderPage("TestPageForLocale");
-        assertEquals(doc.getElementById("id1").getChildText(), "English page");
+        assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
     }
 
     @Test
@@ -39,17 +39,17 @@ public class LocaleTest extends Assert
     {
         _tester.setPreferedLanguage(Locale.CANADA_FRENCH);
         Document doc = _tester.renderPage("TestPageForLocale");
-        assertEquals(doc.getElementById("id1").getChildText(), "French page");
+        assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @Test
     public void change_language_in_browser()
     {
         Document doc = _tester.renderPage("TestPageForLocale");
-        assertEquals(doc.getElementById("id1").getChildText(), "English page");
+        assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
         _tester.setPreferedLanguage(Locale.CANADA_FRENCH);
         doc = _tester.renderPage("TestPageForLocale");
-        assertEquals(doc.getElementById("id1").getChildText(), "French page");
+        assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @Test
@@ -57,7 +57,7 @@ public class LocaleTest extends Assert
     {
         Document doc = _tester.renderPage("TestPageForLocale");
         doc = _tester.clickLink(doc.getElementById("changeLocale"));
-        assertEquals(doc.getElementById("id1").getChildText(), "French page");
+        assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @BeforeMethod

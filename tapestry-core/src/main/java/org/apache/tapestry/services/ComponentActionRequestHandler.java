@@ -40,8 +40,7 @@ public interface ComponentActionRequestHandler
      * @param eventType         the type of event to trigger on the component
      * @param context           context information to provide to the event handler
      * @param activationContext activation context for the page
-     * @return true if the request has been handled (and a response sent to the client), false otherwise
      */
-    boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                   String[] activationContext) throws IOException;
+    void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                String[] activationContext) throws IOException;
 }
