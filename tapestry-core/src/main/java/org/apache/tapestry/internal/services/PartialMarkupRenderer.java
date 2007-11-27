@@ -14,22 +14,21 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.RenderCommand;
+
+import java.io.IOException;
 
 /**
  * Used to render portions of a page as part of an
- * {@linkplain AjaxComponentActionRequestHandler Ajax request}.
+ * {@linkplain AjaxComponentActionRequestHandler Ajax request}.    This encapsulates
+ * rendering of the partial response and then the construction of a {@linkplain org.apache.tapestry.json.JSONObject JSON reply}.
  */
 public interface PartialMarkupRenderer
 {
     /**
      * Used to render a partial response as part of an Ajax action request.
      *
-     * @param page              page used to perform the render
-     * @param rootRenderCommand initial object to render
-     * @param writer            writer used to perform the render
+     * @param renderCommand command that will be executed to render the content
      */
-    void renderPartialPageMarkup(Page page, RenderCommand rootRenderCommand, MarkupWriter writer);
+    void renderPartialPageMarkup(RenderCommand renderCommand) throws IOException;
 }

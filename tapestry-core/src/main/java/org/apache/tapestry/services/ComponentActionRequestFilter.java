@@ -31,8 +31,7 @@ public interface ComponentActionRequestFilter
      * @param context           context information to provide to the event handler
      * @param activationContext activation context for the page
      * @param handler           to delegate to
-     * @return true if the request has been handled (and a response sent to the client), false otherwise
      */
-    boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                   String[] activationContext, ComponentActionRequestHandler handler) throws IOException;
+    void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                String[] activationContext, ComponentActionRequestHandler handler) throws IOException;
 }

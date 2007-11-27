@@ -15,22 +15,15 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventHandler;
-import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.MarkupWriterFactory;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * Similar to {@link ComponentActionRequestHandlerImpl}, but built around the Ajax request cycle, where the action request
@@ -46,19 +39,31 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
     private final Response _response;
 
+    private final PageRenderQueue _queue;
+
+    private final ComponentEventResultProcessor _resultProcessor;
+
     public AjaxComponentActionRequestHandler(RequestPageCache cache, MarkupWriterFactory factory,
-                                             PartialMarkupRenderer renderer, Response response)
+                                             PartialMarkupRenderer renderer, Response response, PageRenderQueue queue,
+                                             @Ajax ComponentEventResultProcessor resultProcessor)
     {
         _cache = cache;
         _factory = factory;
         _renderer = renderer;
         _response = response;
+        _queue = queue;
+        _resultProcessor = resultProcessor;
     }
 
-    public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                          String[] activationContext) throws IOException
+    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                       String[] activationContext) throws IOException
     {
-        final Page page = _cache.get(logicalPageName);
+        Page page = _cache.get(logicalPageName);
+
+        // If we end up doing a partial render, the page render queue service needs to know the
+        // page that will be rendered (for logging purposes, if nothing else).
+
+        _queue.initializeForCompletePage(page);
 
         ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
 
@@ -70,23 +75,16 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
             @SuppressWarnings("unchecked")
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
-                // TODO: Very limiting; event handler should be able to return a component or a StreamResponse
-                // as well.  Perhaps others.  The problem is the page. Maybe we need to store the
-                // page in a global?
-
-                if (!(result instanceof RenderCommand)) throw new IllegalArgumentException(
-                        String.format("Return type %s is not supported.", result.getClass().getName()));
-
-
                 try
                 {
-                    sendClientResponse(page, (RenderCommand) result);
+                    _resultProcessor.processComponentEvent(result, component, methodDescription);
                 }
                 catch (IOException ex)
                 {
+                    // Jump through some hoops to escape this block, which doesn't
+                    // declare IOException
                     exceptionHolder.put(ex);
                 }
-
 
                 holder.put(true);
 
@@ -98,51 +96,17 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
         if (exceptionHolder.hasValue()) throw exceptionHolder.get();
 
-        if (holder.hasValue()) return true;
+        if (holder.hasValue()) return;
 
         element.triggerEvent(eventType, context, handler);
 
         if (exceptionHolder.hasValue()) throw exceptionHolder.get();
 
-        if (holder.hasValue()) return true;
-
-        PrintWriter pw = _response.getPrintWriter("text/javascript");
-
-        pw.print("{ }");
-
-        pw.flush();
-
-        return true;
-    }
-
-    private void sendClientResponse(Page page, RenderCommand rootRenderCommand) throws IOException
-    {
-        // This may be problematic as the charset of the response is not
-        // going to be set properly I think.  We'll loop back to that.
-
-        ContentType contentType = new ContentType("text/javascript");
-
-        MarkupWriter writer = _factory.newMarkupWriter();
-
-        // The partial will quite often contain multiple elements (or just a block of plain text),
-        // so those must be enclosed in a root element.
-
-        Element root = writer.element("ajax-partial");
-
-        _renderer.renderPartialPageMarkup(page, rootRenderCommand, writer);
-
-        writer.end();
-
-        String content = root.getChildText().trim();
+        if (holder.hasValue()) return;
 
         JSONObject reply = new JSONObject();
 
-        reply.put("content", content);
+        _resultProcessor.processComponentEvent(reply, null, null);
 
-        PrintWriter pw = _response.getPrintWriter(contentType.toString());
-
-        pw.print(reply);
-
-        pw.flush();
     }
 }

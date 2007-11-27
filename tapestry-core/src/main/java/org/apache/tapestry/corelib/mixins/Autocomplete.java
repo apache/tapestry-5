@@ -82,6 +82,10 @@ public class Autocomplete
     private MarkupWriterFactory _factory;
 
     @Inject
+    @Path("${tapestry.scriptaculous}/controls.js")
+    private Asset _controlsLibrary;
+
+    @Inject
     @Path("classpath:org/apache/tapestry/ajax-loader.gif")
     private Asset _loader;
 
@@ -105,6 +109,11 @@ public class Autocomplete
      */
     @Parameter(defaultPrefix = "literal")
     private String _tokens;
+
+    void setupRender()
+    {
+        _pageRenderSupport.addScriptLink(_controlsLibrary);
+    }
 
     /**
      * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt;
@@ -191,7 +200,9 @@ public class Autocomplete
         MarkupWriter writer = _factory.newMarkupWriter();
 
         // T4.1 has more flexibility, it can decorate the options with icons, etc.
-        // But this will do for now.
+        // But this will do for now.  The Autocompleter widget will display
+        // icons, but only the character text is stored into the target text field.
+        // TODO: Support alternate return types allowing the event handler method to more precisely control the output.
 
         writer.element("ul");
 

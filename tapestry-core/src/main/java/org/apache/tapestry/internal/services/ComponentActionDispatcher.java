@@ -110,9 +110,10 @@ public class ComponentActionDispatcher implements Dispatcher
         String[] activationContext = activationContextValue == null ? _emptyString : decodeContext(
                 activationContextValue);
 
-        return _componentActionRequestHandler.handle(logicalPageName, nestedComponentId, eventType, eventContext,
-                                                     activationContext);
+        _componentActionRequestHandler.handle(logicalPageName, nestedComponentId, eventType, eventContext,
+                                              activationContext);
 
+        return true;
     }
 
     private String[] decodeContext(String input)

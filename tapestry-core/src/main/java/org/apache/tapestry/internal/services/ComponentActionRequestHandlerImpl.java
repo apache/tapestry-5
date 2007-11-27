@@ -47,8 +47,8 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
         _response = response;
     }
 
-    public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                          String[] activationContext) throws IOException
+    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                       String[] activationContext) throws IOException
     {
         Page page = _cache.get(logicalPageName);
 
@@ -83,16 +83,16 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
 
         page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, activationContext, handler);
 
-        if (holder.hasValue()) return true;
+        if (holder.hasValue()) return;
 
         element.triggerEvent(eventType, context, handler);
 
-        if (holder.hasValue()) return true;
+        if (holder.hasValue()) return;
 
         Link link = _linkFactory.createPageLink(page, false);
 
         _response.sendRedirect(link);
 
-        return true;
+        return;
     }
 }

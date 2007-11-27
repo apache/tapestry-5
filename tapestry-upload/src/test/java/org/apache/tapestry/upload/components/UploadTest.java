@@ -150,7 +150,6 @@ public class UploadTest extends TapestryTestCase
     @Test
     public void process_submission_extracts_value_from_decoder() throws Exception
     {
-        FormSupport formSupport = mockFormSupport();
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         ComponentResources resources = mockComponentResources();
@@ -166,7 +165,7 @@ public class UploadTest extends TapestryTestCase
 
         replay();
 
-        component.processSubmission(formSupport, "test");
+        component.processSubmission("test");
 
         verify();
 
@@ -177,7 +176,6 @@ public class UploadTest extends TapestryTestCase
     @Test
     public void process_submission_ignores_null_value() throws Exception
     {
-        FormSupport formSupport = mockFormSupport();
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         ComponentResources resources = mockComponentResources();
@@ -194,7 +192,7 @@ public class UploadTest extends TapestryTestCase
 
         replay();
 
-        component.processSubmission(formSupport, "test");
+        component.processSubmission("test");
 
         verify();
 
@@ -205,7 +203,6 @@ public class UploadTest extends TapestryTestCase
     @Test
     public void process_submission_calls_validator() throws Exception
     {
-        FormSupport formSupport = mockFormSupport();
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         FieldValidator<Object> validate = mockFieldValidator();
@@ -221,7 +218,7 @@ public class UploadTest extends TapestryTestCase
 
         replay();
 
-        component.processSubmission(formSupport, "test");
+        component.processSubmission("test");
 
         verify();
     }
@@ -230,7 +227,6 @@ public class UploadTest extends TapestryTestCase
     @Test
     public void process_submission_tracks_validator_errors() throws Exception
     {
-        FormSupport formSupport = mockFormSupport();
         MultipartDecoder decoder = mockMultipartDecoder();
         UploadedFile uploadedFile = mockUploadedFile();
         FieldValidator<Object> validate = mockFieldValidator();
@@ -249,7 +245,7 @@ public class UploadTest extends TapestryTestCase
         tracker.recordError(component, "an error");
         replay();
 
-        component.processSubmission(formSupport, "test");
+        component.processSubmission("test");
 
         verify();
     }

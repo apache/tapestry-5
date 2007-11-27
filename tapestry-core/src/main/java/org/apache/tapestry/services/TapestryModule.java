@@ -38,6 +38,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseIns
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.runtime.RenderCommand;
@@ -955,8 +956,28 @@ public final class TapestryModule
                                       ServletApplicationInitializerFilter.class, configuration, terminator);
     }
 
+    /**
+     * The component event result processor used for normal component requests.
+     */
     @Marker({Primary.class, Traditional.class})
     public ComponentEventResultProcessor buildComponentEventResultProcessor(
+            Map<Class, ComponentEventResultProcessor> configuration)
+    {
+        return constructComponentEventResultProcessor(configuration);
+    }
+
+    /**
+     * The component event result processor used for Ajax-oriented component requests.
+     */
+    @Marker(Ajax.class)
+    public ComponentEventResultProcessor buildAjaxComponentEventResultProcessor(
+            Map<Class, ComponentEventResultProcessor> configuration)
+    {
+        return constructComponentEventResultProcessor(configuration);
+
+    }
+
+    private ComponentEventResultProcessor constructComponentEventResultProcessor(
             Map<Class, ComponentEventResultProcessor> configuration)
     {
         Set<Class> handledTypes = CollectionFactory.newSet(configuration.keySet());
@@ -1093,10 +1114,18 @@ public final class TapestryModule
      * <dl>
      * <dt>Object</dt>
      * <dd>Failure case, added to provide a more useful exception message</dd>
-     * <dt>Link</dt>
-     * <dd>Wraps the Link to send a redirect</dd>
+     * <dt>{@link Link}</dt>
+     * <dd>Sends a redirect to the link (which is typically a page render link)</dd>
      * <dt>String</dt>
-     * <dd>The name of the page to render the response (after a redirect)</dd>
+     * <dd>Sends a page render redirect</dd>
+     * <dt>Class</dt>
+     * <dd>Interpreted as the class name of a page, sends a page render render redirect (this is more refactoring safe
+     * than the page name)</dd>
+     * <dt>{@link Component}</dt>
+     * <dd>A page's root component (though a non-root component will work, but will generate a warning). A direct
+     * to the containing page is sent.</dd>
+     * <dt>{@link org.apache.tapestry.StreamResponse}</dt>
+     * <dd>The stream response is sent as the actual reply.</dd>
      * </dl>
      */
     public void contributeComponentEventResultProcessor(
@@ -1108,11 +1137,8 @@ public final class TapestryModule
 
             MappedConfiguration<Class, ComponentEventResultProcessor> configuration)
     {
-
-
         configuration.add(Link.class, new ComponentEventResultProcessor<Link>()
         {
-
             public void processComponentEvent(Link value, Component component, String methodDescripion)
                     throws IOException
             {
@@ -1127,6 +1153,29 @@ public final class TapestryModule
 
         configuration.add(Component.class, componentInstanceProcessor);
 
+        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(_response));
+    }
+
+
+    /**
+     * Contributes handlers for the following types:
+     * <dl>
+     * <dt>Object</dt> <dd>Failure case, added to provide more useful exception message</dd>
+     * <dt>{@link RenderCommand}</dt> <dd>Typically, a {@link org.apache.tapestry.Block}</dd>
+     * <dt>{@link Component}</dt> <dd>Renders the component and its body</dd>
+     * <dt>{@link org.apache.tapestry.json.JSONObject}</dt>
+     * <dd>The JSONObject is returned as a text/javascript response</dd>
+     * <dt>{@link org.apache.tapestry.StreamResponse}</dt>
+     * <dd>The stream response is sent as the actual response</dd>*
+     * </dl>
+     */
+
+    public void contributeAjaxComponentEventResultProcessor(
+            MappedConfiguration<Class, ComponentEventResultProcessor> configuration, ObjectLocator locator)
+    {
+        configuration.add(RenderCommand.class, locator.autobuild(RenderCommandComponentEventResultProcessor.class));
+        configuration.add(Component.class, locator.autobuild(AjaxComponentInstanceEventResultProcessor.class));
+        configuration.add(JSONObject.class, new JSONObjectEventResultProcessor(_response));
         configuration.add(StreamResponse.class, new StreamResponseResultProcessor(_response));
     }
 
@@ -1835,12 +1884,12 @@ public final class TapestryModule
     {
         ComponentActionRequestFilter requestEncodingFilter = new ComponentActionRequestFilter()
         {
-            public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                                  String[] activationContext, ComponentActionRequestHandler handler) throws IOException
+            public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                               String[] activationContext, ComponentActionRequestHandler handler) throws IOException
             {
                 encodingInitializer.initializeRequestEncoding(logicalPageName);
 
-                return handler.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
+                handler.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
             }
 
         };

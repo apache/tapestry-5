@@ -39,12 +39,12 @@ public class AjaxFilter implements ComponentActionRequestFilter
     }
 
 
-    public boolean handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                          String[] activationContext, ComponentActionRequestHandler handler) throws IOException
+    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
+                       String[] activationContext, ComponentActionRequestHandler handler) throws IOException
     {
         ComponentActionRequestHandler next = _request.isXHR() ? _ajaxHandler : handler;
 
-        return next.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
+        next.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
     }
 
 }

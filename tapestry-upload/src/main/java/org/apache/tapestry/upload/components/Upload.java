@@ -103,7 +103,7 @@ public class Upload extends AbstractField
 
     @SuppressWarnings({"unchecked"})
     @Override
-    protected void processSubmission(FormSupport formSupport, String elementName)
+    protected void processSubmission(String elementName)
     {
         UploadedFile uploaded = _decoder.getFileUpload(elementName);
 
