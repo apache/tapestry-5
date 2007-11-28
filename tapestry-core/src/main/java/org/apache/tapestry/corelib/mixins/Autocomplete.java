@@ -22,7 +22,6 @@ import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.MarkupWriterFactory;
@@ -161,13 +160,10 @@ public class Autocomplete
 
         if (_resources.isBound("tokens"))
         {
-            JSONArray tokens = new JSONArray();
             for (int i = 0; i < _tokens.length(); i++)
             {
-                tokens.put(_tokens.substring(i, i + 1));
+                config.accumulate("tokens", _tokens.substring(i, i + 1));
             }
-
-            config.put("tokens", tokens);
         }
 
         _pageRenderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link, config);

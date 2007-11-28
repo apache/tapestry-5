@@ -859,4 +859,22 @@ public final class JSONObject
         }
         return quote(value.toString());
     }
+
+    /**
+     * Returns true if the other object is a JSONObject and its set of properties
+     * matches this object's properties.
+     * <p/>
+     * '
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null) return false;
+
+        if (!(obj instanceof JSONObject)) return false;
+
+        JSONObject other = (JSONObject) obj;
+
+        return _properties.equals(other._properties);
+    }
 }
