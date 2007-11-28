@@ -50,16 +50,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // allows to be verified. Note that the path below represents some aliasing
         // of the raw classpath resource path.
 
-        assertText("//img[@id='button']/@src", "/assets/app1/pages/tapestry-button.png");
+        assertText("//img[@id='button']/@src", "/assets/app1/pages/nested/tapestry-button.png");
 
         // Read the byte stream for the asset and compare to the real copy.
 
-        URL url = new URL("http", "localhost", JETTY_PORT, "/assets/app1/pages/tapestry-button.png");
+        URL url = new URL("http", "localhost", JETTY_PORT, "/assets/app1/pages/nested/tapestry-button.png");
 
         byte[] downloaded = readContent(url);
 
         Resource classpathResource = new ClasspathResource(
-                "org/apache/tapestry/integration/app1/pages/tapestry-button.png");
+                "org/apache/tapestry/integration/app1/pages/nested/tapestry-button.png");
 
         byte[] actual = readContent(classpathResource.toURL());
 
