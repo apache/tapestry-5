@@ -27,11 +27,11 @@ public class CookiesImpl implements Cookies
 {
     private final Request _request;
 
-    private CookieSource _cookieSource;
+    private final CookieSource _cookieSource;
 
     private final CookieSink _cookieSink;
 
-    private int _defaultMaxAge;
+    private final int _defaultMaxAge;
 
     public CookiesImpl(Request request,
 

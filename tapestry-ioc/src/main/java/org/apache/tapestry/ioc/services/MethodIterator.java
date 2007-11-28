@@ -18,9 +18,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 /**
  * Utility used to iterate over the publically visible methods of a class or interface. The
@@ -40,6 +38,16 @@ public class MethodIterator
 
     private final List<MethodSignature> _signatures;
 
+    private static final Comparator<MethodSignature> COMPARATOR = new Comparator<MethodSignature>()
+    {
+        public int compare(MethodSignature o1, MethodSignature o2)
+        {
+
+            return o1.getName().compareTo(o2.getName());
+        }
+    };
+
+
     public MethodIterator(Class subjectClass)
     {
         Method[] methods = subjectClass.getMethods();
@@ -51,6 +59,9 @@ public class MethodIterator
 
         _signatures = newList(map.values());
         _count = _signatures.size();
+
+
+        Collections.sort(_signatures, COMPARATOR);
     }
 
     private void processMethod(Method m, Map<String, MethodSignature> map)
@@ -73,8 +84,8 @@ public class MethodIterator
     /**
      * Returns the next method (as a {@link MethodSignature}, returning null when all are
      * exhausted. Each method signature is returned exactly once (even if the same method signature
-     * is defined in multiple inherited classes or interfaces). The order in which method signatures
-     * are returned is not specified.
+     * is defined in multiple inherited classes or interfaces). The method signatures returned in
+     * ascending order, according to the "natural ordering".
      *
      * @throws NoSuchElementException if there are no more signatures
      */

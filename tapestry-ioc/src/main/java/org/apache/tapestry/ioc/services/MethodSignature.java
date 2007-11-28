@@ -19,6 +19,7 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.size;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * A representation of a {@link java.lang.reflect.Method}, identifying the name, return type,
@@ -47,8 +48,7 @@ public class MethodSignature
 
     private Class[] _exceptionTypes;
 
-    public MethodSignature(Class returnType, String name, Class[] parameterTypes,
-                           Class[] exceptionTypes)
+    public MethodSignature(Class returnType, String name, Class[] parameterTypes, Class[] exceptionTypes)
     {
         _returnType = notNull(returnType, "returnType");
         _name = notBlank(name, "name");
@@ -174,14 +174,21 @@ public class MethodSignature
 
         buffer.append(")");
 
-        for (int i = 0; i < size(_exceptionTypes); i++)
+        int _exceptionCount = size(_exceptionTypes);
+        String _exceptionNames[] = new String[_exceptionCount];
+        for (int i = 0; i < _exceptionCount; i++)
         {
-            if (i == 0)
-                buffer.append(" throws ");
-            else
-                buffer.append(", ");
+            _exceptionNames[i] = _exceptionTypes[i].getName();
+        }
 
-            buffer.append(_exceptionTypes[i].getName());
+        Arrays.sort(_exceptionNames);
+
+        for (int i = 0; i < _exceptionCount; i++)
+        {
+            if (i == 0) buffer.append(" throws ");
+            else buffer.append(", ");
+
+            buffer.append(_exceptionNames[i]);
         }
 
         return buffer.toString();
