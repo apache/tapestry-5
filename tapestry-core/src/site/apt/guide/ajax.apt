@@ -192,7 +192,88 @@ Ajax Components and Mixins
 
 * Zone
 
-  Details coming soon.
+  Initial support for Zones is now in place.  Zones are Tapestry's approach to performing partial updates to
+  the client side.  A Zone component renders as a \<div\> element with the "t-zone" CSS class.  It also
+  adds some JavaScript to the page to "wire up" a Tapestry.Zone object to control updating
+  the \<div\> element.
+
+  A Zone can be updated via an ActionLink component.  ActionLink supports a zone parameter, which is the id
+  of the Zone's \<div\>. Clicking such a link will invoke an event handler method on the server as normal ...
+   except that the return value of the event handler method is used to send a <partial page response>
+   to the client, and the content of that response is used to update the Zone's \<div\> in place.
+
+** Zone div vs. update div
+
+  In many situations, a Zone is a kind of "wrapper" or "container" for dynamic content, that provides
+  a look and feel ... a bit of wrapping markup to create a border.  In that situtation,
+  the Zone \<div\> may contain an update \<div\>.
+
+  An update \<div\> is a \<div\> with the CSS class "t-zone-update", <inside> the Zone's \<div\>.
+
+  When an update occurs, the update \<div\>'s content will be changed, rather than the entire Zone \<div\>.
+
+  The show and update functions apply to the Zone \<div\>.
+
+** Event Handler Return Types
+
+  In a traditional request, the return value of an event handler method is used to determine
+  which page will render a <complete> response, and a <redirect> is sent to the client to render the new page (as
+  a new request).
+
+  With a Zone update, the return value is used to render a <partial response> within the <same request>.
+
+  This return value should be an injected component or block.  The value will be rendered, and that
+  markup will be used on the client side to update the Zone's \<div\>.
+
+** Graceful Degradation
+
+  Users who do not have JavaScript enabled may click ActionLinks that are configured to update a Zone.
+
+  When that occurs, the request will still be sent to the server, but will be handled as a <traditional> request.
+
+  To support graceful degradation, you should detect that case and return a traditional response: a page, page name
+  or page class.
+
+  This is accomplished by injecting the
+  {{{../../apidocs/org/apache/tapestry/services/Request.html}Request}} object, and invoking the isXHR() method.
+  This value will be true for Ajax requests, and false for traditional request.
+
+** Zone Functions
+
+  A Zone may be initially visible or invisible.  When a Zone is updated, it is made visible if not currently so.
+  This is accomplished via a function on the Tapestry.ZoneEffect client-side object.  By default, the show()
+  function is used for this purpose.  The Zone's show parameter is the <name> of a Tapestry.ZoneEffect function.
+
+  If a Zone is already visible, then a different function is used to highlight the change. Here it is
+  the Zone's update parameter, and a default highlight() function, which perfroms a yellow fade to highlight
+  that the content of the Zone has changed.
+
+
+** Zone Limitations
+
+   Unlike many other situations, Tapestry relies on you to specify useful and unique ids to Zone components,
+   then reference those ids inside ActionLink components. Using Zone components inside any kind of loop
+   may cause additional problems, as Tapestry will <uniqueify> the client id you specify (appending an index number).
+
+   The show and update function names are converted to lower case; all the methods of Tapestry.ZoneEffects should have
+   all lower-case names.  Because client-side JavaScript is so fluid (new methods may be added to
+   existing objects), Tapestry makes no attempt to validate the function names ... however, if the names
+   are not valid, then the default show and highlight methods will be used.
+
+   Currently, the partial page content that is rendered may <<not>> use an Environmental services.  This is expected
+   to change soon.
+
+** Coming Soon
+
+  * zone parameter for Form components
+
+  * Extending a Form with a Zone
+
+  * Additional Tapestry.ZoneEffect functions, plus documentation
+
+  * Real examples ...
+
+  []
 
 Your own Ajax Components
 
@@ -211,7 +292,8 @@ Your own Ajax Components
 
   The possible return values are:
 
-  * A Block or Component to render as the response.
+  * A Block or Component to render as the response.  The response will be a JSON hash, will a "content" key
+    whose value is the rendered markup.  This is the basis for updates with the Zone component.
 
   * A {{{../../apidocs/org/apache/tapestry/json/JSONObject.html}JSONObject}}, which will be sent as the response.
 

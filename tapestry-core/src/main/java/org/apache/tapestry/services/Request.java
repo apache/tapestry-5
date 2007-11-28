@@ -107,7 +107,7 @@ public interface Request
     /**
      * Returns true if the request originated on the client using XmlHttpRequest (the core of any Ajax behavior).
      * Ajax action requests may behave quite differently than ordinary, page-based requests.  This implementation
-     * currently depends on the client side setting a header: <strong>X-Requested-With=XmlHttpRequest</strong> (this is what
+     * currently depends on the client side setting a header: <strong>X-Requested-With=XMLHttpRequest</strong> (this is what
      * Prototype does).
      *
      * @return true if the request has an XmlHttpRequest origin

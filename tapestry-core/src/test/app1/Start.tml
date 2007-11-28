@@ -114,7 +114,12 @@
                             Missing Template Demo
                         </t:pagelink>
                         -- Demo for what happens when a template is not found for a
-                        page.
+                        page
+                    </li>
+
+                    <li>
+                        <t:pagelink page="zonedemo">Zone Demo</t:pagelink>
+                        -- dynamic updates within a page
                     </li>
                 </ul>
             </td>

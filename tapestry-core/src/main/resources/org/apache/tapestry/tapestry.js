@@ -172,7 +172,7 @@ var Tapestry = {
             new Tapestry.Zone(spec);
         });
 
-        // Each spec is a pair of values suitable for the linkZone method
+        // Each spec is a pair of argument values suitable for the linkZone method
 
         $A(linkSpecs).each(function (spec)
         {
@@ -436,6 +436,16 @@ Tapestry.Zone.prototype = {
         // Link the div back to this zone.
 
         this.div.zone = this;
+
+        // Look inside the Zone div for the another div with the CSS class "t-zone-update".
+        // If present, then this is the elements whose content will be changed, rather
+        // then the entire Zone div.  This allows a Zone div to contain "wrapper" markup
+        // (borders and such).  Typically, such a Zone div will initially be invisible.
+        // The show and update functions apply to the Zone div, not the update div.
+
+        var updates = div.select("DIV.t-zone-update");
+
+        this.updatediv = updates.length == 0 ? this.div : updates[0];
     },
 
     // Updates the content of the div controlled by this Zone, then
@@ -443,13 +453,16 @@ Tapestry.Zone.prototype = {
 
     show: function(content)
     {
-        this.div.innerHTML = content;
+        this.updatediv.innerHTML = content;
 
         var func = this.div.visible() ? this.updateFunc : this.showFunc;
 
         func.call(this, this.div);
     }
 };
+
+// Find all elements marked with the "t-invisible" CSS class and hide() them, so that
+// Prototype's visible() method operates correctly.
 
 Event.observe(window, 'load', function()
 {

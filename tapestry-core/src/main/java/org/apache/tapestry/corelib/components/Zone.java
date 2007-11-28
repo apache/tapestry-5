@@ -29,15 +29,39 @@ import org.apache.tapestry.json.JSONObject;
 
 /**
  * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other
- * client-side effects.  A Zone renders out as a &lt;div&gt; element a may have content initially,
+ * client-side effects.  A Zone renders out as a &lt;div&gt; element and may have content initially,
  * or may only get its content as a result of client side activity.
  * <p/>
+ * Often, Zone's are initially invisible, in which case the visible parameter may be set to false (it defaults to false).
+ * <p/>
+ * <p/>
+ * When a user clicks an {@link org.apache.tapestry.corelib.components.ActionLink} whose zone parameter is set,
+ * the corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
+ * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show and update
+ * parameters are the <em>names</em> of functions attached to the Tapestry.ZoneEffects object.
  * <p/>
  * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
  */
 @SupportsInformalParameters
 public class Zone implements ClientElement
 {
+    /**
+     * Name of a function on the client-side Tapestry.ZoneEffects object that is invoked to
+     * make the Zone's &lt;div&gt; visible before being updated.  If not specified, then
+     * the basic "show" method is used.
+     */
+    @Parameter
+    private String _show;
+
+    /**
+     * Name of a function on the client-side Tapestry.ZoneEffects object that is invoked
+     * after the Zone's content has been updated. If not specified, then the basic "highlight"
+     * method is used, which performs a classic "yellow fade" to indicate to the user
+     * that and update has taken place.
+     */
+    @Parameter
+    private String _update;
+
     private String _clientId;
 
     @Environmental
@@ -73,7 +97,7 @@ public class Zone implements ClientElement
         JSONObject spec = new JSONObject();
         spec.put("div", _clientId);
 
-        _zoneSetup.addZone(_clientId, null, null);
+        _zoneSetup.addZone(_clientId, _show, _update);
     }
 
     void afterRender(MarkupWriter writer)
