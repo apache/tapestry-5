@@ -83,7 +83,7 @@ import java.util.List;
  * @author JSON.org
  * @version 2
  */
-public class JSONArray
+public final class JSONArray
 {
 
     /**
@@ -417,5 +417,17 @@ public class JSONArray
     Object[] toArray()
     {
         return _list.toArray();
+    }
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (obj == null) return false;
+
+        if (!(obj instanceof JSONArray)) return false;
+
+        JSONArray other = (JSONArray) obj;
+
+        return _list.equals(other._list);
     }
 }

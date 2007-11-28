@@ -78,7 +78,7 @@ Basic JavaScript
 
 +---+
 
-  The Asset is injected, using the ${tapestry.scriptaculous} symbol to reference the location
+  The Asset is injected, using the $\{tapestry.scriptaculous\} symbol to reference the location
   of the Scriptaculous library.
 
   The PageRenderSupport is accessed as an Environmental service.
@@ -132,7 +132,9 @@ Basic JavaScript
   Inside a component, you should use Environmental, to highlight the fact that PageRenderSupport (like most
   environmental objects) is only available during rendering, not during action requests.
 
-Autocomplete Mixin
+Ajax Components and Mixins
+
+* Autocomplete Mixin
 
   The
   {{{../../apidocs/org/apache/tapestry/corelib/mixins/Autocomplete.html}Autocomplete}}
@@ -187,3 +189,38 @@ Autocomplete Mixin
   You may override <<<DIV.t-autocomplete-menu UL>>> to change the main look and feel,
   <<<DIV.t-autocomplete-menu LI>>> for a normal item in the popup list, and
    <<<DIV.t-autocomplete-menu LI.selected>>> for the element under the cursor (or selecting using the arrow keys).
+
+* Zone
+
+  Details coming soon.
+
+Your own Ajax Components
+
+  A study of the Autocomplete mixin's code should be very helpful: it shows how to
+  ask the ComponentResources object to create a link.
+
+  The key part is the way Tapestry invokes a component event handler method on the component.
+
+  For an Ajax request, the return value from an event handler method is processed differently
+  than for a traditional action request.  In an normal request, the return value
+  is the normally name of a page (to redirect to), or the Class of a page to redirect to, or
+  an instance of a page to redirect to.
+
+  For an Ajax request, a redirect is not sent: any response is rendered as part of the same
+  request and sent back immediately.
+
+  The possible return values are:
+
+  * A Block or Component to render as the response.
+
+  * A {{{../../apidocs/org/apache/tapestry/json/JSONObject.html}JSONObject}}, which will be sent as the response.
+
+  * A {{{../../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}, which will be sent as the response.
+
+  []
+
+  In the case of a  Block or Component, the rendering occurs but is packaged up as a JSON response.
+  The JSON response contains a single map containing a single key: "content" whose value is the markup
+  generated from the component or block.
+
+

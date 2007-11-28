@@ -19,6 +19,7 @@ import static org.apache.tapestry.TapestryConstants.ACTION_EVENT;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.internal.services.ZoneSetup;
 import org.apache.tapestry.ioc.annotations.Inject;
 
 import java.util.List;
@@ -42,6 +43,9 @@ public class ActionLink implements ClientElement
 
     @Environmental
     private PageRenderSupport _support;
+
+    @Environmental
+    private ZoneSetup _zoneSetup;
 
     /**
      * If true, then then no link element is rendered (and no informal parameters as well). The body
@@ -73,10 +77,7 @@ public class ActionLink implements ClientElement
 
         _resources.renderInformalParameters(writer);
 
-        // TODO: Extend PRS or add a new environmental, to collect the link/zone connections
-        // and execute them as a single block (to generate less JavaScript).
-
-        if (_zone != null) _support.addScript("Tapestry.linkZone('%s', '%s');", _clientId, _zone);
+        if (_zone != null) _zoneSetup.linkZone(_clientId, _zone);
     }
 
     void afterRender(MarkupWriter writer)

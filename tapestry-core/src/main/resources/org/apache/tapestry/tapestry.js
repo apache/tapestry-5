@@ -14,6 +14,12 @@
 
 var Tapestry = {
 
+    FormEvent : Class.create(),
+
+    FieldEventManager : Class.create(),
+
+    Zone : Class.create(),
+
     registerForm : function(form, clientValidations)
     {
         form = $(form);
@@ -132,12 +138,12 @@ var Tapestry = {
     },
 
     // Convert a link into a trigger of an Ajax update that
-    // updates the indicated zone.
+    // updates the indicated Zone.
 
-    linkZone : function(link, zone)
+    linkZone : function(link, zoneDiv)
     {
         link = $(link);
-        zone = $(zone);
+        var zone = $(zoneDiv).zone;
 
         var clickHandler = function(event)
         {
@@ -146,9 +152,7 @@ var Tapestry = {
                 var response = transport.responseText;
                 var reply = eval("(" + response + ")");
 
-                zone.innerHTML = reply.content;
-
-                zone.show();
+                zone.show(reply.content);
             };
 
             var request = new Ajax.Request(link.href, { onSuccess : successHandler });
@@ -159,11 +163,23 @@ var Tapestry = {
         link.onclick = clickHandler;
     },
 
+    initializeZones : function (zoneSpecs, linkSpecs)
+    {
+        // Each spec is a hash ready to pass to Tapestry.Zone
 
+        $A(zoneSpecs).each(function (spec)
+        {
+            new Tapestry.Zone(spec);
+        });
 
-    FormEvent : Class.create(),
+        // Each spec is a pair of values suitable for the linkZone method
 
-    FieldEventManager : Class.create(),
+        $A(linkSpecs).each(function (spec)
+        {
+            Tapestry.linkZone.apply(null, spec);
+        });
+    },
+
 
     // Adds a validator for a field.  A FieldEventManager is added, if necessary.
     // The validator will be called only for non-blank values, unless acceptBlank is
@@ -386,6 +402,52 @@ Tapestry.FieldEventManager.prototype = {
 
         if (! event.error)
             this.removeDecorations(event);
+    }
+};
+
+// Wrappers around Prototype and Scriptaculous effects, invoked from Tapestry.Zone.show().
+
+Tapestry.ZoneEffect = {
+
+    show : function(element)
+    {
+        element.show();
+    },
+
+    highlight : function(element)
+    {
+        new Effect.Highlight(element);
+    }
+};
+
+
+Tapestry.Zone.prototype = {
+    // spec are the parameters for the Zone:
+    // trigger: required -- name or instance of link.
+    // div: required -- name or instance of div element to be shown, hidden and updated
+    // show: name of Tapestry.ZoneEffect function used to reveal the zone if hidden
+    // update: name of Tapestry.ZoneEffect function used to highlight the zone after it is updated
+    initialize: function(spec)
+    {
+        this.div = $(spec.div);
+        this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.show;
+        this.updateFunc = Tapestry.ZoneEffect[spec.update] || Tapestry.ZoneEffect.highlight;
+
+        // Link the div back to this zone.
+
+        this.div.zone = this;
+    },
+
+    // Updates the content of the div controlled by this Zone, then
+    // invokes the show function (if not visible) or the update function (if visible).
+
+    show: function(content)
+    {
+        this.div.innerHTML = content;
+
+        var func = this.div.visible() ? this.updateFunc : this.showFunc;
+
+        func.call(this, this.div);
     }
 };
 

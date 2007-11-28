@@ -1166,7 +1166,7 @@ public final class TapestryModule
      * <dt>{@link org.apache.tapestry.json.JSONObject}</dt>
      * <dd>The JSONObject is returned as a text/javascript response</dd>
      * <dt>{@link org.apache.tapestry.StreamResponse}</dt>
-     * <dd>The stream response is sent as the actual response</dd>*
+     * <dd>The stream response is sent as the actual response</dd>
      * </dl>
      */
 
@@ -1274,6 +1274,7 @@ public final class TapestryModule
      * Adds basic render initializers:
      * <dl>
      * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd>
+     * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
      * <dt>DefaultValidationDecorator</dt>
      * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
@@ -1323,6 +1324,24 @@ public final class TapestryModule
             }
         };
 
+        MarkupRendererFilter zoneSetup = new MarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
+            {
+                PageRenderSupport pageRenderSupport = _environment.peekRequired(PageRenderSupport.class);
+
+                ZoneSetupImpl setup = new ZoneSetupImpl(pageRenderSupport);
+
+                _environment.push(ZoneSetup.class, setup);
+
+                renderer.renderMarkup(writer);
+
+                _environment.pop(ZoneSetup.class);
+
+                setup.writeInitializationScript();
+            }
+        };
+
         MarkupRendererFilter heartbeat = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
@@ -1360,6 +1379,7 @@ public final class TapestryModule
 
 
         configuration.add("PageRenderSupport", pageRenderSupport);
+        configuration.add("ZoneSetup", zoneSetup, "after:PageRenderSupport");
         configuration.add("Heartbeat", heartbeat);
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator);
     }
