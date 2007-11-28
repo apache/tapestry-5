@@ -118,7 +118,7 @@ public class MethodSignatureTest extends IOCTestCase
         m = find(Class.class, "newInstance");
 
         assertEquals(m.toString(),
-                     "java.lang.Object newInstance() throws java.lang.InstantiationException, java.lang.IllegalAccessException");
+                     "java.lang.Object newInstance() throws java.lang.IllegalAccessException, java.lang.InstantiationException");
     }
 
     @Test
