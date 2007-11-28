@@ -24,6 +24,6 @@ public class RunJetty
 {
     public static void main(String[] args) throws InterruptedException
     {
-        new JettyRunner("/", 8080, "src/test/app1");
+        new JettyRunner("/app1", 8080, "src/test/app1");
     }
 }

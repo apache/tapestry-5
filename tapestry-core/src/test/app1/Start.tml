@@ -60,7 +60,7 @@
                         -- accessing localized messages from the component catalog
                     </li>
                     <li>
-                        <a t:type="PageLink" page="AssetDemo">AssetDemo</a>
+                        <a t:type="PageLink" page="nested/AssetDemo">AssetDemo</a>
                         -- declaring an using Assets
                     </li>
                     <li>
