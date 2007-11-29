@@ -14,19 +14,29 @@
 
 package org.apache.tapestry.integration;
 
-import org.apache.tapestry.test.JettyRunner;
+import org.apache.tapestry.test.AbstractIntegrationTestSuite;
+import org.testng.annotations.Test;
 
-/**
- * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to
- * export test classes and resources into a web facet.
- */
-public class RunJetty
+@Test(timeOut = 50000, sequential = true, groups = {"integration"})
+public class RootPathRedirectTest extends AbstractIntegrationTestSuite
 {
-    public static void main(String[] args) throws InterruptedException
-    {
-        String contextName = args[0];
-        String path = args[1];
 
-        new JettyRunner(contextName, 8080, path);
+    public RootPathRedirectTest()
+    {
+        super("src/test/app3");
+    }
+
+
+    /**
+     * Test to prove that a redirect from the start page works correctly.
+     *
+     * @see https://issues.apache.org/jira/browse/TAPESTRY-1627
+     */
+    @Test
+    public void redirect_for_root() throws Exception
+    {
+        open(BASE_URL);
+
+        assertText("//h1", "Login Page");
     }
 }
