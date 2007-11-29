@@ -12,21 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.integration;
+package org.apache.tapestry.integration.app3.pages;
 
-import org.apache.tapestry.test.JettyRunner;
-
-/**
- * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to
- * export test classes and resources into a web facet.
- */
-public class RunJetty
+public class Login
 {
-    public static void main(String[] args) throws InterruptedException
-    {
-        String contextName = args[0];
-        String path = args[1];
-
-        new JettyRunner(contextName, 8080, path);
-    }
 }

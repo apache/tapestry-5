@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+        <h1>Login Page</h1>
+
+        <p>
+            You have reached this page via a redirect from the Start page's onActivate() event handler method.
+        </p>
+    </body>
+</html>
