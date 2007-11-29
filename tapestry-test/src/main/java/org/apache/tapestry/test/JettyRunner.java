@@ -71,14 +71,24 @@ public class JettyRunner
      */
     public void stop()
     {
+        System.out.printf("Stopping Jetty instance on port %d\n", _port);
+
         try
         {
-            _jetty.stop();
+            // Stop immediately and not gracefully.
+            _jetty.stop(false);
+
+            while (_jetty.isStarted())
+            {
+                Thread.sleep(100);
+            }
         }
         catch (Exception ex)
         {
             throw new RuntimeException("Error stopping Jetty instance: " + ex.toString(), ex);
         }
+
+        System.out.println("Jetty instance has stopped.");
     }
 
     @Override
@@ -89,6 +99,8 @@ public class JettyRunner
 
     private Server createAndStart()
     {
+        System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", _port, _contextPath, _warPath);
+
         try
         {
             Server server = new Server();

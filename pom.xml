@@ -220,7 +220,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.3</version>
+                    <version>2.4-SNAPSHOT</version>
                     <configuration>
                         <suiteXmlFiles>
                             <suiteXmlFile>src/test/conf/testng.xml</suiteXmlFile>
@@ -364,10 +364,10 @@
             <id>tapestry</id>
             <url>http://tapestry.formos.com/maven-repository</url>
         </pluginRepository>
-        <!-- I believe a version of the surefire plugin lives here. -->
+        <!-- Needed to get surefire 2.4-SNAPSHOT -->
         <pluginRepository>
-            <id>howardlewisship.com</id>
-            <url>http://howardlewisship.com/repository</url>
+            <id>apache.snapshots</id>
+            <url>http://people.apache.org/repo/m2-snapshot-repository/</url>
         </pluginRepository>
         <!-- I believe the Cobertura plugin lives here. -->
         <pluginRepository>
