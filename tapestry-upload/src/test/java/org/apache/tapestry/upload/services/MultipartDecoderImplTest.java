@@ -74,6 +74,10 @@ public class MultipartDecoderImplTest extends TapestryTestCase
     public void processFileItemsCreatesWrappedRequestAndSetsNonFileParameters() throws Exception
     {
         HttpServletRequest request = mockHttpServletRequest();
+
+        train_getCharacterEncoding(request, "UTF-8");
+        train_getCharacterEncoding(request, "UTF-8");
+
         MultipartDecoderImpl decoder = new MultipartDecoderImpl("/tmp", 888, -1, -1);
         List<FileItem> fileItems = Arrays.asList(createValueItem("one", "first"), createValueItem("two", "second"));
         replay();
@@ -169,4 +173,8 @@ public class MultipartDecoderImplTest extends TapestryTestCase
         return item;
     }
 
+    protected final void train_getCharacterEncoding(HttpServletRequest request, String encoding)
+    {
+        expect(request.getCharacterEncoding()).andReturn(encoding);
+    }
 }
