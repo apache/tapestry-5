@@ -11,10 +11,10 @@ Tapestry.Palette.prototype = {
         this.selected = $(id);
 
         this.hidden = $(id + ":values");
-	  
+
 	  // Seperator used for values in the hidden field.
         this.sep = ";";
-	  
+
 	  // The BUTTON elements
         this.select = $(id + ":select");
         this.deselect = $(id + ":deselect");
@@ -98,7 +98,7 @@ Tapestry.Palette.prototype = {
     {
         var options = $A(this.selected.options);
 
-    // Make sure that all elements from the (first) selectedIndex to the end are also selected.     
+    // Make sure that all elements from the (first) selectedIndex to the end are also selected.
         return options.slice(this.selected.selectedIndex).all(function(o)
         {
             return o.selected;
@@ -199,7 +199,24 @@ Tapestry.Palette.prototype = {
             if (candidate) before = candidate;
         }
 
-        to.add(option, before);
+        try
+        {
+            to.add(option, before);
+        }
+        catch (ex)
+        {
+            //probably IE complaining about type mismatch for before argument;
+            if (before == null)
+            {
+                //just add to the end...
+                to.add(option);
+            }
+            else
+            {
+                //use option index property...
+                to.add(option, before.index);
+            }
+        }
     },
 
     moveDownClicked : function(event)
@@ -210,7 +227,7 @@ Tapestry.Palette.prototype = {
         });
         var lastPos = lastSelected.index;
         var before = this.selected.options[lastPos + 2];
-        
+
     // TODO: needs to be "reorder options"
         this.reorderSelected(this.removeSelectedOptions(this.selected), before);
 
@@ -226,7 +243,7 @@ Tapestry.Palette.prototype = {
 
         this.updateHidden();
         this.updateButtons();
-    },
+    }
 };
 
 
