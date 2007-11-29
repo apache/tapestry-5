@@ -24,6 +24,7 @@ import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +111,17 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
         {
             if (item.isFormField())
             {
-                wrapper.addParameter(item.getFieldName(), item.getString());
+                String fieldValue;
+                try
+                {
+                    fieldValue = item.getString(request.getCharacterEncoding());
+                }
+                catch (UnsupportedEncodingException e)
+                {
+                    // TODO maybe log exception with level warn
+                    fieldValue = item.getString();
+                }
+                wrapper.addParameter(item.getFieldName(), fieldValue);
             }
             else
             {
