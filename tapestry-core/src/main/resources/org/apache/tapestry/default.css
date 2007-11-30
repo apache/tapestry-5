@@ -337,3 +337,24 @@ DIV.t-autocomplete-menu LI.selected {
     color: black;
     font-weight: bold;
 }
+
+DIV.t-error-bevel {
+    float: left;
+    margin: 0px;
+    padding: 0px;
+
+    cursor: pointer;
+    display: block;
+}
+
+DIV.t-error-bevel SPAN {
+    background: transparent url( 'vbevel.png' ) no-repeat scroll top left;
+    color: white;
+    display: block;
+    float: left;
+    font: normal 12px arial, sans-serif;
+    margin-left: 15px;
+    padding: 6px 30px 0px 15px;
+    height: 39px;
+    text-decoration: none;
+}

@@ -23,20 +23,6 @@ var Tapestry = {
     registerForm : function(form, clientValidations)
     {
         form = $(form);
-
-        form.errorDiv = $(form.id + ':errors');
-
-        if (form.errorDiv)
-        {
-            form.errorList = form.errorDiv.getElementsBySelector("ul").first();
-
-            if (! form.errorList)
-            {
-                // create it now
-                form.errorList = document.createElement("ul");
-                form.errorDiv.appendChild(form.errorList);
-            }
-        }
     
     // This can probably be cleaned up with bind() ...
 
@@ -45,11 +31,6 @@ var Tapestry = {
             var event = new Tapestry.FormEvent(form);
 
             form.firstError = true;
-
-            if (form.errorList)
-            {
-                form.errorList.innerHTML = "";
-            }
 
 	  // Locate elements that have an event manager (and therefore, validations)
             // and let those validations execute, which may result in calls to recordError().
@@ -64,21 +45,6 @@ var Tapestry = {
                     if (event.abort) throw $break;
                 }
             });
-
-	  // On a failure result, display the error div.
-
-            if (form.errorDiv)
-            {
-                if (event.result)
-                {
-                    if (form.errorDiv.visible())
-                        new Effect.BlindUp(form.errorDiv);
-                }
-                else if (! form.errorDiv.visible())
-                {
-                    new Effect.BlindDown(form.errorDiv);
-                }
-            }
 
             return event.result;
         };
@@ -96,9 +62,6 @@ var Tapestry = {
             }
 
             field.decorateForValidationError(event, message);
-
-            if (form.errorList)
-                new Insertion.Bottom(form.errorList, "<li>" + message + "</li>");
 
         };
 
@@ -315,6 +278,15 @@ Tapestry.FieldEventManager.prototype = {
         var id = field.id;
         this.label = $(id + ':label');
         this.icon = $(id + ':icon');
+
+        this.field.observe("blur", function()
+        {
+            var event = new Tapestry.FormEvent(this.field.form);
+
+            event.field = this.field;
+
+            this.validateInput(event);
+        }.bindAsEventListener(this));
     },
 
     // Adds a validator.  acceptBlank is true if the validator should be invoked regardless of
@@ -340,6 +312,9 @@ Tapestry.FieldEventManager.prototype = {
 
         if (this.icon)
             this.icon.hide();
+
+        if (this.popup)
+            this.popup.hide();
     },
 
     // Adds decorations to the field (including label and icon if present).
@@ -348,7 +323,6 @@ Tapestry.FieldEventManager.prototype = {
 
     addDecorations : function(event, message)
     {
-
         this.field.addClassName("t-error");
 
         if (this.label)
@@ -360,6 +334,44 @@ Tapestry.FieldEventManager.prototype = {
                 new Effect.Appear(this.icon);
         }
 
+        if (this.popup == undefined)
+        {
+            this.popupSpan = new Element("span");
+
+            this.popup = $(new Element("div", { 'class' : 't-error-bevel' })).update(this.popupSpan).hide();
+
+            this.popup.absolutize();
+
+            this.popup.field = this.field;
+
+            // It has to go somewhere.
+
+            this.field.insert({ after: this.popup });
+
+            this.popup.absolutize();
+
+            this.popup.observe("click", function()
+            {
+                new Effect.Fade(this.popup);
+            }.bindAsEventListener(this));
+        }
+
+        this.popupSpan.update(message);
+
+        if (! this.popup.visible())
+        {
+            var fieldPos = this.field.positionedOffset();
+
+            // These magic numbers are based on the height of the bevel image.
+            this.popup.setStyle({ top: fieldPos[1] - 34 + "px", left: fieldPos[0] + "px", width: "auto", height: "39px" });
+
+            this.popup.fadingIn = true;
+
+            new Effect.Appear(this.popup, { afterFinish: function()
+            {
+                this.popup.fadingIn = false;
+            }.bindAsEventListener(this) });
+        }
     },
 
 
@@ -471,4 +483,26 @@ Event.observe(window, 'load', function()
         element.hide();
         element.removeClassName("t-invisible");
     });
+
+   // Adds a focus observer that fades all error popups except for the
+    // field in question.
+
+    $$("INPUT", "SELECT", "TEXTAREA").each(function(element)
+    {
+        element.observe("focus", function()
+        {
+            $$("DIV.t-error-bevel").each(function(popup)
+            {
+                // This handles a case where the user tabs out of a field and it is currently fading in with an
+                // error message.  Leave it up unchanged.
+
+                if (popup.fadingIn) return;
+
+                var opacity = popup.field == element ? 1 : .15;
+
+                new Effect.Opacity(popup, { to: opacity });
+            });
+        });
+    });
 });
+

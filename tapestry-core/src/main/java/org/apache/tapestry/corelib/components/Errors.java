@@ -20,15 +20,14 @@ import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.internal.InternalMessages;
-import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.services.FormSupport;
 
 import java.util.List;
 
 /**
- * Standard validation error presenter. Must be enclosed by a {@link Form} component. If errors are
+ * Standard validation error presenter. Must be enclosed by a {@link org.apache.tapestry.corelib.components.Form} component. If errors are
  * present, renders a div element around a banner message and around an unnumbered list of error
- * messages.
+ * messages.         Renders nothing if the {@link org.apache.tapestry.ValidationTracker} shows no errors.
  */
 public class Errors
 {
@@ -59,9 +58,9 @@ public class Errors
 
         if (_tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
 
-        Element div = writer.element("div", "class", _class, "id", _formSupport.getClientId() + ":errors");
+        if (!_tracker.getHasErrors()) return;
 
-        if (!_tracker.getHasErrors()) div.addClassName(TapestryConstants.INVISIBLE_CLASS);
+        writer.element("div", "class", _class);
 
         // Inner div for the banner text
         writer.element("div");
