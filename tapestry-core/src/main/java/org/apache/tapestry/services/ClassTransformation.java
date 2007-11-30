@@ -227,12 +227,30 @@ public interface ClassTransformation extends AnnotationProvider
      * inherited methods, a method is added that first invokes the super implementation. Use
      * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
      * super-class method is invoked.
+     * <p/>
+     * The extended method is considered <em>new</em>. New methods <em>do not</em> are not
+     * scanned for {@linkplain #removeField(String)} removed}, {@linkplain #replaceReadAccess(String, String)} read replaced},
+     * or {@linkplain #replaceWriteAccess(String, String) write replaced} fields.  Generally that's what you want!
      *
      * @param methodSignature the signature of the method to extend
      * @param methodBody      the body of code
-     * @throws IllegalArgumentException if the provided Javassist method body can not be compiled
+     * @throws org.apache.tapestry.internal.services.MethodCompileException
+     *          if the provided Javassist method body can not be compiled
+     * @see #extendExistingMethod(TransformMethodSignature, String)
      */
     void extendMethod(TransformMethodSignature methodSignature, String methodBody);
+
+    /**
+     * Like {@link #extendMethod(TransformMethodSignature, String)}, but the extension does not mark
+     * the method as new, and field changes <em>will</em> be processed.
+     *
+     * @param methodSignature signature of the method to extend
+     * @param methodBody      the body of code
+     * @throws org.apache.tapestry.internal.services.MethodCompileException
+     *          if the provided method body can not be compiled
+     * @see #prefixMethod(TransformMethodSignature, String)
+     */
+    void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
      * Inserts code at the beginning of a method body (i.e. {@link CtBehavior#insertBefore(String)}.
@@ -241,10 +259,15 @@ public interface ClassTransformation extends AnnotationProvider
      * inherited methods, a method is added that first invokes the super implementation. Use
      * {@link #addMethod(TransformMethodSignature, String)} when it is necessary to control when the
      * super-class method is invoked.
+     * <p/>
+     * <p/>
+     * Like {@link #extendExistingMethod(TransformMethodSignature, String)}, this method is generally used to "wrap" an existing method adding additional functionality
+     * such as caching or transaction support.
      *
      * @param methodSignature
      * @param methodBody
-     * @throws IllegalArgumentException If the provided Javassist method body could not be compiled
+     * @throws org.apache.tapestry.internal.services.MethodCompileException
+     *          if the provided method body can not be compiled
      */
     void prefixMethod(TransformMethodSignature methodSignature, String methodBody);
 

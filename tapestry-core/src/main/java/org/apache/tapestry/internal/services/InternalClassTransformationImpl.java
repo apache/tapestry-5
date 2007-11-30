@@ -113,8 +113,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     private ClassLoader _loader;
 
     /**
-     * This is a constructor for the root class, the class that directly contains the ComponentClass
-     * annotation.
+     * This is a constructor for a base class.
      */
     public InternalClassTransformationImpl(CtClass ctClass, ClassLoader loader, Logger logger,
                                            ComponentModel componentModel)
@@ -143,8 +142,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                                                                     "getComponentResources", null, null);
 
         addMethod(sig, "return " + _resourcesFieldName + ";");
+
+        // The "}" will be added later, inside  finish().
     }
 
+    /**
+     * Constructor for a component sub-class.
+     */
     public InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
                                            ClassLoader loader, Logger logger, ComponentModel componentModel)
     {
@@ -184,7 +188,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         _constructor.append(");\n");
 
-        // The "}" will be added later, inside
+        // The "}" will be added later, inside  finish().
     }
 
     private void freeze()
@@ -622,11 +626,31 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _addedMethods.add(method);
     }
 
+    public void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody)
+    {
+        failIfFrozen();
+
+        CtMethod method = findMethod(methodSignature);
+
+        try
+        {
+            method.insertAfter(methodBody);
+        }
+        catch (CannotCompileException ex)
+        {
+            throw new MethodCompileException(ServicesMessages.methodCompileError(methodSignature, methodBody, ex),
+                                             methodBody, ex);
+        }
+
+        addMethodToDescription("extend existing", methodSignature, methodBody);
+    }
+
     public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
     {
         failIfFrozen();
 
         CtMethod method = findMethod(methodSignature);
+
         try
         {
             method.insertBefore(methodBody);
@@ -638,7 +662,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         addMethodToDescription("prefix", methodSignature, methodBody);
-        _addedMethods.add(method);
     }
 
     private void addMethodToDescription(String operation, TransformMethodSignature methodSignature, String methodBody)
@@ -1383,15 +1406,32 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             @Override
             public void edit(FieldAccess access) throws CannotCompileException
             {
+                boolean isRead = access.isReader();
+                String fieldName = access.getFieldName();
+                CtBehavior where = access.where();
+
+                _formatter.format("Checking field %s %s in %s: ", isRead ? "read" : "write", fieldName,
+                                  where.getLongName());
+
                 // Ignore any methods to were added as part of the transformation.
                 // If we reference the field there, we really mean the field.
 
-                if (_addedMethods.contains(access.where())) return;
+                if (_addedMethods.contains(where))
+                {
+                    _formatter.format("added method\n");
+                    return;
+                }
 
-                Map<String, String> transformMap = access.isReader() ? _fieldReadTransforms : _fieldWriteTransforms;
+                Map<String, String> transformMap = isRead ? _fieldReadTransforms : _fieldWriteTransforms;
 
-                String body = transformMap.get(access.getFieldName());
-                if (body == null) return;
+                String body = transformMap.get(fieldName);
+                if (body == null)
+                {
+                    _formatter.format("field not transformed\n");
+                    return;
+                }
+
+                _formatter.format("replacing with %s\n", body);
 
                 access.replace(body);
             }
@@ -1405,6 +1445,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             throw new RuntimeException(ex);
         }
+
+        _formatter.format("\n");
     }
 
     public Class toClass(String type)

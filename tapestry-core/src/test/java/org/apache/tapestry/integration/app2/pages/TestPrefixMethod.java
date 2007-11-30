@@ -14,7 +14,12 @@
 
 package org.apache.tapestry.integration.app2.pages;
 
+import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.integration.app2.FortyTwo;
+import org.apache.tapestry.integration.app2.PlusOne;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.services.BeanModelSource;
 
 public class TestPrefixMethod
 {
@@ -24,4 +29,28 @@ public class TestPrefixMethod
         return 0;
     }
 
+    @Inject
+    private ComponentResources _resources;
+
+    @Inject
+    private BeanModelSource _modelSource;
+
+    @InjectPage
+    private TestPrefixMethod2 _otherPage;
+
+    private int foo;
+
+    @FortyTwo
+    public int getValue2()
+    {
+        foo = _modelSource.hashCode();
+        return foo;
+    }
+
+    @PlusOne
+    public int getValue3()
+    {
+        int value = _otherPage.hashCode();
+        return value * 0;
+    }
 }
