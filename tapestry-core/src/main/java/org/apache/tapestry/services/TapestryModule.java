@@ -1209,7 +1209,8 @@ public final class TapestryModule
 
         configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler));
 
-        configuration.add("ComponentAction", new ComponentActionDispatcher(componentActionRequestHandler),
+        configuration.add("ComponentAction",
+                          new ComponentActionDispatcher(componentActionRequestHandler, componentClassResolver),
                           "after:PageRender");
     }
 

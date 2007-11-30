@@ -17,10 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
@@ -30,13 +27,17 @@ import java.io.IOException;
  */
 public class ComponentActionDispatcher implements Dispatcher
 {
+    private final ComponentClassResolver _componentClassResolver;
+
     private final ComponentActionRequestHandler _componentActionRequestHandler;
 
     private final String[] _emptyString = new String[0];
 
-    public ComponentActionDispatcher(ComponentActionRequestHandler componentActionRequestHandler)
+    public ComponentActionDispatcher(ComponentActionRequestHandler componentActionRequestHandler,
+                                     ComponentClassResolver componentClassResolver)
     {
         _componentActionRequestHandler = componentActionRequestHandler;
+        _componentClassResolver = componentClassResolver;
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -102,6 +103,10 @@ public class ComponentActionDispatcher implements Dispatcher
         }
 
         if (logicalPageName == null) return false;
+
+        // We've identified a page name ... does the application contain a page with that name?
+
+        if (!_componentClassResolver.isPageName(logicalPageName)) return false;
 
         String[] eventContext = contextStart > 0 ? decodeContext(path.substring(contextStart)) : _emptyString;
 
