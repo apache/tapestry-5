@@ -17,10 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.Dispatcher;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
 import static org.easymock.EasyMock.aryEq;
 import static org.easymock.EasyMock.eq;
 import org.testng.annotations.Test;
@@ -40,7 +37,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler);
+        Dispatcher dispatcher = new ComponentActionDispatcher(handler, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -107,8 +104,11 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_getPath(request, "/mypage:eventname");
+
+        train_isPageName(resolver, "mypage", true);
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, "alpha/beta");
 
@@ -117,9 +117,30 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler);
+        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
 
         assertTrue(dispatcher.dispatch(request, response));
+
+        verify();
+    }
+
+    @Test
+    public void request_path_reference_non_existent_page() throws Exception
+    {
+        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+
+        train_getPath(request, "/mypage.foo");
+
+        train_isPageName(resolver, "mypage", false);
+
+        replay();
+
+        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
+
+        assertFalse(dispatcher.dispatch(request, response));
 
         verify();
     }
@@ -130,8 +151,11 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_getPath(request, requestPath);
+
+        train_isPageName(resolver, logicalPageName, true);
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
@@ -139,7 +163,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler);
+        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
 
         assertTrue(dispatcher.dispatch(request, response));
 
