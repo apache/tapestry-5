@@ -1,11 +1,13 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
 
-<t:beaneditform object="this"/>
+    <h1>Regexp Validation Demo</h1>
 
-<hr/>
+    <t:beaneditform object="this"/>
 
-  <t:if test="zipCode">
-    Zip code: [${zipCode}]
-  </t:if>
+    <hr/>
+
+    <t:if test="zipCode">
+        Zip code: [${zipCode}]
+    </t:if>
 
 </html>  

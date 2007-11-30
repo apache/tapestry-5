@@ -363,7 +363,7 @@ Tapestry.FieldEventManager.prototype = {
             var fieldPos = this.field.positionedOffset();
 
             // These magic numbers are based on the height of the bevel image.
-            this.popup.setStyle({ top: fieldPos[1] - 34 + "px", left: fieldPos[0] + "px", width: "auto", height: "39px" });
+            this.popup.setStyle({ top: fieldPos[1] - 34 + "px", left: fieldPos[0] - 5 + "px", width: "auto", height: "39px" });
 
             this.popup.fadingIn = true;
 
