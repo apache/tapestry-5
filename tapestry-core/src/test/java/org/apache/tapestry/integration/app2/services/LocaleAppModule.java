@@ -15,6 +15,7 @@
 package org.apache.tapestry.integration.app2.services;
 
 import org.apache.tapestry.integration.app2.FortyTwo;
+import org.apache.tapestry.integration.app2.PlusOne;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -24,8 +25,7 @@ import org.apache.tapestry.services.TransformMethodSignature;
 
 public class LocaleAppModule
 {
-    public static void contributeApplicationDefaults(
-            MappedConfiguration<String, String> configuration)
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add("tapestry.supported-locales", "en,fr,de");
     }
@@ -34,6 +34,7 @@ public class LocaleAppModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration)
     {
         configuration.add("FortyTwo", new FortyTwoWorker());
+        configuration.add("PlusOne", new PlusOneWorker());
     }
 
     private static final class FortyTwoWorker implements ComponentClassTransformWorker
@@ -47,5 +48,16 @@ public class LocaleAppModule
             }
         }
 
+    }
+
+    private static final class PlusOneWorker implements ComponentClassTransformWorker
+    {
+        public void transform(ClassTransformation transformation, MutableComponentModel model)
+        {
+            for (TransformMethodSignature method : transformation.findMethodsWithAnnotation(PlusOne.class))
+            {
+                transformation.extendExistingMethod(method, "return $_ + 1;");
+            }
+        }
     }
 }

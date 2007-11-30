@@ -33,7 +33,9 @@ public class PrefixMethodTest extends Assert
         _tester = new PageTester(appPackage, appName, PageTester.DEFAULT_CONTEXT_PATH, LocaleAppModule.class);
         Document doc = _tester.renderPage("TestPrefixMethod");
 
-        assertEquals(doc.getElementById("value").getChildMarkup(), "42");
+        // make sure you can use on methods that have injected fields
+        assertEquals(doc.getElementById("value2").getChildMarkup(), "42");
+        assertEquals(doc.getElementById("value3").getChildMarkup(), "1");
 
         // should override the method in the superclass
         doc = _tester.renderPage("TestPrefixMethod2");

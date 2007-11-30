@@ -28,12 +28,6 @@ import java.util.List;
 public interface InternalClassTransformation extends ClassTransformation
 {
     /**
-     * Returns the name of the protected field that is injected with the
-     * {@link org.apache.tapestry.internal.InternalComponentResources}.
-     */
-    String getResourcesFieldName();
-
-    /**
      * Invoked after all {@link ComponentClassTransformWorker}s have had their chance to work over
      * the class. This performs any final operations for the class transformation, which includes
      * coming up with the final constructor method for the class.
