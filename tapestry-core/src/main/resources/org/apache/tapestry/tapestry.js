@@ -455,7 +455,7 @@ Tapestry.Zone.prototype = {
         // (borders and such).  Typically, such a Zone div will initially be invisible.
         // The show and update functions apply to the Zone div, not the update div.
 
-        var updates = div.select("DIV.t-zone-update");
+        var updates = this.div.select("DIV.t-zone-update");
 
         this.updatediv = updates.length == 0 ? this.div : updates[0];
     },

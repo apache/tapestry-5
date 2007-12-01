@@ -43,6 +43,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("AssetDemo");
 
+        // Test for https://issues.apache.org/jira/browse/TAPESTRY-1935
+
+        assertSourcePresent("<link href=\"/css/app.css\" rel=\"stylesheet\" type=\"text/css\">");
+
         assertText("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
 
         // doesn't prove that the image shows up in the client browser (it does, but

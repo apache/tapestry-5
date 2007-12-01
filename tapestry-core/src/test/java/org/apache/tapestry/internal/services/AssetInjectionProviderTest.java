@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.AssetSource;
@@ -57,6 +58,7 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         ClassTransformation ct = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
         Path annotation = mockPath();
+        Resource baseResource = mockResource();
 
         String fieldName = "myField";
         Class fieldType = Object.class;
@@ -69,6 +71,11 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         train_expandSymbols(symbolSource, value, expanded);
 
         train_addInjectedField(ct, AssetSource.class, "assetSource", assetSource, "as");
+
+        train_getBaseResource(model, baseResource);
+
+        train_addInjectedField(ct, Resource.class, "baseResource", baseResource, "br");
+
         train_getResourcesFieldName(ct, "rez");
 
         // This only tests that the code is generated as expected (which is a bit brittle), it
@@ -76,8 +83,7 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         // tests for that.
 
         ct
-                .extendConstructor(
-                        "myField = (java.lang.Object) as.findAsset(rez.getBaseResource(), \"foo.gif\", rez.getLocale());");
+                .extendConstructor("myField = (java.lang.Object) as.findAsset(br, \"foo.gif\", rez.getLocale());");
 
         ct.makeReadOnly(fieldName);
 

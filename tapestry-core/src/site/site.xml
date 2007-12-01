@@ -61,6 +61,7 @@
             <item name="Input Validation" href="guide/validation.html"/>
             <item name="BeanEditForm Guide" href="guide/beaneditform.html"/>
             <item name="Component Events" href="guide/event.html"/>
+            <item name="CSS" href="guide/css.html"/>
             <item name="Ajax" href="guide/ajax.html"/>
             <item name="Page Lifecycle" href="guide/lifecycle.html"/>
             <item name="Component Mixins" href="guide/mixins.html"/>
