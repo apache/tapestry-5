@@ -16,8 +16,8 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -65,6 +65,7 @@ import java.util.Set;
  * Option groups within the {@link SelectModel} will be rendered, but are not supported by the many
  * browsers, and are not fully handled on the client side.
  */
+@IncludeJavaScriptLibrary("palette.js")
 public class Palette extends AbstractField
 {
     // These all started as anonymous inner classes, and were refactored out to here.
@@ -185,10 +186,6 @@ public class Palette extends AbstractField
      */
     @Parameter(value = "asset:move_up.png")
     private Asset _moveUp;
-
-    @Inject
-    @Path("palette.js")
-    private Asset _paletteLibrary;
 
     /**
      * Used to include scripting code in the rendered page.
@@ -334,8 +331,6 @@ public class Palette extends AbstractField
         }
 
         String clientId = getClientId();
-
-        _renderSupport.addScriptLink(_paletteLibrary);
 
         _renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, _reorder, naturalOrder);
 
