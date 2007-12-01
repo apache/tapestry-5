@@ -371,7 +371,7 @@ public class DefaultModuleDefImpl implements ModuleDef, ServiceDefAccumulator
      */
     private void bind()
     {
-        Throwable failure = null;
+        Throwable failure;
         Method bindMethod = null;
 
         try

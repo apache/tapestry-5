@@ -62,7 +62,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
     private enum State
     {
-        CLASS, INTERFACE, DONE;
+        CLASS, INTERFACE, DONE
     }
 
     private State _state;
@@ -107,10 +107,8 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
                 _searchClass = parentOf(_searchClass);
 
-                if (_searchClass == null)
-                    _state = State.INTERFACE;
-                else
-                    queueInterfaces(_searchClass);
+                if (_searchClass == null) _state = State.INTERFACE;
+                else queueInterfaces(_searchClass);
 
                 return result;
 
@@ -146,8 +144,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
         {
             Class componentType = clazz.getComponentType();
 
-            while (componentType.isArray())
-                componentType = componentType.getComponentType();
+            while (componentType.isArray()) componentType = componentType.getComponentType();
 
             if (!componentType.isPrimitive()) return Object[].class;
         }

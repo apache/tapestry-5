@@ -102,8 +102,7 @@ public class ClassFactoryImpl implements ClassFactory
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(ServiceMessages.unableToCreateClass(name, superClass, ex),
-                                       ex);
+            throw new RuntimeException(ServiceMessages.unableToCreateClass(name, superClass, ex), ex);
         }
     }
 
@@ -152,11 +151,7 @@ public class ClassFactoryImpl implements ClassFactory
 
             String sourceFile = ctMethod.getDeclaringClass().getClassFile2().getSourceFile();
 
-            String description = String.format(
-                    "%s (at %s:%d)",
-                    InternalUtils.asString(method),
-                    sourceFile,
-                    lineNumber);
+            String description = String.format("%s (at %s:%d)", InternalUtils.asString(method), sourceFile, lineNumber);
 
             return new StringLocation(description, lineNumber);
         }
@@ -212,6 +207,7 @@ public class ClassFactoryImpl implements ClassFactory
         }
         catch (Exception ex)
         {
+            // Leave the line number as 0 (aka "unknown").
         }
 
         return new StringLocation(builder.toString(), lineNumber);

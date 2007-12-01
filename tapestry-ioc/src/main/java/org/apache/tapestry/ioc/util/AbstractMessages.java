@@ -86,8 +86,6 @@ public abstract class AbstractMessages implements Messages
             {
                 _cache.put(key, newFormatter);
             }
-
-            ;
         });
 
         return newFormatter;

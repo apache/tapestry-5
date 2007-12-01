@@ -28,9 +28,9 @@ public class TapestryException extends RuntimeException implements Locatable
     private transient final Location _location;
 
     /**
-     * @param message   a message (may be null)
-     * @param locatable implements {@link Location} or {@link Locatable}
-     * @param cause     if not null, the root cause of the exception
+     * @param message  a message (may be null)
+     * @param location implements {@link Location} or {@link Locatable}
+     * @param cause    if not null, the root cause of the exception
      */
     public TapestryException(String message, Object location, Throwable cause)
     {
@@ -47,9 +47,9 @@ public class TapestryException extends RuntimeException implements Locatable
     }
 
     /**
-     * @param message   a message (may be null)
-     * @param locatable location to associated with the exception, or null if not known
-     * @param cause     if not null, the root cause of the exception
+     * @param message  a message (may be null)
+     * @param location location to associated with the exception, or null if not known
+     * @param cause    if not null, the root cause of the exception
      */
     public TapestryException(String message, Location location, Throwable cause)
     {

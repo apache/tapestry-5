@@ -36,7 +36,7 @@ public class ConcurrentBarrier
      * see if the current thread has a read lock. So, we tend to remove the TL, rather than set its
      * value to false.
      */
-    public static class ThreadBoolean extends ThreadLocal<Boolean>
+    private static class ThreadBoolean extends ThreadLocal<Boolean>
     {
         @Override
         protected Boolean initialValue()

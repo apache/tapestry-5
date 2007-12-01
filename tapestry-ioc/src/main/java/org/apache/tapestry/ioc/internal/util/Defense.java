@@ -24,10 +24,7 @@ public final class Defense
     }
 
     /**
-     * Checks that a method parameter value is not null, and returns it. This method is used in
-     * situations where some of the parameters to a method are allowed to be null and other's arent.
-     * In that situation, the method will be annotated with {@link SuppressNullCheck}, and the
-     * relevent null checks will occur inside the method implementation.
+     * Checks that a method parameter value is not null, and returns it.
      *
      * @param <T>           the value type
      * @param value         the value (which is checked to ensure non-nullness)
@@ -37,8 +34,7 @@ public final class Defense
      */
     public static <T> T notNull(T value, String parameterName)
     {
-        if (value == null)
-            throw new IllegalArgumentException(UtilMessages.parameterWasNull(parameterName));
+        if (value == null) throw new IllegalArgumentException(UtilMessages.parameterWasNull(parameterName));
 
         return value;
     }
@@ -57,8 +53,7 @@ public final class Defense
         {
             String trimmedValue = value.trim();
 
-            if (!trimmedValue.equals(""))
-                return trimmedValue;
+            if (!trimmedValue.equals("")) return trimmedValue;
         }
 
         throw new IllegalArgumentException(UtilMessages.parameterWasBlank(parameterName));
@@ -79,10 +74,7 @@ public final class Defense
         notNull(parameterValue, parameterName);
 
         if (!type.isInstance(parameterValue))
-            throw new IllegalArgumentException(UtilMessages.badCast(
-                    parameterName,
-                    parameterValue,
-                    type));
+            throw new IllegalArgumentException(UtilMessages.badCast(parameterName, parameterValue, type));
 
         return type.cast(parameterValue);
     }

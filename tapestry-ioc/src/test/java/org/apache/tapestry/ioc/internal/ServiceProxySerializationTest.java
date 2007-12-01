@@ -80,8 +80,7 @@ public class ServiceProxySerializationTest extends IOCTestCase
 
         oos.close();
 
-        byte[] serialized = baos.toByteArray();
-        return serialized;
+        return baos.toByteArray();
     }
 
     private <T> T deserialize(Class<T> type, byte[] serialized) throws IOException, ClassNotFoundException

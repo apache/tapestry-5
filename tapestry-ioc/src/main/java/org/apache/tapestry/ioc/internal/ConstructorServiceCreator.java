@@ -39,17 +39,14 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
     public Object createObject()
     {
-        Throwable failure = null;
+        Throwable failure;
 
         try
         {
-            Object[] parameters = InternalUtils.calculateParametersForConstructor(
-                    _constructor,
-                    _resources,
-                    getParameterDefaultsWithConfigurations());
+            Object[] parameters = InternalUtils.calculateParametersForConstructor(_constructor, _resources,
+                                                                                  getParameterDefaultsWithConfigurations());
 
-            if (_logger.isDebugEnabled())
-                _logger.debug(IOCMessages.invokingConstructor(_creatorDescription));
+            if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.invokingConstructor(_creatorDescription));
 
             return _constructor.newInstance(parameters);
         }
@@ -62,10 +59,7 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
             failure = ex;
         }
 
-        throw new RuntimeException(IOCMessages.constructorError(
-                _creatorDescription,
-                _serviceId,
-                failure), failure);
+        throw new RuntimeException(IOCMessages.constructorError(_creatorDescription, _serviceId, failure), failure);
     }
 
     /**

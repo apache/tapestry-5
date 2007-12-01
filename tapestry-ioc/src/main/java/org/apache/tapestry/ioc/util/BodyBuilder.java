@@ -59,8 +59,8 @@ public final class BodyBuilder
     /**
      * Adds text to the current line, without ending the line.
      *
-     * @param a    string format, as per {@link java.util.Formatter}
-     * @param args arguments referenced by format specifiers
+     * @param format string format, as per {@link java.util.Formatter}
+     * @param args   arguments referenced by format specifiers
      */
     public void add(String format, Object... args)
     {
@@ -70,8 +70,8 @@ public final class BodyBuilder
     /**
      * Adds text to the current line and ends the line.
      *
-     * @param a    string format, as per {@link java.util.Formatter}
-     * @param args arguments referenced by format specifiers
+     * @param format string format, as per {@link java.util.Formatter}
+     * @param args   arguments referenced by format specifiers
      */
     public void addln(String format, Object... args)
     {

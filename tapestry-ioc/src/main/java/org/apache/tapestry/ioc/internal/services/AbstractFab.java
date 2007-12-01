@@ -46,7 +46,7 @@ public class AbstractFab
     /**
      * Map from Class to CtClass.
      */
-    private Map<Class, CtClass> _ctClassCache = newMap();
+    private final Map<Class, CtClass> _ctClassCache = newMap();
 
     public void addInterface(Class interfaceClass)
     {

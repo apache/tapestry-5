@@ -40,5 +40,5 @@ public enum Status
     /**
      * A service implementation for the service has been created.
      */
-    REAL;
+    REAL
 }

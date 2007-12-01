@@ -712,7 +712,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         if (constructor == null) throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-        Throwable failure = null;
+        Throwable failure;
         // An empty map, because when performing autobuilding outside the context of building a
         // service, we don't have defaults for Log, service id, etc.
 

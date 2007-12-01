@@ -71,8 +71,7 @@ public final class RegistryBuilder
         // Make the ClassFactory appear to be a service inside TapestryIOCModule, even before that
         // module exists.
 
-        Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName()
-                + ".ClassFactory");
+        Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
 
         _classFactory = new ClassFactoryImpl(_classLoader, classFactoryLogger);
 
@@ -105,8 +104,7 @@ public final class RegistryBuilder
 
             if (annotation == null) continue;
 
-            for (Class sub : annotation.value())
-                queue.add(sub);
+            queue.addAll(Arrays.asList(annotation.value()));
         }
     }
 
