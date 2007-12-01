@@ -45,8 +45,6 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
     /**
      * Fires the {@link RegistryShutdownListener#registryDidShutdown()} method on each listener. At
      * the end, all the listeners are discarded.
-     *
-     * @param log used if any listener throws an exception
      */
     public void fireRegistryDidShutdown()
     {

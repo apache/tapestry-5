@@ -70,7 +70,7 @@ public interface ClassFactory
     ClassLoader getClassLoader();
 
     /**
-     * Converts a method to a {@link MethodLocation}, which includes information about the source
+     * Converts a method to a {@link Location}, which includes information about the source
      * file name and line number.
      *
      * @param method to look up

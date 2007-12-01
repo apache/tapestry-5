@@ -32,18 +32,15 @@ public class ValueObjectProvider implements ObjectProvider
 
     private final TypeCoercer _typeCoercer;
 
-    public ValueObjectProvider(@Builtin
-    SymbolSource symbolSource,
+    public ValueObjectProvider(@Builtin SymbolSource symbolSource,
 
-                               @Builtin
-                               TypeCoercer typeCoercer)
+                               @Builtin TypeCoercer typeCoercer)
     {
         _symbolSource = symbolSource;
         _typeCoercer = typeCoercer;
     }
 
-    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                         ObjectLocator locator)
+    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
         Value annotation = annotationProvider.getAnnotation(Value.class);
 
@@ -52,8 +49,6 @@ public class ValueObjectProvider implements ObjectProvider
         String value = annotation.value();
         String expanded = _symbolSource.expandSymbols(value);
 
-        T coerced = _typeCoercer.coerce(expanded, objectType);
-
-        return coerced;
+        return _typeCoercer.coerce(expanded, objectType);
     }
 }

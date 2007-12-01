@@ -22,6 +22,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -99,12 +100,10 @@ public class PropertyAccessImpl implements PropertyAccess
 
     private <T> void addAll(List<T> list, T[] array)
     {
-        for (T i : array)
-            list.add(i);
+        list.addAll(Arrays.asList(array));
     }
 
-    private void addPropertiesFromExtendedInterfaces(Class forClass,
-                                                     List<PropertyDescriptor> descriptors)
+    private void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
             throws IntrospectionException
     {
         LinkedList<Class> queue = newLinkedList();

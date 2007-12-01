@@ -32,7 +32,7 @@ public class ChainBuilderImpl implements ChainBuilder
      * Map, keyed on service interface, of implementation Class.
      */
 
-    private Map<Class, Class> _cache = newConcurrentMap();
+    private final Map<Class, Class> _cache = newConcurrentMap();
 
     public ChainBuilderImpl(@Builtin ClassFactory classFactory)
     {
@@ -85,7 +85,7 @@ public class ChainBuilderImpl implements ChainBuilder
         String arrayClassName = commandInterface.getCanonicalName() + "[]";
         String jvmName = ClassFabUtils.toJVMBinaryName(arrayClassName);
 
-        Class array = null;
+        Class array;
 
         try
         {

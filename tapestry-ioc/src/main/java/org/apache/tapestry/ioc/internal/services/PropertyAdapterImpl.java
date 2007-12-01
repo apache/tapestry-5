@@ -81,11 +81,9 @@ public class PropertyAdapterImpl implements PropertyAdapter
     public Object get(Object instance)
     {
         if (_readMethod == null)
-            throw new UnsupportedOperationException(ServiceMessages.readNotSupported(
-                    instance,
-                    _name));
+            throw new UnsupportedOperationException(ServiceMessages.readNotSupported(instance, _name));
 
-        Throwable fail = null;
+        Throwable fail;
 
         try
         {
@@ -106,11 +104,9 @@ public class PropertyAdapterImpl implements PropertyAdapter
     public void set(Object instance, Object value)
     {
         if (_writeMethod == null)
-            throw new UnsupportedOperationException(ServiceMessages.writeNotSupported(
-                    instance,
-                    _name));
+            throw new UnsupportedOperationException(ServiceMessages.writeNotSupported(instance, _name));
 
-        Throwable fail = null;
+        Throwable fail;
 
         try
         {
@@ -134,8 +130,7 @@ public class PropertyAdapterImpl implements PropertyAdapter
     {
         T result = _readMethod != null ? _readMethod.getAnnotation(annotationClass) : null;
 
-        if (result == null && _writeMethod != null)
-            result = _writeMethod.getAnnotation(annotationClass);
+        if (result == null && _writeMethod != null) result = _writeMethod.getAnnotation(annotationClass);
 
         return result;
     }

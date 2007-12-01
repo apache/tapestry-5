@@ -80,6 +80,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
          * @param key to compare against
          * @return true if equal
          */
+        @SuppressWarnings({"StringEquality"})
         boolean matches(String key)
         {
             return key == _key || (key != null && key.equalsIgnoreCase(_key));
@@ -162,7 +163,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
             Position position = select(e.getKey());
 
-            return position.isFound() ? position.entry().valueMatches(e.getValue()) : false;
+            return position.isFound() && position.entry().valueMatches(e.getValue());
         }
 
         @Override
@@ -405,7 +406,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         int low = 0;
         int high = _size - 1;
 
-        int cursor = 0;
+        int cursor;
 
         while (low <= high)
         {

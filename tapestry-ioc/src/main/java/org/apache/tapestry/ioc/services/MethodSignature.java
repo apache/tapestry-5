@@ -40,13 +40,13 @@ public class MethodSignature
 {
     private int _hashCode = -1;
 
-    private Class _returnType;
+    private final Class _returnType;
 
-    private String _name;
+    private final String _name;
 
-    private Class[] _parameterTypes;
+    private final Class[] _parameterTypes;
 
-    private Class[] _exceptionTypes;
+    private final Class[] _exceptionTypes;
 
     public MethodSignature(Class returnType, String name, Class[] parameterTypes, Class[] exceptionTypes)
     {

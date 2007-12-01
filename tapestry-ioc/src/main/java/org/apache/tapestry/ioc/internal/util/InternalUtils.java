@@ -43,15 +43,15 @@ public class InternalUtils
      * Leading punctiation on member names that is stripped off to form a property name or new
      * member name.
      */
-    public static final String NAME_PREFIX = "_$";
+    private static final String NAME_PREFIX = "_$";
 
     /**
      * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a
-     * {@link MethodLocation} (where possible). {@link #asString(Method)} is used under the covers,
+     * {@link Location} (where possible). {@link #asString(Method)} is used under the covers,
      * to present a detailed, but not excessive, description of the class, method and parameters.
      *
      * @param method       method to convert to a string
-     * @param classFactory used to obtain the {@link MethodLocation}
+     * @param classFactory used to obtain the {@link Location}
      * @return the method formatted for presentation to the user
      */
     public static String asString(Method method, ClassFactory classFactory)
@@ -363,12 +363,12 @@ public class InternalUtils
     /**
      * Returns true if the method provided is a static method.
      */
-    public static final boolean isStatic(Method method)
+    public static boolean isStatic(Method method)
     {
         return Modifier.isStatic(method.getModifiers());
     }
 
-    public static final <T> Iterator<T> reverseIterator(final List<T> list)
+    public static <T> Iterator<T> reverseIterator(final List<T> list)
     {
         final ListIterator<T> normal = list.listIterator(list.size());
 

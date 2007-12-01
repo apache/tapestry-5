@@ -71,8 +71,8 @@ public abstract class AbstractServiceCreator implements ObjectCreator
      * containing the collected configuration data. This involves scanning the parameters and
      * generic types.
      */
-    protected final Map<Class, Object> getParameterDefaultsWithConfiguration(
-            Class[] parameterTypes, Type[] genericParameterTypes)
+    protected final Map<Class, Object> getParameterDefaultsWithConfiguration(Class[] parameterTypes,
+                                                                             Type[] genericParameterTypes)
     {
         Map<Class, Object> result = newMap(_parameterDefaults);
         ConfigurationType type = null;
@@ -125,8 +125,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     }
 
     @SuppressWarnings("unchecked")
-    private final void addOrderedConfigurationParameter(Map<Class, Object> parameterDefaults,
-                                                        Type genericType)
+    private void addOrderedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
         List configuration = _resources.getOrderedConfiguration(valueType);
@@ -135,8 +134,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     }
 
     @SuppressWarnings("unchecked")
-    private void addUnorderedConfigurationParameter(Map<Class, Object> parameterDefaults,
-                                                    Type genericType)
+    private void addUnorderedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
         Collection configuration = _resources.getUnorderedConfiguration(valueType);
@@ -145,8 +143,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     }
 
     @SuppressWarnings("unchecked")
-    private void addMappedConfigurationParameter(Map<Class, Object> parameterDefaults,
-                                                 Type genericType)
+    private void addMappedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
     {
         Class keyType = findParameterizedTypeFromGenericType(genericType, 0);
         Class valueType = findParameterizedTypeFromGenericType(genericType, 1);
@@ -173,8 +170,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     {
         Class result = findParameterizedTypeFromGenericType(type, 0);
 
-        if (result == null)
-            throw new IllegalArgumentException(IOCMessages.genericTypeNotSupported(type));
+        if (result == null) throw new IllegalArgumentException(IOCMessages.genericTypeNotSupported(type));
 
         return result;
     }

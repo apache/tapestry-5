@@ -62,6 +62,7 @@ public final class IdAllocator
         /**
          * Clones this instance, returning an equivalent but seperate copy.
          */
+        @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})
         @Override
         public NameGenerator clone()
         {
@@ -110,6 +111,7 @@ public final class IdAllocator
     /**
      * Creates a clone of this IdAllocator instance, copying the allocator's namespace and key map.
      */
+    @SuppressWarnings({"CloneDoesntCallSuperClone"})
     @Override
     public IdAllocator clone()
     {
@@ -148,7 +150,7 @@ public final class IdAllocator
         String key = name + _namespace;
 
         NameGenerator g = _generatorMap.get(key);
-        String result = null;
+        String result;
 
         if (g == null)
         {

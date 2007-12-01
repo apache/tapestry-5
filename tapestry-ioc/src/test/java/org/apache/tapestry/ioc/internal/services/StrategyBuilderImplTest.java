@@ -42,8 +42,6 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
 
     }
 
-    ;
-
     @Test
     public void standard()
     {
@@ -56,9 +54,7 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         assertEquals(service.kindOf(Collections.EMPTY_MAP), "MAP");
         assertEquals(service.kindOf(Collections.EMPTY_LIST), "LIST");
 
-        assertEquals(
-                service.toString(),
-                "<Strategy for org.apache.tapestry.ioc.internal.services.KindOf>");
+        assertEquals(service.toString(), "<Strategy for org.apache.tapestry.ioc.internal.services.KindOf>");
 
         try
         {
@@ -67,9 +63,8 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "No adapter from type void to type org.apache.tapestry.ioc.internal.services.KindOf is available (registered types are java.util.List, java.util.Map).");
+            assertEquals(ex.getMessage(),
+                         "No adapter from type void to type org.apache.tapestry.ioc.internal.services.KindOf is available (registered types are java.util.List, java.util.Map).");
         }
     }
 
@@ -80,9 +75,6 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
         registrations.put(Map.class, new KindOfImpl("MAP"));
         registrations.put(List.class, new KindOfImpl("LIST"));
 
-        StrategyRegistry<KindOf> registry = StrategyRegistry.newInstance(
-                KindOf.class,
-                registrations);
-        return registry;
+        return StrategyRegistry.newInstance(KindOf.class, registrations);
     }
 }
