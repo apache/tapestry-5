@@ -16,19 +16,19 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.PageRenderSupport;
-import org.apache.tapestry.annotations.IncludeStylesheet;
+import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.ClassTransformation;
 
-public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
+public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 {
 
     private final PageRenderSupport _pageRenderSupport;
 
-    public IncludeStylesheetWorker(AssetSource assetSource, PageRenderSupport pageRenderSupport,
-                                   SymbolSource symbolSource)
+    public IncludeJavaScriptLibraryWorker(AssetSource assetSource, PageRenderSupport pageRenderSupport,
+                                          SymbolSource symbolSource)
     {
         super(assetSource, symbolSource);
 
@@ -37,14 +37,13 @@ public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
 
     public void transform(ClassTransformation transformation, final MutableComponentModel model)
     {
-        IncludeStylesheet annotation = transformation.getAnnotation(IncludeStylesheet.class);
+        IncludeJavaScriptLibrary annotation = transformation.getAnnotation(IncludeJavaScriptLibrary.class);
 
         if (annotation != null) addOperationForAssetPaths(transformation, model, annotation.value());
     }
 
-
     protected void handleAsset(Asset asset)
     {
-        _pageRenderSupport.addStylesheetLink(asset, null);
+        _pageRenderSupport.addScriptLink(asset);
     }
 }

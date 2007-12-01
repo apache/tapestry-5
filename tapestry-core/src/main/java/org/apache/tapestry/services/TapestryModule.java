@@ -249,6 +249,7 @@ public final class TapestryModule
      * annotation</li>
      * <li>InjectBlock -- allows a block from the template to be injected into a field</li>
      * <li>IncludeStylesheet -- supports the {@link org.apache.tapestry.annotations.IncludeStylesheet} annotation</li>
+     * <li>IncludeJavaScriptLibrary -- supports the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation</li>
      * <li>SupportsInformalParameters -- checks for the annotation</li>
      * <li>Meta -- checks for meta data and adds it to the component model
      * <li>ApplicationState -- converts fields that reference application state objects
@@ -284,7 +285,6 @@ public final class TapestryModule
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
 
-        configuration.add("IncludeStylesheet", locator.autobuild(IncludeStylesheetWorker.class));
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
@@ -325,6 +325,10 @@ public final class TapestryModule
 
         configuration.add("Retain", new RetainWorker());
         configuration.add("Persist", new PersistWorker());
+
+        configuration.add("IncludeStylesheet", locator.autobuild(IncludeStylesheetWorker.class), "after:SetupRender");
+        configuration.add("IncludeJavaScriptLibrary", locator.autobuild(IncludeJavaScriptLibraryWorker.class),
+                          "after:SetupRender");
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.

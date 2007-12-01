@@ -18,24 +18,19 @@ import java.lang.annotation.*;
 
 
 /**
- * Used to automatically include a CSS stylesheet when rendering the page.  The value is an asset reference; relative
- * paths are relative to the Java class, or a "context:" prefix can be used to reference resources in the web application.
- * <p/>
- * This saves the work of injecting the asset into a field and injecting the PageRenderSupport environmental service, and invoking the method.
- * <p/>
- * Does not support setting a media type; if that is required. use {@link org.apache.tapestry.PageRenderSupport#addStylesheetLink(org.apache.tapestry.Asset, String)}
- * directly.
+ * Allows for the inclusion of one or more JavaScript libraries.  The libraries are assets, usually
+ * (but not always) stored on the classpath with the component.
  *
+ * @see org.apache.tapestry.annotations.IncludeStylesheet
  * @see org.apache.tapestry.annotations.Path
- * @see org.apache.tapestry.annotations.IncludeJavaScriptLibrary
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface IncludeStylesheet
+public @interface IncludeJavaScriptLibrary
 {
     /**
-     * One or more paths to be injected. Symbols in the path will be expanded. The stylesheets may be localized.
+     * The paths to the JavaScript library assets.  Symbols in the paths are expanded.  The library may be localized.
      */
     String[] value();
 }

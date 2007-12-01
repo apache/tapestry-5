@@ -132,6 +132,25 @@ Basic JavaScript
   Inside a component, you should use Environmental, to highlight the fact that PageRenderSupport (like most
   environmental objects) is only available during rendering, not during action requests.
 
+IncludeJavaScriptLibrary Annotation
+
+  The
+  {{{../../apidocs/org/apache/tapestry/annotations/IncludeJavaScriptLibrary.html}IncludeJavaScriptLibrary}} annotation
+  is the easy way to include one or more JavaScript libraries.
+
+  The previous example could be re-written as:
+
++---+
+@InjectJavaScriptLibrary("${tapestry.scriptaculous}/dragdrop.js")
+public class MyComponent
+{
+ . . .
+}
++---+
+
+  This saves you the effort of injecting the asset and making the call to PageRenderSupport.
+  Chances are you will <still> inject PageRenderSupport so as to add some initialization JavaScript.
+
 Ajax Components and Mixins
 
 * Autocomplete Mixin

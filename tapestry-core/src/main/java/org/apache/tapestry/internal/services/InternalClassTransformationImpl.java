@@ -1406,12 +1406,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             @Override
             public void edit(FieldAccess access) throws CannotCompileException
             {
-                boolean isRead = access.isReader();
-                String fieldName = access.getFieldName();
                 CtBehavior where = access.where();
 
-                _formatter.format("Checking field %s %s in %s: ", isRead ? "read" : "write", fieldName,
-                                  where.getLongName());
+                if (where instanceof CtConstructor) return;
+
+                boolean isRead = access.isReader();
+                String fieldName = access.getFieldName();
+                CtMethod method = (CtMethod) where;
+
+                _formatter.format("Checking field %s %s in method %s(): ", isRead ? "read" : "write", fieldName,
+                                  method.getName());
 
                 // Ignore any methods to were added as part of the transformation.
                 // If we reference the field there, we really mean the field.
