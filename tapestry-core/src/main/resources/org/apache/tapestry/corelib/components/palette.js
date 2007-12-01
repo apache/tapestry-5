@@ -2,6 +2,9 @@ Tapestry.Palette = Class.create();
 
 Tapestry.Palette.prototype = {
 
+    // id: of main select element
+    // reorder: true to enable extra controls for changing selection order
+    // naturalOrder: array of values, the proper order for the elements (needed when de-selecting items)
     initialize : function(id, reorder, naturalOrder)
     {
         this.reorder = reorder;
@@ -11,9 +14,6 @@ Tapestry.Palette.prototype = {
         this.selected = $(id);
 
         this.hidden = $(id + ":values");
-
-	  // Seperator used for values in the hidden field.
-        this.sep = ";";
 
 	  // The BUTTON elements
         this.select = $(id + ":select");
@@ -27,7 +27,7 @@ Tapestry.Palette.prototype = {
 
         this.valueToOrderIndex = {};
 
-        naturalOrder.split(this.sep).each(function (value, i)
+        naturalOrder.each(function (value, i)
         {
             this.valueToOrderIndex[value] = i;
         }.bind(this));
@@ -38,21 +38,21 @@ Tapestry.Palette.prototype = {
     bindEvents : function()
     {
         var updateButtons = this.updateButtons.bindAsEventListener(this);
-        Event.observe(this.avail, "change", updateButtons);
-        Event.observe(this.selected, "change", updateButtons);
+        this.avail.observe("change", updateButtons);
+        this.selected.observe("change", updateButtons);
 
         var selectClicked = this.selectClicked.bindAsEventListener(this);
-        Event.observe(this.select, "click", selectClicked);
-        Event.observe(this.avail, "dblclick", selectClicked);
+        this.select.observe("click", selectClicked);
+        this.avail.observe("dblclick", selectClicked);
 
         var deselectClicked = this.deselectClicked.bindAsEventListener(this);
-        Event.observe(this.deselect, "click", deselectClicked);
-        Event.observe(this.selected, "dblclick", deselectClicked);
+        this.deselect.observe("click", deselectClicked);
+        this.selected.observe("dblclick", deselectClicked);
 
         if (this.reorder)
         {
-            Event.observe(this.up, "click", this.moveUpClicked.bindAsEventListener(this));
-            Event.observe(this.down, "click", this.moveDownClicked.bindAsEventListener(this));
+            this.up.observe("click", this.moveUpClicked.bindAsEventListener(this));
+            this.down.observe("click", this.moveDownClicked.bindAsEventListener(this));
         }
     },
 
@@ -140,7 +140,7 @@ Tapestry.Palette.prototype = {
             return o.value;
         });
 
-        this.hidden.value = values.join(this.sep);
+        this.hidden.value = values.toJSON();
     },
 
     moveUpClicked : function(event)
