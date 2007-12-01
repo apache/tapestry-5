@@ -8,7 +8,7 @@ Deployment Notes: Jetty
   
   The easiest way to develop Tapestry applications is to run Jetty <embedded> inside your IDE. If you use Eclipse,
   then {{{http://jettylauncher.sourceforge.net/}the Jetty Launcher plugin}} is invaluable.  The
-  {{{t5-tutorial.pdf}Tapestry 5 Tutorial}} [PDF] discusses installing and using Jetty Launcher.
+  {{{tutorial1/}Tapestry 5 Tutorial}}  discusses installing and using Jetty Launcher.
   
   Jetty Launcher  only works  with Jetty <<4 or 5>> and <<not>> Jetty 6.
   
