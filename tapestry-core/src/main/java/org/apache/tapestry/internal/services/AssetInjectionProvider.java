@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.AssetSource;
@@ -49,27 +50,21 @@ public class AssetInjectionProvider implements InjectionProvider
 
         String expanded = _symbolSource.expandSymbols(path.value());
 
-        String sourceFieldName = transformation.addInjectedField(
-                AssetSource.class,
-                "assetSource",
-                _assetSource);
+        String sourceFieldName = transformation.addInjectedField(AssetSource.class, "assetSource", _assetSource);
+
+        String baseResourceFieldName = transformation.addInjectedField(Resource.class, "baseResource",
+                                                                       componentModel.getBaseResource());
+
         String resourcesFieldName = transformation.getResourcesFieldName();
 
-        String statement = format(
-                "%s = (%s) %s.findAsset(%s.getBaseResource(), \"%s\", %s.getLocale());",
-                fieldName,
-                fieldType.getName(),
-                sourceFieldName,
-                resourcesFieldName,
-                expanded,
-                resourcesFieldName);
+        String statement = format("%s = (%s) %s.findAsset(%s, \"%s\", %s.getLocale());", fieldName, fieldType.getName(),
+                                  sourceFieldName, baseResourceFieldName, expanded, resourcesFieldName);
 
         transformation.extendConstructor(statement);
 
         transformation.makeReadOnly(fieldName);
 
         return true;
-
     }
 
 }

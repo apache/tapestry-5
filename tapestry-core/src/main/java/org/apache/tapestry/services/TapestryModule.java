@@ -245,10 +245,10 @@ public final class TapestryModule
      * <li>Environment -- allows fields to contain values extracted from the {@link Environment}
      * service</li>
      * <li>Inject -- used with the {@link Inject} annotation, when a value is supplied</li>
-     * <li>InjectResources -- used with the {@link Inject} annotation, when no value is supplied</li>
      * <li>InjectPage -- adds code to allow access to other pages via the {@link InjectPage} field
      * annotation</li>
      * <li>InjectBlock -- allows a block from the template to be injected into a field</li>
+     * <li>IncludeStylesheet -- supports the {@link org.apache.tapestry.annotations.IncludeStylesheet} annotation</li>
      * <li>SupportsInformalParameters -- checks for the annotation</li>
      * <li>Meta -- checks for meta data and adds it to the component model
      * <li>ApplicationState -- converts fields that reference application state objects
@@ -283,6 +283,8 @@ public final class TapestryModule
         configuration.add("ApplicationState", new ApplicationStateWorker(applicationStateManager));
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
+
+        configuration.add("IncludeStylesheet", locator.autobuild(IncludeStylesheetWorker.class));
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));

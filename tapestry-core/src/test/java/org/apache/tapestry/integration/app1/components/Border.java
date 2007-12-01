@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.integration.app1.components;
 
+import org.apache.tapestry.annotations.IncludeStylesheet;
+
 /**
  * Here's a component with a template, including a t:body element.
  */
+@IncludeStylesheet("context:css/app.css")
 public class Border
 {
 
