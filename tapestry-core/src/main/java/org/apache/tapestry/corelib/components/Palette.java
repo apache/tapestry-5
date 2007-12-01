@@ -22,7 +22,7 @@ import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.services.Request;
 
 import java.util.Collections;
@@ -282,7 +282,8 @@ public class Palette extends AbstractField
     @Override
     protected void processSubmission(String elementName)
     {
-        String values = _request.getParameter(elementName + ":values");
+        String parameterValue = _request.getParameter(elementName + ":values");
+        JSONArray values = new JSONArray(parameterValue);
 
         // Use a couple of local variables to cut down on access via bindings
 
@@ -293,14 +294,15 @@ public class Palette extends AbstractField
 
         ValueEncoder encoder = _encoder;
 
-        if (InternalUtils.isNonBlank(values))
-        {
-            for (String value : values.split(";"))
-            {
-                Object objectValue = encoder.toValue(value);
 
-                selected.add(objectValue);
-            }
+        int count = values.length();
+        for (int i = 0; i < count; i++)
+        {
+            String value = values.getString(i);
+
+            Object objectValue = encoder.toValue(value);
+
+            selected.add(objectValue);
         }
 
         _selected = selected;
@@ -313,8 +315,7 @@ public class Palette extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        String sep = "";
-        StringBuilder selectedValues = new StringBuilder();
+        JSONArray selectedValues = new JSONArray();
 
         for (OptionModel selected : _selectedOptions)
         {
@@ -322,26 +323,21 @@ public class Palette extends AbstractField
             Object value = selected.getValue();
             String clientValue = _encoder.toClient(value);
 
-            selectedValues.append(sep);
-            selectedValues.append(clientValue);
-
-            sep = ";";
+            selectedValues.put(clientValue);
         }
 
-        StringBuilder naturalOrder = new StringBuilder();
-        sep = "";
+        JSONArray naturalOrder = new JSONArray();
+
         for (String value : _naturalOrder)
         {
-            naturalOrder.append(sep);
-            naturalOrder.append(value);
-            sep = ";";
+            naturalOrder.put(value);
         }
 
         String clientId = getClientId();
 
         _renderSupport.addScriptLink(_paletteLibrary);
 
-        _renderSupport.addScript("new Tapestry.Palette('%s', %s, '%s');", clientId, _reorder, naturalOrder);
+        _renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, _reorder, naturalOrder);
 
         writer.element("input", "type", "hidden", "id", clientId + ":values", "name", getElementName() + ":values",
                        "value", selectedValues);

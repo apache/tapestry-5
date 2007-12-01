@@ -98,6 +98,13 @@ public final class JSONArray
     {
     }
 
+    public JSONArray(String text)
+    {
+        JSONTokener tokener = new JSONTokener(text);
+
+        parse(tokener);
+    }
+
     /**
      * Construct a JSONArray from a JSONTokener.
      *
@@ -108,6 +115,11 @@ public final class JSONArray
     {
         assert tokenizer != null;
 
+        parse(tokenizer);
+    }
+
+    private void parse(JSONTokener tokenizer)
+    {
         if (tokenizer.nextClean() != '[')
         {
             throw tokenizer
