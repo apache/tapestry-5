@@ -47,6 +47,17 @@ public class JSONObjectTest extends Assert
         assertEquals(limitedCopy2.keys().size(), 1);
     }
 
+    @Test
+    public void array_from_string()
+    {
+        JSONArray array = new JSONArray("[ 'foo', 'bar', \"baz\" ]");
+
+        assertEquals(array.length(), 3);
+        assertEquals(array.getString(0), "foo");
+        assertEquals(array.getString(1), "bar");
+        assertEquals(array.getString(2), "baz");
+    }
+
     private void unreachable()
     {
         throw new AssertionError("This code should not be reachable.");
@@ -81,14 +92,8 @@ public class JSONObjectTest extends Assert
     @DataProvider(name = "boolean_inputs")
     public Object[][] boolean_inputs()
     {
-        return new Object[][]
-                {
-                        {"true", true},
-                        {"TRUE", true},
-                        {"false", false},
-                        {"FALSE", false},
-                        {Boolean.TRUE, true},
-                        {Boolean.FALSE, false}};
+        return new Object[][]{{"true", true}, {"TRUE", true}, {"false", false}, {"FALSE", false}, {Boolean.TRUE, true},
+                              {Boolean.FALSE, false}};
     }
 
     @Test
@@ -147,8 +152,7 @@ public class JSONObjectTest extends Assert
     @Test
     public void object_from_string()
     {
-        JSONObject object = new JSONObject(
-                "{ fred: \"flintstone\", caveman: true, friends: [\"barney\"] }");
+        JSONObject object = new JSONObject("{ fred: \"flintstone\", caveman: true, friends: [\"barney\"] }");
 
         assertEquals(object.get("fred"), "flintstone");
         assertEquals(object.getBoolean("caveman"), true);
@@ -204,14 +208,8 @@ public class JSONObjectTest extends Assert
     @DataProvider(name = "double_inputs")
     public Object[][] double_inputs()
     {
-        return new Object[][]
-                {
-                        {3d, "3"},
-                        {-22.5d, "-22.5"},
-                        {0d, "0"},
-                        {Double.NEGATIVE_INFINITY, "null"},
-                        {Double.POSITIVE_INFINITY, "null"},
-                        {Double.NaN, "null"},};
+        return new Object[][]{{3d, "3"}, {-22.5d, "-22.5"}, {0d, "0"}, {Double.NEGATIVE_INFINITY, "null"},
+                              {Double.POSITIVE_INFINITY, "null"}, {Double.NaN, "null"},};
     }
 
     @Test(dataProvider = "get_double_inputs")
@@ -227,11 +225,7 @@ public class JSONObjectTest extends Assert
     @DataProvider(name = "get_double_inputs")
     public Object[][] getDoubleInputs()
     {
-        return new Object[][]
-                {
-                        {new Double(3.5), 3.5d},
-                        {new Long(1000), 1000d},
-                        {"-101.7", -101.7d}};
+        return new Object[][]{{new Double(3.5), 3.5d}, {new Long(1000), 1000d}, {"-101.7", -101.7d}};
     }
 
     @Test
@@ -283,11 +277,7 @@ public class JSONObjectTest extends Assert
     @DataProvider(name = "get_int_inputs")
     public Object[][] get_int_inputs()
     {
-        return new Object[][]
-                {
-                        {"3", 3},
-                        {new Long(97), 97},
-                        {"-8.76", -8}};
+        return new Object[][]{{"3", 3}, {new Long(97), 97}, {"-8.76", -8}};
     }
 
     @Test
@@ -390,8 +380,7 @@ public class JSONObjectTest extends Assert
 
         Arrays.sort(names);
 
-        assertEquals(names, new String[]
-                {"barney", "fred"});
+        assertEquals(names, new String[]{"barney", "fred"});
 
     }
 }
