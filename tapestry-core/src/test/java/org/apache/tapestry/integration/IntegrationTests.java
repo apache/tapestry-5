@@ -827,7 +827,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("fred");
 
         assertTextPresent(
-                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred(), child.onAnyEventFromFred(String), child.onAnyEventFromFred()]");
+                "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred()]");
     }
 
     @Test

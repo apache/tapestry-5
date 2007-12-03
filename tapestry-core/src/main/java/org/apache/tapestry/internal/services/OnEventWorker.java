@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
@@ -85,39 +84,18 @@ public class OnEventWorker implements ComponentClassTransformWorker
     {
         // $1 is the event
 
-        int closeCount = 0;
-
         int parameterCount = getParameterCount(method);
-
-        if (parameterCount > 0)
-        {
-            builder.addln("if ($1.matchesByParameterCount(%d))", parameterCount);
-            builder.begin();
-
-            closeCount++;
-        }
 
         OnEvent annotation = transformation.getMethodAnnotation(method, OnEvent.class);
 
         String eventType = extractEventType(method, annotation);
 
-        if (InternalUtils.isNonBlank(eventType))
-        {
-            builder.addln("if ($1.matchesByEventType(\"%s\"))", eventType);
-            builder.begin();
-
-            closeCount++;
-        }
 
         String componentId = extractComponentId(method, annotation);
 
-        if (InternalUtils.isNonBlank(componentId))
-        {
-            builder.addln("if ($1.matchesByComponentId(\"%s\"))", componentId);
-            builder.begin();
 
-            closeCount++;
-        }
+        builder.addln("if ($1.matches(\"%s\", \"%s\", %d))", eventType, componentId, parameterCount);
+        builder.begin();
 
         // Ensure that we return true, because *some* event handler method was invoked,
         // even if it chose not to abort the event.
@@ -143,8 +121,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         if (isNonVoid) builder.addln("))) return true;");
         else builder.addln(");");
 
-        for (int i = 0; i < closeCount; i++)
-            builder.end();
+        builder.end();
     }
 
     private String extractComponentId(TransformMethodSignature method, OnEvent annotation)
@@ -172,13 +149,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         int fromx = name.indexOf("From");
 
-        String eventName = fromx == -1 ? name.substring(2) : name.substring(2, fromx);
-
-        // This is intended for onAnyFromComponentId, but just onAny works too (and is dangerous).
-
-        if (eventName.equalsIgnoreCase("AnyEvent")) return "";
-
-        return eventName;
+        return fromx == -1 ? name.substring(2) : name.substring(2, fromx);
     }
 
     private int getParameterCount(TransformMethodSignature method)

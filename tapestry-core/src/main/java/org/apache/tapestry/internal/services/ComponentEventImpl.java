@@ -55,19 +55,11 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
         _classLoader = classLoader;
     }
 
-    public boolean matchesByComponentId(String componentId)
+    public boolean matches(String eventType, String componentId, int parameterCount)
     {
-        return _originatingComponentId.equalsIgnoreCase(componentId);
-    }
-
-    public boolean matchesByEventType(String eventType)
-    {
-        return _eventType.equalsIgnoreCase(eventType);
-    }
-
-    public boolean matchesByParameterCount(int parameterCount)
-    {
-        return _context.length >= parameterCount;
+        return _eventType.equalsIgnoreCase(
+                eventType) && _context.length >= parameterCount && (_originatingComponentId.equalsIgnoreCase(
+                componentId) || componentId.equals(""));
     }
 
     @SuppressWarnings("unchecked")

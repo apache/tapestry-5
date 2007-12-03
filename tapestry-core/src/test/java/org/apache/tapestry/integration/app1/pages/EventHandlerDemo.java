@@ -43,18 +43,6 @@ public class EventHandlerDemo extends BaseEventHandlerDemo
         addMethodName("child.onActionFromFred(String)");
     }
 
-    @SuppressWarnings("unused")
-    private void onAnyEventFromFred()
-    {
-        addMethodName("child.onAnyEventFromFred()");
-    }
-
-    @SuppressWarnings("unused")
-    private void onAnyEventFromFred(String value)
-    {
-        addMethodName("child.onAnyEventFromFred(String)");
-    }
-
     @OnEvent(value = "action")
     void eventHandlerZeroChild()
     {
@@ -75,7 +63,6 @@ public class EventHandlerDemo extends BaseEventHandlerDemo
 
     public Object[] getTwoContext()
     {
-        return new Object[]
-                {1, 2};
+        return new Object[]{1, 2};
     }
 }

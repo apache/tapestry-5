@@ -28,28 +28,14 @@ import org.apache.tapestry.ComponentResourcesCommon;
 public interface ComponentEvent extends Event
 {
     /**
-     * Returns true if the component event's type matches any of the provided values. Comparison is
-     * caseless.
+     * Returns true if the event matches the provided criteria.
      *
-     * @param eventType
-     * @return true if there is any match
+     * @param eventType      the type of event (case insensitive match)
+     * @param componentId    component is to match against (case insensitive), or the empty string
+     * @param parameterCount minimum number of context values
+     * @return true if the event matches.
      */
-    boolean matchesByEventType(String eventType);
-
-    /**
-     * Returns true if the originating component matches any of the components identified by their
-     * ids. This filter is only relevent in the immediate container of the originating component (it
-     * will never match at higher levels). Comparison is caseless.
-     */
-    boolean matchesByComponentId(String componentId);
-
-    /**
-     * Returns true if the event context contains the specified number of parameters (or more).
-     *
-     * @param parameterCount number of parameters in the event handler method
-     * @return true if the event can
-     */
-    boolean matchesByParameterCount(int parameterCount);
+    boolean matches(String eventType, String componentId, int parameterCount);
 
     /**
      * Coerces a context value to a particular type. The context is an array of objects; typically
