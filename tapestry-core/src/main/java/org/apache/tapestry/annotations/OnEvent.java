@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.annotations;
 
+import org.apache.tapestry.TapestryConstants;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -50,11 +52,10 @@ public @interface OnEvent
 {
 
     /**
-     * The event types to match. The handler will only be invoked if the client event type matches
-     * the value. If omitted, the default is to match any event. Most components emit, at most, one
-     * event named "action".
+     * The event type to match. The handler will only be invoked if the client event type matches
+     * the value. The default value is "action".  Matching is case-insensitive.
      */
-    String value() default "";
+    String value() default TapestryConstants.ACTION_EVENT;
 
     /**
      * The local id of the component from which the event originates. If not specified, then the
@@ -62,6 +63,9 @@ public @interface OnEvent
      * component's container, it is re-triggered inside the component's grand-container and will
      * appear to originate from the container. Thus events that escape a component will appear to
      * originate in the component's container, and so forth.
+     * <p/>
+     * <p/>
+     * Matching by component id is case insensitive.
      */
     String component() default "";
 

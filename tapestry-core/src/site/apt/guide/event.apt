@@ -88,9 +88,8 @@ Component Events
   
   []
   
-  In the above example, the valueChosen() method will be invoked on <any event> that originates
-  in component <<<choose>>> (and has at least one context value).  Since ActionLink components only emit a single type of event, "action", 
-  this will not be a problem.
+  In the above example, the valueChosen() method will be invoked on the default event, "action", that originates
+  in component <<<choose>>> (and has at least one context value).
   
   Some components can emit more than one type of event, in which case you will want to be more specific:
   
@@ -110,7 +109,8 @@ Component Events
 
   As elsewhere, the comparison of event type and component id is caseless.
   
-  You should qualify exactly which component(s) you wish to recieve events from.
+  You should qualify exactly which component(s) you wish to recieve events from.   Using @OnEvent on a method
+  and not specifying a specific component id means that the method will be invoked for events from <any> component.
   
 Event Handler Method Convention Names
   
@@ -128,9 +128,7 @@ Event Handler Method Convention Names
     _value = value;
   }
 +---+  
-  
-  If your method is named "onAnyEvent", it will be invoked for all types of events. This is rarely what you want!
-    
+
   Note from Howard: I've found that I prefer the naming convention approach, and reserve the annotation just for situations that don't otherwise fit.  
   
 Event Handler Method Return Values
@@ -182,7 +180,7 @@ Event Bubbling
 
 Event Method Exceptions
 
-  Event methods are allow to throw any exception (not just runtime exceptions). If an event method does
+  Event methods are allowed to throw any exception (not just runtime exceptions). If an event method does
   throw an exception, Tapestry will catch the thrown exception and ultimately display the exception report
   page.
 

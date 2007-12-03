@@ -48,8 +48,8 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
-        assertTrue(event.matchesByEventType("eventType"));
-        assertFalse(event.matchesByEventType("foo"));
+        assertTrue(event.matches("eventType", "someId", 0));
+        assertFalse(event.matches("foo", "someId", 0));
 
         verify();
     }
@@ -63,7 +63,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
-        assertTrue(event.matchesByEventType("EVENTTYPE"));
+        assertTrue(event.matches("EVENTTYPE", "someid", 0));
 
         verify();
     }
@@ -77,9 +77,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
-        assertTrue(event.matchesByComponentId("someId"));
+        assertTrue(event.matches("eventType", "someId", 0));
 
-        assertFalse(event.matchesByComponentId("bar"));
+        assertFalse(event.matches("eventtype", "bar", 0));
 
         verify();
     }
@@ -92,7 +92,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         replay();
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, _coercer, null);
 
-        assertTrue(event.matchesByComponentId("SOMEID"));
+        assertTrue(event.matches("eventtype", "SOMEID", 0));
 
         verify();
     }
