@@ -114,11 +114,6 @@
                 <version>${cobertura-plugin-version}</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.tapestry</groupId>
                 <artifactId>tapestry-component-report</artifactId>
                 <version>${project.version}</version>
