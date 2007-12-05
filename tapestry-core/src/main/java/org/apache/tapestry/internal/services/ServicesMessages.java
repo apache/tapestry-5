@@ -380,4 +380,9 @@ class ServicesMessages
     {
         return MESSAGES.format("no-markup-from-page-render", page.getLogicalName());
     }
+
+    static String baseClassInWrongPackage(String parentClassName, String className, String suggestedPackage)
+    {
+        return MESSAGES.format("base-class-in-wrong-package", parentClassName, className, suggestedPackage);
+    }
 }

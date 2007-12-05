@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.services;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.NotFoundException;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
@@ -34,8 +35,7 @@ import java.util.Map;
 /**
  * Implementation of {@link org.apache.tapestry.internal.services.ComponentClassTransformer}.
  */
-public class ComponentClassTransformerImpl implements ComponentClassTransformer,
-                                                      InvalidationListener
+public class ComponentClassTransformerImpl implements ComponentClassTransformer, InvalidationListener
 {
     /**
      * Map from class name to class transformation.
@@ -48,11 +48,15 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final LoggerSource _logSource;
 
+    private final String[] SUBPACKAGES = {"." + InternalConstants.PAGES_SUBPACKAGE + ".",
+                                          "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
+                                          "." + InternalConstants.MIXINS_SUBPACKAGE + ".",
+                                          "." + InternalConstants.BASE_SUBPACKAGE + "."};
+
     /**
      * @param workerChain the ordered list of class transform works as a chain of command instance
      */
-    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain,
-                                         LoggerSource logSource)
+    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource logSource)
     {
         _workerChain = workerChain;
         _logSource = logSource;
@@ -72,7 +76,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     {
         String parentClassname;
 
-        // Component classes must be public
+// Component classes must be public
 
         if (!Modifier.isPublic(ctClass.getModifiers())) return;
 
@@ -104,11 +108,19 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         Logger logger = _logSource.getLogger(classname);
 
-        // If the parent class is in a controlled package, it will already have been loaded and
-        // transformed (that is driven by the ComponentInstantiatorSource).
+// If the parent class is in a controlled package, it will already have been loaded and
+// transformed (that is driven by the ComponentInstantiatorSource).
 
         InternalClassTransformation parentTransformation = _nameToClassTransformation
                 .get(parentClassname);
+
+        if (parentTransformation == null && !parentClassname.equals(Object.class.getName()))
+        {
+            String suggestedPackageName = buildSuggestedPackageName(classname);
+
+            throw new RuntimeException(
+                    ServicesMessages.baseClassInWrongPackage(parentClassname, classname, suggestedPackageName));
+        }
 
         // TODO: Check that the name is not already in the map. But I think that can't happen,
         // because the classloader itself is synchronized.
@@ -117,15 +129,12 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         ComponentModel parentModel = _nameToComponentModel.get(parentClassname);
 
-        MutableComponentModel model = new MutableComponentModelImpl(classname, logger,
-                                                                    baseResource, parentModel);
+        MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource, parentModel);
 
         InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
-                ctClass, classLoader, logger, model)
-                                                     : new InternalClassTransformationImpl(ctClass,
+                ctClass, classLoader, logger, model) : new InternalClassTransformationImpl(ctClass,
                                                                                            parentTransformation,
-                                                                                           classLoader,
-                                                                                           logger, model);
+                                                                                           classLoader, logger, model);
 
         try
         {
@@ -138,8 +147,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
             throw new TransformationException(transformation, ex);
         }
 
-        if (logger.isDebugEnabled())
-            logger.debug("Finished class transformation: " + transformation);
+        if (logger.isDebugEnabled()) logger.debug("Finished class transformation: " + transformation);
 
         _nameToClassTransformation.put(classname, transformation);
         _nameToComponentModel.put(classname, model);
@@ -151,8 +159,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         InternalClassTransformation ct = _nameToClassTransformation.get(className);
 
-        if (ct == null)
-            throw new RuntimeException(ServicesMessages.classNotTransformed(className));
+        if (ct == null) throw new RuntimeException(ServicesMessages.classNotTransformed(className));
 
         try
         {
@@ -162,5 +169,22 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         {
             throw new TransformationException(ct, ex);
         }
+    }
+
+    private String buildSuggestedPackageName(String className)
+    {
+        for (String subpackage : SUBPACKAGES)
+        {
+            int pos = className.indexOf(subpackage);
+
+// Keep the leading '.' in the subpackage name and tack on "base".
+
+            if (pos > 0) return className.substring(0, pos + 1) + InternalConstants.BASE_SUBPACKAGE;
+        }
+
+        // Is this even reachable?  className should always be in a controlled package and so
+        // some subpackage above should have matched.
+
+        return null;
     }
 }
