@@ -19,6 +19,7 @@ import static org.apache.tapestry.TapestryConstants.ACTION_EVENT;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.corelib.base.AbstractLink;
 import org.apache.tapestry.internal.services.ZoneSetup;
 import org.apache.tapestry.ioc.annotations.Inject;
 
@@ -28,7 +29,7 @@ import java.util.List;
  * Component that triggers an action on the server with a subsequent full page refresh.
  */
 @SupportsInformalParameters
-public class ActionLink implements ClientElement
+public class ActionLink extends AbstractLink implements ClientElement
 {
     /**
      * The context for the link (optional parameter). This list of values will be converted into
@@ -56,6 +57,7 @@ public class ActionLink implements ClientElement
 
     private String _clientId;
 
+
     /**
      * Binding zone turns the link into a an Ajax control that causes the
      * related zone to be updated.
@@ -73,9 +75,7 @@ public class ActionLink implements ClientElement
 
         Link link = _resources.createActionLink(ACTION_EVENT, false, contextArray);
 
-        writer.element("a", "href", link, "id", _clientId);
-
-        _resources.renderInformalParameters(writer);
+        writeLink(writer, _clientId, link);
 
         if (_zone != null) _zoneSetup.linkZone(_clientId, _zone);
     }

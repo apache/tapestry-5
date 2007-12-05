@@ -126,7 +126,7 @@ public class PageTester implements ComponentInvoker
      */
     public Document renderPage(String pageName)
     {
-        return invoke(new ComponentInvocation(new PageLinkTarget(pageName), new String[0], null));
+        return invoke(new ComponentInvocationImpl(new PageLinkTarget(pageName), new String[0], null));
     }
 
     /**

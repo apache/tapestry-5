@@ -44,7 +44,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
     @Test
     public void label_error_no_existing_class_attribute()
     {
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
         Environment env = mockEnvironment();
         Field field = mockField();
         ValidationTracker tracker = mockValidationTracker();
@@ -68,7 +68,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
     @Test
     public void label_error_with_existing_class_attribute()
     {
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
         Environment env = mockEnvironment();
         Field field = mockField();
         ValidationTracker tracker = mockValidationTracker();
@@ -92,7 +92,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
     @Test
     public void field_error()
     {
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
         Environment env = mockEnvironment();
         Field field = mockField();
         ValidationTracker tracker = mockValidationTracker();

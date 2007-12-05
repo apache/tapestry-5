@@ -15,18 +15,21 @@
    limitations under the License.
 -->
 
-<suite name="Tapestry Core" annotations="1.5" verbose="2" parallel="tests">
+<suite name="Tapestry Core" thread-count="10" annotations="1.5" verbose="2" parallel="tests">
     <test name="Integration Tests">
         <packages>
             <package name="org.apache.tapestry.integration"/>
         </packages>
     </test>
+    <test name="Components">
+        <package name="org.apache.tapestry.integration.pagelevel"/>
+        <package name="org.apache.tapestry.corelib.base"/>
+        <package name="org.apache.tapestry.corelib.components"/>
+        <package name="org.apache.tapestry.corelib.internal"/>
+    </test>
     <test name="Public APIs">
         <packages>
             <package name="org.apache.tapestry"/>
-            <package name="org.apache.tapestry.integration.pagelevel"/>
-            <package name="org.apache.tapestry.corelib.components"/>
-            <package name="org.apache.tapestry.corelib.internal"/>
             <package name="org.apache.tapestry.dom"/>
             <package name="org.apache.tapestry.json"/>
             <package name="org.apache.tapestry.services"/>

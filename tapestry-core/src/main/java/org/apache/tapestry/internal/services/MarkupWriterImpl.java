@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.*;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -29,17 +28,14 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private Text _currentText;
 
-    private final ComponentInvocationMap _invocationMap;
-
     public MarkupWriterImpl()
     {
-        this(new DefaultMarkupModel(), new NoOpComponentInvocationMap());
+        this(new DefaultMarkupModel());
     }
 
-    public MarkupWriterImpl(MarkupModel model, ComponentInvocationMap invocationMap)
+    public MarkupWriterImpl(MarkupModel model)
     {
         _document = new Document(model);
-        _invocationMap = invocationMap;
     }
 
     public void toMarkup(PrintWriter writer)
@@ -66,13 +62,11 @@ public class MarkupWriterImpl implements MarkupWriter
     public void write(String text)
     {
         // Whitespace before and after the root element is quietly ignored.
-        if (_current == null && InternalUtils.isBlank(text))
-            return;
+        if (_current == null && InternalUtils.isBlank(text)) return;
 
         ensureCurrentElement();
 
-        if (text == null)
-            return;
+        if (text == null) return;
 
         if (_currentText == null)
         {
@@ -104,11 +98,7 @@ public class MarkupWriterImpl implements MarkupWriter
             String name = namesAndValues[i++].toString();
             Object value = namesAndValues[i++];
 
-            if (value == null)
-                continue;
-
-            if (value instanceof Link)
-                _invocationMap.store(_current, (Link) value);
+            if (value == null) continue;
 
             _current.attribute(name, value.toString());
         }
@@ -117,16 +107,13 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private void ensureCurrentElement()
     {
-        if (_current == null)
-            throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
+        if (_current == null) throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
     }
 
     public Element element(String name, Object... namesAndValues)
     {
-        if (_current == null)
-            _current = _document.newRootElement(name);
-        else
-            _current = _current.element(name);
+        if (_current == null) _current = _document.newRootElement(name);
+        else _current = _current.element(name);
 
         attributes(namesAndValues);
 

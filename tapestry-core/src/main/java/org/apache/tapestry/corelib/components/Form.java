@@ -23,6 +23,7 @@ import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
@@ -141,6 +142,9 @@ public class Form implements ClientElement, FormValidationControl
     @Persist
     private ValidationTracker _defaultTracker;
 
+    @Inject
+    private ComponentInvocationMap _componentInvocationMap;
+
     private FormSupportImpl _formSupport;
 
     private Element _form;
@@ -207,6 +211,8 @@ public class Form implements ClientElement, FormValidationControl
 
         _form = writer
                 .element("form", "name", _name, "id", _name, "method", "post", "action", link);
+
+        _componentInvocationMap.store(_form, link);
 
         _resources.renderInformalParameters(writer);
 

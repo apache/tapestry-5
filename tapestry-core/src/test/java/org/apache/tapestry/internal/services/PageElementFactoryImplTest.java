@@ -66,7 +66,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
     {
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        MarkupWriter writer = new MarkupWriterImpl(_xmlModel, null);
+        MarkupWriter writer = new MarkupWriterImpl(_xmlModel);
         Location l = mockLocation();
         RenderQueue queue = mockRenderQueue();
 
@@ -91,7 +91,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
     {
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        MarkupWriter writer = new MarkupWriterImpl(_xmlModel, null);
+        MarkupWriter writer = new MarkupWriterImpl(_xmlModel);
         RenderQueue queue = mockRenderQueue();
 
         replay();
@@ -194,8 +194,8 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer,
-                                                                bindingSource, messagesSource);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer, bindingSource,
+                                                                messagesSource);
 
         try
         {
@@ -204,9 +204,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Attribute expression \'${flintstone\' is missing a closing brace.");
+            assertEquals(ex.getMessage(), "Attribute expression \'${flintstone\' is missing a closing brace.");
             assertSame(ex.getLocation(), location);
         }
 
