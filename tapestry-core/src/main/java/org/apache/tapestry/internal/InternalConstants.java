@@ -50,6 +50,11 @@ public final class InternalConstants
 
     public static final String OBJECT_RENDER_DIV_SECTION = "t-env-data-section";
 
+    public static final String MIXINS_SUBPACKAGE = "mixins";
+    public static final String COMPONENTS_SUBPACKAGE = "components";
+    public static final String PAGES_SUBPACKAGE = "pages";
+    public static final String BASE_SUBPACKAGE = "base";
+
     private InternalConstants()
     {
     }

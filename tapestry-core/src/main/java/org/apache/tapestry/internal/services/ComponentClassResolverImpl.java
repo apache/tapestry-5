@@ -33,12 +33,6 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 {
     private static final String CORE_LIBRARY_PREFIX = "core/";
 
-    private static final String MIXINS_SUBPACKAGE = "mixins";
-
-    private static final String COMPONENTS_SUBPACKAGE = "components";
-
-    private static final String PAGES_SUBPACKAGE = "pages";
-
     private final Logger _logger;
 
     private final ComponentInstantiatorSource _componentInstantiatorSource;
@@ -138,10 +132,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private void addPackagesToInstantiatorSource(String rootPackage)
     {
-        _componentInstantiatorSource.addPackage(rootPackage + ".pages");
-        _componentInstantiatorSource.addPackage(rootPackage + ".components");
-        _componentInstantiatorSource.addPackage(rootPackage + ".mixins");
-        _componentInstantiatorSource.addPackage(rootPackage + ".base");
+        _componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.PAGES_SUBPACKAGE);
+        _componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.COMPONENTS_SUBPACKAGE);
+        _componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.MIXINS_SUBPACKAGE);
+        _componentInstantiatorSource.addPackage(rootPackage + "." + InternalConstants.BASE_SUBPACKAGE);
     }
 
     /**
@@ -268,16 +262,16 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
     private void rebuild(String pathPrefix, String rootPackage)
     {
-        fillNameToClassNameMap(pathPrefix, rootPackage, PAGES_SUBPACKAGE, _pageToClassName);
-        fillNameToClassNameMap(pathPrefix, rootPackage, COMPONENTS_SUBPACKAGE, _componentToClassName);
-        fillNameToClassNameMap(pathPrefix, rootPackage, MIXINS_SUBPACKAGE, _mixinToClassName);
+        fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.PAGES_SUBPACKAGE, _pageToClassName);
+        fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.COMPONENTS_SUBPACKAGE, _componentToClassName);
+        fillNameToClassNameMap(pathPrefix, rootPackage, InternalConstants.MIXINS_SUBPACKAGE, _mixinToClassName);
     }
 
     private void fillNameToClassNameMap(String pathPrefix, String rootPackage, String subPackage,
                                         Map<String, String> logicalNameToClassName)
     {
         String searchPackage = rootPackage + "." + subPackage;
-        boolean isPage = subPackage.equals(PAGES_SUBPACKAGE);
+        boolean isPage = subPackage.equals(InternalConstants.PAGES_SUBPACKAGE);
 
         Collection<String> classNames = _classNameLocator.locateClassNames(searchPackage);
 

@@ -180,7 +180,7 @@ Persistent Fields
   
 {Embedded Components}
 
-  Components often contain other components.  Components inside another components template are called <embedded components>.  
+  Components often contain other components.  Components inside another component's template are called <embedded components>.  
   The containing component's
   {{{templates.html}template}} will contain special elements, in the Tapestry namespace, identifying where the the embedded components go.
   
