@@ -89,7 +89,7 @@ public class SelectTest extends InternalBaseTestCase
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
 
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
         writer.element("select");
 
@@ -105,8 +105,8 @@ public class SelectTest extends InternalBaseTestCase
     {
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
-        List<OptionModel> options = Arrays.asList((OptionModel) new OptionModelImpl("Fred", false,
-                                                                                    "fred", "class", "pixie"));
+        List<OptionModel> options = Arrays.asList(
+                (OptionModel) new OptionModelImpl("Fred", false, "fred", "class", "pixie"));
 
         Select select = new Select();
 
@@ -114,7 +114,7 @@ public class SelectTest extends InternalBaseTestCase
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
 
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
         writer.element("select");
 
@@ -130,8 +130,8 @@ public class SelectTest extends InternalBaseTestCase
     {
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
-        List<OptionModel> options = CollectionFactory.newList((OptionModel) new OptionModelImpl(
-                "Fred", true, "fred", "class", "pixie"));
+        List<OptionModel> options = CollectionFactory.newList(
+                (OptionModel) new OptionModelImpl("Fred", true, "fred", "class", "pixie"));
 
         Select select = new Select();
 
@@ -139,7 +139,7 @@ public class SelectTest extends InternalBaseTestCase
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
 
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
         writer.element("select");
 
@@ -166,7 +166,7 @@ public class SelectTest extends InternalBaseTestCase
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
         writer.element("select");
 
@@ -190,7 +190,7 @@ public class SelectTest extends InternalBaseTestCase
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
         writer.element("select");
 
@@ -216,7 +216,7 @@ public class SelectTest extends InternalBaseTestCase
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
 
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
         writer.element("select");
 

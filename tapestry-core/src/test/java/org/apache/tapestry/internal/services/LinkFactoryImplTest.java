@@ -55,63 +55,34 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     @Test
     public void action_link_root_context_no_ids()
     {
-        testActionLink(
-                "",
-                PAGE_LOGICAL_NAME,
-                "foo.bar",
-                "someaction",
-                "/sub/mypage.foo.bar:someaction");
+        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", "someaction", "/sub/mypage.foo.bar:someaction");
 
     }
 
     @Test
     public void action_link_root_context_with_ids()
     {
-        testActionLink(
-                "",
-                PAGE_LOGICAL_NAME,
-                "foo.bar",
-                "publish",
-                "/sub/mypage.foo.bar:publish/fred/5",
-                "fred",
-                5);
+        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", "publish", "/sub/mypage.foo.bar:publish/fred/5", "fred", 5);
     }
 
     @Test
     public void action_link_with_default_action()
     {
-        testActionLink(
-                "",
-                PAGE_LOGICAL_NAME,
-                "foo.bar",
-                TapestryConstants.ACTION_EVENT,
-                "/sub/mypage.foo.bar/fred/5",
-                "fred",
-                5);
+        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", TapestryConstants.ACTION_EVENT, "/sub/mypage.foo.bar/fred/5",
+                       "fred", 5);
     }
 
     @Test
     public void page_level_event_always_includes_action()
     {
-        testActionLink(
-                "",
-                PAGE_LOGICAL_NAME,
-                "",
-                TapestryConstants.ACTION_EVENT,
-                "/sub/mypage:action/barney/99",
-                "barney",
-                99);
+        testActionLink("", PAGE_LOGICAL_NAME, "", TapestryConstants.ACTION_EVENT, "/sub/mypage:action/barney/99",
+                       "barney", 99);
     }
 
     @Test
     public void action_link_named_context_no_ids()
     {
-        testActionLink(
-                "/fred",
-                PAGE_LOGICAL_NAME,
-                "foo.bar",
-                "someaction",
-                "/fred/sub/mypage.foo.bar:someaction");
+        testActionLink("/fred", PAGE_LOGICAL_NAME, "foo.bar", "someaction", "/fred/sub/mypage.foo.bar:someaction");
     }
 
     @SuppressWarnings("unchecked")
@@ -134,14 +105,11 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_triggerPassivateEventForPageLink(rootElement, listener, holder);
 
-        train_encodeRedirectURL(
-                response,
-                "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar",
-                ENCODED);
+        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar", ENCODED);
 
         // This needs to be refactored a bit to be more testable.
 
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
+        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
         replay();
 
@@ -179,12 +147,11 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         listener.createdPageLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
 
-        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase()
-                + "/biff/bazz", ENCODED);
+        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/biff/bazz", ENCODED);
 
         // This needs to be refactored a bit to be more testable.
 
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
+        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
         replay();
 
@@ -226,7 +193,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         // This needs to be refactored a bit to be more testable.
 
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
+        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
         replay();
 
@@ -267,14 +234,11 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_triggerPassivateEventForPageLink(rootElement, listener, holder);
 
-        train_encodeRedirectURL(
-                response,
-                "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar",
-                ENCODED);
+        train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar", ENCODED);
 
         // This needs to be refactored a bit to be more testable.
 
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
+        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
         replay();
 
@@ -293,8 +257,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     }
 
     @SuppressWarnings("unchecked")
-    private void train_triggerPassivateEventForPageLink(ComponentPageElement rootElement,
-                                                        LinkFactoryListener listener, Holder<Link> holder)
+    private void train_triggerPassivateEventForPageLink(ComponentPageElement rootElement, LinkFactoryListener listener,
+                                                        Holder<Link> holder)
     {
         IAnswer<Boolean> triggerEventAnswer = newAnswerForPassivateEventTrigger();
 
@@ -303,11 +267,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         // Intercept the call to handle component event, and let the IAnswer
         // do the work.
 
-        expect(
-                rootElement.triggerEvent(
-                        eq(TapestryConstants.PASSIVATE_EVENT),
-                        (Object[]) isNull(),
-                        isA(ComponentEventHandler.class))).andAnswer(triggerEventAnswer);
+        expect(rootElement.triggerEvent(eq(TapestryConstants.PASSIVATE_EVENT), (Object[]) isNull(),
+                                        isA(ComponentEventHandler.class))).andAnswer(triggerEventAnswer);
 
         listener.createdPageLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
@@ -324,11 +285,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         // Intercept the call to handle component event, and let the IAnswer
         // do the work.
 
-        expect(
-                rootElement.triggerEvent(
-                        eq(TapestryConstants.PASSIVATE_EVENT),
-                        (Object[]) isNull(),
-                        isA(ComponentEventHandler.class))).andAnswer(triggerEventAnswer);
+        expect(rootElement.triggerEvent(eq(TapestryConstants.PASSIVATE_EVENT), (Object[]) isNull(),
+                                        isA(ComponentEventHandler.class))).andAnswer(triggerEventAnswer);
 
         listener.createdActionLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
@@ -359,8 +317,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 ComponentEventHandler handler = (ComponentEventHandler) EasyMock
                         .getCurrentArguments()[2];
 
-                handler.handleResult(new Object[]
-                        {"foo", "bar"}, null, null);
+                handler.handleResult(new Object[]{"foo", "bar"}, null, null);
 
                 return true;
             }
@@ -368,8 +325,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     }
 
     @SuppressWarnings("unchecked")
-    private void testActionLink(String contextPath, String logicalPageName, String nestedId,
-                                String eventName, String expectedURI, Object... context)
+    private void testActionLink(String contextPath, String logicalPageName, String nestedId, String eventName,
+                                String expectedURI, Object... context)
     {
         Request request = mockRequest();
         Response response = mockResponse();
@@ -392,12 +349,10 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         // This needs to be refactored a bit to be more testable.
 
-        map.store(isA(Link.class), isA(ComponentInvocation.class));
+        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
-        train_encodeURL(response, String.format(
-                "%s?%s=foo/bar",
-                expectedURI,
-                InternalConstants.PAGE_CONTEXT_NAME), ENCODED);
+        train_encodeURL(response, String.format("%s?%s=foo/bar", expectedURI, InternalConstants.PAGE_CONTEXT_NAME),
+                        ENCODED);
 
         replay();
 

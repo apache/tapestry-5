@@ -41,12 +41,11 @@ public class LinkImpl implements Link
 
     public LinkImpl(Response encoder, String contextPath, String targetPath, boolean forForm)
     {
-        this(encoder, contextPath, new ComponentInvocation(new OpaqueConstantTarget(targetPath),
-                                                           new String[0], null), forForm);
+        this(encoder, contextPath,
+             new ComponentInvocationImpl(new OpaqueConstantTarget(targetPath), new String[0], null), forForm);
     }
 
-    public LinkImpl(Response encoder, String contextPath, ComponentInvocation invocation,
-                    boolean forForm)
+    public LinkImpl(Response encoder, String contextPath, ComponentInvocation invocation, boolean forForm)
     {
         _contextPath = contextPath;
         _response = encoder;

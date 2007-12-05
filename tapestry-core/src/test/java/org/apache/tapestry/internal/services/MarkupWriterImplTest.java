@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.dom.XMLMarkupModel;
@@ -34,7 +33,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
     @Test
     public void write_whitespace_before_start_of_root_element_is_ignored()
     {
-        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
         w.write("  ");
 
@@ -47,7 +46,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
     @Test
     public void write_whitespace_after_end_of_root_element_is_ignored()
     {
-        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel(), null);
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
 
         w.element("root");
         w.end();
@@ -112,9 +111,8 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         root.attribute("gnip", "gnop");
 
-        assertEquals(
-                w.toString(),
-                "<root foo=\"bar\" gnip=\"gnop\">before child<nested>inner text</nested>after child</root>");
+        assertEquals(w.toString(),
+                     "<root foo=\"bar\" gnip=\"gnop\">before child<nested>inner text</nested>after child</root>");
     }
 
     @Test
@@ -191,24 +189,6 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         assertEquals(w.toString(), "<root>Test name: writef</root>");
     }
 
-    @Test
-    public void writer_notifies_map_about_links()
-    {
-        ComponentInvocationMap map = mockComponentInvocationMap();
-
-        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel(), map);
-        Link link = mockLink();
-
-        Element e = writer.element("form");
-
-        map.store(e, link);
-
-        replay();
-
-        writer.attributes("action", link);
-
-        verify();
-    }
 
     @Test
     public void write_raw()

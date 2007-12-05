@@ -118,7 +118,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         String[] activationContext = collectActivationContextForPage(containingPage);
 
-        ComponentInvocation invocation = new ComponentInvocation(target, contextStrings, activationContext);
+        ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
 
         Link link = new LinkImpl(_response, _request.getContextPath(), invocation, forForm);
 
@@ -165,7 +165,7 @@ public class LinkFactoryImpl implements LinkFactory
                 activationContext) : collectActivationContextForPage(page);
 
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
-        ComponentInvocation invocation = new ComponentInvocation(target, context, null);
+        ComponentInvocation invocation = new ComponentInvocationImpl(target, context, null);
 
         Link link = new LinkImpl(_response, _request.getContextPath(), invocation, false);
 

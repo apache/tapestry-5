@@ -20,20 +20,13 @@ import org.apache.tapestry.services.MarkupWriterFactory;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 {
-    private final ComponentInvocationMap _componentInvocationMap;
-
-    public MarkupWriterFactoryImpl(ComponentInvocationMap componentInvocationMap)
-    {
-        _componentInvocationMap = componentInvocationMap;
-    }
-
     public MarkupWriter newMarkupWriter()
     {
         // TODO: Analyze the response type to determine the correct model? Maybe ContentType should
         // be passed into to make this determination. DefaultMarkupModel is for SGML style (legacy)
         // HTML.
 
-        return new MarkupWriterImpl(new DefaultMarkupModel(), _componentInvocationMap);
+        return new MarkupWriterImpl(new DefaultMarkupModel());
     }
 
 }
