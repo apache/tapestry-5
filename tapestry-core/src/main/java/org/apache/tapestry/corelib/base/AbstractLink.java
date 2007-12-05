@@ -17,6 +17,7 @@ package org.apache.tapestry.corelib.base;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
+import static org.apache.tapestry.TapestryConstants.LITERAL_BINDING_PREFIX;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
@@ -33,7 +34,7 @@ public abstract class AbstractLink
     /**
      * An anchor value to append to the generated URL (the hash separator will be added automatically).
      */
-    @Parameter
+    @Parameter(defaultPrefix = LITERAL_BINDING_PREFIX)
     private String _anchor;
 
     @Inject
