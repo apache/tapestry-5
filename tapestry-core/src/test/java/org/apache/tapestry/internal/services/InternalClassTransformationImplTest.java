@@ -41,7 +41,6 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Arrays;
 import static java.util.Arrays.asList;
 import java.util.List;
 import java.util.Map;
@@ -919,33 +918,27 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void non_private_fields_log_an_error() throws Exception
+    public void non_private_fields_are_an_exception() throws Exception
     {
         Logger logger = mockLogger();
 
-        logger.error(ServicesMessages.nonPrivateFields(VisibilityBean.class.getName(), Arrays
-                .asList("_$myPackagePrivate", "_$myProtected", "_$myPublic")));
 
         replay();
 
         InternalClassTransformation ct = createClassTransformation(VisibilityBean.class, logger);
 
-        List<String> names = ct.findFieldsWithAnnotation(Retain.class);
+        try
+        {
 
-        // Only _myLong shows up, because its the only private field
+            ct.finish();
 
-        assertEquals(names, Arrays.asList("_$myLong"));
-
-        // However, all the fields are "reserved" via the IdAllocator ...
-
-        assertEquals(ct.newMemberName("_$myLong"), "_$myLong_0");
-        assertEquals(ct.newMemberName("_$myStatic"), "_$myStatic_0");
-        assertEquals(ct.newMemberName("_$myProtected"), "_$myProtected_0");
-
-        // The check for non-private fields has been moved from the ICTI constructor to the finish
-        // method.
-
-        ct.finish();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "Class " + VisibilityBean.class.getName() + " contains field(s)",
+                                  "_$myPackagePrivate", "_$myProtected", "_$myPublic");
+        }
 
         verify();
     }
