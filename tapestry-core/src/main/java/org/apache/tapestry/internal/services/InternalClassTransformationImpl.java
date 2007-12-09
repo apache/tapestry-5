@@ -230,7 +230,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         addMemberNames(_ctClass.getDeclaredMethods());
     }
 
-    public void verifyFields()
+    void verifyFields()
     {
         List<String> names = newList();
 
@@ -249,12 +249,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             names.add(name);
         }
 
-        if (!names.isEmpty())
-        {
-            Collections.sort(names);
-
-            _logger.error(ServicesMessages.nonPrivateFields(getClassName(), names));
-        }
+        if (!names.isEmpty()) throw new RuntimeException(ServicesMessages.nonPrivateFields(getClassName(), names));
     }
 
     private void addMemberNames(CtMember[] members)
