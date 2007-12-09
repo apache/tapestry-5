@@ -24,6 +24,8 @@ import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
 
+import java.io.IOException;
+
 /**
  * Simulates a click on an action link.
  */
@@ -88,7 +90,7 @@ public class ActionLinkInvoker implements ComponentInvoker
                     .getComponentNestedId(), actionLinkTarget.getEventType(), invocation
                     .getContext(), invocation.getActivationContext());
         }
-        catch (java.io.IOException e)
+        catch (IOException e)
         {
             throw new RuntimeException(e);
         }

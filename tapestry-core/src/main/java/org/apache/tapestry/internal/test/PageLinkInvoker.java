@@ -32,11 +32,14 @@ public class PageLinkInvoker implements ComponentInvoker
 
     private final TestableMarkupWriterFactory _markupWriterFactory;
 
+    private final TestableResponse _response;
+
     public PageLinkInvoker(Registry registry)
     {
         _registry = registry;
         _pageRenderRequestHandler = _registry.getService(PageRenderRequestHandler.class);
         _markupWriterFactory = _registry.getService(TestableMarkupWriterFactory.class);
+        _response = _registry.getService(TestableResponse.class);
     }
 
     /**
@@ -59,6 +62,8 @@ public class PageLinkInvoker implements ComponentInvoker
         }
         finally
         {
+            _response.clear();
+
             _registry.cleanupThread();
         }
     }
