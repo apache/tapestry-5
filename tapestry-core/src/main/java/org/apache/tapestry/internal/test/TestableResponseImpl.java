@@ -25,6 +25,8 @@ public class TestableResponseImpl implements TestableResponse
 {
     private Link _link;
 
+    private boolean _committed;
+
     private void nyi(String methodName)
     {
         throw new RuntimeException(String.format("TestableResponse: Method %s() not yet implemented.", methodName));
@@ -39,7 +41,9 @@ public class TestableResponseImpl implements TestableResponse
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
-        // Welll, the output isn't accessible, but I guess we see that it could be generated from
+        _committed = true;
+
+        // Well, the output isn't accessible, but I guess we see that it could be generated from
         // the DOM.
         return new PrintWriter(new ByteArrayOutputStream());
     }
@@ -76,6 +80,8 @@ public class TestableResponseImpl implements TestableResponse
 
     public void sendRedirect(Link link) throws IOException
     {
+        _committed = true;
+
         _link = link;
     }
 
@@ -94,8 +100,14 @@ public class TestableResponseImpl implements TestableResponse
         return _link;
     }
 
+    public boolean isCommitted()
+    {
+        return _committed;
+    }
+
     public void clear()
     {
+        _committed = false;
         _link = null;
     }
 }

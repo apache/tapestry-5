@@ -953,16 +953,30 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         boolean result = false;
 
-        // Provide a default handler for when the provided handler is null.
-
-        if (handler == null) handler = new NotificationEventHandler(eventType, _completeId);
-
         ComponentPageElement component = this;
         String componentId = "";
 
+        // Provide a default handler for when the provided handler is null.
+        final ComponentEventHandler providedHandler = handler == null ? new NotificationEventHandler(eventType,
+                                                                                                     _completeId) : handler;
+
+        ComponentEventHandler wrappedHandler = new ComponentEventHandler()
+        {
+            public boolean handleResult(Object result, Component component, String methodDescription)
+            {
+                // Boolean value is not passed to the handler; it will be true (abort event)
+                // or false (continue looking for event handlers).
+
+                if (result instanceof Boolean) return (Boolean) result;
+
+                return providedHandler.handleResult(result, component, methodDescription);
+            }
+        };
+
+
         while (component != null)
         {
-            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, handler, _typeCoercer,
+            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, wrappedHandler, _typeCoercer,
                                                           _classLoader);
 
             result |= component.handleEvent(event);

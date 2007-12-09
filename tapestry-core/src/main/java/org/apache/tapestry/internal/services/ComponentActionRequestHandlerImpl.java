@@ -89,10 +89,11 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
 
         if (holder.hasValue()) return;
 
-        Link link = _linkFactory.createPageLink(page, false);
+        if (!_response.isCommitted())
+        {
+            Link link = _linkFactory.createPageLink(page, false);
 
-        _response.sendRedirect(link);
-
-        return;
+            _response.sendRedirect(link);
+        }
     }
 }

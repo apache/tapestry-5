@@ -15,19 +15,23 @@
 package org.apache.tapestry;
 
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.ComponentEvent;
 
 /**
- * Handler for a {@link ComponentEvent}, notified when a non-null value is returned from some event
+ * Handler for a a {@linkplain org.apache.tapestry.runtime.Event render phase event) or
+ * {@link org.apache.tapestry.runtime.ComponentEvent }, notified when a non-null value is returned from some event
  * handler method.
- * <p/>
- * TODO: Multiple handlers for different result types / strategy pattern?
  */
 public interface ComponentEventHandler<T>
 {
     /**
      * Invoked to handle a non-null event handler method result. The handler should determine
      * whether the value is acceptible, and throw an exception if not.
+     * <p/>
+     * <p/>
+     * Boolean values are <em>not</em> passed to the handler.  Booleans are used to indicate
+     * that the event has been handled (true) or that a further search for handlers
+     * should continue (true).  If a component event method returns true, then
+     * {@link org.apache.tapestry.runtime.Event#isAborted()} will return true.
      *
      * @param result            the result value provided by a method
      * @param component         the component from which the result was obtained

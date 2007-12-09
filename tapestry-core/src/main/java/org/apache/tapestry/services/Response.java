@@ -130,4 +130,12 @@ public interface Response
      * @return the same URL or a different one with additional information to track the user session
      */
     String encodeRedirectURL(String URL);
+
+    /**
+     * Returns true if the response has already been sent, either as a redirect or as a stream
+     * of content.
+     *
+     * @return true if response already sent
+     */
+    boolean isCommitted();
 }

@@ -53,13 +53,11 @@ public class EventImpl implements Event
         // this should never, ever happen. But what the hell,
         // let's check anyway.
 
-        if (_aborted)
-            throw new IllegalStateException(ServicesMessages
-                    .componentEventIsAborted(_methodDescription));
+        if (_aborted) throw new IllegalStateException(ServicesMessages
+                .componentEventIsAborted(_methodDescription));
 
-        if (result != null)
 
-            _aborted |= _handler.handleResult(result, _component, _methodDescription);
+        if (result != null) _aborted |= _handler.handleResult(result, _component, _methodDescription);
 
         return _aborted;
     }
