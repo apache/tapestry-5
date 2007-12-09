@@ -105,5 +105,8 @@ public class ResponseImpl implements Response
         _response.setIntHeader(name, value);
     }
 
-
+    public boolean isCommitted()
+    {
+        return _response.isCommitted();
+    }
 }

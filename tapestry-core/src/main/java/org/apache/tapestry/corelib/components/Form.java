@@ -301,8 +301,6 @@ public class Form implements ClientElement, FormValidationControl
             {
                 public boolean handleResult(Object result, Component component, String methodDescription)
                 {
-                    if (result instanceof Boolean) return ((Boolean) result);
-
                     // We want to process the event here, so that the component and method description are
                     // properly identified. But that's going to cause a headache aborting the
                     // event.
