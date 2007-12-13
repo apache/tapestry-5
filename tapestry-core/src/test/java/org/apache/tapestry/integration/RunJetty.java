@@ -16,6 +16,8 @@ package org.apache.tapestry.integration;
 
 import org.apache.tapestry.test.JettyRunner;
 
+import java.io.File;
+
 /**
  * A "shim" to run Demo App #1 inside IntelliJ.  I still haven't found a way to get IntelliJ to
  * export test classes and resources into a web facet.
@@ -27,6 +29,8 @@ public class RunJetty
         String contextName = args[0];
         String path = args[1];
 
-        new JettyRunner(contextName, 8080, path);
+        File workingDir = new File(System.getProperty("user.dir"));
+
+        new JettyRunner(workingDir, contextName, 8080, path);
     }
 }

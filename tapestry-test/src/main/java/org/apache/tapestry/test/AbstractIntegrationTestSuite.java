@@ -184,7 +184,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     @BeforeClass(alwaysRun = true)
     public void setup() throws Exception
     {
-        _jettyRunner = new JettyRunner("/", JETTY_PORT, _webappRoot);
+        _jettyRunner = new JettyRunner(TapestryTestConstants.MODULE_BASE_DIR, "/", JETTY_PORT, _webappRoot);
 
         _server = new SeleniumServer();
 

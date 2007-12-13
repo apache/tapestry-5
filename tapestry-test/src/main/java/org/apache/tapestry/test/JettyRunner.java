@@ -19,6 +19,7 @@ import org.mortbay.http.SocketListener;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.WebApplicationContext;
 
+import java.io.File;
 import static java.lang.String.format;
 
 /**
@@ -33,6 +34,8 @@ public class JettyRunner
 
     public static final int DEFAULT_PORT = 80;
 
+    private final File _workingDir;
+
     private final String _contextPath;
 
     private final int _port;
@@ -42,23 +45,17 @@ public class JettyRunner
     private final Server _jetty;
 
     /**
-     * Defaults the context path to "/" and the port to 80.
-     */
-    public JettyRunner(String warPath)
-    {
-        this(DEFAULT_CONTEXT_PATH, DEFAULT_PORT, warPath);
-    }
-
-    /**
      * Creates and starts a new instance of Jetty. This should be done from a test case setup
      * method.
      *
+     * @param workingDir  current directory (used for any relative files)
      * @param contextPath the context path for the deployed application
      * @param port        the port number used to access the application
      * @param warPath     the path to the exploded web application (typically, "src/main/webapp")
      */
-    public JettyRunner(String contextPath, int port, String warPath)
+    public JettyRunner(File workingDir, String contextPath, int port, String warPath)
     {
+        _workingDir = workingDir;
         _contextPath = contextPath;
         _port = port;
         _warPath = warPath;
@@ -99,10 +96,14 @@ public class JettyRunner
 
     private Server createAndStart()
     {
-        System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", _port, _contextPath, _warPath);
-
         try
         {
+
+            String warPath = new File(_workingDir, _warPath).getPath();
+            String webDefaults = new File(_workingDir, "src/test/conf/webdefault.xml").getPath();
+
+            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", _port, _contextPath, warPath);
+
             Server server = new Server();
 
             SocketListener socketListener = new SocketListener();
@@ -112,9 +113,9 @@ public class JettyRunner
             NCSARequestLog log = new NCSARequestLog();
             server.setRequestLog(log);
 
-            WebApplicationContext context = server.addWebApplication(_contextPath, _warPath);
+            WebApplicationContext context = server.addWebApplication(_contextPath, warPath);
 
-            context.setDefaultsDescriptor("src/test/conf/webdefault.xml");
+            context.setDefaultsDescriptor(webDefaults);
 
             server.start();
 

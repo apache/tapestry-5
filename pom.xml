@@ -232,7 +232,7 @@
                             <suiteXmlFile>src/test/conf/testng.xml</suiteXmlFile>
                         </suiteXmlFiles>
                         <argLine>-Xmx500m</argLine>
-                        <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                        <redirectTestOutputToFile>false</redirectTestOutputToFile>
                     </configuration>
                 </plugin>
                 <plugin>
