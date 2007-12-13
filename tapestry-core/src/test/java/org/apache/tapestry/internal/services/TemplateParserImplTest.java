@@ -174,14 +174,14 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     /**
      * Test disabled when not online.
      */
-    @Test(enabled = false)
+    @Test(enabled = true)
     public void html_entity()
     {
         List<TemplateToken> tokens = tokens("html_entity.tml");
 
-        assertEquals(tokens.size(), 3);
+        assertEquals(tokens.size(), 4);
 
-        TextToken t = get(tokens, 1);
+        TextToken t = get(tokens, 2);
 
         // HTML entities are parsed into values that will ultimately
         // be output as numeric entities. This is less than ideal; would like
@@ -645,4 +645,31 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(t2.getSystemId(), systemId);
     }
 
+    @Test
+    public void invalid_component_id() throws Exception
+    {
+        try
+        {
+            parse("invalid_component_id.tml");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "Component id 'not-valid' is not valid");
+        }
+    }
+
+    @Test
+    public void invalid_block_id() throws Exception
+    {
+        try
+        {
+            parse("invalid_block_id.tml");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertMessageContains(ex, "Block id 'not-valid' is not valid");
+        }
+    }
 }

@@ -385,4 +385,9 @@ class ServicesMessages
     {
         return MESSAGES.format("base-class-in-wrong-package", parentClassName, className, suggestedPackage);
     }
+
+    static String invalidId(String messageKey, String idValue)
+    {
+        return MESSAGES.format(messageKey, idValue);
+    }
 }
