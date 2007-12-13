@@ -52,6 +52,10 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
 
+    private static final String ID_REGEXP = "^[a-z]([a-z]|[0-9]|_)*$";
+
+    private static final Pattern ID_PATTERN = Pattern.compile(ID_REGEXP, Pattern.CASE_INSENSITIVE);
+
     private XMLReader _reader;
 
     // Resource being parsed
@@ -287,8 +291,6 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             return;
         }
 
-        // TODO: Handle interpolations inside attributes?
-
         startPossibleComponent(attributes, localName, null);
     }
 
@@ -359,6 +361,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private void startBlock(Attributes attributes)
     {
         String blockId = findSingleParameter("block", "id", attributes);
+
+        validateId(blockId, "invalid-block-id");
 
         // null is ok for blockId
 
@@ -438,6 +442,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
                 if (name.equalsIgnoreCase(ID_ATTRIBUTE_NAME))
                 {
                     id = nullForBlank(value);
+
+                    validateId(id, "invalid-component-id");
+
                     continue;
                 }
 
@@ -484,6 +491,17 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // elements?
 
         _endTagHandlerStack.push(_addEndElementToken);
+    }
+
+    private void validateId(String id, String messageKey)
+    {
+        if (id == null) return;
+
+        if (ID_PATTERN.matcher(id).matches()) return;
+
+        // Not a match.
+
+        throw new TapestryException(ServicesMessages.invalidId(messageKey, id), getCurrentLocation(), null);
     }
 
     private void startBody()
