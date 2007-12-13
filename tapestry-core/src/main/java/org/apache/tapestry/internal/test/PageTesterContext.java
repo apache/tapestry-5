@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.services.Context;
+import org.apache.tapestry.test.TapestryTestConstants;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -23,11 +24,11 @@ import java.util.List;
 
 public class PageTesterContext implements Context
 {
-    private final String _contextRoot;
+    private final File _contextRoot;
 
     public PageTesterContext(String contextRoot)
     {
-        _contextRoot = contextRoot;
+        _contextRoot = new File(TapestryTestConstants.MODULE_BASE_DIR, contextRoot);
     }
 
     public String getInitParameter(String name)
@@ -55,14 +56,12 @@ public class PageTesterContext implements Context
 
     public List<String> getResourcePaths(String path)
     {
-        throw new UnsupportedOperationException(
-                "getResourcePaths() is not supported for ContextForPageTester.");
+        throw new UnsupportedOperationException("getResourcePaths() is not supported for ContextForPageTester.");
     }
 
     public Object getAttribute(String name)
     {
-        throw new UnsupportedOperationException(
-                "getAttribute() is not supported for ContextForPageTester.");
+        throw new UnsupportedOperationException("getAttribute() is not supported for ContextForPageTester.");
     }
 
 }

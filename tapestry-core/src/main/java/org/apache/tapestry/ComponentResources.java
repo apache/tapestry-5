@@ -126,4 +126,5 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @return the informal Block parameter, or null if not bound
      */
     Block getBlockParameter(String parameterName);
+
 }
