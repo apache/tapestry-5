@@ -324,6 +324,49 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         };
     }
 
+    @Test
+    public void action_with_context_that_contains_periods()
+    {
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentPageElement element = mockComponentPageElement();
+        Page page = mockPage();
+        ComponentPageElement rootElement = mockComponentPageElement();
+        LinkFactoryListener listener = mockLinkFactoryListener();
+        ComponentInvocationMap map = mockComponentInvocationMap();
+        RequestPageCache cache = mockRequestPageCache();
+
+        final Holder<Link> holder = new Holder<Link>();
+
+        train_getContainingPage(element, page);
+        train_getLogicalName(page, "mypage");
+        train_getContextPath(request, "");
+        train_getNestedId(element, null);
+
+        train_getRootElement(page, rootElement);
+        train_triggerPassivateEventForActionLink(rootElement, listener, holder);
+
+        // This needs to be refactored a bit to be more testable.
+
+        map.store(isA(Link.class), isA(ComponentInvocation.class));
+
+        train_encodeURL(response, "/mypage:myaction/1.2.3/4.5.6?t:ac=foo/bar", ENCODED);
+
+        replay();
+
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
+        factory.addListener(listener);
+
+        Link link = factory.createActionLink(element, "myaction", false, "1.2.3", "4.5.6");
+
+        assertEquals(link.toURI(), ENCODED);
+        assertSame(link, holder.get());
+
+        verify();
+
+    }
+
+
     @SuppressWarnings("unchecked")
     private void testActionLink(String contextPath, String logicalPageName, String nestedId, String eventName,
                                 String expectedURI, Object... context)

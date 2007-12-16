@@ -117,22 +117,14 @@ public interface Page
     /**
      * Creates a link that will trigger behavior in a component within the page.
      *
-     * @param element
-     * @param action
-     * @param forForm
-     * @param context
-     * @return
+     * @see org.apache.tapestry.ComponentResourcesCommon#createActionLink(String, boolean, Object[])
      */
-    Link createActionLink(ComponentPageElement element, String action, boolean forForm,
-                          Object... context);
+    Link createActionLink(ComponentPageElement element, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a link to the named page.
      *
-     * @param pageName the logical name of the page
-     * @param override if true, the provided context is used even if empty
-     * @param context  optional activation context for the page (if not provided, it is generated from
-     *                 the page itself)
+     * @see org.apache.tapestry.ComponentResourcesCommon#createPageLink(String, boolean, Object[])
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 

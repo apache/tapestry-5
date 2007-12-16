@@ -55,6 +55,24 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         test("/foo/MyPage:anevent", "foo/MyPage", "", "anevent");
     }
 
+    /**
+     * @see https://issues.apache.org/jira/browse/TAPESTRY-1949
+     */
+    @Test
+    public void event_on_page_with_name_and_dotted_parameters() throws Exception
+    {
+        test("/foo/MyPage:myevent/1.2.3/4.5.6", "foo/MyPage", "", "myevent", "1.2.3", "4.5.6");
+    }
+
+    /**
+     * @see https://issues.apache.org/jira/browse/TAPESTRY-1949
+     */
+    @Test
+    public void event_on_page_dotted_parameters() throws Exception
+    {
+        test("/foo/MyPage:action/1.2.3/4.5.6", "foo/MyPage", "", TapestryConstants.ACTION_EVENT, "1.2.3", "4.5.6");
+    }
+
     @Test
     public void event_on_component_within_page() throws Exception
     {

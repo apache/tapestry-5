@@ -20,10 +20,32 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Processes component action events sent as requests from the client. Action events include an
  * event type, identify a page and a component, and may provide additional context strings.
+ * <p/>
+ * <p/>
+ * Forms:
+ * <ul>
+ * <li>/context/pagename:eventname -- event on the page, no action context</li>
+ * <li>/context/pagename:eventname/foo/bar -- event on the page with action context "foo", "bar"</li>
+ * <li>/context/pagename.foo.bar -- event on component foo.bar within the page, default event, no action context</li>
+ * <li>/context/pagename.foo.bar/baz.gnu -- event on component foo.bar within the page, default event, with action context "baz", "gnu"</li>
+ * <li>/context/pagename.bar.baz:eventname/foo/gnu -- event on component bar.baz within the page with action context "foo"
+ * , "gnu"</li>
+ * </ul>
+ * <p/>
+ * <p/>
+ * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create".  The context portion isn't the concern
+ * of this code, since {@link org.apache.tapestry.services.Request#getPath()} will already have stripped that off.  We can act as if the context is
+ * always "/" (the path always starts with a slash).
+ * <p/>
+ * <p/>
+ *
+ * @see org.apache.tapestry.internal.services.LinkFactory#createActionLink(org.apache.tapestry.internal.structure.ComponentPageElement, String, boolean, Object[])
  */
 public class ComponentActionDispatcher implements Dispatcher
 {
@@ -40,80 +62,65 @@ public class ComponentActionDispatcher implements Dispatcher
         _componentClassResolver = componentClassResolver;
     }
 
+    // A beast that recognizes all the elements of a path in a single go.
+    // We skip the leading slash, then take the next few terms (until a dot or a colon)
+    // as the page name.  Then there's a sequence that sees a dot
+    // and recognizes the nested component id (which may be missing), which ends
+    // at the colon, or at the slash (or the end of the string).  The colon identifies
+    // the event name (the event name is also optional).  A valid path will always have
+    // a nested component id or an event name (or both) ... when both are missing, then the
+    // path is most likely a page render request.  After the optional event name,
+    // the next piece is the action context, which is the remainder of the path.
+
+    private final Pattern PATH_PATTERN = Pattern.compile(
+
+            "^/" +      // The leading slash is recognized but skipped
+                    "(((\\w+)/)*(\\w+))" + // A series of folder names leading up to the page name, forming the logical page name
+                    "(\\.(\\w+(\\.\\w+)*))?" + // The first dot separates the page name from the nested component id
+                    "(\\:(\\w+))?" + // A colon, then the event type
+                    "(/(.*))?", //  A slash, then the action context
+                                Pattern.COMMENTS);
+
+    // Constants for the match groups in the above pattern.
+    private static final int LOGICAL_PAGE_NAME = 1;
+    private static final int NESTED_ID = 6;
+    private static final int EVENT_NAME = 9;
+    private static final int CONTEXT = 11;
+
+    // Used to split a context into individual chunks.
+
+    private final Pattern SLASH_PATTERN = Pattern.compile("/");
+
     public boolean dispatch(Request request, Response response) throws IOException
     {
         String path = request.getPath();
 
-        String logicalPageName = null;
-        String nestedComponentId = "";
-        String eventType = TapestryConstants.ACTION_EVENT;
+        Matcher matcher = PATH_PATTERN.matcher(request.getPath());
 
-        // Will always have a dot or a colon
+        if (!matcher.matches()) return false;
 
-        int dotx = path.indexOf('.');
-        int colonx = path.indexOf(':');
+        String logicalPageName = matcher.group(LOGICAL_PAGE_NAME);
 
-        int contextStart = -1;
+        String nestedComponentId = matcher.group(NESTED_ID);
 
-        if (dotx > 0)
-        {
-            logicalPageName = path.substring(1, dotx);
+        String eventType = matcher.group(EVENT_NAME);
 
-            int slashx = path.indexOf('/', dotx + 1);
-
-            // The nested id ends at the colon (if present) or
-            // the first slash (if present) or the end of the path.
-
-            if (slashx < 0)
-            {
-                slashx = path.length();
-            }
-            else
-            {
-                contextStart = slashx + 1;
-            }
-
-            int nestedIdEnd = slashx;
-
-            if (colonx > 0 && colonx < slashx)
-            {
-                nestedIdEnd = colonx;
-                eventType = path.substring(colonx + 1, slashx);
-            }
-
-            nestedComponentId = path.substring(dotx + 1, nestedIdEnd);
-        }
-        else if (colonx > 0)
-        {
-            // No dot, but a colon. Therefore no nested component id, but an action name and
-            // maybe some event context.
-
-            int slashx = path.indexOf('/', colonx + 1);
-            if (slashx < 0)
-            {
-                slashx = path.length();
-            }
-            else
-            {
-                contextStart = slashx + 1;
-            }
-
-            eventType = path.substring(colonx + 1, slashx);
-            logicalPageName = path.substring(1, colonx);
-        }
-
-        if (logicalPageName == null) return false;
-
-        // We've identified a page name ... does the application contain a page with that name?
+        if (nestedComponentId == null && eventType == null) return false;
 
         if (!_componentClassResolver.isPageName(logicalPageName)) return false;
 
-        String[] eventContext = contextStart > 0 ? decodeContext(path.substring(contextStart)) : _emptyString;
+        String[] eventContext = decodeContext(matcher.group(CONTEXT));
 
         String activationContextValue = request.getParameter(InternalConstants.PAGE_CONTEXT_NAME);
 
         String[] activationContext = activationContextValue == null ? _emptyString : decodeContext(
                 activationContextValue);
+
+        // The event type is often omitted, and defaults to "action".
+
+        if (eventType == null) eventType = TapestryConstants.ACTION_EVENT;
+
+        if (nestedComponentId == null) nestedComponentId = "";
 
         _componentActionRequestHandler.handle(logicalPageName, nestedComponentId, eventType, eventContext,
                                               activationContext);
@@ -123,7 +130,9 @@ public class ComponentActionDispatcher implements Dispatcher
 
     private String[] decodeContext(String input)
     {
-        String[] result = input.split("/");
+        if (input == null) return _emptyString;
+
+        String[] result = SLASH_PATTERN.split(input);
 
         for (int i = 0; i < result.length; i++)
         {

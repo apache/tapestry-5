@@ -103,15 +103,15 @@ public class LinkFactoryImpl implements LinkFactory
         _listeners.add(listener);
     }
 
-    public Link createActionLink(ComponentPageElement component, String action, boolean forForm, Object... context)
+    public Link createActionLink(ComponentPageElement component, String eventType, boolean forForm, Object... context)
     {
-        notBlank(action, "action");
+        notBlank(eventType, "action");
 
         Page containingPage = component.getContainingPage();
 
         String logicalPageName = containingPage.getLogicalName();
 
-        ActionLinkTarget target = new ActionLinkTarget(action, logicalPageName, component
+        ActionLinkTarget target = new ActionLinkTarget(eventType, logicalPageName, component
                 .getNestedId());
 
         String[] contextStrings = toContextStrings(context);
@@ -217,10 +217,10 @@ public class LinkFactoryImpl implements LinkFactory
         return result;
     }
 
-    public Link createPageLink(String pageName, boolean override, Object... context)
+    public Link createPageLink(String logicalPageName, boolean override, Object... context)
     {
         // This verifies that the page name is valid.
-        Page page = _pageCache.get(pageName);
+        Page page = _pageCache.get(logicalPageName);
 
         return createPageLink(page, override, context);
     }

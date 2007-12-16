@@ -151,10 +151,9 @@ public class PageImpl implements Page
         return _rootElement.getLogger();
     }
 
-    public Link createActionLink(ComponentPageElement element, String action, boolean forForm,
-                                 Object... context)
+    public Link createActionLink(ComponentPageElement element, String eventType, boolean forForm, Object... context)
     {
-        return _linkFactory.createActionLink(element, action, forForm, context);
+        return _linkFactory.createActionLink(element, eventType, forForm, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
@@ -169,8 +168,7 @@ public class PageImpl implements Page
 
     public Object getFieldChange(ComponentPageElement element, String fieldName)
     {
-        if (_fieldBundle == null)
-            _fieldBundle = _persistentFieldManager.gatherChanges(_logicalPageName);
+        if (_fieldBundle == null) _fieldBundle = _persistentFieldManager.gatherChanges(_logicalPageName);
 
         return _fieldBundle.getValue(element.getNestedId(), fieldName);
     }
