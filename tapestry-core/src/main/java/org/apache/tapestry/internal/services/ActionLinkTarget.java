@@ -28,9 +28,9 @@ public class ActionLinkTarget implements InvocationTarget
 
     private final String _componentNestedId;
 
-    public ActionLinkTarget(String action, String pageName, String componentNestedId)
+    public ActionLinkTarget(String eventType, String pageName, String componentNestedId)
     {
-        _eventType = action;
+        _eventType = eventType;
         _pageName = pageName;
         _componentNestedId = componentNestedId;
 

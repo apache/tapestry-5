@@ -52,7 +52,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
 
-    private static final String ID_REGEXP = "^[a-z]([a-z]|[0-9]|_)*$";
+    private static final String ID_REGEXP = "^[a-z]\\w*$";
 
     private static final Pattern ID_PATTERN = Pattern.compile(ID_REGEXP, Pattern.CASE_INSENSITIVE);
 

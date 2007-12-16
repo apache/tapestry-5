@@ -30,14 +30,14 @@ public interface LinkFactory
      * encoded by the current request (that is, bound to the current request's session, if any).
      *
      * @param component the component for which an action link is to be generated
-     * @param action    a name associated with the action
+     * @param eventType the type of event to trigger
      * @param forForm   true if the link is for a form, false otherwise
      * @param context   Additional path data, each value will be converted to a string and appended to the
      *                  URI
      * @return a link
+     * @see org.apache.tapestry.ComponentResourcesCommon#createActionLink(String, boolean, Object[])
      */
-    Link createActionLink(ComponentPageElement component, String action, boolean forForm,
-                          Object... context);
+    Link createActionLink(ComponentPageElement component, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a render link for the page. If an activation context is supplied then that context is
@@ -52,7 +52,8 @@ public interface LinkFactory
      * @param page              the page to which a link should be created
      * @param override          if true, then the provided activation context is always used even if empty
      * @param activationContext the activation context for the page
-     * @return
+     * @return a link
+     * @see org.apache.tapestry.ComponentResourcesCommon#createPageLink(String, boolean, Object[])
      */
     Link createPageLink(Page page, boolean override, Object... activationContext);
 
@@ -60,12 +61,12 @@ public interface LinkFactory
      * As with {@link #createPageLink(Page, boolean, Object[])}, but the page is specified by
      * logical name, rather than as an instance.
      *
-     * @param page     the logical name of the page to generate a link to
-     * @param override if true, then the provided activation context is always used even if empty
-     * @param context  activation context for the page
+     * @param logicalPageName the logical name of the page to generate a link to
+     * @param override        if true, then the provided activation context is always used even if empty
+     * @param context         activation context for the page
      * @return
      */
-    Link createPageLink(String page, boolean override, Object... context);
+    Link createPageLink(String logicalPageName, boolean override, Object... context);
 
     /**
      * Adds a listener, to be notified any time an action or render link is created; this allows the

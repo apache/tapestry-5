@@ -39,20 +39,24 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Return a string consisting the concatinated ids of all containing components, separated by
      * periods. In addition, nested ids are always all lower case. I.e., "foo.bar.baz". Returns null
-     * for a page.
+     * for the root component of a  page.
      */
     String getNestedId();
 
     /**
-     * Creates a component action request link as a callback for this component.
+     * Creates a component action request link as a callback for this component. The event type
+     * and context (as well as the page name and nested component id) will be encoded into a URL. A request for the
+     * URL will {@linkplain #triggerEvent(String, Object[], ComponentEventHandler)}  trigger} the named event
+     * on the component.
      *
-     * @param action  a name for the action associated with the link
-     * @param forForm if true, the link will be used as the action for an HTML form submission, which
-     *                may affect what information is encoded into the link
-     * @param context additional objects to be encoded into the path portion of the link; each is
-     *                converted to a string an URI encoded
+     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only letters, numbers and the underscore).
+     * @param forForm   if true, the link will be used as the eventType for an HTML form submission, which
+     *                  may affect what information is encoded into the link
+     * @param context   additional objects to be encoded into the path portion of the link; each is
+     *                  converted to a string and URI encoded
+     * @return link object for the callback
      */
-    Link createActionLink(String action, boolean forForm, Object... context);
+    Link createActionLink(String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a render request link to a specific page.
@@ -66,9 +70,9 @@ public interface ComponentResourcesCommon extends Locatable
     Link createPageLink(String pageName, boolean override, Object... context);
 
     /**
-     * Returns a string consisting of the fully qualified class name of the containing page, and the
+     * Returns a string consisting of the logical name of the containing page, and the
      * {@link #getNestedId() nested id} of this component, separated by a colon. I.e.,
-     * "MyPage:foo.bar.baz". For a page, returns just the page's logical name.
+     * "mypage:foo.bar.baz". For a page, returns just the page's logical name.
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *
