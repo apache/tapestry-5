@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ioc.annotations.IntermediateType;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.util.TimePeriod;
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.Request;
 
@@ -33,19 +35,25 @@ public class CookiesImpl implements Cookies
 
     private final int _defaultMaxAge;
 
+    /**
+     * @param request
+     * @param cookieSource
+     * @param cookieSink
+     * @param defaultMaxAge default cookie expiration time in milliseconds
+     */
     public CookiesImpl(Request request,
 
                        CookieSource cookieSource,
 
                        CookieSink cookieSink,
 
-                       @Symbol("tapestry.default-cookie-max-age")
-                       int defaultMaxAge)
+                       @Symbol("tapestry.default-cookie-max-age") @IntermediateType(TimePeriod.class)
+                       long defaultMaxAge)
     {
         _request = request;
         _cookieSource = cookieSource;
         _cookieSink = cookieSink;
-        _defaultMaxAge = defaultMaxAge;
+        _defaultMaxAge = (int) (defaultMaxAge / 1000l);
     }
 
     public String readCookieValue(String name)

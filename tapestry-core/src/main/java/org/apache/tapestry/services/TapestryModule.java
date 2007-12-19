@@ -38,6 +38,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseIns
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry.ioc.util.TimePeriod;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
@@ -506,10 +507,11 @@ public final class TapestryModule
                                          final RequestExceptionHandler exceptionHandler,
 
                                          // @Inject not needed because its a long, not a String
-                                         @Symbol("tapestry.file-check-interval")
+                                         @Symbol("tapestry.file-check-interval") @IntermediateType(TimePeriod.class)
                                          long checkInterval,
 
                                          @Symbol("tapestry.file-check-update-timeout")
+                                         @IntermediateType(TimePeriod.class)
                                          long updateTimeout,
 
                                          LocalizationSetter localizationSetter)
@@ -1527,13 +1529,13 @@ public final class TapestryModule
         // Remember this is request-to-request time, presumably it'll take the developer more than
         // one second to make a change, save it, and switch back to the browser.
 
-        configuration.add("tapestry.file-check-interval", "1000"); // 1 second
-        configuration.add("tapestry.file-check-update-timeout", "50"); // 50 milliseconds
+        configuration.add("tapestry.file-check-interval", "1 s");
+        configuration.add("tapestry.file-check-update-timeout", "50 ms");
 
         // This should be overridden for particular applications.
         configuration.add("tapestry.supported-locales", "en");
 
-        configuration.add("tapestry.default-cookie-max-age", "604800"); // One week
+        configuration.add("tapestry.default-cookie-max-age", "7 d");
 
         configuration.add("tapestry.start-page-name", "start");
 

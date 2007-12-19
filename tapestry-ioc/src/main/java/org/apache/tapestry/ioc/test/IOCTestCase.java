@@ -15,6 +15,7 @@
 package org.apache.tapestry.ioc.test;
 
 import org.apache.tapestry.ioc.*;
+import org.apache.tapestry.ioc.annotations.IntermediateType;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
@@ -359,5 +360,15 @@ public class IOCTestCase extends TestBase
     protected final MasterObjectProvider mockMasterObjectProvider()
     {
         return newMock(MasterObjectProvider.class);
+    }
+
+    protected final void train_value(IntermediateType it, Class value)
+    {
+        expect(it.value()).andReturn(value);
+    }
+
+    protected final IntermediateType newIntermediateType()
+    {
+        return newMock(IntermediateType.class);
     }
 }

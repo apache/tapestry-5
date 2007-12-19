@@ -17,11 +17,14 @@ package org.apache.tapestry.ioc.internal.services;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
+import org.apache.tapestry.ioc.annotations.IntermediateType;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.math.BigInteger;
 
 public class SymbolObjectProviderTest extends IOCTestCase
 {
@@ -51,14 +54,13 @@ public class SymbolObjectProviderTest extends IOCTestCase
         TypeCoercer coercer = mockTypeCoercer();
         AnnotationProvider annotationProvider = mockAnnotationProvider();
         ObjectLocator locator = mockObjectLocator();
-        Symbol annotation = newMock(Symbol.class);
         String symbolName = "example-symbol";
         String symbolValue = "symbol-value";
         Long coercedValue = 123l;
+        Symbol annotation = newSymbol(symbolName);
 
         train_getAnnotation(annotationProvider, Symbol.class, annotation);
-
-        expect(annotation.value()).andReturn(symbolName);
+        train_getAnnotation(annotationProvider, IntermediateType.class, null);
 
         train_valueForSymbol(source, symbolName, symbolValue);
 
@@ -73,8 +75,48 @@ public class SymbolObjectProviderTest extends IOCTestCase
         verify();
     }
 
-    protected final void train_valueForSymbol(SymbolSource source, String symbolName,
-                                              String symbolValue)
+    @Test
+    public void intermediate_type()
+    {
+        SymbolSource source = mockSymbolSource();
+        TypeCoercer coercer = mockTypeCoercer();
+        AnnotationProvider annotationProvider = mockAnnotationProvider();
+        ObjectLocator locator = mockObjectLocator();
+        String symbolName = "example-symbol";
+        String symbolValue = "symbol-value";
+        Long coercedValue = 123l;
+        Symbol annotation = newSymbol(symbolName);
+        IntermediateType it = newIntermediateType();
+        BigInteger intervalue = new BigInteger("123");
+
+        train_getAnnotation(annotationProvider, Symbol.class, annotation);
+        train_getAnnotation(annotationProvider, IntermediateType.class, it);
+
+        train_valueForSymbol(source, symbolName, symbolValue);
+
+        expect(it.value()).andReturn(BigInteger.class);
+
+        train_coerce(coercer, symbolValue, BigInteger.class, intervalue);
+        train_coerce(coercer, intervalue, Long.class, coercedValue);
+
+        replay();
+
+        ObjectProvider provider = new SymbolObjectProvider(source, coercer);
+
+        assertSame(provider.provide(Long.class, annotationProvider, locator), coercedValue);
+
+        verify();
+
+    }
+
+    private Symbol newSymbol(String symbolName)
+    {
+        Symbol annotation = newMock(Symbol.class);
+        expect(annotation.value()).andReturn(symbolName);
+        return annotation;
+    }
+
+    protected final void train_valueForSymbol(SymbolSource source, String symbolName, String symbolValue)
     {
         expect(source.valueForSymbol(symbolName)).andReturn(symbolValue);
     }

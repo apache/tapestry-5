@@ -42,8 +42,8 @@ public class CookiesImplTest extends Assert
         {
             Cookie c = (Cookie) obj;
 
-            return equals(getName(), c.getName()) && equals(getValue(), c.getValue())
-                    && equals(getPath(), c.getPath()) && getMaxAge() == c.getMaxAge();
+            return equals(getName(), c.getName()) && equals(getValue(), c.getValue()) && equals(getPath(),
+                                                                                                c.getPath()) && getMaxAge() == c.getMaxAge();
         }
 
         private boolean equals(Object value, Object other)
@@ -99,14 +99,12 @@ public class CookiesImplTest extends Assert
 
     public void test_Match()
     {
-        attempt("fred", "flintstone", new String[]
-                {"barney", "rubble", "fred", "flintstone"});
+        attempt("fred", "flintstone", new String[]{"barney", "rubble", "fred", "flintstone"});
     }
 
     public void test_No_Match()
     {
-        attempt("foo", null, new String[]
-                {"bar", "baz"});
+        attempt("foo", null, new String[]{"bar", "baz"});
     }
 
     public void test_Write_Cookie_Domain()
@@ -131,7 +129,7 @@ public class CookiesImplTest extends Assert
                 cookies.add(cookie);
             }
 
-        }, 1000);
+        }, 1000l * 1000l);
     }
 
     public void test_Write_Cookie_With_Max_Age()
