@@ -28,6 +28,7 @@ import org.apache.tapestry.services.LibraryMapping;
 import org.slf4j.Logger;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ComponentClassResolverImpl implements ComponentClassResolver, InvalidationListener
 {
@@ -207,7 +208,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     {
         if (savedMap.equals(newMap)) return;
 
-        Map<String, String> fixed = CollectionFactory.newMap();
+        Map<String, String> core = CollectionFactory.newMap();
+        Map<String, String> nonCore = CollectionFactory.newMap();
 
         int maxLength = 0;
 
@@ -217,28 +219,27 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             if (name.startsWith(CORE_LIBRARY_PREFIX))
             {
-
-                // Strip of the "core/" prefix.
+                // Strip off the "core/" prefix.
 
                 String key = name.substring(CORE_LIBRARY_PREFIX.length());
 
                 maxLength = Math.max(maxLength, key.length());
 
-                fixed.put(key, newMap.get(name));
+                core.put(key, newMap.get(name));
+            }
+            else
+            {
+                maxLength = Math.max(maxLength, name.length());
+
+                nonCore.put(name, newMap.get(name));
             }
         }
 
-        // Pass #2: Get everything else (may overwrite some of  pass #1).
+        // Merge the non-core mappings into the core mappings. Where there are conflicts on name, it
+        // means the application overrode a core page/component/mixin and that's ok ... the
+        // merged core map will reflect the application's mapping.
 
-        for (String name : newMap.keySet())
-        {
-            if (name.startsWith(CORE_LIBRARY_PREFIX)) continue;
-
-            maxLength = Math.max(maxLength, name.length());
-
-            fixed.put(name, newMap.get(name));
-        }
-
+        core.putAll(nonCore);
 
         StringBuilder builder = new StringBuilder(2000);
         Formatter f = new Formatter(builder);
@@ -247,11 +248,11 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         String formatString = "%" + maxLength + "s: %s\n";
 
-        List<String> sorted = InternalUtils.sortedKeys(fixed);
+        List<String> sorted = InternalUtils.sortedKeys(core);
 
         for (String name : sorted)
         {
-            String className = fixed.get(name);
+            String className = core.get(name);
 
             f.format(formatString, name, className);
         }
@@ -291,6 +292,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         }
     }
 
+    private static final Pattern SPLIT_PACKAGE_PATTERN = Pattern.compile("\\.");
+
     /**
      * Converts a fully qualified class name to a logical name
      *
@@ -303,11 +306,13 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      */
     private String toLogicalName(String className, String pathPrefix, int startPos)
     {
-        String[] terms = className.substring(startPos).split("\\.");
+        String[] terms = SPLIT_PACKAGE_PATTERN.split(className.substring(startPos));
+
         StringBuilder builder = new StringBuilder(pathPrefix);
         String sep = "";
 
         String logicalName = terms[terms.length - 1];
+        String unstripped = logicalName;
 
         for (int i = 0; i < terms.length - 1; i++)
         {
@@ -322,9 +327,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
             logicalName = stripTerm(term, logicalName);
         }
 
-        // The problem here is that you can eventually end up with the empty string.
-
-        assert logicalName.length() > 0;
+        if (logicalName.equals("")) logicalName = unstripped;
 
         builder.append(sep);
         builder.append(logicalName);
