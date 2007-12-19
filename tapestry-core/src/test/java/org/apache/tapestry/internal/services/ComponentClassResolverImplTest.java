@@ -80,6 +80,32 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         verify();
     }
 
+    /**
+     * https://issues.apache.org/jira/browse/TAPESTRY-1541
+     */
+    @Test
+    public void page_name_matches_containing_folder_name()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+        String className = APP_ROOT_PACKAGE + ".pages.admin.product.ProductAdmin";
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator);
+
+        assertEquals(resolver.resolvePageNameToClassName("admin/product/ProductAdmin"), className);
+
+        verify();
+    }
+
+
     @Test
     public void canonicalize_existing_page_name()
     {
