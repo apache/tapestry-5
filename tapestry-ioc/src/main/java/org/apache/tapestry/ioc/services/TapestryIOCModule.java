@@ -19,6 +19,7 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.services.*;
+import org.apache.tapestry.ioc.util.TimePeriod;
 import org.apache.tapestry.services.MasterObjectProvider;
 
 import java.io.File;
@@ -75,8 +76,8 @@ public final class TapestryIOCModule
     /**
      * Contributes the "perthread" scope.
      */
-    public void contributeServiceLifecycleSource(
-            MappedConfiguration<String, ServiceLifecycle> configuration, ObjectLocator locator)
+    public void contributeServiceLifecycleSource(MappedConfiguration<String, ServiceLifecycle> configuration,
+                                                 ObjectLocator locator)
     {
         configuration.add(PERTHREAD_SCOPE, locator.autobuild(PerThreadServiceLifecycle.class));
     }
@@ -88,10 +89,9 @@ public final class TapestryIOCModule
      * Contributes "Value", which injects values (not services) triggered by the {@link Value}
      * annotation.
      */
-    public static void contributeMasterObjectProvider(
-            OrderedConfiguration<ObjectProvider> configuration,
+    public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 
-            ObjectLocator locator)
+                                                      ObjectLocator locator)
     {
         configuration.add("Value", locator.autobuild(ValueObjectProvider.class));
         configuration.add("Symbol", locator.autobuild(SymbolObjectProvider.class));
@@ -128,6 +128,8 @@ public final class TapestryIOCModule
      * <li>Null to BigDecimal (zero)</li>
      * <li>Null to BigInteger (zero)</li>
      * <li>String to File</li>
+     * <li>String to {@link org.apache.tapestry.ioc.util.TimePeriod}</li>
+     * <li>{@link org.apache.tapestry.ioc.util.TimePeriod} to Long</li>
      * </ul>
      * <p/>
      * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches
@@ -386,10 +388,26 @@ public final class TapestryIOCModule
                 return new File(input);
             }
         });
+
+        add(configuration, String.class, TimePeriod.class, new Coercion<String, TimePeriod>()
+        {
+            public TimePeriod coerce(String input)
+            {
+                return new TimePeriod(input);
+            }
+        });
+
+        add(configuration, TimePeriod.class, Long.class, new Coercion<TimePeriod, Long>()
+        {
+            public Long coerce(TimePeriod input)
+            {
+                return input.milliseconds();
+            }
+        });
     }
 
-    private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType,
-                                   Class<T> targetType, Coercion<S, T> coercion)
+    private static <S, T> void add(Configuration<CoercionTuple> configuration, Class<S> sourceType, Class<T> targetType,
+                                   Coercion<S, T> coercion)
     {
         CoercionTuple<S, T> tuple = new CoercionTuple<S, T>(sourceType, targetType, coercion);
 
@@ -397,11 +415,9 @@ public final class TapestryIOCModule
     }
 
     public static void contributeSymbolSource(OrderedConfiguration<SymbolProvider> configuration,
-                                              @ApplicationDefaults
-                                              SymbolProvider applicationDefaults,
+                                              @ApplicationDefaults SymbolProvider applicationDefaults,
 
-                                              @FactoryDefaults
-                                              SymbolProvider factoryDefaults)
+                                              @FactoryDefaults SymbolProvider factoryDefaults)
     {
         configuration.add("SystemProperties", new SystemPropertiesSymbolProvider());
         configuration.add("ApplicationDefaults", applicationDefaults, "after:SystemProperties");

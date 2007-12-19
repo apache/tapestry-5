@@ -33,15 +33,22 @@ class UtilMessages
 
     static String noStrategyAdapter(Class inputType, Class adapterType, Collection<String> catalog)
     {
-        return MESSAGES.format(
-                "no-strategy-adapter",
-                inputType.getName(),
-                adapterType.getName(),
-                InternalUtils.joinSorted(catalog));
+        return MESSAGES.format("no-strategy-adapter", inputType.getName(), adapterType.getName(),
+                               InternalUtils.joinSorted(catalog));
     }
 
     static String stackIsEmpty()
     {
         return MESSAGES.get("stack-is-empty");
+    }
+
+    static String invalidTimePeriodUnit(String unit, String input, Collection<String> units)
+    {
+        return MESSAGES.format("invalid-time-period-unit", unit, input, InternalUtils.joinSorted(units));
+    }
+
+    static String invalidTimePeriodInput(String invalid, String input)
+    {
+        return MESSAGES.format("invalid-time-period-input", invalid, input);
     }
 }

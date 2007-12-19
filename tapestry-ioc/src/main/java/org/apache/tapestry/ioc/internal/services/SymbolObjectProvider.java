@@ -17,6 +17,7 @@ package org.apache.tapestry.ioc.internal.services;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
+import org.apache.tapestry.ioc.annotations.IntermediateType;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.SymbolSource;
@@ -31,26 +32,27 @@ public class SymbolObjectProvider implements ObjectProvider
 
     private final TypeCoercer _typeCoercer;
 
-    public SymbolObjectProvider(@Builtin
-    SymbolSource symbolSource,
+    public SymbolObjectProvider(@Builtin SymbolSource symbolSource,
 
-                                @Builtin
-                                TypeCoercer typeCoercer)
+                                @Builtin TypeCoercer typeCoercer)
     {
         _symbolSource = symbolSource;
         _typeCoercer = typeCoercer;
     }
 
-    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                         ObjectLocator locator)
+    public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
         Symbol annotation = annotationProvider.getAnnotation(Symbol.class);
 
         if (annotation == null) return null;
 
-        String symbolValue = _symbolSource.valueForSymbol(annotation.value());
+        Object value = _symbolSource.valueForSymbol(annotation.value());
 
-        return _typeCoercer.coerce(symbolValue, objectType);
+        IntermediateType it = annotationProvider.getAnnotation(IntermediateType.class);
+
+        if (it != null) value = _typeCoercer.coerce(value, it.value());
+
+        return _typeCoercer.coerce(value, objectType);
     }
 
 }

@@ -16,11 +16,14 @@ package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.annotations.IntermediateType;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
+
+import java.math.BigDecimal;
 
 public class ValueObjectProviderTest extends IOCTestCase
 {
@@ -53,11 +56,11 @@ public class ValueObjectProviderTest extends IOCTestCase
         String annotationValue = "${foo}";
         String expanded = "Foo";
         Runnable coerced = mockRunnable();
-        Value annotation = newMock(Value.class);
+        Value annotation = newValue(annotationValue);
 
         train_getAnnotation(annotationProvider, Value.class, annotation);
 
-        expect(annotation.value()).andReturn(annotationValue);
+        train_getAnnotation(annotationProvider, IntermediateType.class, null);
 
         train_expandSymbols(symbolSource, annotationValue, expanded);
         train_coerce(coercer, expanded, Runnable.class, coerced);
@@ -70,4 +73,48 @@ public class ValueObjectProviderTest extends IOCTestCase
 
         verify();
     }
+
+    @Test
+    public void intermediate_type()
+    {
+        SymbolSource symbolSource = mockSymbolSource();
+        TypeCoercer coercer = mockTypeCoercer();
+        AnnotationProvider annotationProvider = mockAnnotationProvider();
+        ObjectLocator locator = mockObjectLocator();
+        String annotationValue = "${foo}";
+        String expanded = "Foo";
+        Runnable coerced = mockRunnable();
+        Value annotation = newValue(annotationValue);
+        IntermediateType it = newIntermediateType();
+        BigDecimal intervalue = new BigDecimal("1234");
+
+        train_getAnnotation(annotationProvider, Value.class, annotation);
+
+        train_getAnnotation(annotationProvider, IntermediateType.class, it);
+
+        train_value(it, BigDecimal.class);
+
+        train_expandSymbols(symbolSource, annotationValue, expanded);
+        train_coerce(coercer, expanded, BigDecimal.class, intervalue);
+        train_coerce(coercer, intervalue, Runnable.class, coerced);
+
+        replay();
+
+        ValueObjectProvider provider = new ValueObjectProvider(symbolSource, coercer);
+
+        assertSame(provider.provide(Runnable.class, annotationProvider, locator), coerced);
+
+        verify();
+    }
+
+    private Value newValue(String value)
+    {
+        Value annotation = newMock(Value.class);
+
+        expect(annotation.value()).andReturn(value);
+
+        return annotation;
+    }
+
+
 }

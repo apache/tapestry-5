@@ -17,6 +17,7 @@ package org.apache.tapestry.ioc.internal.services;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
+import org.apache.tapestry.ioc.annotations.IntermediateType;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.SymbolSource;
@@ -24,7 +25,9 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
 
 /**
  * Provides an object when the {@link Value} annotation is present. The string value has symbols
- * expanded, and then is {@link TypeCoercer coerced} to the associated type.
+ * expanded, and then is {@link TypeCoercer coerced} to the associated type.   The value
+ * may first be coerced to an intermediate type if
+ * the {@link IntermediateType} annotation is present.
  */
 public class ValueObjectProvider implements ObjectProvider
 {
@@ -47,7 +50,11 @@ public class ValueObjectProvider implements ObjectProvider
         if (annotation == null) return null;
 
         String value = annotation.value();
-        String expanded = _symbolSource.expandSymbols(value);
+        Object expanded = _symbolSource.expandSymbols(value);
+
+        IntermediateType intermediate = annotationProvider.getAnnotation(IntermediateType.class);
+
+        if (intermediate != null) expanded = _typeCoercer.coerce(expanded, intermediate.value());
 
         return _typeCoercer.coerce(expanded, objectType);
     }
