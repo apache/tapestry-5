@@ -5,8 +5,8 @@ require 'optparse'
 $group = nil
 $artifact = nil
 $package = nil
+$archetypeVersion = nil
 $version = "1.0.0-SNAPSHOT"
-$archetypeVersion = "5.0.5"
 $offline = false
 
 $opts = OptionParser.new do |opts|
@@ -68,11 +68,14 @@ command << [
   "archetype:create",
   "-DarchetypeGroupId=org.apache.tapestry",
   "-DarchetypeArtifactId=quickstart",
-  "-DarchetypeVersion=#$archetypeVersion",
   "-DgroupId=#$group",
   "-DartifactId=#$artifact",
   "-DartifactVersion=#$version",
   "-DpackageName=#$package"]
+
+if $archetypeVersion
+  command << "-DarchetypeVersion=#$archetypeVersion"
+end
 
 command = command.join ' '
 
