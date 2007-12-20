@@ -687,6 +687,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void grid_set() throws Exception
+    {
+        start("Grid Set Demo");
+
+        assertFalse(isTextPresent("Exception"));
+    }
+
+    @Test
     public void navigation_response_from_page_activate() throws Exception
     {
         start("Protected Page");
