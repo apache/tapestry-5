@@ -85,7 +85,14 @@ Configuring Tapestry
     
     Primarily, this is used with a cookie that exists 
     to track the preferred user locale.
-    
+
+  [tapestry.default-stylesheet]
+    The default stylesheet automatically injected into every rendered HTML page.  Many Tapestry components assume that
+    this stylesheet is available.  All the classes defined in the stylesheet are prefixed with "t-". The exact contents
+    of the stylesheet are subject to change at any time (they are considered internal), so replacing the stylesheet,
+    rather than overriding selected rules within it, entails some risk.
+
+    The default is org/apache/tapestry/default.css, stored on the classpath.
   
   [tapestry.file-check-interval]
     Time (in milliseconds) between file system checks. During a file system check, only a single thread is active (all others

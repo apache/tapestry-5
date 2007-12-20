@@ -1280,18 +1280,18 @@ public final class TapestryModule
     }
 
     /**
-     * Adds basic render initializers:
+     * Adds basic render initializers, each of which provides an {@link org.apache.tapestry.annotations.Environmental} service:
      * <dl>
      * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd>
      * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
      * <dt>DefaultValidationDecorator</dt>
-     * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
+     * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
      * </dl>
      */
     public void contributePageRenderInitializer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
-                                                @Path("org/apache/tapestry/default.css")
+                                                @Path("${tapestry.default-stylesheet}")
                                                 final Asset stylesheetAsset,
 
                                                 @Path("org/apache/tapestry/field-error-marker.png")
@@ -1538,6 +1538,8 @@ public final class TapestryModule
         configuration.add("tapestry.default-cookie-max-age", "7 d");
 
         configuration.add("tapestry.start-page-name", "start");
+
+        configuration.add("tapestry.default-stylesheet", "org/apache/tapestry/default.css");
 
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
