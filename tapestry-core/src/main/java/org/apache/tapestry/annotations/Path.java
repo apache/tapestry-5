@@ -38,8 +38,6 @@ public @interface Path
      * The path to the resource; if prefixed (say with "classpath:") then its a complete path within
      * the identified namespace; otherwise it's a relative path from the class containing the
      * annotation. Symbols will be expanded.
-     *
-     * @return
      */
     String value();
 }
