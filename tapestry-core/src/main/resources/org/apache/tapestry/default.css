@@ -338,23 +338,23 @@ DIV.t-autocomplete-menu LI.selected {
     font-weight: bold;
 }
 
-DIV.t-error-bevel {
-    float: left;
-    margin: 0px;
-    padding: 0px;
-
-    cursor: pointer;
+DIV.t-error-bevel SPAN {
+    background: transparent url( 'error-bevel-left.png' ) no-repeat;
     display: block;
+    line-height: 33px;
+    margin-left: -9px;
+    padding: 0px 7pt 10px 22px;
 }
 
-DIV.t-error-bevel SPAN {
-    background: transparent url( 'vbevel.png' ) no-repeat scroll top left;
-    color: white;
+DIV.t-error-bevel {
+    background: transparent url( 'error-bevel-right.png' ) no-repeat scroll top right;
+    color: #FFF;
     display: block;
     float: left;
     font: normal 12px arial, sans-serif;
-    margin-left: 15px;
-    padding: 6px 30px 0px 15px;
     height: 39px;
+    margin-right: 6px;
+    padding-right: 25px;
     text-decoration: none;
+    cursor: pointer;
 }
