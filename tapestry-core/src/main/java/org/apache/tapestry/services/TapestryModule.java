@@ -26,7 +26,7 @@ import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator
 import org.apache.tapestry.internal.beaneditor.ValidateAnnotationConstraintGenerator;
 import org.apache.tapestry.internal.bindings.*;
 import org.apache.tapestry.internal.events.InvalidationListener;
-import org.apache.tapestry.internal.grid.ListGridDataSource;
+import org.apache.tapestry.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
 import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.util.IntegerRange;
@@ -598,7 +598,7 @@ public final class TapestryModule
      * <ul>
      * <li>String to {@link SelectModel}
      * <li>Map to {@link SelectModel}
-     * <li>List to {@link GridDataSource}
+     * <li>Collection to {@link GridDataSource}
      * <li>null to {@link GridDataSource}
      * <li>String to {@link GridPagerPosition}
      * <li>List to {@link SelectModel}
@@ -624,11 +624,11 @@ public final class TapestryModule
             }
         });
 
-        add(configuration, List.class, GridDataSource.class, new Coercion<List, GridDataSource>()
+        add(configuration, Collection.class, GridDataSource.class, new Coercion<Collection, GridDataSource>()
         {
-            public GridDataSource coerce(List input)
+            public GridDataSource coerce(Collection input)
             {
-                return new ListGridDataSource(input);
+                return new CollectionGridDataSource(input);
             }
         });
 

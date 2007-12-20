@@ -155,6 +155,10 @@
                         -- handling of null source for Grid
                     </li>
                     <li>
+                        <a t:type="PageLink" page="gridsetdemo">Grid Set Demo</a>
+                        -- handling of Set sources for Grid
+                    </li>
+                    <li>
                         <a t:type="PageLink" page="gridenumdemo">Grid Enum Demo</a>
                         -- handling of enum types in the Grid
                     </li>
