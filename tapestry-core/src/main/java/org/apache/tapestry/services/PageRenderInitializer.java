@@ -16,7 +16,7 @@ package org.apache.tapestry.services;
 
 /**
  * Service to which an ordered collection of {@link org.apache.tapestry.services.MarkupRendererFilter}s is
- * provided, which can then merge the filters with an eactual {@link org.apache.tapestry.services.MarkupRenderer}.
+ * provided, which can then merge the filters with an actual {@link org.apache.tapestry.services.MarkupRenderer}.
  */
 public interface PageRenderInitializer
 {
