@@ -15,20 +15,22 @@
 package org.apache.tapestry.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.json.JSONObject;
 
 /**
- * Filter interface for {@link org.apache.tapestry.services.MarkupRenderer}, which allows
- * for code to execute before and/or after the main rendering process.  Typically, this is to
- * allow for the placement of {@linkplain org.apache.tapestry.services.Environment environmental services}.
+ * A filter (the main interface being {@link PartialMarkupRenderer}) applied when performing a partial page render as part of an Ajax-oriented request.  This is similar
+ * to {@link org.apache.tapestry.services.MarkupRendererFilter} and filters are often in place so as
+ * to contribute {@link org.apache.tapestry.annotations.Environmental} services to the pages and components that render.
  */
-public interface MarkupRendererFilter
+public interface PartialMarkupRendererFilter
 {
     /**
      * Implementations should perform work before or after passing the writer
      * to the renderer.
      *
      * @param writer   to which markup should be written
-     * @param renderer delegate to which the writer should be passed.
+     * @param reply    JSONObject which will contain the partial response
+     * @param renderer delegate to which the writer should be passed
      */
-    void renderMarkup(MarkupWriter writer, MarkupRenderer renderer);
+    void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer);
 }

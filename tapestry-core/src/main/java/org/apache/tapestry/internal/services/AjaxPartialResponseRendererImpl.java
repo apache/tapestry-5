@@ -15,39 +15,49 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.MarkupWriterFactory;
+import org.apache.tapestry.services.PartialMarkupRenderer;
 import org.apache.tapestry.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class PartialMarkupRendererImpl implements PartialMarkupRenderer
+public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRenderer
 {
     private final Environment _environment;
-
-    private final PageRenderQueue _pageRenderQueue;
 
     private final MarkupWriterFactory _factory;
 
     private final Response _response;
 
-    public PartialMarkupRendererImpl(Environment environment, PageRenderQueue pageRenderQueue,
-                                     MarkupWriterFactory factory, Response response)
+    private final PartialMarkupRenderer _partialMarkupRenderer;
+
+    private final PageRenderQueue _pageRenderQueue;
+
+
+    public AjaxPartialResponseRendererImpl(Environment environment, MarkupWriterFactory factory, Response response,
+                                           PartialMarkupRenderer partialMarkupRenderer, PageRenderQueue pageRenderQueue)
     {
         _environment = environment;
-        _pageRenderQueue = pageRenderQueue;
         _factory = factory;
         _response = response;
+        _partialMarkupRenderer = partialMarkupRenderer;
+        _pageRenderQueue = pageRenderQueue;
     }
 
     public void renderPartialPageMarkup(RenderCommand rootRenderCommand) throws IOException
     {
         _environment.clear();
+
+        // This is a complex area as we are trying to keep public and private services properly
+        // seperated, and trying to keep stateless and stateful (i.e., perthread scope) services
+        // seperated. So we inform the stateful queue service what it needs to do here ...
+
+        _pageRenderQueue.initializeForPartialPageRender(rootRenderCommand);
 
         // This may be problematic as the charset of the response is not
         // going to be set properly I think.  We'll loop back to that.
@@ -56,25 +66,11 @@ public class PartialMarkupRendererImpl implements PartialMarkupRenderer
 
         MarkupWriter writer = _factory.newMarkupWriter();
 
-        // The partial will quite often contain multiple elements (or just a block of plain text),
-        // so those must be enclosed in a root element.
-
-        Element root = writer.element("ajax-partial");
-
-        _pageRenderQueue.initializeForPartialPageRender(rootRenderCommand);
-
-        // TODO: This is where we will set up a pipeline to provide environmentals and,
-        // perhaps, to catch errors and inform the client.
-
-        _pageRenderQueue.render(writer);
-
-        writer.end();
-
-        String content = root.getChildMarkup().trim();
-
         JSONObject reply = new JSONObject();
 
-        reply.put("content", content);
+        // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
+
+        _partialMarkupRenderer.renderMarkup(writer, reply);
 
         PrintWriter pw = _response.getPrintWriter(contentType.toString());
 

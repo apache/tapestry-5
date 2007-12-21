@@ -15,11 +15,18 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
 
+/**
+ * This services keeps track of the page being rendered and the root command for the partial render, it is therefore
+ * request/thread scoped.  There's a filter pipeline around the rendering, and that gets to be stateless because this service,
+ * at the end of the pipeline, is stateful.
+ */
 @Scope(PERTHREAD_SCOPE)
 public class PageRenderQueueImpl implements PageRenderQueue
 {
@@ -49,5 +56,23 @@ public class PageRenderQueueImpl implements PageRenderQueue
         // Run the queue until empty.
 
         queue.run(writer);
+    }
+
+    public void renderPartial(MarkupWriter writer, JSONObject reply)
+    {
+        // The partial will quite often contain multiple elements (or just a block of plain text),
+        // so those must be enclosed in a root element.
+
+        Element root = writer.element("ajax-partial");
+
+        // The initialize methods will already have been invoked.
+
+        render(writer);
+
+        writer.end();
+
+        String content = root.getChildMarkup().trim();
+
+        reply.put("content", content);
     }
 }

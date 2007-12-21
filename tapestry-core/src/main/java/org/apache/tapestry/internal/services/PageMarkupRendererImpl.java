@@ -18,7 +18,6 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.MarkupRenderer;
-import org.apache.tapestry.services.PageRenderInitializer;
 
 public class PageMarkupRendererImpl implements PageMarkupRenderer
 {
@@ -28,7 +27,7 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
 
     private final MarkupRenderer _markupRendererPipeline;
 
-    public PageMarkupRendererImpl(PageRenderInitializer pageRenderInitializer, PageRenderQueue pageRenderQueue,
+    public PageMarkupRendererImpl(MarkupRenderer markupRendererPipeline, PageRenderQueue pageRenderQueue,
                                   Environment environment)
     {
         // We have to go through some awkward tricks here:
@@ -40,15 +39,7 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
         _pageRenderQueue = pageRenderQueue;
         _environment = environment;
 
-        MarkupRenderer renderer = new MarkupRenderer()
-        {
-            public void renderMarkup(MarkupWriter writer)
-            {
-                _pageRenderQueue.render(writer);
-            }
-        };
-
-        _markupRendererPipeline = pageRenderInitializer.addFilters(renderer);
+        _markupRendererPipeline = markupRendererPipeline;
     }
 
     public void renderPageMarkup(Page page, MarkupWriter writer)

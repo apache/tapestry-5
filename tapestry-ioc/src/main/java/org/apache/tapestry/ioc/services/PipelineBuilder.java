@@ -44,14 +44,14 @@ public interface PipelineBuilder
      *
      * @param <S>              service type
      * @param <F>              filter type
-     * @param log              logs any warnings generated when constructing the pipeline
+     * @param logger           logs any warnings generated when constructing the pipeline
      * @param serviceInterface
      * @param filterInterface
      * @param filters          sorted list of filters
      * @param terminator       end of the pipeline
      * @return an object that encapsulates the filters and the terminator
      */
-    <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters, S terminator);
+    <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters, S terminator);
 
     /**
      * Creates a pipeline from just the filters. A
@@ -59,12 +59,12 @@ public interface PipelineBuilder
      *
      * @param <S>
      * @param <F>
-     * @param log
+     * @param logger
      * @param serviceInterface
      * @param filterInterface
      * @param filters
      * @return
      */
-    <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters);
+    <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters);
 
 }

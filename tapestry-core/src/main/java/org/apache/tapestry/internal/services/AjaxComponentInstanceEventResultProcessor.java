@@ -23,14 +23,14 @@ import org.apache.tapestry.services.ComponentEventResultProcessor;
 import java.io.IOException;
 
 /**
- * Performs a partial page render based on a
+ * Performs a partial page render based on a root component.
  */
 public class AjaxComponentInstanceEventResultProcessor implements ComponentEventResultProcessor<Component>
 {
     private final RequestPageCache _cache;
-    private final PartialMarkupRenderer _renderer;
+    private final AjaxPartialResponseRenderer _renderer;
 
-    public AjaxComponentInstanceEventResultProcessor(PartialMarkupRenderer renderer, RequestPageCache cache)
+    public AjaxComponentInstanceEventResultProcessor(AjaxPartialResponseRenderer renderer, RequestPageCache cache)
     {
         _renderer = renderer;
         _cache = cache;

@@ -33,7 +33,7 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         String pageName = "Biff";
 
         RequestPageCache cache = mockRequestPageCache();
-        PartialMarkupRenderer renderer = newMock(PartialMarkupRenderer.class);
+        AjaxPartialResponseRenderer renderer = newMock(AjaxPartialResponseRenderer.class);
         Page page = mockPage();
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();
@@ -64,7 +64,7 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         String pageName = "Biff";
 
         RequestPageCache cache = mockRequestPageCache();
-        PartialMarkupRenderer renderer = newMock(PartialMarkupRenderer.class);
+        AjaxPartialResponseRenderer renderer = newMock(AjaxPartialResponseRenderer.class);
         Page page = mockPage();
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();

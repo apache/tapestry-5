@@ -28,8 +28,7 @@ public class PipelineBuilderImpl implements PipelineBuilder
 
     private final DefaultImplementationBuilder _defaultImplementationBuilder;
 
-    public PipelineBuilderImpl(@Builtin
-    ClassFactory classFactory,
+    public PipelineBuilderImpl(@Builtin ClassFactory classFactory,
 
                                DefaultImplementationBuilder defaultImplementationBuilder)
     {
@@ -37,21 +36,19 @@ public class PipelineBuilderImpl implements PipelineBuilder
         _defaultImplementationBuilder = defaultImplementationBuilder;
     }
 
-    public <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface,
-                          List<F> filters)
+    public <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters)
     {
         S terminator = _defaultImplementationBuilder.createDefaultImplementation(serviceInterface);
 
-        return build(log, serviceInterface, filterInterface, filters, terminator);
+        return build(logger, serviceInterface, filterInterface, filters, terminator);
     }
 
-    public <S, F> S build(Logger log, Class<S> serviceInterface, Class<F> filterInterface,
-                          List<F> filters, S terminator)
+    public <S, F> S build(Logger logger, Class<S> serviceInterface, Class<F> filterInterface, List<F> filters,
+                          S terminator)
     {
         if (filters.isEmpty()) return terminator;
 
-        BridgeBuilder<S, F> bb = new BridgeBuilder<S, F>(log, serviceInterface, filterInterface,
-                                                         _classFactory);
+        BridgeBuilder<S, F> bb = new BridgeBuilder<S, F>(logger, serviceInterface, filterInterface, _classFactory);
 
         // The first bridge will point to the terminator.
         // Like service decorators, we work deepest (last)
