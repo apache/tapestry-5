@@ -533,9 +533,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("//input[@id='firstName']/@size", "40");
 
+        // Check that the @Width annotation works
+
+        assertText("//input[@id='birthYear']/@size", "4");
+
         // Check override of the submit label
 
         assertText("//input[@type='submit']/@value", "Register");
+
 
         type("firstName", "a");
         type("lastName", "b");

@@ -17,6 +17,7 @@ package org.apache.tapestry.integration.app1.data;
 import org.apache.tapestry.beaneditor.OrderAfter;
 import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.beaneditor.Validate;
+import org.apache.tapestry.beaneditor.Width;
 
 public class RegistrationData
 {
@@ -32,6 +33,7 @@ public class RegistrationData
 
     @OrderAfter("lastName")
     @Validate("min=1900,max=2007")
+    @Width(4)
     public int getBirthYear()
     {
         return _birthYear;

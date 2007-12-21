@@ -82,4 +82,9 @@ public interface PropertyEditContext
      * correct place to look for strings used for labels, etc.
      */
     Messages getContainerMessages();
+
+    /**
+     * Returns the desired width of the input field used to edit the property. A value less than 1 is an unspecified width.
+     */
+    int getWidth();
 }

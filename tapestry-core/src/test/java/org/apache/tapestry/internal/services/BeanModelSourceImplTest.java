@@ -22,6 +22,7 @@ import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.BeanModelSource;
+import org.easymock.EasyMock;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -70,21 +71,22 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-        assertEquals(
-                model.toString(),
-                "BeanModel[org.apache.tapestry.internal.services.SimpleBean properties:firstName, lastName, age]");
+        assertEquals(model.toString(),
+                     "BeanModel[org.apache.tapestry.internal.services.SimpleBean properties:firstName, lastName, age]");
 
         PropertyModel age = model.get("age");
 
         assertEquals(age.getLabel(), "Age");
         assertSame(age.getPropertyType(), int.class);
         assertEquals(age.getDataType(), "text");
+        assertEquals(age.getWidth(), 2);
 
         PropertyModel firstName = model.get("firstName");
 
         assertEquals(firstName.getLabel(), "First Name");
         assertEquals(firstName.getPropertyType(), String.class);
         assertEquals(firstName.getDataType(), "text");
+        assertEquals(firstName.getWidth(), 0);
 
         assertEquals(model.get("lastName").getLabel(), "Last Name");
 
@@ -122,6 +124,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         stub_contains(messages, false);
 
         expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
+        expect(conduit.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
 
         replay();
 
@@ -131,17 +134,9 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         // Note the use of case insensitivity here.
 
-        PropertyModel property = model.add(
-                RelativePosition.BEFORE,
-                "lastname",
-                "middleInitial",
-                conduit);
+        PropertyModel property = model.add(RelativePosition.BEFORE, "lastname", "middleInitial", conduit);
 
-        assertEquals(model.getPropertyNames(), Arrays.asList(
-                "firstName",
-                "middleInitial",
-                "lastName",
-                "age"));
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "middleInitial", "lastName", "age"));
 
         assertEquals(property.getPropertyName(), "middleInitial");
         assertSame(property.getConduit(), conduit);
@@ -193,23 +188,17 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         expect(conduit.getPropertyType()).andReturn(propertyType).atLeastOnce();
 
+        expect(conduit.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);
+
         replay();
 
         BeanModel model = _source.create(SimpleBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
-        PropertyModel property = model.add(
-                RelativePosition.AFTER,
-                "firstname",
-                "middleInitial",
-                conduit);
+        PropertyModel property = model.add(RelativePosition.AFTER, "firstname", "middleInitial", conduit);
 
-        assertEquals(model.getPropertyNames(), Arrays.asList(
-                "firstName",
-                "middleInitial",
-                "lastName",
-                "age"));
+        assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "middleInitial", "lastName", "age"));
 
         assertEquals(property.getPropertyName(), "middleInitial");
         assertSame(property.getConduit(), conduit);
@@ -280,9 +269,8 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Bean editor model for org.apache.tapestry.internal.services.SimpleBean already contains a property model for property \'age\'.");
+            assertEquals(ex.getMessage(),
+                         "Bean editor model for org.apache.tapestry.internal.services.SimpleBean already contains a property model for property \'age\'.");
         }
 
         verify();
@@ -308,10 +296,8 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         }
         catch (RuntimeException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Bean editor model for org.apache.tapestry.internal.services.SimpleBean does not contain a property named \'frobozz\'.  "
-                            + "Available properties: age, firstName, lastName.");
+            assertEquals(ex.getMessage(),
+                         "Bean editor model for org.apache.tapestry.internal.services.SimpleBean does not contain a property named \'frobozz\'.  " + "Available properties: age, firstName, lastName.");
         }
 
         verify();
@@ -346,8 +332,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources).get("age").label(
-                "Decrepitude").model();
+        BeanModel model = _source.create(SimpleBean.class, true, resources).get("age").label("Decrepitude").model();
 
         assertEquals(model.get("age").getLabel(), "Decrepitude");
 
@@ -394,8 +379,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertSame(propertyModel.getPropertyType(), String[].class);
 
-        String[] value =
-                {"foo", "bar"};
+        String[] value = {"foo", "bar"};
 
         StringArrayBean bean = new StringArrayBean();
 

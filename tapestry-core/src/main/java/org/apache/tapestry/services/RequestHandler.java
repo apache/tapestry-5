@@ -17,9 +17,10 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 
 /**
- * Service interface for the RequestHandler pipeline service.
+ * Service interface for the RequestHandler pipeline service. An ordered configuration of filters may be
+ * contributed to the service.
  *
- * @see RequestFilter
+ * @see org.apache.tapestry.services.RequestFilter
  */
 
 public interface RequestHandler

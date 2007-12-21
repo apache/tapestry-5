@@ -113,4 +113,11 @@ public interface Request
      * @return true if the request has an XmlHttpRequest origin
      */
     boolean isXHR();
+
+    /**
+     * Checks whether the requested session ID is still valid.
+     *
+     * @return true if the request included a session id that is still active, false if the included session id has expired
+     */
+    public boolean isRequestedSessionIdValid();
 }

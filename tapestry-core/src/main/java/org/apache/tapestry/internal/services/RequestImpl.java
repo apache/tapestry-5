@@ -110,4 +110,8 @@ public class RequestImpl implements Request
         return XML_HTTP_REQUEST.equals(_request.getHeader(REQUESTED_WITH_HEADER));
     }
 
+    public boolean isRequestedSessionIdValid()
+    {
+        return _request.isRequestedSessionIdValid();
+    }
 }

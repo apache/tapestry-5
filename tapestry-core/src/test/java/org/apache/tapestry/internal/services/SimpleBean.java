@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.beaneditor.Width;
+
 public class SimpleBean
 {
     private String _firstName;
@@ -32,6 +34,7 @@ public class SimpleBean
         return _lastName;
     }
 
+    @Width(2)
     public int getAge()
     {
         return _age;

@@ -42,9 +42,8 @@ public class TestableRequestImpl implements TestableRequest
 
     private void nyi(String methodName)
     {
-        throw new RuntimeException(String.format(
-                "Request: method %s() not yet implemented by TestableRequestImpl.",
-                methodName));
+        throw new RuntimeException(
+                String.format("Request: method %s() not yet implemented by TestableRequestImpl.", methodName));
     }
 
     public void clear()
@@ -140,4 +139,11 @@ public class TestableRequestImpl implements TestableRequest
         return false;
     }
 
+    /**
+     * Always returns true.
+     */
+    public boolean isRequestedSessionIdValid()
+    {
+        return true;
+    }
 }
