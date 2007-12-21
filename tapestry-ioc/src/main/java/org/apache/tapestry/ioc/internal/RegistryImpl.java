@@ -61,7 +61,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     static final String CLASS_FACTORY_SERVICE_ID = "ClassFactory";
 
-    static final String LOG_SOURCE_SERVICE_ID = "LogSource";
+    static final String LOGGER_SOURCE_SERVICE_ID = "LoggerSource";
 
     private final OneShotLock _lock = new OneShotLock();
 
@@ -130,7 +130,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
 
-        addBuiltin(LOG_SOURCE_SERVICE_ID, LoggerSource.class, _loggerSource);
+        addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, _loggerSource);
 
         _classFactory = classFactory;
 

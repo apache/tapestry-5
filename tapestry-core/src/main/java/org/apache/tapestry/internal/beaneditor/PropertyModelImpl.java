@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.beaneditor;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.beaneditor.Width;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
@@ -38,8 +39,9 @@ public class PropertyModelImpl implements PropertyModel
 
     private boolean _sortable;
 
-    public PropertyModelImpl(BeanModel model, final String name, final PropertyConduit conduit,
-                             Messages messages)
+    private int _width;
+
+    public PropertyModelImpl(BeanModel model, String name, PropertyConduit conduit, Messages messages)
     {
         _model = model;
         _name = name;
@@ -55,6 +57,14 @@ public class PropertyModelImpl implements PropertyModel
         Class wrapperType = ClassFabUtils.getWrapperType(getPropertyType());
 
         _sortable = Comparable.class.isAssignableFrom(wrapperType);
+
+        // Extract a default width from the @Width annotation, if present
+        if (conduit != null)
+        {
+            Width width = conduit.getAnnotation(Width.class);
+
+            if (width != null) _width = width.value();
+        }
     }
 
     public String getId()
@@ -116,6 +126,18 @@ public class PropertyModelImpl implements PropertyModel
     public PropertyModel sortable(boolean sortable)
     {
         _sortable = sortable;
+
+        return this;
+    }
+
+    public int getWidth()
+    {
+        return _width;
+    }
+
+    public PropertyModel width(int width)
+    {
+        _width = width;
 
         return this;
     }

@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Service interface for the tapestry.request.HttpServletRequestHandler pipeline service.
+ * Service interface for the HttpServletRequestHandler pipeline service.
  *
  * @see org.apache.tapestry.services.HttpServletRequestFilter
  */

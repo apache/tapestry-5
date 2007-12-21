@@ -38,27 +38,22 @@ public class PropertyEditBlocks
     @Environmental
     private PropertyEditContext _context;
 
-    @Component(parameters =
-            {"value=context.propertyValue", "label=prop:context.label",
-                    "translate=prop:context.translator", "validate=prop:textFieldValidator",
-                    "clientId=prop:context.propertyId"})
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "size=prop:widthOrNull"})
     private TextField _textField;
 
-    @Component(parameters =
-            {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty",
-                    "model=selectModelForProperty", "validate=prop:selectValidator",
-                    "clientId=prop:context.propertyId"})
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId"})
     private Select _select;
 
     @SuppressWarnings("unused")
-    @Component(parameters =
-            {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId"})
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId"})
     private Checkbox _checkboxField;
 
     @SuppressWarnings("unused")
-    @Component(parameters =
-            {"value=context.propertyValue", "label=prop:context.label",
-                    "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator"})
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator"})
     private DateField _dateField;
 
     public PropertyEditContext getContext()
@@ -97,5 +92,12 @@ public class PropertyEditBlocks
     public SelectModel getSelectModelForProperty()
     {
         return new EnumSelectModel(_context.getPropertyType(), _context.getContainerMessages());
+    }
+
+    public Integer getWidthOrNull()
+    {
+        int width = _context.getWidth();
+
+        return width < 1 ? null : width;
     }
 }

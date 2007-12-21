@@ -170,6 +170,11 @@ public class PropertyEditor
             {
                 _propertyModel.getConduit().set(_object, value);
             }
+
+            public int getWidth()
+            {
+                return _propertyModel.getWidth();
+            }
         };
 
         _environment.push(PropertyEditContext.class, context);

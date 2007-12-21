@@ -52,7 +52,7 @@ public interface PropertyModel
      * Changes the data type for the property.
      *
      * @param dataType
-     * @return the property edit model, for further changes
+     * @return the property model, for further changes
      */
     PropertyModel dataType(String dataType);
 
@@ -63,10 +63,25 @@ public interface PropertyModel
     PropertyConduit getConduit();
 
     /**
+     * Returns the desired field width for the field used to edit the property.  A value of 0 or less means unspecified.
+     *
+     * @return the width of the field used to edit the property
+     */
+    int getWidth();
+
+    /**
+     * Sets the width of the field used to edit the property.
+     *
+     * @param width the desired width (0 or less indicates an unspecified width)
+     * @return the property model, for further changes
+     */
+    PropertyModel width(int width);
+
+    /**
      * Changes the label for the property to the provided value.
      *
      * @param label new label for property
-     * @return the property edit model, for further changes
+     * @return the property model, for further changes
      */
     PropertyModel label(String label);
 
@@ -83,6 +98,8 @@ public interface PropertyModel
 
     /**
      * Updates sortable and returns the model for further changes.
+     *
+     * @return the property model, for further changes
      */
     PropertyModel sortable(boolean sortable);
 }
