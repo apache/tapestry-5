@@ -20,6 +20,15 @@ var Tapestry = {
 
     Zone : Class.create(),
 
+    // Adds a callback function that will be invoked when the DOM is loaded (which
+    // occurs *before* window.onload, which has to wait for images and such to load
+    // first.  This simply observes the dom:loaded event on the document object (support for
+    // which is provided by Prototype).
+    onDOMLoaded : function(callback)
+    {
+        document.observe("dom:loaded", callback);
+    },
+
     registerForm : function(form, clientValidations)
     {
         form = $(form);
@@ -350,9 +359,11 @@ Tapestry.FieldEventManager.prototype = {
 
             this.popup.absolutize();
 
-            this.popup.observe("click", function()
+            this.popup.observe("click", function(event)
             {
-                new Effect.Fade(this.popup);
+                this.popup.hide();
+
+                event.stop();
             }.bindAsEventListener(this));
         }
 
@@ -476,7 +487,7 @@ Tapestry.Zone.prototype = {
 // Find all elements marked with the "t-invisible" CSS class and hide() them, so that
 // Prototype's visible() method operates correctly.
 
-Event.observe(window, 'load', function()
+Tapestry.onDOMLoaded(function()
 {
     $$(".t-invisible").each(function(element)
     {

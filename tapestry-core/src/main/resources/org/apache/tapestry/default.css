@@ -342,19 +342,19 @@ DIV.t-error-bevel SPAN {
     background: transparent url( 'error-bevel-left.png' ) no-repeat;
     display: block;
     line-height: 33px;
-    margin-left: -9px;
-    padding: 0px 7pt 10px 22px;
+    margin-left: 0px;
+    padding: 0px 5px 10px 22px;
 }
 
 DIV.t-error-bevel {
     background: transparent url( 'error-bevel-right.png' ) no-repeat scroll top right;
+    cursor: pointer;
     color: #FFF;
     display: block;
     float: left;
     font: normal 12px arial, sans-serif;
     height: 39px;
     margin-right: 6px;
-    padding-right: 25px;
+    padding-right: 29px;
     text-decoration: none;
-    cursor: pointer;
 }
