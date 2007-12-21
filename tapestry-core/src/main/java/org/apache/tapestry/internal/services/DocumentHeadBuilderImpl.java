@@ -124,9 +124,9 @@ public class DocumentHeadBuilderImpl implements DocumentHeadBuilder
             Element e = body.element("script", "type", "text/javascript");
             e.raw("\n<!--\n");
 
-            // This assumes that Prototype is available.
+            // This assumes that Prototype and tapestry.js is available.
 
-            e.text("Event.observe(window, 'load', function() {\n");
+            e.text("Tapestry.onDOMLoaded(function() {\n");
 
             e.text(_scriptBlock.toString());
 
