@@ -112,8 +112,9 @@ public final class TapestryModule
         binder.bind(ComponentEventResultProcessor.class, ComponentInstanceResultProcessor.class).withId(
                 "ComponentInstanceResultProcessor");
         binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
-        binder.bind(PageRenderInitializer.class, PageRenderInitializerImpl.class);
-        binder.bind(PartialMarkupRenderer.class, PartialMarkupRendererImpl.class);
+        binder.bind(MarkupRenderer.class, MarkupRendererPipelineImpl.class);
+        binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
+        binder.bind(PartialMarkupRenderer.class, PartialMarkupRendererPipelineImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -1280,7 +1281,7 @@ public final class TapestryModule
     }
 
     /**
-     * Adds basic render initializers, each of which provides an {@link org.apache.tapestry.annotations.Environmental} service:
+     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental} service:
      * <dl>
      * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd>
      * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
@@ -1289,19 +1290,19 @@ public final class TapestryModule
      * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
      * </dl>
      */
-    public void contributePageRenderInitializer(OrderedConfiguration<MarkupRendererFilter> configuration,
+    public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
-                                                @Path("${tapestry.default-stylesheet}")
-                                                final Asset stylesheetAsset,
+                                         @Path("${tapestry.default-stylesheet}")
+                                         final Asset stylesheetAsset,
 
-                                                @Path("org/apache/tapestry/field-error-marker.png")
-                                                final Asset fieldErrorIcon,
+                                         @Path("org/apache/tapestry/field-error-marker.png")
+                                         final Asset fieldErrorIcon,
 
-                                                final ValidationMessagesSource validationMessagesSource,
+                                         final ValidationMessagesSource validationMessagesSource,
 
-                                                final SymbolSource symbolSource,
+                                         final SymbolSource symbolSource,
 
-                                                final AssetSource assetSource)
+                                         final AssetSource assetSource)
     {
         MarkupRendererFilter pageRenderSupport = new MarkupRendererFilter()
         {
@@ -1389,8 +1390,109 @@ public final class TapestryModule
 
         configuration.add("PageRenderSupport", pageRenderSupport);
         configuration.add("ZoneSetup", zoneSetup, "after:PageRenderSupport");
-        configuration.add("Heartbeat", heartbeat);
-        configuration.add("DefaultValidationDecorator", defaultValidationDecorator);
+        configuration.add("Heartbeat", heartbeat, "after:PageRenderSupport");
+        configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
+    }
+
+
+    /**
+     * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response.  This
+     * is an analog to {@link #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)} }
+     * and overlaps it to some degree.
+     * <dl>
+     * <dt>   PageRenderSupport     </dt>
+     * <dd>Provides {@link org.apache.tapestry.PageRenderSupport}</dd>
+     * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
+     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
+     * <dt>DefaultValidationDecorator</dt>
+     * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
+     * </dl>
+     */
+    public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
+
+                                                @Path("org/apache/tapestry/field-error-marker.png")
+                                                final Asset fieldErrorIcon,
+
+                                                final ValidationMessagesSource validationMessagesSource,
+
+                                                final SymbolSource symbolSource,
+
+                                                final AssetSource assetSource)
+    {
+        PartialMarkupRendererFilter pageRenderSupport = new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                PartialRenderPageRenderSupport support = new PartialRenderPageRenderSupport();
+
+                _environment.push(PageRenderSupport.class, support);
+
+                renderer.renderMarkup(writer, reply);
+
+                support.update(reply);
+
+                _environment.pop(PageRenderSupport.class);
+            }
+        };
+
+        PartialMarkupRendererFilter zoneSupport = new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                PageRenderSupport pageRenderSupport = _environment.peekRequired(PageRenderSupport.class);
+
+                ZoneSetupImpl setup = new ZoneSetupImpl(pageRenderSupport);
+
+                _environment.push(ZoneSetup.class, setup);
+
+                renderer.renderMarkup(writer, reply);
+
+                _environment.pop(ZoneSetup.class);
+
+                setup.writeInitializationScript();
+            }
+        };
+
+        PartialMarkupRendererFilter heartbeat = new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                Heartbeat heartbeat = new HeartbeatImpl();
+
+                heartbeat.begin();
+
+                _environment.push(Heartbeat.class, heartbeat);
+
+                renderer.renderMarkup(writer, reply);
+
+                _environment.pop(Heartbeat.class);
+
+                heartbeat.end();
+            }
+        };
+
+        PartialMarkupRendererFilter defaultValidationDecorator = new PartialMarkupRendererFilter()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
+            {
+                Messages messages = validationMessagesSource.getValidationMessages(_threadLocale.getLocale());
+
+                ValidationDecorator decorator = new DefaultValidationDecorator(_environment, messages, fieldErrorIcon,
+                                                                               writer);
+
+                _environment.push(ValidationDecorator.class, decorator);
+
+                renderer.renderMarkup(writer, reply);
+
+                _environment.pop(ValidationDecorator.class);
+            }
+        };
+
+
+        configuration.add("PageRenderSupport", pageRenderSupport);
+        configuration.add("ZoneSupport", zoneSupport, "after:PageRenderSupport");
+        configuration.add("Heatbeat", heartbeat, "after:PageRenderSupport");
+        configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
     /**
@@ -1929,4 +2031,5 @@ public final class TapestryModule
 
         configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
     }
+
 }

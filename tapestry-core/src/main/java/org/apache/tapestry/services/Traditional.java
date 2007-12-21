@@ -18,7 +18,8 @@ import java.lang.annotation.*;
 
 
 /**
- * Marker annotation for a service that should be used for traditional (non-Ajax) requests.
+ * Marker annotation for a service that should be used for traditional page oriented requests, as opposed to Ajax requests
+ * (that send ad-hoc or {@linkplain PartialMarkupRenderer partial page markup} responses.
  *
  * @see org.apache.tapestry.services.ComponentActionRequestHandler
  */

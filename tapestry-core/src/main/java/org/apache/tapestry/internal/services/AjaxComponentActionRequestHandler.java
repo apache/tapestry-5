@@ -35,7 +35,7 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
     private final MarkupWriterFactory _factory;
 
-    private final PartialMarkupRenderer _renderer;
+    private final AjaxPartialResponseRenderer _renderer;
 
     private final Response _response;
 
@@ -44,8 +44,8 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
     private final ComponentEventResultProcessor _resultProcessor;
 
     public AjaxComponentActionRequestHandler(RequestPageCache cache, MarkupWriterFactory factory,
-                                             PartialMarkupRenderer renderer, Response response, PageRenderQueue queue,
-                                             @Ajax ComponentEventResultProcessor resultProcessor)
+                                             AjaxPartialResponseRenderer renderer, Response response,
+                                             PageRenderQueue queue, @Ajax ComponentEventResultProcessor resultProcessor)
     {
         _cache = cache;
         _factory = factory;

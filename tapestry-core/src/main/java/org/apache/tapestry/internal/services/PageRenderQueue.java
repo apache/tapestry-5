@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
 
 
@@ -43,4 +44,12 @@ public interface PageRenderQueue
      * @param writer to write markup to
      */
     void render(MarkupWriter writer);
+
+    /**
+     * Performs a partial markup render, as configured via {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)}.
+     *
+     * @param writer to which markup should be written
+     * @param reply  JSONObject which will contain the partial response
+     */
+    void renderPartial(MarkupWriter writer, JSONObject reply);
 }

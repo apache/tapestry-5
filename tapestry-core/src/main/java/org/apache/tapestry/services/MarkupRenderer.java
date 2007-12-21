@@ -19,6 +19,10 @@ import org.apache.tapestry.MarkupWriter;
 /**
  * An object which will perform rendering of a page (or portion of a page).  This interface
  * exists to be filtered via {@link org.apache.tapestry.services.MarkupRendererFilter}.
+ * <p/>
+ * The MarkupRenderer service takes an ordered configuration of {@link org.apache.tapestry.services.MarkupRendererFilter}s, which
+ * are used for ordinary page rendering (as opposed to {@linkplain org.apache.tapestry.services.PartialMarkupRenderer partial page rendering} for Ajax requests).
+ * The MarkupRenderer service may be selected using the {@link org.apache.tapestry.ioc.annotations.Primary} marker annotation.
  */
 public interface MarkupRenderer
 {

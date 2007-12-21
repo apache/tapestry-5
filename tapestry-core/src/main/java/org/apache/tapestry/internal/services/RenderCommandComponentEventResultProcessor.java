@@ -23,13 +23,13 @@ import java.io.IOException;
 /**
  * Processor for objects that implement {@link RenderCommand} (such as {@link org.apache.tapestry.internal.structure.BlockImpl}).
  *
- * @see org.apache.tapestry.internal.services.PartialMarkupRenderer#renderPartialPageMarkup(org.apache.tapestry.runtime.RenderCommand)
+ * @see AjaxPartialResponseRenderer#renderPartialPageMarkup(org.apache.tapestry.runtime.RenderCommand)
  */
 public class RenderCommandComponentEventResultProcessor implements ComponentEventResultProcessor<RenderCommand>
 {
-    private final PartialMarkupRenderer _renderer;
+    private final AjaxPartialResponseRenderer _renderer;
 
-    public RenderCommandComponentEventResultProcessor(PartialMarkupRenderer renderer)
+    public RenderCommandComponentEventResultProcessor(AjaxPartialResponseRenderer renderer)
     {
         _renderer = renderer;
     }
