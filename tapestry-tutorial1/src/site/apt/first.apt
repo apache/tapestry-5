@@ -35,7 +35,28 @@ mvn archetype:create
   The first time you execute this command, Maven will spend quite a while downloading all kinds of JARs into
   your local repository, which can take a minute or more. Later, once all that is already available locally,
   the whole command executes in under a second.
-  
+
+  If you are behind a firewall, before running any "mvn" commands, you will need to configure your proxy settings in settings.xml. Here is an example:
+
+----
+<settings>
+ <proxies>
+    <proxy>
+       <active>true</active>
+       <protocol>http</protocol>
+       <host>myProxyServer.com</host>
+       <port>8080</port>
+       <username>joeuser</username>
+       <password>myPassword</password>
+       <nonProxyHosts></nonProxyHosts>
+    </proxy>
+ </proxies>
+ <localRepository>C:/Documents and Settings/joeuser/.m2/repository</localRepository>
+</settings>
+----
+
+  Of course, adjust \<localRepository\> to match the correct path for your computer.  
+
   One of the first things you can do is use Maven to run Jetty directly.
   
   Change into the newly created directory, and execute the command:
@@ -46,8 +67,13 @@ mvn jetty:run
 
   Again, the first time, there's a dizzying number of downloads, but before you know it, the Jetty servlet container
   is up and running.
+
+
+
+  One
   
-  You can open a web browser to {{{http://localhost:8080/tutorial1/}http://localhost:8080/tutorial1/}} to see the running application:
+  You can open a web browser to {{{http://localhost:8080/tapestry-tutorial1/}http://localhost:8080/tapestry-tutorial1/}}
+  to see the running application:
   
 [startpage.png] Default Start page for Application
 
@@ -118,7 +144,7 @@ mvn jetty:run
       </web-app>
 ----
   
-  This is short and sweet: ou can see that the package name you provided earlier shows up as the tapestry.app-package context parameter; the TapestryFilter instance will use
+  This is short and sweet: you can see that the package name you provided earlier shows up as the tapestry.app-package context parameter; the TapestryFilter instance will use
   this information to locate the Java classes we'll look at next.
   
   Tapestry 5 operates as a <servlet filter> rather than as a traditional <servlet>. In this way, Tapestry has a chance to intercept all incoming requests, to determine
@@ -216,7 +242,7 @@ public class Start
 }
 ---
   
-  That's pretty darn simple: No classes to extend, no interfaces to implement, just a very pure POJO (Plain Old Java Object). You do have to mee the Tapestry framework
+  That's pretty darn simple: No classes to extend, no interfaces to implement, just a very pure POJO (Plain Old Java Object). You do have to meet the Tapestry framework
   halfway:
   
   * You need to put the Java class in the expected package, org.apache.tapestry.tutorial.pages
@@ -285,8 +311,8 @@ public class Start
   
 [app-live-reload.png] Application after live class reloading
 
-  This one of Tapestry's early <wow factor> features: changes to your component classes are picked up immediately. No restart. No re-deploy.  Make the changes and see them <now>.
-  Nothing should slow you down or get in the way of you getting our job done.
+  This is one of Tapestry's early <wow factor> features: changes to your component classes are picked up immediately. No restart. No re-deploy.  Make the changes and see them <now>.
+  Nothing should slow you down or get in the way of you getting your job done.
   
   Now that we have our basic application set up, and ready to run (or debug) directly inside Eclipse, we can start working on implementing our
   Hi/Lo game in earnest.
