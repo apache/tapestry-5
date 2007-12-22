@@ -483,7 +483,7 @@ zip-regexp-message=Zip Codes are five or nine digits.  Example: 02134 or 90125-1
   further customizations of the BeanEditForm component.
   
   By now you are likely curious about what happens <after> the form submits
-  succesfully (without validation errors), so that's what we'll focus on next.
+  successfully (without validation errors), so that's what we'll focus on next.
   
 ====
 
