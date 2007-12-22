@@ -23,6 +23,7 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.BodyBuilder;
+import org.apache.tapestry.services.ComponentLayer;
 import org.apache.tapestry.services.PropertyConduitSource;
 
 import java.lang.annotation.Annotation;
@@ -46,15 +47,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private final Map<MultiKey, PropertyConduit> _cache = newConcurrentMap();
 
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-                                                                             new Class[]
-                                                                                     {Object.class}, null);
+                                                                             new Class[]{Object.class}, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-                                                                             new Class[]
-                                                                                     {Object.class, Object.class},
+                                                                             new Class[]{Object.class, Object.class},
                                                                              null);
 
-    public PropertyConduitSourceImpl(final PropertyAccess access, final ClassFactory classFactory)
+    public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer ClassFactory classFactory)
     {
         _access = access;
         _classFactory = classFactory;
@@ -122,8 +121,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         ClassFab classFab = _classFactory.newClass(name, BasePropertyConduit.class);
 
-        classFab.addConstructor(new Class[]
-                {Class.class, AnnotationProvider.class, String.class}, null, "super($$);");
+        classFab.addConstructor(new Class[]{Class.class, AnnotationProvider.class, String.class}, null, "super($$);");
 
         String[] terms = expression.split("\\.");
 
@@ -136,10 +134,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         Class propertyType = readMethod != null ? readMethod.getReturnType() : writeMethod
                 .getParameterTypes()[0];
 
-        String description = String.format(
-                "PropertyConduit[%s %s]",
-                rootClass.getName(),
-                expression);
+        String description = String.format("PropertyConduit[%s %s]", rootClass.getName(), expression);
 
         Class conduitClass = classFab.createClass();
 
@@ -150,8 +145,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             {
                 T result = readMethod == null ? null : readMethod.getAnnotation(annotationClass);
 
-                if (result == null && writeMethod != null)
-                    result = writeMethod.getAnnotation(annotationClass);
+                if (result == null && writeMethod != null) result = writeMethod.getAnnotation(annotationClass);
 
                 return result;
             }
@@ -160,10 +154,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         try
         {
-            return (PropertyConduit) conduitClass.getConstructors()[0].newInstance(
-                    propertyType,
-                    provider,
-                    description);
+            return (PropertyConduit) conduitClass.getConstructors()[0].newInstance(propertyType, provider, description);
         }
         catch (Exception ex)
         {
@@ -192,11 +183,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             boolean nullable = term.endsWith("?");
             if (nullable) term = term.substring(0, term.length() - 1);
 
-            Method readMethod = readMethodForTerm(
-                    activeType,
-                    expression,
-                    term,
-                    (i < terms.length - 1));
+            Method readMethod = readMethodForTerm(activeType, expression, term, (i < terms.length - 1));
 
             if (readMethod == null)
             {
@@ -210,12 +197,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             // $w is harmless for non-wrapper types.
 
-            builder.addln(
-                    "%s %s = ($w) %s.%s();",
-                    ClassFabUtils.toJavaClassName(termType),
-                    thisStep,
-                    previousStep,
-                    readMethod.getName());
+            builder.addln("%s %s = ($w) %s.%s();", ClassFabUtils.toJavaClassName(termType), thisStep, previousStep,
+                          readMethod.getName());
 
             if (nullable) builder.addln("if (%s == null) return null;", thisStep);
 
@@ -232,10 +215,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             builder.clear();
             builder
-                    .addln(
-                            "throw new java.lang.RuntimeException(\"Expression %s for class %s is write-only.\");",
-                            expression,
-                            rootClass.getName());
+                    .addln("throw new java.lang.RuntimeException(\"Expression %s for class %s is write-only.\");",
+                           expression, rootClass.getName());
         }
 
         classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
@@ -269,12 +250,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             // $w is harmless for non-wrapper types.
 
-            builder.addln(
-                    "%s %s = ($w) %s.%s();",
-                    ClassFabUtils.toJavaClassName(termType),
-                    thisStep,
-                    previousStep,
-                    readMethod.getName());
+            builder.addln("%s %s = ($w) %s.%s();", ClassFabUtils.toJavaClassName(termType), thisStep, previousStep,
+                          readMethod.getName());
 
             if (nullable) builder.addln("if (%s == null) return;", thisStep);
 
@@ -290,10 +267,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         {
             builder.clear();
             builder
-                    .addln(
-                            "throw new java.lang.RuntimeException(\"Expression %s for class %s is read-only.\");",
-                            expression,
-                            rootClass.getName());
+                    .addln("throw new java.lang.RuntimeException(\"Expression %s for class %s is read-only.\");",
+                           expression, rootClass.getName());
             classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
 
             return null;
@@ -326,18 +301,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
         PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
-        if (adapter == null)
-            throw new RuntimeException(ServicesMessages.noSuchProperty(
-                    activeType,
-                    term,
-                    expression,
-                    classAdapter.getPropertyNames()));
+        if (adapter == null) throw new RuntimeException(
+                ServicesMessages.noSuchProperty(activeType, term, expression, classAdapter.getPropertyNames()));
 
         return adapter.getWriteMethod();
     }
 
-    private Method readMethodForTerm(Class activeType, String expression, String term,
-                                     boolean mustExist)
+    private Method readMethodForTerm(Class activeType, String expression, String term, boolean mustExist)
     {
         if (term.endsWith(PARENS))
         {
@@ -350,17 +320,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             }
             catch (NoSuchMethodException ex)
             {
-                throw new RuntimeException(ServicesMessages.methodNotFound(
-                        term,
-                        activeType,
-                        expression), ex);
+                throw new RuntimeException(ServicesMessages.methodNotFound(term, activeType, expression), ex);
             }
 
             if (method.getReturnType().equals(void.class))
-                throw new RuntimeException(ServicesMessages.methodIsVoid(
-                        term,
-                        activeType,
-                        expression));
+                throw new RuntimeException(ServicesMessages.methodIsVoid(term, activeType, expression));
 
             return method;
         }
@@ -368,20 +332,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
         PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
-        if (adapter == null)
-            throw new RuntimeException(ServicesMessages.noSuchProperty(
-                    activeType,
-                    term,
-                    expression,
-                    classAdapter.getPropertyNames()));
+        if (adapter == null) throw new RuntimeException(
+                ServicesMessages.noSuchProperty(activeType, term, expression, classAdapter.getPropertyNames()));
 
         Method m = adapter.getReadMethod();
 
         if (m == null && mustExist)
-            throw new RuntimeException(ServicesMessages.writeOnlyProperty(
-                    term,
-                    activeType,
-                    expression));
+            throw new RuntimeException(ServicesMessages.writeOnlyProperty(term, activeType, expression));
 
         return m;
     }
