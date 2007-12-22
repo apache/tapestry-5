@@ -97,7 +97,7 @@ Total time: 6 minutes 0 seconds
   
   (I set this up as an alias).  You'll be prompted for your GPG password six times (sorry!).
   
-  Finally, copy the distros up to the tapestry-releases directory, with <<<scp target/dist/* hlship@people.apache.org:public_html/tapestry-releases>>>.
+  Finally, copy the distros up to the tapestry-releases directory, with <<<scp target/dist/* hlship@people.apache.org:public_html/tapestry-releases>>>
   
   (I set this up as an alias, too).
   
@@ -108,7 +108,7 @@ Cleaning up
   
   You must login to people.apache.org and perform a couple of cleanups.  Starting in <<<~hlship/public_html>>>, you must execute:
   
-  <<<find tapestry-ibiblio-rsynch-repository -name \*.asc.\* | xargs rm>>>>
+  <<<find tapestry-ibiblio-rsynch-repository -name \\*.asc.\\* | xargs rm>>>
   
   This deletes lots of excess GnuPG signature files that were inadvertently created and uploaded.
   

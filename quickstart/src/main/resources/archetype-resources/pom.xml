@@ -1,4 +1,5 @@
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>${groupId}</groupId>
     <artifactId>${artifactId}</artifactId>
@@ -11,10 +12,10 @@
             <artifactId>tapestry-core</artifactId>
             <version>${tapestry-release-version}</version>
         </dependency>
-        
+
         <!-- A dependency on either JUnit or TestNG is required, or the surefire plugin (which runs the tests)
-             will fail, preventing Maven from packaging the WAR. Tapestry includes a large number
-             of testing facilities designed for use with TestNG (http://testng.org/), so it's recommended. -->
+will fail, preventing Maven from packaging the WAR. Tapestry includes a large number
+of testing facilities designed for use with TestNG (http://testng.org/), so it's recommended. -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -67,10 +68,10 @@
             </plugin>
         </plugins>
     </build>
-    
+
     <reporting>
-        
-        <!-- Adds a report detailing the components, mixins and base classes defined by this module. -->        
+
+        <!-- Adds a report detailing the components, mixins and base classes defined by this module. -->
         <plugins>
             <plugin>
                 <groupId>org.apache.tapestry</groupId>
@@ -83,41 +84,41 @@
         </plugins>
     </reporting>
 
-  <repositories>
-    <!-- This can be commented out when the tapestry-release-version is a not a snapshot.
-         The non-snapshot Tapestry artifacts are distributed through the central
-         repository at ibiblio.     -->
-  
-    <repository>
-      <id>tapestry-snapshots</id>
-      <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
-    </repository>
-    
-    <repository>
-      <id>codehaus.snapshots</id>
-      <url>http://snapshots.repository.codehaus.org</url>
-    </repository>
-    <!-- For access to the selenium JARs. -->
-    <repository>
-      <id>openqa</id>
-      <name>OpenQA Maven Repository</name>
-      <url>http://maven.openqa.org/</url>
-    </repository>
-  </repositories>
-  
-  <pluginRepositories>
-    
-    <!-- As above, this can be commented out when access to the snapshot version
-         of a Tapestry Maven plugin is not required.   -->
-    <pluginRepository>
-      <id>tapestry-snapshots</id>
-      <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
-    </pluginRepository>
-    
+    <repositories>
+        <!-- This can be commented out when the tapestry-release-version is a not a snapshot.
+ The non-snapshot Tapestry artifacts are distributed through the central
+ repository at ibiblio.     -->
 
-  </pluginRepositories>
-  
+        <repository>
+            <id>tapestry-snapshots</id>
+            <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
+        </repository>
+
+        <repository>
+            <id>codehaus.snapshots</id>
+            <url>http://snapshots.repository.codehaus.org</url>
+        </repository>
+        <!-- For access to the selenium JARs. -->
+        <repository>
+            <id>openqa</id>
+            <name>OpenQA Maven Repository</name>
+            <url>http://maven.openqa.org/</url>
+        </repository>
+    </repositories>
+
+    <pluginRepositories>
+
+        <!-- As above, this can be commented out when access to the snapshot version
+of a Tapestry Maven plugin is not required.   -->
+        <pluginRepository>
+            <id>tapestry-snapshots</id>
+            <url>http://tapestry.formos.com/maven-snapshot-repository/</url>
+        </pluginRepository>
+
+
+    </pluginRepositories>
+
     <properties>
-        <tapestry-release-version>5.0.7-SNAPSHOT</tapestry-release-version>
+        <tapestry-release-version>5.0.7</tapestry-release-version>
     </properties>
 </project>
