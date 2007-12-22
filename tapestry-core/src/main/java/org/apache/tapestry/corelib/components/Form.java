@@ -161,6 +161,7 @@ public class Form implements ClientElement, FormValidationControl
     private RenderInformals _renderInformals;
 
     @Inject
+    @Traditional
     private ComponentEventResultProcessor _eventResultProcessor;
 
     private String _name;

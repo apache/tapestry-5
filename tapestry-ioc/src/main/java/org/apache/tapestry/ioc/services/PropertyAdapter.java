@@ -14,15 +14,17 @@
 
 package org.apache.tapestry.ioc.services;
 
-import java.lang.annotation.Annotation;
+import org.apache.tapestry.ioc.AnnotationProvider;
+
 import java.lang.reflect.Method;
 
 /**
- * Provides access to a single property within a class.
+ * Provides access to a single property within a class. Acts as an {@link AnnotationProvider}; when searching
+ * for annotations, the read method (if present) is checked first, followed by the write method.
  *
  * @see org.apache.tapestry.ioc.services.ClassPropertyAdapter
  */
-public interface PropertyAdapter
+public interface PropertyAdapter extends AnnotationProvider
 {
     /**
      * Returns the name of the property.
@@ -71,14 +73,4 @@ public interface PropertyAdapter
      * Returns the type of the property.
      */
     Class getType();
-
-    /**
-     * Returns an annotation on the property. The read method (if present) is checked first,
-     * followed by the write method.
-     *
-     * @param <T>
-     * @param annotationClass the annotation to retrieve
-     * @return the annotation on the read or write method, or null if not present on either method
-     */
-    <T extends Annotation> T getAnnotation(Class<T> annotationClass);
 }

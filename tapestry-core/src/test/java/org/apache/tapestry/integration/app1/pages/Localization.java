@@ -14,10 +14,11 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Service;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry.services.ComponentLayer;
 import org.apache.tapestry.services.PersistentLocale;
 import org.apache.tapestry.services.Request;
 
@@ -29,11 +30,11 @@ public class Localization
     private Messages _messages;
 
     @Inject
-    @Service("ClassFactory")
+    @Builtin
     private ClassFactory _iocClassFactory;
 
     @Inject
-    @Service("ComponentClassFactory")
+    @ComponentLayer
     private ClassFactory _componentClassFactory;
 
     @Inject

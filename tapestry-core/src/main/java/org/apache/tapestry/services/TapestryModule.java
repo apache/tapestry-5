@@ -35,7 +35,6 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.*;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.ioc.util.TimePeriod;
@@ -130,53 +129,6 @@ public final class TapestryModule
         AliasManager manager = new AliasManagerImpl(logger, configuration);
 
         return new AliasImpl(manager, mode, overridesManager);
-    }
-
-    /**
-     * A few of the built in services overlap in terms of service interface so we make contributions
-     * to the Alias service to disambiguate. This ensures that a bare parameter (without an
-     * InjectService annotation) will chose the correct value without being further qualified.
-     * <dl>
-     * <dt>{@link ComponentEventResultProcessor}
-     * <dd> the master ComponentEventResultProcessor service (rather than one of the other services
-     * that exist to handle a specific type of result)</li>
-     * <dt>{@link ObjectRenderer}
-     * <dd> the master ObjectRenderer service (rather than the one of the other services that
-     * renders a specific type of object)</li>
-     * <dt>{@link ClassFactory}
-     * <dd> the <em>ComponentClassFactory</em> (which will be recreated if the component class
-     * loader is recreated, on a change to a component class)
-     * <dt>{@link DataTypeAnalyzer}
-     * <dd> the <em>DefaultDataTypeAnalyzer</em> service
-     * </dl>
-     */
-    public static void contributeAlias(Configuration<AliasContribution> configuration, ObjectLocator locator,
-
-                                       @ComponentLayer ClassFactory componentClassFactory,
-
-                                       @InjectService("DefaultDataTypeAnalyzer")
-                                       DataTypeAnalyzer dataTypeAnalyzer)
-    {
-        add(configuration, locator, ComponentEventResultProcessor.class, ObjectRenderer.class);
-
-        configuration.add(AliasContribution.create(ClassFactory.class, componentClassFactory));
-        configuration.add(AliasContribution.create(DataTypeAnalyzer.class, dataTypeAnalyzer));
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void add(Configuration<AliasContribution> configuration, ObjectLocator locator,
-                            Class... serviceInterfaces)
-    {
-        for (Class serviceInterface : serviceInterfaces)
-        {
-            String name = serviceInterface.getName();
-            String serviceId = InternalUtils.lastTerm(name);
-
-            AliasContribution contribution = AliasContribution.create(serviceInterface, locator
-                    .getService(serviceId, serviceInterface));
-
-            configuration.add(contribution);
-        }
     }
 
     /**
@@ -339,18 +291,23 @@ public final class TapestryModule
     }
 
     /**
-     * Adds the {@link #build(java.util.List)}  DefaultDatatTypeAnalyzer} to the
-     * configuration, ordered explicitly last.
+     * <dl>
+     * <dt>Annotation</dt>
+     * <dd>Checks for {@link org.apache.tapestry.beaneditor.DataType} annotation</dd>
+     * <dt>Default  (ordered last)</dt>
+     * <dd>{@link org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer} service ({@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry.ioc.MappedConfiguration)} })</dd>
+     * </dl>
      */
     public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration,
                                                   @InjectService("DefaultDataTypeAnalyzer")
                                                   DataTypeAnalyzer defaultDataTypeAnalyzer)
     {
+        configuration.add("Annotation", new AnnotationDataTypeAnalyzer());
         configuration.add("Default", defaultDataTypeAnalyzer, "after:*");
     }
 
     /**
-     * Maps property types to data type names
+     * Maps property types to data type names:
      * <ul>
      * <li>String --&gt; text
      * <li>Number --&gt; text
@@ -876,6 +833,13 @@ public final class TapestryModule
         return _chainBuilder.build(ComponentClassTransformWorker.class, configuration);
     }
 
+    /**
+     * Analyzes properties to determine the data types, used to
+     * {@linkplain #contributeBeanBlockSource(org.apache.tapestry.ioc.Configuration)} locale display and edit blocks}
+     * for properties.  The default behaviors look for a {@link org.apache.tapestry.beaneditor.DataType} annotation before
+     * deriving the data type from the property type.
+     */
+    @Marker(Primary.class)
     public DataTypeAnalyzer build(List<DataTypeAnalyzer> configuration)
     {
         return _chainBuilder.build(DataTypeAnalyzer.class, configuration);
@@ -1025,6 +989,7 @@ public final class TapestryModule
         return service;
     }
 
+    @Marker(Primary.class)
     public ObjectRenderer build(Map<Class, ObjectRenderer> configuration)
     {
         StrategyRegistry<ObjectRenderer> registry = StrategyRegistry.newInstance(ObjectRenderer.class, configuration);

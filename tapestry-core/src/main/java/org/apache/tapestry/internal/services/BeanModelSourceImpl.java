@@ -21,11 +21,13 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.annotations.Primary;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry.services.ComponentLayer;
 import org.apache.tapestry.services.DataTypeAnalyzer;
 import org.apache.tapestry.services.PropertyConduitSource;
 
@@ -46,9 +48,9 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     private final DataTypeAnalyzer _dataTypeAnalyzer;
 
-    public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer,
-                               PropertyAccess propertyAccess, PropertyConduitSource propertyConduitSource,
-                               ClassFactory classFactory, DataTypeAnalyzer dataTypeAnalyzer)
+    public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer, PropertyAccess propertyAccess,
+                               PropertyConduitSource propertyConduitSource, @ComponentLayer ClassFactory classFactory,
+                               @Primary DataTypeAnalyzer dataTypeAnalyzer)
     {
         _loggerSource = loggerSource;
         _typeCoercer = typeCoercer;
@@ -58,8 +60,7 @@ public class BeanModelSourceImpl implements BeanModelSource
         _dataTypeAnalyzer = dataTypeAnalyzer;
     }
 
-    public BeanModel create(Class beanClass, boolean filterReadOnlyProperties,
-                            ComponentResources resources)
+    public BeanModel create(Class beanClass, boolean filterReadOnlyProperties, ComponentResources resources)
     {
         notNull(beanClass, "beanClass");
         notNull(resources, "resources");
@@ -68,8 +69,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
         ClassPropertyAdapter adapter = _propertyAccess.getAdapter(beanClass);
 
-        final BeanModel model = new BeanModelImpl(beanClass, _propertyConduitSource, _typeCoercer,
-                                                  messages);
+        final BeanModel model = new BeanModelImpl(beanClass, _propertyConduitSource, _typeCoercer, messages);
 
         List<String> propertyNames = newList();
 

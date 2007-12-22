@@ -22,6 +22,7 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.PageRenderRequestHandler;
 import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.Traditional;
 
 import java.io.IOException;
 
@@ -39,7 +40,8 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
     private final Response _response;
 
-    public PageRenderRequestHandlerImpl(RequestPageCache cache, ComponentEventResultProcessor resultProcessor,
+    public PageRenderRequestHandlerImpl(RequestPageCache cache,
+                                        @Traditional ComponentEventResultProcessor resultProcessor,
                                         PageResponseRenderer pageResponseRenderer, Response response)
     {
         _cache = cache;

@@ -18,6 +18,7 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.pages.ExceptionReport;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Primary;
 import org.apache.tapestry.services.ObjectRenderer;
 
 /**
@@ -32,6 +33,7 @@ public class RenderObject
     private Object _object;
 
     @Inject
+    @Primary
     private ObjectRenderer<Object> _renderer;
 
     boolean beginRender(MarkupWriter writer)
