@@ -1,0 +1,5 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <head>
+    <link rel="stylesheet" href="${stylePath}" />
+  </head>
+</html>

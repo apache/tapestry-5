@@ -1,0 +1,37 @@
+ ----
+ Page Lifecycle Methods
+ ----
+ 
+Page Lifecycle Methods
+
+  There are a few situations where it is useful for a component to perform some operations, usually some kind of initialization or
+  caching, based on the lifecycle of the page.
+  
+  The page lifecycle is quite simple.  When first needed, a page is loaded.  Loading a page involves instantitating the components of the page
+  and connecting them together.
+  
+  Once a page is loaded, it is <attached> to the current request.  Remember that there will be many threads, each handling its own request.
+  In many cases, there will be multiple copies of the same page attached to different requests (and different threads). This is how Tapestry keeps you
+  from worrying about multi-threading issues ... the objects involved in any request are reserved to <just> that request (and <just> that thread).
+  
+  At the end of a request, after a response has been sent to the client, the page is <detached> from the request.  This is a chance to perform
+  a lot of cleanup of the page, discarding temporary objects (so that they can be reclaimed by the garbage collector) and otherwise returning the
+  page to its pristine state.  After detaching, a page is placed into the page pool, where it will await reuse for some future request (likely by a completely
+  different user).
+  
+  As with {{{rendering.html}component rendering}}, you have the ability to make your components "aware" of these events by identifying methods to be invoked.
+  
+  You have the choice of attaching an annotation to a method, or simply naming the method correctly.  
+  
+  Page lifecycle methods should take no parameters and return void.
+  
+  The annotations / method names are:
+  
+   * {{{../../apidocs/org/apache/tapestry/annotations/PageLoaded.html}PageLoaded}} annotation, or method name "pageLoaded"
+   
+   * {{{../../apidocs/org/apache/tapestry/annotations/PageAttached.html}PageAttached}} annotation, or method name "pageAttached"
+   
+   * {{{../../apidocs/org/apache/tapestry/annotations/PageDetached.html}PageDetached}} annotation, or method name "pageDetached"
+   
+   
+   
