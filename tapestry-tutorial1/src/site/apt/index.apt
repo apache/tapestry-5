@@ -9,7 +9,7 @@ Tapestry Tutorial: Introduction
   Welcome to Tapestry! 
 
   This is a tutorial for people who will be creating Tapestry 5 applications.  It doesn't matter whether you have experience with Tapestry 4 (or Tapestry 3, for that matter) or whether you are completely new to Tapestry.  
-  In fact, in some ways, the less you know about web development in general, and Tapestry in particular, the better of you may be ... that much less to unlearn!
+  In fact, in some ways, the less you know about web development in general, and Tapestry in particular, the better off you may be ... that much less to unlearn!
 
   You do need to have a reasonable understanding of HTML, a smattering of XML, and a good understanding of basic Java language features, and a few newer things such as Java Annotations.
   
