@@ -1,0 +1,8 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<p><t:form t:id="form1">
+	<input t:type="TextField" t:id="t1" value="value" size="50"/>
+</t:form></p>
+<p>
+	You entered: ${value}.
+</p>
+</html>

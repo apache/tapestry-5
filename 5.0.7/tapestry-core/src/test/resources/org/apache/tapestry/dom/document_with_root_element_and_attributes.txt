@@ -1,0 +1,1 @@
+<has-attributes barney="rubble" fred="flintstone"></has-attributes>

@@ -1,0 +1,9 @@
+<t:container xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+A bit of text.
+
+<foo/>
+
+Some more text.
+
+</t:container>
