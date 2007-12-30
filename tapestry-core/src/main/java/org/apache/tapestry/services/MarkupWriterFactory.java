@@ -15,6 +15,7 @@
 package org.apache.tapestry.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.internal.util.ContentType;
 
 /**
  * Source for {@link org.apache.tapestry.MarkupWriter} instances.
@@ -23,6 +24,8 @@ public interface MarkupWriterFactory
 {
     /**
      * This will likely expand in the future to control things like output format and encoding, etc.
+     *
+     * @param contentType
      */
-    MarkupWriter newMarkupWriter();
+    MarkupWriter newMarkupWriter(ContentType contentType);
 }

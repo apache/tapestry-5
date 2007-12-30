@@ -21,14 +21,17 @@ import org.apache.tapestry.ioc.Location;
  */
 public class AttributeToken extends TemplateToken
 {
+    private final String _namespaceURI;
+
     private final String _name;
 
     private final String _value;
 
-    public AttributeToken(String name, String value, Location location)
+    public AttributeToken(String namespaceURI, String name, String value, Location location)
     {
         super(TokenType.ATTRIBUTE, location);
 
+        _namespaceURI = namespaceURI;
         _name = name;
         _value = value;
     }
@@ -49,9 +52,18 @@ public class AttributeToken extends TemplateToken
         return _value;
     }
 
+    /**
+     * Returns the namespace URI containing the attribute, or the empty string
+     * for the default namespace.
+     */
+    public String getNamespaceURI()
+    {
+        return _namespaceURI;
+    }
+
     @Override
     public String toString()
     {
-        return String.format("Attribute[%s=%s]", _name, _value);
+        return String.format("Attribute[%s %s=%s]", _namespaceURI, _name, _value);
     }
 }

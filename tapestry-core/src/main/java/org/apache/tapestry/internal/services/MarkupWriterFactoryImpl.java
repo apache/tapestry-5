@@ -16,17 +16,27 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.DefaultMarkupModel;
+import org.apache.tapestry.dom.MarkupModel;
+import org.apache.tapestry.dom.XMLMarkupModel;
+import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MarkupWriterFactory;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 {
-    public MarkupWriter newMarkupWriter()
-    {
-        // TODO: Analyze the response type to determine the correct model? Maybe ContentType should
-        // be passed into to make this determination. DefaultMarkupModel is for SGML style (legacy)
-        // HTML.
+    private final MarkupModel _htmlModel = new DefaultMarkupModel();
 
-        return new MarkupWriterImpl(new DefaultMarkupModel());
+    private final MarkupModel _xmlModel = new XMLMarkupModel();
+
+    public MarkupWriter newMarkupWriter(ContentType contentType)
+    {
+        boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");
+
+        MarkupModel model = isHTML ? _htmlModel : _xmlModel;
+
+        // The charset parameter sets the encoding attribute of the XML declaration, if
+        // not null and if using the XML model.
+
+        return new MarkupWriterImpl(model, contentType.getParameter("charset"));
     }
 
 }

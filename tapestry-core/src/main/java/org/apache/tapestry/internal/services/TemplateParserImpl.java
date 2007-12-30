@@ -65,6 +65,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private final List<TemplateToken> _tokens = newList();
 
+    /**
+     * Because {@link org.xml.sax.ContentHandler#startPrefixMapping(String, String)} events arrive before the
+     * corresponding {@link org.xml.sax.ContentHandler#startElement(String, String, String, org.xml.sax.Attributes)}
+     * events, we need to accumlate the {@link org.apache.tapestry.internal.parser.DefineNamespacePrefixToken}s
+     * ahead of time to get the correct ordering in the output tokens list.
+     */
+    private final List<DefineNamespacePrefixToken> _defineNamespaceTokens = newList();
+
     // Non-blank ids from start component elements
 
     private final Set<String> _componentIds = newSet();
@@ -110,7 +118,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     // expansions on the same text line into a single large
     // but invalid expansion.
 
-    private final Pattern EXPANSION_PATTERN = Pattern.compile("\\$\\{\\s*(.*?)\\s*}", Pattern.MULTILINE);
+    private static final String EXPANSION_REGEXP = "\\$\\{\\s*(.*?)\\s*}";
+
+    private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP, Pattern.MULTILINE);
 
     public TemplateParserImpl(Logger logger, Map<String, URL> configuration)
     {
@@ -123,6 +133,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private void reset()
     {
         _tokens.clear();
+        _defineNamespaceTokens.clear();
         _componentIds.clear();
         _templateResource = null;
         _locator = null;
@@ -291,7 +302,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             return;
         }
 
-        startPossibleComponent(attributes, localName, null);
+        startPossibleComponent(attributes, uri, localName, null);
     }
 
     /**
@@ -349,7 +360,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         String componentType = localName.replace('.', '/');
 
         // With a component type specified, it's not just possibly a component ...
-        startPossibleComponent(attributes, null, componentType);
+        startPossibleComponent(attributes, null, null, componentType);
     }
 
     private void startContainer()
@@ -411,12 +422,13 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     /**
      * @param attributes     the attributes for the element
+     * @param namespaceURI   the namespace URI for the element (or the empty string)
      * @param elementName    the name of the element (to be assigned to the new token), may be null for a
      *                       component in the Tapestry namespace
      * @param identifiedType the type of the element, usually null, but may be the component type derived from
-     *                       the element name (for an element in the Tapestry namespace)
      */
-    private void startPossibleComponent(Attributes attributes, String elementName, String identifiedType)
+    private void startPossibleComponent(Attributes attributes, String namespaceURI, String elementName,
+                                        String identifiedType)
     {
         String id = null;
         String type = identifiedType;
@@ -464,7 +476,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
                 // not part of the template's doctype for the element being instrumented.
             }
 
-            attributeTokens.add(new AttributeToken(name, value, location));
+            attributeTokens.add(new AttributeToken(uri, name, value, location));
         }
 
         boolean isComponent = (id != null || type != null);
@@ -480,8 +492,10 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         }
         else
         {
-            _tokens.add(new StartElementToken(elementName, location));
+            _tokens.add(new StartElementToken(namespaceURI, elementName, location));
         }
+
+        addDefineNamespaceTokens();
 
         _tokens.addAll(attributeTokens);
 
@@ -535,6 +549,17 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         return new LocationImpl(_templateResource, _locator.getLineNumber(), _locator
                 .getColumnNumber());
+    }
+
+    /**
+     * Adds any namespace tokens accumulated from just before the current element. The list of namespace tokens is then
+     * cleared.
+     */
+    private void addDefineNamespaceTokens()
+    {
+        _tokens.addAll(_defineNamespaceTokens);
+
+        _defineNamespaceTokens.clear();
     }
 
     public void comment(char[] ch, int start, int length) throws SAXException
@@ -619,9 +644,6 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     {
     }
 
-    public void endPrefixMapping(String prefix) throws SAXException
-    {
-    }
 
     public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException
     {
@@ -640,6 +662,20 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     }
 
     public void startPrefixMapping(String prefix, String uri) throws SAXException
+    {
+        // Not interested in the Tapestry namespace (that is never sent to the client).
+
+        if (uri.equals(TAPESTRY_SCHEMA_5_0_0)) return;
+
+        // The prefix may be blank, which happens when the xmlns attribute is used to define the
+        // namespace for the default namespace, and when a document has an explicit DOCTYPE.
+
+        DefineNamespacePrefixToken token = new DefineNamespacePrefixToken(uri, prefix, getCurrentLocation());
+
+        _defineNamespaceTokens.add(token);
+    }
+
+    public void endPrefixMapping(String prefix) throws SAXException
     {
     }
 

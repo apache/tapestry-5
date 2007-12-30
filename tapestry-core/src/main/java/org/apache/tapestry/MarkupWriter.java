@@ -54,8 +54,6 @@ public interface MarkupWriter
 
     /**
      * Writes the text as a child of the current element.
-     * <p/>
-     * TODO: Filtering of XML entities.
      */
 
     void write(String text);
@@ -81,6 +79,15 @@ public interface MarkupWriter
      */
     void comment(String text);
 
+
+    /**
+     * Adds parsed character content. This will be enclosed in a CDATA block if supported.  When not supported,
+     * this is the same as {@link #write(String)}.
+     *
+     * @param content pre-parsed content
+     */
+    void cdata(String content);
+
     /**
      * Adds a series of attributes and values. Null values are quietly skipped. If a name already
      * has a value, then the new value is <em>ignored</em>.
@@ -102,4 +109,35 @@ public interface MarkupWriter
      * Returns the currently active element.
      */
     Element getElement();
+
+    /**
+     * Defines a namespace for the currently active element. The namespace URI will be mapped
+     * to the provided namespace prefix within the Element.
+     *
+     * @param namespace       the namespace URI
+     * @param namespacePrefix the prefix for elements and attributes associated with the namespace    (may
+     *                        be the empty string for the default namespace)
+     * @return the currently active element
+     */
+    Element defineNamespace(String namespace, String namespacePrefix);
+
+    /**
+     * Starts an element within the given namespace. The correct namespace prefix will be identified and used.
+     * Must be balanced by a call to {@link #end()}.
+     *
+     * @param namespace   URI containing the element
+     * @param elementName name of the element within the namespace
+     * @return the new Element
+     */
+    Element elementNS(String namespace, String elementName);
+
+    /**
+     * Creates an attribute within the namespace for the current element.
+     *
+     * @param namespace      URI containing the element
+     * @param attributeName  name of the attribute within the namespace
+     * @param attributeValue the value for the attribute
+     * @return the currently active element
+     */
+    Element attributeNS(String namespace, String attributeName, String attributeValue);
 }

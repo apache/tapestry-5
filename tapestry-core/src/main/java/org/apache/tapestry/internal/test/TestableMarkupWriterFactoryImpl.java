@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.internal.util.ContentType;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.services.Core;
@@ -28,11 +29,10 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
     private MarkupWriter _lastCreated;
 
     /**
-     * Using Builtin to reference to framework-provided version, which this implementation wraps
+     * Using Core annotation to reference to framework-provided version, which this implementation wraps
      * around.
      */
-    public TestableMarkupWriterFactoryImpl(@Core
-    MarkupWriterFactory delegate)
+    public TestableMarkupWriterFactoryImpl(@Core MarkupWriterFactory delegate)
     {
         _delegate = delegate;
     }
@@ -42,9 +42,9 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
         return _lastCreated;
     }
 
-    public MarkupWriter newMarkupWriter()
+    public MarkupWriter newMarkupWriter(ContentType contentType)
     {
-        MarkupWriter result = _delegate.newMarkupWriter();
+        MarkupWriter result = _delegate.newMarkupWriter(contentType);
 
         _lastCreated = result;
 

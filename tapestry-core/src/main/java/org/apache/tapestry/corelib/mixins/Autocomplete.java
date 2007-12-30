@@ -193,7 +193,7 @@ public class Autocomplete
 
         _resources.triggerEvent("providecompletions", new Object[]{input}, handler);
 
-        MarkupWriter writer = _factory.newMarkupWriter();
+        MarkupWriter writer = _factory.newMarkupWriter(null);
 
         // T4.1 has more flexibility, it can decorate the options with icons, etc.
         // But this will do for now.  The Autocompleter widget will display

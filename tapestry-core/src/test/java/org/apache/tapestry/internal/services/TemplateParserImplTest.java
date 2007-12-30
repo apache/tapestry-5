@@ -82,7 +82,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     }
 
     @Test
-    synchronized public void just_HTML()
+    public void just_HTML()
     {
         Resource resource = getResource("justHTML.tml");
 
@@ -101,6 +101,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         // Spot check a few things ...
 
         assertEquals(t0.getName(), "html");
+        assertEquals(t0.getNamespaceURI(), "");
         checkLine(t0, 1);
 
         TextToken t1 = get(tokens, 1);
@@ -123,6 +124,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         AttributeToken t13 = get(tokens, 13);
         assertEquals(t13.getName(), "class");
         assertEquals(t13.getValue(), "important");
+        assertEquals(t13.getNamespaceURI(), "");
 
         TextToken t14 = get(tokens, 14);
         // Simplify the text, converting consecutive whitespace to just a single space.
@@ -130,6 +132,47 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         // Line number is the *start* line of the whole text block.
         checkLine(t14, 6);
+    }
+
+    @Test
+    public void namespaced_element()
+    {
+        Resource resource = getResource("namespaced_element.tml");
+
+        ComponentTemplate template = getParser().parseTemplate(resource);
+
+        assertSame(template.getResource(), resource);
+
+        List<TemplateToken> tokens = template.getTokens();
+
+        // They add up quick ...
+
+        assertEquals(tokens.size(), 6);
+
+        StartElementToken t0 = get(tokens, 0);
+
+        String expectedURI = "http://foo.com";
+
+        assertEquals(t0.getNamespaceURI(), expectedURI);
+        assertEquals(t0.getName(), "bar");
+
+        DefineNamespacePrefixToken t1 = get(tokens, 1);
+
+        assertEquals(t1.getNamespacePrefix(), "foo");
+        assertEquals(t1.getNamespaceURI(), expectedURI);
+
+        AttributeToken t2 = get(tokens, 2);
+
+        assertEquals(t2.getName(), "biff");
+        assertEquals(t2.getValue(), "baz");
+        assertEquals(t2.getNamespaceURI(), expectedURI);
+
+        StartElementToken t3 = get(tokens, 3);
+
+        assertEquals(t3.getNamespaceURI(), "");
+        assertEquals(t3.getName(), "gnip");
+
+        // The rest are close tokens
     }
 
     @Test
@@ -171,17 +214,33 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(t.getText().trim(), "lt:< gt:> amp:&");
     }
 
-    /**
-     * Test disabled when not online.
-     */
-    @Test(enabled = true)
+    @Test
     public void html_entity()
     {
+        String expectedURI = "http://www.w3.org/1999/xhtml";
+
         List<TemplateToken> tokens = tokens("html_entity.tml");
 
-        assertEquals(tokens.size(), 4);
+        assertEquals(tokens.size(), 5);
 
-        TextToken t = get(tokens, 2);
+        DTDToken t0 = get(tokens, 0);
+
+        assertEquals(t0.getName(), "html");
+        assertEquals(t0.getPublicId(), "-//W3C//DTD XHTML 1.0 Transitional//EN");
+        assertEquals(t0.getSystemId(), "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd");
+
+        StartElementToken t1 = get(tokens, 1);
+
+        assertEquals(t1.getNamespaceURI(), expectedURI);
+        assertEquals(t1.getName(), "html");
+
+        DefineNamespacePrefixToken t2 = get(tokens, 2);
+
+        assertEquals(t2.getNamespaceURI(), expectedURI);
+        assertEquals(t2.getNamespacePrefix(), "");
+
+
+        TextToken t = get(tokens, 3);
 
         // HTML entities are parsed into values that will ultimately
         // be output as numeric entities. This is less than ideal; would like
@@ -204,7 +263,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CDATAToken t = get(tokens, 2);
 
-        assertEquals(t.getText(), "CDATA: &lt;foo&gt; &amp; &lt;bar&gt; and <baz>");
+        assertEquals(t.getContent(), "CDATA: &lt;foo&gt; &amp; &lt;bar&gt; and <baz>");
         checkLine(t, 2);
     }
 
@@ -487,7 +546,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         CDATAToken t2 = get(tokens, 2);
 
-        assertEquals(t2.getText(), "${not-an-expansion}");
+        assertEquals(t2.getContent(), "${not-an-expansion}");
     }
 
     @Test
@@ -600,37 +659,36 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     public void doctype_parsed_correctly(String fileName) throws Exception
     {
         List<TemplateToken> tokens = tokens(fileName);
-        assertEquals(tokens.size(), 11);
-        TextToken t = get(tokens, 8);
+        assertEquals(tokens.size(), 12);
+        TextToken t = get(tokens, 9);
         assertEquals(t.getText().trim(), "<Test>");
     }
 
     @DataProvider(name = "doctype_token_added_correctly_data")
     public Object[][] doctype_token_added_correctly_data()
     {
-        return new Object[][]{{"xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
-                               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"}, {"xhtml1_transitional_doctype.tml",
-                                                                                      "html",
-                                                                                      "-//W3C//DTD XHTML 1.0 Transitional//EN",
-                                                                                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"},
-                                                                                     {"xhtml1_frameset_doctype.tml",
-                                                                                      "html",
-                                                                                      "-//W3C//DTD XHTML 1.0 Frameset//EN",
-                                                                                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"},
-                                                                                     {"html4_strict_doctype.tml",
-                                                                                      "HTML",
-                                                                                      "-//W3C//DTD HTML 4.01//EN",
-                                                                                      "http://www.w3.org/TR/html4/strict.dtd"},
-                                                                                     {"html4_transitional_doctype.tml",
-                                                                                      "HTML",
-                                                                                      "-//W3C//DTD HTML 4.01 Transitional//EN",
-                                                                                      "http://www.w3.org/TR/html4/loose.dtd"},
-                                                                                     {"html4_frameset_doctype.tml",
-                                                                                      "HTML",
-                                                                                      "-//W3C//DTD HTML 4.01 Frameset//EN",
-                                                                                      "http://www.w3.org/TR/html4/frameset.dtd"},
-                                                                                     {"system_doctype.xml", "foo", null,
-                                                                                      "src/test/resources/org/apache/tapestry/internal/services/simple.dtd"}};
+        return new Object[][]{
+
+                {"xhtml1_strict_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Strict//EN",
+                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"},
+
+                {"xhtml1_transitional_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Transitional//EN",
+                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"},
+
+                {"xhtml1_frameset_doctype.tml", "html", "-//W3C//DTD XHTML 1.0 Frameset//EN",
+                 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"},
+
+                {"html4_strict_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01//EN",
+                 "http://www.w3.org/TR/html4/strict.dtd"},
+
+                {"html4_transitional_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Transitional//EN",
+                 "http://www.w3.org/TR/html4/loose.dtd"},
+
+                {"html4_frameset_doctype.tml", "HTML", "-//W3C//DTD HTML 4.01 Frameset//EN",
+                 "http://www.w3.org/TR/html4/frameset.dtd"},
+
+                {"system_doctype.xml", "foo", null,
+                 "src/test/resources/org/apache/tapestry/internal/services/simple.dtd"}};
     }
 
     @Test(dataProvider = "doctype_token_added_correctly_data")

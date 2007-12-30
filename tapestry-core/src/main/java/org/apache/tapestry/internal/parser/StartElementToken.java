@@ -27,12 +27,14 @@ import org.apache.tapestry.ioc.Location;
  */
 public class StartElementToken extends TemplateToken
 {
+    private final String _namespaceURI;
     private final String _name;
 
-    public StartElementToken(String name, Location location)
+    public StartElementToken(String namespaceURI, String name, Location location)
     {
         super(TokenType.START_ELEMENT, location);
 
+        _namespaceURI = namespaceURI;
         _name = name;
     }
 
@@ -44,9 +46,17 @@ public class StartElementToken extends TemplateToken
         return _name;
     }
 
+    /**
+     * @return the namespace URI for the element, or the empty string for the default namespace
+     */
+    public String getNamespaceURI()
+    {
+        return _namespaceURI;
+    }
+
     @Override
     public String toString()
     {
-        return String.format("Start[%s]", _name);
+        return String.format("Start[%s %s]", _namespaceURI, _name);
     }
 }

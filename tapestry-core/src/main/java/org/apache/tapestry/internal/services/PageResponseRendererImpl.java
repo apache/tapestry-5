@@ -51,7 +51,7 @@ public class PageResponseRendererImpl implements PageResponseRenderer
         // Eventually we'll have to do work to figure out the correct markup type, content type,
         // whatever. Right now its defaulting to plain HTML.
 
-        MarkupWriter writer = _markupWriterFactory.newMarkupWriter();
+        MarkupWriter writer = _markupWriterFactory.newMarkupWriter(contentType);
 
         _markupRenderer.renderPageMarkup(page, writer);
 

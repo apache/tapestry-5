@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.internal.parser.*;
@@ -30,6 +31,7 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
+import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.PersistentFieldManager;
 import org.slf4j.Logger;
@@ -42,6 +44,9 @@ import java.util.Map;
  */
 class PageLoaderProcessor
 {
+    /**
+     * Special prefix for parameters that are inherited from named parameters of their container.
+     */
     private static final String INHERIT_PREFIX = "inherit:";
 
     private static final Runnable NO_OP = new Runnable()
@@ -467,6 +472,14 @@ class PageLoaderProcessor
                     dtd((DTDToken) token);
                     break;
 
+                case DEFINE_NAMESPACE_PREFIX:
+                    defineNamespacePrefix((DefineNamespacePrefixToken) token);
+                    break;
+
+                case CDATA:
+                    cdata((CDATAToken) token);
+                    break;
+
                 default:
                     throw new IllegalStateException("Not implemented yet: " + token);
             }
@@ -478,6 +491,34 @@ class PageLoaderProcessor
 
         // TODO: Check that all stacks are empty. That should never happen, as long
         // as the ComponentTemplate is valid.
+    }
+
+    private void cdata(CDATAToken token)
+    {
+        final String content = token.getContent();
+
+        PageElement element = new PageElement()
+        {
+            public void render(MarkupWriter writer, RenderQueue queue)
+            {
+                writer.cdata(content);
+            }
+        };
+
+        addToBody(element);
+    }
+
+    private void defineNamespacePrefix(final DefineNamespacePrefixToken token)
+    {
+        PageElement element = new PageElement()
+        {
+            public void render(MarkupWriter writer, RenderQueue queue)
+            {
+                writer.defineNamespace(token.getNamespaceURI(), token.getNamespacePrefix());
+            }
+        };
+
+        addToBody(element);
     }
 
     private void parameter(ParameterToken token)

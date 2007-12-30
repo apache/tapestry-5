@@ -35,7 +35,12 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public MarkupWriterImpl(MarkupModel model)
     {
-        _document = new Document(model);
+        this(model, null);
+    }
+
+    public MarkupWriterImpl(MarkupModel model, String encoding)
+    {
+        _document = new Document(model, encoding);
     }
 
     public void toMarkup(PrintWriter writer)
@@ -57,6 +62,15 @@ public class MarkupWriterImpl implements MarkupWriter
     public Element getElement()
     {
         return _current;
+    }
+
+    public void cdata(String content)
+    {
+        ensureCurrentElement();
+
+        _current.cdata(content);
+
+        _currentText = null;
     }
 
     public void write(String text)
@@ -151,4 +165,31 @@ public class MarkupWriterImpl implements MarkupWriter
         _currentText = null;
     }
 
+    public Element attributeNS(String namespace, String attributeName, String attributeValue)
+    {
+        ensureCurrentElement();
+
+        _current.attribute(namespace, attributeName, attributeValue);
+
+        return _current;
+    }
+
+    public Element defineNamespace(String namespace, String namespacePrefix)
+    {
+        ensureCurrentElement();
+
+        _current.defineNamespace(namespace, namespacePrefix);
+
+        return _current;
+    }
+
+    public Element elementNS(String namespace, String elementName)
+    {
+        if (_current == null) _current = _document.newRootElement(namespace, elementName);
+        else _current = _current.elementNS(namespace, elementName);
+
+        _currentText = null;
+
+        return _current;
+    }
 }

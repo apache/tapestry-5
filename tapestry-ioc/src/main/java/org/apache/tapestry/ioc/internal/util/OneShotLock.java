@@ -36,10 +36,16 @@ public class OneShotLock
     {
         if (_lock)
         {
+            // This is how I would think it would be:
+
             // [0] is getStackTrace()
             // [1] is innerCheck()
             // [2] is check() or lock()
             // [3] is caller of check() or lock()
+
+            // ... so why do we get element 4?  Found this via trial and error.  Some extra stack frame
+            // gets in there somehow, as in, getStackTrace() must be calling something (probably native)
+            // that creates the actual array, and includes itself as [0], getStackTrace() as [1], etc.
 
             StackTraceElement element = Thread.currentThread().getStackTrace()[4];
 

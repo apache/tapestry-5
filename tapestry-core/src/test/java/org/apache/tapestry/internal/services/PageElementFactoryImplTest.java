@@ -49,16 +49,19 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         replay();
 
         PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
-        StartElementToken token = new StartElementToken("fred", l);
+        StartElementToken token = new StartElementToken("http://foo.com", "fred", l);
 
         PageElement element = factory.newStartElement(token);
 
         element.render(writer, queue);
 
+
+        writer.defineNamespace("http://foo.com", "");
+
         verify();
 
-        assertEquals(element.toString(), "Start[fred]");
-        assertEquals(writer.toString(), "<fred></fred>");
+        assertEquals(element.toString(), "Start[http://foo.com fred]");
+        assertEquals(writer.toString(), "<fred xmlns=\"http://foo.com\"></fred>");
     }
 
     @Test
@@ -73,7 +76,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         replay();
 
         PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
-        AttributeToken token = new AttributeToken("name", "value", l);
+        AttributeToken token = new AttributeToken(null, "name", "value", l);
 
         PageElement element = factory.newAttributeElement(null, token);
 
@@ -83,7 +86,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         verify();
 
-        assertEquals(writer.toString(), "<root name=\"value\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<root name=\"value\"/>");
     }
 
     @Test
@@ -111,7 +114,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         verify();
 
         assertEquals(element.toString(), "End");
-        assertEquals(writer.toString(), "<root>before<nested/>after</root>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<root>before<nested/>after</root>");
     }
 
     @Test
@@ -190,7 +193,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         Location location = mockLocation();
 
-        AttributeToken token = new AttributeToken("fred", "${flintstone", location);
+        AttributeToken token = new AttributeToken(null, "fred", "${flintstone", location);
 
         replay();
 

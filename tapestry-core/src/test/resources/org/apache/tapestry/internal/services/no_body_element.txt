@@ -1,1 +1,2 @@
+<?xml version="1.0"?>
 <html><notbody><p>Ready to be updated with scripts.</p></notbody></html>

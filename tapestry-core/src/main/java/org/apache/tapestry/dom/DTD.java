@@ -35,21 +35,6 @@ public class DTD
         _systemId = systemId;
     }
 
-    public String getName()
-    {
-        return _name;
-    }
-
-    public String getPublicId()
-    {
-        return _publicId;
-    }
-
-    public String getSystemId()
-    {
-        return _systemId;
-    }
-
     public void toMarkup(PrintWriter writer)
     {
         if (_publicId != null)

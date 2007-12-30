@@ -29,10 +29,19 @@ public final class Document extends Node
 
     private final MarkupModel _model;
 
+    private final String _encoding;
+
     public Document(MarkupModel model)
     {
+        this(model, null);
+    }
+
+    public Document(MarkupModel model, String encoding)
+    {
         super(null);
+
         _model = model;
+        _encoding = encoding;
     }
 
     Document getDocument()
@@ -80,7 +89,21 @@ public final class Document extends Node
      */
     public Element newRootElement(String name)
     {
-        _rootElement = new Element(this, name);
+        _rootElement = new Element(this, null, name);
+
+        return _rootElement;
+    }
+
+    /**
+     * Creates a new root element within a namespace.
+     *
+     * @param namespace URI of namespace containing the element
+     * @param name      name of element with namespace
+     * @return the root element
+     */
+    public Element newRootElement(String namespace, String name)
+    {
+        _rootElement = new Element(this, namespace, name);
 
         return _rootElement;
     }
@@ -88,8 +111,17 @@ public final class Document extends Node
     @Override
     public void toMarkup(PrintWriter writer)
     {
-        if (_rootElement == null)
-            throw new IllegalStateException("No root element has been defined.");
+        if (_rootElement == null) throw new IllegalStateException(DomMessages.noRootElement());
+
+
+        if (_model.isXML())
+        {
+            writer.print("<?xml version=\"1.0\"");
+
+            if (_encoding != null) writer.printf(" encoding=\"%s\"", _encoding);
+
+            writer.print("?>\n");
+        }
 
         // TODO: lead-in comments, directives.
         if (_dtd != null)
@@ -128,5 +160,4 @@ public final class Document extends Node
     {
         _dtd = new DTD(name, publicId, systemId);
     }
-
 }

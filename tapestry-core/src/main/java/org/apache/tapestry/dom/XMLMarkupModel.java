@@ -15,7 +15,7 @@
 package org.apache.tapestry.dom;
 
 /**
- * Used for some testing where we want a model with XML style semantics.
+ * Markup model used when generating any form of XML markup.
  */
 public final class XMLMarkupModel extends DefaultMarkupModel
 {
@@ -27,5 +27,14 @@ public final class XMLMarkupModel extends DefaultMarkupModel
     public EndTagStyle getEndTagStyle(String element)
     {
         return EndTagStyle.ABBREVIATE;
+    }
+
+    /**
+     * Returns true.
+     */
+    @Override
+    public boolean isXML()
+    {
+        return true;
     }
 }

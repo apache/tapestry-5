@@ -40,7 +40,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.element("root");
         w.end();
 
-        assertEquals(w.toString(), "<root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n<root/>");
     }
 
     @Test
@@ -53,7 +53,7 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         w.write("  ");
 
-        assertEquals(w.toString(), "<root/>");
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n<root/>");
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -62,6 +62,22 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         MarkupWriter w = new MarkupWriterImpl();
 
         w.comment("fail!");
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void attribute_ns_with_no_current_element()
+    {
+        MarkupWriter w = new MarkupWriterImpl();
+
+        w.attributeNS("foo", "bar", "baz");
+    }
+
+    @Test(expectedExceptions = IllegalStateException.class)
+    public void define_namespace_with_no_current_element()
+    {
+        MarkupWriter w = new MarkupWriterImpl();
+
+        w.defineNamespace("foo", "bar");
     }
 
     @Test(expectedExceptions = IllegalStateException.class)
@@ -202,5 +218,43 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
         w.end();
 
         assertEquals(w.toString(), "<root>&lt;&nbsp;&gt;</root>");
+    }
+
+    @Test
+    public void namespaced_elements_and_attributes()
+    {
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+
+        Element root = w.elementNS("fredns", "root");
+
+        assertSame(root.defineNamespace("fredns", "fred"), root);
+
+        root.defineNamespace("barneyns", "barney");
+
+        assertSame(w.attributeNS("fredns", "foo", "bar"), root);
+
+        Element child = w.elementNS("barneyns", "child");
+
+        assertSame(child.getParent(), root);
+
+        w.end(); // child
+        w.end(); // root
+
+        assertEquals(w.toString(),
+                     "<?xml version=\"1.0\"?>\n<fred:root fred:foo=\"bar\" xmlns:barney=\"barneyns\" xmlns:fred=\"fredns\"><barney:child/></fred:root>");
+    }
+
+    @Test
+    public void cdata_content()
+    {
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+
+        w.element("root");
+        w.write("Normal Text ");
+        w.cdata("< & >");
+        w.write("More Normal Text");
+
+        assertEquals(w.toString(),
+                     "<?xml version=\"1.0\"?>\n<root>Normal Text <![CDATA[< & >]]>More Normal Text</root>");
     }
 }

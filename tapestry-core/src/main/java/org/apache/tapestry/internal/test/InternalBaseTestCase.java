@@ -474,7 +474,7 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
      *
      * @param trim trim each line of whitespace
      */
-    protected final String readFile(String file, boolean trim) throws Exception
+    protected final String readFile(String file) throws Exception
     {
         InputStream is = getClass().getResourceAsStream(file);
         is = new BufferedInputStream(is);
@@ -489,16 +489,14 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
 
             if (line == null) break;
 
-            if (trim) line = line.trim();
-
             buffer.append(line);
 
-            if (!trim) buffer.append("\n");
+            buffer.append("\n");
         }
 
         in.close();
 
-        return buffer.toString();
+        return buffer.toString().trim();
     }
 
     protected final DocumentHeadBuilder mockDocumentScriptBuilder()

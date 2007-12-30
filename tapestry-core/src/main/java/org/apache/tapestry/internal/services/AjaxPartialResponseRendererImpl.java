@@ -64,7 +64,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
         ContentType contentType = new ContentType("text/javascript");
 
-        MarkupWriter writer = _factory.newMarkupWriter();
+        MarkupWriter writer = _factory.newMarkupWriter(null);
 
         JSONObject reply = new JSONObject();
 

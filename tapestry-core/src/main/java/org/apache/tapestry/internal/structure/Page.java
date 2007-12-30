@@ -108,6 +108,7 @@ public interface Page
 
     /**
      * Retrieves a component element by its nested id (a sequence of simple ids, separated by dots).
+     * The individual names in the nested id are matched without regards to case.
      * A nested id of '' (the empty string) returns the root element of the page.
      *
      * @throws IllegalArgumentException if the nestedId does not correspond to a component

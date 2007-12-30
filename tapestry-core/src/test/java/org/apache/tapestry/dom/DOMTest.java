@@ -40,7 +40,59 @@ public class DOMTest extends InternalBaseTestCase
 
         d.newRootElement("empty");
 
-        assertEquals(d.toString(), "<empty/>");
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<empty/>");
+    }
+
+    @Test
+    public void namespaced_elements() throws Exception
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        Element root = d.newRootElement("fredns", "root");
+
+        root.defineNamespace("fredns", "f");
+        root.defineNamespace("barneyns", "b");
+
+        Element nested = root.elementNS("fredns", "nested");
+
+        Element deepest = nested.elementNS("barneyns", "deepest");
+
+        assertEquals(d.toString(), readFile("namespaced_elements.txt"));
+    }
+
+    @Test
+    public void namespace_element_without_a_prefix()
+    {
+
+        Document d = new Document(new XMLMarkupModel());
+
+        Element root = d.newRootElement("fredns", "root");
+
+        try
+        {
+            d.toString();
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(), "Namespace prefix for URI 'fredns' is not defined.");
+        }
+    }
+
+    @Test
+    public void default_namespace()
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        String namespaceURI = "http://foo.com";
+
+        Element root = d.newRootElement(namespaceURI, "root");
+
+        root.defineNamespace(namespaceURI, "");
+        root.attribute(namespaceURI, "gnip", "gnop");
+
+
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<root gnip=\"gnop\" xmlns=\"http://foo.com\"/>");
     }
 
     /**
@@ -56,7 +108,7 @@ public class DOMTest extends InternalBaseTestCase
         e.attribute("fred", "flintstone");
         e.attribute("barney", "rubble");
 
-        assertEquals(d.toString(), readFile("document_with_root_element_and_attributes.txt", true));
+        assertEquals(d.toString(), readFile("document_with_root_element_and_attributes.txt"));
     }
 
     @Test
@@ -78,7 +130,7 @@ public class DOMTest extends InternalBaseTestCase
 
         assertSame(p.getParent(), e);
 
-        assertEquals(d.toString(), readFile("nested_elements.txt", true));
+        assertEquals(d.toString(), readFile("nested_elements.txt"));
     }
 
     @Test
@@ -288,7 +340,8 @@ public class DOMTest extends InternalBaseTestCase
         root.elementAt(1, "one").element("tiny");
         root.elementAt(2, "two").element("bubbles");
 
-        assertEquals(d.toString(), "<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
+        assertEquals(d.toString(),
+                     "<?xml version=\"1.0\"?>\n<fred><start/><one><tiny/></one><two><bubbles/></two><end/></fred>");
     }
 
     @Test
@@ -333,7 +386,7 @@ public class DOMTest extends InternalBaseTestCase
         Element root = d.newRootElement("prime");
         root.element("slag");
         d.dtd("prime", "-//TF", "tf");
-        String expected = "<!DOCTYPE prime PUBLIC \"-//TF\" \"tf\"><prime><slag/></prime>";
+        String expected = "<?xml version=\"1.0\"?>\n<!DOCTYPE prime PUBLIC \"-//TF\" \"tf\"><prime><slag/></prime>";
         assertEquals(d.toString(), expected);
     }
 
@@ -343,12 +396,12 @@ public class DOMTest extends InternalBaseTestCase
         Document d = new Document(new XMLMarkupModel());
         d.newRootElement("prime");
         d.dtd("prime", null, null);
-        assertEquals(d.toString(), "<prime/>");
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<prime/>");
         d.dtd("prime", "-//TF", null);
-        assertEquals(d.toString(), "<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>");
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime PUBLIC \"-//TF\"><prime/>");
 
         d.dtd("prime", null, "tf");
-        assertEquals(d.toString(), "<!DOCTYPE prime SYSTEM \"tf\"><prime/>");
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<!DOCTYPE prime SYSTEM \"tf\"><prime/>");
     }
 
     @Test
@@ -378,5 +431,38 @@ public class DOMTest extends InternalBaseTestCase
         assertSame(root.addClassName("barney", "wilma"), root);
 
         assertEquals(root.toString(), "<div class=\"fred barney wilma\"/>");
+    }
+
+    @Test
+    public void cdata_in_HTML_document()
+    {
+        Document d = new Document();
+
+        d.newRootElement("root").cdata("This & That");
+
+        // The '&' is expanded to an entity:
+
+        assertEquals(d.toString(), "<root>This &amp; That</root>");
+    }
+
+    @Test
+    public void cdata_in_XML_document()
+    {
+        Document d = new Document(new XMLMarkupModel());
+
+        d.newRootElement("root").cdata("This & That");
+
+        // The '&' is expanded to an entity:
+
+        assertEquals(d.toString(), "<?xml version=\"1.0\"?>\n<root><![CDATA[This & That]]></root>");
+    }
+
+    @Test
+    public void encoding_specified()
+    {
+        Document d = new Document(new XMLMarkupModel(), "utf-8");
+        d.newRootElement("root");
+
+        assertEquals(d.toString(), "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<root/>");
     }
 }
