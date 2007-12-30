@@ -1207,11 +1207,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     /**
      * Tests TAPESTRY-1934.
      */
+    @Test
     public void base_class_must_be_in_controlled_package() throws Exception
     {
         open(BASE_URL + "invalidsuperclass");
 
         assertTextPresent(
                 "Base class org.apache.tapestry.integration.app1.WrongPackageForBaseClass (super class of org.apache.tapestry.integration.app1.pages.InvalidSuperClass) is not in a controlled package and is therefore not valid. You should try moving the class to package org.apache.tapestry.integration.app1.base.");
+    }
+
+    @Test
+    public void xml_content() throws Exception
+    {
+        open(BASE_URL + "xmlcontent");
+
+        // Commented out ... Selenium can't seem to handle an XML response.
+
+        // assertSourcePresent("<![CDATA[< & >]]>");
     }
 }

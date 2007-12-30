@@ -16,7 +16,10 @@ package org.apache.tapestry.dom;
 
 /**
  * Used by a the DOM to determine how to produce markup. Delegates details about converted entities
- * and some formatting details.
+ * and some formatting details.  This exists to handle the differences between traditional HTML
+ * output (which is SGML based, meaning there can be elements that are valid without a close tag) and
+ * "modern" XML, such as XHTML.  Generally speaking, for XHTML it is vital that a !DOCTYPE be included
+ * in the rendered response, or the browser will be unable to display the result properly.
  */
 public interface MarkupModel
 {
@@ -43,4 +46,13 @@ public interface MarkupModel
      * For a given element, determines how the end tag for the element should be rendered.
      */
     EndTagStyle getEndTagStyle(String element);
+
+    /**
+     * Returns true if the document markup is XML, which is used to determine
+     * the need for an XML declaration at the start of the document,
+     * and whether CDATA sections are supported.
+     *
+     * @return true for XML output, false for HTML (SGML) output
+     */
+    boolean isXML();
 }

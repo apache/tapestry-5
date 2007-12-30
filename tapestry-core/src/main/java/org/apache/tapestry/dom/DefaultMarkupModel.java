@@ -25,18 +25,8 @@ import java.util.Set;
  */
 public class DefaultMarkupModel implements MarkupModel
 {
-    private final Set<String> EMPTY_ELEMENTS = newSet(
-            "base",
-            "br",
-            "col",
-            "frame",
-            "hr",
-            "img",
-            "input",
-            "link",
-            "meta",
-            "option",
-            "param");
+    private final Set<String> EMPTY_ELEMENTS = newSet("base", "br", "col", "frame", "hr", "img", "input", "link",
+                                                      "meta", "option", "param");
 
     /**
      * Passes all characters but '&lt;', '&gt;' and '&amp;' through unchanged.
@@ -91,4 +81,11 @@ public class DefaultMarkupModel implements MarkupModel
         return isEmpty ? EndTagStyle.OMIT : EndTagStyle.REQUIRE;
     }
 
+    /**
+     * Returns false.
+     */
+    public boolean isXML()
+    {
+        return false;
+    }
 }

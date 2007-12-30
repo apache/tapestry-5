@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.corelib.pages;
 
+import org.apache.tapestry.annotations.Meta;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
@@ -28,6 +29,7 @@ import java.util.List;
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually
  * overridden in a production application.
  */
+@Meta("tapestry.response-content-type=text/html")
 public class ExceptionReport implements ExceptionReporter
 {
     private List<ExceptionInfo> _stack;

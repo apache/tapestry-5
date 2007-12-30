@@ -92,7 +92,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public PageElement newStartElement(StartElementToken token)
     {
-        return new StartElementPageElement(token.getName());
+        return new StartElementPageElement(token.getNamespaceURI(), token.getName());
     }
 
     public PageElement newTextElement(TextToken token)
@@ -105,27 +105,25 @@ public class PageElementFactoryImpl implements PageElementFactory
         return _endElement;
     }
 
-    public PageElement newAttributeElement(ComponentResources componentResources,
-                                           final AttributeToken token)
+    public PageElement newAttributeElement(ComponentResources componentResources, AttributeToken token)
     {
-        final StringProvider provider = parseAttributeExpansionExpression(
-                token.getValue(),
-                componentResources,
-                token.getLocation());
+        final StringProvider provider = parseAttributeExpansionExpression(token.getValue(), componentResources,
+                                                                          token.getLocation());
 
+        final String namespace = token.getNamespaceURI();
         final String name = token.getName();
 
         return new PageElement()
         {
             public void render(MarkupWriter writer, RenderQueue queue)
             {
-                writer.attributes(name, provider.provideString());
+                writer.attributeNS(namespace, name, provider.provideString());
             }
         };
     }
 
-    private StringProvider parseAttributeExpansionExpression(String expression,
-                                                             ComponentResources resources, final Location location)
+    private StringProvider parseAttributeExpansionExpression(String expression, ComponentResources resources,
+                                                             final Location location)
     {
         final List<StringProvider> providers = newList();
 
@@ -152,19 +150,13 @@ public class PageElementFactoryImpl implements PageElementFactory
 
             int endx = expression.indexOf("}", expansionx);
 
-            if (endx < 0)
-                throw new TapestryException(ServicesMessages
-                        .unclosedAttributeExpression(expression), location, null);
+            if (endx < 0) throw new TapestryException(ServicesMessages
+                    .unclosedAttributeExpression(expression), location, null);
 
             String expansion = expression.substring(expansionx + 2, endx);
 
-            final Binding binding = _bindingSource.newBinding(
-                    "attribute expansion",
-                    resources,
-                    resources,
-                    PROP_BINDING_PREFIX,
-                    expansion,
-                    location);
+            final Binding binding = _bindingSource.newBinding("attribute expansion", resources, resources,
+                                                              PROP_BINDING_PREFIX, expansion, location);
 
             final StringProvider provider = new StringProvider()
             {
@@ -210,23 +202,16 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     }
 
-    public PageElement newExpansionElement(ComponentResources componentResources,
-                                           ExpansionToken token)
+    public PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token)
     {
-        Binding binding = _bindingSource.newBinding(
-                "expansion",
-                componentResources,
-                componentResources,
-                PROP_BINDING_PREFIX,
-                token.getExpression(),
-                token.getLocation());
+        Binding binding = _bindingSource.newBinding("expansion", componentResources, componentResources,
+                                                    PROP_BINDING_PREFIX, token.getExpression(), token.getLocation());
 
         return new ExpansionPageElement(binding, _typeCoercer);
     }
 
-    public ComponentPageElement newComponentElement(Page page, ComponentPageElement container,
-                                                    String id, String componentType, String componentClassName,
-                                                    String elementName,
+    public ComponentPageElement newComponentElement(Page page, ComponentPageElement container, String id,
+                                                    String componentType, String componentClassName, String elementName,
                                                     Location location)
     {
         try
@@ -267,9 +252,9 @@ public class PageElementFactoryImpl implements PageElementFactory
             // how the component elements are nested within the loading component's
             // template.
 
-            ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id,
-                                                                           elementName, instantiator, _typeCoercer,
-                                                                           _messagesSource, location);
+            ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id, elementName,
+                                                                           instantiator, _typeCoercer, _messagesSource,
+                                                                           location);
 
             page.addLifecycleListener(result);
 
@@ -285,8 +270,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         }
     }
 
-    private void checkForRecursion(String componentClassName, ComponentPageElement container,
-                                   Location location)
+    private void checkForRecursion(String componentClassName, ComponentPageElement container, Location location)
     {
         // Container may be null for a root element;
 
@@ -297,8 +281,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         while (resources != null)
         {
             if (resources.getComponentModel().getComponentClassName().equals(componentClassName))
-                throw new TapestryException(
-                        ServicesMessages.componentRecursion(componentClassName), location, null);
+                throw new TapestryException(ServicesMessages.componentRecursion(componentClassName), location, null);
 
             resources = resources.getContainerResources();
         }
@@ -308,8 +291,8 @@ public class PageElementFactoryImpl implements PageElementFactory
     {
         Instantiator instantiator = _componentInstantiatorSource.findInstantiator(componentType);
 
-        ComponentPageElementImpl result = new ComponentPageElementImpl(page, instantiator,
-                                                                       _typeCoercer, _messagesSource);
+        ComponentPageElementImpl result = new ComponentPageElementImpl(page, instantiator, _typeCoercer,
+                                                                       _messagesSource);
 
         addMixins(result, instantiator);
 
@@ -374,20 +357,13 @@ public class PageElementFactoryImpl implements PageElementFactory
 
         if (expression.contains(EXPANSION_START))
         {
-            StringProvider provider = parseAttributeExpansionExpression(
-                    expression,
-                    loadingComponentResources,
-                    location);
+            StringProvider provider = parseAttributeExpansionExpression(expression, loadingComponentResources,
+                                                                        location);
 
             return new AttributeExpansionBinding(provider, location);
         }
 
-        return _bindingSource.newBinding(
-                "parameter " + parameterName,
-                loadingComponentResources,
-                embeddedComponentResources,
-                defaultBindingPrefix,
-                expression,
-                location);
+        return _bindingSource.newBinding("parameter " + parameterName, loadingComponentResources,
+                                         embeddedComponentResources, defaultBindingPrefix, expression, location);
     }
 }

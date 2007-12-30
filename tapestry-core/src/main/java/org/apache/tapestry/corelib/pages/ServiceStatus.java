@@ -15,6 +15,7 @@
 package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.annotations.Meta;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -31,6 +32,7 @@ import java.util.List;
  * <p/>
  * TODO: Disable this page if in production mode (or not, as it does no harm).
  */
+@Meta("tapestry.response-content-type=text/html")
 public class ServiceStatus
 {
     @Inject

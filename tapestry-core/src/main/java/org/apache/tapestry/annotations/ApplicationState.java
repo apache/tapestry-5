@@ -30,7 +30,7 @@ import java.lang.annotation.Target;
  * If another field exists with the same name, suffixed with "Exists" (i.e., "_aso" for the ASO
  * field, and "_asoExists" for the companion field) and the type of that field is boolean, then access
  * to the field will determine whether the ASO has already been created. This is necessary because
- * even a null check ("_aso != null") will force the ASO to be created. Instead, check te companion
+ * even a null check ("_aso != null") will force the ASO to be created. Instead, check the companion
  * boolean field ("_asoExists").
  */
 @Target(FIELD)

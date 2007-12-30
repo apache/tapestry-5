@@ -4,7 +4,10 @@
  
 Building Pipelines
 
-  A common pattern within Tapestry is the use of filtering pipelines.  
+  A common pattern within Tapestry is the use of filtering pipelines.   Another name
+  for a pipeline is a <filter chain>; an example of this is the Filter and FilterChain
+  interfaces inside the Servlet API.
+
   In this pattern, an existing service is decorated with a filter.
   The filter will delegate to the service, but has the chance to
   alter or replace parameters before invoking the method, and

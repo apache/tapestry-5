@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,15 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.parser;
+package org.apache.tapestry.integration.app1.pages;
 
-/**
- * Defines the different types of {@link org.apache.tapestry.internal.parser.TemplateToken}s. Each
- * value maps to a particular subclass of TemplateToken.
- */
-public enum TokenType
+import org.apache.tapestry.annotations.Meta;
+
+@Meta("tapestry.response-content-type=text/xml")
+public class XMLContent
 {
-
-    ATTRIBUTE, CDATA, COMMENT, END_ELEMENT, START_COMPONENT, START_ELEMENT, TEXT, BODY, EXPANSION, PARAMETER, BLOCK, DTD,
-    DEFINE_NAMESPACE_PREFIX
 }

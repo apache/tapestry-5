@@ -23,7 +23,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 {
     private void check(Document document, String file) throws Exception
     {
-        assertEquals(document.toString(), readFile(file, true));
+        assertEquals(document.toString(), readFile(file));
     }
 
     @Test
@@ -48,8 +48,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
     {
         Document document = new Document(new XMLMarkupModel());
 
-        document.newRootElement("html").element("body").element("p").text(
-                "Ready to be updated with scripts.");
+        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
         DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 
@@ -66,8 +65,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
     {
         Document document = new Document(new XMLMarkupModel());
 
-        document.newRootElement("html").element("body").element("p").text(
-                "Ready to be updated with styles.");
+        document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
         DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 
@@ -84,8 +82,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
     {
         Document document = new Document(new XMLMarkupModel());
 
-        document.newRootElement("html").element("body").element("p").text(
-                "Ready to be updated with styles.");
+        document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
         DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 
@@ -122,8 +119,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
     {
         Document document = new Document();
 
-        document.newRootElement("html").element("body").element("p").text(
-                "Ready to be updated with scripts.");
+        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
         DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 
@@ -144,8 +140,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
     {
         Document document = new Document();
 
-        document.newRootElement("html").element("body").element("p").text(
-                "Ready to be updated with scripts.");
+        document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
         DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 
@@ -154,7 +149,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         builder.updateDocument(document);
 
-        assertEquals(document.toString(), readFile("add_script.txt", false).trim());
+        assertEquals(document.toString(), readFile("add_script.txt").trim());
     }
 
     /**
@@ -165,8 +160,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
     {
         Document document = new Document(new XMLMarkupModel());
 
-        document.newRootElement("html").element("notbody").element("p").text(
-                "Ready to be updated with scripts.");
+        document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.");
 
         DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
 

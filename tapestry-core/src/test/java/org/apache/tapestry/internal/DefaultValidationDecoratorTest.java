@@ -60,7 +60,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         decorator.insideLabel(field, e);
 
-        assertEquals(writer.toString(), "<label accesskey=\"f\" class=\"t-error\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<label accesskey=\"f\" class=\"t-error\"/>");
 
         verify();
     }
@@ -84,7 +84,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
 
         decorator.insideLabel(field, e);
 
-        assertEquals(writer.toString(), "<label accesskey=\"f\" class=\"foo t-error\"/>");
+        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<label accesskey=\"f\" class=\"foo t-error\"/>");
 
         verify();
     }
@@ -109,7 +109,7 @@ public class DefaultValidationDecoratorTest extends TapestryTestCase
         decorator.insideField(field);
 
         assertEquals(writer.toString(),
-                     "<input class=\"foo t-error\" name=\"ex\" size=\"30\" type=\"text\" value=\"freddy\"/>");
+                     "<?xml version=\"1.0\"?>\n<input class=\"foo t-error\" name=\"ex\" size=\"30\" type=\"text\" value=\"freddy\"/>");
 
         verify();
     }
