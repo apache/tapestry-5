@@ -107,20 +107,26 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
 
+
+        String encoding = request.getCharacterEncoding();
+
         for (FileItem item : fileItems)
         {
             if (item.isFormField())
             {
                 String fieldValue;
+
                 try
                 {
-                    fieldValue = item.getString(request.getCharacterEncoding());
+
+                    fieldValue = encoding == null ? item.getString() : item.getString(encoding);
                 }
                 catch (UnsupportedEncodingException e)
                 {
                     // TODO maybe log exception with level warn
                     fieldValue = item.getString();
                 }
+
                 wrapper.addParameter(item.getFieldName(), fieldValue);
             }
             else
