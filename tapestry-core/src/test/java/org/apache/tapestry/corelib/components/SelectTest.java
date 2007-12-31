@@ -97,7 +97,7 @@ public class SelectTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), read("just_options.html"));
+        assertEquals(writer.toString(), read("just_options.txt"));
     }
 
     @Test
@@ -122,7 +122,7 @@ public class SelectTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), read("option_attributes.html"));
+        assertEquals(writer.toString(), read("option_attributes.txt"));
     }
 
     @Test
@@ -147,7 +147,7 @@ public class SelectTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), read("disabled_option.html"));
+        assertEquals(writer.toString(), read("disabled_option.txt"));
 
     }
 
@@ -174,7 +174,7 @@ public class SelectTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), read("option_groups.html"));
+        assertEquals(writer.toString(), read("option_groups.txt"));
     }
 
     @Test
@@ -198,7 +198,7 @@ public class SelectTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), read("option_groups_precede_ungroup_options.html"));
+        assertEquals(writer.toString(), read("option_groups_precede_ungroup_options.txt"));
     }
 
     @Test
@@ -224,6 +224,6 @@ public class SelectTest extends InternalBaseTestCase
 
         writer.end();
 
-        assertEquals(writer.toString(), read("option_group_attributes.html"));
+        assertEquals(writer.toString(), read("option_group_attributes.txt"));
     }
 }
