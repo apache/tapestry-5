@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal;
 
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.EncoderException;
 import org.apache.commons.codec.net.URLCodec;
 import org.apache.tapestry.OptionModel;
@@ -36,6 +35,7 @@ import org.slf4j.Logger;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,23 @@ import java.util.Map;
  */
 public class TapestryInternalUtils
 {
-    private static final URLCodec CODEC = new URLCodec();
+    private static final URLCodec CODEC = new URLCodec()
+    {
+
+        private BitSet contextSafe = (BitSet) WWW_FORM_URL.clone();
+
+        {
+            // Servlet container does not decode '+' in path to ' ',
+            // so we encode ' ' to %20, not to '+'.
+            contextSafe.clear(' ');
+        }
+
+        @Override
+        public byte[] encode(byte[] bytes)
+        {
+            return encodeUrl(contextSafe, bytes);
+        }
+    };
 
     private TapestryInternalUtils()
     {
@@ -472,11 +488,11 @@ public class TapestryInternalUtils
         return getLabelForEnum(messages, prefix, value);
     }
 
-    public static String urlEncode(String input)
+    public static String encodeContext(String input)
     {
         try
         {
-            return CODEC.encode(input);
+            return CODEC.encode(escapePercentAndSlash(input));
         }
         catch (EncoderException ex)
         {
@@ -484,16 +500,14 @@ public class TapestryInternalUtils
         }
     }
 
-    public static String urlDecode(String input)
+    public static String escapePercentAndSlash(String input)
     {
-        try
-        {
-            return CODEC.decode(input);
-        }
-        catch (DecoderException ex)
-        {
-            throw new RuntimeException(ex);
-        }
+        return input.replaceAll("%", "%25").replaceAll("/", "%2F");
+    }
+
+    public static String unescapePercentAndSlash(String input)
+    {
+        return input.replaceAll("%2[Ff]", "/").replaceAll("%25", "%");
     }
 
     /**

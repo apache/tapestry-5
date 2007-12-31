@@ -98,7 +98,7 @@ public class ComponentInvocationImpl implements ComponentInvocation
         {
             builder.append("/");
 
-            builder.append(TapestryInternalUtils.urlEncode(id));
+            builder.append(TapestryInternalUtils.encodeContext(id));
         }
 
         return builder.toString();

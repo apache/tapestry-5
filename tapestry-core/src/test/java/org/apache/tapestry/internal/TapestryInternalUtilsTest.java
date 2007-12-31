@@ -98,22 +98,14 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @DataProvider(name = "to_user_presentable")
     public Object[][] to_user_presentable_data()
     {
-        return new Object[][]
-                {
-                        {"hello", "Hello"},
-                        {"userId", "User Id"},
-                        {"useHTML", "Use HTML"},
-                        {"underscored_name", "Underscored Name"},};
+        return new Object[][]{{"hello", "Hello"}, {"userId", "User Id"}, {"useHTML", "Use HTML"},
+                              {"underscored_name", "Underscored Name"},};
     }
 
     @Test
     public void map_from_keys_and_values()
     {
-        Map<String, String> map = TapestryInternalUtils.mapFromKeysAndValues(
-                "fred",
-                "flintstone",
-                "barney",
-                "rubble");
+        Map<String, String> map = TapestryInternalUtils.mapFromKeysAndValues("fred", "flintstone", "barney", "rubble");
 
         assertEquals(map.size(), 2);
         assertEquals(map.get("fred"), "flintstone");
@@ -302,15 +294,11 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @Test
     public void extract_id_from_property_expression()
     {
-        assertEquals(
-                TapestryInternalUtils.extractIdFromPropertyExpression("simpleName"),
-                "simpleName");
-        assertEquals(
-                TapestryInternalUtils.extractIdFromPropertyExpression("complex.name().withStuff"),
-                "complexnamewithStuff");
-        assertEquals(
-                TapestryInternalUtils.extractIdFromPropertyExpression("number99.withABullet"),
-                "number99withABullet");
+        assertEquals(TapestryInternalUtils.extractIdFromPropertyExpression("simpleName"), "simpleName");
+        assertEquals(TapestryInternalUtils.extractIdFromPropertyExpression("complex.name().withStuff"),
+                     "complexnamewithStuff");
+        assertEquals(TapestryInternalUtils.extractIdFromPropertyExpression("number99.withABullet"),
+                     "number99withABullet");
     }
 
     @Test
@@ -322,9 +310,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(
-                TapestryInternalUtils.defaultLabel("myid", messages, "myid-name-not-used"),
-                "My Id");
+        assertEquals(TapestryInternalUtils.defaultLabel("myid", messages, "myid-name-not-used"), "My Id");
 
         verify();
     }
@@ -338,10 +324,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(TapestryInternalUtils.defaultLabel(
-                "foobarbazbiff",
-                messages,
-                "foo.bar().baz.biff()"), "Biff");
+        assertEquals(TapestryInternalUtils.defaultLabel("foobarbazbiff", messages, "foo.bar().baz.biff()"), "Biff");
 
         verify();
     }
@@ -373,14 +356,7 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         // Subclass properties listed after superclass properties, as desired.
 
-        assertEquals(sorted, Arrays.asList(
-                "firstName",
-                "lastName",
-                "age",
-                "street",
-                "city",
-                "state",
-                "zip"));
+        assertEquals(sorted, Arrays.asList("firstName", "lastName", "age", "street", "city", "state", "zip"));
     }
 
     @Test
@@ -457,5 +433,41 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         verify();
 
+    }
+
+    @Test
+    public void escape_percent_and_slash()
+    {
+        assertEquals(TapestryInternalUtils.escapePercentAndSlash("foo%bar/baz"), "foo%25bar%2Fbaz");
+    }
+
+    @Test
+    public void unescape_percent_and_slash()
+    {
+        assertEquals(TapestryInternalUtils.unescapePercentAndSlash("foo%25bar%2Fbaz"), "foo%bar/baz");
+    }
+
+    @Test
+    public void encode_alphanum_context()
+    {
+        String input = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        String expected = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        assertEquals(TapestryInternalUtils.encodeContext(input), expected);
+    }
+
+    @Test
+    public void encode_unsafe_context()
+    {
+        String input = " !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+        String expected = "%20%21%22%23%24%2525%26%27%28%29*%2B%2C-.%252F%3A%3B%3C%3D%3E%3F%40%5B%5C%5D%5E_%60%7B%7C%7D%7E";
+        assertEquals(TapestryInternalUtils.encodeContext(input), expected);
+    }
+
+    @Test
+    public void encode_utf8_japanese_context()
+    {
+        String input = "\u65E5\u672C\u8A9E";
+        String expected = "%E6%97%A5%E6%9C%AC%E8%AA%9E";
+        assertEquals(TapestryInternalUtils.encodeContext(input), expected);
     }
 }

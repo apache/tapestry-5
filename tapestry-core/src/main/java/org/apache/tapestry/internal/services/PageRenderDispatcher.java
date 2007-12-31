@@ -92,7 +92,7 @@ public class PageRenderDispatcher implements Dispatcher
 
         for (int i = 0; i < context.length; i++)
         {
-            context[i] = TapestryInternalUtils.urlDecode(context[i]);
+            context[i] = TapestryInternalUtils.unescapePercentAndSlash(context[i]);
         }
 
         return context;

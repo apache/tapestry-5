@@ -718,13 +718,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("actionlink");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
         assertTextPresent("No component context.");
 
         clickAndWait("link=go");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma");
-        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
+        assertTextSeries("//ul[2]/li[%d]", 1, "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE");
     }
 
     @Test
@@ -734,7 +734,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("actionlink");
 
-        assertTextSeries("//li[%d]", 1, "betty", "wilma");
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
 
         clickAndWait("nocontext");
 
@@ -759,6 +759,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=computed context");
 
         assertTextSeries("//li[%d]", 1, "fred", "7", "true");
+
+        clickAndWait("link=PageLink Context Demo");
+
+        clickAndWait("link=unsafe characters");
+
+        assertText("//li[1]", "unsafe characters: !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~");
+
+        clickAndWait("link=PageLink Context Demo");
+
+        clickAndWait("link=japanese kanji");
+
+        assertText("//li[1]", "japanese kanji: \u65E5\u672C\u8A9E");
     }
 
     @Test

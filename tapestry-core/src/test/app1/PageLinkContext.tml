@@ -1,9 +1,10 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    
+
     <h1>PageLink Context Demo</h1>
-    
+
     <p>
-        Demonstrates how to supply explicit context is a page link.  This is often used in pages with a master/detail relationship,
+        Demonstrates how to supply explicit context is a page link. This is often used in pages with a master/detail
+        relationship,
         with the master page providing links to the detail page, configured via the explicit context.
     </p>
 
@@ -12,6 +13,10 @@
     <a t:type="pagelink" page="target" context="literal:literal context">literal context</a>
     <br/>
     <a t:type="pagelink" page="target" context="computedContext">computed context</a>
+    <br/>
+    <a t:type="pagelink" page="target" context="unsafeCharacters">unsafe characters</a>
+    <br/>
+    <a t:type="pagelink" page="target" context="japaneseKanji">japanese kanji</a>
 
-    
+
 </html>

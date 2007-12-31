@@ -18,7 +18,16 @@ public class PageLinkContext
 {
     public Object[] getComputedContext()
     {
-        return new Object[]
-                {"fred", 7, true};
+        return new Object[]{"fred", 7, true};
+    }
+
+    public String getUnsafeCharacters()
+    {
+        return "unsafe characters: !\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+    }
+
+    public String getJapaneseKanji()
+    {
+        return "japanese kanji: \u65E5\u672C\u8A9E";
     }
 }
