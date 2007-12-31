@@ -146,7 +146,7 @@ public class LinkFactoryImpl implements LinkFactory
         {
             if (i > 0) builder.append("/");
 
-            builder.append(TapestryInternalUtils.urlEncode(activationContext[i]));
+            builder.append(TapestryInternalUtils.encodeContext(activationContext[i]));
         }
 
         link.addParameter(InternalConstants.PAGE_CONTEXT_NAME, builder.toString());

@@ -136,7 +136,7 @@ public class ComponentActionDispatcher implements Dispatcher
 
         for (int i = 0; i < result.length; i++)
         {
-            result[i] = TapestryInternalUtils.urlDecode(result[i]);
+            result[i] = TapestryInternalUtils.unescapePercentAndSlash(result[i]);
         }
 
         return result;

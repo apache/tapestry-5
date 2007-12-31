@@ -50,8 +50,7 @@ public class Target
 
     public Object[] getContextToEncode()
     {
-        return new Object[]
-                {"fred", "barney", "clark kent"};
+        return new Object[]{"fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE"};
     }
 
     public Object getObject()

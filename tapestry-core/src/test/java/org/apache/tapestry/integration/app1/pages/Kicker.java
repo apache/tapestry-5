@@ -23,8 +23,7 @@ public class Kicker
 
     Object onAction()
     {
-        _target.setActivationContext(new String[]
-                {"betty", "wilma"});
+        _target.setActivationContext(new String[]{"betty", "wilma", "betty/wilma", "\u82B1\u5B50"});
 
         return _target;
     }
