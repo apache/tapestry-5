@@ -114,4 +114,14 @@ public class RequestImpl implements Request
     {
         return _request.isRequestedSessionIdValid();
     }
+
+    public Object getAttribute(String name)
+    {
+        return _request.getAttribute(name);
+    }
+
+    public void setAttribute(String name, Object value)
+    {
+        _request.setAttribute(name, value);
+    }
 }

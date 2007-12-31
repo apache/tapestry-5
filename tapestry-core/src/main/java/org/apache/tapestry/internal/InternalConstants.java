@@ -55,6 +55,14 @@ public final class InternalConstants
     public static final String PAGES_SUBPACKAGE = "pages";
     public static final String BASE_SUBPACKAGE = "base";
 
+
+    /**
+     * Used in some Ajax scenarios to set the content type for the response early, when the Page instance
+     * (the authority on content types) is known. The value is of type {@link org.apache.tapestry.internal.util.ContentType}.
+     */
+    public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
+    public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
+
     private InternalConstants()
     {
     }

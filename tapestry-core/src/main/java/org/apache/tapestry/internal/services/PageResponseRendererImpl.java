@@ -14,13 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MarkupWriterFactory;
-import org.apache.tapestry.services.MetaDataLocator;
 import org.apache.tapestry.services.Response;
 
 import java.io.IOException;
@@ -28,28 +25,26 @@ import java.io.PrintWriter;
 
 public class PageResponseRendererImpl implements PageResponseRenderer
 {
-    public static final String CHARSET = "charset";
-
     private final PageMarkupRenderer _markupRenderer;
 
     private final MarkupWriterFactory _markupWriterFactory;
 
-    private final MetaDataLocator _metaDataLocator;
+    private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
 
     public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory, PageMarkupRenderer markupRenderer,
-                                    MetaDataLocator metaDataLocator)
+                                    PageContentTypeAnalyzer pageContentTypeAnalyzer)
     {
         _markupWriterFactory = markupWriterFactory;
         _markupRenderer = markupRenderer;
-        _metaDataLocator = metaDataLocator;
+        _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
     }
 
     public void renderPageResponse(Page page, Response response) throws IOException
     {
-        ContentType contentType = findResponseContentType(page);
+        ContentType contentType = _pageContentTypeAnalyzer.findContentType(page);
 
-        // Eventually we'll have to do work to figure out the correct markup type, content type,
-        // whatever. Right now its defaulting to plain HTML.
+        // For the moment, the content type is all that's used determine the model for the markup writer.
+        // It's something of a can of worms.
 
         MarkupWriter writer = _markupWriterFactory.newMarkupWriter(contentType);
 
@@ -61,25 +56,4 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
         pw.flush();
     }
-
-    private ContentType findResponseContentType(Page page)
-    {
-        ComponentResources pageResources = page.getRootComponent().getComponentResources();
-
-        String contentTypeString = _metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources);
-        ContentType contentType = new ContentType(contentTypeString);
-
-        // Make sure thre's always a charset specified.
-
-        String encoding = contentType.getParameter(CHARSET);
-        if (encoding == null)
-        {
-            encoding = _metaDataLocator
-                    .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
-            contentType.setParameter(CHARSET, encoding);
-        }
-
-        return contentType;
-    }
-
 }

@@ -28,6 +28,8 @@ public class TestableRequestImpl implements TestableRequest
 
     private final Map<String, String> _parameters = newMap();
 
+    private final Map<String, Object> _attributes = newMap();
+
     private Session _session;
 
     public TestableRequestImpl()
@@ -145,5 +147,15 @@ public class TestableRequestImpl implements TestableRequest
     public boolean isRequestedSessionIdValid()
     {
         return true;
+    }
+
+    public Object getAttribute(String name)
+    {
+        return _attributes.get(name);
+    }
+
+    public void setAttribute(String name, Object value)
+    {
+        _attributes.put(name, value);
     }
 }

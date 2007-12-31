@@ -119,5 +119,28 @@ public interface Request
      *
      * @return true if the request included a session id that is still active, false if the included session id has expired
      */
-    public boolean isRequestedSessionIdValid();
+    boolean isRequestedSessionIdValid();
+
+
+    /**
+     * Returns the value of the named attribute as an <code>Object</code>,
+     * or <code>null</code> if no attribute of the given name exists.  Because this method is a wrapper
+     * around {@link javax.servlet.ServletRequest#getAttribute(String)}, it is case <em>sensitive</em> (unlike most of Tapestry).
+     *
+     * @param name a <code>String</code> specifying the name of
+     *             the attribute
+     * @return an <code>Object</code> containing the value
+     *         of the attribute, or <code>null</code> if the attribute does not exist
+     */
+    Object getAttribute(String name);
+
+    /**
+     * Stores an attribute in this request.
+     * Attributes are reset between requests (and remember that in Tapestry, there is usually
+     * two requests per operation: the action request that redirects to a render request).
+     *
+     * @param name  a <code>String</code> specifying the name of the attribute
+     * @param value the <code>Object</code> to be stored, or null to remove the attribute
+     */
+    void setAttribute(String name, Object value);
 }

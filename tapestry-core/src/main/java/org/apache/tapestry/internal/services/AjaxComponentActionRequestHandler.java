@@ -16,8 +16,10 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
@@ -37,15 +39,20 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
     private final AjaxPartialResponseRenderer _renderer;
 
+    private final Request _request;
+
     private final Response _response;
 
     private final PageRenderQueue _queue;
 
     private final ComponentEventResultProcessor _resultProcessor;
 
+    private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
+
     public AjaxComponentActionRequestHandler(RequestPageCache cache, MarkupWriterFactory factory,
-                                             AjaxPartialResponseRenderer renderer, Response response,
-                                             PageRenderQueue queue, @Ajax ComponentEventResultProcessor resultProcessor)
+                                             AjaxPartialResponseRenderer renderer, Request request, Response response,
+                                             PageRenderQueue queue, @Ajax ComponentEventResultProcessor resultProcessor,
+                                             PageContentTypeAnalyzer pageContentTypeAnalyzer)
     {
         _cache = cache;
         _factory = factory;
@@ -53,6 +60,8 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
         _response = response;
         _queue = queue;
         _resultProcessor = resultProcessor;
+        _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
+        _request = request;
     }
 
     public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
@@ -64,6 +73,10 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
         // page that will be rendered (for logging purposes, if nothing else).
 
         _queue.initializeForCompletePage(page);
+
+        ContentType contentType = _pageContentTypeAnalyzer.findContentType(page);
+
+        _request.setAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME, contentType);
 
         ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
 

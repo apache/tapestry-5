@@ -15,13 +15,11 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.services.Environment;
-import org.apache.tapestry.services.MarkupWriterFactory;
-import org.apache.tapestry.services.PartialMarkupRenderer;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,18 +30,20 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
     private final MarkupWriterFactory _factory;
 
+    private final Request _request;
     private final Response _response;
 
     private final PartialMarkupRenderer _partialMarkupRenderer;
 
     private final PageRenderQueue _pageRenderQueue;
 
-
-    public AjaxPartialResponseRendererImpl(Environment environment, MarkupWriterFactory factory, Response response,
-                                           PartialMarkupRenderer partialMarkupRenderer, PageRenderQueue pageRenderQueue)
+    public AjaxPartialResponseRendererImpl(Environment environment, MarkupWriterFactory factory, Request request,
+                                           Response response, PartialMarkupRenderer partialMarkupRenderer,
+                                           PageRenderQueue pageRenderQueue)
     {
         _environment = environment;
         _factory = factory;
+        _request = request;
         _response = response;
         _partialMarkupRenderer = partialMarkupRenderer;
         _pageRenderQueue = pageRenderQueue;
@@ -59,12 +59,14 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
 
         _pageRenderQueue.initializeForPartialPageRender(rootRenderCommand);
 
-        // This may be problematic as the charset of the response is not
-        // going to be set properly I think.  We'll loop back to that.
+        ContentType pageContentType = (ContentType) _request.getAttribute(
+                InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
+        String charset = pageContentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER);
 
         ContentType contentType = new ContentType("text/javascript");
+        contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
 
-        MarkupWriter writer = _factory.newMarkupWriter(null);
+        MarkupWriter writer = _factory.newMarkupWriter(pageContentType);
 
         JSONObject reply = new JSONObject();
 
