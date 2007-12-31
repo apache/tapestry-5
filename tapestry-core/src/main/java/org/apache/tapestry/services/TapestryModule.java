@@ -111,9 +111,8 @@ public final class TapestryModule
         binder.bind(ComponentEventResultProcessor.class, ComponentInstanceResultProcessor.class).withId(
                 "ComponentInstanceResultProcessor");
         binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
-        binder.bind(MarkupRenderer.class, MarkupRendererPipelineImpl.class);
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
-        binder.bind(PartialMarkupRenderer.class, PartialMarkupRendererPipelineImpl.class);
+        binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -1245,8 +1244,36 @@ public final class TapestryModule
         configuration.add(ClassTransformation.class, preformatted);
     }
 
+
     /**
-     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental} service:
+     * The MarkupRenderer service is used to render a full page as markup.  Supports an ordered
+     * configuration of {@link org.apache.tapestry.services.MarkupRendererFilter}s.
+     *
+     * @param pageRenderQueue handles the bulk of the work
+     * @param logger          used to log errors building the pipeline
+     * @param configuration   filters on this service
+     * @return the service
+     * @see #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
+     */
+    public MarkupRenderer buildMarkupRenderer(final PageRenderQueue pageRenderQueue, Logger logger,
+                                              List<MarkupRendererFilter> configuration)
+    {
+        MarkupRenderer terminator = new MarkupRenderer()
+        {
+            public void renderMarkup(MarkupWriter writer)
+            {
+                pageRenderQueue.render(writer);
+            }
+        };
+
+        return _pipelineBuilder.build(logger, MarkupRenderer.class, MarkupRendererFilter.class, configuration,
+                                      terminator);
+    }
+
+
+    /**
+     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental} service.  Filters often
+     * provide {@link Environmental} services needed by components as they render.
      * <dl>
      * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd>
      * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
@@ -1359,6 +1386,33 @@ public final class TapestryModule
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
+
+    /**
+     * A wrapper around {@link org.apache.tapestry.internal.services.PageRenderQueue} used for partial page renders.
+     * Supports an ordered configuration of {@link org.apache.tapestry.services.PartialMarkupRendererFilter}s.
+     *
+     * @param logger        used to log warnings creating the pipeline
+     * @param configuration filters for the service
+     * @param renderQueue   does most of the work
+     * @return the service
+     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
+     */
+    public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
+                                                            List<PartialMarkupRendererFilter> configuration,
+                                                            final PageRenderQueue renderQueue)
+    {
+
+        PartialMarkupRenderer terminator = new PartialMarkupRenderer()
+        {
+            public void renderMarkup(MarkupWriter writer, JSONObject reply)
+            {
+                renderQueue.renderPartial(writer, reply);
+            }
+        };
+
+        return _pipelineBuilder.build(logger, PartialMarkupRenderer.class, PartialMarkupRendererFilter.class,
+                                      configuration, terminator);
+    }
 
     /**
      * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response.  This
@@ -1563,7 +1617,7 @@ public final class TapestryModule
         // Java class files always require a digest.
         configuration.add("class");
 
-        // Likewise, we don't want people fishing for templates.
+// Likewise, we don't want people fishing for templates.
         configuration.add(InternalConstants.TEMPLATE_EXTENSION);
     }
 
@@ -1599,7 +1653,7 @@ public final class TapestryModule
         configuration.add("tapestry.file-check-interval", "1 s");
         configuration.add("tapestry.file-check-update-timeout", "50 ms");
 
-        // This should be overridden for particular applications.
+// This should be overridden for particular applications.
         configuration.add("tapestry.supported-locales", "en");
 
         configuration.add("tapestry.default-cookie-max-age", "7 d");
@@ -1608,17 +1662,17 @@ public final class TapestryModule
 
         configuration.add("tapestry.default-stylesheet", "org/apache/tapestry/default.css");
 
-        // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
-        // support a new version, we create a new folder, and update the path entry. We can then
-        // delete the old version folder (or keep it around). This should be more manageable than
-        // overwriting the local copy with updates (it's too easy for files deleted between scriptaculous
-        // releases to be accidentally left lying around). There's also a ClasspathAliasManager
-        // contribution based on the path.
+// This is designed to make it easy to keep synchronized with script.aculo.ous. As we
+// support a new version, we create a new folder, and update the path entry. We can then
+// delete the old version folder (or keep it around). This should be more manageable than
+// overwriting the local copy with updates (it's too easy for files deleted between scriptaculous
+// releases to be accidentally left lying around). There's also a ClasspathAliasManager
+// contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
         configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry/scriptaculous_1_8");
 
-        // Likewise for jscalendar, currently version 1.0
+// Likewise for jscalendar, currently version 1.0
 
         configuration.add("tapestry.jscalendar.path", "org/apache/tapestry/jscalendar-1.0");
         configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
@@ -1660,15 +1714,15 @@ public final class TapestryModule
     {
         PagePoolImpl service = new PagePoolImpl(logger, pageLoader, _threadLocale, resolver);
 
-        // This covers invalidations due to changes to classes
+// This covers invalidations due to changes to classes
 
         pageLoader.addInvalidationListener(service);
 
-        // This covers invalidation due to changes to message catalogs (properties files)
+// This covers invalidation due to changes to message catalogs (properties files)
 
         componentMessagesSource.addInvalidationListener(service);
 
-        // ... and this covers invalidations due to changes to templates
+// ... and this covers invalidations due to changes to templates
 
         _componentTemplateSource.addInvalidationListener(service);
 
@@ -1679,8 +1733,8 @@ public final class TapestryModule
     {
         PageLoaderImpl service = resources.autobuild(PageLoaderImpl.class);
 
-        // Recieve invalidations when the class loader is discarded (due to a component class
-        // change). The notification is forwarded to the page loader's listeners.
+// Recieve invalidations when the class loader is discarded (due to a component class
+// change). The notification is forwarded to the page loader's listeners.
 
         _componentInstantiatorSource.addInvalidationListener(service);
 
@@ -1820,8 +1874,8 @@ public final class TapestryModule
 
                 initializer.initializeApplication(context);
 
-                // We don't care about the result, but this forces a load of the service
-                // at application startup, rather than on first request.
+// We don't care about the result, but this forces a load of the service
+// at application startup, rather than on first request.
 
                 componentClassResolver.isPageName("ForceLoadAtStartup");
             }
@@ -1934,7 +1988,7 @@ public final class TapestryModule
 
         BindingFactory stringFactory = new BindingFactory()
         {
-            // This will match embedded single quotes as-is, no escaping necessary.
+// This will match embedded single quotes as-is, no escaping necessary.
 
             private final Pattern _pattern = Pattern.compile("^\\s*'(.*)'\\s*$");
 
@@ -1954,7 +2008,7 @@ public final class TapestryModule
             }
         };
 
-        // To be honest, order probably doesn't matter.
+// To be honest, order probably doesn't matter.
 
         configuration.add("Keyword", keywordFactory);
         configuration.add("This", thisFactory);
