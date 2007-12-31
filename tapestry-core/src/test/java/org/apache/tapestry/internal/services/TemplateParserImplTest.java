@@ -147,7 +147,7 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         // They add up quick ...
 
-        assertEquals(tokens.size(), 6);
+        assertEquals(tokens.size(), 8);
 
         StartElementToken t0 = get(tokens, 0);
 
@@ -167,10 +167,10 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         assertEquals(t2.getValue(), "baz");
         assertEquals(t2.getNamespaceURI(), expectedURI);
 
-        StartElementToken t3 = get(tokens, 3);
+        StartElementToken t4 = get(tokens, 4);
 
-        assertEquals(t3.getNamespaceURI(), "");
-        assertEquals(t3.getName(), "gnip");
+        assertEquals(t4.getNamespaceURI(), "");
+        assertEquals(t4.getName(), "gnip");
 
         // The rest are close tokens
     }
