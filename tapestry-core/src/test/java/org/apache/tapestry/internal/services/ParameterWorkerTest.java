@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -119,7 +119,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         train_isLoaded(resources, true);
         train_isBound(resources, "invariantPrimitive", true);
-        train_readParameter(resources, "invariantPrimitive", long.class, value);
+        train_readParameter(resources, "invariantPrimitive", Long.class, value);
 
         replay();
 
@@ -354,7 +354,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         train_isLoaded(resources, true);
         train_isBound(resources, "primitive", true);
-        train_readParameter(resources, "primitive", int.class, 123);
+        train_readParameter(resources, "primitive", Integer.class, 123);
         train_isRendering(resources, false);
 
         replay();
@@ -382,7 +382,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         train_isLoaded(resources, true);
         train_isBound(resources, "primitive", true);
-        train_readParameter(resources, "primitive", int.class, 890);
+        train_readParameter(resources, "primitive", Integer.class, 890);
         train_isRendering(resources, false);
 
         replay();
@@ -420,8 +420,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         verify();
     }
 
-    protected void train_isBound(InternalComponentResources resources, String parameterName,
-                                 boolean isBound)
+    protected void train_isBound(InternalComponentResources resources, String parameterName, boolean isBound)
     {
         expect(resources.isBound(parameterName)).andReturn(isBound);
     }
@@ -471,12 +470,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
             {
                 train_isBound(resources, "value", false);
 
-                expect(
-                        source.newBinding(
-                                "default value",
-                                resources,
-                                TapestryConstants.PROP_BINDING_PREFIX,
-                                "literal:greeting")).andReturn(binding);
+                expect(source.newBinding("default value", resources, TapestryConstants.PROP_BINDING_PREFIX,
+                                         "literal:greeting")).andReturn(binding);
 
                 resources.bindParameter("value", binding);
 
@@ -487,13 +482,9 @@ public class ParameterWorkerTest extends InternalBaseTestCase
             ;
         };
 
-        Component component = setupForIntegrationTest(
-                resources,
-                mockLogger(),
-                DefaultParameterComponent.class.getName(),
-                model,
-                source,
-                phaseTwoTraining);
+        Component component = setupForIntegrationTest(resources, mockLogger(),
+                                                      DefaultParameterComponent.class.getName(), model, source,
+                                                      phaseTwoTraining);
 
         train_isLoaded(resources, true);
         train_isBound(resources, "value", true);
@@ -534,13 +525,9 @@ public class ParameterWorkerTest extends InternalBaseTestCase
             ;
         };
 
-        Component component = setupForIntegrationTest(
-                resources,
-                mockLogger(),
-                DefaultParameterBindingMethodComponent.class.getName(),
-                model,
-                source,
-                phaseTwoTraining);
+        Component component = setupForIntegrationTest(resources, mockLogger(),
+                                                      DefaultParameterBindingMethodComponent.class.getName(), model,
+                                                      source, phaseTwoTraining);
 
         train_isLoaded(resources, true);
         train_isBound(resources, "value", true);
@@ -558,17 +545,16 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         expect(resources.isRendering()).andReturn(rendering);
     }
 
-    protected final <T> void train_readParameter(InternalComponentResources resources,
-                                                 String parameterName, Class<T> expectedType, T value)
+    protected final <T> void train_readParameter(InternalComponentResources resources, String parameterName,
+                                                 Class<T> expectedType, T value)
     {
-        expect(resources.readParameter(parameterName, expectedType)).andReturn(value);
+        expect(resources.readParameter(parameterName, expectedType.getName())).andReturn(value);
     }
 
     /**
      * This is for the majority of tests.
      */
-    private Component setupForIntegrationTest(final InternalComponentResources resources)
-            throws Exception
+    private Component setupForIntegrationTest(final InternalComponentResources resources) throws Exception
     {
         MutableComponentModel model = mockMutableComponentModel();
 
@@ -586,19 +572,13 @@ public class ParameterWorkerTest extends InternalBaseTestCase
             }
         };
 
-        return setupForIntegrationTest(
-                resources,
-                mockLogger(),
-                ParameterComponent.class.getName(),
-                model,
-                mockBindingSource(),
-                phaseTwoTraining);
+        return setupForIntegrationTest(resources, mockLogger(), ParameterComponent.class.getName(), model,
+                                       mockBindingSource(), phaseTwoTraining);
     }
 
     private Component setupForIntegrationTest(InternalComponentResources resources, Logger logger,
                                               String componentClassName, MutableComponentModel model,
-                                              BindingSource source,
-                                              Runnable phaseTwoTraining) throws Exception
+                                              BindingSource source, Runnable phaseTwoTraining) throws Exception
     {
         ClassPool pool = new ClassPool();
         ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
@@ -609,9 +589,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         loader.delegateLoadingOf("org.apache.tapestry.");
 
         CtClass ctClass = pool.get(componentClassName);
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass,
-                                                                                         _contextClassLoader, logger,
-                                                                                         null);
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _contextClassLoader,
+                                                                                         logger, null);
 
         replay();
 
@@ -649,8 +628,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         train_isInvariant(resources, "uncached", false);
     }
 
-    protected final void train_isInvariant(InternalComponentResources resources,
-                                           String parameterName, boolean invariant)
+    protected final void train_isInvariant(InternalComponentResources resources, String parameterName,
+                                           boolean invariant)
     {
         expect(resources.isInvariant(parameterName)).andReturn(invariant);
     }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -113,6 +113,7 @@ public final class TapestryModule
         binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
+
     }
 
     public static Alias build(Logger logger,
@@ -2051,4 +2052,12 @@ public final class TapestryModule
         configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
     }
 
+    public ComponentClassCache buildComponentClassCache(@ComponentLayer ClassFactory classFactory)
+    {
+        ComponentClassCacheImpl service = new ComponentClassCacheImpl(classFactory);
+
+        _componentInstantiatorSource.addInvalidationListener(service);
+
+        return service;
+    }
 }

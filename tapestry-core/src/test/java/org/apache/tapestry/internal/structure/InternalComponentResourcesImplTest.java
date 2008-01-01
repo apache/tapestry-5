@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null,
-                                                                                  ins, coercer, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, coercer, null,
+                                                                                  null);
 
         resources.renderInformalParameters(writer);
 
@@ -67,8 +67,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null,
-                                                                                  ins, coercer, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, coercer, null,
+                                                                                  null);
 
         resources.bindParameter("fred", binding);
 
@@ -102,8 +102,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null,
-                                                                                  ins, coercer, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, coercer, null,
+                                                                                  null);
 
         resources.bindParameter("fred", binding);
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -1236,5 +1236,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // Commented out ... Selenium can't seem to handle an XML response.
 
         // assertSourcePresent("<![CDATA[< & >]]>");
+    }
+
+    /**
+     * Tests TAPESTRY-2005.
+     */
+    @Test
+    public void components_passed_as_parameters() throws Exception
+    {
+        start("ComponentParameter Demo");
+
+        // This component is inside a block, and is only rendered because it is passed as a parameter, of type ActionLink,
+        // to an ActionLinkIndirect component.
+
+        clickAndWait("link=click me");
+
+        assertTextPresent("Link was clicked.");
     }
 }
