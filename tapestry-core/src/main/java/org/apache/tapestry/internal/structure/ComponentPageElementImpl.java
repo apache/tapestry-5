@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.internal.services.ComponentEventImpl;
 import org.apache.tapestry.internal.services.EventImpl;
 import org.apache.tapestry.internal.services.Instantiator;
@@ -491,7 +492,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final TypeCoercer _typeCoercer;
 
-    private final ClassLoader _classLoader;
+    private final ComponentClassCache _componentClassCache;
 
     /**
      * Constructor for other components embedded within the root component or at deeper levels of
@@ -511,7 +512,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
                                     Instantiator instantiator, TypeCoercer typeCoercer,
-                                    ComponentMessagesSource messagesSource, Location location)
+                                    ComponentClassCache componentClassCache, ComponentMessagesSource messagesSource,
+                                    Location location)
     {
         super(location);
 
@@ -520,17 +522,17 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         _id = id;
         _elementName = elementName;
         _typeCoercer = typeCoercer;
+        _componentClassCache = componentClassCache;
+
         _messagesSource = messagesSource;
 
         ComponentResources containerResources = container == null ? null : container
                 .getComponentResources();
 
         _coreResources = new InternalComponentResourcesImpl(this, containerResources, instantiator, _typeCoercer,
-                                                            _messagesSource);
+                                                            _messagesSource, _componentClassCache);
 
         _coreComponent = _coreResources.getComponent();
-
-        _classLoader = _coreComponent.getClass().getClassLoader();
 
         String pageName = _page.getLogicalName();
 
@@ -567,9 +569,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
      * Constructor for the root component of a page.
      */
     public ComponentPageElementImpl(Page page, Instantiator instantiator, TypeCoercer typeCoercer,
-                                    ComponentMessagesSource messagesSource)
+                                    ComponentClassCache componentClassCache, ComponentMessagesSource messagesSource)
     {
-        this(page, null, null, null, instantiator, typeCoercer, messagesSource, null);
+        this(page, null, null, null, instantiator, typeCoercer, componentClassCache, messagesSource, null);
     }
 
     public void addEmbeddedElement(ComponentPageElement child)
@@ -598,7 +600,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(this, _coreResources,
                                                                                       instantiator, _typeCoercer,
-                                                                                      _messagesSource);
+                                                                                      _messagesSource,
+                                                                                      _componentClassCache);
 
         // TODO: Check for name collision?
 
@@ -977,7 +980,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         while (component != null)
         {
             ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, wrappedHandler, _typeCoercer,
-                                                          _classLoader);
+                                                          _componentClassCache);
 
             result |= component.handleEvent(event);
 

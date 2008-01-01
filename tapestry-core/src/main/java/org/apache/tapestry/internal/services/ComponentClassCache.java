@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
-
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.util.ContentType;
+package org.apache.tapestry.internal.services;
 
 /**
- * Source for {@link org.apache.tapestry.MarkupWriter} instances.
+ * A cache for converting between class names and component (or other) classes.  For component classes,
+ * ensures that the class is the transformed class.
  */
-public interface MarkupWriterFactory
+public interface ComponentClassCache
 {
     /**
-     * This will likely expand in the future to control things like output format and encoding, etc.
+     * Gets the Class instance for the give name.
      *
-     * @param contentType
+     * @param className fully qualified class name
+     * @return the class instance
      */
-    MarkupWriter newMarkupWriter(ContentType contentType);
+    Class forName(String className);
 }

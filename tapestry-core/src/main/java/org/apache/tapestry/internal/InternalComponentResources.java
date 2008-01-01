@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,6 +34,16 @@ public interface InternalComponentResources extends ComponentResources, Internal
      * @return the value for the parameter, or null if the parameter is not bound.
      */
     <T> T readParameter(String parameterName, Class<T> expectedType);
+
+    /**
+     * Used by generated component code to read a parameter value.
+     *
+     * @param parameterName   the name of the parameter to read
+     * @param desiredTypeName the class name of the desired value (classes will be resolved in the
+     *                        component class loader)
+     * @return the value coerced to the correct type
+     */
+    Object readParameter(String parameterName, String desiredTypeName);
 
     /**
      * Updates a parameter. It is an error to update a parameter which is not bound. The parameter

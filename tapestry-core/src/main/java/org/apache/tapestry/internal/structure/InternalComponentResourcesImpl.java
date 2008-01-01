@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.structure;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.internal.InternalComponentResources;
+import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Location;
@@ -50,6 +51,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private final ComponentResources _containerResources;
 
+    private final ComponentClassCache _componentClassCache;
+
     // Case insensitive
     private Map<String, Binding> _bindings;
 
@@ -57,12 +60,14 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private Messages _messages;
 
-    public InternalComponentResourcesImpl(ComponentPageElement element,
-                                          ComponentResources containerResources, Instantiator componentInstantiator,
-                                          TypeCoercer typeCoercer, ComponentMessagesSource messagesSource)
+    public InternalComponentResourcesImpl(ComponentPageElement element, ComponentResources containerResources,
+                                          Instantiator componentInstantiator, TypeCoercer typeCoercer,
+                                          ComponentMessagesSource messagesSource,
+                                          ComponentClassCache componentClassCache)
     {
         _element = element;
         _containerResources = containerResources;
+        _componentClassCache = componentClassCache;
         _componentModel = componentInstantiator.getModel();
         _typeCoercer = typeCoercer;
         _messagesSource = messagesSource;
@@ -171,10 +176,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
         catch (Exception ex)
         {
-            throw new TapestryException(StructureMessages.fieldPersistFailure(
-                    getCompleteId(),
-                    fieldName,
-                    ex), getLocation(), ex);
+            throw new TapestryException(StructureMessages.fieldPersistFailure(getCompleteId(), fieldName, ex),
+                                        getLocation(), ex);
         }
     }
 
@@ -201,11 +204,16 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
         catch (Exception ex)
         {
-            throw new TapestryException(StructureMessages.getParameterFailure(
-                    parameterName,
-                    getCompleteId(),
-                    ex), b, ex);
+            throw new TapestryException(StructureMessages.getParameterFailure(parameterName, getCompleteId(), ex), b,
+                                        ex);
         }
+    }
+
+    public Object readParameter(String parameterName, String desiredTypeName)
+    {
+        Class parameterType = _componentClassCache.forName(desiredTypeName);
+
+        return readParameter(parameterName, parameterType);
     }
 
     public Class getBoundType(String parameterName)
@@ -230,10 +238,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
         catch (Exception ex)
         {
-            throw new TapestryException(StructureMessages.writeParameterFailure(
-                    parameterName,
-                    getCompleteId(),
-                    ex), b, ex);
+            throw new TapestryException(StructureMessages.writeParameterFailure(parameterName, getCompleteId(), ex), b,
+                                        ex);
         }
     }
 
@@ -308,8 +314,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Messages getMessages()
     {
-        if (_messages == null)
-            _messages = _messagesSource.getMessages(_componentModel, getLocale());
+        if (_messages == null) _messages = _messagesSource.getMessages(_componentModel, getLocale());
 
         return _messages;
     }

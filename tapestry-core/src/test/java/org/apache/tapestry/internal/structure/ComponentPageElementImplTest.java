@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         ComponentResources resources = cpe.getComponentResources();
 
@@ -66,8 +66,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
         catch (BlockNotFoundException ex)
         {
-            assertTrue(ex.getMessage().contains(
-                    "does not contain a block with identifier 'notFound'."));
+            assertTrue(ex.getMessage().contains("does not contain a block with identifier 'notFound'."));
         }
 
         verify();
@@ -86,7 +85,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         ComponentResources resources = cpe.getComponentResources();
 
@@ -116,7 +115,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         ComponentResources resources = cpe.getComponentResources();
         assertFalse(resources.isBound("fred"));
@@ -143,7 +142,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.addBlock("myblock", block1);
 
@@ -154,9 +153,8 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Component Foo already contains a block with id \'MyBlock\'. Block ids must be unique (excluding case, which is ignored).");
+            assertEquals(ex.getMessage(),
+                         "Component Foo already contains a block with id \'MyBlock\'. Block ids must be unique (excluding case, which is ignored).");
         }
 
         verify();
@@ -181,7 +179,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.bindParameter("barney", binding);
 
@@ -209,7 +207,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.containingPageDidLoad();
 
@@ -253,8 +251,8 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null,
-                                                                    ins, coercer, null, l);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null, ins, coercer, null,
+                                                                    null, l);
 
         try
         {
@@ -262,9 +260,8 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Parameter(s) fred, wilma are required for foo.components.MyComponent, but have not been bound.");
+            assertEquals(ex.getMessage(),
+                         "Parameter(s) fred, wilma are required for foo.components.MyComponent, but have not been bound.");
             assertSame(ex.getLocation(), l);
         }
 
@@ -289,7 +286,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         assertFalse(cpe.getComponentResources().isInvariant("fred"));
 
@@ -324,7 +321,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.bindParameter("barney", binding);
 
@@ -356,7 +353,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.bindParameter("barney", binding);
 
@@ -377,7 +374,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         try
         {
@@ -386,8 +383,8 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertEquals(ex.getMessage(), "Component " + PAGE_NAME
-                    + " does not contain an embedded component with id 'unknown'.");
+            assertEquals(ex.getMessage(),
+                         "Component " + PAGE_NAME + " does not contain an embedded component with id 'unknown'.");
         }
 
         verify();
@@ -410,7 +407,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.addEmbeddedElement(childElement);
 
@@ -443,7 +440,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.addEmbeddedElement(child1);
 
@@ -454,8 +451,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         }
         catch (TapestryException ex)
         {
-            assertTrue(ex.getMessage().contains(
-                    "already contains a child component with id 'CHILD'."));
+            assertTrue(ex.getMessage().contains("already contains a child component with id 'CHILD'."));
             assertSame(ex.getLocation(), l);
         }
 
@@ -480,7 +476,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.addMixin(mixinIns);
 
@@ -506,7 +502,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.addMixin(mixinIns);
 
@@ -542,7 +538,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
 
         cpe.addMixin(mixinInstantiator);
 

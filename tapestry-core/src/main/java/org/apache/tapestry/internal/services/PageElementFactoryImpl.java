@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     private final TypeCoercer _typeCoercer;
 
+    private final ComponentClassCache _componentClassCache;
+
     private final BindingSource _bindingSource;
 
     private final ComponentMessagesSource _messagesSource;
@@ -63,12 +65,14 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
-                                  ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
+                                  ComponentClassResolver resolver, TypeCoercer typeCoercer,
+                                  ComponentClassCache componentClassCache, BindingSource bindingSource,
                                   ComponentMessagesSource messagesSource)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _componentClassResolver = resolver;
         _typeCoercer = typeCoercer;
+        _componentClassCache = componentClassCache;
         _bindingSource = bindingSource;
         _messagesSource = messagesSource;
     }
@@ -253,7 +257,8 @@ public class PageElementFactoryImpl implements PageElementFactory
             // template.
 
             ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id, elementName,
-                                                                           instantiator, _typeCoercer, _messagesSource,
+                                                                           instantiator, _typeCoercer,
+                                                                           _componentClassCache, _messagesSource,
                                                                            location);
 
             page.addLifecycleListener(result);
@@ -292,7 +297,7 @@ public class PageElementFactoryImpl implements PageElementFactory
         Instantiator instantiator = _componentInstantiatorSource.findInstantiator(componentType);
 
         ComponentPageElementImpl result = new ComponentPageElementImpl(page, instantiator, _typeCoercer,
-                                                                       _messagesSource);
+                                                                       _componentClassCache, _messagesSource);
 
         addMixins(result, instantiator);
 

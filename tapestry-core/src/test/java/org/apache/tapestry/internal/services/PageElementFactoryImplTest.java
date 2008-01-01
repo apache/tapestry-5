@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
         StartElementToken token = new StartElementToken("http://foo.com", "fred", l);
 
         PageElement element = factory.newStartElement(token);
@@ -75,7 +75,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
         AttributeToken token = new AttributeToken(null, "name", "value", l);
 
         PageElement element = factory.newAttributeElement(null, token);
@@ -99,7 +99,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
 
         PageElement element = factory.newEndElement();
 
@@ -125,7 +125,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
 
         PageElement element1 = factory.newEndElement();
         PageElement element2 = factory.newEndElement();
@@ -146,7 +146,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
         TextToken token = new TextToken("some text", l);
 
         PageElement element = factory.newTextElement(token);
@@ -173,7 +173,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
 
         PageElement element = factory.newRenderBodyElement(component);
 
@@ -197,7 +197,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer, bindingSource,
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer, null, bindingSource,
                                                                 messagesSource);
 
         try

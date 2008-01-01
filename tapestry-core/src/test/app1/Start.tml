@@ -285,6 +285,12 @@
             -- Demo the autocomplete mixin for text fields.
         </li>
 
+        <li>
+            <t:pagelink page="componentparameter">ComponentParameter Demo</t:pagelink>
+            -- Demo using a component type as a parameter type and succesfuly passing
+            a component
+        </li>
+
     </ul>
 
 </html>

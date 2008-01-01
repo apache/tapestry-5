@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -101,11 +101,14 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void coerce_context()
     {
         ComponentEventHandler handler = mockComponentEventHandler();
+        ComponentClassCache cache = mockComponentClassCache();
+
+        train_forName(cache, "java.lang.Integer", Integer.class);
 
         replay();
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"27"}, handler, _coercer,
-                                                      null);
+                                                      cache);
 
         assertEquals(event.coerceContext(0, "java.lang.Integer"), new Integer(27));
 
