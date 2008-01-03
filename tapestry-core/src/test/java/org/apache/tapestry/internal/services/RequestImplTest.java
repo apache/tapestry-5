@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -124,5 +124,68 @@ public class RequestImplTest extends InternalBaseTestCase
     public Object[][] xhr_inputs()
     {
         return new Object[][]{{null, false}, {"", false}, {"some other value", false}, {"XMLHttpRequest", true}};
+    }
+
+    @Test
+    public void get_path_for_normal_servlet_container()
+    {
+        String path = "/foo/bar";
+
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        train_getPathInfo(sr, null);
+        expect(sr.getServletPath()).andReturn(path);
+
+        replay();
+
+        Request request = new RequestImpl(sr);
+
+        assertEquals(request.getPath(), path);
+
+        verify();
+    }
+
+    /**
+     * TAPESTRY-1713
+     */
+    @Test
+    public void get_path_for_websphere_with_empty_path()
+    {
+        String path = "/foo/bar";
+
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        train_getPathInfo(sr, path);
+
+        replay();
+
+        Request request = new RequestImpl(sr);
+
+        assertEquals(request.getPath(), path);
+
+        verify();
+    }
+
+    /**
+     * TAPESTRY-1713
+     */
+    public void get_path_for_websphere_with_nonempty_path()
+    {
+        HttpServletRequest sr = mockHttpServletRequest();
+
+        train_getPathInfo(sr, "");
+
+        replay();
+
+        Request request = new RequestImpl(sr);
+
+        assertEquals(request.getPath(), "/");
+
+        verify();
+    }
+
+    protected final void train_getPathInfo(HttpServletRequest request, String pathInfo)
+    {
+        expect(request.getPathInfo()).andReturn(pathInfo).atLeastOnce();
     }
 }
