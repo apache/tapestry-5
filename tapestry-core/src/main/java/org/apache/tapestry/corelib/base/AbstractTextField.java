@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,8 @@
 package org.apache.tapestry.corelib.base;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
@@ -91,6 +89,10 @@ public abstract class AbstractTextField extends AbstractField
 
     @Inject
     private FieldValidationSupport _fieldValidationSupport;
+
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled _renderDisabled;
 
     /**
      * Computes a default value for the "translate" parameter using {@link TranslatorDefaultSource}.

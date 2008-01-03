@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,8 +16,10 @@ package org.apache.tapestry.upload.components;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
@@ -69,6 +71,10 @@ public class Upload extends AbstractField
 
     @Inject
     private FieldValidationSupport _fieldValidationSupport;
+
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled _renderDisabled;
 
     /**
      * Computes a default value for the "validate" parameter using
