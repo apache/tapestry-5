@@ -1654,8 +1654,8 @@ public final class TapestryModule
         configuration.add("tapestry.file-check-interval", "1 s");
         configuration.add("tapestry.file-check-update-timeout", "50 ms");
 
-// This should be overridden for particular applications.
-        configuration.add("tapestry.supported-locales", "en");
+        // This should be overridden for particular applications.
+        configuration.add("tapestry.supported-locales", "en,it");
 
         configuration.add("tapestry.default-cookie-max-age", "7 d");
 

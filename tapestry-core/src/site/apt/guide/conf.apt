@@ -108,7 +108,9 @@ Configuring Tapestry
     A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
     If no match can be found, the first locale in the list is treated as the default.
     
-    The default is (currently) "en". 
+    The default is (currently) "en,it".  As the community contributes new localizations of the necessary messages files,
+    this list will expand.  Note that the Tapestry quickstart archetype overrides the factory default, forcing the
+    application to be localized only for "en".
     
   [tapestry.start-page-name]
     The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".
