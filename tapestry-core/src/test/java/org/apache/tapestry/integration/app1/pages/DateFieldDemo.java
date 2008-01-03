@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,9 @@ public class DateFieldDemo
     @Persist
     private Date _birthday;
 
+    @Persist
+    private Date _asteroidImpact;
+
     @Validate("required")
     public Date getBirthday()
     {
@@ -40,5 +43,21 @@ public class DateFieldDemo
     public DateFormat getDateFormat()
     {
         return new SimpleDateFormat("MM/dd/yyyy");
+    }
+
+    @Validate("required")
+    public Date getAsteroidImpact()
+    {
+        return _asteroidImpact;
+    }
+
+    public void setAsteroidImpact(Date asteroidImpact)
+    {
+        _asteroidImpact = asteroidImpact;
+    }
+
+    public String getAsteroidImpactFormatted()
+    {
+        return new SimpleDateFormat("MM/dd/yyyy hh:mm").format(_asteroidImpact);
     }
 }
