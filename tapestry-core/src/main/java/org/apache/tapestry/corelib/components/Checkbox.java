@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.AfterRender;
 import org.apache.tapestry.annotations.BeginRender;
+import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.Request;
 
@@ -31,6 +33,10 @@ public class Checkbox extends AbstractField
 {
     @Inject
     private Request _request;
+
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled _renderDisabled;
 
     /**
      * The value to be read or updated. If not bound, the Checkbox will attempt to edit a property

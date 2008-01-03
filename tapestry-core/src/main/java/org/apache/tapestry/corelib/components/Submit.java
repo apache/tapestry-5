@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
@@ -52,6 +54,10 @@ public final class Submit extends AbstractField
 
     @Inject
     private Request _request;
+
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled _renderDisabled;
 
     public Submit()
     {

@@ -1265,4 +1265,45 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("//span[@id='target']/@class", "inherit");
     }
 
+    @Test
+    public void disabled_fields() throws Exception
+    {
+        start("Disabled Fields");
+
+        String[] paths = new String[]{"//input[@id='textfield']",
+
+                                      "//input[@id='passwordfield']",
+
+                                      "//textarea[@id='textarea']",
+
+                                      "//input[@id='checkbox']",
+
+                                      "//select[@id='select']",
+
+                                      "//input[@id='radio1']",
+
+                                      "//input[@id='radio2']",
+
+                                      "//input[@id='datefield']",
+
+                                      "//button[@id='datefield:trigger']",
+
+                                      "//select[@id='palette:avail']",
+
+                                      "//button[@id='palette:select']",
+
+                                      "//button[@id='palette:deselect']",
+
+                                      "//select[@id='palette']",
+
+                                      "//input[@id='submit']"};
+
+        for (String path : paths)
+        {
+            String locator = String.format("%s/@disabled", path);
+
+            assertText(locator, "disabled");
+        }
+    }
+
 }

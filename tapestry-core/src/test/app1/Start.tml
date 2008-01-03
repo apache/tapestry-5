@@ -296,6 +296,12 @@
             -- Demo a component which inherits informal parameters from its container
         </li>
 
+        <li>
+            <t:pagelink page="disabledfields">Disabled Fields</t:pagelink>
+            -- Demonstrate a bunch of disabled fields, to verify that the RenderDisabled mixin works
+            and is being used properly
+        </li>
+
     </ul>
 
 </html>

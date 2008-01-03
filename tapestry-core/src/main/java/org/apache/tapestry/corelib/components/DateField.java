@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,6 +151,8 @@ public class DateField extends AbstractField
 
                        "value", value);
 
+        writeDisabled(writer);
+
         _validate.render(writer);
 
         _resources.renderInformalParameters(writer);
@@ -166,6 +168,9 @@ public class DateField extends AbstractField
                        "class", "t-calendar-trigger",
 
                        "id", triggerId);
+
+        writeDisabled(writer);
+
 
         writer.element("img",
 
@@ -188,6 +193,11 @@ public class DateField extends AbstractField
         configure(setup);
 
         _support.addScript("Calendar.setup(%s);", setup);
+    }
+
+    private void writeDisabled(MarkupWriter writer)
+    {
+        if (isDisabled()) writer.attributes("disabled", "disabled");
     }
 
     /**

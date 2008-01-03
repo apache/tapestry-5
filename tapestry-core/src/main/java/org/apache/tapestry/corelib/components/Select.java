@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.BeforeRenderTemplate;
 import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
@@ -106,6 +108,10 @@ public final class Select extends AbstractField
 
     @Inject
     private FieldValidationSupport _fieldValidationSupport;
+
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled _renderDisabled;
 
     @SuppressWarnings({"unchecked"})
     @Override
