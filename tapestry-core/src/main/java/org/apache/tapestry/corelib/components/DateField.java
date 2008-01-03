@@ -56,6 +56,14 @@ public class DateField extends AbstractField
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> _validate = NOOP_VALIDATOR;
 
+
+    /**
+     * If true, then the client-side calendar will show the time as well as the date.  You will probably
+     * need to bind the format parameter as well when this is true, say to <code>%m/%d/%y %H:%M</code>.
+     */
+    @Parameter
+    private boolean _editTime;
+
     // We will eventually make the skins & themes more configurable.
 
     @Inject
@@ -187,6 +195,9 @@ public class DateField extends AbstractField
         setup.put("inputField", clientId);
         setup.put("ifFormat", _format);
         setup.put("button", triggerId);
+
+
+        if (_editTime) setup.put("showsTime", true);
 
         // Let subclasses do more.
 
