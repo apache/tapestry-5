@@ -1099,4 +1099,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _page.getLogicalName();
     }
 
+    public Map<String, Binding> getInformalParameterBindings()
+    {
+        return _coreResources.getInformalParameterBindings();
+    }
 }

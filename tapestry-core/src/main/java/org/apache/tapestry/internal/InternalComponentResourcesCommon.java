@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,6 +18,8 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderQueue;
+
+import java.util.Map;
 
 /**
  * Operations shared by {@link InternalComponentResources} and {@link ComponentPageElement}.
@@ -64,4 +66,13 @@ public interface InternalComponentResourcesCommon
      * Invoked to make the receiver queue itself to be rendered.
      */
     void queueRender(RenderQueue queue);
+
+    /**
+     * Constructs a map linking informal parameters to the corresponding bindings.
+     *
+     * @return map, possible empty
+     */
+    Map<String, Binding> getInformalParameterBindings();
+
+
 }

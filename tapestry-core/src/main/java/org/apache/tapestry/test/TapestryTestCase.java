@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.model.ParameterModel;
 import org.apache.tapestry.runtime.Component;
@@ -693,7 +694,7 @@ public abstract class TapestryTestCase extends IOCTestCase
 
     protected final void train_getSupportsInformalParameters(ComponentModel model, boolean supports)
     {
-        expect(model.getSupportsInformalParameters()).andReturn(supports);
+        expect(model.getSupportsInformalParameters()).andReturn(supports).atLeastOnce();
     }
 
     protected final void train_getValidationMessages(ValidationMessagesSource messagesSource, Locale locale,
@@ -958,5 +959,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final PageRenderSupport mockPageRenderSupport()
     {
         return newMock(PageRenderSupport.class);
+    }
+
+    protected final void train_getInheritInformalParameters(EmbeddedComponentModel model, boolean inherits)
+    {
+        expect(model.getInheritInformalParameters()).andReturn(inherits).atLeastOnce();
     }
 }
