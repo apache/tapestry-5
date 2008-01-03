@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,7 +68,14 @@ public class RequestImpl implements Request
 
     public String getPath()
     {
-        return _request.getServletPath();
+        String pathInfo = _request.getPathInfo();
+
+        if (pathInfo == null) return _request.getServletPath();
+
+        // Websphere 6.1 is a bit wonky (see TAPESTRY-1713), and tends to return the empty string
+        // for the servlet path, and return the true path in pathInfo.
+
+        return pathInfo.length() == 0 ? "/" : pathInfo;
     }
 
     public String getContextPath()
