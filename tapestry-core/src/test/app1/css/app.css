@@ -1,3 +1,7 @@
 BODY {
     font-family: "Trebuchet MS";
 }
+
+SPAN.inherit {
+    font-style: italic;
+}

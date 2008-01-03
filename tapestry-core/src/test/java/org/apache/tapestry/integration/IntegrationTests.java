@@ -1253,4 +1253,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("Link was clicked.");
     }
+
+    /**
+     * Tests TAPESTRY-1546
+     */
+    @Test
+    public void inherit_informals() throws Exception
+    {
+        start("Inherit Informal Parameters Demo");
+
+        assertText("//span[@id='target']/@class", "inherit");
+    }
+
 }

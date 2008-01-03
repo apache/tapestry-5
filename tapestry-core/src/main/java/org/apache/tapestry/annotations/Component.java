@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,4 +46,10 @@ public @interface Component
      * The value is a binding expression, with a default binding prefix of "prop:".
      */
     String[] parameters() default {};
+
+    /**
+     * If true, then the component will inherit all informal parameters from its parent component.
+     * The default is false.
+     */
+    boolean inheritInformalParameters() default false;
 }

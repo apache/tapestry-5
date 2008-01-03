@@ -22,6 +22,7 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.services.TypeCoercer;
@@ -359,4 +360,21 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _element.getPageName();
     }
 
+    public Map<String, Binding> getInformalParameterBindings()
+    {
+        Map<String, Binding> result = CollectionFactory.newMap();
+
+        if (_bindings != null)
+        {
+            for (String name : _bindings.keySet())
+            {
+
+                if (_componentModel.getParameterModel(name) != null) continue;
+
+                result.put(name, _bindings.get(name));
+            }
+        }
+
+        return result;
+    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -106,14 +106,11 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
         // TODO: Check for conflict with base model
 
-        if (_parameters == null)
-            _parameters = newCaseInsensitiveMap();
+        if (_parameters == null) _parameters = newCaseInsensitiveMap();
         else
         {
             if (_parameters.containsKey(name))
-                throw new IllegalArgumentException(ModelMessages.duplicateParameter(
-                        name,
-                        _componentClassName));
+                throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, _componentClassName));
         }
 
         _parameters.put(name, new ParameterModelImpl(name, required, defaultBindingPrefix));
@@ -123,8 +120,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         ParameterModel result = InternalUtils.get(_parameters, parameterName.toLowerCase());
 
-        if (result == null && _parentModel != null)
-            result = _parentModel.getParameterModel(parameterName);
+        if (result == null && _parentModel != null) result = _parentModel.getParameterModel(parameterName);
 
         return result;
     }
@@ -147,21 +143,19 @@ public final class MutableComponentModelImpl implements MutableComponentModel
         return InternalUtils.sortedKeys(_parameters);
     }
 
-    public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
-                                                              String componentClassName, Location location)
+    public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
+                                                              boolean inheritInformalParameters, Location location)
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
-        if (_embeddedComponents == null)
-            _embeddedComponents = newCaseInsensitiveMap();
+        if (_embeddedComponents == null) _embeddedComponents = newCaseInsensitiveMap();
         else if (_embeddedComponents.containsKey(id))
-            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(
-                    id,
-                    _componentClassName));
+            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id, _componentClassName));
 
-        MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type,
-                                                                                       componentClassName,
-                                                                                       _componentClassName, location);
+        MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type, componentClassName,
+                                                                                       _componentClassName,
+                                                                                       inheritInformalParameters,
+                                                                                       location);
 
         _embeddedComponents.put(id, embedded);
 
@@ -185,8 +179,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         EmbeddedComponentModel result = InternalUtils.get(_embeddedComponents, componentId);
 
-        if (result == null && _parentModel != null)
-            result = _parentModel.getEmbeddedComponentModel(componentId);
+        if (result == null && _parentModel != null) result = _parentModel.getEmbeddedComponentModel(componentId);
 
         return result;
     }
@@ -195,11 +188,9 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         String result = InternalUtils.get(_persistentFields, fieldName);
 
-        if (result == null && _parentModel != null)
-            result = _parentModel.getFieldPersistenceStrategy(fieldName);
+        if (result == null && _parentModel != null) result = _parentModel.getFieldPersistenceStrategy(fieldName);
 
-        if (result == null)
-            throw new IllegalArgumentException(ModelMessages.missingPersistentField(fieldName));
+        if (result == null) throw new IllegalArgumentException(ModelMessages.missingPersistentField(fieldName));
 
         return result;
     }

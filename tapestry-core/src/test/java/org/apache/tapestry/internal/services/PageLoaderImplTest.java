@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -73,9 +73,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_getComponentIds(template, "baz", "biff");
 
-        logger.error(ServicesMessages.embeddedComponentsNotInTemplate(
-                Arrays.asList("foo", "bar"),
-                PAGE_CLASS_NAME));
+        logger.error(ServicesMessages.embeddedComponentsNotInTemplate(Arrays.asList("foo", "bar"), PAGE_CLASS_NAME));
 
         train_getTokens(template);
 
@@ -119,6 +117,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_getTemplate(templateSource, model, LOCALE, template);
 
+
         train_isMissing(template, false);
 
         train_getLogger(model, logger);
@@ -127,10 +126,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_getComponentIds(template, "foo");
 
-        train_getTokens(
-                template,
-                new StartComponentToken(null, "foo", "Fred", null, l),
-                new EndElementToken(null));
+        train_getTokens(template, new StartComponentToken(null, "foo", "Fred", null, l), new EndElementToken(null));
 
         train_getEmbeddedComponentModel(model, "foo", emodel);
 
@@ -142,17 +138,12 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(emodel, "foo.components.Barney");
 
-        train_newComponentElement(
-                elementFactory,
-                rootElement,
-                "foo",
-                "Barney",
-                "foo.components.Barney",
-                null,
-                l,
-                childElement);
+        train_newComponentElement(elementFactory, rootElement, "foo", "Barney", "foo.components.Barney", null, l,
+                                  childElement);
 
         train_getCompleteId(childElement, PAGE_CLASS_NAME + "/Barney");
+
+        train_getInheritInformalParameters(emodel, false);
 
         rootElement.addToTemplate(childElement);
 
@@ -176,4 +167,5 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         verify();
     }
+
 }

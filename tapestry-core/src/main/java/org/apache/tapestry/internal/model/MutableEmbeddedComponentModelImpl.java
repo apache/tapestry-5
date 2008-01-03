@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
-                                                                     MutableEmbeddedComponentModel
+public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements MutableEmbeddedComponentModel
 {
     private final String _id;
 
@@ -36,6 +35,8 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
 
     private final String _declaredClass;
 
+    private final boolean _inheritInformalParameters;
+
     private Map<String, String> _parameters;
 
     /**
@@ -43,14 +44,15 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
      */
     private List<String> _mixinClassNames;
 
-    public MutableEmbeddedComponentModelImpl(String id, String componentType,
-                                             String componentClassName, String declaredClass, Location location)
+    public MutableEmbeddedComponentModelImpl(String id, String componentType, String componentClassName,
+                                             String declaredClass, boolean inheritInformalParameters, Location location)
     {
         super(location);
 
         _id = id;
         _componentType = componentType;
         _componentClassName = componentClassName;
+        _inheritInformalParameters = inheritInformalParameters;
         _declaredClass = declaredClass;
     }
 
@@ -62,22 +64,15 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
     @Override
     public String toString()
     {
-        return String.format(
-                "EmbeddedComponentModel[id=%s type=%s class=%s]",
-                _id,
-                _componentType,
-                _componentClassName);
+        return String.format("EmbeddedComponentModel[id=%s type=%s class=%s inheritInformals=%s]", _id, _componentType,
+                             _componentClassName, _inheritInformalParameters);
     }
 
     public void addParameter(String name, String value)
     {
-        if (_parameters == null)
-            _parameters = newMap();
+        if (_parameters == null) _parameters = newMap();
         else if (_parameters.containsKey(name))
-            throw new IllegalArgumentException(ModelMessages.duplicateParameterValue(
-                    name,
-                    _id,
-                    _declaredClass));
+            throw new IllegalArgumentException(ModelMessages.duplicateParameterValue(name, _id, _declaredClass));
 
         _parameters.put(name, value);
     }
@@ -117,11 +112,15 @@ public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements
         }
         else
         {
-            if (_mixinClassNames.contains(mixinClassName))
-                throw new IllegalArgumentException(ModelMessages
-                        .duplicateMixin(mixinClassName, _id));
+            if (_mixinClassNames.contains(mixinClassName)) throw new IllegalArgumentException(ModelMessages
+                    .duplicateMixin(mixinClassName, _id));
         }
 
         _mixinClassNames.add(mixinClassName);
+    }
+
+    public boolean getInheritInformalParameters()
+    {
+        return _inheritInformalParameters;
     }
 }

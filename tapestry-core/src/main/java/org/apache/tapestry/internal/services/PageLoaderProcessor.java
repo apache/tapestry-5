@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.internal.parser.*;
 import org.apache.tapestry.internal.structure.*;
 import org.apache.tapestry.ioc.Location;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
@@ -36,11 +37,15 @@ import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.PersistentFieldManager;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Contains all the work-state related to the {@link PageLoaderImpl}.
+ * <p/>
+ * <em>This is the Tapestry heart, this is the Tapestry soul ...</em>
  */
 class PageLoaderProcessor
 {
@@ -57,6 +62,9 @@ class PageLoaderProcessor
         }
     };
 
+
+    private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+
     private Stack<ComponentPageElement> _activeElementStack = newStack();
 
     private boolean _addAttributesAsComponentBindings = false;
@@ -71,6 +79,12 @@ class PageLoaderProcessor
     private final Stack<Boolean> _discardEndTagStack = newStack();
 
     private final Stack<Runnable> _endElementCommandStack = newStack();
+
+    /**
+     * Used as a queue of Runnable objects used to handle final setup.
+     */
+
+    private final List<Runnable> _finalization = CollectionFactory.newList();
 
     private final IdAllocator _idAllocator = new IdAllocator();
 
@@ -142,30 +156,37 @@ class PageLoaderProcessor
 
         if (mixins != null)
         {
-            for (String type : mixins.split(","))
+            for (String type : COMMA_PATTERN.split(mixins))
                 _pageElementFactory.addMixinByTypeName(component, type);
         }
     }
 
+
+    /**
+     * @param model                embededded model defining the new component, from an {@link org.apache.tapestry.annotations.Component} annotation
+     * @param loadingComponent     the currently loading container component
+     * @param newComponent         the new child of the container whose parameters are being bound
+     * @param newComponentBindings map of bindings for the new component (used to handle inheriting of informal parameters)
+     */
     private void bindParametersFromModel(EmbeddedComponentModel model, ComponentPageElement loadingComponent,
-                                         ComponentPageElement component, Map<String, Binding> bindingMap)
+                                         ComponentPageElement newComponent, Map<String, Binding> newComponentBindings)
     {
         for (String name : model.getParameterNames())
         {
             String value = model.getParameterValue(name);
 
-            String defaultBindingPrefix = determineDefaultBindingPrefix(component, name,
+            String defaultBindingPrefix = determineDefaultBindingPrefix(newComponent, name,
                                                                         TapestryConstants.PROP_BINDING_PREFIX);
 
-            Binding binding = findBinding(loadingComponent, component, name, value, defaultBindingPrefix,
-                                          component.getLocation());
+            Binding binding = findBinding(loadingComponent, newComponent, name, value, defaultBindingPrefix,
+                                          newComponent.getLocation());
 
             if (binding != null)
             {
-                component.bindParameter(name, binding);
+                newComponent.bindParameter(name, binding);
 
                 // So that the binding can be shared if inherited by a subcomponent
-                bindingMap.put(name, binding);
+                newComponentBindings.put(name, binding);
             }
         }
     }
@@ -344,6 +365,13 @@ class PageLoaderProcessor
         loadRootComponent(pageClassName);
 
         workComponentQueue();
+
+        // Take care of any finalization logic that's been deferred out.
+
+        for (Runnable r : _finalization)
+        {
+            r.run();
+        }
 
         // The page is *loaded* before it is attached to the request.
         // This is to help ensure that no client-specific information leaks
@@ -579,7 +607,7 @@ class PageLoaderProcessor
 
         if (embeddedId == null) embeddedId = generateEmbeddedId(embeddedType, _idAllocator);
 
-        EmbeddedComponentModel embeddedModel = _loadingComponentModel
+        final EmbeddedComponentModel embeddedModel = _loadingComponentModel
                 .getEmbeddedComponentModel(embeddedId);
 
         if (embeddedModel != null)
@@ -600,17 +628,19 @@ class PageLoaderProcessor
                 ServicesMessages.noTypeForEmbeddedComponent(embeddedId, _loadingComponentModel.getComponentClassName()),
                 token, null);
 
-        ComponentPageElement newComponent = _pageElementFactory.newComponentElement(_page, _loadingElement, embeddedId,
-                                                                                    embeddedType,
-                                                                                    embeddedComponentClassName,
-                                                                                    elementName, token.getLocation());
+        final ComponentPageElement newComponent = _pageElementFactory.newComponentElement(_page, _loadingElement,
+                                                                                          embeddedId, embeddedType,
+                                                                                          embeddedComponentClassName,
+                                                                                          elementName,
+                                                                                          token.getLocation());
 
         addMixinsToComponent(newComponent, embeddedModel, token.getMixins());
 
-        Map<String, Binding> bindingMap = newMap();
-        _componentIdToBindingMap.put(newComponent.getCompleteId(), bindingMap);
+        final Map<String, Binding> newComponentBindings = newMap();
+        _componentIdToBindingMap.put(newComponent.getCompleteId(), newComponentBindings);
 
-        if (embeddedModel != null) bindParametersFromModel(embeddedModel, _loadingElement, newComponent, bindingMap);
+        if (embeddedModel != null)
+            bindParametersFromModel(embeddedModel, _loadingElement, newComponent, newComponentBindings);
 
         addToBody(newComponent);
 
@@ -632,10 +662,40 @@ class PageLoaderProcessor
 
         // And clean that up when the end element is reached.
 
+
+        final ComponentModel newComponentModel = newComponent.getComponentResources().getComponentModel();
+
+        // If the component was from an embedded @Component annotation, and it is inheritting informal parameters,
+        // and the component in question supports informal parameters, than get those inheritted informal parameters ...
+        // but later (this helps ensure that <t:parameter> elements that may provide informal parameters are
+        // visible when the informal parameters are copied to the child component).
+
+        if (embeddedModel != null && embeddedModel.getInheritInformalParameters() && newComponentModel.getSupportsInformalParameters())
+        {
+            final ComponentPageElement loadingElement = _loadingElement;
+
+            Runnable finalizer = new Runnable()
+            {
+                public void run()
+                {
+                    handleInformalParameters(loadingElement, embeddedModel, newComponent, newComponentModel,
+                                             newComponentBindings);
+
+                }
+            };
+
+
+            _finalization.add(finalizer);
+        }
+
+
         Runnable cleanup = new Runnable()
         {
             public void run()
             {
+                // May need a separate queue for this, to execute at the very end of page loading.
+
+
                 _activeElementStack.pop();
                 _bodyPageElementStack.pop();
             }
@@ -644,6 +704,34 @@ class PageLoaderProcessor
         // The start tag is not added to the body of the component, so neither should
         // the end tag.
         configureEnd(true, cleanup);
+    }
+
+    /**
+     * Invoked when a component's end tag is reached, to check and process informal parameters as per the
+     * {@link org.apache.tapestry.model.EmbeddedComponentModel#getInheritInformalParameters()} flag.
+     *
+     * @param loadingComponent     the container component that was loaded
+     * @param model
+     * @param newComponent
+     * @param newComponentBindings
+     */
+    private void handleInformalParameters(ComponentPageElement loadingComponent, EmbeddedComponentModel model,
+                                          ComponentPageElement newComponent, ComponentModel newComponentModel,
+                                          Map<String, Binding> newComponentBindings)
+    {
+
+        Map<String, Binding> informals = loadingComponent.getInformalParameterBindings();
+
+
+        for (String name : informals.keySet())
+        {
+            if (newComponentModel.getParameterModel(name) != null) continue;
+
+            Binding binding = informals.get(name);
+
+            newComponent.bindParameter(name, binding);
+            newComponentBindings.put(name, binding);
+        }
     }
 
     private void startElement(StartElementToken token)

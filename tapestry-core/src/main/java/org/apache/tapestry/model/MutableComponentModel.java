@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,14 +40,14 @@ public interface MutableComponentModel extends ComponentModel
     /**
      * Defines a new embedded component.
      *
-     * @param id                 the unique id for the embedded component, which must not already exist.
-     * @param type               the type of the component (posslibly blank)
-     * @param componentClassName the fully qualified class name (derived from the field), used if the type is blank
-     * @param location           where the component is defined
-     * @return a mutable model allowing parameters to be set
+     * @param id                        the unique id for the embedded component, which must not already exist.
+     * @param type                      the type of the component (posslibly blank)
+     * @param componentClassName        the fully qualified class name (derived from the field), used if the type is blank
+     * @param inheritInformalParameters if true, then the component will inherit informal parameters provided to its container
+     * @param location                  where the component is defined @return a mutable model allowing parameters to be set
      */
-    MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type,
-                                                       String componentClassName, Location location);
+    MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
+                                                       boolean inheritInformalParameters, Location location);
 
     /**
      * Used to define the field persistence strategy for a particular field name. Returns a logical

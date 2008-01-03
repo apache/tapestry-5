@@ -291,6 +291,11 @@
             a component
         </li>
 
+        <li>
+            <t:pagelink page="inheritinformalsdemo">Inherit Informal Parameters Demo</t:pagelink>
+            -- Demo a component which inherits informal parameters from its container
+        </li>
+
     </ul>
 
 </html>

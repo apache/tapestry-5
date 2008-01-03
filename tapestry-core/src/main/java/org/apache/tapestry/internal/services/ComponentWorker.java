@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -60,18 +60,14 @@ public class ComponentWorker implements ComponentClassTransformWorker
                     .getClassName(), fieldName), 0);
 
             MutableEmbeddedComponentModel embedded = model.addEmbeddedComponent(id, annotation
-                    .type(), type, location);
+                    .type(), type, annotation.inheritInformalParameters(), location);
 
             addParameters(embedded, annotation.parameters());
 
             transformation.makeReadOnly(fieldName);
 
-            String body = String.format(
-                    "%s = (%s) %s.getEmbeddedComponent(\"%s\");",
-                    fieldName,
-                    type,
-                    transformation.getResourcesFieldName(),
-                    id);
+            String body = String.format("%s = (%s) %s.getEmbeddedComponent(\"%s\");", fieldName, type,
+                                        transformation.getResourcesFieldName(), id);
 
             transformation
                     .extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);

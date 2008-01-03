@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -155,9 +155,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Parameter 'Fred' of component org.example.components.Foo is already defined.");
+            assertEquals(ex.getMessage(),
+                         "Parameter 'Fred' of component org.example.components.Foo is already defined.");
         }
 
         verify();
@@ -207,21 +206,15 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         assertTrue(model.getEmbeddedComponentIds().isEmpty());
 
-        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
-                "fred",
-                "Fred",
-                COMPONENT_CLASS_NAME,
-                l);
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false, l);
 
         assertEquals(fred.getId(), "fred");
         assertEquals(fred.getComponentType(), "Fred");
+        assertFalse(fred.getInheritInformalParameters());
         assertSame(fred.getLocation(), l);
 
-        MutableEmbeddedComponentModel barney = model.addEmbeddedComponent(
-                "barney",
-                "Barney",
-                COMPONENT_CLASS_NAME,
-                null);
+        MutableEmbeddedComponentModel barney = model.addEmbeddedComponent("barney", "Barney", COMPONENT_CLASS_NAME,
+                                                                          false, null);
 
         assertEquals(model.getEmbeddedComponentIds(), Arrays.asList("barney", "fred"));
 
@@ -233,9 +226,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         assertSame(model.getEmbeddedComponentModel("FRED"), fred);
         assertSame(model.getEmbeddedComponentModel("BARNEY"), barney);
 
-        assertEquals(
-                fred.toString(),
-                "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred]");
+        assertEquals(fred.toString(),
+                     "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred inheritInformals=false]");
 
         verify();
     }
@@ -250,22 +242,45 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, null);
+        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, false, null);
 
         try
         {
-            model.addEmbeddedComponent("fred", "Fred2", COMPONENT_CLASS_NAME, null);
+            model.addEmbeddedComponent("fred", "Fred2", COMPONENT_CLASS_NAME, false, null);
             unreachable();
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Embedded component 'fred' has already been defined for component class org.example.components.Foo.");
+            assertEquals(ex.getMessage(),
+                         "Embedded component 'fred' has already been defined for component class org.example.components.Foo.");
         }
 
         verify();
     }
+
+    @Test
+    public void add_embedded_with_inherit_informal_parameters()
+    {
+        Resource r = mockResource();
+        Logger logger = mockLogger();
+        Location l = mockLocation();
+
+        replay();
+
+        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
+
+        assertTrue(model.getEmbeddedComponentIds().isEmpty());
+
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, true, l);
+
+        assertTrue(fred.getInheritInformalParameters());
+
+        assertEquals(fred.toString(),
+                     "EmbeddedComponentModel[id=fred type=Fred class=org.example.components.Fred inheritInformals=true]");
+
+        verify();
+    }
+
 
     @Test
     public void add_embedded_is_case_insensitive()
@@ -277,18 +292,17 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, null);
+        model.addEmbeddedComponent("fred", "Fred1", COMPONENT_CLASS_NAME, false, null);
 
         try
         {
-            model.addEmbeddedComponent("FRED", "Fred2", COMPONENT_CLASS_NAME, null);
+            model.addEmbeddedComponent("FRED", "Fred2", COMPONENT_CLASS_NAME, false, null);
             unreachable();
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Embedded component 'FRED' has already been defined for component class org.example.components.Foo.");
+            assertEquals(ex.getMessage(),
+                         "Embedded component 'FRED' has already been defined for component class org.example.components.Foo.");
         }
 
         verify();
@@ -304,11 +318,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
-                "fred",
-                "Fred",
-                COMPONENT_CLASS_NAME,
-                null);
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
+                                                                        null);
 
         assertTrue(fred.getParameterNames().isEmpty());
 
@@ -332,11 +343,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
-                "fred",
-                "Fred",
-                COMPONENT_CLASS_NAME,
-                null);
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
+                                                                        null);
 
         fred.addParameter("city", "bedrock");
 
@@ -347,9 +355,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "A value for parameter 'city' of embedded component fred (of component class org.example.components.Foo) has already been provided.");
+            assertEquals(ex.getMessage(),
+                         "A value for parameter 'city' of embedded component fred (of component class org.example.components.Foo) has already been provided.");
         }
 
         verify();
@@ -365,11 +372,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
-                "fred",
-                "Fred",
-                COMPONENT_CLASS_NAME,
-                null);
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
+                                                                        null);
 
         assertTrue(fred.getMixinClassNames().isEmpty());
 
@@ -386,11 +390,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
-                "fred",
-                "Fred",
-                COMPONENT_CLASS_NAME,
-                null);
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
+                                                                        null);
 
         fred.addMixin("zip.zop.Zoom");
         fred.addMixin("foo.bar.Baz");
@@ -410,11 +411,8 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent(
-                "fred",
-                "Fred",
-                COMPONENT_CLASS_NAME,
-                null);
+        MutableEmbeddedComponentModel fred = model.addEmbeddedComponent("fred", "Fred", COMPONENT_CLASS_NAME, false,
+                                                                        null);
 
         fred.addMixin("zip.zop.Zoom");
 
@@ -425,9 +423,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Mixin zip.zop.Zoom (for component fred) has already been defined.");
+            assertEquals(ex.getMessage(), "Mixin zip.zop.Zoom (for component fred) has already been defined.");
         }
 
         // Make sure it wasn't actually added.
@@ -566,9 +562,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "No field persistence strategy has been defined for field \'someField\'.");
+            assertEquals(ex.getMessage(), "No field persistence strategy has been defined for field \'someField\'.");
         }
 
         verify();
