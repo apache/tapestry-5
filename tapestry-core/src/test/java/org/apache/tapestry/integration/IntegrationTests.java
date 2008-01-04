@@ -1309,4 +1309,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         }
     }
 
+    /**
+     * TAPESTRY-2013
+     */
+    @Test
+    public void bean_editor_overrides()
+    {
+        start("BeanEditor Override", "Clear Data");
+
+        assertTextPresent("[FirstName Property Editor Override]");
+    }
+
 }
