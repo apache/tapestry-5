@@ -97,6 +97,7 @@
           <module name="tapestry-core">
             <files>
               <file url="file://$PROJECT_DIR$/tapestry-core/src/test/app1/WEB-INF/web.xml" />
+              <file url="file://$PROJECT_DIR$/tapestry-core/target/site-webapp/WEB-INF/web.xml" />
             </files>
           </module>
           <module name="tapestry-project" />
