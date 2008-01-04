@@ -54,6 +54,7 @@
         </menu>
 
         <menu name="User Guide">
+            <item name="Project Layout" href="guide/project-layout.html"/>
             <item name="Component Classes" href="guide/component-classes.html"/>
             <item name="Component Templates" href="guide/templates.html"/>
             <item name="Component Parameters" href="guide/parameters.html"/>
