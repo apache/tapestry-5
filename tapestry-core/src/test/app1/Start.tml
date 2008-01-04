@@ -302,6 +302,11 @@
             and is being used properly
         </li>
 
+        <li>
+            <t:pagelink page="BeanEditorOverride">BeanEditor Override</t:pagelink>
+            -- Property editor overrides work for the BeanEditor component itself (not just the BeanEditForm component)
+        </li>
+
     </ul>
 
 </html>

@@ -12,8 +12,8 @@ Project Layout
   Parts of this project layout mimics the format of an <exploded WAR> (a WAR file unpackaged onto the
   file system).  This will often enable you to run your application directly from your workspace,
   without any special build or packaging process, while developing.  Each of the major IDEs has plugins
-  to allow you to accomplish this task ... and its one of the things (combined with
-  {{{reload.html}live class reloading}} that makes working with Tapestry a breeze.
+  to allow you to accomplish this task ... and its one of the factors (combined with
+  {{{reload.html}live class reloading}}) that makes working with Tapestry a breeze.
 
   Below is a sample project, whose root package is <<<com.example.myapp>>>:
 

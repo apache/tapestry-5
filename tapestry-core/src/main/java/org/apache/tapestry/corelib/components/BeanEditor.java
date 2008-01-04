@@ -19,6 +19,7 @@ import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
@@ -33,6 +34,7 @@ import org.apache.tapestry.services.FormSupport;
  * central component of the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of
  * its functionality.
  */
+@SupportsInformalParameters
 public class BeanEditor
 {
     public static class Prepare implements ComponentAction<BeanEditor>
