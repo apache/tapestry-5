@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.PersistentLocale;
-import org.apache.tapestry.services.PersistentLocaleImpl;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
