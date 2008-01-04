@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,11 +33,13 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 {
     private final ApplicationStateManager _applicationStateManager;
 
-    private final ClassLoader _classLoader = Thread.currentThread().getContextClassLoader();
+    private final ComponentClassCache _componentClassCache;
 
-    public ApplicationStateWorker(ApplicationStateManager applicationStateManager)
+    public ApplicationStateWorker(ApplicationStateManager applicationStateManager,
+                                  ComponentClassCache componentClassCache)
     {
         _applicationStateManager = applicationStateManager;
+        _componentClassCache = componentClassCache;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -53,17 +55,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
         {
             String fieldType = transformation.getFieldType(fieldName);
 
-            Class fieldClass;
-
-            try
-            {
-                fieldClass = _classLoader.loadClass(fieldType);
-            }
-            catch (ClassNotFoundException ex)
-            {
-                throw new RuntimeException(ex);
-
-            }
+            Class fieldClass = _componentClassCache.forName(fieldType);
 
             String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
 

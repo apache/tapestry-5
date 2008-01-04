@@ -54,7 +54,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentClassTransformWorker worker = new ApplicationStateWorker(manager);
+        ComponentClassTransformWorker worker = new ApplicationStateWorker(manager, null);
 
         worker.transform(ct, model);
 
@@ -69,6 +69,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         Logger logger = mockLogger();
         MutableComponentModel model = mockMutableComponentModel();
         InternalComponentResources resources = mockInternalComponentResources();
+        ComponentClassCache cache = mockComponentClassCache();
 
         String componentClassName = StateHolder.class.getName();
         Class asoClass = ReadOnlyBean.class;
@@ -82,13 +83,14 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         loader.delegateLoadingOf("org.apache.tapestry.");
 
         CtClass ctClass = pool.get(componentClassName);
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass,
-                                                                                         _contextClassLoader, logger,
-                                                                                         null);
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _contextClassLoader,
+                                                                                         logger, null);
+
+        train_forName(cache, ReadOnlyBean.class);
 
         replay();
 
-        new ApplicationStateWorker(manager).transform(transformation, model);
+        new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();
 

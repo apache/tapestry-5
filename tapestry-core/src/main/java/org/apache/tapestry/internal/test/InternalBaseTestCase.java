@@ -537,6 +537,11 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(cache.forName(className)).andReturn(cachedClass).atLeastOnce();
     }
 
+    protected void train_forName(ComponentClassCache cache, Class cachedClass)
+    {
+        train_forName(cache, cachedClass.getName(), cachedClass);
+    }
+
     protected final ComponentClassCache mockComponentClassCache()
     {
         return newMock(ComponentClassCache.class);

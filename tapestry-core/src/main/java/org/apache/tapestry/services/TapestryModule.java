@@ -235,7 +235,7 @@ public final class TapestryModule
         // UnclaimedField is last.
 
         configuration.add("Meta", new MetaWorker());
-        configuration.add("ApplicationState", new ApplicationStateWorker(applicationStateManager));
+        configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class));
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
 
