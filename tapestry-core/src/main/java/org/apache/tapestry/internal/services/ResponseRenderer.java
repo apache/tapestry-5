@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,18 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ContentType;
-import org.apache.tapestry.internal.structure.Page;
 
-public interface PageContentTypeAnalyzer
+/**
+ * Public facade around internal services related to rendering a markup response.
+ */
+public interface ResponseRenderer
 {
     /**
-     * Analyzes the meta-data for the page and identifies the correct
-     * {@link org.apache.tapestry.ContentType} (including encoding).
+     * Finds the content type for the page containing the indicated component.
      *
-     * @param page to be rendered
+     * @param component a component within a page
      * @return the content type
+     * @throws IllegalArgumentException if the component parameter is not a component
      */
-    ContentType findContentType(Page page);
+    ContentType findContentType(Object component);
 }

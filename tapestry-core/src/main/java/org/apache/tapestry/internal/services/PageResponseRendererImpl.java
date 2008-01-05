@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ContentType;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Response;
 

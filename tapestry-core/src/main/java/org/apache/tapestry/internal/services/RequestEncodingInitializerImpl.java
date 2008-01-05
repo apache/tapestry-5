@@ -15,9 +15,9 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.ContentType;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MetaDataLocator;
 import org.apache.tapestry.services.Request;
 
@@ -29,8 +29,7 @@ public class RequestEncodingInitializerImpl implements RequestEncodingInitialize
 
     private final Request _request;
 
-    public RequestEncodingInitializerImpl(RequestPageCache cache, MetaDataLocator locator,
-                                          Request request)
+    public RequestEncodingInitializerImpl(RequestPageCache cache, MetaDataLocator locator, Request request)
     {
         _cache = cache;
         _locator = locator;
@@ -42,15 +41,12 @@ public class RequestEncodingInitializerImpl implements RequestEncodingInitialize
         Page page = _cache.get(pageName);
         ComponentResources pageResources = page.getRootElement().getComponentResources();
 
-        String contentTypeString = _locator.findMeta(
-                TapestryConstants.RESPONSE_CONTENT_TYPE,
-                pageResources);
+        String contentTypeString = _locator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources);
         ContentType contentType = new ContentType(contentTypeString);
 
         String encoding = contentType.getParameter("charset");
 
-        if (encoding == null)
-            encoding = _locator.findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
+        if (encoding == null) encoding = _locator.findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
 
         _request.setEncoding(encoding);
     }

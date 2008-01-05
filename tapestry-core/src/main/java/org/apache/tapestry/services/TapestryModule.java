@@ -113,7 +113,7 @@ public final class TapestryModule
         binder.bind(PageRenderQueue.class, PageRenderQueueImpl.class);
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
-
+        binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
     }
 
     public static Alias build(Logger logger,

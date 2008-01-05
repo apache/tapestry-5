@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ContentType;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.DefaultMarkupModel;
 import org.apache.tapestry.dom.MarkupModel;
 import org.apache.tapestry.dom.XMLMarkupModel;
-import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MarkupWriterFactory;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory

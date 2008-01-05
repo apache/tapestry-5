@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.InjectContainer;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
+import org.apache.tapestry.internal.services.ResponseRenderer;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.TypeCoercer;
@@ -57,6 +58,7 @@ import java.util.List;
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
+
     private static final String PARAM_NAME = "t:input";
 
     /**
@@ -93,6 +95,9 @@ public class Autocomplete
      */
     @Parameter(defaultPrefix = "literal")
     private int _minChars;
+
+    @Inject
+    private ResponseRenderer _responseRenderer;
 
 
     /**
@@ -193,7 +198,9 @@ public class Autocomplete
 
         _resources.triggerEvent("providecompletions", new Object[]{input}, handler);
 
-        MarkupWriter writer = _factory.newMarkupWriter(null);
+        ContentType contentType = _responseRenderer.findContentType(this);
+
+        MarkupWriter writer = _factory.newMarkupWriter(contentType);
 
         // T4.1 has more flexibility, it can decorate the options with icons, etc.
         // But this will do for now.  The Autocompleter widget will display
@@ -211,6 +218,6 @@ public class Autocomplete
 
         writer.end(); // ul
 
-        return new TextStreamResponse("text/html", writer.toString());
+        return new TextStreamResponse(contentType.getMimeType(), writer.toString());
     }
 }
