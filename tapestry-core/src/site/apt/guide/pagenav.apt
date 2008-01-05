@@ -81,6 +81,11 @@ Action Requests
 
   An event handler can also return a {{{../../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}} object, which encapsulates a stream to
   be sent directly to the client browser.  This is useful for compnents that want to, say, generate an image or PDF and provide it to the client.
+
+
+* URL response
+
+  A URL is handled as a client redirect to an external URL.
   
 * Object response
 

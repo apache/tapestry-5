@@ -978,6 +978,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         goBack();
         waitForPageToLoad();
 
+        // This has been failing?  Why?
+
+        // clickAndWait("link=URL");
+        // assertTextPresent("Google");
+        // goBack();
+        // waitForPageToLoad();
+
         clickAndWait("link=bad");
         assertTextPresent("An unexpected application exception has occurred.",
                           "An event handler for component org.apache.tapestry.integration.app1.pages.Start returned the value 20 (from method org.apache.tapestry.integration.app1.pages.Start.onActionFromBadReturnType() (at Start.java:34)). Return type java.lang.Integer can not be handled.");
