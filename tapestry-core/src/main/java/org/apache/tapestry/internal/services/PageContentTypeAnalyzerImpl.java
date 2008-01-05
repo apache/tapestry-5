@@ -15,10 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.ContentType;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.ContentType;
 import org.apache.tapestry.services.MetaDataLocator;
 
 public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer

@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ComponentResourcesCommon;
+import org.apache.tapestry.ContentType;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.*;
 import org.apache.tapestry.internal.events.InvalidationListener;
@@ -545,5 +546,15 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final ComponentClassCache mockComponentClassCache()
     {
         return newMock(ComponentClassCache.class);
+    }
+
+    protected void train_findContentType(PageContentTypeAnalyzer analyzer, Page page, ContentType contentType)
+    {
+        expect(analyzer.findContentType(page)).andReturn(contentType).atLeastOnce();
+    }
+
+    protected final PageContentTypeAnalyzer mockPageContentTypeAnalyzer()
+    {
+        return newMock(PageContentTypeAnalyzer.class);
     }
 }

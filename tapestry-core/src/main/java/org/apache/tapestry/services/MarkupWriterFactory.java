@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import org.apache.tapestry.ContentType;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.util.ContentType;
 
 /**
  * Source for {@link org.apache.tapestry.MarkupWriter} instances.
