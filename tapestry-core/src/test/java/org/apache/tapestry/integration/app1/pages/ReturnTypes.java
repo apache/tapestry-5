@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.util.TextStreamResponse;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Tests the various event handler method return types.
@@ -68,5 +71,10 @@ public class ReturnTypes
     {
         // What is Tapestry supposed to do with this? Let's see that Exception Report page.
         return 20;
+    }
+
+    Object onActionFromURL() throws MalformedURLException
+    {
+        return new URL("http://google.com");
     }
 }

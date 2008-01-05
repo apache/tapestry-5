@@ -1055,6 +1055,16 @@ public final class TapestryModule
     }
 
     /**
+     * Builds a shadow of the RequestGlobals.HTTPServletRequest property.  Generally, you should inject
+     * the {@link Request} service instead, as future version of Tapestry may operate beyond just the
+     * servlet API.
+     */
+    public HttpServletRequest buildHttpServletRequest()
+    {
+        return _shadowBuilder.build(_requestGlobals, "HTTPServletRequest", HttpServletRequest.class);
+    }
+
+    /**
      * Builds a shadow of the RequestGlobals.response property. Note again that the shadow can be an
      * ordinary singleton, even though RequestGlobals is perthread.
      */
@@ -1100,6 +1110,8 @@ public final class TapestryModule
      * to the containing page is sent.</dd>
      * <dt>{@link org.apache.tapestry.StreamResponse}</dt>
      * <dd>The stream response is sent as the actual reply.</dd>
+     * <dt>URL</dt>
+     * <dd>Sends a redirect to a (presumably) external URL</dd>
      * </dl>
      */
     public void contributeComponentEventResultProcessor(
@@ -1117,6 +1129,15 @@ public final class TapestryModule
                     throws IOException
             {
                 _response.sendRedirect(value);
+            }
+        });
+
+        configuration.add(URL.class, new ComponentEventResultProcessor<URL>()
+        {
+            public void processComponentEvent(URL value, Component component, String methodDescripion)
+                    throws IOException
+            {
+                _response.sendRedirect(value.toExternalForm());
             }
         });
 
