@@ -1327,4 +1327,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("[FirstName Property Editor Override]");
     }
 
+    /**
+     * TAPESTRY-1830
+     */
+    @Test
+    public void var_binding()
+    {
+        start("Var Binding Demo");
+
+        assertTextSeries("//li[%d]", 1, "1", "2", "3");
+    }
+
 }

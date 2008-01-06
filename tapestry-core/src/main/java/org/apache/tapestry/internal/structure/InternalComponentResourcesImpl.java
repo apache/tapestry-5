@@ -24,6 +24,8 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
@@ -60,6 +62,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private final ComponentMessagesSource _messagesSource;
 
     private Messages _messages;
+
+    // Case insensitive
+    private Map<String, Object> _renderVariables;
 
     public InternalComponentResourcesImpl(ComponentPageElement element, ComponentResources containerResources,
                                           Instantiator componentInstantiator, TypeCoercer typeCoercer,
@@ -376,5 +381,34 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         }
 
         return result;
+    }
+
+    public Object getRenderVariable(String name)
+    {
+        Object result = InternalUtils.get(_renderVariables, name);
+
+        if (result == null) throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(),
+                                                                                                       name,
+                                                                                                       _renderVariables == null ? null : _renderVariables.keySet()));
+
+        return result;
+    }
+
+    public void storeRenderVariable(String name, Object value)
+    {
+        Defense.notBlank(name, "name");
+        Defense.notNull(value, "value");
+
+        if (!_element.isRendering())
+            throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
+
+        if (_renderVariables == null) _renderVariables = CollectionFactory.newCaseInsensitiveMap();
+
+        _renderVariables.put(name, value);
+    }
+
+    public void postRenderCleanup()
+    {
+        if (_renderVariables != null) _renderVariables.clear();
     }
 }

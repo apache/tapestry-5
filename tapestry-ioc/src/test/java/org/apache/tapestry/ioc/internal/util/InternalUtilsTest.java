@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -305,5 +305,17 @@ public class InternalUtilsTest extends IOCTestCase
             assertEquals(ex.getMessage(),
                          "Marker annotation class org.apache.tapestry.ioc.internal.util.NotRetainedRuntime is not valid because it is not visible at runtime. Add a @RetentionPolicy(RUNTIME) to the class.");
         }
+    }
+
+    @Test
+    public void join_sorted_null()
+    {
+        assertEquals(InternalUtils.joinSorted(null), "(none)");
+    }
+
+    @Test
+    public void join_sorted_empty()
+    {
+        assertEquals(InternalUtils.joinSorted(Collections.emptyList()), "(none)");
     }
 }

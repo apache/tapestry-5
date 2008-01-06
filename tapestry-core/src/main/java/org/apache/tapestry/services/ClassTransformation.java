@@ -349,4 +349,12 @@ public interface ClassTransformation extends AnnotationProvider
      *         source line number
      */
     String getMethodIdentifier(TransformMethodSignature signature);
+
+    /**
+     * Returns true if this transformation represents a root class (one that extends directly from Object), or
+     * false if this transformation is an extension of another transformed class.
+     *
+     * @return true if root class, false is sub-class
+     */
+    boolean isRootTransformation();
 }

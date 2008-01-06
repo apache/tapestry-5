@@ -127,4 +127,21 @@ public interface ComponentResources extends ComponentResourcesCommon
      */
     Block getBlockParameter(String parameterName);
 
+    /**
+     * Returns a previously stored render variable.
+     *
+     * @param name of the variable (case will be ignored)
+     * @return the variable's value
+     * @throws IllegalArgumentException if the name doesn't correspond to a stored value
+     */
+    Object getRenderVariable(String name);
+
+    /**
+     * Stores a render variable, accessible with the provided name.
+     *
+     * @param name  of value to store
+     * @param value value to store (may not be null)
+     * @throws IllegalStateException if the component is not currently rendering
+     */
+    void storeRenderVariable(String name, Object value);
 }

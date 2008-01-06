@@ -38,8 +38,6 @@ public class ExceptionReport implements ExceptionReporter
 
     private String _propertyName;
 
-    private String _frame;
-
     private String _attributeName;
 
     @Inject
@@ -68,16 +66,6 @@ public class ExceptionReport implements ExceptionReporter
     public void setInfo(ExceptionInfo info)
     {
         _info = info;
-    }
-
-    public String getFrame()
-    {
-        return _frame;
-    }
-
-    public void setFrame(String frame)
-    {
-        _frame = frame;
     }
 
     public String getPropertyName()
