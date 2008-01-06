@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.ContentType;
-import org.apache.tapestry.MarkupWriter;
-
-/**
- * Source for {@link org.apache.tapestry.MarkupWriter} instances.
- */
-public interface MarkupWriterFactory
+public class VarBindingDemo
 {
-    /**
-     * This will likely expand in the future to control things like output format and encoding, etc.
-     *
-     * @param contentType
-     */
-    MarkupWriter newMarkupWriter(ContentType contentType);
 }

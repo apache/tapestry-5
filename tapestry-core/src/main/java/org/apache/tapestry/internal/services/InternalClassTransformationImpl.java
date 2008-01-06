@@ -1500,4 +1500,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 .getMediumDescription(), sourceFile, lineNumber);
     }
 
+    public boolean isRootTransformation()
+    {
+        return _parentTransformation == null;
+    }
 }

@@ -72,4 +72,9 @@ public interface InternalComponentResources extends ComponentResources, Internal
      * to the {@link PersistentFieldManager}.
      */
     void persistFieldChange(String fieldName, Object newValue);
+
+    /**
+     * Allows the resources to cleanup any render-time only data.
+     */
+    void postRenderCleanup();
 }

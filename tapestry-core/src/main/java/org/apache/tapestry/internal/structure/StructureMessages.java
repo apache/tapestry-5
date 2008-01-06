@@ -18,9 +18,10 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 
+import java.util.Collection;
 import java.util.List;
 
-class StructureMessages
+final class StructureMessages
 {
     private static final Messages MESSAGES = MessagesImpl.forClass(StructureMessages.class);
 
@@ -49,8 +50,7 @@ class StructureMessages
         return MESSAGES.format("write-parameter-failure", parameterName, componentId, cause);
     }
 
-    static String missingMixinForParameter(String componentId, String mixinName,
-                                           String parameterName)
+    static String missingMixinForParameter(String componentId, String mixinName, String parameterName)
     {
         return MESSAGES
                 .format("missing-mixin-for-parameter", componentId, mixinName, parameterName);
@@ -99,5 +99,16 @@ class StructureMessages
     static String fieldPersistFailure(String componentId, String fieldName, Throwable cause)
     {
         return MESSAGES.format("field-persist-failure", componentId, fieldName, cause);
+    }
+
+    static String missingRenderVariable(String componentId, String name, Collection<String> names)
+    {
+
+        return MESSAGES.format("missing-render-variable", componentId, name, InternalUtils.joinSorted(names));
+    }
+
+    static String renderVariableSetWhenNotRendering(String completeId, String name)
+    {
+        return MESSAGES.format("render-variable-set-when-not-rendering", completeId, name);
     }
 }

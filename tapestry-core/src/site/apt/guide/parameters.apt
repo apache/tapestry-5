@@ -131,11 +131,49 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | validate   | A <validator specification> used to create some number of field validators.      |
 *------------+----------------------------------------------------------------------------------+
+| var        | Allows a render variable of the component to be read or updated. |      |
+*------------+----------------------------------------------------------------------------------+
 
   Parameters have a default prefix, usually "prop:", that is used when the prefix is not provided.
   
   A <special prefix>, "inherit:", is used to support {{{#Inherited Parameter Bindings}Inherted Parameter Bindings}}.
-    
+
+Render Variables
+
+    Components can have any number of <render variables>.  Render variables are named values with no
+    specific type (they are ultimately stored in a Map).  Render variables are useful
+    for holding simply values, such as a loop index, that needs to be passed from one component to another.
+
+    For example:
+
+---
+  <ul>
+    <li t:type="loop" source="1..10" value="index">${index}</li>
+  </ul>
+
+  private int _index;
+
+  public int getIndex() { return _index; }
+
+  public void setIndex(int index) { _index = index; }
+---
+
+  ... could be rewritten as just:
+
+---
+  <ul>
+    <li t:type="loop" source="1..10" value="var:index">${var:index}</li>
+  </ul>
+---
+
+  In other words, you don't have to define a property in the Java code.  This disadvantage is that
+  render variables don't work with the property expression syntax, so you can pass around a
+  render variables <value> but you can't reference any of the value's properties.
+
+  Render variables are automatically cleared when a component finishes rendering.
+
+  Render variable names are case insensitive.
+
 Property Bindings
 
   The "prop:" binding prefix indicates a property binding.

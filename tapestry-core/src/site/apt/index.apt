@@ -13,6 +13,13 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
 
+  * The new "var:" binding prefix allows for temporary, untyped storage
+    of render-time values without having to define a new component property.
+
+  * Event handler methods may now return a URL, to send a client redirect to that URL.
+
+  * Localizations for Italian (it) and Simplified Chinese (zh_CN) have been added.
+
   * We're finally starting to see some Ajax support, beginning with the
   {{{../apidocs/org/apache/tapestry/corelib/mixins/Autocomplete.html}Autocomplete mixin}}.
 

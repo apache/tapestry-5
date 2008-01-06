@@ -142,7 +142,7 @@ public final class TapestryModule
 
     /**
      * Contributes the factory for serveral built-in binding prefixes ("asset", "literal", prop",
-     * "block", "component" "message", "validate", "translate").
+     * "block", "component" "message", "validate", "translate", "var").
      */
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration,
 
@@ -157,12 +157,14 @@ public final class TapestryModule
     {
         configuration.add(TapestryConstants.LITERAL_BINDING_PREFIX, new LiteralBindingFactory());
         configuration.add(TapestryConstants.PROP_BINDING_PREFIX, propBindingFactory);
+
         configuration.add("component", new ComponentBindingFactory());
         configuration.add("message", new MessageBindingFactory());
         configuration.add("validate", new ValidateBindingFactory(fieldValidatorSource));
         configuration.add("translate", new TranslateBindingFactory(translatorSource));
         configuration.add("block", new BlockBindingFactory());
         configuration.add("asset", new AssetBindingFactory(assetSource));
+        configuration.add("var", new RenderVariableBindingFactory());
     }
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
@@ -211,6 +213,8 @@ public final class TapestryModule
      * of the request</li>
      * <li>RenderCommand -- ensures all components also implement {@link RenderCommand}</li>
      * <li>SetupRender, BeginRender, etc. -- correspond to component render phases and annotations</li>
+     * <li>InvokePostRenderCleanupOnResources -- makes sure {@link org.apache.tapestry.internal.InternalComponentResources#postRenderCleanup()} is invoked
+     * after a component finishes rendering</li>
      * </ul>
      */
     public static void contributeComponentClassTransformWorker(
@@ -283,6 +287,8 @@ public final class TapestryModule
         configuration.add("IncludeStylesheet", locator.autobuild(IncludeStylesheetWorker.class), "after:SetupRender");
         configuration.add("IncludeJavaScriptLibrary", locator.autobuild(IncludeJavaScriptLibraryWorker.class),
                           "after:SetupRender");
+
+        configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.

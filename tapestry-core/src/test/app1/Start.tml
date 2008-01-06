@@ -307,6 +307,11 @@
             -- Property editor overrides work for the BeanEditor component itself (not just the BeanEditForm component)
         </li>
 
+        <li>
+            <t:pagelink page="varbindingdemo">Var Binding Demo</t:pagelink>
+            -- use of the var: binding prefix
+        </li>
+
     </ul>
 
 </html>
