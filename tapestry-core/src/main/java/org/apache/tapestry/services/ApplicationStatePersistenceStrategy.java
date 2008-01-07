@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.apache.tapestry.services;
 /**
  * Used by {@link ApplicationStateManager} to manage a specific kind of ASO persistence. The stategy
  * is responsible for managing ASO instances within its domain.
+ *
+ * @see org.apache.tapestry.services.ApplicationStatePersistenceStrategySource
  */
 public interface ApplicationStatePersistenceStrategy
 {

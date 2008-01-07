@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,8 +22,13 @@ import org.apache.tapestry.corelib.components.Grid;
  * A source of {@link Block}s used to display the properties of a bean (used by the {@link Grid}
  * component), or to edit the properties of a bean (used by the {@link BeanEditForm} component).
  * Contributions to this service define what properties may be editted.
+ * <p/>
+ * <p/>
+ * Blocks are accessed in terms of a <strong>data type</strong> a string that identifies the type
+ * of data to be editted, such as "string", "date", "boolean", etc.
  *
  * @see DataTypeAnalyzer
+ * @see org.apache.tapestry.services.TapestryModule#contributeBeanBlockSource(org.apache.tapestry.ioc.Configuration)
  */
 public interface BeanBlockSource
 {

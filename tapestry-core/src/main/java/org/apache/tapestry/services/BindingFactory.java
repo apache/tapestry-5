@@ -19,7 +19,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Creates a binding of a particular type.
+ * Creates a binding of a particular type.  This is usually invoked from the {@link org.apache.tapestry.services.BindingSource} service.
  */
 public interface BindingFactory
 {
@@ -40,6 +40,6 @@ public interface BindingFactory
      * @param location    from which the binding was generate, or null if not known
      * @return the new binding instance
      */
-    Binding newBinding(String description, ComponentResources container,
-                       ComponentResources component, String expression, Location location);
+    Binding newBinding(String description, ComponentResources container, ComponentResources component,
+                       String expression, Location location);
 }

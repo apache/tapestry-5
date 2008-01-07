@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.ioc.services.Builtin;
-
 import java.lang.annotation.Documented;
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.PARAMETER;
@@ -24,9 +22,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used to identify a service from the component layer that conflicts, in terms of service
+ * Marker annotation used to identify a service from the component layer that conflicts, in terms of service
  * interface, with a service from elsewhere. In particular, this is used to disambiguate
- * {@link org.apache.tapestry.ioc.services.ClassFactory} which has one implementation (marked with {@link Builtin} and
+ * {@link org.apache.tapestry.ioc.services.ClassFactory} which has one implementation (marked with {@link org.apache.tapestry.ioc.services.Builtin} and
  * another with this annotation.
  */
 @Target(

@@ -15,10 +15,12 @@
 package org.apache.tapestry.services;
 
 /**
- * Allow for deferred execution of logic, useful when trying to get multiple components to
+ * Allows for deferred execution of logic, useful when trying to get multiple components to
  * coordinate behavior. A component may add a command to be executed "{@link #end() at the end of the heartbeat}".
  * The classic example of this is a Label and the field it labels; since we don't know which order
  * the two will render, we can't tell if the field's id is correct until after both have rendered.
+ * <p/>
+ * The Heartbeat is injected into components via the {@link org.apache.tapestry.annotations.Environmental} annotation.
  */
 public interface Heartbeat
 {

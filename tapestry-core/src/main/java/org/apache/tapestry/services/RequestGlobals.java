@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * Service used to store the current request objects, both the Servlet API versions, and the
- * Tapestry generic versions.
+ * Tapestry generic versions. The service has a per-thread scope.
  */
 public interface RequestGlobals
 {
@@ -35,12 +35,12 @@ public interface RequestGlobals
     void store(Request request, Response response);
 
     /**
-     * Accessible as injected object "alias:Request".
+     * The current request. This is exposed as service Request.
      */
     Request getRequest();
 
     /**
-     * Accessible as injected object "alias:Response".
+     * The current response. This is exposed as service Response.
      */
     Response getResponse();
 }

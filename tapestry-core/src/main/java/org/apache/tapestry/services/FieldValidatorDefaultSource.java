@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.Messages;
 import java.util.Locale;
 
 /**
- * For a particular field, geenerates the default validation for the field, in accordance with a
+ * For a particular field, generates the default validation for the field, in accordance with a
  * number of factors and contributions.
  */
 public interface FieldValidatorDefaultSource
@@ -39,7 +39,6 @@ public interface FieldValidatorDefaultSource
      * @param propertyAnnotations
      * @return
      */
-    FieldValidator createDefaultValidator(Field field, String overrideId,
-                                          Messages overrideMessages, Locale locale, Class propertyType,
-                                          AnnotationProvider propertyAnnotations);
+    FieldValidator createDefaultValidator(Field field, String overrideId, Messages overrideMessages, Locale locale,
+                                          Class propertyType, AnnotationProvider propertyAnnotations);
 }

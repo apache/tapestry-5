@@ -18,6 +18,9 @@ import org.apache.tapestry.ContentType;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.services.Response;
+
+import java.io.IOException;
 
 public class ResponseRendererImpl implements ResponseRenderer
 {
@@ -25,10 +28,17 @@ public class ResponseRendererImpl implements ResponseRenderer
 
     private final PageContentTypeAnalyzer _pageContentAnalyzer;
 
-    public ResponseRendererImpl(RequestPageCache pageCache, PageContentTypeAnalyzer pageContentAnalyzer)
+    private final PageResponseRenderer _renderer;
+
+    private final Response _response;
+
+    public ResponseRendererImpl(RequestPageCache pageCache, PageContentTypeAnalyzer pageContentAnalyzer,
+                                PageResponseRenderer renderer, Response response)
     {
         _pageCache = pageCache;
         _pageContentAnalyzer = pageContentAnalyzer;
+        _renderer = renderer;
+        _response = response;
     }
 
     public ContentType findContentType(Object component)
@@ -40,5 +50,12 @@ public class ResponseRendererImpl implements ResponseRenderer
         Page page = _pageCache.get(pageName);
 
         return _pageContentAnalyzer.findContentType(page);
+    }
+
+    public void renderPageMarkupResponse(String pageName) throws IOException
+    {
+        Page page = _pageCache.get(pageName);
+
+        _renderer.renderPageResponse(page, _response);
     }
 }

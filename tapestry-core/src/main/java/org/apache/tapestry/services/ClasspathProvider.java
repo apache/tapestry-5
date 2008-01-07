@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 
 
 /**
- * Used to select the correct {@link AssetFactory} for injection. The marked interface will service
+ * A marker annotation used to select the correct {@link AssetFactory} for injection. The marked interface will provide
  * assets located on the classpath.
  */
 @Target(

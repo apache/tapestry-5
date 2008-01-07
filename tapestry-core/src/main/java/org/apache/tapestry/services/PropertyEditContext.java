@@ -24,7 +24,7 @@ import org.apache.tapestry.corelib.components.Label;
 import org.apache.tapestry.ioc.Messages;
 
 /**
- * Defines a context for editing a property of a bean via {@link BeanEditForm}. This value is made
+ * Defines a context for editing a property of a bean via {@link org.apache.tapestry.corelib.components.BeanEditor}. This value is made
  * available to blocks via the {@link Environmental} annotation.
  *
  * @see BeanBlockSource

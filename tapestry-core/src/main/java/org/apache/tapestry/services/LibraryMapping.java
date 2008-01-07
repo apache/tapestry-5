@@ -17,9 +17,18 @@ package org.apache.tapestry.services;
 /**
  * Used to configure the {@link ComponentClassResolver}, to allow it to map prefixes to library
  * root packages (the application namespace is a special case of this). In each case, a prefix on
- * the path is mapped to a package. Prefixes should start with a character and end with a slash, as
- * in "core". The root package name should have two sub-packages: "pages" to contain named pages,
- * and "components" to contain named components.
+ * the path is mapped to a package. Prefixes should start and end with characters, such as "core".
+ * It is allowed for a prefix to contain a slash, though it is not recommended.
+ * <p/>
+ * The root package name should have a number of sub-packages:
+ * <dl>
+ * <dt>pages</dt> <dd>contains named pages</dd>
+ * <dt>components</dt> <dd>contains components</dd>
+ * <dt>mixins</dt> <dd>contains component mixins</dd>
+ * <dt>base</dt> <dd>contains base classes</dd>
+ * </dl>
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeComponentClassResolver(org.apache.tapestry.ioc.Configuration)
  */
 public final class LibraryMapping
 {

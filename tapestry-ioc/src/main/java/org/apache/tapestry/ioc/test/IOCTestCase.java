@@ -20,10 +20,10 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry.ioc.services.MasterObjectProvider;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.MasterObjectProvider;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 

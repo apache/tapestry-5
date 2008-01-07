@@ -19,7 +19,7 @@ import org.apache.tapestry.runtime.Component;
 import java.io.IOException;
 
 /**
- * Responsible for handling the return value provided by a component event handler.
+ * Responsible for handling the return value provided by a component event handler method.
  *
  * @param <T>
  */
@@ -31,8 +31,7 @@ public interface ComponentEventResultProcessor<T>
      * @param value            the value returned from a method
      * @param component        the component on which a method was invoked
      * @param methodDescripion a description of method which provided the value
-     * @return an object that can send the request to the client
-     * @throws RuntimeException if the value can not be converted into a response
+     * @throws RuntimeException if the value can not handled
      */
     void processComponentEvent(T value, Component component, String methodDescripion) throws IOException;
 }

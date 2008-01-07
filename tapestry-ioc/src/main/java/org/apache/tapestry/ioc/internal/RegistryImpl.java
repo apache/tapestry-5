@@ -28,7 +28,6 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.internal.util.Orderer;
 import org.apache.tapestry.ioc.services.*;
-import org.apache.tapestry.services.MasterObjectProvider;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Constructor;

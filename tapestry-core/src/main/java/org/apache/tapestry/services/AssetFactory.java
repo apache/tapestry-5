@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import org.apache.tapestry.ioc.Resource;
 
 /**
  * Used by {@link AssetSource} to create new {@link Asset}s as needed.
+ *
+ * @see org.apache.tapestry.services.AssetSource
  */
 public interface AssetFactory
 {

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry.ioc.services;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
@@ -47,6 +47,5 @@ public interface MasterObjectProvider
      * @throws RuntimeException if the expression can not be evaluated, or the type of object identified is not
      *                          assignable to the type specified by the objectType parameter
      */
-    <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
-                  ObjectLocator locator, boolean required);
+    <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator, boolean required);
 }

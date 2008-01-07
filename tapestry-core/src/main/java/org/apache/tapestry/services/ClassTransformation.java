@@ -22,7 +22,12 @@ import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
- * Contains class-specific information used when transforming an raw class into an executable class.
+ * Contains class-specific information used when transforming a raw component class into an executable component class.
+ * An executable class is one that has been transformed to work within Tapestry.  This includes
+ * adding interfaces ({@link org.apache.tapestry.runtime.Component}) but also transforming access to fields, based
+ * on annotations and naming conventions.  Most of the changes are provided by different implementations of
+ * {@link ComponentClassTransformWorker}.
+ * <p/>
  * Much of this information is somewhat like ordinary reflection, but applies to a class that has
  * not yet been loaded.
  * <p/>
@@ -39,6 +44,8 @@ import java.util.List;
  * <p/>
  * The majority of methods concern the <em>declared</em> members (field and methods) of a specific
  * class, rather than any fields or methods inherited from a base class.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeComponentClassTransformWorker(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.ioc.ObjectLocator, InjectionProvider, Environment, ComponentClassResolver, org.apache.tapestry.internal.services.RequestPageCache, BindingSource, ApplicationStateManager)
  */
 public interface ClassTransformation extends AnnotationProvider
 {

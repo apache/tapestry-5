@@ -22,7 +22,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker for services that are provided by the Tapestry core module.
+ * Marker annotation for services that are provided by the Tapestry core module.
  */
 @Target(
         {PARAMETER, FIELD})

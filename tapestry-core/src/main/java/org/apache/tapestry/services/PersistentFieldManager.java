@@ -19,6 +19,8 @@ import org.apache.tapestry.ComponentResources;
 /**
  * Handle persistent property changes. Primarily, delegates to a number of
  * {@link PersistentFieldStrategy} instances.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributePersistentFieldManager(org.apache.tapestry.ioc.MappedConfiguration, Request, PersistentFieldStrategy)
  */
 public interface PersistentFieldManager
 {

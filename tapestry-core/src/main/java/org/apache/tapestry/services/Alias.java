@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,21 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.ioc.ObjectProvider;
 
 /**
- * Primarily, the Alias service is an ObjectProvider that fits into the command chain and
- * disambiguates injections on type. Contributions to the Alias service identify the normal service
+ * The Alias service provides an ObjectProvider that fits into the MasterObjectProvider command chain and
+ * disambiguates injections based on type. {@linkplain org.apache.tapestry.services.AliasContribution Contibutions}
+ * to the Alias service identify the desired service
  * to inject for a particular service interface; this is only necessary when there is more than one
  * service implementing the same interface.
+ * <p/>
+ * The {@linkplain AliasManager AliasOverrides}
+ * service also takes an unordered configuration of {@link org.apache.tapestry.services.AliasContribution}; such
+ * contributions override the "factory" contributions to the Alias service itself.  This is often used
+ * to replace built-in service implementations with ones that are specific to a particular application.
  */
 public interface Alias
 {
     /**
-     * Returns an object that can provide objects based on contributions into the Alias (and
-     * AliasOverrides) service.
+     * Returns an object provideer that checks the desired type against the service's contributions.
      */
     ObjectProvider getObjectProvider();
 }

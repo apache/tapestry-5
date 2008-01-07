@@ -26,6 +26,10 @@ import org.apache.tapestry.internal.bindings.PropBindingFactory;
  * name of a JavaBean property, or the name of a method (a method that takes no parameters). Method
  * names are distinguished from property names by appending empty parens. Using a method term as the
  * final term will make the expression read-only.
+ * <p/>
+ * Alternately, the seperator between property names may be "?." (i.e., "user?.name").  This allows
+ * an "if not null" connection: if the term is null, then the expression evaluates to null, otherwise,
+ * the expression continues to the next property.  The helps avoid NullPointerExpressions.
  */
 public interface PropertyConduitSource
 {

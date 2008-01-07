@@ -19,6 +19,7 @@ import org.apache.tapestry.ContentType;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.services.Response;
 import org.testng.annotations.Test;
 
 public class ResponseRendererImplTest extends InternalBaseTestCase
@@ -42,9 +43,32 @@ public class ResponseRendererImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer);
+        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer, null, null);
 
         assertSame(renderer.findContentType(component), contentType);
+
+        verify();
+    }
+
+    @Test
+    public void render_page_markup() throws Exception
+    {
+        RequestPageCache cache = mockRequestPageCache();
+        PageContentTypeAnalyzer analyzer = mockPageContentTypeAnalyzer();
+        String pageName = "foo/bar";
+        Page page = mockPage();
+        PageResponseRenderer pageResponseRenderer = mockPageResponseRenderer();
+        Response response = mockResponse();
+
+        train_get(cache, pageName, page);
+
+        pageResponseRenderer.renderPageResponse(page, response);
+
+        replay();
+
+        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer, pageResponseRenderer, response);
+
+        renderer.renderPageMarkupResponse(pageName);
 
         verify();
     }
