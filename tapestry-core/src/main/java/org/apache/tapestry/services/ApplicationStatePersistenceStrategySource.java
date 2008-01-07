@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,10 +16,8 @@ package org.apache.tapestry.services;
 
 /**
  * Used to provide access to stategies via a logical name for the stategy, such as "session".
- * <p/>
- * Note: Ideally, this would just be internal to {@link ApplicationStateManager}, but Tapestry
- * IOC's one-configuration-per-service makes that awkward, so this part of that functionality
- * becomes its own service.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeApplicationStatePersistenceStrategySource(org.apache.tapestry.ioc.MappedConfiguration, Request)
  */
 public interface ApplicationStatePersistenceStrategySource
 {

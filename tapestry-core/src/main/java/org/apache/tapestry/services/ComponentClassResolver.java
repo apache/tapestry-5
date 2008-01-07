@@ -27,7 +27,7 @@ import org.apache.tapestry.internal.services.ClassNameLocator;
  * package is expected to have sub-packages: "pages", "components", "mixins" and "base" ("base" is
  * for base classes).
  * <p/>
- * The resolver performs a search of the classpath (via {@link ClassNameLocator}, to build up a set
+ * The resolver performs a search of the classpath (via {@link ClassNameLocator}), to build up a set
  * of case-insensitive maps from logical page name, component type, or mixin type to fully qualified
  * class name.
  * <p/>

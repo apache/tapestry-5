@@ -22,10 +22,15 @@ import java.util.NoSuchElementException;
  * <p/>
  * The Environment acts like a collection of stacks. Each stack contains environmental service
  * providers of a given type.
+ *
+ * @see org.apache.tapestry.annotations.Environmental
+ * @see org.apache.tapestry.services.EnvironmentalShadowBuilder
  */
 public interface Environment
 {
     /**
+     * Peeks at the current top of the indicated stack.
+     *
      * @param <T>  the type of environmental service
      * @param type class used to select a service
      * @return the current service of that type, or null if no service of that type has been added
@@ -33,6 +38,8 @@ public interface Environment
     <T> T peek(Class<T> type);
 
     /**
+     * Peeks at the current top of the indicated stack (which must have a non-null value).
+     *
      * @param <T>  the type of environmental service
      * @param type class used to select a service
      * @return the current service

@@ -22,8 +22,10 @@ import org.apache.tapestry.model.ComponentModel;
  * the meta data defined for the component, accessed via {@link ComponentModel#getMeta(String)}.
  * This includes meta data defined by base classes. When meta-data for a particular component can
  * not be found, a search works up the containment hierarchy (to the component's container, and the
- * container's containter, and so on). If <em>that</em> proves unfruitful, a system of defaults is
+ * container's container, and so on). If <em>that</em> proves unfruitful, a system of defaults is
  * provided by configuration and matched against the containing page's logical name.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeMetaDataLocator(org.apache.tapestry.ioc.MappedConfiguration)
  */
 public interface MetaDataLocator
 {

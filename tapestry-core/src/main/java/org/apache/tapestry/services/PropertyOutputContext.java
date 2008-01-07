@@ -19,7 +19,8 @@ import org.apache.tapestry.ioc.Messages;
 
 /**
  * Provides context information needed when displaying a value. This interface is an integral part
- * of the {@link Grid} and similar output components.
+ * of the {@link Grid} and similar output components.    It is made available to
+ * components via an {@link org.apache.tapestry.annotations.Environmental} annotation.
  */
 public interface PropertyOutputContext
 {

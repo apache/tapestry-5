@@ -20,7 +20,7 @@ import org.apache.tapestry.Field;
 
 /**
  * Services provided by an enclosing Form control component to the various form element components
- * it encloses. Implement {@link ClientElement}, to share the id of the enclosing form.
+ * it encloses. Implements {@link ClientElement}, to share the id of the enclosing form.
  */
 public interface FormSupport extends ClientElement
 {

@@ -20,6 +20,8 @@ import org.apache.tapestry.MarkupWriter;
  * Filter interface for {@link org.apache.tapestry.services.MarkupRenderer}, which allows
  * for code to execute before and/or after the main rendering process.  Typically, this is to
  * allow for the placement of {@linkplain org.apache.tapestry.services.Environment environmental services}.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
  */
 public interface MarkupRendererFilter
 {

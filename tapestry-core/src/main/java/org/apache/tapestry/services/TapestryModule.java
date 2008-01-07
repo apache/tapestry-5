@@ -462,9 +462,15 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes filter "StaticFilesFilter" that identifies requests for static resources and
-     * terminates the pipeline by returning false. Generally, most filters should be ordered after
-     * this filter.
+     * Continues a number of filters into the RequestHandler service:
+     * <dl>
+     * <dt>StaticFiles</dt> <dd>Checks to see if the request is for an actual file, if so, returns true to let
+     * the servlet container process the request</dd>
+     * <dt>CheckForUpdates</dt> <dd>Periodically fires events that checks to see if the file system sources
+     * for any cached data has changed (see {@link org.apache.tapestry.internal.services.CheckForUpdatesFilter}).
+     * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler} handle them</dd>
+     * <dt>Localization</dt> <dd>Determines the locale for the current request from header data or cookies in the request</dd>
+     * </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 

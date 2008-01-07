@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.services.MasterObjectProvider;
+import org.apache.tapestry.ioc.services.MasterObjectProvider;
 
 /**
  * Defines an object which can provide access to services defined within a

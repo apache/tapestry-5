@@ -18,6 +18,8 @@ import java.io.IOException;
 
 /**
  * Filter interface for {@link ComponentActionRequestHandler}.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeComponentActionRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.internal.services.RequestEncodingInitializer, ComponentActionRequestHandler)
  */
 public interface ComponentActionRequestFilter
 {

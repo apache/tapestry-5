@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,10 @@ import org.apache.tapestry.beaneditor.OrderBefore;
 /**
  * Used by a component to create a default {@link BeanModel} for a particular bean class. Also
  * provides support to the model by generating validation information for individual fields.
+ * <p/>
+ * <p/>
+ * BeanModels are the basis for the {@link org.apache.tapestry.corelib.components.BeanEditor} and
+ * {@link org.apache.tapestry.corelib.components.Grid} comopnents.
  */
 public interface BeanModelSource
 {
@@ -42,6 +46,5 @@ public interface BeanModelSource
      *                                 labels)
      * @return a model
      */
-    BeanModel create(Class beanClass, boolean filterReadOnlyProperties,
-                     ComponentResources resources);
+    BeanModel create(Class beanClass, boolean filterReadOnlyProperties, ComponentResources resources);
 }

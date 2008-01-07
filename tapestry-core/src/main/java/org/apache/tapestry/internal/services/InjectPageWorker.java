@@ -50,18 +50,15 @@ public class InjectPageWorker implements ComponentClassTransformWorker
 
         if (names.isEmpty()) return;
 
-        String cacheFieldName = transformation.addInjectedField(
-                RequestPageCache.class,
-                "_requestPageCache",
-                _requestPageCache);
+        String cacheFieldName = transformation.addInjectedField(RequestPageCache.class, "_requestPageCache",
+                                                                _requestPageCache);
 
         for (String name : names)
             addInjectedPage(transformation, name, cacheFieldName);
 
     }
 
-    private void addInjectedPage(ClassTransformation transformation, String fieldName,
-                                 String cacheFieldName)
+    private void addInjectedPage(ClassTransformation transformation, String fieldName, String cacheFieldName)
     {
         InjectPage annotation = transformation.getFieldAnnotation(fieldName, InjectPage.class);
 
@@ -79,11 +76,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
 
-        builder.add(
-                "%s page = %s.get(\"%s\");",
-                Page.class.getName(),
-                cacheFieldName,
-                injectedPageName);
+        builder.addln("%s page = %s.get(\"%s\");", Page.class.getName(), cacheFieldName, injectedPageName);
 
         builder.addln("return (%s) page.getRootElement().getComponent();", fieldType);
 

@@ -19,7 +19,10 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Used to acquire bindings for component parameters.
+ * Used to acquire bindings for component parameters. The BindingSource service strips off the binding prefix
+ * to locate a {@link org.apache.tapestry.services.BindingFactory}.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeBindingSource(org.apache.tapestry.ioc.MappedConfiguration, AssetSource, BindingFactory, FieldValidatorSource, TranslatorSource)
  */
 public interface BindingSource
 {
@@ -42,8 +45,8 @@ public interface BindingSource
      * @param location      location assigned to the binding (or null if not known)
      * @return a binding
      */
-    Binding newBinding(String description, ComponentResources container,
-                       ComponentResources component, String defaultPrefix, String expression, Location location);
+    Binding newBinding(String description, ComponentResources container, ComponentResources component,
+                       String defaultPrefix, String expression, Location location);
 
     /**
      * A simpler version of
@@ -59,6 +62,5 @@ public interface BindingSource
      * @param expression    the binding
      * @return a binding
      */
-    Binding newBinding(String description, ComponentResources container, String defaultPrefix,
-                       String expression);
+    Binding newBinding(String description, ComponentResources container, String defaultPrefix, String expression);
 }

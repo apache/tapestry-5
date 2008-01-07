@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,6 +22,11 @@ import java.util.Locale;
 
 /**
  * Used to find or create an {@link Asset} with a given path.
+ * <p/>
+ * Assets are defined with a domain, and the domain is indicated by a prefix.  The two builtin domains are "context:" (for files inside
+ * the web application context) and "classpath:" for files stored on the classpath (typically, inside a JAR, such as a component library).
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeAssetSource(org.apache.tapestry.ioc.MappedConfiguration, AssetFactory, AssetFactory)
  */
 public interface AssetSource
 {

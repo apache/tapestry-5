@@ -16,11 +16,21 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ContentType;
 
+import java.io.IOException;
+
 /**
  * Public facade around internal services related to rendering a markup response.
  */
 public interface ResponseRenderer
 {
+    /**
+     * Renders a markup response by rendering the named page.
+     *
+     * @param pageName logical name of page to provide the markup
+     */
+    void renderPageMarkupResponse(String pageName) throws IOException;
+
+
     /**
      * Finds the content type for the page containing the indicated component.
      *

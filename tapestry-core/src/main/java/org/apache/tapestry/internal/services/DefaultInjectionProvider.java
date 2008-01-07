@@ -16,20 +16,20 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.services.MasterObjectProvider;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
-import org.apache.tapestry.services.MasterObjectProvider;
 
 import java.lang.annotation.Annotation;
 
 /**
  * Worker for the {@link org.apache.tapestry.ioc.annotations.Inject} annotation that delegates out to
- * the master {@link MasterObjectProvider} to access the value. This worker must be scheduled after
+ * the master {@link org.apache.tapestry.ioc.services.MasterObjectProvider} to access the value. This worker must be scheduled after
  * certain other workers, such as {@link BlockInjectionProvider} (which is keyed off a combination of
  * type and the Inject annotation).
  *
- * @see org.apache.tapestry.services.MasterObjectProvider
+ * @see org.apache.tapestry.ioc.services.MasterObjectProvider
  */
 public class DefaultInjectionProvider implements InjectionProvider
 {

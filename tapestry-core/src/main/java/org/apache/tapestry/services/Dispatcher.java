@@ -19,6 +19,8 @@ import java.io.IOException;
 /**
  * A dispatcher is responsible for recognizing an incoming request. Dispatchers form an ordered
  * chain of command, with each dispatcher responsible for recognizing requests that it can process.
+ *
+ * @see org.apache.tapestry.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry.ioc.OrderedConfiguration, ClasspathAssetAliasManager, org.apache.tapestry.internal.services.ResourceCache, org.apache.tapestry.internal.services.ResourceStreamer, PageRenderRequestHandler, ComponentActionRequestHandler, ComponentClassResolver, String)
  */
 public interface Dispatcher
 {

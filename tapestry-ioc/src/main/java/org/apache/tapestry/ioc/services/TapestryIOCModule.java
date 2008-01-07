@@ -20,7 +20,6 @@ import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.services.*;
 import org.apache.tapestry.ioc.util.TimePeriod;
-import org.apache.tapestry.services.MasterObjectProvider;
 
 import java.io.File;
 import java.lang.reflect.Array;

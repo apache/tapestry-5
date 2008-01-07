@@ -17,9 +17,9 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
+import org.apache.tapestry.ioc.services.MasterObjectProvider;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.MasterObjectProvider;
 import org.apache.tapestry.services.Request;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.isA;
@@ -36,12 +36,8 @@ public class DefaultInjectionProviderTest extends InternalBaseTestCase
         MutableComponentModel model = mockMutableComponentModel();
         Request injected = mockRequest();
 
-        expect(
-                master.provide(
-                        eq(Request.class),
-                        isA(AnnotationProvider.class),
-                        eq(locator),
-                        eq(false))).andReturn(injected);
+        expect(master.provide(eq(Request.class), isA(AnnotationProvider.class), eq(locator), eq(false))).andReturn(
+                injected);
 
         ct.injectField("myfield", injected);
 
@@ -62,12 +58,8 @@ public class DefaultInjectionProviderTest extends InternalBaseTestCase
         ClassTransformation ct = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
 
-        expect(
-                master.provide(
-                        eq(Request.class),
-                        isA(AnnotationProvider.class),
-                        eq(locator),
-                        eq(false))).andReturn(null);
+        expect(master.provide(eq(Request.class), isA(AnnotationProvider.class), eq(locator), eq(false))).andReturn(
+                null);
 
         replay();
 

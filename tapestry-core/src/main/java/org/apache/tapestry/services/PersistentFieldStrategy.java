@@ -16,6 +16,13 @@ package org.apache.tapestry.services;
 
 import java.util.Collection;
 
+/**
+ * Defines how changes to fields (within components, within pages) may have their values persisted between requests.
+ * Different implementations store the field values
+ * {@linkplain org.apache.tapestry.internal.services.SessionPersistentFieldStrategy in the session},
+ * {@linkplain org.apache.tapestry.internal.services.ClientPersistentFieldStrategy on the client}, or
+ * elsewhere.
+ */
 public interface PersistentFieldStrategy
 {
     /**
