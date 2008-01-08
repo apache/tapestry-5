@@ -95,6 +95,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         ComponentPageElement rootElement = mockComponentPageElement();
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
@@ -113,7 +114,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer);
+
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false);
@@ -136,6 +138,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         Page page = mockPage();
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
@@ -155,7 +158,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false, "biff", "bazz");
@@ -178,6 +181,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         Page page = mockPage();
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
@@ -197,7 +201,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, true);
@@ -221,6 +225,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         train_get(cache, PAGE_LOGICAL_NAME, page);
 
@@ -242,7 +247,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
@@ -334,11 +339,16 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+
+        String optimizedPath = "/optimized/path";
 
         final Holder<Link> holder = new Holder<Link>();
 
         train_getLogicalName(page, "mypage");
         train_getContextPath(request, "");
+
+        train_optimizePath(optimizer, "/mypage:myaction/1.2.3/4.5.6?t:ac=foo/bar", optimizedPath);
 
         train_getRootElement(page, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
@@ -347,11 +357,11 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         map.store(isA(Link.class), isA(ComponentInvocation.class));
 
-        train_encodeURL(response, "/mypage:myaction/1.2.3/4.5.6?t:ac=foo/bar", ENCODED);
+        train_encodeURL(response, "/optimized/path", ENCODED);
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
@@ -375,11 +385,18 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+
+        String optimizedPath = "/optimized/path";
+
+        String generatedPath = String.format("%s?%s=foo/bar", expectedURI, InternalConstants.PAGE_CONTEXT_NAME);
 
         final Holder<Link> holder = new Holder<Link>();
 
         train_getLogicalName(page, logicalPageName);
         train_getContextPath(request, contextPath);
+
+        train_optimizePath(optimizer, generatedPath, optimizedPath);
 
         train_getRootElement(page, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
@@ -388,12 +405,11 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
-        train_encodeURL(response, String.format("%s?%s=foo/bar", expectedURI, InternalConstants.PAGE_CONTEXT_NAME),
-                        ENCODED);
+        train_encodeURL(response, optimizedPath, ENCODED);
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, nestedId, eventName, false, context);

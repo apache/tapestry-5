@@ -58,7 +58,8 @@ public interface Link
 
     /**
      * Returns the URI portion of the link. When the link is created for a form, this will not
-     * include query parameters. This is the same value returned from toString().
+     * include query parameters. This is the same value returned from toString().  In some circumstances,
+     * this may be a relative URI (relative to the current Request's URI).
      *
      * @return the URI, ready to be added as an element attribute
      */
@@ -84,4 +85,11 @@ public interface Link
      */
     void setAnchor(String anchor);
 
+    /**
+     * Converts the link to a full URI, a complete path, starting with a leading slash. This is necessary
+     * in many cases for client-side JavaScript that must send a request to application via XMLHttpRequest.
+     *
+     * @return the complete URI (not abbreviated relative to the current request path)
+     */
+    String toFullURI();
 }

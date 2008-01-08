@@ -18,17 +18,17 @@ import org.apache.tapestry.ioc.test.TestBase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-public class TimePeriodTest extends TestBase
+public class TimeIntervalTest extends TestBase
 {
     @Test
     public void use_constructor()
     {
-        TimePeriod p = new TimePeriod("30 s");
+        TimeInterval p = new TimeInterval("30 s");
 
         assertEquals(p.seconds(), 30);
         assertEquals(p.milliseconds(), 30 * 1000);
 
-        assertEquals(p.toString(), "TimePeriod[30000 ms]");
+        assertEquals(p.toString(), "TimeInterval[30000 ms]");
     }
 
     @Test
@@ -36,13 +36,13 @@ public class TimePeriodTest extends TestBase
     {
         try
         {
-            TimePeriod.parseMilliseconds("30s 500mz");
+            TimeInterval.parseMilliseconds("30s 500mz");
             unreachable();
         }
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Unknown time period unit 'mz' (in '30s 500mz').  Defined units: d, h, m, ms, s.");
+                         "Unknown time interval unit 'mz' (in '30s 500mz').  Defined units: d, h, m, ms, s.");
         }
     }
 
@@ -51,12 +51,12 @@ public class TimePeriodTest extends TestBase
     {
         try
         {
-            TimePeriod.parseMilliseconds("30s z 500ms");
+            TimeInterval.parseMilliseconds("30s z 500ms");
             unreachable();
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Unexpected string 'z' (in time period '30s z 500ms').");
+            assertEquals(ex.getMessage(), "Unexpected string 'z' (in time interval '30s z 500ms').");
         }
     }
 
@@ -65,19 +65,19 @@ public class TimePeriodTest extends TestBase
     {
         try
         {
-            TimePeriod.parseMilliseconds("30s  500ms xyz");
+            TimeInterval.parseMilliseconds("30s  500ms xyz");
             unreachable();
         }
         catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(), "Unexpected string 'xyz' (in time period '30s  500ms xyz').");
+            assertEquals(ex.getMessage(), "Unexpected string 'xyz' (in time interval '30s  500ms xyz').");
         }
     }
 
     @Test(dataProvider = "mix_of_units_data")
     public void mix_of_units(String input, long expected)
     {
-        assertEquals(TimePeriod.parseMilliseconds(input), expected);
+        assertEquals(TimeInterval.parseMilliseconds(input), expected);
     }
 
     @DataProvider(name = "mix_of_units_data")

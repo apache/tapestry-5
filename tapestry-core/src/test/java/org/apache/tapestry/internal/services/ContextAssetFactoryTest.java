@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
 
 public class ContextAssetFactoryTest extends InternalBaseTestCase
 {
+
     @Test
     public void root_resource()
     {
@@ -32,7 +33,7 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context);
+        AssetFactory factory = new ContextAssetFactory(request, context, null);
 
         assertEquals(factory.getRootResource().toString(), "context:/");
 
@@ -44,20 +45,28 @@ public class ContextAssetFactoryTest extends InternalBaseTestCase
     {
         Context context = mockContext();
         Request request = mockRequest();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
 
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
         train_getContextPath(request, "/context");
 
+        train_optimizePath(optimizer, "/context/foo/Bar.txt", "/opt/path1");
+        train_optimizePath(optimizer, "/context/foo/Bar.txt", "/opt/path2");
+
         replay();
 
-        AssetFactory factory = new ContextAssetFactory(request, context);
+        AssetFactory factory = new ContextAssetFactory(request, context, optimizer);
 
         Asset asset = factory.createAsset(r);
 
         assertSame(asset.getResource(), r);
-        assertEquals(asset.toClientURL(), "/context/foo/Bar.txt");
-        assertEquals(asset.toString(), asset.toClientURL());
+        assertEquals(asset.toClientURL(), "/opt/path1");
+
+        // In real life, toString() is the same as toClientURL(), but we're testing
+        // that the optimize method is getting called, basically.
+
+        assertEquals(asset.toString(), "/opt/path2");
 
         verify();
     }

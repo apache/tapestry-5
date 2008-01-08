@@ -47,23 +47,36 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final TypeCoercer _typeCoercer;
 
+    private final RequestPathOptimizer _optimizer;
+
     private final List<LinkFactoryListener> _listeners = newThreadSafeList();
 
     private final StrategyRegistry<PassivateContextHandler> _registry;
+
 
     private interface PassivateContextHandler<T>
     {
         void handle(T result, List context);
     }
 
-    public LinkFactoryImpl(Request request, Response encoder, ComponentInvocationMap componentInvocationMap,
-                           RequestPageCache pageCache, TypeCoercer typeCoercer)
+    public LinkFactoryImpl(Request request,
+
+                           Response encoder,
+
+                           ComponentInvocationMap componentInvocationMap,
+
+                           RequestPageCache pageCache,
+
+                           TypeCoercer typeCoercer,
+
+                           RequestPathOptimizer optimizer)
     {
         _request = request;
         _response = encoder;
         _componentInvocationMap = componentInvocationMap;
         _pageCache = pageCache;
         _typeCoercer = typeCoercer;
+        _optimizer = optimizer;
 
         Map<Class, PassivateContextHandler> registrations = newMap();
 
@@ -118,7 +131,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
 
-        Link link = new LinkImpl(_response, _request.getContextPath(), invocation, forForm);
+        Link link = new LinkImpl(_response, _optimizer, _request.getContextPath(), invocation, forForm);
 
         // Now see if the page has an activation context.
 
@@ -165,7 +178,7 @@ public class LinkFactoryImpl implements LinkFactory
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
         ComponentInvocation invocation = new ComponentInvocationImpl(target, context, null);
 
-        Link link = new LinkImpl(_response, _request.getContextPath(), invocation, false);
+        Link link = new LinkImpl(_response, _optimizer, _request.getContextPath(), invocation, false);
 
         _componentInvocationMap.store(link, invocation);
 

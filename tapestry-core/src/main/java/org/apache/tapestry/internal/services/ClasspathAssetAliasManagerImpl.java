@@ -29,6 +29,8 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 {
     private final Request _request;
 
+    private final RequestPathOptimizer _optimizer;
+
     /**
      * Map from alias to path.
      */
@@ -49,9 +51,12 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
      */
     public ClasspathAssetAliasManagerImpl(Request request,
 
+                                          RequestPathOptimizer optimizer,
+
                                           Map<String, String> configuration)
     {
         _request = request;
+        _optimizer = optimizer;
 
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
@@ -87,6 +92,13 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     public String toClientURL(String resourcePath)
     {
+        String path = toCompleteClientURI(resourcePath);
+
+        return _optimizer.optimizePath(path);
+    }
+
+    private String toCompleteClientURI(String resourcePath)
+    {
         StringBuilder builder = new StringBuilder(_request.getContextPath());
         builder.append(TapestryConstants.ASSET_PATH_PREFIX);
 
@@ -117,8 +129,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
         {
             if (basePath.startsWith(alias))
             {
-                return _aliasToPathPrefix.get(alias)
-                        + basePath.substring(alias.length());
+                return _aliasToPathPrefix.get(alias) + basePath.substring(alias.length());
             }
         }
 

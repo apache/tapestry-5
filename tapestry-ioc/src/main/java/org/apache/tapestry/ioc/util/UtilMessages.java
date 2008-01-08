@@ -42,13 +42,13 @@ class UtilMessages
         return MESSAGES.get("stack-is-empty");
     }
 
-    static String invalidTimePeriodUnit(String unit, String input, Collection<String> units)
+    static String invalidTimeIntervalUnit(String unit, String input, Collection<String> units)
     {
-        return MESSAGES.format("invalid-time-period-unit", unit, input, InternalUtils.joinSorted(units));
+        return MESSAGES.format("invalid-time-interval-unit", unit, input, InternalUtils.joinSorted(units));
     }
 
-    static String invalidTimePeriodInput(String invalid, String input)
+    static String invalidTimeIntervalInput(String invalid, String input)
     {
-        return MESSAGES.format("invalid-time-period-input", invalid, input);
+        return MESSAGES.format("invalid-time-interval-input", invalid, input);
     }
 }

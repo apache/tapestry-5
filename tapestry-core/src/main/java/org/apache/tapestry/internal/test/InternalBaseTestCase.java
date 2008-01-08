@@ -557,4 +557,15 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         return newMock(PageContentTypeAnalyzer.class);
     }
+
+
+    protected final RequestPathOptimizer mockRequestPathOptimizer()
+    {
+        return newMock(RequestPathOptimizer.class);
+    }
+
+    protected final void train_optimizePath(RequestPathOptimizer optimizer, String path, String optimizedPath)
+    {
+        expect(optimizer.optimizePath(path)).andReturn(optimizedPath);
+    }
 }

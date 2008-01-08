@@ -630,7 +630,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
+        // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
+
+        assertText("//img[@id='rating:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='rating:sort']/@alt", "[Asc]");
 
         assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor", "Dance", "31",
@@ -640,14 +642,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Rating");
 
-        assertText("//img[@id='rating:sort']/@src", "/assets/tapestry/corelib/components/sort-desc.png");
+        assertText("//img[@id='rating:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
         assertText("//img[@id='rating:sort']/@alt", "[Desc]");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "Hey Blondie", "Out from Out Where");
 
         clickAndWait("link=Title");
 
-        assertText("//img[@id='title:sort']/@src", "/assets/tapestry/corelib/components/sort-asc.png");
+        assertText("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -778,8 +780,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Client Validation Demo");
 
-        assertTextSeries("//script[%d]/@src", 1, "/assets/scriptaculous/prototype.js",
-                         "/assets/scriptaculous/scriptaculous.js");
+        // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
+
+        assertTextSeries("//script[%d]/@src", 1, "assets/scriptaculous/prototype.js",
+                         "assets/scriptaculous/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,18 +23,60 @@ import java.util.Arrays;
 
 public class LinkImplTest extends InternalBaseTestCase
 {
+    private static final String OPTIMIZED = "/optimized/path";
+
     private static final String ENCODED = "*encoded*";
+
+
+    @Test
+    public void simple_redirect()
+    {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        Response response = mockResponse();
+
+        train_encodeRedirectURL(response, "/foo/bar", ENCODED);
+
+        replay();
+
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
+
+
+        assertEquals(link.toRedirectURI(), ENCODED);
+
+        verify();
+    }
+
+    @Test
+    public void to_string_same_as_to_uri()
+    {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        Response response = mockResponse();
+
+        train_optimizePath(optimizer, "/foo/bar", OPTIMIZED);
+        train_encodeURL(response, OPTIMIZED, ENCODED);
+
+        replay();
+
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
+
+
+        assertEquals(link.toString(), ENCODED);
+
+        verify();
+    }
 
     @Test
     public void url_with_parameters()
     {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
-        train_encodeURL(response, "/foo/bar?barney=rubble&fred=flintstone", ENCODED);
+        train_optimizePath(optimizer, "/foo/bar?barney=rubble&fred=flintstone", OPTIMIZED);
+        train_encodeURL(response, OPTIMIZED, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, "/foo", "bar");
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
 
         link.addParameter("fred", "flintstone");
         link.addParameter("barney", "rubble");
@@ -47,11 +89,12 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void retrieve_parameter_values()
     {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         replay();
 
-        Link link = new LinkImpl(response, "/foo", "bar");
+        Link link = new LinkImpl(response, optimizer, "", "bar");
 
         link.addParameter("fred", "flintstone");
         link.addParameter("barney", "rubble");
@@ -64,30 +107,14 @@ public class LinkImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void parameter_names_are_returned_sorted()
-    {
-        Response response = mockResponse();
-
-        replay();
-
-        Link link = new LinkImpl(response, "/foo", "bar");
-
-        link.addParameter("fred", "flintstone");
-        link.addParameter("barney", "rubble");
-
-        assertEquals(link.getParameterNames(), Arrays.asList("barney", "fred"));
-
-        verify();
-    }
-
-    @Test
     public void parameter_names_must_be_unique()
     {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
         replay();
 
-        Link link = new LinkImpl(response, "/foo", "bar");
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
 
         link.addParameter("fred", "flintstone");
         try
@@ -97,9 +124,8 @@ public class LinkImplTest extends InternalBaseTestCase
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(
-                    ex.getMessage(),
-                    "Parameter names are required to be unique.  Parameter 'fred' already has the value 'flintstone'.");
+            assertEquals(ex.getMessage(),
+                         "Parameter names are required to be unique.  Parameter 'fred' already has the value 'flintstone'.");
         }
 
         verify();
@@ -108,13 +134,15 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void to_form_URI_does_not_include_parameters()
     {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
-        train_encodeURL(response, "/foo/bar", ENCODED);
+        train_optimizePath(optimizer, "/foo/bar", OPTIMIZED);
+        train_encodeURL(response, OPTIMIZED, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, "/foo", "bar", true);
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar", true);
 
         link.addParameter("fred", "flintstone");
         link.addParameter("barney", "rubble");
@@ -144,15 +172,21 @@ public class LinkImplTest extends InternalBaseTestCase
 
     private void url_with_anchor(String anchor, String url)
     {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
-        train_encodeURL(response, url, ENCODED);
+
+        train_optimizePath(optimizer, url, OPTIMIZED);
+        train_encodeURL(response, OPTIMIZED, ENCODED);
+
 
         replay();
 
-        Link link = new LinkImpl(response, "/foo", "bar");
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
 
         link.setAnchor(anchor);
+
+        assertSame(link.getAnchor(), anchor);
 
         assertEquals(link.toURI(), ENCODED);
 
@@ -162,13 +196,16 @@ public class LinkImplTest extends InternalBaseTestCase
     @Test
     public void url_with_anchor_and_parameters()
     {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
 
-        train_encodeURL(response, "/foo/bar?barney=rubble&fred=flintstone#wilma", ENCODED);
+
+        train_optimizePath(optimizer, "/foo/bar?barney=rubble&fred=flintstone#wilma", OPTIMIZED);
+        train_encodeURL(response, OPTIMIZED, ENCODED);
 
         replay();
 
-        Link link = new LinkImpl(response, "/foo", "bar");
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
 
         link.addParameter("fred", "flintstone");
         link.addParameter("barney", "rubble");
@@ -179,4 +216,44 @@ public class LinkImplTest extends InternalBaseTestCase
         verify();
     }
 
+
+    @Test
+    public void force_full_uri()
+    {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        Response response = mockResponse();
+
+
+        train_encodeURL(response, "/ctx/foo", ENCODED);
+
+        replay();
+
+
+        Link link = new LinkImpl(response, optimizer, "/ctx",
+                                 new ComponentInvocationImpl(new OpaqueConstantTarget("foo"), new String[0], null),
+                                 false);
+
+        assertEquals(link.toFullURI(), ENCODED);
+
+
+        verify();
+    }
+
+    @Test
+    public void parameter_names_are_returned_sorted()
+    {
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        Response response = mockResponse();
+
+        replay();
+
+        Link link = new LinkImpl(response, optimizer, "/foo", "bar");
+
+        link.addParameter("fred", "flintstone");
+        link.addParameter("barney", "rubble");
+
+        assertEquals(link.getParameterNames(), Arrays.asList("barney", "fred"));
+
+        verify();
+    }
 }

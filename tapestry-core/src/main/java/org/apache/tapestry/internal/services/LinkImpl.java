@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Link;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.Response;
 
 import java.util.List;
@@ -24,9 +25,13 @@ import java.util.List;
  */
 public class LinkImpl implements Link
 {
-    private final Response _response;
+    private static final int BUFFER_SIZE = 100;
 
     private final String _contextPath;
+
+    private final Response _response;
+
+    private final RequestPathOptimizer _optimizer;
 
     private final ComponentInvocation _invocation;
 
@@ -34,21 +39,33 @@ public class LinkImpl implements Link
 
     private String _anchor;
 
-    public LinkImpl(Response encoder, String contextPath, String targetPath)
+    LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath, String targetPath)
     {
-        this(encoder, contextPath, targetPath, false);
+        this(response, optimizer, contextPath, targetPath, false);
     }
 
-    public LinkImpl(Response encoder, String contextPath, String targetPath, boolean forForm)
+    LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath, String targetPath, boolean forForm)
     {
-        this(encoder, contextPath,
+        this(response, optimizer, contextPath,
              new ComponentInvocationImpl(new OpaqueConstantTarget(targetPath), new String[0], null), forForm);
     }
 
-    public LinkImpl(Response encoder, String contextPath, ComponentInvocation invocation, boolean forForm)
+    /**
+     * Creates a new Link.  Links may be full or optimized; optimization involves creating a relative URI from the
+     * request's URI to the Link's URI.
+     *
+     * @param response    used to encode the response when necessary
+     * @param optimizer   optimizes complete URLs to appropriate relative URLs
+     * @param contextPath path for the context {@link org.apache.tapestry.services.Request#getContextPath()}
+     * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry.test.PageTester})
+     * @param forForm     if true, then a Form has requested the Link, in which case, the link should not generated query parameters directly (they will
+     */
+    public LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath,
+                    ComponentInvocation invocation, boolean forForm)
     {
+        _response = response;
+        _optimizer = optimizer;
         _contextPath = contextPath;
-        _response = encoder;
         _invocation = invocation;
         _forForm = forForm;
     }
@@ -70,26 +87,36 @@ public class LinkImpl implements Link
 
     public String toURI()
     {
-        return _response.encodeURL(buildURI());
+        return _response.encodeURL(buildURI(false));
     }
 
-    private String buildURI()
+    public String toFullURI()
     {
-        StringBuilder builder = new StringBuilder();
+        return _response.encodeURL(buildURI(true));
+    }
+
+
+    private String buildURI(boolean full)
+    {
+        StringBuilder builder = new StringBuilder(BUFFER_SIZE);
         builder.append(_contextPath);
         builder.append("/");
         builder.append(_invocation.buildURI(_forForm));
-        if (_anchor != null && _anchor.length() > 0)
+
+        if (InternalUtils.isNonBlank(_anchor))
         {
             builder.append("#");
             builder.append(_anchor);
         }
-        return builder.toString();
+
+        String fullURI = builder.toString();
+
+        return full ? fullURI : _optimizer.optimizePath(fullURI);
     }
 
     public String toRedirectURI()
     {
-        return _response.encodeRedirectURL(buildURI());
+        return _response.encodeRedirectURL(buildURI(true));
     }
 
     public String getAnchor()
@@ -100,11 +127,6 @@ public class LinkImpl implements Link
     public void setAnchor(String anchor)
     {
         _anchor = anchor;
-    }
-
-    public ComponentInvocation getInvocation()
-    {
-        return _invocation;
     }
 
     @Override
