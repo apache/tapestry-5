@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,31 +43,6 @@ public interface ComponentResourcesCommon extends Locatable
      */
     String getNestedId();
 
-    /**
-     * Creates a component action request link as a callback for this component. The event type
-     * and context (as well as the page name and nested component id) will be encoded into a URL. A request for the
-     * URL will {@linkplain #triggerEvent(String, Object[], ComponentEventHandler)}  trigger} the named event
-     * on the component.
-     *
-     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only letters, numbers and the underscore).
-     * @param forForm   if true, the link will be used as the eventType for an HTML form submission, which
-     *                  may affect what information is encoded into the link
-     * @param context   additional objects to be encoded into the path portion of the link; each is
-     *                  converted to a string and URI encoded
-     * @return link object for the callback
-     */
-    Link createActionLink(String eventType, boolean forForm, Object... context);
-
-    /**
-     * Creates a render request link to a specific page.
-     *
-     * @param pageName the logical name of the page to link to
-     * @param override if true, the context is used even if empty (normally, the target page is allowed
-     *                 to passivate, providing a context, when the provided context is empty)
-     * @param context  the activation context for the page. If omitted, the activation context is
-     *                 obtained from the target paget
-     */
-    Link createPageLink(String pageName, boolean override, Object... context);
 
     /**
      * Returns a string consisting of the logical name of the containing page, and the
@@ -85,7 +60,7 @@ public interface ComponentResourcesCommon extends Locatable
      * Triggers a component event. A search for an event handling method will occur, first in the
      * component, then its container, and so on. When a matching event handler method is located, it
      * is invoked. If the method returns a value, the value is passed to the handler (if handler is
-     * null, then it is an error for a method to return a non-null vavlue).
+     * null, then it is an error for a method to return a non-null value).
      * <p/>
      * Resolution of event type to event handler methods is case insensitive.
      *

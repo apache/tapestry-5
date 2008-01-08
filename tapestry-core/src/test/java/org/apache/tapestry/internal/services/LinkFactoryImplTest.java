@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -329,7 +329,6 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentPageElement element = mockComponentPageElement();
         Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
         LinkFactoryListener listener = mockLinkFactoryListener();
@@ -338,10 +337,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         final Holder<Link> holder = new Holder<Link>();
 
-        train_getContainingPage(element, page);
         train_getLogicalName(page, "mypage");
         train_getContextPath(request, "");
-        train_getNestedId(element, null);
 
         train_getRootElement(page, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
@@ -357,7 +354,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
         factory.addListener(listener);
 
-        Link link = factory.createActionLink(element, "myaction", false, "1.2.3", "4.5.6");
+        Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
 
         assertEquals(link.toURI(), ENCODED);
         assertSame(link, holder.get());
@@ -373,19 +370,16 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     {
         Request request = mockRequest();
         Response response = mockResponse();
-        ComponentPageElement element = mockComponentPageElement();
-        Page page = mockPage();
         ComponentPageElement rootElement = mockComponentPageElement();
+        Page page = mockPage();
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
 
         final Holder<Link> holder = new Holder<Link>();
 
-        train_getContainingPage(element, page);
         train_getLogicalName(page, logicalPageName);
         train_getContextPath(request, contextPath);
-        train_getNestedId(element, nestedId);
 
         train_getRootElement(page, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
@@ -402,7 +396,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer);
         factory.addListener(listener);
 
-        Link link = factory.createActionLink(element, eventName, false, context);
+        Link link = factory.createActionLink(page, nestedId, eventName, false, context);
 
         assertEquals(link.toURI(), ENCODED);
         assertSame(link, holder.get());

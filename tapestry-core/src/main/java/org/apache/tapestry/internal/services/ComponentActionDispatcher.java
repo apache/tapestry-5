@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  * <p/>
  * <p/>
  *
- * @see org.apache.tapestry.internal.services.LinkFactory#createActionLink(org.apache.tapestry.internal.structure.ComponentPageElement, String, boolean, Object[])
+ * @see LinkFactory#createActionLink(org.apache.tapestry.internal.structure.Page, String, String,boolean, Object...)
  */
 public class ComponentActionDispatcher implements Dispatcher
 {

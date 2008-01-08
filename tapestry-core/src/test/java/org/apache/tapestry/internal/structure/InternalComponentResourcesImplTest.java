@@ -24,6 +24,7 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.ParameterModel;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.testng.annotations.Test;
 
 public class InternalComponentResourcesImplTest extends InternalBaseTestCase
@@ -38,12 +39,14 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         TypeCoercer coercer = mockTypeCoercer();
         ComponentModel model = mockComponentModel();
 
+        train_getNestedId(element, "foo.bar");
+
         train_getModel(ins, model);
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, coercer, null,
-                                                                                  null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, coercer,
+                                                                                  null, null);
 
         resources.renderInformalParameters(writer);
 
@@ -62,14 +65,16 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ParameterModel pmodel = mockParameterModel();
         Binding binding = mockBinding();
 
+        train_getNestedId(element, "foo.bar");
+
         train_getModel(ins, model);
 
         train_getParameterModel(model, "fred", pmodel);
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, coercer, null,
-                                                                                  null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, coercer,
+                                                                                  null, null);
 
         resources.bindParameter("fred", binding);
 
@@ -91,6 +96,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Object rawValue = new Object();
         String convertedValue = "*converted*";
 
+        train_getNestedId(element, "foo.bar");
+
         train_getModel(ins, model);
 
         train_getParameterModel(model, "fred", null);
@@ -103,8 +110,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, coercer, null,
-                                                                                  null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, coercer,
+                                                                                  null, null);
 
         resources.bindParameter("fred", binding);
 
@@ -123,13 +130,15 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         Object value = new Object();
 
+        train_getNestedId(element, "foo.bar");
+
         train_getModel(ins, model);
 
         train_isRendering(element, true);
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, null, null, null);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null, null);
 
         resources.storeRenderVariable("myRenderVar", value);
 
@@ -151,6 +160,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement element = mockComponentPageElement();
 
+        train_getNestedId(element, "foo.bar");
+
         train_getModel(ins, model);
 
         train_isRendering(element, true);
@@ -160,7 +171,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, null, null, null);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null, null);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -187,6 +198,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement element = mockComponentPageElement();
 
+        train_getNestedId(element, "bar");
+
         train_getModel(ins, model);
 
         train_isRendering(element, true);
@@ -196,7 +209,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, null, null, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null,
+                                                                                  null);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -225,6 +239,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement element = mockComponentPageElement();
 
+        train_getNestedId(element, "foo.bar");
+
         train_getModel(ins, model);
 
         train_isRendering(element, false);
@@ -233,7 +249,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(element, null, ins, null, null, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null,
+                                                                                  null);
 
 
         try
@@ -246,6 +263,32 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
             assertEquals(ex.getMessage(),
                          "Component Foo.bar is not rendering, so render variable 'fred' may not be updated.");
         }
+
+        verify();
+    }
+
+    @Test
+    public void add_page_lifecycle_listener()
+    {
+        Component component = mockComponent();
+        Instantiator ins = mockInstantiator(component);
+        ComponentModel model = mockComponentModel();
+        ComponentPageElement element = mockComponentPageElement();
+        Page page = mockPage();
+        PageLifecycleListener listener = newMock(PageLifecycleListener.class);
+
+        train_getNestedId(element, "foo.bar");
+
+        train_getModel(ins, model);
+
+        page.addLifecycleListener(listener);
+
+        replay();
+
+        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, ins, null, null,
+                                                                                  null);
+
+        resources.addPageLifecycleListener(listener);
 
         verify();
     }

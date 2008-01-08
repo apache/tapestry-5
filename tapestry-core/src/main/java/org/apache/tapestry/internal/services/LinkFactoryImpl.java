@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -103,20 +103,18 @@ public class LinkFactoryImpl implements LinkFactory
         _listeners.add(listener);
     }
 
-    public Link createActionLink(ComponentPageElement component, String eventType, boolean forForm, Object... context)
+    public Link createActionLink(Page page, String nestedId, String eventType, boolean forForm, Object... context)
     {
+        notNull(page, "page");
         notBlank(eventType, "action");
 
-        Page containingPage = component.getContainingPage();
+        String logicalPageName = page.getLogicalName();
 
-        String logicalPageName = containingPage.getLogicalName();
-
-        ActionLinkTarget target = new ActionLinkTarget(eventType, logicalPageName, component
-                .getNestedId());
+        ActionLinkTarget target = new ActionLinkTarget(eventType, logicalPageName, nestedId);
 
         String[] contextStrings = toContextStrings(context);
 
-        String[] activationContext = collectActivationContextForPage(containingPage);
+        String[] activationContext = collectActivationContextForPage(page);
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
 
@@ -153,7 +151,7 @@ public class LinkFactoryImpl implements LinkFactory
 
     }
 
-    public Link createPageLink(final Page page, boolean override, Object... activationContext)
+    public Link createPageLink(Page page, boolean override, Object... activationContext)
     {
         notNull(page, "page");
 

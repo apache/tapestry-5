@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -118,14 +118,14 @@ public interface Page
     /**
      * Creates a link that will trigger behavior in a component within the page.
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#createActionLink(String, boolean, Object[])
+     * @see org.apache.tapestry.ComponentResources#createActionLink(String, boolean, Object[])
      */
-    Link createActionLink(ComponentPageElement element, String eventType, boolean forForm, Object... context);
+    Link createActionLink(String nestedId, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a link to the named page.
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#createPageLink(String, boolean, Object[])
+     * @see org.apache.tapestry.ComponentResources#createPageLink(String, boolean, Object[])
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 
@@ -146,7 +146,7 @@ public interface Page
      * @param fieldName the name of the persistent field
      * @return the value, or null if no value is stored
      */
-    Object getFieldChange(ComponentPageElement element, String fieldName);
+    Object getFieldChange(String nestedId, String fieldName);
 
     /**
      * Called as a component initially starts to render itself. This is used to check for the cases
