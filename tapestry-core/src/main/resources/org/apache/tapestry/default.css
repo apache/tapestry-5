@@ -341,7 +341,7 @@ DIV.t-autocomplete-menu LI.selected {
 DIV.t-error-bevel SPAN {
     background: transparent url( 'error-bevel-left.png' ) no-repeat;
     display: block;
-    line-height: 33px;
+    line-height: 28px;
     margin-left: 0px;
     padding: 0px 5px 10px 22px;
 }

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,8 +59,7 @@ public class AssetDispatcher implements Dispatcher
         // Remember that the request path does not include the context path, so we can simply start
         // looking for the asset path prefix right off the bat.
 
-        if (!path.startsWith(TapestryConstants.ASSET_PATH_PREFIX))
-            return false;
+        if (!path.startsWith(TapestryConstants.ASSET_PATH_PREFIX)) return false;
 
         // ClassLoaders like their paths to start with a leading slash.
 
@@ -68,8 +67,7 @@ public class AssetDispatcher implements Dispatcher
 
         Resource resource = findResourceAndValidateDigest(response, resourcePath);
 
-        if (resource == null)
-            return true;
+        if (resource == null) return true;
 
         URL url = resource.toURL();
 
@@ -80,10 +78,23 @@ public class AssetDispatcher implements Dispatcher
             return true;
         }
 
-        long ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE_HEADER);
+        long ifModifiedSince = 0;
+
+        try
+        {
+            ifModifiedSince = request.getDateHeader(IF_MODIFIED_SINCE_HEADER);
+        }
+        catch (IllegalArgumentException ex)
+        {
+            // Simulate the header being missing if it is poorly formatted.
+
+            ifModifiedSince = -1;
+        }
+
         if (ifModifiedSince > 0)
         {
             long modified = _resourceCache.getTimeModified(resource);
+
             if (ifModifiedSince >= modified)
             {
                 response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
@@ -103,13 +114,11 @@ public class AssetDispatcher implements Dispatcher
      *         digest is invalid (and an error has been sent back to the client)
      * @throws IOException
      */
-    private Resource findResourceAndValidateDigest(Response response, String resourcePath)
-            throws IOException
+    private Resource findResourceAndValidateDigest(Response response, String resourcePath) throws IOException
     {
         Resource resource = new ClasspathResource(resourcePath);
 
-        if (!_resourceCache.requiresDigest(resource))
-            return resource;
+        if (!_resourceCache.requiresDigest(resource)) return resource;
 
         String file = resource.getFile();
 
