@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -225,6 +225,36 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         train_getTimeModified(cache, SMILEY, now - 1000);
 
         response.sendError(HttpServletResponse.SC_NOT_MODIFIED, "");
+
+        replay();
+
+        Dispatcher d = new AssetDispatcher(streamer, aliasManager, cache);
+
+        assertTrue(d.dispatch(request, response));
+
+        verify();
+    }
+
+    @Test
+    public void if_modified_since_header_not_readable() throws Exception
+    {
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ClasspathAssetAliasManager aliasManager = mockClasspathAssetAliasManager();
+        ResourceCache cache = mockResourceCache();
+        ResourceStreamer streamer = mockResourceStreamer();
+        long now = System.currentTimeMillis();
+
+        train_getPath(request, SMILEY_CLIENT_URL);
+
+        train_toResourcePath(aliasManager, SMILEY_CLIENT_URL, SMILEY_PATH);
+
+        train_requiresDigest(cache, SMILEY, false);
+
+        expect(request.getDateHeader(AssetDispatcher.IF_MODIFIED_SINCE_HEADER)).andThrow(
+                new IllegalArgumentException("For testing."));
+
+        streamer.streamResource(SMILEY);
 
         replay();
 
