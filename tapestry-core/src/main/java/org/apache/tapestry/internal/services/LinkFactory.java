@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 
 /**
@@ -29,15 +28,15 @@ public interface LinkFactory
      * Creates a stateful action link. Action links are built for components. Action links are
      * encoded by the current request (that is, bound to the current request's session, if any).
      *
-     * @param component the component for which an action link is to be generated
+     * @param page
+     * @param nestedId
      * @param eventType the type of event to trigger
      * @param forForm   true if the link is for a form, false otherwise
      * @param context   Additional path data, each value will be converted to a string and appended to the
-     *                  URI
-     * @return a link
-     * @see org.apache.tapestry.ComponentResourcesCommon#createActionLink(String, boolean, Object[])
+     *                  URI @return a link
+     * @see org.apache.tapestry.ComponentResources#createActionLink(String, boolean, Object[])
      */
-    Link createActionLink(ComponentPageElement component, String eventType, boolean forForm, Object... context);
+    Link createActionLink(Page page, String nestedId, String eventType, boolean forForm, Object... context);
 
     /**
      * Creates a render link for the page. If an activation context is supplied then that context is
@@ -53,7 +52,7 @@ public interface LinkFactory
      * @param override          if true, then the provided activation context is always used even if empty
      * @param activationContext the activation context for the page
      * @return a link
-     * @see org.apache.tapestry.ComponentResourcesCommon#createPageLink(String, boolean, Object[])
+     * @see org.apache.tapestry.ComponentResources#createPageLink(String, boolean, Object[])
      */
     Link createPageLink(Page page, boolean override, Object... activationContext);
 
@@ -72,7 +71,7 @@ public interface LinkFactory
      * Adds a listener, to be notified any time an action or render link is created; this allows the
      * listener to modify the link (by adding additional query parameters to the link).
      *
-     * @param listener
+     * @param listener to add
      */
     void addListener(LinkFactoryListener listener);
 }

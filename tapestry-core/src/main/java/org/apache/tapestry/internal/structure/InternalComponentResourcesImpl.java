@@ -30,6 +30,7 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ComponentMessagesSource;
 import org.slf4j.Logger;
@@ -44,6 +45,10 @@ import java.util.Map;
  */
 public class InternalComponentResourcesImpl implements InternalComponentResources
 {
+    private final Page _page;
+
+    private final String _nestedId;
+
     private final ComponentModel _componentModel;
 
     private final ComponentPageElement _element;
@@ -66,17 +71,20 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     // Case insensitive
     private Map<String, Object> _renderVariables;
 
-    public InternalComponentResourcesImpl(ComponentPageElement element, ComponentResources containerResources,
-                                          Instantiator componentInstantiator, TypeCoercer typeCoercer,
-                                          ComponentMessagesSource messagesSource,
+    public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
+                                          ComponentResources containerResources, Instantiator componentInstantiator,
+                                          TypeCoercer typeCoercer, ComponentMessagesSource messagesSource,
                                           ComponentClassCache componentClassCache)
     {
+        _page = page;
         _element = element;
         _containerResources = containerResources;
         _componentClassCache = componentClassCache;
         _componentModel = componentInstantiator.getModel();
         _typeCoercer = typeCoercer;
         _messagesSource = messagesSource;
+
+        _nestedId = _element.getNestedId();
 
         _component = componentInstantiator.newInstance(this);
     }
@@ -104,7 +112,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Object getFieldChange(String fieldName)
     {
-        return _element.getFieldChange(fieldName);
+        return _page.getFieldChange(_nestedId, fieldName);
     }
 
     public String getId()
@@ -114,18 +122,25 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public boolean hasFieldChange(String fieldName)
     {
-        return _element.hasFieldChange(fieldName);
+        return getFieldChange(fieldName) != null;
     }
 
+    /**
+     * Delegates to the
+     * {@link Page#createActionLink(String, String, boolean, Object[])} on the containing page.
+     * Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every
+     * component page element).
+     */
     public Link createActionLink(String action, boolean forForm, Object... context)
     {
-        return _element.createActionLink(action, forForm, context);
+        return _page.createActionLink(_nestedId, action, forForm, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return _element.createPageLink(pageName, override, context);
+        return _page.createPageLink(pageName, override, context);
     }
+
 
     public String getCompleteId()
     {
@@ -178,7 +193,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     {
         try
         {
-            _element.persistFieldChange(this, fieldName, newValue);
+            _page.persistFieldChange(this, fieldName, newValue);
         }
         catch (Exception ex)
         {
@@ -332,7 +347,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public void queueRender(RenderQueue queue)
     {
-        _element.queueRender(queue);
+        queue.push(_element);
     }
 
     public Block getBlock(String blockId)
@@ -410,5 +425,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public void postRenderCleanup()
     {
         if (_renderVariables != null) _renderVariables.clear();
+    }
+
+    public void addPageLifecycleListener(PageLifecycleListener listener)
+    {
+        _page.addLifecycleListener(listener);
     }
 }

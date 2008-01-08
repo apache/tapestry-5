@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.structure;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.InternalComponentResourcesCommon;
@@ -24,7 +23,6 @@ import org.apache.tapestry.model.ParameterModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentEvent;
 import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.PersistentFieldManager;
 
 /**
  * Extended version of {@link org.apache.tapestry.internal.structure.PageElement} for elements that
@@ -114,12 +112,4 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * @return the default binding prefix, or null
      */
     String getDefaultBindingPrefix(String parameterName);
-
-    /**
-     * Posts a change to a persistent field. If the component is still loading, then this change is
-     * ignored. Otherwise, it is propogated, via the
-     * {@link Page#persistFieldChange(ComponentResources, String, Object) page} to the
-     * {@link PersistentFieldManager#postChange(String, ComponentResources, String, Object) PersistentFieldManager}.
-     */
-    void persistFieldChange(ComponentResources resources, String fieldName, Object newValue);
 }

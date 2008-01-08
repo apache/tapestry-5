@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -151,9 +151,9 @@ public class PageImpl implements Page
         return _rootElement.getLogger();
     }
 
-    public Link createActionLink(ComponentPageElement element, String eventType, boolean forForm, Object... context)
+    public Link createActionLink(String nestedId, String eventType, boolean forForm, Object... context)
     {
-        return _linkFactory.createActionLink(element, eventType, forForm, context);
+        return _linkFactory.createActionLink(this, nestedId, eventType, forForm, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
@@ -166,11 +166,11 @@ public class PageImpl implements Page
         _persistentFieldManager.postChange(_logicalPageName, resources, fieldName, newValue);
     }
 
-    public Object getFieldChange(ComponentPageElement element, String fieldName)
+    public Object getFieldChange(String nestedId, String fieldName)
     {
         if (_fieldBundle == null) _fieldBundle = _persistentFieldManager.gatherChanges(_logicalPageName);
 
-        return _fieldBundle.getValue(element.getNestedId(), fieldName);
+        return _fieldBundle.getValue(nestedId, fieldName);
     }
 
     public void decrementDirtyCount()

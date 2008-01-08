@@ -529,11 +529,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         ComponentResources containerResources = container == null ? null : container
                 .getComponentResources();
 
-        _coreResources = new InternalComponentResourcesImpl(this, containerResources, instantiator, _typeCoercer,
-                                                            _messagesSource, _componentClassCache);
-
-        _coreComponent = _coreResources.getComponent();
-
         String pageName = _page.getLogicalName();
 
         // A page (really, the root component of a page) does not have a container.
@@ -563,6 +558,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 _completeId = container.getCompleteId() + "." + caselessId;
             }
         }
+
+        _coreResources = new InternalComponentResourcesImpl(_page, this, containerResources, instantiator, _typeCoercer,
+                                                            _messagesSource, _componentClassCache);
+
+        _coreComponent = _coreResources.getComponent();
     }
 
     /**
@@ -598,7 +598,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String mixinClassName = instantiator.getModel().getComponentClassName();
         String mixinName = TapestryInternalUtils.lastTerm(mixinClassName);
 
-        InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(this, _coreResources,
+        InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(_page, this, _coreResources,
                                                                                       instantiator, _typeCoercer,
                                                                                       _messagesSource,
                                                                                       _componentClassCache);
@@ -750,21 +750,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         verifyRequiredParametersAreBound();
     }
 
-    /**
-     * Delegates to the
-     * {@link Page#createActionLink(ComponentPageElement, String, boolean, Object[]) the containing page}.
-     * Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every
-     * component page element).
-     */
-    public Link createActionLink(String action, boolean forForm, Object... context)
-    {
-        return _page.createActionLink(this, action, forForm, context);
-    }
-
-    public Link createPageLink(String pageName, boolean override, Object... context)
-    {
-        return _page.createPageLink(pageName, override, context);
-    }
 
     public void enqueueBeforeRenderBody(RenderQueue queue)
     {
@@ -809,10 +794,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return embeddedElement;
     }
 
-    public Object getFieldChange(String fieldName)
-    {
-        return _page.getFieldChange(this, fieldName);
-    }
 
     public String getId()
     {
@@ -871,11 +852,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return result;
     }
 
-    public boolean hasFieldChange(String fieldName)
-    {
-        return getFieldChange(fieldName) != null;
-    }
-
     /**
      * Invokes a callback on the component instances (the core component plus any mixins).
      *
@@ -913,14 +889,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public boolean isRendering()
     {
         return _rendering;
-    }
-
-    public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)
-    {
-        // While loading the page (i.e., when setting field defaults), ignore these
-        // changes.
-
-        if (_loaded) _page.persistFieldChange(resources, fieldName, newValue);
     }
 
     /**
@@ -1019,11 +987,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     public String getElementName()
     {
         return _elementName;
-    }
-
-    public void queueRender(RenderQueue queue)
-    {
-        queue.push(this);
     }
 
     public Block getBlock(String id)

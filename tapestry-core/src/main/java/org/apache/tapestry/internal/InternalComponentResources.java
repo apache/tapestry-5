@@ -16,15 +16,36 @@ package org.apache.tapestry.internal;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.PersistentFieldManager;
 
 /**
  * An extension of {@link org.apache.tapestry.ComponentResources} that represents additional methods
- * that are private to the framework and not exposed in any public APIs. Ideally, there will not be
- * any need for this interface (we'll see as we go).
+ * that are private to the framework and not exposed in any public APIs.
  */
 public interface InternalComponentResources extends ComponentResources, InternalComponentResourcesCommon
 {
+    /**
+     * Get the current persisted value of the field.
+     *
+     * @param fieldName the name of the field to access
+     * @return the value stored for the field, or null if no value is currently stored
+     */
+    Object getFieldChange(String fieldName);
+
+    /**
+     * Checks to see if there is a value stored for the indicated field.
+     */
+    boolean hasFieldChange(String fieldName);
+
+    /**
+     * Posts a change to a persistent field. If the component is still loading, then this change is
+     * ignored. Otherwise, it is propagated, via the
+     * {@link Page#persistFieldChange(org.apache.tapestry.ComponentResources, String, Object) page}
+     * to the {@link PersistentFieldManager}.
+     */
+    void persistFieldChange(String fieldName, Object newValue);
+
     /**
      * Reads the value of a parameter, via the parameter's {@link org.apache.tapestry.Binding}.
      *
@@ -61,20 +82,17 @@ public interface InternalComponentResources extends ComponentResources, Internal
      * aggressively than variant bindings.
      *
      * @param parameterName the name of parameter to check for invariance
-     * @return
+     * @return true if the binding is an invariant, false if the binding has no fixed value
      */
     boolean isInvariant(String parameterName);
-
-    /**
-     * Posts a change to a persistent field. If the component is still loading, then this change is
-     * ignored. Otherwise, it is propagated, via the
-     * {@link Page#persistFieldChange(org.apache.tapestry.ComponentResources, String, Object) page}
-     * to the {@link PersistentFieldManager}.
-     */
-    void persistFieldChange(String fieldName, Object newValue);
 
     /**
      * Allows the resources to cleanup any render-time only data.
      */
     void postRenderCleanup();
+
+    /**
+     * Invoked to make the receiver queue itself to be rendered.
+     */
+    void queueRender(RenderQueue queue);
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.runtime.PageLifecycleListener;
 
 /**
  * Provides a component instance with the resources provided by the framework. In many
@@ -144,4 +145,36 @@ public interface ComponentResources extends ComponentResourcesCommon
      * @throws IllegalStateException if the component is not currently rendering
      */
     void storeRenderVariable(String name, Object value);
+
+    /**
+     * Adds a listener object that will be notified about page lifecycle events.
+     */
+    void addPageLifecycleListener(PageLifecycleListener listener);
+
+
+    /**
+     * Creates a component action request link as a callback for this component. The event type
+     * and context (as well as the page name and nested component id) will be encoded into a URL. A request for the
+     * URL will {@linkplain #triggerEvent(String, Object[], ComponentEventHandler)}  trigger} the named event
+     * on the component.
+     *
+     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only letters, numbers and the underscore).
+     * @param forForm   if true, the link will be used as the eventType for an HTML form submission, which
+     *                  may affect what information is encoded into the link
+     * @param context   additional objects to be encoded into the path portion of the link; each is
+     *                  converted to a string and URI encoded
+     * @return link object for the callback
+     */
+    Link createActionLink(String eventType, boolean forForm, Object... context);
+
+    /**
+     * Creates a render request link to a specific page.
+     *
+     * @param pageName the logical name of the page to link to
+     * @param override if true, the context is used even if empty (normally, the target page is allowed
+     *                 to passivate, providing a context, when the provided context is empty)
+     * @param context  the activation context for the page. If omitted, the activation context is
+     *                 obtained from the target paget
+     */
+    Link createPageLink(String pageName, boolean override, Object... context);
 }
