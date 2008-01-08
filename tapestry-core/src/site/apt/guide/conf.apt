@@ -74,17 +74,24 @@ Configuring Tapestry
   
 * Configuration Symbols
 
-  Tapestry may also be configured via {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/symbols.html}symbols}}.  A certain number of built-in services
+  Tapestry may also be configured via {{{../../tapestry-ioc/symbols.html}symbols}}.  A certain number of built-in services
   (some of which are not even public) are configured via symbols.  These symbols can be overridden
-  by contributing to the tapestry.ioc.ApplicationDefaults service configuration, or on the command line
+  by contributing to the ApplicationDefaults service configuration, or on the command line
   by defining JVM System Properties with the -D command line option.
+
+  These symbols are always defined in terms of strings, that are coerced to the appropriate type (a number,
+  a boolean, etc.).  Of special note are <time intervals>, which are specified in a
+  {{{../../apidocs/org/apache/tapestry/ioc/util/TimeInterval.html}particular format}}.
+
   
   [tapestry.default-cookie-max-age]
-    The default age, in seconds, that cookies created by Tapestry will be kept in the client web browser.
+    The default time period that cookies created by Tapestry will be kept in the client web browser.
     The dfault value is equal to one week. 
     
     Primarily, this is used with a cookie that exists 
     to track the preferred user locale.
+
+    The default is "7 d" (that is, seven days).
 
   [tapestry.default-stylesheet]
     The default stylesheet automatically injected into every rendered HTML page.  Many Tapestry components assume that
@@ -95,11 +102,25 @@ Configuring Tapestry
     The default is org/apache/tapestry/default.css, stored on the classpath.
   
   [tapestry.file-check-interval]
-    Time (in milliseconds) between file system checks. During a file system check, only a single thread is active (all others
+    Time period between file system checks. During a file system check, only a single thread is active (all others
     are blocked) and any files loaded are checked for changes (this is part of {{{reload.html}automatic component reloading}}).
 
-    The default is 1000 (one second),  and is usually overridden with a higher value in production (say, between one and five minutes).
-    
+    The default is "1 s" (one second),  and is usually overridden with a higher value in production (say, between one and five minutes).
+
+  [tapestry.file-check-update-timeout]
+    Time period that Tapestry will wait to obtain the exclusive lock needed for a file check. The default is "50 ms" (50 milliseconds).
+
+    If the exclusive lock can't be obtained in that amount of time, the request will proceeed normally (without the check),
+    but each successive request will attempt to get the lock and perform the check until successful.
+
+  [tapestry.force-full-uris]
+     A flag (true or false). When false (the default), Tapestry will attempt to optimize URLs that it generates, using
+     relative URLs when such URLs are shorter than complete URLs.  You will see some savings when you make generous
+     use of libraries, sub-folders and page activation contexts ... otherwise, no significant difference.
+
+     When true, all URLs will be complete URLs (including the
+     context path, and the complete path for the request).
+
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
     to use a different version of the script.aculo.us library. Tapestry's default version is 1.7.0 (including Prototype 1.5.0).

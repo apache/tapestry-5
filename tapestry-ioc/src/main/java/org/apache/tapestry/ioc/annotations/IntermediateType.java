@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 /**
  * Used to guide Tapestry when coercing from a raw type to a field or parameter type, by forcing
  * Tapestry to coerce to the intermediate type.  This was introduced to allow coercion from
- * string to a time period (in milliseconds) via {@link org.apache.tapestry.ioc.util.TimePeriod}.
+ * string to a time period (in milliseconds) via {@link org.apache.tapestry.ioc.util.TimeInterval}.
  *
  * @see org.apache.tapestry.ioc.annotations.Value
  * @see org.apache.tapestry.ioc.annotations.Symbol

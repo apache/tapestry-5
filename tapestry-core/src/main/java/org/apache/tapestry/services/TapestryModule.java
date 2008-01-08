@@ -37,7 +37,7 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.apache.tapestry.ioc.util.TimePeriod;
+import org.apache.tapestry.ioc.util.TimeInterval;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
@@ -114,6 +114,7 @@ public final class TapestryModule
         binder.bind(AjaxPartialResponseRenderer.class, AjaxPartialResponseRendererImpl.class);
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
+        binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -477,11 +478,11 @@ public final class TapestryModule
                                          final RequestExceptionHandler exceptionHandler,
 
                                          // @Inject not needed because its a long, not a String
-                                         @Symbol("tapestry.file-check-interval") @IntermediateType(TimePeriod.class)
+                                         @Symbol("tapestry.file-check-interval") @IntermediateType(TimeInterval.class)
                                          long checkInterval,
 
                                          @Symbol("tapestry.file-check-update-timeout")
-                                         @IntermediateType(TimePeriod.class)
+                                         @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
                                          LocalizationSetter localizationSetter)
@@ -1696,6 +1697,8 @@ public final class TapestryModule
 
         configuration.add("tapestry.default-stylesheet", "org/apache/tapestry/default.css");
 
+        configuration.add(TapestryConstants.FORCE_FULL_URIS_SYMBOL, "false");
+
 // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
 // support a new version, we create a new folder, and update the path entry. We can then
 // delete the old version folder (or keep it around). This should be more manageable than
@@ -1804,9 +1807,7 @@ public final class TapestryModule
     }
 
     @Marker(ClasspathProvider.class)
-    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache,
-
-                                                   ClasspathAssetAliasManager aliasManager)
+    public AssetFactory buildClasspathAssetFactory(ResourceCache resourceCache, ClasspathAssetAliasManager aliasManager)
     {
         ClasspathAssetFactory factory = new ClasspathAssetFactory(resourceCache, aliasManager);
 
@@ -1816,9 +1817,9 @@ public final class TapestryModule
     }
 
     @Marker(ContextProvider.class)
-    public AssetFactory buildContextAssetFactory(ApplicationGlobals globals)
+    public AssetFactory buildContextAssetFactory(ApplicationGlobals globals, RequestPathOptimizer optimizer)
     {
-        return new ContextAssetFactory(_request, globals.getContext());
+        return new ContextAssetFactory(_request, globals.getContext(), optimizer);
     }
 
     public CookieSink buildCookieSink()

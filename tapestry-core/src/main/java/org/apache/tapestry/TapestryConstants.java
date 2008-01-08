@@ -75,6 +75,12 @@ public final class TapestryConstants
      */
     public static final String ERROR_CLASS = "t-error";
 
+
+    /**
+     * Symbol which may be set to "true" to force the use of full URIs (not relative URIs) exclusively.
+     */
+    public static final String FORCE_FULL_URIS_SYMBOL = "tapestry.force-full-uris";
+
     private TapestryConstants()
     {
     }

@@ -14,10 +14,12 @@
 
 package org.apache.tapestry.internal.test;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.CookieSink;
 import org.apache.tapestry.internal.services.CookieSource;
 import org.apache.tapestry.ioc.Configuration;
+import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceBinder;
 import org.apache.tapestry.services.AliasContribution;
@@ -68,5 +70,10 @@ public class PageTesterModule
         AliasContribution<T> contribution = AliasContribution.create(serviceClass, TEST_MODE, service);
 
         configuration.add(contribution);
+    }
+
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(TapestryConstants.FORCE_FULL_URIS_SYMBOL, "true");
     }
 }

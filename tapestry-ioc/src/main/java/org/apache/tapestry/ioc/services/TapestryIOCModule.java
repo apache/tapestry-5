@@ -19,7 +19,7 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Value;
 import org.apache.tapestry.ioc.internal.services.*;
-import org.apache.tapestry.ioc.util.TimePeriod;
+import org.apache.tapestry.ioc.util.TimeInterval;
 
 import java.io.File;
 import java.lang.reflect.Array;
@@ -127,8 +127,8 @@ public final class TapestryIOCModule
      * <li>Null to BigDecimal (zero)</li>
      * <li>Null to BigInteger (zero)</li>
      * <li>String to File</li>
-     * <li>String to {@link org.apache.tapestry.ioc.util.TimePeriod}</li>
-     * <li>{@link org.apache.tapestry.ioc.util.TimePeriod} to Long</li>
+     * <li>String to {@link org.apache.tapestry.ioc.util.TimeInterval}</li>
+     * <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to Long</li>
      * </ul>
      * <p/>
      * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches
@@ -388,17 +388,17 @@ public final class TapestryIOCModule
             }
         });
 
-        add(configuration, String.class, TimePeriod.class, new Coercion<String, TimePeriod>()
+        add(configuration, String.class, TimeInterval.class, new Coercion<String, TimeInterval>()
         {
-            public TimePeriod coerce(String input)
+            public TimeInterval coerce(String input)
             {
-                return new TimePeriod(input);
+                return new TimeInterval(input);
             }
         });
 
-        add(configuration, TimePeriod.class, Long.class, new Coercion<TimePeriod, Long>()
+        add(configuration, TimeInterval.class, Long.class, new Coercion<TimeInterval, Long>()
         {
-            public Long coerce(TimePeriod input)
+            public Long coerce(TimeInterval input)
             {
                 return input.milliseconds();
             }

@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.ioc.util.TimePeriod;
+import org.apache.tapestry.ioc.util.TimeInterval;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -174,8 +174,8 @@ public class TypeCoercerImplTest extends IOCInternalTestCase
                 {"foo/bar/baz.txt", File.class, new File("foo/bar/baz.txt")},
 
 
-                {new TimePeriod("2 h"), Long.class, 2 * 60 * 60 * 1000l},
-                {"2 h", TimePeriod.class, new TimePeriod("120 m")},
+                {new TimeInterval("2 h"), Long.class, 2 * 60 * 60 * 1000l},
+                {"2 h", TimeInterval.class, new TimeInterval("120 m")},
 
                 {null, Long.class, 0l}, {null, Short.class, (short) 0}, {null, Byte.class, (byte) 0},
                 {null, BigDecimal.class, BigDecimal.ZERO}, {null, Float.class, 0f},

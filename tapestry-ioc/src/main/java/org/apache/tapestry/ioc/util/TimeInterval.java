@@ -39,7 +39,7 @@ import java.util.regex.Pattern;
  * <p>  Example: "2 h 30 m". By convention, terms are specified largest to smallest.  A term without a unit is assumed to be milliseconds.  Units are case insensitive ("h" or "H"
  * are treated the same).
  */
-public class TimePeriod
+public class TimeInterval
 {
     private static final Map<String, Long> UNITS = CollectionFactory.newCaseInsensitiveMap();
 
@@ -59,11 +59,11 @@ public class TimePeriod
     private final long _milliseconds;
 
     /**
-     * Creates a TimePeriod for a string.
+     * Creates a TimeInterval for a string.
      *
      * @param input the string specifying the amount of time in the period
      */
-    public TimePeriod(String input)
+    public TimeInterval(String input)
     {
         _milliseconds = parseMilliseconds(input);
     }
@@ -97,7 +97,7 @@ public class TimePeriod
             if (lastMatchEnd + 1 < start)
             {
                 String invalid = input.substring(lastMatchEnd + 1, start);
-                throw new RuntimeException(UtilMessages.invalidTimePeriodInput(invalid, input));
+                throw new RuntimeException(UtilMessages.invalidTimeIntervalInput(invalid, input));
             }
 
             lastMatchEnd = matcher.end();
@@ -114,7 +114,7 @@ public class TimePeriod
             Long unitValue = UNITS.get(units);
 
             if (unitValue == null)
-                throw new RuntimeException(UtilMessages.invalidTimePeriodUnit(units, input, UNITS.keySet()));
+                throw new RuntimeException(UtilMessages.invalidTimeIntervalUnit(units, input, UNITS.keySet()));
 
             milliseconds += count * unitValue;
         }
@@ -122,7 +122,7 @@ public class TimePeriod
         if (lastMatchEnd + 1 < input.length())
         {
             String invalid = input.substring(lastMatchEnd + 1);
-            throw new RuntimeException(UtilMessages.invalidTimePeriodInput(invalid, input));
+            throw new RuntimeException(UtilMessages.invalidTimeIntervalInput(invalid, input));
         }
 
         return milliseconds;
@@ -131,7 +131,7 @@ public class TimePeriod
     @Override
     public String toString()
     {
-        return String.format("TimePeriod[%d ms]", _milliseconds);
+        return String.format("TimeInterval[%d ms]", _milliseconds);
     }
 
     @Override
@@ -139,9 +139,9 @@ public class TimePeriod
     {
         if (obj == null) return false;
 
-        if (obj instanceof TimePeriod)
+        if (obj instanceof TimeInterval)
         {
-            TimePeriod tp = (TimePeriod) obj;
+            TimeInterval tp = (TimeInterval) obj;
 
             return _milliseconds == tp._milliseconds;
         }

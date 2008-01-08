@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,10 +31,13 @@ public class ContextAssetFactory implements AssetFactory
 
     private final Context _context;
 
-    public ContextAssetFactory(Request request, Context context)
+    private final RequestPathOptimizer _optimizer;
+
+    public ContextAssetFactory(Request request, Context context, RequestPathOptimizer optimizer)
     {
         _request = request;
         _context = context;
+        _optimizer = optimizer;
     }
 
     public Asset createAsset(final Resource resource)
@@ -50,7 +53,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return contextPath;
+                return _optimizer.optimizePath(contextPath);
             }
 
             /**

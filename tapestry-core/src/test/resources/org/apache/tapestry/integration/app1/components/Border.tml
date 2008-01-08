@@ -2,26 +2,38 @@
     <head>
         <title>Tapestry Integration Test Application #1</title>
         <style>
-A.selected
-{
-  font-size: large;
-  font-weight: bold;
-}
+            A.selected
+            {
+            font-size: large;
+            font-weight: bold;
+            }
         </style>
     </head>
     <body>
         <t:body/>
-        
-        
+
+        <hr/>
+
         <p>
             <a t:type="PageLink" page="Start">Back to index</a>
         </p>
-        
-      <p>
-        Currently on page: ${componentResources.pageName}
-      </p>
-        
+
+        <p>
+            Currently on page: ${componentResources.pageName}
+        </p>
+
+
+        <h3>Fabricated classes:</h3>
+
+        <dl>
+            <dt>IOC Layer: ${iocClassFactory.createdClassCount}</dt>
+            <dd>Service proxies and interceptors</dd>
+
+            <dt>Component Layer: ${componentClassFactory.createdClassCount}</dt>
+            <dd>For the most part, this is going to be prop: bindings</dd>
+        </dl>
+
     </body>
-    
-    
+
+
 </html>
