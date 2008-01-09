@@ -13,7 +13,7 @@
 // limitations under the License.
 // package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.integration.app1.pages.GridDemo;
+package org.apache.tapestry.integration.app1.pages;
 
 public class LeanGridDemo extends GridDemo
 {
