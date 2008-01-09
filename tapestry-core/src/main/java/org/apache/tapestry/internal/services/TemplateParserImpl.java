@@ -50,11 +50,28 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private static final String ID_ATTRIBUTE_NAME = "id";
 
+    public static final String XML_NAMESPACE_URI = "http://www.w3.org/XML/1998/namespace";
+
+    /**
+     * Used as the namespace URI for Tapestry templates.
+     */
     public static final String TAPESTRY_SCHEMA_5_0_0 = "http://tapestry.apache.org/schema/tapestry_5_0_0.xsd";
 
-    private static final String ID_REGEXP = "^[a-z]\\w*$";
+    private static final Pattern ID_PATTERN = Pattern.compile("^[a-z]\\w*$", Pattern.CASE_INSENSITIVE);
 
-    private static final Pattern ID_PATTERN = Pattern.compile(ID_REGEXP, Pattern.CASE_INSENSITIVE);
+    /**
+     * Used when compressing whitespace.
+     */
+    private static final Pattern REDUCE_WHITESPACE_PATTERN = Pattern.compile("//s+");
+
+    // Note the use of the non-greedy modifier; this prevents the pattern from merging multiple
+    // expansions on the same text line into a single large
+    // but invalid expansion.
+
+    private static final String EXPANSION_REGEXP = "\\$\\{\\s*(.*?)\\s*}";
+
+    private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP, Pattern.MULTILINE);
+
 
     private XMLReader _reader;
 
@@ -99,11 +116,19 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private final Stack<Runnable> _endTagHandlerStack = new Stack<Runnable>();
 
-    private final Runnable _addEndElementToken = new Runnable()
+    private boolean _compressWhitespace;
+
+    private final Stack<Boolean> _compressWhitespaceStack = new Stack<Boolean>();
+
+    private final Runnable _endOfElementHandler = new Runnable()
     {
         public void run()
         {
             _tokens.add(new EndElementToken(getCurrentLocation()));
+
+            // Restore the flag to how it was before the element was parsed.
+
+            _compressWhitespace = _compressWhitespaceStack.pop();
         }
     };
 
@@ -111,16 +136,10 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     {
         public void run()
         {
+            _compressWhitespace = _compressWhitespaceStack.pop();
         }
     };
 
-    // Note the use of the non-greedy modifier; this prevents the pattern from merging multiple
-    // expansions on the same text line into a single large
-    // but invalid expansion.
-
-    private static final String EXPANSION_REGEXP = "\\$\\{\\s*(.*?)\\s*}";
-
-    private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP, Pattern.MULTILINE);
 
     public TemplateParserImpl(Logger logger, Map<String, URL> configuration)
     {
@@ -144,13 +163,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         _insideBodyErrorLogged = false;
         _ignoreEvents = true;
 
-        // Stack needs a clear();
-
-        while (!_endTagHandlerStack.isEmpty()) _endTagHandlerStack.pop();
+        _endTagHandlerStack.clear();
+        _compressWhitespaceStack.clear();
     }
 
     public ComponentTemplate parseTemplate(Resource templateResource)
     {
+        _compressWhitespace = true;
+
         if (_reader == null)
         {
             try
@@ -220,6 +240,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         _textBuffer.append(ch, start, length);
     }
 
+
     /**
      * Adds tokens corresponding to the content in the text buffer. For a non-CDATA section, we also
      * search for expansions (thus we may add more than one token). Clears the text buffer.
@@ -236,6 +257,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         }
         else
         {
+            if (_compressWhitespace) text = REDUCE_WHITESPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
+
             addTokensForText(text);
         }
 
@@ -246,7 +269,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * Scans the text, using a regular expression pattern, for expansion patterns, and adds
      * appropriate tokens for what it finds.
      *
-     * @param text
+     * @param text to add as {@link org.apache.tapestry.internal.parser.TextToken}s
+     *             and {@link org.apache.tapestry.internal.parser.ExpansionToken}s
      */
     private void addTokensForText(String text)
     {
@@ -256,7 +280,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         // The big problem with all this code is that everything gets assigned to the
         // start of the text block, even if there are line breaks leading up to it.
-        // That's going to take a lot more work and there are bigger fish to fry.
+        // That's going to take a lot more work and there are bigger fish to fry.  In addition,
+        // TAPESTRY-2028 means that the whitespace has likely been stripped out of the text
+        // already anyway.
 
         while (matcher.find())
         {
@@ -269,9 +295,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
                 _tokens.add(new TextToken(prefix, _textStartLocation));
             }
 
-            // Group 1 includes the real text of the expansion, which whitespace around the
-            // expression (but inside the curly
-            // braces) excluded.
+            // Group 1 includes the real text of the expansion, with whitespace around the
+            // expression (but inside the curly braces) excluded.
 
             String expression = matcher.group(1);
 
@@ -349,7 +374,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         if (localName.equalsIgnoreCase("container"))
         {
-            startContainer();
+            startContainer(localName, attributes);
             return;
         }
 
@@ -363,14 +388,35 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         startPossibleComponent(attributes, null, null, componentType);
     }
 
-    private void startContainer()
+    private void startContainer(String elementName, Attributes attributes)
     {
+        _compressWhitespaceStack.push(_compressWhitespace);
+
         // Neither the container nor its end tag are considered tokens, just the contents inside.
+
         _endTagHandlerStack.push(_ignoreEndElement);
+
+        for (int i = 0; i < attributes.getLength(); i++)
+        {
+            String name = attributes.getLocalName(i);
+
+            // The name will be blank for an xmlns: attribute
+
+            if (InternalUtils.isBlank(name)) continue;
+
+            String uri = attributes.getURI(i);
+            String value = attributes.getValue(i);
+
+            if (isXMLSpaceAttribute(uri, name, value)) continue;
+
+            throw new TapestryException(ServicesMessages.attributeNotAllowed(elementName), getCurrentLocation(), null);
+        }
     }
 
     private void startBlock(Attributes attributes)
     {
+        addEndOfElementHandler();
+
         String blockId = findSingleParameter("block", "id", attributes);
 
         validateId(blockId, "invalid-block-id");
@@ -378,18 +424,34 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // null is ok for blockId
 
         _tokens.add(new BlockToken(blockId, getCurrentLocation()));
-        _endTagHandlerStack.push(_addEndElementToken);
+
+        // TODO: Check for an xml:space attribute
     }
 
     private void startParameter(Attributes attributes)
     {
+        addEndOfElementHandler();
+
         String parameterName = findSingleParameter("parameter", "name", attributes);
 
         if (InternalUtils.isBlank(parameterName))
             throw new TapestryException(ServicesMessages.parameterElementNameRequired(), getCurrentLocation(), null);
 
         _tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
-        _endTagHandlerStack.push(_addEndElementToken);
+    }
+
+    /**
+     * Should be called *before* the _compressWhitespace is changed.
+     */
+    private void addEndOfElementHandler()
+    {
+        // Record how the flag was set at the start of the element
+
+        _compressWhitespaceStack.push(_compressWhitespace);
+
+        _endTagHandlerStack.push(_endOfElementHandler);
+
+
     }
 
     private String findSingleParameter(String elementName, String attributeName, Attributes attributes)
@@ -398,21 +460,41 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         for (int i = 0; i < attributes.getLength(); i++)
         {
+            String uri = attributes.getURI(i);
             String name = attributes.getLocalName(i);
+            String value = attributes.getValue(i);
+
+            if (isXMLSpaceAttribute(uri, name, value)) continue;
 
             if (name.equals(attributeName))
             {
-                result = attributes.getValue(i);
+                result = value;
                 continue;
             }
 
-            // Only the name attribute is allowed.
+            // Only the named attribute is allowed.
 
             throw new TapestryException(ServicesMessages.undefinedTapestryAttribute(elementName, name, attributeName),
                                         getCurrentLocation(), null);
         }
 
         return result;
+    }
+
+    private boolean isXMLSpaceAttribute(String uri, String name, String value)
+    {
+
+        if (uri.equals(XML_NAMESPACE_URI) && name.equals("space"))
+        {
+            // "preserve" turns off whitespace compression
+            // "default" (the other option, but we'll accept anything) turns it on (or leaves it on, more likely).
+
+            _compressWhitespace = !"preserve".equalsIgnoreCase(value);
+
+            return true;
+        }
+
+        return false;
     }
 
     private String nullForBlank(String input)
@@ -430,6 +512,11 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private void startPossibleComponent(Attributes attributes, String namespaceURI, String elementName,
                                         String identifiedType)
     {
+
+        // Add an end handler to match this start tag.
+
+        addEndOfElementHandler();
+
         String id = null;
         String type = identifiedType;
         String mixins = null;
@@ -476,6 +563,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
                 // not part of the template's doctype for the element being instrumented.
             }
 
+
+            if (isXMLSpaceAttribute(uri, name, value)) continue;
+
             attributeTokens.add(new AttributeToken(uri, name, value, location));
         }
 
@@ -504,7 +594,6 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // TODO: Is there value in having different end elements for components vs. ordinary
         // elements?
 
-        _endTagHandlerStack.push(_addEndElementToken);
     }
 
     private void validateId(String id, String messageKey)

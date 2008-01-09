@@ -57,6 +57,12 @@ public class StartElementToken extends TemplateToken
     @Override
     public String toString()
     {
-        return String.format("Start[%s %s]", _namespaceURI, _name);
+        StringBuilder builder = new StringBuilder("Start[");
+
+        if (_namespaceURI.length() > 0) builder.append(_namespaceURI).append(" ");
+
+        builder.append(_name).append("]");
+
+        return builder.toString();
     }
 }

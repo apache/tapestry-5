@@ -64,6 +64,12 @@ public class AttributeToken extends TemplateToken
     @Override
     public String toString()
     {
-        return String.format("Attribute[%s %s=%s]", _namespaceURI, _name, _value);
+        StringBuilder builder = new StringBuilder("Attribute[");
+
+        if (_namespaceURI.length() > 0) builder.append(_namespaceURI).append(" ");
+
+        builder.append(_name).append("=").append(_value).append("]");
+
+        return builder.toString();
     }
 }
