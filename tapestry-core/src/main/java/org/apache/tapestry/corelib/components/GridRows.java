@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,8 +31,6 @@ import java.util.List;
  * {@linkplain FormSupport#store(Object, ComponentAction) as ComponentActions}). This is not ideal
  * ... in a situation where the data set can shift between the form render and the form submission,
  * this can cause unexpected results, including applying changes to the wrong objects.
- *
- * @jira TAPESTRY-1650 Tracking issue for Ajax support
  */
 public class GridRows
 {
@@ -86,6 +84,14 @@ public class GridRows
     private Object _row;
 
     /**
+     * If true, then the CSS class on each &lt;TD&gt; cell will be omitted, which can reduce
+     * the amount of output from the component overall by a considerable amount. Leave this as false, the
+     * default, when you are leveraging the CSS to customize the look and feel of particular columns.
+     */
+    @Parameter
+    private boolean _lean;
+
+    /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off.
      * Defaults to false, enabling state saving logic within Forms.
      */
@@ -113,6 +119,8 @@ public class GridRows
 
     public String getCellClass()
     {
+        if (_lean) return null;
+
         String id = _provider.getDataModel().get(_propertyName).getId();
 
         return id + "-cell";

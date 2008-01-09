@@ -590,6 +590,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("[pageLoaded() was invoked.]");
     }
 
+
     /**
      * Basic Grid rendering, with a column render override. Also tests sorting.
      */
@@ -1340,6 +1341,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Var Binding Demo");
 
         assertTextSeries("//li[%d]", 1, "1", "2", "3");
+    }
+
+    /**
+     * TAPESTRY-2021
+     */
+    @Test
+    public void lean_grid()
+    {
+        start("Lean Grid Demo");
+
+        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Rating");
+
+        // Selenium makes it pretty hard to check for a missing class.
+
+        // assertText("//th[1]/@class", "");
     }
 
 }
