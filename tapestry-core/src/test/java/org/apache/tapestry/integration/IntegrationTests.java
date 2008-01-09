@@ -79,7 +79,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         start("Count Page");
 
-        assertTextPresent("Ho! Ho! Ho!");
+        assertTextPresent("Merry Christmas: Ho! Ho! Ho! ");
     }
 
     /**
@@ -310,6 +310,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void render_phase_order()
     {
         start("RenderPhaseOrder");
+
 
         assertTextPresent(
                 "[BEGIN-TRACER-MIXIN BEGIN-ABSTRACT-TRACER BEGIN-TRACER BODY AFTER-TRACER AFTER-ABSTRACT-TRACER AFTER-TRACER-MIXIN]");
