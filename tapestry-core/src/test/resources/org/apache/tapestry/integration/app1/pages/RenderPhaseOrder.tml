@@ -7,7 +7,9 @@
     </p>
 
     <p>
-        [<t:Tracer t:mixins="TracerMixin" xml:space="preserve">BODY</t:Tracer>]
+        [<t:Tracer t:mixins="TracerMixin" xml:space="preserve">
+        BODY
+    </t:Tracer>]
     </p>
 
 </html>
