@@ -5,9 +5,9 @@
         will execute in the exact opposite order from the earlier phases, to ensure
         that output operations balance.
     </p>
-    
+
     <p>
-      [<t:Tracer t:mixins="TracerMixin"> BODY </t:Tracer>]
+        [<t:Tracer t:mixins="TracerMixin" xml:space="preserve">BODY</t:Tracer>]
     </p>
 
 </html>

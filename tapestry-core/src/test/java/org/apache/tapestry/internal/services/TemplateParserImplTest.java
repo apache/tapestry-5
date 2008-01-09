@@ -274,15 +274,15 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         // Again, whitespace before and after the comment adds some tokens
 
-        assertEquals(tokens.size(), 5);
+        assertEquals(tokens.size(), 3);
 
-        CommentToken t = get(tokens, 2);
+        CommentToken token1 = get(tokens, 1);
 
         // Comments are now trimmed of leading and trailing whitespace. This may mean
         // that the output isn't precisely what's in the template, but a) its a comment
         // and b) that's pretty much true of everything in the templates.
 
-        assertEquals(t.getComment(), "Single line comment");
+        assertEquals(token1.getComment(), "Single line comment");
     }
 
     @Test
@@ -442,13 +442,13 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         List<TemplateToken> tokens = tokens("component_with_mixins.tml");
 
-        assertEquals(tokens.size(), 6);
+        assertEquals(tokens.size(), 4);
 
-        StartComponentToken t = get(tokens, 2);
+        StartComponentToken token1 = get(tokens, 1);
 
-        assertEquals(t.getId(), "fred");
-        assertEquals(t.getComponentType(), "comp");
-        assertEquals(t.getMixins(), "Barney");
+        assertEquals(token1.getId(), "fred");
+        assertEquals(token1.getComponentType(), "comp");
+        assertEquals(token1.getMixins(), "Barney");
     }
 
     @Test
@@ -554,12 +554,12 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         List<TemplateToken> tokens = tokens("expansions_not_allowed_in_attributes.tml");
 
-        assertEquals(tokens.size(), 4);
+        assertEquals(tokens.size(), 3);
 
-        AttributeToken t1 = get(tokens, 1);
+        AttributeToken token1 = get(tokens, 1);
 
-        assertEquals(t1.getName(), "exp");
-        assertEquals(t1.getValue(), "${not-an-expansion}");
+        assertEquals(token1.getName(), "exp");
+        assertEquals(token1.getValue(), "${not-an-expansion}");
     }
 
     @Test
@@ -583,11 +583,11 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         List<TemplateToken> tokens = tokens("complex_component_type.tml");
 
-        assertEquals(tokens.size(), 6);
+        assertEquals(tokens.size(), 4);
 
-        StartComponentToken token2 = get(tokens, 2);
+        StartComponentToken token1 = get(tokens, 1);
 
-        assertEquals(token2.getComponentType(), "subfolder/nifty");
+        assertEquals(token1.getComponentType(), "subfolder/nifty");
     }
 
     @Test
@@ -595,17 +595,17 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     {
         List<TemplateToken> tokens = tokens("block_element.tml");
 
-        BlockToken token2 = get(tokens, 2);
-        assertEquals(token2.getId(), "block0");
+        BlockToken token1 = get(tokens, 1);
+        assertEquals(token1.getId(), "block0");
 
-        CommentToken token4 = get(tokens, 4);
-        assertEquals(token4.getComment(), "block0 content");
+        CommentToken token2 = get(tokens, 2);
+        assertEquals(token2.getComment(), "block0 content");
 
-        BlockToken token8 = get(tokens, 8);
-        assertNull(token8.getId());
+        BlockToken token4 = get(tokens, 4);
+        assertNull(token4.getId());
 
-        CommentToken token10 = get(tokens, 10);
-        assertEquals(token10.getComment(), "anon block content");
+        CommentToken token5 = get(tokens, 5);
+        assertEquals(token5.getComment(), "anon block content");
     }
 
     @DataProvider(name = "parse_failure_data")
@@ -729,5 +729,34 @@ public class TemplateParserImplTest extends InternalBaseTestCase
         {
             assertMessageContains(ex, "Block id 'not-valid' is not valid");
         }
+    }
+
+    /**
+     * Because of common code, this covers t:block and t:parameter.
+     */
+    @Test
+    public void space_preserved_in_block() throws Exception
+    {
+        List<TemplateToken> tokens = tokens("space_preserved_in_block.tml");
+
+        TextToken token1 = get(tokens, 1);
+
+        assertEquals(token1.getText(), "\n" + "        line in the middle\n" + "    ");
+    }
+
+    /**
+     * t:container is a bit of a different code path than t:block/t:parameter
+     */
+    @Test
+    public void space_preserved_in_container() throws Exception
+    {
+        List<TemplateToken> tokens = tokens("space_preserved_in_container.tml");
+
+        TextToken token0 = get(tokens, 0);
+        assertEquals(token0.getText(), "\n" + "    ");
+
+        TextToken token2 = get(tokens, 2);
+        assertEquals(token2.getText(), "\n" + "        some text\n" + "    ");
+
     }
 }

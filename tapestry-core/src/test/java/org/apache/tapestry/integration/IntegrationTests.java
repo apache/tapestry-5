@@ -865,7 +865,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Inherited Bindings Demo");
 
-        assertTextPresent("Bound: [ value: the-bound-value, bound: true ]", "Unbound: [ value: null, bound: false ]");
+        assertTextPresent("Bound:[ value: the-bound-value, bound: true ]", "Unbound:[ value: null, bound: false ]");
     }
 
     @Test

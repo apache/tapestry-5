@@ -340,7 +340,63 @@ Invisible Instrumentation
   It will write a dynamic class attribute into each \<tr\>.
         
    
+Whitespace in Templates
 
+  Tapestry strips out unnecessary whitespace from templates as they are parsed.  This includes whitespace
+  immediately before and after a start or end tag.  Inside any block of text, repeated whitespace is reduced
+  to a single space character.
+
+  If you do a view source on the rendered output, you'll see that the bulk of the rendered page is one
+  long unbroken line.
+
+  This approach has certain efficiency advantages on both the server (less processing to render the page) and on the client
+  (fewer characters to parse).  Tools such as
+  {{{http://www.getfirebug.com/}FireBug}} are useful for allowing you to view the rendered HTML on the client properly.
+
+  In rare cases, the whitespace in a template <is> significant.  Perhaps you are creating a \<pre\> (preformatted)
+  block of text, or the whitespace interacts with your stylesheet to some desired effect.
+
+  You may use the standard XML attribute <<<xml:space>>> to indicate to Tapestry whether whitespace should
+  be compressed (<<<xml:space="default">>>) or preserved (<<<xml:space="preserve">>>).  Such attributes are stripped
+  out by the template parser; they do not appear in the rendered output.
+
+  The xml: namespace prefix is built into all XML documents, there is no special configuration (as there is with the
+  Tapestry namespace).
+
+  For example:
+
+---
+  <ul class="navmenu" xml:space="preserve">
+    <li t:type="loop" t:source="pages" t:value="var:page">
+      <t:pagelink page="var:page">${var:page}</t:pagelink>
+    </li>
+  </ul>
+---
+
+  This will preserve the whitespace between the \<ul\> and \<li\> elements, and between the
+  (rendered) \<li\> elements and the nested \<a\> elements.  For example, the output may look something like:
+
+---
+  <ul>
+    <li>
+      <a href="showcart>ShowCart</a>
+    </li>
+    <li>
+      <a href="viewaccount">ViewAccount</a>
+    </li>
+  </ul>
+---
+
+  With normal whitespace compression, you would see the following rendered output:
+
+---
+  <ul><li><a href="showcart">ShowCart</a></li><li><a href="viewaccount">ViewAccount</li></ul>
+---
+
+
+  You can even put further <<<xml:space>>> attributes inside nested elements to fine-tune the control over
+  what whitespace is preserved and what is compressed.
+  
   
 
   

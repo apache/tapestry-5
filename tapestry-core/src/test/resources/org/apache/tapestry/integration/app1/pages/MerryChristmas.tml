@@ -1,4 +1,5 @@
 <html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <p> Merry Christmas: <t:loop source="1..3"> Ho! </t:loop>
+    <p>Merry Christmas:
+        <t:loop source="1..3" xml:space="preserve">Ho!</t:loop>
     </p>
 </html>

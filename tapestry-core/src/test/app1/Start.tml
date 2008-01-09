@@ -4,7 +4,7 @@
     <h1>Tapestry 5 Integration Application 1</h1>
 
 
-    <ul>
+    <ul xml:space="default">
         <li>
             <a t:type="PageLink" page="MerryChristmas">Count Page</a>
         </li>
