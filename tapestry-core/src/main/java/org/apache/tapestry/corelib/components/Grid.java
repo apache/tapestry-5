@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -122,6 +122,15 @@ public class Grid implements GridModelProvider
     @Parameter(value = "block:empty")
     private Block _empty;
 
+
+    /**
+     * If true, then the CSS class on each &lt;TD&gt; and &lt;TH&gt; cell will be omitted, which can reduce
+     * the amount of output from the component overall by a considerable amount. Leave this as false, the
+     * default, when you are leveraging the CSS to customize the look and feel of particular columns.
+     */
+    @Parameter
+    private boolean _lean;
+
     @Inject
     private ComponentResources _resources;
 
@@ -144,18 +153,15 @@ public class Grid implements GridModelProvider
     private String _rowClass;
 
     @SuppressWarnings("unused")
-    @Component(parameters =
-            {"sortColumnId=sortColumnId", "sortAscending=sortAscending"})
+    @Component(parameters = {"sortColumnId=sortColumnId", "sortAscending=sortAscending", "lean=inherit:lean"})
     private GridColumns _columns;
 
     @SuppressWarnings("unused")
-    @Component(parameters =
-            {"rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row",
-                    "volatile=inherit:volatile"})
+    @Component(
+            parameters = {"rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean"})
     private GridRows _rows;
 
-    @Component(parameters =
-            {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage"})
+    @Component(parameters = {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage"})
     private GridPager _pager;
 
     @SuppressWarnings("unused")
@@ -192,8 +198,7 @@ public class Grid implements GridModelProvider
 
                 Class rowType = _dataSource.getRowType();
 
-                if (rowType == null)
-                    throw new RuntimeException("xxx -- no source to determine list type from");
+                if (rowType == null) throw new RuntimeException("xxx -- no source to determine list type from");
 
                 // Properties do not have to be read/write
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,7 +38,13 @@ public class GridColumns
     @Parameter(value = "componentResources.container")
     private GridModelProvider _dataProvider;
 
-    private PropertyModel _columnModel;
+    /**
+     * If true, then the CSS class on each &lt;TH&gt; cell will be omitted, which can reduce
+     * the amount of output from the component overall by a considerable amount. Leave this as false, the
+     * default, when you are leveraging the CSS to customize the look and feel of particular columns.
+     */
+    @Parameter
+    private boolean _lean;
 
     /**
      * The column which is currently being sorted. This value is the column's
@@ -55,8 +61,7 @@ public class GridColumns
     private boolean _sortAscending;
 
     @SuppressWarnings("unused")
-    @Component(parameters =
-            {"disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
+    @Component(parameters = {"disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
     private ActionLink _sort, _sort2;
 
     @Inject
@@ -74,6 +79,8 @@ public class GridColumns
     @Inject
     private Messages _messages;
 
+    private PropertyModel _columnModel;
+
     public boolean isSortDisabled()
     {
         return !_columnModel.isSortable();
@@ -81,10 +88,16 @@ public class GridColumns
 
     public String getSortLinkClass()
     {
-        if (isActiveSortColumn())
-            return _sortAscending ? "t-sort-column-ascending" : "t-sort-column-descending";
+        if (isActiveSortColumn()) return _sortAscending ? "t-sort-column-ascending" : "t-sort-column-descending";
 
         return null;
+    }
+
+    public String getHeaderClass()
+    {
+        if (_lean) return null;
+
+        return _columnModel.getId() + "-header";
     }
 
     public boolean isActiveSortColumn()
@@ -119,8 +132,7 @@ public class GridColumns
 
     public String getIconLabel()
     {
-        String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending")
-                     : "sortable";
+        String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending") : "sortable";
 
         return _messages.get(key);
     }
@@ -138,10 +150,5 @@ public class GridColumns
     public void setColumnName(String columnName)
     {
         _columnModel = _dataProvider.getDataModel().get(columnName);
-    }
-
-    public String getCellClass()
-    {
-        return _columnModel.getId() + "-header";
     }
 }

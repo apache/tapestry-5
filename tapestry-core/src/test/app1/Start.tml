@@ -312,6 +312,11 @@
             -- use of the var: binding prefix
         </li>
 
+        <li>
+            <t:pagelink page="leangriddemo">Lean Grid Demo</t:pagelink>
+            -- Grid component with lean parameter turned on, to eliminate CSS class attributes in TD and TH elements
+        </li>
+
     </ul>
 
 </html>
