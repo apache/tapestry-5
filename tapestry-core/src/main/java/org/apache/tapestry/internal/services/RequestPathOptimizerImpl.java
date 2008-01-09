@@ -46,14 +46,23 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
     {
         if (_forceFull || _request.isXHR()) return path;
 
+        String requestPath = _request.getPath();
+
         StringBuilder builder = new StringBuilder();
 
         builder.append(_request.getContextPath());
-        builder.append(_request.getPath());
+
+
+        builder.append(requestPath);
 
         String requestURI = builder.toString();
 
         String[] requestTerms = SLASH_PATTERN.split(requestURI);
+
+        // Degenerate case when getting the root application
+
+        if (requestPath.equals("")) requestTerms = add(requestTerms, "");
+
         String[] pathTerms = SLASH_PATTERN.split(path);
 
         builder.setLength(0);
@@ -95,5 +104,15 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
         // path.
 
         return path;
+    }
+
+    private String[] add(String[] array, String s)
+    {
+        String[] newArray = new String[array.length + 1];
+
+        System.arraycopy(array, 0, newArray, 0, array.length);
+        newArray[array.length] = s;
+
+        return newArray;
     }
 }

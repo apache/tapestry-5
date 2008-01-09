@@ -24,27 +24,44 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
     @DataProvider(name = "uri_optimization")
     public Object[][] uri_optimization_data()
     {
-        return new Object[][]{
+        return new Object[][]{{"/context", "/foo/bar.png", "/context/foo/baz.png", "baz.png"},
 
-                {"/context", "/foo/bar", "foo/baz", "baz"},
+                              {"/context", "/foo/bar.gif", "/context/foo//baz.gif", "baz.gif"},
 
-                {"/context", "/foo/bar", "foo//baz", "baz"},
+                              {"/context", "/foo//bar.css", "/context/foo/baz.css", "baz.css"},
 
-                {"/context", "/foo//bar", "foo/baz", "baz"},
+                              {"", "/foo/bar.css", "/foo/baz.css", "baz.css"},
 
-                {"", "/foo/bar", "foo/baz", "baz"},
+                              {"/reallylongcontexttoensureitisrelative", "/foo/bar/baz/biff.gif",
+                               "/reallylongcontexttoensureitisrelative/gnip/gnop.gif", "../../../gnip/gnop.gif"},
 
-                {"/reallylongcontexttoensureitisrelative", "/foo/bar/baz/biff", "gnip/gnop", "../../../gnip/gnop"},
+                              {"", "/foo/bar/baz/biff/yepthisissolongthatabsoluteurlisshorter/dude", "/gnip/gnop",
+                               "/gnip/gnop"},
 
-                {"", "/foo/bar/baz/biff/yepthisissolongthatabsoluteurlisshorter/dude", "gnip/gnop", "/gnip/gnop"},
+                              {"", "/foo/bar", "/foo/bar/baz/bif", "bar/baz/bif"},
 
-                {"", "/foo/bar", "/foo/bar/baz/bif", "bar/baz/bif"},
+                              {"", "/foo/bar/baz/bif", "/foo", "/foo"},
 
-                {"", "/foo/bar/baz/bif", "foo", "/foo"},
+                              {"/ctx", "/foo/bar/baz/bif", "/ctx/foo", "/ctx/foo"},
 
-                {"/ctx", "/foo/bar/baz/bif", "foo", "/ctx/foo"},
+                              {"/anotherobnoxiouslylongcontextthatiwllforcerelative", "/foo/bar/baz/bif",
+                               "/anotherobnoxiouslylongcontextthatiwllforcerelative/foo", "../../../foo"},
 
-                {"/anotherobnoxiouslylongcontextthatiwllforcerelative", "/foo/bar/baz/bif", "foo", "../../../foo"}
+                              // A couple of better examples, see TAPESTRY-2033
+
+                              {"/manager", "", "/manager/asset/foo.gif", "asset/foo.gif"},
+
+                              {"", "", "/asset/foo.gif", "asset/foo.gif"},
+
+                              {"/verylongcontextname", "/style/app.css", "/verylongcontextname/asset/foo.gif",
+                               "../asset/foo.gif"},
+
+                              {"", "/eventhandlerdemo.barney/one", "/eventhandlerdemo.clear/anything",
+                               "/eventhandlerdemo.clear/anything"},
+
+                              {"/verylongcontextname", "/eventhandlerdemo.barney/one",
+                               "/verylongcontextname/eventhandlerdemo.clear/anything",
+                               "../eventhandlerdemo.clear/anything"}
 
         };
     }
@@ -59,12 +76,11 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
         train_getContextPath(request, contextPath);
         train_getPath(request, requestPath);
 
-
         replay();
 
         RequestPathOptimizer optimizer = new RequestPathOptimizerImpl(request, false);
 
-        assertEquals(optimizer.optimizePath(expectedURI), expectedURI);
+        assertEquals(optimizer.optimizePath(path), expectedURI);
 
         verify();
     }
