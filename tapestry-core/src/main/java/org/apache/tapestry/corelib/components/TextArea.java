@@ -20,6 +20,8 @@ import org.apache.tapestry.corelib.base.AbstractTextField;
 /**
  * TextArea component corresponds to a &lt;textarea&gt; element. The value parameter is almost
  * always bound to a string, but this is not an absolute requirement.
+ *
+ * @see TextOutput
  */
 public final class TextArea extends AbstractTextField
 {

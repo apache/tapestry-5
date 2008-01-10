@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.corelib.pages;
 
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.Renderable;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -49,5 +51,21 @@ public class PropertyDisplayBlocks
     public PropertyOutputContext getContext()
     {
         return _context;
+    }
+
+    public Renderable getPasswordRenderer()
+    {
+        return new Renderable()
+        {
+            public void render(MarkupWriter writer)
+            {
+
+                Object value = _context.getPropertyValue();
+
+                int length = value == null ? 0 : value.toString().length();
+
+                for (int i = 0; i < length; i++) writer.write("*");
+            }
+        };
     }
 }

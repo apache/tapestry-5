@@ -548,6 +548,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("birthYear", "");
         select("sex", "label=Martian");
         click("citizen");
+        type("password", "abracadabra");
+        type("notes", "line1\nline2\nline3");
 
         clickAndWait(SUBMIT);
 
@@ -558,13 +560,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
         type("birthYear", "1966");
+        type("password", "supersecret");
 
         clickAndWait(SUBMIT);
 
-        // The XPath support is too week for //div[@class='t-beandisplay-value'][%d], so we
+        // The XPath support is too weak for //div[@class='t-beandisplay-value'][%d], so we
         // just look for the text itself.
 
-        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U. S. Citizen");
+        assertTextPresent("Howard", "Lewis Ship", "1966", "Martian", "U. S. Citizen", "***********", "line1", "line2",
+                          "line3");
+
     }
 
     @Test
@@ -577,6 +582,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
+        type("password", "supersecret");
 
         clickAndWait("//input[@type=\'submit\']");
 
@@ -802,6 +808,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("firstName", "Howard");
         type("lastName", "Lewis Ship");
         type("birthYear", "1000");
+        type("password", "supersecret");
+
         click(SUBMIT);
 
         type("birthYear", "1966");
