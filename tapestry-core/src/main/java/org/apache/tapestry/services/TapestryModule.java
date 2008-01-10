@@ -343,19 +343,39 @@ public final class TapestryModule
 
     public static void contributeBeanBlockSource(Configuration<BeanBlockContribution> configuration)
     {
-        addEditBlock(configuration, "text", "text");
-        addEditBlock(configuration, "enum", "enum");
-        addEditBlock(configuration, "checkbox", "checkbox");
-        addEditBlock(configuration, "date", "date");
+        addEditBlock(configuration, "text");
+        addEditBlock(configuration, "enum");
+        addEditBlock(configuration, "checkbox");
+        addEditBlock(configuration, "date");
+        addEditBlock(configuration, "password");
 
-        addDisplayBlock(configuration, "enum", "enum");
-        addDisplayBlock(configuration, "date", "date");
+        // longtext uses a text area, not a text field
+
+        addEditBlock(configuration, "longtext");
+
+        addDisplayBlock(configuration, "enum");
+        addDisplayBlock(configuration, "date");
+
+        // Password and long text have special output needs.
+        addDisplayBlock(configuration, "password");
+        addDisplayBlock(configuration, "longtext");
+
+    }
+
+    private static void addEditBlock(Configuration<BeanBlockContribution> configuration, String dataType)
+    {
+        addEditBlock(configuration, dataType, dataType);
     }
 
     private static void addEditBlock(Configuration<BeanBlockContribution> configuration, String dataType,
                                      String blockId)
     {
         configuration.add(new BeanBlockContribution(dataType, "PropertyEditBlocks", blockId, true));
+    }
+
+    private static void addDisplayBlock(Configuration<BeanBlockContribution> configuration, String dataType)
+    {
+        addDisplayBlock(configuration, dataType, dataType);
     }
 
     private static void addDisplayBlock(Configuration<BeanBlockContribution> configuration, String dataType,
@@ -387,16 +407,16 @@ public final class TapestryModule
 
     /**
      * Contributes the base set of injection providers:
-     * <ul>
-     * <li>Default -- based on {@link MasterObjectProvider}</li>
-     * <li>Block -- injects fields of type Block</li>
-     * <li>ComponentResources -- give component access to its resources</li>
-     * <li>CommonResources -- access to properties of resources (log, messages, etc.)</li>
-     * <li>Asset -- injection of assets (triggered via {@link Path} annotation), with the path
-     * relative to the component class</li>
-     * <li>Service -- ordered last, for use when Inject is present and nothing else works, matches
-     * field type against Tapestry IoC service</li>
-     * </ul>
+     * <dl>
+     * <dt>Default</dt> <dd>based on {@link MasterObjectProvider}</dd>
+     * <dt>Block</dt> <dd>injects fields of type Block</dd>
+     * <dt>ComponentResources</dt> <dd>give component access to its resources</dd>
+     * <dt>CommonResources</dt> <dd>access to properties of resources (log, messages, etc.)</dd>
+     * <dt>Asset</dt> <dd>injection of assets (triggered via {@link Path} annotation), with the path
+     * relative to the component class</dd>
+     * <dt>Service</dt> <dd>ordered last, for use when Inject is present and nothing else works, matches
+     * field type against Tapestry IoC services</dd>
+     * </dl>
      */
     public static void contributeInjectionProvider(OrderedConfiguration<InjectionProvider> configuration,
 
@@ -428,12 +448,12 @@ public final class TapestryModule
 
     /**
      * Contributes two object providers:
-     * <ul>
-     * <li>Alias: Searches by type among {@linkplain AliasContribution contributions} to the
-     * {@link Alias} service</li>
-     * <li>Asset: Checks for the {@link Path} annotation, and injects an {@link Asset}</li>
-     * <li>Service: Injects based on the {@link Service} annotation, if present</li>
-     * </ul>
+     * <dl>
+     * <dt>Alias</dt> <dd> Searches by type among {@linkplain AliasContribution contributions} to the
+     * {@link Alias} service</dd>
+     * <dt>Asset<dt> <dd> Checks for the {@link Path} annotation, and injects an {@link Asset}</dd>
+     * <dt>Service</dt> <dd>Injects based on the {@link Service} annotation, if present</dd>
+     * </dl>
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 

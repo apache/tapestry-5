@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,15 +56,37 @@ public class PropertyEditBlocks
             parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator"})
     private DateField _dateField;
 
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:passwordFieldValidator", "clientId=prop:context.propertyId", "size=prop:widthOrNull"})
+    private PasswordField _passwordField;
+
+    @Component(
+            parameters = {"value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId", "cols=prop:widthOrNull"})
+    private TextArea _textArea;
+
+
     public PropertyEditContext getContext()
     {
         return _context;
     }
 
+
     public FieldValidator getTextFieldValidator()
     {
         return _context.getValidator(_textField);
     }
+
+    public FieldValidator getPasswordFieldValidator()
+    {
+        return _context.getValidator(_passwordField);
+    }
+
+
+    public FieldValidator getTextAreaValidator()
+    {
+        return _context.getValidator(_textArea);
+    }
+
 
     public FieldValidator getDateFieldValidator()
     {

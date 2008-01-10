@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.integration.app1.data;
 
-import org.apache.tapestry.beaneditor.OrderAfter;
-import org.apache.tapestry.beaneditor.OrderBefore;
-import org.apache.tapestry.beaneditor.Validate;
-import org.apache.tapestry.beaneditor.Width;
+import org.apache.tapestry.beaneditor.*;
 
 public class RegistrationData
 {
@@ -30,6 +27,10 @@ public class RegistrationData
     private Sex _sex = Sex.MALE;
 
     private boolean _citizen;
+
+    private String _password;
+
+    private String _notes;
 
     @OrderAfter("lastName")
     @Validate("min=1900,max=2007")
@@ -55,6 +56,18 @@ public class RegistrationData
     public String getLastName()
     {
         return _lastName;
+    }
+
+    @Validate("required,minlength=6")
+    @DataType("password")
+    public String getPassword()
+    {
+        return _password;
+    }
+
+    public void setPassword(String password)
+    {
+        _password = password;
     }
 
     public boolean isCitizen()
@@ -86,5 +99,16 @@ public class RegistrationData
     public void setCitizen(boolean citizen)
     {
         _citizen = citizen;
+    }
+
+    @DataType("longtext")
+    public String getNotes()
+    {
+        return _notes;
+    }
+
+    public void setNotes(String notes)
+    {
+        _notes = notes;
     }
 }
