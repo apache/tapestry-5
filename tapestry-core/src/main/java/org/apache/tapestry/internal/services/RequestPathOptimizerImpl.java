@@ -52,7 +52,6 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
         builder.append(_request.getContextPath());
 
-
         builder.append(requestPath);
 
         String requestURI = builder.toString();
@@ -61,7 +60,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
         // Degenerate case when getting the root application
 
-        if (requestPath.equals("")) requestTerms = add(requestTerms, "");
+        if (requestPath.equals("/") || requestPath.equals("")) requestTerms = add(requestTerms, "");
 
         String[] pathTerms = SLASH_PATTERN.split(path);
 
