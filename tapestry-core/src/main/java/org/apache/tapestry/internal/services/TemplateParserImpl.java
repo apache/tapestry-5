@@ -60,9 +60,17 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private static final Pattern ID_PATTERN = Pattern.compile("^[a-z]\\w*$", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Used when compressing whitespace.
+     * Any amount of mixed simple whitespace (space, tab, form feed) mixed with at least one carriage return or line feed,
+     * followed by any amount of whitespace.  Will be reduced to a single linefeed.
      */
-    private static final Pattern REDUCE_WHITESPACE_PATTERN = Pattern.compile("//s+");
+    private static final Pattern REDUCE_LINEBREAKS_PATTERN = Pattern.compile("[ \\t\\f]*[\\r\\n]\\s*",
+                                                                             Pattern.MULTILINE);
+
+    /**
+     * Used when compressing whitespace, matches any sequence of simple whitespace (space, tab, formfeed). Applied
+     * after REDUCE_LINEBREAKS_PATTERN.
+     */
+    private static final Pattern REDUCE_WHITESPACE_PATTERN = Pattern.compile("[ \\t\\f]+", Pattern.MULTILINE);
 
     // Note the use of the non-greedy modifier; this prevents the pattern from merging multiple
     // expansions on the same text line into a single large
@@ -70,7 +78,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private static final String EXPANSION_REGEXP = "\\$\\{\\s*(.*?)\\s*}";
 
-    private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP, Pattern.MULTILINE);
+    private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP);
 
 
     private XMLReader _reader;
@@ -251,18 +259,31 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         String text = _textBuffer.toString();
 
+        _textBuffer.setLength(0);
+
         if (_textIsCData)
         {
             _tokens.add(new CDATAToken(text, _textStartLocation));
+
+            return;
         }
-        else
+
+        if (_compressWhitespace)
         {
-            if (_compressWhitespace) text = REDUCE_WHITESPACE_PATTERN.matcher(text.trim()).replaceAll(" ");
+            text = compressWhitespaceInText(text);
 
-            addTokensForText(text);
+            if (InternalUtils.isBlank(text)) return;
         }
 
-        _textBuffer.setLength(0);
+
+        addTokensForText(text);
+    }
+
+    private String compressWhitespaceInText(String text)
+    {
+        String linebreaksReduced = REDUCE_LINEBREAKS_PATTERN.matcher(text).replaceAll("\n");
+
+        return REDUCE_WHITESPACE_PATTERN.matcher(linebreaksReduced).replaceAll(" ");
     }
 
     /**

@@ -342,9 +342,10 @@ Invisible Instrumentation
    
 Whitespace in Templates
 
-  Tapestry strips out unnecessary whitespace from templates as they are parsed.  This includes whitespace
-  immediately before and after a start or end tag.  Inside any block of text, repeated whitespace is reduced
-  to a single space character.
+  Tapestry strips out unnecessary whitespace from templates as they are parsed.
+  Inside any block of text, repeated whitespace is reduced
+  to a single space character.  Blocks of text that are entirely whitespace, such a line break
+  and whitespace between two tags, is eliminated entirely.
 
   If you do a view source on the rendered output, you'll see that the bulk of the rendered page is one
   long unbroken line.

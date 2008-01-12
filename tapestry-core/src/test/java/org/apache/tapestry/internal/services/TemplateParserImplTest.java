@@ -611,19 +611,28 @@ public class TemplateParserImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_failure_data")
     public Object[][] parse_failure_data()
     {
-        return new Object[][]{{"mixin_requires_id_or_type.tml",
-                               "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
-                               2}, {"illegal_nesting_within_body_element.tml",
-                                    "Element 'xyz' is nested within a Tapestry body element", 2}, {
-                "unexpected_attribute_in_parameter_element.tml",
-                "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
-                4}, {"name_attribute_of_parameter_element_omitted.tml",
-                     "The name attribute of the <parameter> element must be specified.", 4}, {
-                "name_attribute_of_parameter_element_blank.tml",
-                "The name attribute of the <parameter> element must be specified.", 4}, {
-                "unexpected_attribute_in_block_element.tml",
-                "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
-                3},
+        return new Object[][]{
+
+                {"mixin_requires_id_or_type.tml",
+                 "You may not specify mixins for element <span> because it does not represent a component (which requires either an id attribute or a type attribute).",
+                 2},
+
+                {"illegal_nesting_within_body_element.tml", "Element 'xyz' is nested within a Tapestry body element",
+                 2},
+
+                {"unexpected_attribute_in_parameter_element.tml",
+                 "Element <parameter> does not support an attribute named 'grok'. The only allowed attribute name is 'name'.",
+                 4},
+
+                {"name_attribute_of_parameter_element_omitted.tml",
+                 "The name attribute of the <parameter> element must be specified.", 4},
+
+                {"name_attribute_of_parameter_element_blank.tml",
+                 "The name attribute of the <parameter> element must be specified.", 4},
+
+                {"unexpected_attribute_in_block_element.tml",
+                 "Element <block> does not support an attribute named 'name'. The only allowed attribute name is 'id'.",
+                 3},
 
         };
     }
@@ -757,6 +766,23 @@ public class TemplateParserImplTest extends InternalBaseTestCase
 
         TextToken token2 = get(tokens, 2);
         assertEquals(token2.getText(), "\n" + "        some text\n" + "    ");
+
+    }
+
+    @Test
+    public void minimal_whitespace_maintained_inside_tags() throws Exception
+    {
+        List<TemplateToken> tokens = tokens("minimal_whitespace_maintained_inside_tags.tml");
+
+        // A line feed or carriage return surrounded by other whitespace is reduced to
+        // just a line feed.
+
+        TextToken token1 = get(tokens, 1);
+        assertEquals(token1.getText(), "\nWhitespace\n");
+
+
+        TextToken token5 = get(tokens, 5);
+        assertEquals(token5.getText(), "\nis maintained.\n");
 
     }
 }
