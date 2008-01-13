@@ -72,7 +72,28 @@ Roadmap
      that doesn't use Tapestry (it isn't a web application).
      
   []
-    
+
+Third Party Libraries
+
+  Tapestry 5 has inspired a number of people to create third party libraries, providing a mix of new components
+  and new and improved integrations.
+
+*--+--+--+
+| <<Library>> | <<Author >> | <<Description >>
+*--+--+--+
+| {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
+*--+--+--+
+| {{{http://code.google.com/p/gc-tapestry-components/}Godcode Components}} |   Chris Lewis |         A mixed collection of components providing simple but time-saving functionality, as well as more exotic ones; built on top of the prototype and script.aculo.us javascript libraries. |
+*--+--+--+
+| {{{http://code.google.com/p/shams/}Shams Examples, Components}} |  Mohammad H. Shamsi |   A set of Tapestry 5 Examples, Tutorials, Components, and Documents for beginners |
+*--+--+--+
+| {{{http://code.google.com/p/tapestry5-components/}T5Components}} | Sven Homburg | Ajax-enabled components based on Prototype and Scriptaculous. |
+*--+--+--+
+| {{{http://www.localhost.nu/java/tapestry5-acegi/}tapestry5-acegi}} | Robin Helgelin  | Integration with the Acegi path-based security framework. |
+*--+--+--+
+| {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
+*--+--+--+
+
 
 What's changed since Tapestry 4?
 
@@ -88,7 +109,7 @@ What's changed since Tapestry 4?
     objects>).
   
   * Tapestry no longer uses XML page and component specification files. Information that used to
-    be supplied in such files is now supplied directly in the Java class, using Java annotations.
+    be supplied in such files is now supplied directly in the Java class, using Java annotations and naming conventions.
     
   * {{{tapestry-core/guide/reload.html}Changes to Tapestry component templates <and classes> are now picked up <immediately>}}, 
     without any kind
