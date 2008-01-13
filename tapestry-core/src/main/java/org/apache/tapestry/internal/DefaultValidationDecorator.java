@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,12 +34,12 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
     /**
      * @param environment        used to locate objects and services during the render
-     * @param validationMessages obtained from {@link org.apache.tapestry.services.ValidationMessagesSource}, used to obtain the label for the
-     *                           icon
+     * @param validationMessages obtained from {@link org.apache.tapestry.services.ValidationMessagesSource}, used to
+     *                           obtain the label for the icon
      * @param iconAsset          asset for an icon that will be displayed after each field (marked with the
      * @param markupWriter
      */
-    public DefaultValidationDecorator(final Environment environment, Messages validationMessages, Asset iconAsset,
+    public DefaultValidationDecorator(Environment environment, Messages validationMessages, Asset iconAsset,
                                       MarkupWriter markupWriter)
     {
         _environment = environment;

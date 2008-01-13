@@ -27,8 +27,8 @@ import java.io.InputStream;
 import java.net.URL;
 
 /**
- * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on
- * my system, Skype is listening on localhost:80.
+ * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
+ * listening on localhost:80.
  */
 @Test(timeOut = 50000, sequential = true, groups = {"integration"})
 public class IntegrationTests extends AbstractIntegrationTestSuite
@@ -159,9 +159,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * {@link InjectContainerWorker} is largely tested by the forms tests ({@link RenderDisabled}
-     * is built on it). test is for the failure case, where a mixin class is used with the wrong
-     * type of component.
+     * {@link InjectContainerWorker} is largely tested by the forms tests ({@link RenderDisabled} is built on it). test
+     * is for the failure case, where a mixin class is used with the wrong type of component.
      */
     @Test
     public void inject_container_failure() throws Exception
@@ -381,8 +380,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * Tests for forms and form submissions and basic form control components. also tests a few
-     * other things, such as computed default bindings and invisible instrumentation.
+     * Tests for forms and form submissions and basic form control components. also tests a few other things, such as
+     * computed default bindings and invisible instrumentation.
      */
     @Test
     public void simple_form()
@@ -518,8 +517,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * Tests the bean editor. Along the way, tests a bunch about validation, loops, blocks, and
-     * application state objects.
+     * Tests the bean editor. Along the way, tests a bunch about validation, loops, blocks, and application state
+     * objects.
      */
     @Test
     public void bean_editor()
@@ -800,7 +799,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         click(SUBMIT);
 
         // Looks like more weaknesses in Selenium, can only manage the first match not the others.
-        assertTextSeries("//div[@class='t-error-bevel'][%d]/span", 1, "You must provide a value for First Name."
+        assertTextSeries("//div[@class='t-error-popup'][%d]/span", 1, "You must provide a value for First Name."
                          //, "Everyone has to have a last name!",
                          //       "Year of Birth requires a value of at least 1900."
         );
@@ -1125,8 +1124,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * This can test some output and parsing capability of the DateField component, but not the
-     * interesting client-side behavior.
+     * This can test some output and parsing capability of the DateField component, but not the interesting client-side
+     * behavior.
      */
     @Test
     public void basic_datefield()

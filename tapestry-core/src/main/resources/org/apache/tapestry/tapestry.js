@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,12 @@ var Tapestry = {
     FieldEventManager : Class.create(),
 
     Zone : Class.create(),
+
+    ErrorPopup : Class.create(),
+
+    // An array of ErrorPopup that have been created for fields within the page
+
+    errorPopups : [],
 
     // Adds a callback function that will be invoked when the DOM is loaded (which
     // occurs *before* window.onload, which has to wait for images and such to load
@@ -274,6 +280,124 @@ Tapestry.FormEvent.prototype = {
     }
 };
 
+Tapestry.ErrorPopup.prototype = {
+    initialize : function(field)
+    {
+        this.field = $(field);
+
+        this.innerSpan = new Element("span");
+        this.outerDiv = $(new Element("div", { 'class' : 't-error-popup' })).update(this.innerSpan).hide();
+
+        this.field.insert({ after : this.outerDiv });
+
+        this.outerDiv.absolutize();
+
+        this.outerDiv.observe("click", function(event)
+        {
+            this.stopAnimation();
+
+            this.outerDiv.hide();
+
+            event.stop();
+        });
+
+        Tapestry.errorPopups.push(this);
+
+        this.state = "hidden";
+
+        this.queue = { position: 'end', scope: this.field.id };
+
+        Event.observe(window, "resize", this.repositionBubble.bind(this));
+    },
+
+    showMessage : function(message)
+    {
+        this.stopAnimation();
+
+        this.innerSpan.update(message);
+
+        this.hasMessage = true;
+
+        this.fadeIn();
+
+    },
+
+    repositionBubble : function()
+    {
+        var fieldPos = this.field.positionedOffset();
+
+        this.outerDiv.setStyle({ top: fieldPos[1] - 34 + "px", left: fieldPos[0] - 5 + "px", width: "auto", height: "39px" });
+    },
+
+    fadeIn : function()
+    {
+        this.repositionBubble();
+
+        if (this.state == "hidden")
+        {
+            this.state = "visible";
+
+            this.animation = new Effect.Appear(this.outerDiv, { afterFinish : this.afterFadeIn.bind(this), queue: this.queue });
+        }
+    },
+
+    stopAnimation : function()
+    {
+        if (this.animation) this.animation.cancel();
+
+        this.animation = null;
+    },
+
+    fadeOut : function ()
+    {
+        this.stopAnimation();
+
+        if (this.state == "visible")
+        {
+            this.state = "hidden";
+
+            this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue });
+        }
+    },
+
+    hide : function()
+    {
+        this.hasMessage = false;
+
+        this.stopAnimation();
+
+        this.outerDiv.hide();
+
+        this.state = "hidden";
+    },
+
+    afterFadeIn : function()
+    {
+        this.animation = null;
+
+        if (this.field != Tapestry.focusedElement) this.fadeOut();
+    },
+
+    handleFocusChange : function(element)
+    {
+        if (element == this.field)
+        {
+            if (this.hasMessage) this.fadeIn();
+            return;
+        }
+
+        if (this.animation == null)
+        {
+            this.fadeOut();
+            return;
+        }
+
+        // Must be fading in, let it finish, then fade it back out.
+
+        this.animation = new Effect.Fade(this.outerDiv, { queue : this.queue });
+    }
+};
+
 Tapestry.FieldEventManager.prototype = {
 
     initialize : function(field)
@@ -322,8 +446,8 @@ Tapestry.FieldEventManager.prototype = {
         if (this.icon)
             this.icon.hide();
 
-        if (this.popup)
-            this.popup.hide();
+        if (this.errorPopup)
+            this.errorPopup.hide();
     },
 
     // Adds decorations to the field (including label and icon if present).
@@ -343,46 +467,10 @@ Tapestry.FieldEventManager.prototype = {
                 new Effect.Appear(this.icon);
         }
 
-        if (this.popup == undefined)
-        {
-            this.popupSpan = new Element("span");
+        if (this.errorPopup == undefined)
+            this.errorPopup = new Tapestry.ErrorPopup(this.field);
 
-            this.popup = $(new Element("div", { 'class' : 't-error-bevel' })).update(this.popupSpan).hide();
-
-            this.popup.absolutize();
-
-            this.popup.field = this.field;
-
-            // It has to go somewhere.
-
-            this.field.insert({ after: this.popup });
-
-            this.popup.absolutize();
-
-            this.popup.observe("click", function(event)
-            {
-                this.popup.hide();
-
-                event.stop();
-            }.bindAsEventListener(this));
-        }
-
-        this.popupSpan.update(message);
-
-        if (! this.popup.visible())
-        {
-            var fieldPos = this.field.positionedOffset();
-
-            // These magic numbers are based on the height of the bevel image.
-            this.popup.setStyle({ top: fieldPos[1] - 34 + "px", left: fieldPos[0] - 5 + "px", width: "auto", height: "39px" });
-
-            this.popup.fadingIn = true;
-
-            new Effect.Appear(this.popup, { afterFinish: function()
-            {
-                this.popup.fadingIn = false;
-            }.bindAsEventListener(this) });
-        }
+        this.errorPopup.showMessage(message);
     },
 
 
@@ -495,23 +583,18 @@ Tapestry.onDOMLoaded(function()
         element.removeClassName("t-invisible");
     });
 
-   // Adds a focus observer that fades all error popups except for the
+    // Adds a focus observer that fades all error popups except for the
     // field in question.
 
     $$("INPUT", "SELECT", "TEXTAREA").each(function(element)
     {
         element.observe("focus", function()
         {
-            $$("DIV.t-error-bevel").each(function(popup)
+            Tapestry.focusedElement = element;
+
+            $(Tapestry.errorPopups).each(function(popup)
             {
-                // This handles a case where the user tabs out of a field and it is currently fading in with an
-                // error message.  Leave it up unchanged.
-
-                if (popup.fadingIn) return;
-
-                var opacity = popup.field == element ? 1 : .15;
-
-                new Effect.Opacity(popup, { to: opacity });
+                popup.handleFocusChange(element);
             });
         });
     });

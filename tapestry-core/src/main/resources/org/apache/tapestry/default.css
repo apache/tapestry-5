@@ -338,7 +338,7 @@ DIV.t-autocomplete-menu LI.selected {
     font-weight: bold;
 }
 
-DIV.t-error-bevel SPAN {
+DIV.t-error-popup SPAN {
     background: transparent url( 'error-bevel-left.png' ) no-repeat;
     display: block;
     line-height: 28px;
@@ -346,7 +346,7 @@ DIV.t-error-bevel SPAN {
     padding: 0px 5px 10px 22px;
 }
 
-DIV.t-error-bevel {
+DIV.t-error-popup {
     background: transparent url( 'error-bevel-right.png' ) no-repeat scroll top right;
     cursor: pointer;
     color: #FFF;
