@@ -141,7 +141,7 @@ IncludeJavaScriptLibrary Annotation
   The previous example could be re-written as:
 
 +---+
-@InjectJavaScriptLibrary("${tapestry.scriptaculous}/dragdrop.js")
+@IncludeJavaScriptLibrary("${tapestry.scriptaculous}/dragdrop.js")
 public class MyComponent
 {
  . . .
