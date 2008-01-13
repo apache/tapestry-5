@@ -299,7 +299,7 @@ Tapestry.ErrorPopup.prototype = {
             this.outerDiv.hide();
 
             event.stop();
-        });
+        }.bindAsEventListener(this));
 
         Tapestry.errorPopups.push(this);
 
@@ -308,6 +308,7 @@ Tapestry.ErrorPopup.prototype = {
         this.queue = { position: 'end', scope: this.field.id };
 
         Event.observe(window, "resize", this.repositionBubble.bind(this));
+
     },
 
     showMessage : function(message)
