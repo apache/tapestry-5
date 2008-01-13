@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver);
+        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver, 5, 0, 20, 600000);
 
         assertSame(page, pool.checkout(INPUT_PAGE_NAME));
 
@@ -76,7 +76,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver);
+        PagePool pool = new PagePoolImpl(logger, loader, tl, resolver, 5, 0, 20, 600000);
 
         assertSame(pool.checkout(INPUT_PAGE_NAME), page1);
 
@@ -117,6 +117,8 @@ public class PagePoolImplTest extends InternalBaseTestCase
         Logger logger = mockLogger();
 
         train_detached(page, true);
+        train_getLogicalName(page, "dirty");
+        train_getLocale(page, Locale.ENGLISH);
 
         logger.error(contains("is dirty, and will be discarded"));
 
@@ -125,7 +127,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         replay();
 
-        PagePool pool = new PagePoolImpl(logger, loader, null, null);
+        PagePool pool = new PagePoolImpl(logger, loader, null, null, 5, 0, 20, 600000);
 
         pool.release(page);
 

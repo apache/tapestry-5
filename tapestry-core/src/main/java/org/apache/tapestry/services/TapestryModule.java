@@ -133,8 +133,8 @@ public final class TapestryModule
     }
 
     /**
-     * A companion service to {@linkplain #build(org.slf4j.Logger, String, AliasManager, java.util.Collection)}  the Alias service}
-     * whose configuration contribution define spot overrides to specific services.
+     * A companion service to {@linkplain #build(org.slf4j.Logger, String, AliasManager, java.util.Collection)}  the
+     * Alias service} whose configuration contribution define spot overrides to specific services.
      */
     public static AliasManager buildAliasOverrides(Logger logger, Collection<AliasContribution> configuration)
     {
@@ -142,8 +142,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the factory for serveral built-in binding prefixes ("asset", "literal", prop",
-     * "block", "component" "message", "validate", "translate", "var").
+     * Contributes the factory for serveral built-in binding prefixes ("asset", "literal", prop", "block", "component"
+     * "message", "validate", "translate", "var").
      */
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration,
 
@@ -190,33 +190,24 @@ public final class TapestryModule
     }
 
     /**
-     * Adds a number of standard component class transform workers:
-     * <ul>
-     * <li>Retain -- allows fields to retain their values between requests</li>
-     * <li>Persist -- allows fields to store their their value persistently between requests</li>
-     * <li>Parameter -- identifies parameters based on the
-     * {@link org.apache.tapestry.annotations.Parameter} annotation</li>
-     * <li>Component -- identifies embedded components based on the
-     * {@link org.apache.tapestry.annotations.Component} annotation</li>
-     * <li>Mixin -- adds a mixin as part of a component's implementation</li>
-     * <li>Environment -- allows fields to contain values extracted from the {@link Environment}
-     * service</li>
-     * <li>Inject -- used with the {@link Inject} annotation, when a value is supplied</li>
-     * <li>InjectPage -- adds code to allow access to other pages via the {@link InjectPage} field
-     * annotation</li>
-     * <li>InjectBlock -- allows a block from the template to be injected into a field</li>
-     * <li>IncludeStylesheet -- supports the {@link org.apache.tapestry.annotations.IncludeStylesheet} annotation</li>
-     * <li>IncludeJavaScriptLibrary -- supports the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation</li>
-     * <li>SupportsInformalParameters -- checks for the annotation</li>
-     * <li>Meta -- checks for meta data and adds it to the component model
-     * <li>ApplicationState -- converts fields that reference application state objects
-     * <li>UnclaimedField -- identifies unclaimed fields and resets them to null/0/false at the end
-     * of the request</li>
-     * <li>RenderCommand -- ensures all components also implement {@link RenderCommand}</li>
-     * <li>SetupRender, BeginRender, etc. -- correspond to component render phases and annotations</li>
-     * <li>InvokePostRenderCleanupOnResources -- makes sure {@link org.apache.tapestry.internal.InternalComponentResources#postRenderCleanup()} is invoked
-     * after a component finishes rendering</li>
-     * </ul>
+     * Adds a number of standard component class transform workers: <ul> <li>Retain -- allows fields to retain their
+     * values between requests</li> <li>Persist -- allows fields to store their their value persistently between
+     * requests</li> <li>Parameter -- identifies parameters based on the {@link org.apache.tapestry.annotations.Parameter}
+     * annotation</li> <li>Component -- identifies embedded components based on the {@link
+     * org.apache.tapestry.annotations.Component} annotation</li> <li>Mixin -- adds a mixin as part of a component's
+     * implementation</li> <li>Environment -- allows fields to contain values extracted from the {@link Environment}
+     * service</li> <li>Inject -- used with the {@link Inject} annotation, when a value is supplied</li> <li>InjectPage
+     * -- adds code to allow access to other pages via the {@link InjectPage} field annotation</li> <li>InjectBlock --
+     * allows a block from the template to be injected into a field</li> <li>IncludeStylesheet -- supports the {@link
+     * org.apache.tapestry.annotations.IncludeStylesheet} annotation</li> <li>IncludeJavaScriptLibrary -- supports the
+     * {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation</li> <li>SupportsInformalParameters
+     * -- checks for the annotation</li> <li>Meta -- checks for meta data and adds it to the component model
+     * <li>ApplicationState -- converts fields that reference application state objects <li>UnclaimedField -- identifies
+     * unclaimed fields and resets them to null/0/false at the end of the request</li> <li>RenderCommand -- ensures all
+     * components also implement {@link RenderCommand}</li> <li>SetupRender, BeginRender, etc. -- correspond to
+     * component render phases and annotations</li> <li>InvokePostRenderCleanupOnResources -- makes sure {@link
+     * org.apache.tapestry.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
+     * finishes rendering</li> </ul>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -298,12 +289,9 @@ public final class TapestryModule
     }
 
     /**
-     * <dl>
-     * <dt>Annotation</dt>
-     * <dd>Checks for {@link org.apache.tapestry.beaneditor.DataType} annotation</dd>
-     * <dt>Default  (ordered last)</dt>
-     * <dd>{@link org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer} service ({@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry.ioc.MappedConfiguration)} })</dd>
-     * </dl>
+     * <dl> <dt>Annotation</dt> <dd>Checks for {@link org.apache.tapestry.beaneditor.DataType} annotation</dd>
+     * <dt>Default  (ordered last)</dt> <dd>{@link org.apache.tapestry.internal.services.DefaultDataTypeAnalyzer}
+     * service ({@link #contributeDefaultDataTypeAnalyzer(org.apache.tapestry.ioc.MappedConfiguration)} })</dd> </dl>
      */
     public static void contributeDataTypeAnalyzer(OrderedConfiguration<DataTypeAnalyzer> configuration,
                                                   @InjectService("DefaultDataTypeAnalyzer")
@@ -314,14 +302,8 @@ public final class TapestryModule
     }
 
     /**
-     * Maps property types to data type names:
-     * <ul>
-     * <li>String --&gt; text
-     * <li>Number --&gt; text
-     * <li>Enum --&gt; enum
-     * <li>Boolean --&gt; checkbox
-     * <li>Date --&gt; date
-     * </ul>
+     * Maps property types to data type names: <ul> <li>String --&gt; text <li>Number --&gt; text <li>Enum --&gt; enum
+     * <li>Boolean --&gt; checkbox <li>Date --&gt; date </ul>
      */
     public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, String> configuration)
     {
@@ -385,15 +367,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the basic set of validators:
-     * <ul>
-     * <li>required</li>
-     * <li>minlength</li>
-     * <li>maxlength</li>
-     * <li>min</li>
-     * <li>max</li>
-     * <li>regexp</li>
-     * </ul>
+     * Contributes the basic set of validators: <ul> <li>required</li> <li>minlength</li> <li>maxlength</li>
+     * <li>min</li> <li>max</li> <li>regexp</li> </ul>
      */
     public static void contributeFieldValidatorSource(MappedConfiguration<String, Validator> configuration)
     {
@@ -406,17 +381,12 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the base set of injection providers:
-     * <dl>
-     * <dt>Default</dt> <dd>based on {@link MasterObjectProvider}</dd>
-     * <dt>Block</dt> <dd>injects fields of type Block</dd>
-     * <dt>ComponentResources</dt> <dd>give component access to its resources</dd>
-     * <dt>CommonResources</dt> <dd>access to properties of resources (log, messages, etc.)</dd>
-     * <dt>Asset</dt> <dd>injection of assets (triggered via {@link Path} annotation), with the path
-     * relative to the component class</dd>
-     * <dt>Service</dt> <dd>ordered last, for use when Inject is present and nothing else works, matches
-     * field type against Tapestry IoC services</dd>
-     * </dl>
+     * Contributes the base set of injection providers: <dl> <dt>Default</dt> <dd>based on {@link
+     * MasterObjectProvider}</dd> <dt>Block</dt> <dd>injects fields of type Block</dd> <dt>ComponentResources</dt>
+     * <dd>give component access to its resources</dd> <dt>CommonResources</dt> <dd>access to properties of resources
+     * (log, messages, etc.)</dd> <dt>Asset</dt> <dd>injection of assets (triggered via {@link Path} annotation), with
+     * the path relative to the component class</dd> <dt>Service</dt> <dd>ordered last, for use when Inject is present
+     * and nothing else works, matches field type against Tapestry IoC services</dd> </dl>
      */
     public static void contributeInjectionProvider(OrderedConfiguration<InjectionProvider> configuration,
 
@@ -447,13 +417,10 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes two object providers:
-     * <dl>
-     * <dt>Alias</dt> <dd> Searches by type among {@linkplain AliasContribution contributions} to the
-     * {@link Alias} service</dd>
-     * <dt>Asset<dt> <dd> Checks for the {@link Path} annotation, and injects an {@link Asset}</dd>
-     * <dt>Service</dt> <dd>Injects based on the {@link Service} annotation, if present</dd>
-     * </dl>
+     * Contributes two object providers: <dl> <dt>Alias</dt> <dd> Searches by type among {@linkplain AliasContribution
+     * contributions} to the {@link Alias} service</dd> <dt>Asset<dt> <dd> Checks for the {@link Path} annotation, and
+     * injects an {@link Asset}</dd> <dt>Service</dt> <dd>Injects based on the {@link Service} annotation, if
+     * present</dd> </dl>
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 
@@ -483,15 +450,13 @@ public final class TapestryModule
     }
 
     /**
-     * Continues a number of filters into the RequestHandler service:
-     * <dl>
-     * <dt>StaticFiles</dt> <dd>Checks to see if the request is for an actual file, if so, returns true to let
-     * the servlet container process the request</dd>
-     * <dt>CheckForUpdates</dt> <dd>Periodically fires events that checks to see if the file system sources
-     * for any cached data has changed (see {@link org.apache.tapestry.internal.services.CheckForUpdatesFilter}).
-     * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler} handle them</dd>
-     * <dt>Localization</dt> <dd>Determines the locale for the current request from header data or cookies in the request</dd>
-     * </dl>
+     * Continues a number of filters into the RequestHandler service: <dl> <dt>StaticFiles</dt> <dd>Checks to see if the
+     * request is for an actual file, if so, returns true to let the servlet container process the request</dd>
+     * <dt>CheckForUpdates</dt> <dd>Periodically fires events that checks to see if the file system sources for any
+     * cached data has changed (see {@link org.apache.tapestry.internal.services.CheckForUpdatesFilter}).
+     * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler}
+     * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
+     * cookies in the request</dd> </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
@@ -546,13 +511,8 @@ public final class TapestryModule
 
 
     /**
-     * Contributes the basic set of default translators:
-     * <ul>
-     * <li>Integer</li>
-     * <li>String</li>
-     * <li>Long</li>
-     * <li>Double</li>
-     * </li>
+     * Contributes the basic set of default translators: <ul> <li>Integer</li> <li>String</li> <li>Long</li>
+     * <li>Double</li> </li>
      */
     public static void contributeTranslatorDefaultSource(MappedConfiguration<Class, Translator> configuration)
     {
@@ -563,13 +523,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the basic set of named translators:
-     * <ul>
-     * <li>integer</li>
-     * <li>string</li>
-     * <li>long</li>
-     * <li>double</li>
-     * </ul>
+     * Contributes the basic set of named translators: <ul> <li>integer</li> <li>string</li> <li>long</li>
+     * <li>double</li> </ul>
      */
     public static void contributeTranslatorSource(MappedConfiguration<String, Translator> configuration)
     {
@@ -585,16 +540,9 @@ public final class TapestryModule
     }
 
     /**
-     * Adds coercions:
-     * <ul>
-     * <li>String to {@link SelectModel}
-     * <li>Map to {@link SelectModel}
-     * <li>Collection to {@link GridDataSource}
-     * <li>null to {@link GridDataSource}
-     * <li>String to {@link GridPagerPosition}
-     * <li>List to {@link SelectModel}
-     * <li>{@link ComponentResourcesAware} (typically, a component) to {@link ComponentResources}
-     * </ul>
+     * Adds coercions: <ul> <li>String to {@link SelectModel} <li>Map to {@link SelectModel} <li>Collection to {@link
+     * GridDataSource} <li>null to {@link GridDataSource} <li>String to {@link GridPagerPosition} <li>List to {@link
+     * SelectModel} <li>{@link ComponentResourcesAware} (typically, a component) to {@link ComponentResources} </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
@@ -665,11 +613,8 @@ public final class TapestryModule
     }
 
     /**
-     * Adds built-in constraint generators:
-     * <ul>
-     * <li>PrimtiveField -- primitive fields are always required
-     * <li>ValidateAnnotation -- adds constraints from a {@link Validate} annotation
-     * </ul>
+     * Adds built-in constraint generators: <ul> <li>PrimtiveField -- primitive fields are always required
+     * <li>ValidateAnnotation -- adds constraints from a {@link Validate} annotation </ul>
      */
     public static void contributeValidationConstraintGenerator(
             OrderedConfiguration<ValidationConstraintGenerator> configuration)
@@ -817,9 +762,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds the source of {@link Messages} containing validation messages. The contributions are
-     * paths to message bundles (resource paths within the classpath); the default contribution is
-     * "org/apache/tapestry/internal/ValidationMessages".
+     * Builds the source of {@link Messages} containing validation messages. The contributions are paths to message
+     * bundles (resource paths within the classpath); the default contribution is "org/apache/tapestry/internal/ValidationMessages".
      */
     public ValidationMessagesSource build(Collection<String> configuration, UpdateListenerHub updateListenerHub,
 
@@ -843,7 +787,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link org.apache.tapestry.PageRenderSupport} inside this thread's {@link Environment}.
+     * Builds a proxy to the current {@link org.apache.tapestry.PageRenderSupport} inside this thread's {@link
+     * Environment}.
      */
     public PageRenderSupport buildPageRenderSupport(EnvironmentalShadowBuilder builder)
     {
@@ -851,7 +796,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link org.apache.tapestry.services.FormSupport} inside this thread's {@link org.apache.tapestry.services.Environment}.
+     * Builds a proxy to the current {@link org.apache.tapestry.services.FormSupport} inside this thread's {@link
+     * org.apache.tapestry.services.Environment}.
      */
     public FormSupport buildFormSupport(EnvironmentalShadowBuilder builder)
     {
@@ -867,10 +813,9 @@ public final class TapestryModule
     }
 
     /**
-     * Analyzes properties to determine the data types, used to
-     * {@linkplain #contributeBeanBlockSource(org.apache.tapestry.ioc.Configuration)} locale display and edit blocks}
-     * for properties.  The default behaviors look for a {@link org.apache.tapestry.beaneditor.DataType} annotation before
-     * deriving the data type from the property type.
+     * Analyzes properties to determine the data types, used to {@linkplain #contributeBeanBlockSource(org.apache.tapestry.ioc.Configuration)}
+     * locale display and edit blocks} for properties.  The default behaviors look for a {@link
+     * org.apache.tapestry.beaneditor.DataType} annotation before deriving the data type from the property type.
      */
     @Marker(Primary.class)
     public DataTypeAnalyzer build(List<DataTypeAnalyzer> configuration)
@@ -879,9 +824,9 @@ public final class TapestryModule
     }
 
     /**
-     * A chain of command for providing values for {@link Inject}-ed
-     * fields in component classes. The service's configuration can be extended to allow for
-     * different automatic injections (based on some combination of field type and field name).
+     * A chain of command for providing values for {@link Inject}-ed fields in component classes. The service's
+     * configuration can be extended to allow for different automatic injections (based on some combination of field
+     * type and field name).
      */
 
     public InjectionProvider build(List<InjectionProvider> configuration)
@@ -999,9 +944,8 @@ public final class TapestryModule
     }
 
     /**
-     * The default data type analyzer is the final analyzer consulted and identifies the type
-     * entirely pased on the property type, working against its own configuration (mapping property
-     * type class to data type).
+     * The default data type analyzer is the final analyzer consulted and identifies the type entirely pased on the
+     * property type, working against its own configuration (mapping property type class to data type).
      */
     public DataTypeAnalyzer buildDefaultDataTypeAnalyzer(ServiceResources resources)
     {
@@ -1046,11 +990,10 @@ public final class TapestryModule
     }
 
     /**
-     * Returns a {@link ClassFactory} that can be used to create extra classes around component
-     * classes. This ClassFactory will be cleared whenever an underlying component class is
-     * discovered to have changed. Use of this class factory implies that your code will become
-     * aware of this (if necessary) to discard any cached object (alas, this currently involves
-     * dipping into the internals side to register for the correct notifications). Failure to
+     * Returns a {@link ClassFactory} that can be used to create extra classes around component classes. This
+     * ClassFactory will be cleared whenever an underlying component class is discovered to have changed. Use of this
+     * class factory implies that your code will become aware of this (if necessary) to discard any cached object (alas,
+     * this currently involves dipping into the internals side to register for the correct notifications). Failure to
      * properly clean up can result in really nasty PermGen space memory leaks.
      */
     @Marker(ComponentLayer.class)
@@ -1061,8 +1004,7 @@ public final class TapestryModule
 
 
     /**
-     * Ordered contributions to the MasterDispatcher service allow different URL matching strategies
-     * to occur.
+     * Ordered contributions to the MasterDispatcher service allow different URL matching strategies to occur.
      */
     public Dispatcher buildMasterDispatcher(List<Dispatcher> configuration)
     {
@@ -1079,8 +1021,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a shadow of the RequestGlobals.request property. Note again that the shadow can be an
-     * ordinary singleton, even though RequestGlobals is perthread.
+     * Builds a shadow of the RequestGlobals.request property. Note again that the shadow can be an ordinary singleton,
+     * even though RequestGlobals is perthread.
      */
     public Request buildRequest()
     {
@@ -1088,9 +1030,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a shadow of the RequestGlobals.HTTPServletRequest property.  Generally, you should inject
-     * the {@link Request} service instead, as future version of Tapestry may operate beyond just the
-     * servlet API.
+     * Builds a shadow of the RequestGlobals.HTTPServletRequest property.  Generally, you should inject the {@link
+     * Request} service instead, as future version of Tapestry may operate beyond just the servlet API.
      */
     public HttpServletRequest buildHttpServletRequest()
     {
@@ -1098,8 +1039,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a shadow of the RequestGlobals.response property. Note again that the shadow can be an
-     * ordinary singleton, even though RequestGlobals is perthread.
+     * Builds a shadow of the RequestGlobals.response property. Note again that the shadow can be an ordinary singleton,
+     * even though RequestGlobals is perthread.
      */
     public Response buildResponse()
     {
@@ -1127,25 +1068,14 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes handlers for the following types:
-     * <dl>
-     * <dt>Object</dt>
-     * <dd>Failure case, added to provide a more useful exception message</dd>
-     * <dt>{@link Link}</dt>
-     * <dd>Sends a redirect to the link (which is typically a page render link)</dd>
-     * <dt>String</dt>
-     * <dd>Sends a page render redirect</dd>
-     * <dt>Class</dt>
-     * <dd>Interpreted as the class name of a page, sends a page render render redirect (this is more refactoring safe
-     * than the page name)</dd>
-     * <dt>{@link Component}</dt>
-     * <dd>A page's root component (though a non-root component will work, but will generate a warning). A direct
-     * to the containing page is sent.</dd>
-     * <dt>{@link org.apache.tapestry.StreamResponse}</dt>
-     * <dd>The stream response is sent as the actual reply.</dd>
-     * <dt>URL</dt>
-     * <dd>Sends a redirect to a (presumably) external URL</dd>
-     * </dl>
+     * Contributes handlers for the following types: <dl> <dt>Object</dt> <dd>Failure case, added to provide a more
+     * useful exception message</dd> <dt>{@link Link}</dt> <dd>Sends a redirect to the link (which is typically a page
+     * render link)</dd> <dt>String</dt> <dd>Sends a page render redirect</dd> <dt>Class</dt> <dd>Interpreted as the
+     * class name of a page, sends a page render render redirect (this is more refactoring safe than the page name)</dd>
+     * <dt>{@link Component}</dt> <dd>A page's root component (though a non-root component will work, but will generate
+     * a warning). A direct to the containing page is sent.</dd> <dt>{@link org.apache.tapestry.StreamResponse}</dt>
+     * <dd>The stream response is sent as the actual reply.</dd> <dt>URL</dt> <dd>Sends a redirect to a (presumably)
+     * external URL</dd> </dl>
      */
     public void contributeComponentEventResultProcessor(
 
@@ -1186,15 +1116,11 @@ public final class TapestryModule
 
 
     /**
-     * Contributes handlers for the following types:
-     * <dl>
-     * <dt>Object</dt> <dd>Failure case, added to provide more useful exception message</dd>
-     * <dt>{@link RenderCommand}</dt> <dd>Typically, a {@link org.apache.tapestry.Block}</dd>
-     * <dt>{@link Component}</dt> <dd>Renders the component and its body</dd>
-     * <dt>{@link org.apache.tapestry.json.JSONObject}</dt>
-     * <dd>The JSONObject is returned as a text/javascript response</dd>
-     * <dt>{@link org.apache.tapestry.StreamResponse}</dt>
-     * <dd>The stream response is sent as the actual response</dd>
+     * Contributes handlers for the following types: <dl> <dt>Object</dt> <dd>Failure case, added to provide more useful
+     * exception message</dd> <dt>{@link RenderCommand}</dt> <dd>Typically, a {@link org.apache.tapestry.Block}</dd>
+     * <dt>{@link Component}</dt> <dd>Renders the component and its body</dd> <dt>{@link
+     * org.apache.tapestry.json.JSONObject}</dt> <dd>The JSONObject is returned as a text/javascript response</dd>
+     * <dt>{@link org.apache.tapestry.StreamResponse}</dt> <dd>The stream response is sent as the actual response</dd>
      * </dl>
      */
 
@@ -1243,15 +1169,9 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes meta data defaults:
-     * <dl>
-     * <dt>{@link PersistentFieldManagerImpl#META_KEY}
-     * <dd>{@link PersistentFieldManagerImpl#DEFAULT_STRATEGY}
-     * <dt>{@link TapestryConstants#RESPONSE_CONTENT_TYPE}
-     * <dd>text/html
-     * <dt>{@link TapestryConstants#RESPONSE_ENCODING}
-     * <dd>UTF-8
-     * </dl>
+     * Contributes meta data defaults: <dl> <dt>{@link PersistentFieldManagerImpl#META_KEY} <dd>{@link
+     * PersistentFieldManagerImpl#DEFAULT_STRATEGY} <dt>{@link TapestryConstants#RESPONSE_CONTENT_TYPE} <dd>text/html
+     * <dt>{@link TapestryConstants#RESPONSE_ENCODING} <dd>UTF-8 </dl>
      *
      * @param configuration
      */
@@ -1264,8 +1184,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes a default object renderer for type Object, plus specialized renderers for
-     * {@link Request} and {@link Location}.
+     * Contributes a default object renderer for type Object, plus specialized renderers for {@link Request} and {@link
+     * Location}.
      */
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
@@ -1301,14 +1221,16 @@ public final class TapestryModule
 
 
     /**
-     * The MarkupRenderer service is used to render a full page as markup.  Supports an ordered
-     * configuration of {@link org.apache.tapestry.services.MarkupRendererFilter}s.
+     * The MarkupRenderer service is used to render a full page as markup.  Supports an ordered configuration of {@link
+     * org.apache.tapestry.services.MarkupRendererFilter}s.
      *
      * @param pageRenderQueue handles the bulk of the work
      * @param logger          used to log errors building the pipeline
      * @param configuration   filters on this service
      * @return the service
-     * @see #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
+     * @see #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
+     *      org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource,
+     *      AssetSource)
      */
     public MarkupRenderer buildMarkupRenderer(final PageRenderQueue pageRenderQueue, Logger logger,
                                               List<MarkupRendererFilter> configuration)
@@ -1327,15 +1249,12 @@ public final class TapestryModule
 
 
     /**
-     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental} service.  Filters often
-     * provide {@link Environmental} services needed by components as they render.
-     * <dl>
-     * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd>
-     * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
-     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt>
-     * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
-     * </dl>
+     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental}
+     * service.  Filters often provide {@link Environmental} services needed by components as they render. <dl>
+     * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd> <dt>ZoneSetup</dt> <dd>Provides {@link
+     * ZoneSetup}</dd> <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
+     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance
+     * of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd> </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
@@ -1450,7 +1369,8 @@ public final class TapestryModule
      * @param configuration filters for the service
      * @param renderQueue   does most of the work
      * @return the service
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
+     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
+     *      ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration,
@@ -1470,17 +1390,14 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response.  This
-     * is an analog to {@link #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset, org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)} }
-     * and overlaps it to some degree.
-     * <dl>
-     * <dt>   PageRenderSupport     </dt>
-     * <dd>Provides {@link org.apache.tapestry.PageRenderSupport}</dd>
-     * <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
+     * Contributes {@link PartialMarkupRendererFilter}s used when rendering a partial Ajax response.  This is an analog
+     * to {@link #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
+     * org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)}
+     * } and overlaps it to some degree. <dl> <dt>   PageRenderSupport     </dt> <dd>Provides {@link
+     * org.apache.tapestry.PageRenderSupport}</dd> <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt>
-     * <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
-     * </dl>
+     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance
+     * of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd> </dl>
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 
@@ -1570,15 +1487,9 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes several strategies:
-     * <dl>
-     * <dt>session
-     * <dd>Values are stored in the {@link Session}
-     * <dt>flash
-     * <dd>Values are stored in the {@link Session}, until the next request (for the page)
-     * <dt>client
-     * <dd>Values are encoded into URLs (or hidden form fields)
-     * </dl>
+     * Contributes several strategies: <dl> <dt>session <dd>Values are stored in the {@link Session} <dt>flash
+     * <dd>Values are stored in the {@link Session}, until the next request (for the page) <dt>client <dd>Values are
+     * encoded into URLs (or hidden form fields) </dl>
      */
     public void contributePersistentFieldManager(MappedConfiguration<String, PersistentFieldStrategy> configuration,
 
@@ -1607,11 +1518,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes {@link ValueEncoderFactory}s for types:
-     * <ul>
-     * <li>String
-     * <li>Enum
-     * </ul>
+     * Contributes {@link ValueEncoderFactory}s for types: <ul> <li>String <li>Enum </ul>
      *
      * @param configuration
      */
@@ -1630,8 +1537,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds the component action request handler for traditional (non-Ajax) requests. These typically
-     * result in a redirect to a Tapestry render URL.
+     * Builds the component action request handler for traditional (non-Ajax) requests. These typically result in a
+     * redirect to a Tapestry render URL.
      *
      * @see org.apache.tapestry.internal.services.ComponentActionRequestHandlerImpl
      */
@@ -1644,9 +1551,8 @@ public final class TapestryModule
     }
 
     /**
-     * Builds the action request handler for Ajax requests, based on
-     * {@link org.apache.tapestry.internal.services.AjaxComponentActionRequestHandler}.  Filters on
-     * the request handler are supported here as well.
+     * Builds the action request handler for Ajax requests, based on {@link org.apache.tapestry.internal.services.AjaxComponentActionRequestHandler}.
+     * Filters on the request handler are supported here as well.
      */
     @Marker(Ajax.class)
     public ComponentActionRequestHandler buildAjaxComponentActionRequestHandler(
@@ -1657,9 +1563,9 @@ public final class TapestryModule
     }
 
     /**
-     * Configures the extensions that will require a digest to be downloaded via the asset
-     * dispatcher. Most resources are "safe", they don't require a digest. For unsafe resources, the
-     * digest is incorporated into the URL to ensure that the client side isn't just "fishing".
+     * Configures the extensions that will require a digest to be downloaded via the asset dispatcher. Most resources
+     * are "safe", they don't require a digest. For unsafe resources, the digest is incorporated into the URL to ensure
+     * that the client side isn't just "fishing".
      * <p/>
      * The extensions must be all lower case.
      * <p/>
@@ -1717,6 +1623,11 @@ public final class TapestryModule
 
         configuration.add("tapestry.default-stylesheet", "org/apache/tapestry/default.css");
 
+        configuration.add("tapestry.page-pool.soft-limit", "5");
+        configuration.add("tapestry.page-pool.soft-wait", "10 ms");
+        configuration.add("tapestry.page-pool.hard-limit", "20");
+        configuration.add("tapestry.page-pool.active-window", "10 m");
+
         configuration.add(TapestryConstants.FORCE_FULL_URIS_SYMBOL, "false");
 
 // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
@@ -1766,22 +1677,26 @@ public final class TapestryModule
         return transformer;
     }
 
-    public PagePool build(Logger logger, PageLoader pageLoader, ComponentMessagesSource componentMessagesSource,
-                          ComponentClassResolver resolver)
+    public PagePool build(PageLoader pageLoader, ComponentMessagesSource componentMessagesSource,
+                          ServiceResources resources)
     {
-        PagePoolImpl service = new PagePoolImpl(logger, pageLoader, _threadLocale, resolver);
+        PagePoolImpl service = resources.autobuild(PagePoolImpl.class);
 
-// This covers invalidations due to changes to classes
+        // This covers invalidations due to changes to classes
 
         pageLoader.addInvalidationListener(service);
 
-// This covers invalidation due to changes to message catalogs (properties files)
+        // This covers invalidation due to changes to message catalogs (properties files)
 
         componentMessagesSource.addInvalidationListener(service);
 
-// ... and this covers invalidations due to changes to templates
+        // ... and this covers invalidations due to changes to templates
 
         _componentTemplateSource.addInvalidationListener(service);
+
+        // Give the service a chance to clean up its own cache periodically as well
+
+        _updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -1869,12 +1784,12 @@ public final class TapestryModule
     }
 
     /**
-     * Builds the PropBindingFactory as a chain of command. The terminator of the chain is
-     * responsible for ordinary property names (and property paths). Contributions to the service
-     * cover additional special cases, such as simple literal values.
+     * Builds the PropBindingFactory as a chain of command. The terminator of the chain is responsible for ordinary
+     * property names (and property paths). Contributions to the service cover additional special cases, such as simple
+     * literal values.
      *
-     * @param configuration contributions of special factories for some constants, each contributed factory
-     *                      may return a binding if applicable, or null otherwise
+     * @param configuration contributions of special factories for some constants, each contributed factory may return a
+     *                      binding if applicable, or null otherwise
      */
     public BindingFactory buildPropBindingFactory(List<BindingFactory> configuration,
                                                   PropertyConduitSource propertyConduitSource)
@@ -1887,11 +1802,8 @@ public final class TapestryModule
     }
 
     /**
-     * Adds content types for "css" and "js" file extensions.
-     * <dl>
-     * <dt>css</dt> <dd>test/css</dd>
-     * <dt>js</dt> <dd>text/javascript</dd>
-     * </dl>
+     * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>test/css</dd> <dt>js</dt>
+     * <dd>text/javascript</dd> </dl>
      */
     @SuppressWarnings({"JavaDoc"})
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
@@ -1901,9 +1813,9 @@ public final class TapestryModule
     }
 
     /**
-     * Adds a listener to the {@link org.apache.tapestry.internal.services.ComponentInstantiatorSource} that clears
-     * the {@link PropertyAccess} and {@link TypeCoercer} caches on a class loader invalidation.  In addition, forces
-     * the realization of {@link ComponentClassResolver} at startup.
+     * Adds a listener to the {@link org.apache.tapestry.internal.services.ComponentInstantiatorSource} that clears the
+     * {@link PropertyAccess} and {@link TypeCoercer} caches on a class loader invalidation.  In addition, forces the
+     * realization of {@link ComponentClassResolver} at startup.
      */
     public void contributeApplicationInitializer(OrderedConfiguration<ApplicationInitializerFilter> configuration,
                                                  final PropertyAccess propertyAccess, final TypeCoercer typeCoercer,

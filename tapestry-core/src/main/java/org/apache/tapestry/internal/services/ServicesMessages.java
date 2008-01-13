@@ -29,6 +29,7 @@ import org.apache.tapestry.services.TransformMethodSignature;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 class ServicesMessages
 {
@@ -394,5 +395,10 @@ class ServicesMessages
     static String attributeNotAllowed(String elementName)
     {
         return MESSAGES.format("attribute-not-allowed", elementName);
+    }
+
+    static String pagePoolExausted(String pageName, Locale locale, int hardLimit)
+    {
+        return MESSAGES.format("page-pool-exausted", pageName, locale.toString(), hardLimit);
     }
 }

@@ -125,16 +125,48 @@ Configuring Tapestry
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
     to use a different version of the script.aculo.us library. Tapestry's default version is 1.7.0 (including Prototype 1.5.0).
 
-  [tapestry.supported-locales]
-    A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
-    If no match can be found, the first locale in the list is treated as the default.
+  [tapestry.page-pool.active-window]
+    The time interval that an instantiated page instance may be cached before being removed. As pages are
+    returned to the pool, they are time stamped. Periodically (as per the file check interval),
+    the pool is scanned for page instances that have not been used recently; those that are outside
+    the active window are discarded.  This is used to help free up unnecessary page instances after
+    a request surge.
+
+    The default is "10 m" (10 minutes).
     
-    The default is (currently) "en,it,zn_CH".  As the community contributes new localizations of the necessary messages files,
-    this list will expand.  Note that the Tapestry quickstart archetype overrides the factory default, forcing the
-    application to be localized only for "en".
-    
+  [tapestry.page-pool.hard-limit]
+    The absolute maximum number of page instances (for a particular page name / locale combination) that Tapestry
+    will create at any time.  If this number is reached, then requests will fail because a page instance is not
+    available ... this can happen as part of a denial of service attack.  For this value to have any meaning, it
+    should be lower than the number of threads that the servlet container is configured to use when processing
+    requests.
+
+    The default is 20 page instances.
+
+  [tapestry.page-pool.soft-limit]
+    The number of pages in the page pool (for a given page name / locale combination) before which Tapestry will
+    start to wait for existing pages to be made available.  Under this limit of pages, Tapestry will simply
+    create a new page instance if no existing instance is readily available.  Once the soft limit is reached,
+    Tapestry will wait a short period of time (the soft wait interval) to see if an existing page instance
+    is made available.  It will then create a new page instance (unless the hard limit has been reached).
+
+    The default is 5 page instances.
+
+  [tapestry.page-pool.soft-wait]
+    The time interval that Tapestry will wait for a page instance to come available before deciding whether to create
+    a new instance.  The default is "10 ms".
+
+
+
+
   [tapestry.start-page-name]
     The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".
     
 
-  
+  [tapestry.supported-locales]
+    A comma-separated list of supported locales.  Incoming requests as "narrowed" to one of these locales, based on closest match.
+    If no match can be found, the first locale in the list is treated as the default.
+
+    The default is (currently) "en,it,zn_CH".  As the community contributes new localizations of the necessary messages files,
+    this list will expand.  Note that the Tapestry quickstart archetype overrides the factory default, forcing the
+    application to be localized only for "en".
