@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,16 +41,15 @@ public class ThreadCleanupHubImpl implements ThreadCleanupHub
         _logger = logger;
     }
 
-    public void addThreadCleanupListener(ThreadCleanupListener listener)
+    public synchronized void addThreadCleanupListener(ThreadCleanupListener listener)
     {
         _holder.get().add(listener);
     }
 
     /**
-     * Instructs the hub to notify all its listeners (for the current thread). It also discards its
-     * list of listeners.
+     * Instructs the hub to notify all its listeners (for the current thread). It also discards its list of listeners.
      */
-    public void cleanup()
+    public synchronized void cleanup()
     {
         List<ThreadCleanupListener> listeners = _holder.get();
 

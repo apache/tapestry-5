@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,13 +47,13 @@ public class PerThreadServiceCreator extends ThreadLocal implements ThreadCleanu
         return _delegate.createObject();
     }
 
-    public Object createObject()
+    public synchronized Object createObject()
     {
         // Get (or create) the service.
         return get();
     }
 
-    public void threadDidCleanup()
+    public synchronized void threadDidCleanup()
     {
         remove();
     }

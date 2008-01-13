@@ -18,10 +18,10 @@ import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
 
 /**
- * Contains core logic used by {@link TestBase}, allowing for mock objects to be used outside of a
- * TestNG-based test suite. A <em>single</em> standard mock control is used for all mock
- * instances. The control does not care about execution order, but will balk at any unexpected
- * method invocations. This class is thread safe (it used a thread local to store the mock control).
+ * Contains core logic used by {@link TestBase}, allowing for mock objects to be used outside of a TestNG-based test
+ * suite. A <em>single</em> standard mock control is used for all mock instances. The control does not care about
+ * execution order, but will balk at any unexpected method invocations. This class is thread safe (it used a thread
+ * local to store the mock control).
  */
 public final class MockTester
 {
@@ -37,22 +37,21 @@ public final class MockTester
     private final ThreadLocalControl _localControl = new ThreadLocalControl();
 
     /**
-     * Invoked after an individual unit test (i.e., a test method invocation) to discard the mock
-     * control.
+     * Invoked after an individual unit test (i.e., a test method invocation) to discard the mock control.
      */
-    public void cleanup()
+    public synchronized void cleanup()
     {
         _localControl.remove();
     }
 
-    public IMocksControl getMocksControl()
+    public synchronized IMocksControl getMocksControl()
     {
         return _localControl.get();
     }
 
     /**
-     * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong>
-     * check order, but does fail on any unexpected method invocations.
+     * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong> check order,
+     * but does fail on any unexpected method invocations.
      *
      * @param <T>       the type of the mock object
      * @param mockClass the class to mock
@@ -64,8 +63,8 @@ public final class MockTester
     }
 
     /**
-     * Switches each mock object created by {@link #newMock(Class)} into replay mode (out of the
-     * initial training mode).
+     * Switches each mock object created by {@link #newMock(Class)} into replay mode (out of the initial training
+     * mode).
      */
     public void replay()
     {
@@ -73,8 +72,8 @@ public final class MockTester
     }
 
     /**
-     * Verifies that all trained methods have been invoked on all mock objects (created by
-     * {@link #newMock(Class)}, then switches each mock object back to training mode.
+     * Verifies that all trained methods have been invoked on all mock objects (created by {@link #newMock(Class)}, then
+     * switches each mock object back to training mode.
      */
     public void verify()
     {
