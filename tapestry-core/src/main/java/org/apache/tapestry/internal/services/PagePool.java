@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,11 +22,15 @@ import org.apache.tapestry.internal.structure.Page;
 public interface PagePool
 {
     /**
-     * Obtains a page instance from the pool via a logical page name. A page instance is created if
-     * no such page is currently available.
+     * Obtains a page instance from the pool via a logical page name. A page instance is created if no such page is
+     * currently available.  The page pool enforces limits on the number of page instances (for any page name / locale
+     * combination) and may wait for a page to become available rather than create a new instance. There's also a hard
+     * limit, at which point an exception is raised.
      *
      * @param logicalPageName logical name used to identify the page
      * @return a page instance
+     * @throws RuntimeException if the name is not valid, if the page cannot be loaded, or if an instance of the page
+     *                          can't be created.
      */
     Page checkout(String logicalPageName);
 
