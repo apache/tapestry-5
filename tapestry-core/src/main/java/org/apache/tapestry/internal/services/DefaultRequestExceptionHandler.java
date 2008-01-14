@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import java.io.IOException;
 
 /**
- * Default implementation of {@link RequestExceptionHandler} that displays the standard
- * ExceptionReport page. The page must implement the {@link ExceptionReporter} interface.
+ * Default implementation of {@link RequestExceptionHandler} that displays the standard ExceptionReport page. The page
+ * must implement the {@link ExceptionReporter} interface.
  */
 public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 {
@@ -36,8 +36,8 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final Logger _logger;
 
-    public DefaultRequestExceptionHandler(RequestPageCache pageCache,
-                                          PageResponseRenderer renderer, Response response, Logger logger)
+    public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Response response,
+                                          Logger logger)
     {
         _pageCache = pageCache;
         _renderer = renderer;
@@ -57,6 +57,6 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
         rootComponent.reportException(exception);
 
-        _renderer.renderPageResponse(page, _response);
+        _renderer.renderPageResponse(page);
     }
 }

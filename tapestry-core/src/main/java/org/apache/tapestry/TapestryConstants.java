@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ public final class TapestryConstants
     public static final String ACTION_EVENT = "action";
 
     /**
-     * Event triggered when a page is activated (for rendering). The component event handler will be
-     * passed the context provided by the passivate event.
+     * Event triggered when a page is activated (for rendering). The component event handler will be passed the context
+     * provided by the passivate event.
      */
     public static final String ACTIVATE_EVENT = "activate";
 
     /**
-     * Event triggered when a link for a page is generated. The event handler for the page may
-     * provide an object, or an array of objects, as the context for the page. These values will
-     * become part of the page's context, and will be provided back when the page is activated.
+     * Event triggered when a link for a page is generated. The event handler for the page may provide an object, or an
+     * array of objects, as the context for the page. These values will become part of the page's context, and will be
+     * provided back when the page is activated.
      */
     public static final String PASSIVATE_EVENT = "passivate";
 
@@ -53,16 +53,15 @@ public final class TapestryConstants
     public static final String PROP_BINDING_PREFIX = "prop";
 
     /**
-     * Meta data key applied to pages that sets the response content type. A factory default
-     * provides the value "text/html" when not overridden.
+     * Meta data key applied to pages that sets the response content type. A factory default provides the value
+     * "text/html" when not overridden.
      */
     public static final String RESPONSE_CONTENT_TYPE = "tapestry.response-content-type";
 
     /**
-     * Meta data key applied to pages that sets the response encoding. A factory default provides
-     * the value "UTF-8" when not overriden. Content type may also be specified in the
-     * {@link #RESPONSE_CONTENT_TYPE content type} as parameter "charset", i.e.,
-     * "text/html;charset=UTF-8".
+     * Meta data key applied to pages that sets the response encoding. A factory default provides the value "UTF-8" when
+     * not overriden. Content type may also be specified in the {@link #RESPONSE_CONTENT_TYPE content type} as parameter
+     * "charset", i.e., "text/html;charset=UTF-8".
      */
     public static final String RESPONSE_ENCODING = "tapestry.response-encoding";
 
@@ -80,6 +79,19 @@ public final class TapestryConstants
      * Symbol which may be set to "true" to force the use of full URIs (not relative URIs) exclusively.
      */
     public static final String FORCE_FULL_URIS_SYMBOL = "tapestry.force-full-uris";
+
+
+    /**
+     * If set to true, then action requests will render a page markup response immediately, rather than sending a
+     * redirect to render the response.
+     */
+    public static final String SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL = "tapestry.suppress-redirect-from-action-requests";
+
+    /**
+     * The list of locales supported by the application; locales identified in the incoming request are "narrowed" to
+     * one of these values.
+     */
+    public static final String SUPPORTED_LOCALES_SYMBOL = "tapestry.supported-locales";
 
     private TapestryConstants()
     {

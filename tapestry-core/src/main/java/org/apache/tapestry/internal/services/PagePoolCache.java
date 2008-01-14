@@ -211,33 +211,14 @@ final class PagePoolCache
      */
     private Page findAvailablePage()
     {
-        CachedPage cachedPage = null;
 
-        ListIterator<CachedPage> i = _available.listIterator();
+        if (_available.isEmpty()) return null;
 
-        while (i.hasNext())
-        {
-            cachedPage = i.next();
+        CachedPage cachedPage = _available.removeFirst();
 
-            // The CachePage should be removed, either because
-            // it is a valid page being moved to the in use list,
-            // or because it the soft reference has been reclaimed
-            // and it is no good to anyone.
+        _inUse.addFirst(cachedPage);
 
-            i.remove();
-
-            Page page = cachedPage.get();
-
-            if (page != null)
-            {
-                _inUse.addFirst(cachedPage);
-
-                return page;
-            }
-
-        }
-
-        return null;
+        return cachedPage.get();
     }
 
     /**
@@ -320,7 +301,7 @@ final class PagePoolCache
 
     /**
      * Finds any cached pages whose last modified time is beyond the active window, meaning they haven't been used in
-     * some amount of time.  In addition, culls out any CachedPages that have been reclaimed by the garbage collector.
+     * some amount of time., and releases them to the garbage collector.
      */
     void cleanup()
     {
@@ -336,12 +317,6 @@ final class PagePoolCache
             while (i.hasNext())
             {
                 CachedPage cached = i.next();
-
-                if (cached.get() == null)
-                {
-                    i.remove();
-                    continue;
-                }
 
                 if (cached.getLastAccess() < cutoff) i.remove();
             }

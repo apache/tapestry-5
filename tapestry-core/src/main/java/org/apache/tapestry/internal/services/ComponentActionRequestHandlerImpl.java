@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventHandler;
-import org.apache.tapestry.Link;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
@@ -34,17 +33,18 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
 
     private final RequestPageCache _cache;
 
-    private final LinkFactory _linkFactory;
-
     private final Response _response;
 
+    private final ActionRenderResponseGenerator _generator;
+
     public ComponentActionRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
-                                             RequestPageCache cache, LinkFactory linkFactory, Response response)
+                                             RequestPageCache cache, Response response,
+                                             ActionRenderResponseGenerator generator)
     {
         _resultProcessor = resultProcessor;
         _cache = cache;
-        _linkFactory = linkFactory;
         _response = response;
+        _generator = generator;
     }
 
     public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
@@ -57,6 +57,7 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
         ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
 
         final Holder<Boolean> holder = Holder.create();
+        final Holder<IOException> exceptionHolder = Holder.create();
 
         ComponentEventHandler handler = new ComponentEventHandler()
         {
@@ -69,7 +70,7 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
                 }
                 catch (IOException ex)
                 {
-                    throw new RuntimeException(ex);
+                    exceptionHolder.put(ex);
                 }
 
                 holder.put(true);
@@ -83,17 +84,16 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
 
         page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, activationContext, handler);
 
+        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+
         if (holder.hasValue()) return;
 
         element.triggerEvent(eventType, context, handler);
 
+        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+
         if (holder.hasValue()) return;
 
-        if (!_response.isCommitted())
-        {
-            Link link = _linkFactory.createPageLink(page, false);
-
-            _response.sendRedirect(link);
-        }
+        if (!_response.isCommitted()) _generator.generateResponse(page);
     }
 }

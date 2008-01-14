@@ -16,21 +16,24 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.structure.Page;
 
-import java.lang.ref.SoftReference;
-
 /**
- * Tracks the usage of a page instance using a soft reference.  The soft reference will be reclaimed whenever the
- * garbage collector requires it.
+ * Tracks the usage of a page instance, allowing a last access property to be associated with the page. CachedPage
+ * instances are only accessed from within a {@link PagePoolCache}, which handles synchronization concerns.
+ * <p/>
+ * An earlier version of this code used <soft references>, but those seem to be problematic (the test suite started
+ * behaving erratically and response time suffered).  Perhaps that could be addressed via tuning of the VM, but for the
+ * meantime, we use hard references and rely more on the soft and hard limits and the culling of unused pages
+ * periodically.
  */
-public class CachedPage
+class CachedPage
 {
-    private final SoftReference<Page> _ref;
+    private final Page _page;
 
     private long _lastAccess;
 
     CachedPage(Page page)
     {
-        _ref = new SoftReference<Page>(page);
+        _page = page;
     }
 
     /**
@@ -40,7 +43,7 @@ public class CachedPage
      */
     Page get()
     {
-        return _ref.get();
+        return _page;
     }
 
     /**

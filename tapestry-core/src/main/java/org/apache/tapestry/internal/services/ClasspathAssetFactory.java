@@ -25,8 +25,8 @@ import org.apache.tapestry.services.ClasspathAssetAliasManager;
 import java.util.Map;
 
 /**
- * Generates Assets for files on the classpath. Caches generated client URLs internally, and clears
- * that cache when notified to do so by the {@link ResourceCache}.
+ * Generates Assets for files on the classpath. Caches generated client URLs internally, and clears that cache when
+ * notified to do so by the {@link ResourceCache}.
  *
  * @see AssetDispatcher
  */
@@ -38,8 +38,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
     private final Map<Resource, String> _resourceToClientURL = newConcurrentMap();
 
-    public ClasspathAssetFactory(final ResourceCache cache,
-                                 final ClasspathAssetAliasManager aliasManager)
+    public ClasspathAssetFactory(final ResourceCache cache, final ClasspathAssetAliasManager aliasManager)
     {
         _cache = cache;
         _aliasManager = aliasManager;
@@ -60,7 +59,10 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
             _resourceToClientURL.put(resource, clientURL);
         }
 
-        return clientURL;
+        // The path generated is partially request-dependent and therefore can't be cached, it will even
+        // vary from request to the next.
+
+        return _aliasManager.toClientURL(clientURL);
     }
 
     private String buildClientURL(Resource resource)
@@ -75,21 +77,14 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
             int lastdotx = path.lastIndexOf('.');
 
-            String revisedPath = path.substring(0, lastdotx + 1) + _cache.getDigest(resource)
-                    + path.substring(lastdotx);
-
-            return _aliasManager.toClientURL(revisedPath);
+            path = path.substring(0, lastdotx + 1) + _cache.getDigest(resource) + path.substring(lastdotx);
         }
 
-        return _aliasManager.toClientURL(path);
+        return path;
     }
 
     public Asset createAsset(final Resource resource)
     {
-        // TODO: Assets will eventually have a kind of symbolic link used
-        // to shorten the path. Some assets may need to have a checksum embedded
-        // in the path as well.
-
         return new Asset()
         {
             public Resource getResource()

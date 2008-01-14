@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
         String expectedClientURL = "/context/asset/foo/Bar.txt";
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
+
+        getMocksControl().times(2); // Cache of the raw path, not the final path which may be optimized
 
         replay();
 
@@ -81,6 +83,8 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.txt", expectedClientURL);
 
+        getMocksControl().times(2); // 2nd time is the toString() call
+
         replay();
 
         AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager);
@@ -89,7 +93,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         assertSame(asset.getResource(), r);
         assertEquals(asset.toClientURL(), expectedClientURL);
-        assertEquals(asset.toString(), asset.toClientURL());
+        assertEquals(asset.toString(), expectedClientURL);
 
         verify();
     }
@@ -110,6 +114,8 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         train_toClientURL(aliasManager, "foo/Bar.ABC123.txt", expectedClientURL);
 
+        getMocksControl().times(2); // 2nd time is the toString() call
+
         replay();
 
         AssetFactory factory = new ClasspathAssetFactory(cache, aliasManager);
@@ -118,7 +124,7 @@ public class ClasspathAssetFactoryTest extends InternalBaseTestCase
 
         assertSame(asset.getResource(), r);
         assertEquals(asset.toClientURL(), expectedClientURL);
-        assertEquals(asset.toString(), asset.toClientURL());
+        assertEquals(asset.toString(), expectedClientURL);
 
         verify();
     }

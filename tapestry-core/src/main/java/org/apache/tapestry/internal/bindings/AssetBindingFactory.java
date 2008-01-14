@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@ package org.apache.tapestry.internal.bindings;
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.BindingFactory;
 
@@ -31,19 +33,63 @@ public class AssetBindingFactory implements BindingFactory
 {
     private final AssetSource _source;
 
-    public AssetBindingFactory(final AssetSource source)
+    private final boolean _forceFullURIs;
+
+    public class AssetBinding extends AbstractBinding
     {
-        _source = source;
+        private final String _description;
+
+        private final Asset _asset;
+
+        protected AssetBinding(String description, Asset asset, Location location)
+        {
+            super(location);
+
+            _description = description;
+            _asset = asset;
+        }
+
+        public Object get()
+        {
+            return _asset;
+        }
+
+        /**
+         * Asset bindings are invariant only if full URIs are being used.  This is complicated ... basically, if the
+         * Asset is invariant, then any value coerced from the Asset is also invariant (such as a String version of an
+         * Asset's path).  Thus, the invariant String gets cached inside component parameter fields.  However, when the
+         * path is dynamic (i.e., because of {@link org.apache.tapestry.internal.services.RequestPathOptimizer}), we
+         * need to ensure that the Assets aren't cached.
+         *
+         * @return true if full URIs are enabled, false otherwise
+         */
+        @Override
+        public boolean isInvariant()
+        {
+            return _forceFullURIs;
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("AssetBinding[%s: %s]", _description, _asset);
+        }
     }
 
-    public Binding newBinding(String description, ComponentResources container,
-                              ComponentResources component, String expression, Location location)
+    public AssetBindingFactory(AssetSource source,
+                               @Symbol(TapestryConstants.FORCE_FULL_URIS_SYMBOL)boolean forceFullURIs)
+    {
+        _source = source;
+        _forceFullURIs = forceFullURIs;
+    }
+
+    public Binding newBinding(String description, ComponentResources container, ComponentResources component,
+                              String expression, Location location)
     {
         Resource baseResource = container.getBaseResource();
 
         Asset asset = _source.findAsset(baseResource, expression, container.getLocale());
 
-        return new LiteralBinding(description, asset, location);
-
+        return new AssetBinding(description, asset, location);
     }
 }

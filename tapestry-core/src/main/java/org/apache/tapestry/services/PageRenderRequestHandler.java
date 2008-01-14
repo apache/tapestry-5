@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import java.io.IOException;
+
 /**
  * Handles a invocation related to rendering out a pages complete content.
  *
@@ -22,12 +24,12 @@ package org.apache.tapestry.services;
 public interface PageRenderRequestHandler
 {
     /**
-     * Invoked to activate and render a page. In certain cases, based on values returned when
-     * activating the page, a {@link org.apache.tapestry.services.ComponentEventResultProcessor} may be used
-     * to send an alternate response (typically, a redirect).
+     * Invoked to activate and render a page. In certain cases, based on values returned when activating the page, a
+     * {@link org.apache.tapestry.services.ComponentEventResultProcessor} may be used to send an alternate response
+     * (typically, a redirect).
      *
      * @param logicalPageName the logical name of the page to activate and render
      * @param context         context data, supplied by the page at render time, extracted from the render URL
      */
-    void handle(String logicalPageName, String[] context);
+    void handle(String logicalPageName, String[] context) throws IOException;
 }

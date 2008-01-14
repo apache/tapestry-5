@@ -1,4 +1,4 @@
-// Copyright 2006, 2007, 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ import org.apache.tapestry.internal.structure.Page;
 import java.io.IOException;
 
 /**
- * Service responsible for writing a full page markup response.
+ * Used to produce the normal response to an action request: a redirect to a particular page.
  */
-public interface PageResponseRenderer
+public interface ActionRenderResponseGenerator
 {
-    void renderPageResponse(Page page) throws IOException;
+    void generateResponse(Page page) throws IOException;
 }

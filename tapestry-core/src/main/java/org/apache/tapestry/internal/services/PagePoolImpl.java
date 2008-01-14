@@ -30,8 +30,7 @@ import java.util.Map;
 
 /**
  * Registered as an invalidation listener with the page loader, the component messages source, and the component
- * template source. Any time any of those notice a change, then the entire page pool is wiped. In addition, only soft
- * references to pages are maintained, so when memory gets tight, page instances may be arbitrarily discarded.
+ * template source. Any time any of those notice a change, then the entire page pool is wiped.
  * <p/>
  * The master page pool is, itself, divided into individual sub-pools, one for each combination of
  * <p/>
@@ -147,7 +146,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
     }
 
     /**
-     * Any time templates, classes or messages change, we through out all instances.
+     * Any time templates, classes or messages change, we throw out all instances.
      */
     public synchronized void objectWasInvalidated()
     {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ContentType;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Response;
 
@@ -31,16 +32,21 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
     private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
 
+    private final Response _response;
+
     public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory, PageMarkupRenderer markupRenderer,
-                                    PageContentTypeAnalyzer pageContentTypeAnalyzer)
+                                    PageContentTypeAnalyzer pageContentTypeAnalyzer, Response response)
     {
         _markupWriterFactory = markupWriterFactory;
         _markupRenderer = markupRenderer;
         _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
+        _response = response;
     }
 
-    public void renderPageResponse(Page page, Response response) throws IOException
+    public void renderPageResponse(Page page) throws IOException
     {
+        Defense.notNull(page, "page");
+
         ContentType contentType = _pageContentTypeAnalyzer.findContentType(page);
 
         // For the moment, the content type is all that's used determine the model for the markup writer.
@@ -50,7 +56,7 @@ public class PageResponseRendererImpl implements PageResponseRenderer
 
         _markupRenderer.renderPageMarkup(page, writer);
 
-        PrintWriter pw = response.getPrintWriter(contentType.toString());
+        PrintWriter pw = _response.getPrintWriter(contentType.toString());
 
         writer.toMarkup(pw);
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ import org.apache.tapestry.services.Traditional;
 import java.io.IOException;
 
 /**
- * Handles a PageLink as specified by a PageLinkPathSource by activating and then rendering the
- * page.
+ * Handles a PageLink as specified by a PageLinkPathSource by activating and then rendering the page.
  */
 public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 {
@@ -50,11 +49,12 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
         _response = response;
     }
 
-    public void handle(String logicalPageName, String[] context)
+    public void handle(String logicalPageName, String[] context) throws IOException
     {
         Page page = _cache.get(logicalPageName);
 
         final Holder<Boolean> holder = Holder.create();
+        final Holder<IOException> exceptionHolder = Holder.create();
 
         ComponentEventHandler handler = new ComponentEventHandler()
         {
@@ -65,9 +65,9 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
                 {
                     _resultProcessor.processComponentEvent(result, component, methodDescription);
                 }
-                catch (IOException e)
+                catch (IOException ex)
                 {
-                    throw new RuntimeException(e);
+                    exceptionHolder.put(ex);
                 }
 
                 holder.put(true);
@@ -80,16 +80,10 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
         // The handler will have asked the result processor to send a response.
 
+        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+
         if (holder.hasValue()) return;
 
-        try
-        {
-            _pageResponseRenderer.renderPageResponse(page, _response);
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-
+        _pageResponseRenderer.renderPageResponse(page);
     }
 }

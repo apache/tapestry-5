@@ -154,7 +154,9 @@ public final class TapestryModule
 
                                                FieldValidatorSource fieldValidatorSource,
 
-                                               TranslatorSource translatorSource)
+                                               TranslatorSource translatorSource,
+
+                                               ObjectLocator locator)
     {
         configuration.add(TapestryConstants.LITERAL_BINDING_PREFIX, new LiteralBindingFactory());
         configuration.add(TapestryConstants.PROP_BINDING_PREFIX, propBindingFactory);
@@ -164,7 +166,7 @@ public final class TapestryModule
         configuration.add("validate", new ValidateBindingFactory(fieldValidatorSource));
         configuration.add("translate", new TranslateBindingFactory(translatorSource));
         configuration.add("block", new BlockBindingFactory());
-        configuration.add("asset", new AssetBindingFactory(assetSource));
+        configuration.add("asset", locator.autobuild(AssetBindingFactory.class));
         configuration.add("var", new RenderVariableBindingFactory());
     }
 
@@ -222,9 +224,7 @@ public final class TapestryModule
 
             RequestPageCache requestPageCache,
 
-            BindingSource bindingsource,
-
-            ApplicationStateManager applicationStateManager)
+            BindingSource bindingsource)
     {
         // TODO: Proper scheduling of all of this. Since a given field or method should
         // only have a single annotation, the order doesn't matter so much, as long as
@@ -690,6 +690,8 @@ public final class TapestryModule
 
     private final RequestGlobals _requestGlobals;
 
+    private final ActionRenderResponseGenerator _actionRenderResponseGenerator;
+
     public TapestryModule(PipelineBuilder pipelineBuilder,
 
                           PropertyShadowBuilder shadowBuilder,
@@ -722,7 +724,9 @@ public final class TapestryModule
 
                           Response response,
 
-                          ThreadLocale threadLocale)
+                          ThreadLocale threadLocale,
+
+                          ActionRenderResponseGenerator actionRenderResponseGenerator)
     {
         _pipelineBuilder = pipelineBuilder;
         _shadowBuilder = shadowBuilder;
@@ -743,6 +747,7 @@ public final class TapestryModule
         _request = request;
         _response = response;
         _threadLocale = threadLocale;
+        _actionRenderResponseGenerator = actionRenderResponseGenerator;
     }
 
     public Context build(ApplicationGlobals globals)
@@ -1104,10 +1109,10 @@ public final class TapestryModule
             }
         });
 
-        configuration.add(String.class, new StringResultProcessor(_requestPageCache, _linkFactory, _response));
+        configuration.add(String.class, new StringResultProcessor(_requestPageCache, _actionRenderResponseGenerator));
 
-        configuration.add(Class.class,
-                          new ClassResultProcessor(componentClassResolver, _requestPageCache, _linkFactory, _response));
+        configuration.add(Class.class, new ClassResultProcessor(componentClassResolver, _requestPageCache,
+                                                                _actionRenderResponseGenerator));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
@@ -1615,7 +1620,7 @@ public final class TapestryModule
         configuration.add("tapestry.file-check-update-timeout", "50 ms");
 
         // This should be overridden for particular applications.
-        configuration.add("tapestry.supported-locales", "en,it,zh_CN");
+        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,it,zh_CN");
 
         configuration.add("tapestry.default-cookie-max-age", "7 d");
 
@@ -1628,19 +1633,21 @@ public final class TapestryModule
         configuration.add("tapestry.page-pool.hard-limit", "20");
         configuration.add("tapestry.page-pool.active-window", "10 m");
 
+        configuration.add(TapestryConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL, "false");
+
         configuration.add(TapestryConstants.FORCE_FULL_URIS_SYMBOL, "false");
 
-// This is designed to make it easy to keep synchronized with script.aculo.ous. As we
-// support a new version, we create a new folder, and update the path entry. We can then
-// delete the old version folder (or keep it around). This should be more manageable than
-// overwriting the local copy with updates (it's too easy for files deleted between scriptaculous
-// releases to be accidentally left lying around). There's also a ClasspathAliasManager
-// contribution based on the path.
+        // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
+        // support a new version, we create a new folder, and update the path entry. We can then
+        // delete the old version folder (or keep it around). This should be more manageable than
+        // overwriting the local copy with updates (it's too easy for files deleted between scriptaculous
+        // releases to be accidentally left lying around). There's also a ClasspathAliasManager
+        // contribution based on the path.
 
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
         configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry/scriptaculous_1_8");
 
-// Likewise for jscalendar, currently version 1.0
+        // Likewise for jscalendar, currently version 1.0
 
         configuration.add("tapestry.jscalendar.path", "org/apache/tapestry/jscalendar-1.0");
         configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
@@ -1997,9 +2004,17 @@ public final class TapestryModule
         return service;
     }
 
+    /**
+     * Contributes filters: <dl> <dt>SetRequestEncode</dt> <dd>Sets the request encoding (before:*)</dd> <dt>Ajax</dt>
+     * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so</dd>
+     * <dt>ImmediateRender</dt> <dd>When {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
+     * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
+     * response, which is the normal behavior) </dd> </dl>
+     */
     public void contributeComponentActionRequestHandler(
             OrderedConfiguration<ComponentActionRequestFilter> configuration,
-            final RequestEncodingInitializer encodingInitializer, @Ajax ComponentActionRequestHandler ajaxHandler)
+            final RequestEncodingInitializer encodingInitializer, @Ajax ComponentActionRequestHandler ajaxHandler,
+            ObjectLocator locator)
     {
         ComponentActionRequestFilter requestEncodingFilter = new ComponentActionRequestFilter()
         {
@@ -2016,6 +2031,8 @@ public final class TapestryModule
         configuration.add("SetRequestEncoding", requestEncodingFilter, "before:*");
 
         configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
+
+        configuration.add("ImmediateRender", locator.autobuild(ImmediateActionRenderResponseFilter.class));
     }
 
     public ComponentClassCache buildComponentClassCache(@ComponentLayer ClassFactory classFactory)
@@ -2025,5 +2042,20 @@ public final class TapestryModule
         _componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
+    }
+
+    /**
+     * Chooses one of two implementations, based on the configured mode.
+     */
+    public ActionRenderResponseGenerator buildActionRenderResponseGenerator(
+
+            @Symbol(TapestryConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL)
+            boolean immediateMode,
+
+            ObjectLocator locator)
+    {
+        if (immediateMode) return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
+
+        return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
     }
 }
