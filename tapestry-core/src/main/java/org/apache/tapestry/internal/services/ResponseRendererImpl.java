@@ -56,6 +56,6 @@ public class ResponseRendererImpl implements ResponseRenderer
     {
         Page page = _pageCache.get(pageName);
 
-        _renderer.renderPageResponse(page, _response);
+        _renderer.renderPageResponse(page);
     }
 }

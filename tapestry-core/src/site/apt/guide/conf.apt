@@ -123,7 +123,8 @@ Configuring Tapestry
 
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
-    to use a different version of the script.aculo.us library. Tapestry's default version is 1.7.0 (including Prototype 1.5.0).
+    to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.0
+    (including Prototype 1.6.0).
 
   [tapestry.page-pool.active-window]
     The time interval that an instantiated page instance may be cached before being removed. As pages are
@@ -156,9 +157,6 @@ Configuring Tapestry
     The time interval that Tapestry will wait for a page instance to come available before deciding whether to create
     a new instance.  The default is "10 ms".
 
-
-
-
   [tapestry.start-page-name]
     The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".
     
@@ -170,3 +168,14 @@ Configuring Tapestry
     The default is (currently) "en,it,zn_CH".  As the community contributes new localizations of the necessary messages files,
     this list will expand.  Note that the Tapestry quickstart archetype overrides the factory default, forcing the
     application to be localized only for "en".
+
+  [tapestry.suppress-redirect-from-action-requests]
+    Normally, Tapestry responds to action requests (such as form submissions) by sending a client-side redirect
+    to the renderring page.  This has a lot of benefits in terms of improving browser navigation, making sure
+    URLs are bookmarkable, and so forth.  However, it has a cost: more data stored persistently in the session,
+    and a double-request for each user action (one action request, one render request).
+
+    Setting this symbol to "true" changes the Tapestry behavior to make it more like Tapestry 4: a markup response
+    is sent directly for the action request, no redirect in the middle. This option should be used with care,
+    and only in cases where you are certain that the benefits outweigh the disadvantages.
+

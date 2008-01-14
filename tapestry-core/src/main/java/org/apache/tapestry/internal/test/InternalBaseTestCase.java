@@ -470,8 +470,8 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     /**
-     * Reads the content of a file into a string. Each line is trimmed of line separators and
-     * leading/trailing whitespace.
+     * Reads the content of a file into a string. Each line is trimmed of line separators and leading/trailing
+     * whitespace.
      *
      * @param trim trim each line of whitespace
      */
@@ -567,5 +567,10 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final void train_optimizePath(RequestPathOptimizer optimizer, String path, String optimizedPath)
     {
         expect(optimizer.optimizePath(path)).andReturn(optimizedPath);
+    }
+
+    protected final ActionRenderResponseGenerator mockActionRenderResponseGenerator()
+    {
+        return newMock(ActionRenderResponseGenerator.class);
     }
 }

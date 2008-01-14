@@ -62,7 +62,7 @@ public class ResponseRendererImplTest extends InternalBaseTestCase
 
         train_get(cache, pageName, page);
 
-        pageResponseRenderer.renderPageResponse(page, response);
+        pageResponseRenderer.renderPageResponse(page);
 
         replay();
 

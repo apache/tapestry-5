@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ import org.apache.tapestry.internal.services.InvocationTarget;
 import org.apache.tapestry.internal.services.PageLinkTarget;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.services.PageRenderRequestHandler;
+
+import java.io.IOException;
 
 /**
  * Simulates a click on a page link.
@@ -60,12 +62,17 @@ public class PageLinkInvoker implements ComponentInvoker
 
             return _markupWriterFactory.getLatestMarkupWriter().getDocument();
         }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
         finally
         {
             _response.clear();
 
             _registry.cleanupThread();
         }
+
     }
 
 }

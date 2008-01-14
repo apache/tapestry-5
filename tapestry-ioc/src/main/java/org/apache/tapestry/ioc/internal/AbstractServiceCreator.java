@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.ObjectCreator;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.ServiceResources;
 import static org.apache.tapestry.ioc.internal.ConfigurationType.*;
@@ -28,9 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Abstract implementation of {@link ObjectCreator} geared towards the creation of the core service
- * implementation, either by invoking a service builder method on a module, or by invoking a
- * constructor.
+ * Abstract implementation of {@link ObjectCreator} geared towards the creation of the core service implementation,
+ * either by invoking a service builder method on a module, or by invoking a constructor.
  */
 public abstract class AbstractServiceCreator implements ObjectCreator
 {
@@ -61,15 +61,15 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         _logger = resources.getLogger();
 
         _parameterDefaults.put(String.class, _serviceId);
+        _parameterDefaults.put(ObjectLocator.class, resources);
         _parameterDefaults.put(ServiceResources.class, resources);
         _parameterDefaults.put(Logger.class, _logger);
         _parameterDefaults.put(Class.class, resources.getServiceInterface());
     }
 
     /**
-     * Returns a map (based on _parameterDefaults) that includes (possibly) an additional mapping
-     * containing the collected configuration data. This involves scanning the parameters and
-     * generic types.
+     * Returns a map (based on _parameterDefaults) that includes (possibly) an additional mapping containing the
+     * collected configuration data. This involves scanning the parameters and generic types.
      */
     protected final Map<Class, Object> getParameterDefaultsWithConfiguration(Class[] parameterTypes,
                                                                              Type[] genericParameterTypes)
@@ -157,9 +157,9 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     }
 
     /**
-     * Extracts from a generic type the underlying parameterized type. I.e., for List<Runnable>,
-     * will return Runnable. This is limited to simple parameterized types, not the more complex
-     * cases involving wildcards and upper/lower boundaries.
+     * Extracts from a generic type the underlying parameterized type. I.e., for List<Runnable>, will return Runnable.
+     * This is limited to simple parameterized types, not the more complex cases involving wildcards and upper/lower
+     * boundaries.
      *
      * @param type the genetic type of the parameter, i.e., List<Runnable>
      * @return the parameterize type (i.e. Runnable.class if type represents List<Runnable>).
@@ -176,15 +176,15 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     }
 
     /**
-     * "Sniffs" a generic type to find the underlying parameterized type. If the Type is a class,
-     * then Object.class is returned. Otherwise, the type must be a ParameterizedType. We check to
-     * make sure it has the correct number of a actual types (1 for a Collection or List, 2 for a
-     * Map). The actual types must be classes (wildcards just aren't supported)
+     * "Sniffs" a generic type to find the underlying parameterized type. If the Type is a class, then Object.class is
+     * returned. Otherwise, the type must be a ParameterizedType. We check to make sure it has the correct number of a
+     * actual types (1 for a Collection or List, 2 for a Map). The actual types must be classes (wildcards just aren't
+     * supported)
      *
      * @param type      a Class or ParameterizedType to inspect
      * @param typeIndex the index within the ParameterizedType to extract
-     * @return the actual type, or Object.class if the input type is not generic, or null if any
-     *         other pre-condition is not met
+     * @return the actual type, or Object.class if the input type is not generic, or null if any other pre-condition is
+     *         not met
      */
     private static Class findParameterizedTypeFromGenericType(Type type, int typeIndex)
     {

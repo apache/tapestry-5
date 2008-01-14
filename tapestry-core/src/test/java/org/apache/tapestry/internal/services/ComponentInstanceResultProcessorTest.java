@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,12 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.Response;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -39,9 +37,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         Logger logger = mockLogger();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
-        LinkFactory factory = mockLinkFactory();
-        Response response = mockResponse();
-        Link link = mockLink();
+        ActionRenderResponseGenerator generator = mockActionRenderResponseGenerator();
 
         train_getComponentResources(result, resources);
         train_getContainer(resources, null);
@@ -49,14 +45,12 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_getPageName(resources, PAGE_NAME);
         train_get(cache, PAGE_NAME, page);
 
-        train_createPageLink(factory, page, link);
-
-        response.sendRedirect(link);
+        generator.generateResponse(page);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, response,
-                                                                                                  cache, factory);
+        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
+                                                                                                  generator);
 
         processor.processComponentEvent(result, source, METHOD_DESCRIPTION);
 
@@ -74,9 +68,8 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         Logger logger = mockLogger();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
-        LinkFactory factory = mockLinkFactory();
-        Response response = mockResponse();
-        Link link = mockLink();
+        ActionRenderResponseGenerator generator = mockActionRenderResponseGenerator();
+
 
         train_getComponentResources(value, valueResources);
 
@@ -92,17 +85,16 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_getPageName(valueResources, PAGE_NAME);
         train_get(cache, PAGE_NAME, page);
 
-        train_createPageLink(factory, page, link);
-
-        response.sendRedirect(link);
+        generator.generateResponse(page);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, response,
-                                                                                                  cache, factory);
+        ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
+                                                                                                  generator);
 
         processor.processComponentEvent(value, source, METHOD_DESCRIPTION);
 
         verify();
     }
+
 }

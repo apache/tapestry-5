@@ -53,6 +53,8 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
 
                               {"", "", "/asset/foo.gif", "asset/foo.gif"},
 
+                              {"", "/griddemo.grid.columns.sort/title", "/assets/default.css", "/assets/default.css"},
+
                               {"/example", "/", "/example/assets/tapestry/default.css", "assets/tapestry/default.css"},
 
                               {"/example", "/newaccount", "/example/assets/tapestry/default.css",

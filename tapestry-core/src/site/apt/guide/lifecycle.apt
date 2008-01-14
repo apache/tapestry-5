@@ -36,6 +36,14 @@ Page Lifecycle
    The end result is that all pages in the pool are entirely equivalent to each other; it doesn't matter which
    instance is used for processing any particular request.
 
+   Remember that the page instance is just the tip of the iceberg: a page instance encompasses the page component,
+   its templates, all of its parameter bindings, tokens read from its template and (recursively) the same
+   thing for all components inside the page. It adds up.
+
+   A page instance will be "checked out" of the pool for a short period of time: a few milliseconds
+   to service a typical request. Because of this, it is generally the case that Tapestry
+   can handle a large number of end users with a relatively small pool of page instances.
+
 Comparison to JavaServer Pages
 
    JSPs also use a caching mechanism; the JSP itself is compiled into a Java servlet class, and acts as a singleton.
@@ -72,7 +80,7 @@ Page Pool Configuration
      attached to the request.
 
    * If the soft limit has been reached, Tapestry will wait for a short period of time for
-     a page instance to become available.
+     a page instance to become available before creating a new page instance.
 
    * If the hard limit has been reached, Tapestry will throw an exception rather than create a new page instance.
 
@@ -88,19 +96,20 @@ Page Pool Configuration
    hard limit is reached.
 
    Remember that all these configuration values are  per key: the combination of page name and locale.
-   Thus even with a hard limit of 20, you may have 20 start page instances for locale en and 20 start page
-   instances for locale fr (if you application is configured to support English and French).  Likewise,
+   Thus even with a hard limit of 20, you may eventually find that Tapestry
+   has created 20 start page instances for locale "en" <and> 20 start page
+   instances for locale "fr" (if your application is configured to support both English and French).  Likewise,
    you may have 20 instances for the start page, and 20 instances for the newaccount page.
 
-   Pooled pages are stored using <soft references>; this means that the garbage collector is free to reclaim
-   a page instance (that isn't actively being used) at any time. Further, Tapestry will release
-   page instances that haven't been used recently.
+   Tapestry periodically checks its cache for page instances that have not been used recently
+   (within a configurable window).  Unused page instances are release to the garbage collector.
 
    The end result is that you have quite a degree of tuning control over the process.  If memory is a limitation
    and throughput can be sacrificed, try lowering the soft and hard limit and increasing the soft wait.
 
    If performance is absolute and you have lots of memory, then increase the soft and hard limit and reduce 
-   the soft wait.
+   the soft wait.  This encourages Tapestry to create more page instances and not wait as long to re-use
+   existing instances.
 
 Page Lifecycle Methods
 

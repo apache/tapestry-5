@@ -26,16 +26,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * An optional annotation that may be placed on a service building method of a module. The
- * annotation overrides the default scope for services (the default being a global singleton that is
- * instantiated on demand) for an alternate lifecycle. Alternate lifecycles are typically used to
- * bind a service implementation to a single thread or request. Modules may define new scopes. Each
- * scope should have a corresponding {@link ServiceLifecycle} implementation. The linkage from scope
- * name to service lifecycle occurs via a contribution to the {@link ServiceLifecycleSource} service
- * configuration.
+ * An optional annotation that may be placed on a service building method of a module, or on the implementation class
+ * (when using service binding). The annotation overrides the default scope for services (the default being a global
+ * singleton that is instantiated on demand) for an alternate lifecycle. Alternate lifecycles are typically used to bind
+ * a service implementation to a single thread or request. Modules may define new scopes. Each scope should have a
+ * corresponding {@link ServiceLifecycle} implementation. The linkage from scope name to service lifecycle occurs via a
+ * contribution to the {@link ServiceLifecycleSource} service configuration.
  * <p/>
- * The annotation may also be placed directly on a service implementation class, when using service
- * autobuilding (via the {@link ServiceBinder}.
+ * The annotation may also be placed directly on a service implementation class, when using service autobuilding (via
+ * the {@link ServiceBinder}.
  */
 @Target(
         {TYPE, METHOD})

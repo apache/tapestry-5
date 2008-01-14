@@ -19,32 +19,31 @@ import org.apache.tapestry.services.Alias;
 public final class InternalConstants
 {
     /**
-     * Init parameter used to identify the package from which application classes are loaded. Such
-     * classes are in the pages, components and mixins sub-packages.
+     * Init parameter used to identify the package from which application classes are loaded. Such classes are in the
+     * pages, components and mixins sub-packages.
      */
     public static final String TAPESTRY_APP_PACKAGE_PARAM = "tapestry.app-package";
 
     /**
-     * The application mode, generally "servlet", used to select the correct contributions to the
-     * {@link Alias} service.
+     * The application mode, generally "servlet", used to select the correct contributions to the {@link Alias}
+     * service.
      */
     public static final String TAPESTRY_ALIAS_MODE_SYMBOL = "tapestry.alias-mode";
 
     /**
-     * The name of the application (i.e., the name of the application filter). Used, for example, to
-     * select additional resources related to the application.
+     * The name of the application (i.e., the name of the application filter). Used, for example, to select additional
+     * resources related to the application.
      */
     public static final String TAPESTRY_APP_NAME_SYMBOL = "tapestry.app-name";
 
     /**
-     * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup
-     * <em>L</em>anguage. Template files are well-formed XML files.
+     * The extension used for Tapestry component template files, <em>T</em>apestry <em>M</em>arkup <em>L</em>anguage.
+     * Template files are well-formed XML files.
      */
     public static final String TEMPLATE_EXTENSION = "tml";
 
     /**
-     * The name of the query parameter that stores the page activation context inside an action
-     * request.
+     * The name of the query parameter that stores the page activation context inside an action request.
      */
     public static final String PAGE_CONTEXT_NAME = "t:ac";
 
@@ -57,11 +56,18 @@ public final class InternalConstants
 
 
     /**
-     * Used in some Ajax scenarios to set the content type for the response early, when the Page instance
-     * (the authority on content types) is known. The value is of type {@link org.apache.tapestry.ContentType}.
+     * Used in some Ajax scenarios to set the content type for the response early, when the Page instance (the authority
+     * on content types) is known. The value is of type {@link org.apache.tapestry.ContentType}.
      */
     public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
+
+    /**
+     * Request attribute that stores a {@link org.apache.tapestry.internal.structure.Page} instance that will be
+     * rendered as the {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
+     * immediate mode response}.
+     */
+    public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";
 
     private InternalConstants()
     {

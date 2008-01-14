@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -99,19 +99,13 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerEvent(
-                rootElement,
-                TapestryConstants.ACTIVATE_EVENT,
-                new Object[0],
-                null,
-                false);
+        train_triggerEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[0], null, false);
 
-        renderer.renderPageResponse(page, response);
+        renderer.renderPageResponse(page);
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
-                                                                            renderer, response);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -152,15 +146,13 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[]
-                {"zip", "zoom"}, null, false);
+        train_triggerEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[]{"zip", "zoom"}, null, false);
 
-        renderer.renderPageResponse(page, response);
+        renderer.renderPageResponse(page);
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor,
-                                                                            renderer, response);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -174,13 +166,10 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         return newMock(ComponentEventResultProcessor.class);
     }
 
-    private void train_triggerEvent(ComponentPageElement element, String eventType,
-                                    Object[] context, ComponentEventHandler handler, boolean handled)
+    private void train_triggerEvent(ComponentPageElement element, String eventType, Object[] context,
+                                    ComponentEventHandler handler, boolean handled)
     {
-        expect(
-                element.triggerEvent(
-                        eq(eventType),
-                        aryEq(context),
-                        isA(ComponentEventHandler.class))).andReturn(handled);
+        expect(element.triggerEvent(eq(eventType), aryEq(context), isA(ComponentEventHandler.class))).andReturn(
+                handled);
     }
 }
