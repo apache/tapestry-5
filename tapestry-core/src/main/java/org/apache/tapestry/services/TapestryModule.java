@@ -1266,7 +1266,7 @@ public final class TapestryModule
                                          @Path("${tapestry.default-stylesheet}")
                                          final Asset stylesheetAsset,
 
-                                         @Path("org/apache/tapestry/field-error-marker.png")
+                                         @Path("${tapestry.field-error-marker}")
                                          final Asset fieldErrorIcon,
 
                                          final ValidationMessagesSource validationMessagesSource,
@@ -1406,7 +1406,7 @@ public final class TapestryModule
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 
-                                                @Path("org/apache/tapestry/field-error-marker.png")
+                                                @Path("${tapestry.field-error-marker}")
                                                 final Asset fieldErrorIcon,
 
                                                 final ValidationMessagesSource validationMessagesSource,
@@ -1627,6 +1627,7 @@ public final class TapestryModule
         configuration.add("tapestry.start-page-name", "start");
 
         configuration.add("tapestry.default-stylesheet", "org/apache/tapestry/default.css");
+        configuration.add("tapestry.field-error-marker", "org/apache/tapestry/field-error-marker.gif");
 
         configuration.add("tapestry.page-pool.soft-limit", "5");
         configuration.add("tapestry.page-pool.soft-wait", "10 ms");
