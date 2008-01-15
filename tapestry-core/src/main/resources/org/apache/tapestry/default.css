@@ -339,15 +339,19 @@ DIV.t-autocomplete-menu LI.selected {
 }
 
 DIV.t-error-popup SPAN {
-    background: transparent url( 'error-bevel-left.png' ) no-repeat;
+    background: transparent url( 'error-bevel-left.gif' ) no-repeat;
     display: block;
     line-height: 28px;
     margin-left: 0px;
     padding: 0px 5px 10px 22px;
 }
 
+HTML>BODY DIV.t-error-popup SPAN {
+    background: transparent url( 'error-bevel-left.png' ) no-repeat;
+}
+
 DIV.t-error-popup {
-    background: transparent url( 'error-bevel-right.png' ) no-repeat scroll top right;
+    background: transparent url( 'error-bevel-right.gif' ) no-repeat scroll top right;
     cursor: pointer;
     color: #FFF;
     display: block;
@@ -357,4 +361,8 @@ DIV.t-error-popup {
     margin-right: 6px;
     padding-right: 29px;
     text-decoration: none;
+}
+
+HTML>BODY DIV.t-error-popup {
+    background: transparent url( 'error-bevel-right.png' ) no-repeat scroll top right;
 }
