@@ -70,12 +70,6 @@ class ServicesMessages
         return MESSAGES.format("no-declared-method", ctClass.getName(), methodSignature);
     }
 
-    static String incorrectClassForInstantiator(String className, Class componentClass)
-    {
-        return MESSAGES.format("incorrect-class-for-instantiator", className, componentClass
-                .getName());
-    }
-
     static String classNotTransformed(String className)
     {
         return MESSAGES.format("class-not-transformed", className);

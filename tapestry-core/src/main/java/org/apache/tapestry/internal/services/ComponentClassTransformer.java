@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,9 +17,8 @@ package org.apache.tapestry.internal.services;
 import javassist.CtClass;
 
 /**
- * Encapsulates all the work performed by the
- * {@link org.apache.tapestry.internal.services.ComponentInstantiatorSource} when it loads and
- * transforms a class.
+ * Encapsulates all the work performed by the {@link org.apache.tapestry.internal.services.ComponentInstantiatorSource}
+ * when it loads and transforms a class.
  */
 public interface ComponentClassTransformer
 {
@@ -27,13 +26,14 @@ public interface ComponentClassTransformer
      * Performs a transformation on the class, accessing the class from the class pool.
      *
      * @param ctClass     compile time class to be transformed
-     * @param classLoader class loader used to resolve references to other classes (both transformed and
-     *                    not)
+     * @param classLoader class loader used to resolve references to other classes (both transformed and not)
      */
     void transformComponentClass(CtClass ctClass, ClassLoader classLoader);
 
     /**
      * Creates a new instantiator instance.
+     *
+     * @param componentClassName fully qualified name of component class to instantiate
      */
-    Instantiator createInstantiator(Class componentClass);
+    Instantiator createInstantiator(String componentClassName);
 }

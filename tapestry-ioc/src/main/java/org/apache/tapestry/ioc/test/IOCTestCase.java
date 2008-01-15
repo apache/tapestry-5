@@ -118,6 +118,11 @@ public class IOCTestCase extends TestBase
         return newMock(Logger.class);
     }
 
+    protected final void stub_isDebugEnabled(Logger logger, boolean enabled)
+    {
+        expect(logger.isDebugEnabled()).andStubReturn(enabled);
+    }
+
     @SuppressWarnings("unchecked")
     protected final <K, V> MappedConfiguration<K, V> mockMappedConfiguration()
     {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,8 +21,11 @@ import org.apache.tapestry.annotations.Retain;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.InheritedAnnotation;
+import org.apache.tapestry.internal.transform.*;
 import org.apache.tapestry.internal.transform.pages.*;
+import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
+import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.runtime.Component;
@@ -31,6 +34,7 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.MethodFilter;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeMethod;
@@ -53,13 +57,15 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 {
     private static final String STRING_CLASS_NAME = "java.lang.String";
 
-    private ClassPool _classPool;
+    private PropertyAccess _access;
 
     private final ClassLoader _contextClassLoader = currentThread().getContextClassLoader();
 
+    private ClassFactory _classFactory;
+
     private Loader _loader;
 
-    private PropertyAccess _access;
+    private ClassFactoryClassPool _classFactoryClassPool;
 
     @BeforeClass
     public void setup_access()
@@ -74,30 +80,35 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     /**
-     * We need a new ClassPool for each individual test, since many of the tests will end up
-     * modifying one or more CtClass instances.
+     * We need a new ClassPool for each individual test, since many of the tests will end up modifying one or more
+     * CtClass instances.
      */
     @BeforeMethod
     public void setup_classpool()
     {
-        _classPool = new ClassPool();
+        //  _classPool = new ClassPool();
 
-        _loader = new Loader(_contextClassLoader, _classPool);
+        _classFactoryClassPool = new ClassFactoryClassPool(_contextClassLoader);
 
-        // This ensures that only the classes we explicitly access and modify
-        // are loaded by the new loader; everthing else comes out of the common
-        // context class loader, which prevents a lot of nasty class cast exceptions.
-
-        _loader.delegateLoadingOf("org.apache.tapestry.");
+        _loader = new TestPackageAwareLoader(_contextClassLoader, _classFactoryClassPool);
 
         // Inside Maven Surefire, the system classpath is not sufficient to find all
         // the necessary files.
-        _classPool.appendClassPath(new LoaderClassPath(_loader));
+        _classFactoryClassPool.appendClassPath(new LoaderClassPath(_loader));
+
+        Logger logger = LoggerFactory.getLogger(InternalClassTransformationImplTest.class);
+
+        _classFactory = new ClassFactoryImpl(_loader, _classFactoryClassPool, logger);
     }
 
     private CtClass findCtClass(Class targetClass) throws NotFoundException
     {
-        return _classPool.get(targetClass.getName());
+        return _classFactoryClassPool.get(targetClass.getName());
+    }
+
+    private Class toClass(CtClass ctClass) throws Exception
+    {
+        return _classFactoryClassPool.toClass(ctClass, _loader, null);
     }
 
     @Test
@@ -156,7 +167,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         CtClass ctClass = findCtClass(targetClass);
 
-        return new InternalClassTransformationImpl(ctClass, _contextClassLoader, logger, null);
+        return new InternalClassTransformationImpl(ctClass, _classFactory, logger, null);
     }
 
     @Test
@@ -370,9 +381,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     /**
-     * More a test of how Javassist works. Javassist does not honor the Inherited annotation for
-     * classes (this kind of makes sense, since it won't necessarily have the super-class in
-     * memory).
+     * More a test of how Javassist works. Javassist does not honor the Inherited annotation for classes (this kind of
+     * makes sense, since it won't necessarily have the super-class in memory).
      */
     @Test
     public void ensure_subclasses_inherit_parent_class_annotations() throws Exception
@@ -396,8 +406,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     }
 
     /**
-     * These tests are really to assert my understanding of Javassist's API. I guess we should keep
-     * them around to make sure that future versions of Javassist work the same as our expectations.
+     * These tests are really to assert my understanding of Javassist's API. I guess we should keep them around to make
+     * sure that future versions of Javassist work the same as our expectations.
      */
     @Test
     public void ensure_javassist_still_does_not_show_inherited_interfaces() throws Exception
@@ -466,17 +476,15 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
         // so we'll just check that.
 
         ct.finish();
 
-        Class transformed = _classPool.toClass(targetObjectCtClass, _loader);
-
-        Instantiator instantiator = ct.createInstantiator(transformed);
+        Instantiator instantiator = ct.createInstantiator();
 
         ComponentResourcesAware instance = instantiator.newInstance(resources);
 
@@ -498,7 +506,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _loader, logger,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
                                                                              null);
 
         String parentFieldName = ct.addInjectedField(String.class, "_value", value);
@@ -508,16 +516,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ct.finish();
 
-        // Instantiate the transformed base class, so that we can create a transformed
-        // subclass.
-
-        _classPool.toClass(targetObjectCtClass, _loader);
-
         // Now lets work on the subclass
 
         CtClass subclassCtClass = findCtClass(TargetObjectSubclass.class);
 
-        ct = new InternalClassTransformationImpl(subclassCtClass, ct, _loader, logger, null);
+        ct = new InternalClassTransformationImpl(subclassCtClass, ct, _classFactory, logger, null);
 
         String subclassFieldName = ct.addInjectedField(String.class, "_childValue", value);
 
@@ -532,43 +535,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ct.finish();
 
-        Class transformed = _classPool.toClass(subclassCtClass, _loader);
 
-        Instantiator instantiator = ct.createInstantiator(transformed);
+        Instantiator instantiator = ct.createInstantiator();
 
         Object instance = instantiator.newInstance(resources);
 
         Object actual = _access.get(instance, "value");
 
         assertSame(actual, value);
-
-        verify();
-    }
-
-    @Test
-    public void wrong_instance_type_passed_to_create_instantiator() throws Exception
-    {
-        CtClass ctClass = findCtClass(BasicComponent.class);
-
-        Logger logger = mockLogger();
-
-        replay();
-
-        InternalClassTransformation ct = new InternalClassTransformationImpl(ctClass, _contextClassLoader, logger,
-                                                                             null);
-
-        _classPool.toClass(ctClass, _loader);
-
-        try
-        {
-            ct.createInstantiator(Boolean.class);
-            unreachable();
-        }
-        catch (IllegalArgumentException ex)
-        {
-            assertEquals(ex.getMessage(),
-                         ServicesMessages.incorrectClassForInstantiator(BasicComponent.class.getName(), Boolean.class));
-        }
 
         verify();
     }
@@ -584,21 +558,21 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         ct.addImplementedInterface(FooInterface.class);
         ct.addImplementedInterface(GetterMethodsInterface.class);
 
         ct.finish();
 
-        Class transformed = _classPool.toClass(targetObjectCtClass, _loader);
+        Class transformed = toClass(targetObjectCtClass);
 
         Class[] interfaces = transformed.getInterfaces();
 
         assertEquals(interfaces, new Class[]{Component.class, FooInterface.class, GetterMethodsInterface.class});
 
-        Object target = ct.createInstantiator(transformed).newInstance(resources);
+        Object target = ct.createInstantiator().newInstance(resources);
 
         FooInterface asFoo = (FooInterface) target;
 
@@ -631,8 +605,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         ct.makeReadOnly("_value");
 
@@ -650,7 +624,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             // The PropertyAccess layer adds a wrapper exception around the real one.
 
             assertEquals(ex.getCause().getMessage(),
-                         "Field org.apache.tapestry.internal.services.ReadOnlyBean._value is read-only.");
+                         "Field org.apache.tapestry.internal.transform.ReadOnlyBean._value is read-only.");
         }
 
         verify();
@@ -665,8 +639,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(RemoveFieldBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, null, logger, null);
 
         ct.removeField("_barney");
 
@@ -686,8 +659,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         ct.extendConstructor("_value = \"from constructor\";");
 
@@ -711,8 +684,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         ct.injectField("_value", "Tapestry");
 
@@ -732,15 +705,15 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             // The PropertyAccess layer adds a wrapper exception around the real one.
 
             assertEquals(ex.getCause().getMessage(),
-                         "Field org.apache.tapestry.internal.services.ReadOnlyBean._value is read-only.");
+                         "Field org.apache.tapestry.internal.transform.ReadOnlyBean._value is read-only.");
         }
 
         verify();
     }
 
     /**
-     * Tests the basic functionality of overriding read and write; also tests the case for multiple
-     * field read/field write substitions.
+     * Tests the basic functionality of overriding read and write; also tests the case for multiple field read/field
+     * write substitions.
      */
     @Test
     public void override_field_read_and_write() throws Exception
@@ -753,8 +726,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         replaceAccessToField(ct, "foo");
         replaceAccessToField(ct, "bar");
@@ -1057,11 +1030,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     private Component instantiate(Class<?> expectedClass, InternalClassTransformation ct,
                                   InternalComponentResources resources) throws Exception
     {
-        CtClass targetObjectCtClass = findCtClass(expectedClass);
-
-        Class transformedClass = _classPool.toClass(targetObjectCtClass, _loader);
-
-        Instantiator ins = ct.createInstantiator(transformedClass);
+        Instantiator ins = ct.createInstantiator();
 
         return ins.newInstance(resources);
     }
@@ -1144,14 +1113,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldRemoval.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _contextClassLoader,
-                                                                             logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
+                                                                             null);
 
         ct.removeField("_fieldToRemove");
 
         ct.finish();
 
-        Class transformed = _classPool.toClass(targetObjectCtClass, _loader);
+        Class transformed = toClass(targetObjectCtClass);
 
         for (Field f : transformed.getDeclaredFields())
         {

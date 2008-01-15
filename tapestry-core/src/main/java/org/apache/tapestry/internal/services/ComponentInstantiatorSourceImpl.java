@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,14 +31,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A wrapper around a Javassist class loader that allows certain classes to be modified as they are
- * loaded.
+ * A wrapper around a Javassist class loader that allows certain classes to be modified as they are loaded.
  */
 public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubImpl implements Translator, ComponentInstantiatorSource, UpdateListener
 {
     /**
-     * Add -Djavassist-write-dir=target/transformed-classes to the command line to force output of
-     * transformed classes to disk (for hardcore debugging).
+     * Add -Djavassist-write-dir=target/transformed-classes to the command line to force output of transformed classes
+     * to disk (for hardcore debugging).
      */
     private static final String JAVASSIST_WRITE_DIR = System.getProperty("javassist-write-dir");
 
@@ -108,8 +107,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     /**
-     * Invoked at object creation, or when there are updates to class files (i.e., invalidation), to
-     * create a new set of Javassist class pools and loaders.
+     * Invoked at object creation, or when there are updates to class files (i.e., invalidation), to create a new set of
+     * Javassist class pools and loaders.
      */
     private void initializeService()
     {
@@ -213,17 +212,19 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
     }
 
-    public synchronized Instantiator findInstantiator(String classname)
+    public synchronized Instantiator findInstantiator(String className)
     {
-        Instantiator result = _instantiatorMap.get(classname);
+        Instantiator result = _instantiatorMap.get(className);
 
         if (result == null)
         {
-            Class instanceClass = findClass(classname);
+            // Force the creation of the class (and the transformation of the class).
 
-            result = _transformer.createInstantiator(instanceClass);
+            findClass(className);
 
-            _instantiatorMap.put(classname, result);
+            result = _transformer.createInstantiator(className);
+
+            _instantiatorMap.put(className, result);
         }
 
         return result;
@@ -242,8 +243,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     }
 
     /**
-     * Returns true if the package for the class name is in a package that is controlled by the
-     * enhancer. Controlled packages are identified by {@link #addPackage(String)}.
+     * Returns true if the package for the class name is in a package that is controlled by the enhancer. Controlled
+     * packages are identified by {@link #addPackage(String)}.
      */
 
     boolean inControlledPackage(String classname)

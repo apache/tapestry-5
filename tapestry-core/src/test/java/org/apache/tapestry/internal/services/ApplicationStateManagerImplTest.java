@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.internal.transform.ReadOnlyBean;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.services.*;
 import org.easymock.EasyMock;
@@ -39,9 +40,10 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
         ReadOnlyBean aso = new ReadOnlyBean();
 
-        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(
-                asoClass,
-                new ApplicationStateContribution(strategyName, creator));
+        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
+                                                                                          new ApplicationStateContribution(
+                                                                                                  strategyName,
+                                                                                                  creator));
 
         train_get(source, strategyName, strategy);
 
@@ -66,9 +68,10 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         Class asoClass = ReadOnlyBean.class;
         ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
 
-        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(
-                asoClass,
-                new ApplicationStateContribution(strategyName, creator));
+        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
+                                                                                          new ApplicationStateContribution(
+                                                                                                  strategyName,
+                                                                                                  creator));
 
         train_get(source, strategyName, strategy);
         train_exists(strategy, asoClass, false);
@@ -92,9 +95,10 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         Class asoClass = ReadOnlyBean.class;
         ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
 
-        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(
-                asoClass,
-                new ApplicationStateContribution(strategyName, creator));
+        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
+                                                                                          new ApplicationStateContribution(
+                                                                                                  strategyName,
+                                                                                                  creator));
 
         train_get(source, strategyName, strategy);
         train_exists(strategy, asoClass, true);
@@ -118,9 +122,9 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         Class asoClass = ReadOnlyBean.class;
         Object aso = new ReadOnlyBean();
 
-        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(
-                asoClass,
-                new ApplicationStateContribution(strategyName));
+        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
+                                                                                          new ApplicationStateContribution(
+                                                                                                  strategyName));
 
         train_get(source, strategyName, strategy);
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,28 +14,22 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.annotations.ApplicationState;
-
-public class StateHolder
+public class SimpleASO
 {
-    @ApplicationState
-    private ReadOnlyBean _bean;
+    private String _value;
 
-    private boolean _beanExists;
-
-    public ReadOnlyBean getBean()
+    public String getValue()
     {
-        return _bean;
+        return _value;
     }
 
-    public void setBean(ReadOnlyBean bean)
+    public void setValue(String value)
     {
-        _bean = bean;
+        _value = value;
     }
 
-    public boolean getBeanExists()
+    public String getReadOnly()
     {
-        return _beanExists;
+        return null;
     }
-
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,11 @@ import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry.services.ComponentLayer;
 import org.slf4j.Logger;
 
 import java.lang.reflect.Modifier;
@@ -46,7 +48,9 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ComponentClassTransformWorker _workerChain;
 
-    private final LoggerSource _logSource;
+    private final LoggerSource _loggerSource;
+
+    private final ClassFactory _classFactory;
 
     private final String[] SUBPACKAGES = {"." + InternalConstants.PAGES_SUBPACKAGE + ".",
                                           "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
@@ -56,15 +60,16 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     /**
      * @param workerChain the ordered list of class transform works as a chain of command instance
      */
-    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource logSource)
+    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource loggerSource,
+                                         @ComponentLayer ClassFactory classFactory)
     {
         _workerChain = workerChain;
-        _logSource = logSource;
+        _loggerSource = loggerSource;
+        _classFactory = classFactory;
     }
 
     /**
-     * Clears the cache of {@link InternalClassTransformation} instances whenever the class loader
-     * is invalidated.
+     * Clears the cache of {@link InternalClassTransformation} instances whenever the class loader is invalidated.
      */
     public void objectWasInvalidated()
     {
@@ -106,7 +111,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         String classname = ctClass.getName();
 
-        Logger logger = _logSource.getLogger(classname);
+        Logger logger = _loggerSource.getLogger(classname);
 
 // If the parent class is in a controlled package, it will already have been loaded and
 // transformed (that is driven by the ComponentInstantiatorSource).
@@ -132,9 +137,10 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource, parentModel);
 
         InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
-                ctClass, classLoader, logger, model) : new InternalClassTransformationImpl(ctClass,
-                                                                                           parentTransformation,
-                                                                                           classLoader, logger, model);
+                ctClass, _classFactory, logger, model) : new InternalClassTransformationImpl(ctClass,
+                                                                                             parentTransformation,
+                                                                                             _classFactory, logger,
+                                                                                             model);
 
         try
         {
@@ -153,17 +159,15 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         _nameToComponentModel.put(classname, model);
     }
 
-    public Instantiator createInstantiator(Class componentClass)
+    public Instantiator createInstantiator(String componentClassName)
     {
-        String className = componentClass.getName();
+        InternalClassTransformation ct = _nameToClassTransformation.get(componentClassName);
 
-        InternalClassTransformation ct = _nameToClassTransformation.get(className);
-
-        if (ct == null) throw new RuntimeException(ServicesMessages.classNotTransformed(className));
+        if (ct == null) throw new RuntimeException(ServicesMessages.classNotTransformed(componentClassName));
 
         try
         {
-            return ct.createInstantiator(componentClass);
+            return ct.createInstantiator();
         }
         catch (Throwable ex)
         {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,29 +22,28 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 import java.util.List;
 
 /**
- * Extends {@link org.apache.tapestry.services.ClassTransformation} with additional methods that may
- * only be used internally by Tapestry.
+ * Extends {@link org.apache.tapestry.services.ClassTransformation} with additional methods that may only be used
+ * internally by Tapestry.
  */
 public interface InternalClassTransformation extends ClassTransformation
 {
     /**
-     * Invoked after all {@link ComponentClassTransformWorker}s have had their chance to work over
-     * the class. This performs any final operations for the class transformation, which includes
-     * coming up with the final constructor method for the class.
+     * Invoked after all {@link ComponentClassTransformWorker}s have had their chance to work over the class. This
+     * performs any final operations for the class transformation, which includes coming up with the final constructor
+     * method for the class.
      */
     void finish();
 
     /**
      * Called (after {@link #finish()}) to construct an instantiator for the component.
      *
-     * @param componentClass the class to be instantiated
      * @return the component's instantiator
      */
-    Instantiator createInstantiator(Class componentClass);
+    Instantiator createInstantiator();
 
     /**
-     * Returns a copy of the transformation's IdAllocator. Used when creating a child class
-     * transformation. May only be invoked on a frozen transformation.
+     * Returns a copy of the transformation's IdAllocator. Used when creating a child class transformation. May only be
+     * invoked on a frozen transformation.
      */
     IdAllocator getIdAllocator();
 
@@ -54,8 +53,8 @@ public interface InternalClassTransformation extends ClassTransformation
     List<ConstructorArg> getConstructorArgs();
 
     /**
-     * Searchs for an existing injection of an object, returning the name of the protected field
-     * into which the value was injected.
+     * Searchs for an existing injection of an object, returning the name of the protected field into which the value
+     * was injected.
      */
     String searchForPreviousInjection(MultiKey key);
 }

@@ -26,27 +26,27 @@ import java.util.List;
 /**
  * Manages a set of EasyMock mock objects. Used as a base class for test cases.
  * <p/>
- * Extends from {@link org.testng.Assert} to bring in all the public static assert methods without
- * requiring extra imports.
+ * Extends from {@link org.testng.Assert} to bring in all the public static assert methods without requiring extra
+ * imports.
  * <p/>
- * Provides a common mock factory method, {@link #newMock(Class)}. A single <em>standard</em>
- * mock control is used for all mock objects. Standard mocks do not care about the exact order in
- * which methods are invoked, though they are as rigourous as strict mocks when checking that
- * parameters are the correct values.
+ * Provides a common mock factory method, {@link #newMock(Class)}. A single <em>standard</em> mock control is used for
+ * all mock objects. Standard mocks do not care about the exact order in which methods are invoked, though they are as
+ * rigourous as strict mocks when checking that parameters are the correct values.
  * <p/>
- * This base class is created with the intention of use within a TestNG test suite; if using JUnit,
- * you can get the same functionality using {@link MockTester}.
+ * This base class is created with the intention of use within a TestNG test suite; if using JUnit, you can get the same
+ * functionality using {@link MockTester}.
  * <p/>
- * This class is thread safe (it uses a thread local to store the mock control). In theory, this
- * should allow TestNG to execute tests in parallel. Unfortunately, as of this writing (TestNG 5.1
- * and maven-surefire 2.8-SNAPSHOT) parallel execution does not always work fully and consistently,
- * some tests are dropped, and so Tapestry does not make use of TestNG parallel execution.
+ * This class is thread safe (it uses a thread local to store the mock control). In theory, this should allow TestNG to
+ * execute tests in parallel. Unfortunately, as of this writing (TestNG 5.1 and maven-surefire 2.8-SNAPSHOT) parallel
+ * execution does not always work fully and consistently, some tests are dropped, and so Tapestry does not make use of
+ * TestNG parallel execution.
  *
  * @see EasyMock#createControl()
  * @see MockTester
  */
 public class TestBase extends Assert
 {
+
     private static class ThreadLocalControl extends ThreadLocal<IMocksControl>
     {
         @Override
@@ -76,8 +76,8 @@ public class TestBase extends Assert
     }
 
     /**
-     * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong>
-     * check order, but does fail on any unexpected method invocations.
+     * Creates a new mock object of the indicated type. The shared mock control does <strong>not</strong> check order,
+     * but does fail on any unexpected method invocations.
      *
      * @param <T>       the type of the mock object
      * @param mockClass the class to mock
@@ -89,8 +89,8 @@ public class TestBase extends Assert
     }
 
     /**
-     * Switches each mock object created by {@link #newMock(Class)} into replay mode (out of the
-     * initial training mode).
+     * Switches each mock object created by {@link #newMock(Class)} into replay mode (out of the initial training
+     * mode).
      */
     protected final void replay()
     {
@@ -98,8 +98,8 @@ public class TestBase extends Assert
     }
 
     /**
-     * Verifies that all trained methods have been invoked on all mock objects (created by
-     * {@link #newMock(Class)}, then switches each mock object back to training mode.
+     * Verifies that all trained methods have been invoked on all mock objects (created by {@link #newMock(Class)}, then
+     * switches each mock object back to training mode.
      */
     protected final void verify()
     {
@@ -107,8 +107,7 @@ public class TestBase extends Assert
     }
 
     /**
-     * Convienience for {@link EasyMock#expectLastCall()} with
-     * {@link IExpectationSetters#andThrow(Throwable)}.
+     * Convienience for {@link EasyMock#expectLastCall()} with {@link IExpectationSetters#andThrow(Throwable)}.
      *
      * @param throwable the exception to be thrown by the most recent method call on any mock
      */
@@ -118,8 +117,8 @@ public class TestBase extends Assert
     }
 
     /**
-     * Invoked from code that should not be reachable. For example, place a call to unreachable()
-     * after invoking a method that is expected to throw an exception.
+     * Invoked from code that should not be reachable. For example, place a call to unreachable() after invoking a
+     * method that is expected to throw an exception.
      */
 
     protected final void unreachable()
@@ -155,9 +154,9 @@ public class TestBase extends Assert
     }
 
     /**
-     * Compares two lists for equality; first all the elements are individually compared for
-     * equality (if the lists are of unequal length, only elements up to the shorter length are
-     * compared). Then the length of the lists are compared. This generally gives
+     * Compares two lists for equality; first all the elements are individually compared for equality (if the lists are
+     * of unequal length, only elements up to the shorter length are compared). Then the length of the lists are
+     * compared. This generally gives
      *
      * @param <T>      type of objects to compare
      * @param actual   actual values to check

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.internal.transform.ReadOnlyBean;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.BeanModelSource;
 import org.easymock.EasyMock;
