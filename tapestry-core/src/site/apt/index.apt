@@ -13,6 +13,11 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
 
+  * Page instances are now cached more efficiently, with Tapestry attempting to control how many instances
+    are created, and culling unused instances periodically.
+
+  * New Unless component (like an If component, but inverted).
+
   * Support for "password" and "longtext" data types (for use with the BeanEditor), and a new
     {{{../apidocs/org/apache/tapestry/corelib/components/TextOutput.html}TextOutput}} component.
 
@@ -36,32 +41,7 @@ New And Of Note
   * Tapestry templates now use the extension .tml (not .html). Page templates in the context are now stored at the root, not under WEB-INF.
   
   * The core of BeanEditForm has been factored out as a new component, BeanEditor (this allows you to edit multiple beans within the same form).
-  
-  * Some of the annotations that aren't used specifically with component classes have been split off into the new
-    {{{../tapestry-annotations/}tapestry-annotations}} module.
-  
-  * Validator constraint values may now be specified in the component message catalog, rather than in the @Validation annotation (or validate component parameter). 
-  
-  * A new validator, regexp, has been added.
-  
-  * A Radio button component has been added.
-  
-  * A file upload form component has been added (in a new library: {{{../tapestry-upload/}tapestry-upload}}). 
-  
-  * The BeanEditForm component can now create the object it edits.
-  
-  * Added the Palette component for sophisticated multiple-property selection and ordering.
-  
-  * New "asset:" binding prefix to allow asset files to be bound to parameters.
-  
-  * Template expansions are now allowed inside attributes.
-  
-  * Applications may optionally provide a global message catalog (which is searched when a page or component message catalog
-    can not directly provide a localized message).
-  
-  * Explicit \<!DOCTYPE\> declarations inside page and component templates will now be forwarded through to the client
-    web browser.
-    
+
  
 Changes from Tapestry 4 to Tapestry 5
 
@@ -71,10 +51,12 @@ Changes from Tapestry 4 to Tapestry 5
   to provide a stable, powerful, extensible platform for many years to come.
   
   Here's a few of the planned and implemented features:
+
+  * Easy to get started using Maven.
   
-  * Simplified, minimal API based on annotations
+  * Simplified, minimal API based on annotations.
   
-  * <<No>> base class requirement; components are true, pure Pojos (Plain Old Java Objects)
+  * <<No>> base class requirement; components are true, pure Pojos (Plain Old Java Objects).
   
   * Abstract classes ... gone!  Classes are normal, concrete classes.
   
@@ -82,11 +64,11 @@ Changes from Tapestry 4 to Tapestry 5
   
   * Less configuration all around.
   
-  * Automatic reloading of templates and even <Java classes>
+  * Automatic reloading of templates and even <Java classes>.
   
-  * Super-duper Ajax integration built in (<that's still very much in progress>)
+  * Super-duper Ajax integration built in.
   
-  * Easy & fast unit testing of individual pages or components
+  * Easy & fast unit testing of individual pages or components.
     
 Adaptive API
 

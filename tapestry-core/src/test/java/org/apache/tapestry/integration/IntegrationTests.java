@@ -70,18 +70,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertEquals(downloaded, actual);
     }
 
-    @Test
-    public void basic_parameters() throws Exception
-    {
-
-        // OK ... could be a separate test, but for efficiency, we'll mix it in here.
-        // It takes a while to start up Selenium RC (and a Firefox browser).
-
-        start("Count Page");
-
-        assertTextPresent("Merry Christmas: Ho! Ho! Ho! ");
-    }
-
     /**
      * Tests the ability to inject a Block, and the ability to use the block to control rendering.
      */
@@ -1366,4 +1354,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // assertText("//th[1]/@class", "");
     }
 
+    @Test
+    public void unless_compnent()
+    {
+        start("Unless Demo");
+
+        assertText("//p[@id='false']", "false is rendered");
+
+        assertText("//p[@id='true']", "");
+    }
 }

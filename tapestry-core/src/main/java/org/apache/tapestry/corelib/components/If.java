@@ -29,22 +29,24 @@ public class If
     private boolean _test;
 
     /**
-     * Optional parameter to invert the test. If true, then the body is rendered when the test
-     * parameter is false (not true).
+     * Optional parameter to invert the test. If true, then the body is rendered when the test parameter is false (not
+     * true).
+     *
+     * @see Unless
      */
     @Parameter
     private boolean _negate;
 
     /**
-     * An alternate {@link Block} to render if the test parameter is false. The default, null, means
-     * render nothing in that situation.
+     * An alternate {@link Block} to render if the test parameter is false. The default, null, means render nothing in
+     * that situation.
      */
     @Parameter
     private Block _else;
 
     /**
-     * Returns null if the test parameter is true, which allows normal rendering (of the body). If
-     * the test parameter is false, returns the else parameter (this may also be null).
+     * Returns null if the test parameter is true, which allows normal rendering (of the body). If the test parameter is
+     * false, returns the else parameter (this may also be null).
      */
     Object beginRender()
     {
@@ -52,8 +54,8 @@ public class If
     }
 
     /**
-     * If the test parameter is true, then the body is rendered, otherwise not. The component does
-     * not have a template or do any other rendering besides its body.
+     * If the test parameter is true, then the body is rendered, otherwise not. The component does not have a template
+     * or do any other rendering besides its body.
      */
     boolean beforeRenderBody()
     {

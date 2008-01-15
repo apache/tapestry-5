@@ -19,19 +19,19 @@ import org.apache.tapestry.corelib.components.Grid;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 /**
- * Used by {@link BeanModelSource} to identify the type of data associated with a particular
- * property (represented as a {@link PropertyAdapter}). The data type is a string used to determine
- * what kind of interface to use for displaying the value of the property, or what kind of interface
- * to use for editing the value of the property. Common property types are "text", "enum",
- * "checkbox", but the list is extensible.
+ * Used by {@link BeanModelSource} to identify the type of data associated with a particular property (represented as a
+ * {@link PropertyAdapter}). The data type is a string used to determine what kind of interface to use for displaying
+ * the value of the property, or what kind of interface to use for editing the value of the property. Common property
+ * types are "text", "enum", "checkbox", but the list is extensible.
  * <p/>
- * <p>Different strategies for identifying the data type are encapsulated in the DataTypeAnalyzer service, forming
- * a chain of command.
+ * <p>Different strategies for identifying the data type are encapsulated in the DataTypeAnalyzer service, forming a
+ * chain of command.
  *
  * @see Grid
  * @see BeanEditForm
  * @see BeanBlockSource
- * @see org.apache.tapestry.services.TapestryModule#contributeDataTypeAnalyzer(org.apache.tapestry.ioc.OrderedConfiguration, DataTypeAnalyzer)
+ * @see org.apache.tapestry.services.TapestryModule#contributeDataTypeAnalyzer(org.apache.tapestry.ioc.OrderedConfiguration,
+ *      DataTypeAnalyzer)
  */
 public interface DataTypeAnalyzer
 {
