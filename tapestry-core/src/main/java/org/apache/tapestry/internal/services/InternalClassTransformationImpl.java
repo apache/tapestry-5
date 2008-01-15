@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,11 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.ClassFab;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
+import org.apache.tapestry.ioc.services.ClassFactory;
+import org.apache.tapestry.ioc.services.MethodSignature;
+import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FieldFilter;
@@ -40,8 +45,7 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Implementation of the {@link org.apache.tapestry.internal.services.InternalClassTransformation}
- * interface.
+ * Implementation of the {@link org.apache.tapestry.internal.services.InternalClassTransformation} interface.
  */
 public final class InternalClassTransformationImpl implements InternalClassTransformation
 {
@@ -110,17 +114,25 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private Formatter _formatter = new Formatter(_description);
 
-    private ClassLoader _loader;
+    private final ClassFactory _classFactory;
+
+    /**
+     * Signature for newInstance() method of Instantiator.
+     */
+    private static final MethodSignature NEW_INSTANCE_SIGNATURE = new MethodSignature(Component.class, "newInstance",
+                                                                                      new Class[]{
+                                                                                              InternalComponentResources.class},
+                                                                                      null);
 
     /**
      * This is a constructor for a base class.
      */
-    public InternalClassTransformationImpl(CtClass ctClass, ClassLoader loader, Logger logger,
+    public InternalClassTransformationImpl(CtClass ctClass, ClassFactory classFactory, Logger logger,
                                            ComponentModel componentModel)
     {
         _ctClass = ctClass;
         _classPool = _ctClass.getClassPool();
-        _loader = loader;
+        _classFactory = classFactory;
         _parentTransformation = null;
         _componentModel = componentModel;
 
@@ -150,11 +162,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * Constructor for a component sub-class.
      */
     public InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
-                                           ClassLoader loader, Logger logger, ComponentModel componentModel)
+                                           ClassFactory classFactory, Logger logger, ComponentModel componentModel)
     {
         _ctClass = ctClass;
         _classPool = _ctClass.getClassPool();
-        _loader = loader;
+        _classFactory = classFactory;
         _logger = logger;
         _parentTransformation = parentTransformation;
         _componentModel = componentModel;
@@ -210,7 +222,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _removedFieldNames = null;
         _constructor = null;
         _formatter = null;
-        _loader = null;
         // _ctClass = null; -- needed by toString()
         _classPool = null;
     }
@@ -283,8 +294,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     /**
-     * Searches an array of objects (that are really annotations instances) to find one that is of
-     * the correct type, which is returned.
+     * Searches an array of objects (that are really annotations instances) to find one that is of the correct type,
+     * which is returned.
      *
      * @param <T>
      * @param annotationClass the annotation to search for
@@ -416,10 +427,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     /**
-     * Adds default implementations for the methods defined by the interface (and all of its
-     * super-interfaces). The implementations return null (or 0, or false, as appropriate to to the
-     * method type). There are a number of degenerate cases that are not covered properly: these are
-     * related to base interfaces that may be implemented by base classes.
+     * Adds default implementations for the methods defined by the interface (and all of its super-interfaces). The
+     * implementations return null (or 0, or false, as appropriate to to the method type). There are a number of
+     * degenerate cases that are not covered properly: these are related to base interfaces that may be implemented by
+     * base classes.
      *
      * @param ctInterface
      * @throws NotFoundException
@@ -479,10 +490,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     /**
-     * Check to see if the target class (or any of its super classes) implements the provided
-     * interface. This is geared for simple interfaces (that don't extend other interfaces), thus if
-     * the class (or a base class) implement interface Y that extends interface X, we may not return
-     * true for interface X.
+     * Check to see if the target class (or any of its super classes) implements the provided interface. This is geared
+     * for simple interfaces (that don't extend other interfaces), thus if the class (or a base class) implement
+     * interface Y that extends interface X, we may not return true for interface X.
      */
 
     private boolean classImplementsInterface(CtClass ctInterface) throws NotFoundException
@@ -1043,9 +1053,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     /**
-     * This is split out from {@link #addInjectedField(Class, String, Object)} to handle a special
-     * case for the InternalComponentResources, which is null when "injected" (during the class
-     * transformation) and is only determined when a component is actually instantiated.
+     * This is split out from {@link #addInjectedField(Class, String, Object)} to handle a special case for the
+     * InternalComponentResources, which is null when "injected" (during the class transformation) and is only
+     * determined when a component is actually instantiated.
      */
     private String addInjectedFieldUncached(Class type, String suggestedName, Object value)
     {
@@ -1079,8 +1089,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
     /**
-     * Adds a parameter to the constructor for the class; the parameter is used to initialize the
-     * value for a field.
+     * Adds a parameter to the constructor for the class; the parameter is used to initialize the value for a field.
      *
      * @param fieldName name of field to inject
      * @param fieldType Javassist type of the field (and corresponding parameter)
@@ -1188,25 +1197,82 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _formatter.format(")\n%s\n\n", constructorBody);
     }
 
-    public Instantiator createInstantiator(Class componentClass)
+    public Instantiator createInstantiator()
     {
-        String className = _ctClass.getName();
+        String componentClassName = _ctClass.getName();
 
-        if (!className.equals(componentClass.getName())) throw new IllegalArgumentException(
-                ServicesMessages.incorrectClassForInstantiator(className, componentClass));
+        String name = ClassFabUtils.generateClassName("Instantiator");
 
-        Object[] parameters = new Object[_constructorArgs.size()];
+        ClassFab cf = _classFactory.newClass(name, AbstractInstantiator.class);
 
-        // Skip the first constructor argument, it's always a placeholder
-        // for the InternalComponentResources instance that's provided
-        // later.
+        BodyBuilder constructor = new BodyBuilder();
+
+        // This is realy -1 + 2: The first value in _constructorArgs is the InternalComponentResources, which doesn't
+        // count toward's the Instantiator's constructor ... then we add in the Model and String description.
+        // It's tricky because there's the constructor parameters for the Instantiator, most of which are stored
+        // in fields and then used as the constructor parameters for the Component.
+
+        Class[] constructorParameterTypes = new Class[_constructorArgs.size() + 1];
+        Object[] constructorParameterValues = new Object[_constructorArgs.size() + 1];
+
+        constructorParameterTypes[0] = ComponentModel.class;
+        constructorParameterValues[0] = _componentModel;
+
+        constructorParameterTypes[1] = String.class;
+        constructorParameterValues[1] = String.format("Instantiator[%s]", componentClassName);
+
+        BodyBuilder newInstance = new BodyBuilder();
+
+        newInstance.add("return new %s($1", componentClassName);
+
+        constructor.begin();
+
+        // Pass the model and description to AbstractInstantiator
+
+        constructor.addln("super($1, $2);");
+
+        // Again, skip the (implicit) InternalComponentResources field, that's
+        // supplied to the Instantiator's newInstance() method.
 
         for (int i = 1; i < _constructorArgs.size(); i++)
         {
-            parameters[i] = _constructorArgs.get(i).getValue();
+            ConstructorArg arg = _constructorArgs.get(i);
+
+            Class argType = toClass(arg.getType().getName());
+
+            String fieldName = "_param_" + i;
+
+            constructorParameterTypes[i + 1] = argType;
+            constructorParameterValues[i + 1] = arg.getValue();
+
+            cf.addField(fieldName, argType);
+
+            // $1 is model, $2 is description, to $3 is first dynamic parameter.
+
+            constructor.addln("%s = $%d;", fieldName, i + 2);
+
+            newInstance.add(", %s", fieldName);
         }
 
-        return new ReflectiveInstantiator(_componentModel, componentClass, parameters);
+        constructor.end();
+        newInstance.addln(");");
+
+        cf.addConstructor(constructorParameterTypes, null, constructor.toString());
+
+        cf.addMethod(Modifier.PUBLIC, NEW_INSTANCE_SIGNATURE, newInstance.toString());
+
+        Class instantiatorClass = cf.createClass();
+
+        try
+        {
+            Object instance = instantiatorClass.getConstructors()[0].newInstance(constructorParameterValues);
+
+            return (Instantiator) instance;
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 
     private void failIfFrozen()
@@ -1450,15 +1516,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public Class toClass(String type)
     {
-        failIfFrozen();
-
-        // No reason why this can't be allowed to work after freezing.
-
         String finalType = TransformUtils.getWrapperTypeName(type);
 
         try
         {
-            return Class.forName(finalType, true, _loader);
+            return Class.forName(finalType, true, _classFactory.getClassLoader());
         }
         catch (ClassNotFoundException ex)
         {

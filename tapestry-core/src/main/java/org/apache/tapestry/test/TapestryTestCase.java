@@ -50,16 +50,16 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * Base test case that adds a number of convienience factory and training methods for the public
- * interfaces of Tapestry.
+ * Base test case that adds a number of convienience factory and training methods for the public interfaces of
+ * Tapestry.
  */
 public abstract class TapestryTestCase extends IOCTestCase
 {
 
     /**
-     * Creates a new markup writer instance (not a markup writer mock). Output can be directed at
-     * the writer, which uses the default (HTML) markup model. The writer's toString() value
-     * represents all the collected markup in the writer.
+     * Creates a new markup writer instance (not a markup writer mock). Output can be directed at the writer, which uses
+     * the default (HTML) markup model. The writer's toString() value represents all the collected markup in the
+     * writer.
      *
      * @return
      */
@@ -909,9 +909,8 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     /**
-     * Provides access to component messages, suitable for testing. Reads the associated .properties
-     * file for the class (NOT any localization of it). Only the messages directly in the
-     * .properties file is available.
+     * Provides access to component messages, suitable for testing. Reads the associated .properties file for the class
+     * (NOT any localization of it). Only the messages directly in the .properties file is available.
      *
      * @param componentClass component class whose messages are needed *
      * @return the Messages instance
@@ -964,5 +963,15 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_getInheritInformalParameters(EmbeddedComponentModel model, boolean inherits)
     {
         expect(model.getInheritInformalParameters()).andReturn(inherits).atLeastOnce();
+    }
+
+    protected final ApplicationStateManager mockApplicationStateManager()
+    {
+        return newMock(ApplicationStateManager.class);
+    }
+
+    protected final <T> void train_get(ApplicationStateManager manager, Class<T> asoClass, T aso)
+    {
+        expect(manager.get(asoClass)).andReturn(aso);
     }
 }

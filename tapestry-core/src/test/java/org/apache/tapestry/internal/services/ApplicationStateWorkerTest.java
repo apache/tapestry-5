@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,21 +14,27 @@
 
 package org.apache.tapestry.internal.services;
 
-import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
+import javassist.NotFoundException;
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.internal.transform.StateHolder;
+import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
+import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.services.PropertyAccessImpl;
+import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ApplicationStateManager;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 public class ApplicationStateWorkerTest extends InternalBaseTestCase
@@ -36,6 +42,44 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     private final ClassLoader _contextClassLoader = Thread.currentThread().getContextClassLoader();
 
     private PropertyAccess _access = new PropertyAccessImpl();
+
+    private ClassFactory _classFactory;
+
+    private Loader _loader;
+
+    private ClassFactoryClassPool _classFactoryClassPool;
+
+    /**
+     * We need a new ClassPool for each individual test, since many of the tests will end up modifying one or more
+     * CtClass instances.
+     */
+    @BeforeMethod
+    public void setup_classpool()
+    {
+        //  _classPool = new ClassPool();
+
+        _classFactoryClassPool = new ClassFactoryClassPool(_contextClassLoader);
+
+        _loader = new TestPackageAwareLoader(_contextClassLoader, _classFactoryClassPool);
+
+        // Inside Maven Surefire, the system classpath is not sufficient to find all
+        // the necessary files.
+        _classFactoryClassPool.appendClassPath(new LoaderClassPath(_loader));
+
+        Logger logger = LoggerFactory.getLogger(InternalClassTransformationImplTest.class);
+
+        _classFactory = new ClassFactoryImpl(_loader, _classFactoryClassPool, logger);
+    }
+
+    private CtClass findCtClass(Class targetClass) throws NotFoundException
+    {
+        return _classFactoryClassPool.get(targetClass.getName());
+    }
+
+    private Class toClass(CtClass ctClass) throws Exception
+    {
+        return _classFactoryClassPool.toClass(ctClass, _loader, null);
+    }
 
     @AfterClass
     public void cleanup()
@@ -46,7 +90,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     @Test
     public void no_fields_with_annotation()
     {
-        ApplicationStateManager manager = newApplicationStateManager();
+        ApplicationStateManager manager = mockApplicationStateManager();
         ClassTransformation ct = mockClassTransformation();
         MutableComponentModel model = mockMutableComponentModel();
 
@@ -65,28 +109,19 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     @Test
     public void field_read_and_write() throws Exception
     {
-        ApplicationStateManager manager = newApplicationStateManager();
+        ApplicationStateManager manager = mockApplicationStateManager();
         Logger logger = mockLogger();
         MutableComponentModel model = mockMutableComponentModel();
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentClassCache cache = mockComponentClassCache();
 
-        String componentClassName = StateHolder.class.getName();
-        Class asoClass = ReadOnlyBean.class;
+        Class asoClass = SimpleASO.class;
 
-        ClassPool pool = new ClassPool();
-        ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
-        pool.appendClassPath(new LoaderClassPath(contextLoader));
+        CtClass ctClass = findCtClass(StateHolder.class);
 
-        Loader loader = new Loader(contextLoader, pool);
-
-        loader.delegateLoadingOf("org.apache.tapestry.");
-
-        CtClass ctClass = pool.get(componentClassName);
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _contextClassLoader,
-                                                                                         logger, null);
-
-        train_forName(cache, ReadOnlyBean.class);
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _classFactory, logger,
+                                                                                         null);
+        train_forName(cache, asoClass);
 
         replay();
 
@@ -96,9 +131,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         transformation.finish();
 
-        Class transformedClass = pool.toClass(ctClass, loader);
-
-        Instantiator instantiator = transformation.createInstantiator(transformedClass);
+        Instantiator instantiator = transformation.createInstantiator();
 
         Object component = instantiator.newInstance(resources);
 
@@ -114,7 +147,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         // Test read property (get from ASM)
 
-        Object aso = new ReadOnlyBean();
+        Object aso = new SimpleASO();
 
         train_get(manager, asoClass, aso);
 
@@ -126,7 +159,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         // Test write property (set ASM)
 
-        Object aso2 = new ReadOnlyBean();
+        Object aso2 = new SimpleASO();
 
         manager.set(asoClass, aso2);
 
@@ -137,13 +170,5 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         verify();
     }
 
-    protected final ApplicationStateManager newApplicationStateManager()
-    {
-        return newMock(ApplicationStateManager.class);
-    }
 
-    protected final <T> void train_get(ApplicationStateManager manager, Class<T> asoClass, T aso)
-    {
-        expect(manager.get(asoClass)).andReturn(aso);
-    }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -40,9 +40,8 @@ import java.net.URLConnection;
 import java.util.UUID;
 
 /**
- * Tests for {@link org.apache.tapestry.internal.services.ComponentInstantiatorSourceImpl}. Several
- * of these tests are more of the form of integration tests that instantiate the Tapestry IoC
- * Registry.
+ * Tests for {@link org.apache.tapestry.internal.services.ComponentInstantiatorSourceImpl}. Several of these tests are
+ * more of the form of integration tests that instantiate the Tapestry IoC Registry.
  */
 public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 {
@@ -71,8 +70,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(_contextLoader,
-                                                                                transformer, logger);
+        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(_contextLoader, transformer, logger);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 
@@ -203,8 +201,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         return connection.getLastModified();
     }
 
-    private void createSynthComponentClass(String name) throws CannotCompileException,
-                                                               NotFoundException, IOException
+    private void createSynthComponentClass(String name) throws CannotCompileException, NotFoundException, IOException
     {
         ClassPool pool = new ClassPool();
         // Inside Maven Surefire, the system classpath is not sufficient to find all
@@ -217,9 +214,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         // Implement method getName()
 
-        CtMethod method = CtNewMethod.make(
-                "public String getName() { return \"" + name + "\"; }",
-                ctClass);
+        CtMethod method = CtNewMethod.make("public String getName() { return \"" + name + "\"; }", ctClass);
         ctClass.addMethod(method);
 
         ctClass.addInterface(pool.get(Named.class.getName()));
@@ -239,9 +234,6 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
 
         replay();
-
-        // Can't wait for the HiveMind code base to start using some generics for this kind of
-        // thing.
 
         Instantiator inst = _source.findInstantiator(classname);
 
@@ -267,16 +259,14 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         URL url = _extraClasspath.toURL();
 
-        _extraLoader = new URLClassLoader(new URL[]
-                {url}, _contextLoader);
+        _extraLoader = new URLClassLoader(new URL[]{url}, _contextLoader);
         RegistryBuilder builder = new RegistryBuilder(_extraLoader);
 
         builder.add(TapestryModule.class);
 
-        SymbolProvider provider = new SingleKeySymbolProvider(
-                InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
-        ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode",
-                                                                                provider, "before:ApplicationDefaults");
+        SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL, "servlet");
+        ContributionDef contribution = new SyntheticSymbolSourceContributionDef("AliasMode", provider,
+                                                                                "before:ApplicationDefaults");
 
         ModuleDef module = new SyntheticModuleDef(contribution);
 
