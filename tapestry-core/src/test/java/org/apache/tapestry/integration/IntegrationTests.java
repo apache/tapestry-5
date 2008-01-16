@@ -1363,4 +1363,33 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("//p[@id='true']", "");
     }
+
+    /**
+     * TAPESTRY-2044
+     */
+    @Test
+    public void action_links_on_non_active_page()
+    {
+        start("Action Links off of Active Page");
+
+        String contextSpan = "//span[@id='context']";
+
+        assertText(contextSpan, "0");
+
+        clickAndWait("link=3");
+
+        assertText(contextSpan, "3");
+
+        clickAndWait("link=refresh");
+
+        assertText(contextSpan, "3");
+
+        clickAndWait("link=1");
+
+        assertText(contextSpan, "1");
+
+        clickAndWait("link=refresh");
+
+        assertText(contextSpan, "1");
+    }
 }

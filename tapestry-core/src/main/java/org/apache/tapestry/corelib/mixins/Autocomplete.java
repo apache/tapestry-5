@@ -36,17 +36,16 @@ import java.util.List;
  * A mixin for a text field that allows for autocompletion of text fields. This is based on Prototype's autocompleter
  * control.
  * <p/>
- * The mixin renders an (initially invisible) progress indicator after the field (it will also be after
- * the error icon most fields render). The progress indicator is made visible during the request to the server.
- * The mixin then renders a &lt;div&gt; that will be filled in on the client
- * side with dynamically obtained selections.
+ * The mixin renders an (initially invisible) progress indicator after the field (it will also be after the error icon
+ * most fields render). The progress indicator is made visible during the request to the server. The mixin then renders
+ * a &lt;div&gt; that will be filled in on the client side with dynamically obtained selections.
  * <p/>
- * Multiple selection on the client is enabled by binding the tokens parameter (however, the mixin doesn't
- * help split multiple selections up on the server, that is still your code's responsibility).
+ * Multiple selection on the client is enabled by binding the tokens parameter (however, the mixin doesn't help split
+ * multiple selections up on the server, that is still your code's responsibility).
  * <p/>
- * The container is responsible for providing an event handler for event "providecompletions".  The context
- * will be the partial input string sent from the client.  The return value should be an array or list of
- * completions, in presentation order.  I.e.
+ * The container is responsible for providing an event handler for event "providecompletions".  The context will be the
+ * partial input string sent from the client.  The return value should be an array or list of completions, in
+ * presentation order.  I.e.
  * <p/>
  * <pre>
  * String[] onProvideCompletionsFromMyField(String input)
@@ -101,15 +100,15 @@ public class Autocomplete
 
 
     /**
-     * Overrides the default check frequency for determining whether to send a server request.
-     * The default is .4 seconds.
+     * Overrides the default check frequency for determining whether to send a server request. The default is .4
+     * seconds.
      */
     @Parameter(defaultPrefix = "literal")
     private double _frequency;
 
     /**
-     * If given, then the autocompleter will support multiple input values, seperated by
-     * any of the individual characters in the string.
+     * If given, then the autocompleter will support multiple input values, seperated by any of the individual
+     * characters in the string.
      */
     @Parameter(defaultPrefix = "literal")
     private String _tokens;
@@ -120,8 +119,8 @@ public class Autocomplete
     }
 
     /**
-     * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt;
-     * element and the JavaScript.
+     * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt; element and
+     * the JavaScript.
      *
      * @param writer
      */
@@ -185,7 +184,7 @@ public class Autocomplete
 
         matchesHolder.put(Collections.emptyList());
 
-        ComponentEventHandler handler = new ComponentEventHandler()
+        ComponentEventCallback callback = new ComponentEventCallback()
         {
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
@@ -197,7 +196,7 @@ public class Autocomplete
             }
         };
 
-        _resources.triggerEvent("providecompletions", new Object[]{input}, handler);
+        _resources.triggerEvent("providecompletions", new Object[]{input}, callback);
 
         ContentType contentType = _responseRenderer.findContentType(this);
 

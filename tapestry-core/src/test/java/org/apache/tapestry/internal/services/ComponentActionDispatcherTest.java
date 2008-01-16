@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.*;
-import static org.easymock.EasyMock.aryEq;
-import static org.easymock.EasyMock.eq;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -124,14 +122,54 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
+        ComponentActionRequestParameters expectedParameters = new ComponentActionRequestParameters("mypage", "mypage",
+                                                                                                   "", "eventname",
+                                                                                                   new String[]{"alpha",
+                                                                                                                "beta"},
+                                                                                                   new String[0]);
+
         train_getPath(request, "/mypage:eventname");
 
         train_isPageName(resolver, "mypage", true);
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, "alpha/beta");
 
-        handler.handle(eq("mypage"), eq(""), eq("eventname"), aryEq(new String[0]),
-                       aryEq(new String[]{"alpha", "beta"}));
+        train_getParameter(request, InternalConstants.ACTIVE_PAGE_NAME, null);
+
+        handler.handle(expectedParameters);
+
+        replay();
+
+        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
+
+        assertTrue(dispatcher.dispatch(request, response));
+
+        verify();
+    }
+
+    @Test
+    public void different_active_and_containing_pages() throws Exception
+    {
+        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        ComponentClassResolver resolver = mockComponentClassResolver();
+
+        ComponentActionRequestParameters expectedParameters = new ComponentActionRequestParameters("activepage",
+                                                                                                   "mypage", "",
+                                                                                                   "eventname",
+                                                                                                   new String[0],
+                                                                                                   new String[0]);
+
+        train_getPath(request, "/mypage:eventname");
+
+        train_isPageName(resolver, "mypage", true);
+
+        train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
+
+        train_getParameter(request, InternalConstants.ACTIVE_PAGE_NAME, "activepage");
+
+        handler.handle(expectedParameters);
 
         replay();
 
@@ -163,21 +201,30 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
         verify();
     }
 
-    private void test(String requestPath, String logicalPageName, String nestedComponentId, String eventType,
-                      String... context) throws IOException
+    private void test(String requestPath, String containerPageName, String nestedComponentId, String eventType,
+                      String... eventContext) throws IOException
     {
         ComponentActionRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
+        ComponentActionRequestParameters expectedParameters = new ComponentActionRequestParameters(containerPageName,
+                                                                                                   containerPageName,
+                                                                                                   nestedComponentId,
+                                                                                                   eventType,
+                                                                                                   new String[0],
+                                                                                                   eventContext);
+
         train_getPath(request, requestPath);
 
-        train_isPageName(resolver, logicalPageName, true);
+        train_isPageName(resolver, containerPageName, true);
 
         train_getParameter(request, InternalConstants.PAGE_CONTEXT_NAME, null);
 
-        handler.handle(eq(logicalPageName), eq(nestedComponentId), eq(eventType), aryEq(context), aryEq(new String[0]));
+        train_getParameter(request, InternalConstants.ACTIVE_PAGE_NAME, null);
+
+        handler.handle(expectedParameters);
 
         replay();
 

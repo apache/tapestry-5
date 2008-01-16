@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
+import org.apache.tapestry.ComponentEventCallback;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.Event;
@@ -27,9 +27,9 @@ public class EventImpl implements Event
 
     private String _methodDescription;
 
-    private final ComponentEventHandler _handler;
+    private final ComponentEventCallback _handler;
 
-    public EventImpl(ComponentEventHandler handler)
+    public EventImpl(ComponentEventCallback handler)
     {
         _handler = notNull(handler, "handler");
     }

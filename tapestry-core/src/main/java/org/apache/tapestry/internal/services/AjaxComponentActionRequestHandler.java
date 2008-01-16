@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,34 +14,25 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.ContentType;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.json.JSONObject;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
 /**
- * Similar to {@link ComponentActionRequestHandlerImpl}, but built around the Ajax request cycle, where the action request
- * sends back an immediate JSON response containing the new content.
+ * Similar to {@link ComponentActionRequestHandlerImpl}, but built around the Ajax request cycle, where the action
+ * request sends back an immediate JSON response containing the new content.
  */
 public class AjaxComponentActionRequestHandler implements ComponentActionRequestHandler
 {
     private final RequestPageCache _cache;
 
-    private final MarkupWriterFactory _factory;
-
-    private final AjaxPartialResponseRenderer _renderer;
-
     private final Request _request;
-
-    private final Response _response;
 
     private final PageRenderQueue _queue;
 
@@ -49,77 +40,48 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
     private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
 
-    public AjaxComponentActionRequestHandler(RequestPageCache cache, MarkupWriterFactory factory,
-                                             AjaxPartialResponseRenderer renderer, Request request, Response response,
-                                             PageRenderQueue queue, @Ajax ComponentEventResultProcessor resultProcessor,
+    public AjaxComponentActionRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue,
+                                             @Ajax ComponentEventResultProcessor resultProcessor,
                                              PageContentTypeAnalyzer pageContentTypeAnalyzer)
     {
         _cache = cache;
-        _factory = factory;
-        _renderer = renderer;
-        _response = response;
         _queue = queue;
         _resultProcessor = resultProcessor;
         _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         _request = request;
     }
 
-    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                       String[] activationContext) throws IOException
+    public void handle(ComponentActionRequestParameters parameters) throws IOException
     {
-        Page page = _cache.get(logicalPageName);
+        Page activePage = _cache.get(parameters.getActivePageName());
+
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
+
+        activePage.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT,
+                                                 parameters.getPageActivationContext(), callback);
+
+        if (callback.isAborted()) return;
 
         // If we end up doing a partial render, the page render queue service needs to know the
         // page that will be rendered (for logging purposes, if nothing else).
 
-        _queue.initializeForCompletePage(page);
+        _queue.initializeForCompletePage(activePage);
 
-        ContentType contentType = _pageContentTypeAnalyzer.findContentType(page);
+        ContentType contentType = _pageContentTypeAnalyzer.findContentType(activePage);
 
         _request.setAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME, contentType);
 
-        ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
+        Page containerPage = _cache.get(parameters.getContainingPageName());
 
-        final Holder<Boolean> holder = Holder.create();
-        final Holder<IOException> exceptionHolder = Holder.create();
+        ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
-        ComponentEventHandler handler = new ComponentEventHandler()
-        {
-            @SuppressWarnings("unchecked")
-            public boolean handleResult(Object result, Component component, String methodDescription)
-            {
-                try
-                {
-                    _resultProcessor.processComponentEvent(result, component, methodDescription);
-                }
-                catch (IOException ex)
-                {
-                    // Jump through some hoops to escape this block, which doesn't
-                    // declare IOException
-                    exceptionHolder.put(ex);
-                }
+        element.triggerEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
-                holder.put(true);
-
-                return true;
-            }
-        };
-
-        page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, activationContext, handler);
-
-        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
-
-        if (holder.hasValue()) return;
-
-        element.triggerEvent(eventType, context, handler);
-
-        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
-
-        if (holder.hasValue()) return;
+        if (callback.isAborted()) return;
 
         JSONObject reply = new JSONObject();
 
-        _resultProcessor.processComponentEvent(reply, null, null);
+        _resultProcessor.processResultValue(reply, null, null);
 
     }
 }

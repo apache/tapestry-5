@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
+import org.apache.tapestry.ComponentEventCallback;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
@@ -30,7 +30,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     {
         ComponentClassResolver resolver = mockComponentClassResolver();
         RequestPageCache cache = mockRequestPageCache();
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, null, null, null);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, null, null);
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -105,7 +105,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -152,7 +152,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer, response);
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler);
 
@@ -167,9 +167,9 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
     }
 
     private void train_triggerEvent(ComponentPageElement element, String eventType, Object[] context,
-                                    ComponentEventHandler handler, boolean handled)
+                                    ComponentEventCallback handler, boolean handled)
     {
-        expect(element.triggerEvent(eq(eventType), aryEq(context), isA(ComponentEventHandler.class))).andReturn(
+        expect(element.triggerEvent(eq(eventType), aryEq(context), isA(ComponentEventCallback.class))).andReturn(
                 handled);
     }
 }

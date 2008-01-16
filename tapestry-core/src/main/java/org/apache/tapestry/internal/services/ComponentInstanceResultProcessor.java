@@ -38,7 +38,7 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         _generator = generator;
     }
 
-    public void processComponentEvent(Component value, Component component, String methodDescription) throws IOException
+    public void processResultValue(Component value, Component component, String methodDescription) throws IOException
     {
         ComponentResources resources = value.getComponentResources();
 

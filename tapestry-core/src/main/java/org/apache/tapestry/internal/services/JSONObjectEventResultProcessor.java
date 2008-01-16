@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import java.io.PrintWriter;
 
 
 /**
- * Implemention of {@link ComponentEventResultProcessor} for {@link org.apache.tapestry.json.JSONObject}, allowing
- * a component event handler to return a JSONObject that will be sent directly to the client as the reply.
- * This is often used with custom components that need a custom JSON response.
+ * Implemention of {@link ComponentEventResultProcessor} for {@link org.apache.tapestry.json.JSONObject}, allowing a
+ * component event handler to return a JSONObject that will be sent directly to the client as the reply. This is often
+ * used with custom components that need a custom JSON response.
  */
 public class JSONObjectEventResultProcessor implements ComponentEventResultProcessor<JSONObject>
 {
@@ -37,7 +37,7 @@ public class JSONObjectEventResultProcessor implements ComponentEventResultProce
         _response = response;
     }
 
-    public void processComponentEvent(JSONObject value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(JSONObject value, Component component, String methodDescripion) throws IOException
     {
         PrintWriter pw = _response.getPrintWriter("text/javascript");
 

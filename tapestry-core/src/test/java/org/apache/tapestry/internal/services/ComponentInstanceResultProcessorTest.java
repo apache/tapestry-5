@@ -52,7 +52,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
                                                                                                   generator);
 
-        processor.processComponentEvent(result, source, METHOD_DESCRIPTION);
+        processor.processResultValue(result, source, METHOD_DESCRIPTION);
 
         verify();
     }
@@ -92,7 +92,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
                                                                                                   generator);
 
-        processor.processComponentEvent(value, source, METHOD_DESCRIPTION);
+        processor.processResultValue(value, source, METHOD_DESCRIPTION);
 
         verify();
     }

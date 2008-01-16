@@ -36,7 +36,7 @@ public class StringResultProcessor implements ComponentEventResultProcessor<Stri
         _generator = generator;
     }
 
-    public void processComponentEvent(String value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(String value, Component component, String methodDescripion) throws IOException
     {
         Page page = _requestPageCache.get(value);
 

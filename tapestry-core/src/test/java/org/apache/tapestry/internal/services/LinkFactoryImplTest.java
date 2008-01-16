@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
+import org.apache.tapestry.ComponentEventCallback;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
@@ -114,7 +114,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer, null);
 
         factory.addListener(listener);
 
@@ -158,7 +158,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer, null);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false, "biff", "bazz");
@@ -201,7 +201,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer, null);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, true);
@@ -247,7 +247,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, null);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
@@ -273,7 +273,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         // do the work.
 
         expect(rootElement.triggerEvent(eq(TapestryConstants.PASSIVATE_EVENT), (Object[]) isNull(),
-                                        isA(ComponentEventHandler.class))).andAnswer(triggerEventAnswer);
+                                        isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
         listener.createdPageLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
@@ -291,7 +291,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         // do the work.
 
         expect(rootElement.triggerEvent(eq(TapestryConstants.PASSIVATE_EVENT), (Object[]) isNull(),
-                                        isA(ComponentEventHandler.class))).andAnswer(triggerEventAnswer);
+                                        isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
         listener.createdActionLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
@@ -319,7 +319,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
             @SuppressWarnings("unchecked")
             public Boolean answer() throws Throwable
             {
-                ComponentEventHandler handler = (ComponentEventHandler) EasyMock
+                ComponentEventCallback handler = (ComponentEventCallback) EasyMock
                         .getCurrentArguments()[2];
 
                 handler.handleResult(new Object[]{"foo", "bar"}, null, null);
@@ -340,6 +340,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        PageRenderQueue queue = mockPageRenderQueue();
 
         String optimizedPath = "/optimized/path";
 
@@ -353,6 +354,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         train_getRootElement(page, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
 
+        train_getRenderingPage(queue, page);
+
         // This needs to be refactored a bit to be more testable.
 
         map.store(isA(Link.class), isA(ComponentInvocation.class));
@@ -361,7 +364,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, queue);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
@@ -370,7 +373,55 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         assertSame(link, holder.get());
 
         verify();
+    }
 
+    @Test
+    public void action_for_non_active_page()
+    {
+        Request request = mockRequest();
+        Response response = mockResponse();
+        Page containingPage = mockPage();
+        Page activePage = mockPage();
+        ComponentPageElement rootElement = mockComponentPageElement();
+        LinkFactoryListener listener = mockLinkFactoryListener();
+        ComponentInvocationMap map = mockComponentInvocationMap();
+        RequestPageCache cache = mockRequestPageCache();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        PageRenderQueue queue = mockPageRenderQueue();
+
+        String optimizedPath = "/optimized/path";
+
+        final Holder<Link> holder = new Holder<Link>();
+
+        train_getLogicalName(containingPage, "MyPage");
+        train_getContextPath(request, "");
+
+        train_optimizePath(optimizer, "/mypage:myaction?t:ac=foo/bar&t:ap=activepage", optimizedPath);
+
+        train_getRootElement(activePage, rootElement);
+        train_triggerPassivateEventForActionLink(rootElement, listener, holder);
+
+        train_getRenderingPage(queue, activePage);
+
+        train_getLogicalName(activePage, "ActivePage");
+
+        // This needs to be refactored a bit to be more testable.
+
+        map.store(isA(Link.class), isA(ComponentInvocation.class));
+
+        train_encodeURL(response, "/optimized/path", ENCODED);
+
+        replay();
+
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, queue);
+        factory.addListener(listener);
+
+        Link link = factory.createActionLink(containingPage, null, "myaction", false);
+
+        assertEquals(link.toURI(), ENCODED);
+        assertSame(link, holder.get());
+
+        verify();
     }
 
 
@@ -386,6 +437,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        PageRenderQueue queue = mockPageRenderQueue();
 
         String optimizedPath = "/optimized/path";
 
@@ -401,6 +453,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         train_getRootElement(page, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
 
+        train_getRenderingPage(queue, page);
+
         // This needs to be refactored a bit to be more testable.
 
         map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
@@ -409,7 +463,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, queue);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, nestedId, eventName, false, context);
@@ -419,4 +473,5 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         verify();
     }
+
 }

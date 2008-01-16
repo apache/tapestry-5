@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,14 @@
 
 package org.apache.tapestry.runtime;
 
-import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.ComponentResourcesCommon;
 
 /**
- * An event that may originate in application logic, or as a result of a client interaction (a GET
- * or POST from the client).
+ * An event that may originate in application logic, or as a result of a client interaction (a GET or POST from the
+ * client).
  *
- * @see ComponentResourcesCommon#triggerEvent(String, Object[],
- *      org.apache.tapestry.ComponentEventHandler)
- * @see ComponentEventHandler
+ * @see ComponentResourcesCommon#triggerEvent(String, Object[], org.apache.tapestry.ComponentEventCallback)
+ * @see org.apache.tapestry.ComponentEventCallback
  */
 public interface ComponentEvent extends Event
 {
@@ -38,8 +36,8 @@ public interface ComponentEvent extends Event
     boolean matches(String eventType, String componentId, int parameterCount);
 
     /**
-     * Coerces a context value to a particular type. The context is an array of objects; typically
-     * it is an array of strings of extra path information encoded into the action URL.
+     * Coerces a context value to a particular type. The context is an array of objects; typically it is an array of
+     * strings of extra path information encoded into the action URL.
      *
      * @param index           the index of the context value
      * @param desiredTypeName the desired type

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,9 @@ import org.apache.tapestry.runtime.RenderCommand;
 
 
 /**
- * A wrapper around {@link org.apache.tapestry.runtime.RenderQueue}, but referencable as
- * a (per-thread) service.     This service is scoped so that we can tell it what to render
- * in one method, then have it do the render in another. Part of an elaborate
- * scheme to keep certain interfaces public and other closely related ones private.
+ * A wrapper around {@link org.apache.tapestry.runtime.RenderQueue}, but referencable as a (per-thread) service. This
+ * service is scoped so that we can tell it what to render in one method, then have it do the render in another. Part of
+ * an elaborate scheme to keep certain interfaces public and other closely related ones private.
  */
 public interface PageRenderQueue
 {
@@ -32,6 +31,11 @@ public interface PageRenderQueue
      * Initializes the queue for rendering of a complete page.
      */
     void initializeForCompletePage(Page page);
+
+    /**
+     * Returns the page that is rendering markup content.
+     */
+    Page getRenderingPage();
 
     /**
      * Initializes the queue for rendering of a portion of a page.

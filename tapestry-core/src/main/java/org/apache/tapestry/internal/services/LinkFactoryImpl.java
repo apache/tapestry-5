@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
+import org.apache.tapestry.ComponentEventCallback;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
@@ -49,6 +49,8 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final RequestPathOptimizer _optimizer;
 
+    private final PageRenderQueue _pageRenderQueue;
+
     private final List<LinkFactoryListener> _listeners = newThreadSafeList();
 
     private final StrategyRegistry<PassivateContextHandler> _registry;
@@ -69,7 +71,9 @@ public class LinkFactoryImpl implements LinkFactory
 
                            TypeCoercer typeCoercer,
 
-                           RequestPathOptimizer optimizer)
+                           RequestPathOptimizer optimizer,
+
+                           PageRenderQueue pageRenderQueue)
     {
         _request = request;
         _response = encoder;
@@ -77,6 +81,7 @@ public class LinkFactoryImpl implements LinkFactory
         _pageCache = pageCache;
         _typeCoercer = typeCoercer;
         _optimizer = optimizer;
+        _pageRenderQueue = pageRenderQueue;
 
         Map<Class, PassivateContextHandler> registrations = newMap();
 
@@ -127,17 +132,23 @@ public class LinkFactoryImpl implements LinkFactory
 
         String[] contextStrings = toContextStrings(context);
 
-        String[] activationContext = collectActivationContextForPage(page);
+        Page activePage = _pageRenderQueue.getRenderingPage();
+
+        String[] activationContext = collectActivationContextForPage(activePage);
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
 
         Link link = new LinkImpl(_response, _optimizer, _request.getContextPath(), invocation, forForm);
 
+        // TAPESTRY-2044: Sometimes the active page drags in components from another page and we
+        // need to differentiate that.
+
+        if (activePage != page)
+            link.addParameter(InternalConstants.ACTIVE_PAGE_NAME, activePage.getLogicalName().toLowerCase());
+
         // Now see if the page has an activation context.
 
         addActivationContextToLink(link, activationContext);
-
-        // TODO: query parameter for case where active page != component page.
 
         _componentInvocationMap.store(link, invocation);
 
@@ -189,14 +200,14 @@ public class LinkFactoryImpl implements LinkFactory
     }
 
     /**
-     * Returns a list of objects acquired by invoking triggering the passivate event on the page's
-     * root element. May return an empty list.
+     * Returns a list of objects acquired by invoking triggering the passivate event on the page's root element. May
+     * return an empty list.
      */
     private String[] collectActivationContextForPage(final Page page)
     {
         final List context = newList();
 
-        ComponentEventHandler handler = new ComponentEventHandler()
+        ComponentEventCallback callback = new ComponentEventCallback()
         {
             @SuppressWarnings("unchecked")
             public boolean handleResult(Object result, Component component, String methodDescription)
@@ -211,7 +222,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         ComponentPageElement rootElement = page.getRootElement();
 
-        rootElement.triggerEvent(TapestryConstants.PASSIVATE_EVENT, null, handler);
+        rootElement.triggerEvent(TapestryConstants.PASSIVATE_EVENT, null, callback);
 
         return toContextStrings(context.toArray());
     }

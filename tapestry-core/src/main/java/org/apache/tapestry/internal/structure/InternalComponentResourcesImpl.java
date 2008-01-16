@@ -39,9 +39,8 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of
- * resources to the component, including access to its parameters, parameter bindings, and
- * persistent field data.
+ * The bridge between a component and its {@link ComponentPageElement}, that supplies all kinds of resources to the
+ * component, including access to its parameters, parameter bindings, and persistent field data.
  */
 public class InternalComponentResourcesImpl implements InternalComponentResources
 {
@@ -126,10 +125,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     }
 
     /**
-     * Delegates to the
-     * {@link Page#createActionLink(String, String, boolean, Object[])} on the containing page.
-     * Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every
-     * component page element).
+     * Delegates to the {@link Page#createActionLink(String, String, boolean, Object[])} on the containing page. Why the
+     * extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every component page element).
      */
     public Link createActionLink(String action, boolean forForm, Object... context)
     {
@@ -162,7 +159,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _element.isRendering();
     }
 
-    public boolean triggerEvent(String eventType, Object[] context, ComponentEventHandler handler)
+    public boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback handler)
     {
         return _element.triggerEvent(eventType, context, handler);
     }

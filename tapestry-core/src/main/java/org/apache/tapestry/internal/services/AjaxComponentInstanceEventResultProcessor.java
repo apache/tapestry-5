@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class AjaxComponentInstanceEventResultProcessor implements ComponentEvent
         _cache = cache;
     }
 
-    public void processComponentEvent(Component value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(Component value, Component component, String methodDescripion) throws IOException
     {
         ComponentResources resources = value.getComponentResources();
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ import org.apache.tapestry.corelib.components.Form;
 import java.io.IOException;
 
 /**
- * Handler interface for action requests. Action requests <em>do things</em> such as process a
- * form submission or otherwise change state. In the majority of cases, after the action, a redirect
- * response is sent to the client which, in turn, causes a page render.
+ * Handler interface for action requests. Action requests <em>do things</em> such as process a form submission or
+ * otherwise change state. In the majority of cases, after the action, a redirect response is sent to the client which,
+ * in turn, causes a page render.
  *
  * @see ActionLink
  * @see Form
@@ -31,16 +31,10 @@ import java.io.IOException;
 public interface ComponentActionRequestHandler
 {
     /**
-     * Handler for a component action request which will trigger an event on a component and use
-     * the return value to send a response to the client (typically, a redirect to a page render URL).
+     * Handler for a component action request which will trigger an event on a component and use the return value to
+     * send a response to the client (typically, a redirect to a page render URL).
      *
-     * @param logicalPageName   the page name containing the component, and the default component to render the
-     *                          response
-     * @param nestedComponentId the id of the component within the page
-     * @param eventType         the type of event to trigger on the component
-     * @param context           context information to provide to the event handler
-     * @param activationContext activation context for the page
+     * @param parameters defining the requst
      */
-    void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                String[] activationContext) throws IOException;
+    void handle(ComponentActionRequestParameters parameters) throws IOException;
 }

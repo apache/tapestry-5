@@ -573,4 +573,14 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         return newMock(ActionRenderResponseGenerator.class);
     }
+
+    protected final PageRenderQueue mockPageRenderQueue()
+    {
+        return newMock(PageRenderQueue.class);
+    }
+
+    protected final void train_getRenderingPage(PageRenderQueue queue, Page page)
+    {
+        expect(queue.getRenderingPage()).andReturn(page);
+    }
 }

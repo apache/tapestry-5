@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,21 +19,17 @@ import java.io.IOException;
 /**
  * Filter interface for {@link ComponentActionRequestHandler}.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeComponentActionRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.internal.services.RequestEncodingInitializer, ComponentActionRequestHandler)
+ * @see org.apache.tapestry.services.TapestryModule#contributeComponentActionRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration,
+ *      org.apache.tapestry.internal.services.RequestEncodingInitializer, ComponentActionRequestHandler,
+ *      org.apache.tapestry.ioc.ObjectLocator) }
  */
 public interface ComponentActionRequestFilter
 {
     /**
      * Filter for a component action request.
      *
-     * @param logicalPageName   the page name containing the component, and the default component to render the
-     *                          response
-     * @param nestedComponentId the id of the component within the page
-     * @param eventType         the type of event to trigger on the component
-     * @param context           context information to provide to the event handler
-     * @param activationContext activation context for the page
-     * @param handler           to delegate to
+     * @param parameters defining details of the request
+     * @param handler    to delegate to
      */
-    void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                String[] activationContext, ComponentActionRequestHandler handler) throws IOException;
+    void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler) throws IOException;
 }

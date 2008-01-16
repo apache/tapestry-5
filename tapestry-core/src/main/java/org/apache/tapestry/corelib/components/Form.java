@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
+import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
-import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
@@ -42,84 +42,77 @@ import java.util.List;
 /**
  * An HTML form, which will enclose other components to render out the various types of fields.
  * <p/>
- * A Form emits several notification events; when it renders it sends a {@link #PREPARE prepare}
- * notification event, to allow any listeners to set up the state of the page prior to rendering out
- * the form's content.
+ * A Form emits several notification events; when it renders it sends a {@link #PREPARE prepare} notification event, to
+ * allow any listeners to set up the state of the page prior to rendering out the form's content.
  * <p/>
- * When the form is submitted, the component emits four notifications: first another prepare event
- * to allow the page to update its state as necessary to prepare for the form submission, then
- * (after components enclosed by the form have operated), a "validate" event is emitted, to allow
- * for cross-form validation. After that, either a "success" or "failure" event (depending on
- * whether the {@link ValidationTracker} has recorded any errors). Lastly, a "submit" event, for any
- * listeners that care only about form submission, regardless of success or failure.
+ * When the form is submitted, the component emits four notifications: first another prepare event to allow the page to
+ * update its state as necessary to prepare for the form submission, then (after components enclosed by the form have
+ * operated), a "validate" event is emitted, to allow for cross-form validation. After that, either a "success" or
+ * "failure" event (depending on whether the {@link ValidationTracker} has recorded any errors). Lastly, a "submit"
+ * event, for any listeners that care only about form submission, regardless of success or failure.
  * <p/>
- * For all of these notifications, the event context is derived from the <strong>context</strong>
- * parameter. This context is encoded into the form's action URI (the parameter is not read when the
- * form is submitted, instead the values encoded into the form are used).
+ * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
+ * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
+ * values encoded into the form are used).
  */
 public class Form implements ClientElement, FormValidationControl
 {
     /**
-     * Invoked to let the containing component(s) prepare for the form rendering or the form
-     * submission.
+     * Invoked to let the containing component(s) prepare for the form rendering or the form submission.
      */
     public static final String PREPARE = "prepare";
 
     /**
-     * Event type for a notification after the form has submitted. This event notification occurs on
-     * any form submit, without respect to "success" or "failure".
+     * Event type for a notification after the form has submitted. This event notification occurs on any form submit,
+     * without respect to "success" or "failure".
      */
     public static final String SUBMIT = "submit";
 
     /**
-     * Event type for a notification to perform validation of submitted data. This allows a listener
-     * to perform cross-field validation. This occurs before the {@link #SUCCESS} or
-     * {@link #FAILURE} notification.
+     * Event type for a notification to perform validation of submitted data. This allows a listener to perform
+     * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE} notification.
      */
     public static final String VALIDATE = "validate";
 
     /**
-     * Event type for a notification after the form has submitted, when there are no errors in the
-     * validation tracker. This occurs before the {@link #SUBMIT} event.
+     * Event type for a notification after the form has submitted, when there are no errors in the validation tracker.
+     * This occurs before the {@link #SUBMIT} event.
      */
     public static final String SUCCESS = "success";
 
     /**
-     * Event type for a notification after the form has been submitted, when there are errors in the
-     * validation tracker. This occurs before the {@link #SUBMIT} event.
+     * Event type for a notification after the form has been submitted, when there are errors in the validation tracker.
+     * This occurs before the {@link #SUBMIT} event.
      */
     public static final String FAILURE = "failure";
 
     /**
-     * The context for the link (optional parameter). This list of values will be converted into
-     * strings and included in the URI. The strings will be coerced back to whatever their values
-     * are and made available to event handler methods.
+     * The context for the link (optional parameter). This list of values will be converted into strings and included in
+     * the URI. The strings will be coerced back to whatever their values are and made available to event handler
+     * methods.
      */
     @Parameter
     private List<?> _context;
 
     /**
-     * The object which will record user input and validation errors. The object must be persistent
-     * between requests (since the form submission and validation occurs in an component event
-     * request and the subsequent render occurs in a render request). The default is a persistent
-     * property of the Form component and this is sufficient for nearly all purposes (except when a
-     * Form is rendered inside a loop).
+     * The object which will record user input and validation errors. The object must be persistent between requests
+     * (since the form submission and validation occurs in an component event request and the subsequent render occurs
+     * in a render request). The default is a persistent property of the Form component and this is sufficient for
+     * nearly all purposes (except when a Form is rendered inside a loop).
      */
     @Parameter("defaultTracker")
     private ValidationTracker _tracker;
 
     /**
-     * Query parameter name storing form data (the serialized commands needed to process a form
-     * submission).
+     * Query parameter name storing form data (the serialized commands needed to process a form submission).
      */
     public static final String FORM_DATA = "t:formdata";
 
     /**
-     * If true (the default) then client validation is enabled for the form, and the default set of
-     * JavaScript libraries (Prototype, Scriptaculous and the Tapestry library) will be added to the
-     * rendered page, and the form will register itself for validation. This may be turned off when
-     * client validation is not desired; for example, when many validations are used that do not
-     * operate on the client side at all.
+     * If true (the default) then client validation is enabled for the form, and the default set of JavaScript libraries
+     * (Prototype, Scriptaculous and the Tapestry library) will be added to the rendered page, and the form will
+     * register itself for validation. This may be turned off when client validation is not desired; for example, when
+     * many validations are used that do not operate on the client side at all.
      */
     @Parameter("true")
     private boolean _clientValidation;
@@ -279,7 +272,7 @@ public class Form implements ClientElement, FormValidationControl
     }
 
     @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
-    Object onAction(Object[] context)
+    Object onAction(Object[] context) throws IOException
     {
         _tracker.clear();
 
@@ -296,35 +289,11 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-            final Holder<Object> holder = Holder.create();
+            ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_eventResultProcessor);
 
-            ComponentEventHandler handler = new ComponentEventHandler()
-            {
-                public boolean handleResult(Object result, Component component, String methodDescription)
-                {
-                    // We want to process the event here, so that the component and method description are
-                    // properly identified. But that's going to cause a headache aborting the
-                    // event.
+            _resources.triggerEvent(PREPARE, context, callback);
 
-                    try
-                    {
-                        _eventResultProcessor.processComponentEvent(result, component, methodDescription);
-                    }
-                    catch (IOException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-
-                    holder.put(true);
-
-                    return true; // Abort other event processing.
-                }
-            };
-
-            _resources.triggerEvent(PREPARE, context, handler);
-
-            //
-            if (holder.hasValue()) return holder.get();
+            if (callback.isAborted()) return true;
 
             // TODO: Ajax stuff will eventually mean there are multiple values for this parameter
             // name
@@ -375,9 +344,9 @@ public class Form implements ClientElement, FormValidationControl
 
             _tracker = tracker;
 
-            _resources.triggerEvent(VALIDATE, context, handler);
+            _resources.triggerEvent(VALIDATE, context, callback);
 
-            if (holder.hasValue()) return holder.get();
+            if (callback.isAborted()) return true;
 
             _formSupport.executeDeferred();
 
@@ -390,15 +359,15 @@ public class Form implements ClientElement, FormValidationControl
 
             if (!_tracker.getHasErrors()) _tracker.clear();
 
-            _resources.triggerEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, handler);
+            _resources.triggerEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, callback);
 
             // Lastly, tell anyone whose interested that the form is completely submitted.
 
-            if (holder.hasValue()) return holder.get();
+            if (callback.isAborted()) return true;
 
-            _resources.triggerEvent(SUBMIT, context, handler);
+            _resources.triggerEvent(SUBMIT, context, callback);
 
-            return holder.get();
+            return callback.isAborted();
         }
         finally
         {
