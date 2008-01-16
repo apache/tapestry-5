@@ -143,9 +143,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(ComponentClassResolver.class);
     }
 
-    protected final ComponentEventHandler mockComponentEventHandler()
+    protected final ComponentEventCallback mockComponentEventHandler()
     {
-        return newMock(ComponentEventHandler.class);
+        return newMock(ComponentEventCallback.class);
     }
 
     protected final ComponentModel mockComponentModel()
@@ -709,7 +709,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     @SuppressWarnings("unchecked")
-    protected final void train_handleResult(ComponentEventHandler handler, Object result, Component component,
+    protected final void train_handleResult(ComponentEventCallback handler, Object result, Component component,
                                             String methodDescription, boolean abort)
     {
         expect(handler.handleResult(result, component, methodDescription)).andReturn(abort);

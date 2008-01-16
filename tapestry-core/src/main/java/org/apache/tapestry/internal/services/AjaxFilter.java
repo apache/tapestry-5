@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,17 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.services.Ajax;
-import org.apache.tapestry.services.ComponentActionRequestFilter;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
 /**
- * A filter that intercepts Ajax-oriented requests, thos that originate on the client-side using
- * XmlHttpRequest. In these cases, the action processing occurs normally, but the response is quite
- * different.
+ * A filter that intercepts Ajax-oriented requests, thos that originate on the client-side using XmlHttpRequest. In
+ * these cases, the action processing occurs normally, but the response is quite different.
  */
 public class AjaxFilter implements ComponentActionRequestFilter
 {
@@ -38,13 +34,12 @@ public class AjaxFilter implements ComponentActionRequestFilter
         _ajaxHandler = ajaxHandler;
     }
 
-
-    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                       String[] activationContext, ComponentActionRequestHandler handler) throws IOException
+    public void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler)
+            throws IOException
     {
         ComponentActionRequestHandler next = _request.isXHR() ? _ajaxHandler : handler;
 
-        next.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
+        next.handle(parameters);
     }
 
 }

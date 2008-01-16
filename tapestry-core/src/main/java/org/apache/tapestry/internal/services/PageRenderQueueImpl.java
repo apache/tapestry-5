@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.apache.tapestry.runtime.RenderCommand;
 
 /**
  * This services keeps track of the page being rendered and the root command for the partial render, it is therefore
- * request/thread scoped.  There's a filter pipeline around the rendering, and that gets to be stateless because this service,
- * at the end of the pipeline, is stateful.
+ * request/thread scoped.  There's a filter pipeline around the rendering, and that gets to be stateless because this
+ * service, at the end of the pipeline, is stateful.
  */
 @Scope(PERTHREAD_SCOPE)
 public class PageRenderQueueImpl implements PageRenderQueue
@@ -45,6 +45,11 @@ public class PageRenderQueueImpl implements PageRenderQueue
         if (_page == null) throw new IllegalStateException("Page must be specified before root render command.");
 
         _rootCommand = rootCommand;
+    }
+
+    public Page getRenderingPage()
+    {
+        return _page;
     }
 
     public void render(MarkupWriter writer)

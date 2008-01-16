@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
         _response = response;
     }
 
-    public void processComponentEvent(StreamResponse streamResponse, Component component, String methodDescripion)
+    public void processResultValue(StreamResponse streamResponse, Component component, String methodDescripion)
             throws IOException
     {
         OutputStream os = null;

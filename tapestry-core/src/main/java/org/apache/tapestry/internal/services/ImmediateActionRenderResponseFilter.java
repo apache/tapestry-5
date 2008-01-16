@@ -17,10 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.services.ComponentActionRequestFilter;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
@@ -39,10 +36,10 @@ public class ImmediateActionRenderResponseFilter implements ComponentActionReque
         _response = response;
     }
 
-    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                       String[] activationContext, ComponentActionRequestHandler handler) throws IOException
+    public void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler)
+            throws IOException
     {
-        handler.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
+        handler.handle(parameters);
 
         // If markup or a redirect has already been generated, then we're good.
 

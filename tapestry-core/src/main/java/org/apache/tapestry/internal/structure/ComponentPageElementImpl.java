@@ -22,7 +22,7 @@ import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.internal.services.ComponentEventImpl;
 import org.apache.tapestry.internal.services.EventImpl;
 import org.apache.tapestry.internal.services.Instantiator;
-import org.apache.tapestry.internal.util.NotificationEventHandler;
+import org.apache.tapestry.internal.util.NotificationEventCallback;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
@@ -43,15 +43,14 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Implements {@link org.apache.tapestry.internal.structure.PageElement} and
- * {@link org.apache.tapestry.internal.InternalComponentResources}, and represents a component
- * within an overall page. Much of a component page element's behavior is delegated to user code,
- * via a {@link org.apache.tapestry.runtime.Component} instance.
+ * Implements {@link org.apache.tapestry.internal.structure.PageElement} and {@link
+ * org.apache.tapestry.internal.InternalComponentResources}, and represents a component within an overall page. Much of
+ * a component page element's behavior is delegated to user code, via a {@link org.apache.tapestry.runtime.Component}
+ * instance.
  * <p/>
- * Once instantiated, a ComponentPageElementImpl should be registered as a
- * {@link org.apache.tapestry.internal.structure.Page}. This could be done inside the constructors,
- * but that tends to complicate unit tests, so its done by
- * {@link org.apache.tapestry.internal.services.PageElementFactoryImpl}.
+ * Once instantiated, a ComponentPageElementImpl should be registered as a {@link org.apache.tapestry.internal.structure.Page}.
+ * This could be done inside the constructors, but that tends to complicate unit tests, so its done by {@link
+ * org.apache.tapestry.internal.services.PageElementFactoryImpl}.
  * <p/>
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
@@ -103,7 +102,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return list == null ? 0 : list.size();
     }
 
-    private static class RenderPhaseEventHandler implements ComponentEventHandler
+    private static class RenderPhaseEventHandler implements ComponentEventCallback
     {
         private boolean _result = true;
 
@@ -420,9 +419,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private final ComponentMessagesSource _messagesSource;
 
     /**
-     * Component lifecycle instances for all mixins; the core component is added to this list during
-     * page load. This is only used in the case that a component has mixins (in which case, the core
-     * component is listed last).
+     * Component lifecycle instances for all mixins; the core component is added to this list during page load. This is
+     * only used in the case that a component has mixins (in which case, the core component is listed last).
      */
     private List<Component> _components = null;
 
@@ -495,15 +493,13 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private final ComponentClassCache _componentClassCache;
 
     /**
-     * Constructor for other components embedded within the root component or at deeper levels of
-     * the hierarchy.
+     * Constructor for other components embedded within the root component or at deeper levels of the hierarchy.
      *
      * @param page           ultimately containing this component
      * @param container      component immediately containing this component (may be null for a root component)
-     * @param id             unique (within the container) id for this component (may be null for a root
-     *                       component)
-     * @param elementName    the name of the element which represents this component in the template, or null
-     *                       for &lt;comp&gt; element or a page component
+     * @param id             unique (within the container) id for this component (may be null for a root component)
+     * @param elementName    the name of the element which represents this component in the template, or null for
+     *                       &lt;comp&gt; element or a page component
      * @param instantiator   used to create the new component instance and access the component's model
      * @param typeCoercer    used when coercing parameter values
      * @param messagesSource Provides access to the component's message catalog
@@ -855,8 +851,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Invokes a callback on the component instances (the core component plus any mixins).
      *
-     * @param reverse  if true, the callbacks are in the reverse of the normal order (this is associated
-     *                 with AfterXXX phases)
+     * @param reverse  if true, the callbacks are in the reverse of the normal order (this is associated with AfterXXX
+     *                 phases)
      * @param callback the object to receive each component instance
      */
     private void invoke(boolean reverse, ComponentCallback callback)
@@ -920,7 +916,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return String.format("ComponentPageElement[%s]", _completeId);
     }
 
-    public boolean triggerEvent(String eventType, Object[] context, ComponentEventHandler handler)
+    public boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback callback)
     {
         boolean result = false;
 
@@ -928,10 +924,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String componentId = "";
 
         // Provide a default handler for when the provided handler is null.
-        final ComponentEventHandler providedHandler = handler == null ? new NotificationEventHandler(eventType,
-                                                                                                     _completeId) : handler;
+        final ComponentEventCallback providedHandler = callback == null ? new NotificationEventCallback(eventType,
+                                                                                                        _completeId) : callback;
 
-        ComponentEventHandler wrappedHandler = new ComponentEventHandler()
+        ComponentEventCallback wrapped = new ComponentEventCallback()
         {
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
@@ -947,7 +943,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         while (component != null)
         {
-            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, wrappedHandler, _typeCoercer,
+            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, wrapped, _typeCoercer,
                                                           _componentClassCache);
 
             result |= component.handleEvent(event);

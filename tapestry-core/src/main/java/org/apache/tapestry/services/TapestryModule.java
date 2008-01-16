@@ -1093,8 +1093,7 @@ public final class TapestryModule
     {
         configuration.add(Link.class, new ComponentEventResultProcessor<Link>()
         {
-            public void processComponentEvent(Link value, Component component, String methodDescripion)
-                    throws IOException
+            public void processResultValue(Link value, Component component, String methodDescripion) throws IOException
             {
                 _response.sendRedirect(value);
             }
@@ -1102,8 +1101,7 @@ public final class TapestryModule
 
         configuration.add(URL.class, new ComponentEventResultProcessor<URL>()
         {
-            public void processComponentEvent(URL value, Component component, String methodDescripion)
-                    throws IOException
+            public void processResultValue(URL value, Component component, String methodDescripion) throws IOException
             {
                 _response.sendRedirect(value.toExternalForm());
             }
@@ -2019,14 +2017,13 @@ public final class TapestryModule
     {
         ComponentActionRequestFilter requestEncodingFilter = new ComponentActionRequestFilter()
         {
-            public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                               String[] activationContext, ComponentActionRequestHandler handler) throws IOException
+            public void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler)
+                    throws IOException
             {
-                encodingInitializer.initializeRequestEncoding(logicalPageName);
+                encodingInitializer.initializeRequestEncoding(parameters.getActivePageName());
 
-                handler.handle(logicalPageName, nestedComponentId, eventType, context, activationContext);
+                handler.handle(parameters);
             }
-
         };
 
         configuration.add("SetRequestEncoding", requestEncodingFilter, "before:*");

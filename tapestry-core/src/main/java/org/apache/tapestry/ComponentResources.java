@@ -22,17 +22,16 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
 
 /**
- * Provides a component instance with the resources provided by the framework. In many
- * circumstances, the resources object can be considered the component itself; in others, it is the
- * {@link #getComponent() component property}, and instance of a class provided by the application
- * developer (though transformed in many ways while being loaded) that is the true component. In
- * reality, it is the combination of the resources object with the lifecycle instance.
+ * Provides a component instance with the resources provided by the framework. In many circumstances, the resources
+ * object can be considered the component itself; in others, it is the {@link #getComponent() component property}, and
+ * instance of a class provided by the application developer (though transformed in many ways while being loaded) that
+ * is the true component. In reality, it is the combination of the resources object with the lifecycle instance.
  */
 public interface ComponentResources extends ComponentResourcesCommon
 {
     /**
-     * Returns the base resource for the component, which will represent the class's location within
-     * the classpath (this is used to resolve relative assets).
+     * Returns the base resource for the component, which will represent the class's location within the classpath (this
+     * is used to resolve relative assets).
      */
     Resource getBaseResource();
 
@@ -47,28 +46,27 @@ public interface ComponentResources extends ComponentResourcesCommon
     Component getComponent();
 
     /**
-     * Returns the component which contains this component, or null for the root component.
-     * For mixins, this returns the componet to which the mixin is attached.
+     * Returns the component which contains this component, or null for the root component. For mixins, this returns the
+     * componet to which the mixin is attached.
      */
     Component getContainer();
 
     /**
-     * Returns the {@link ComponentResources} for the container, or null if the this is the root
-     * component (that has no container). As a special case, for a mixin, this returns the core
-     * component's resources.
+     * Returns the {@link ComponentResources} for the container, or null if the this is the root component (that has no
+     * container). As a special case, for a mixin, this returns the core component's resources.
      */
     ComponentResources getContainerResources();
 
     /**
-     * Returns the {@link Messages} from the container, or null if this is the root component (with
-     * no container). As a special case, for a mixin, this return the core component's messages.
+     * Returns the {@link Messages} from the container, or null if this is the root component (with no container). As a
+     * special case, for a mixin, this return the core component's messages.
      */
     Messages getContainerMessages();
 
     /**
-     * Returns the page that contains this component. Technically, the page itself is an internal
-     * object in Tapestry and this returns the root component of the actual page, but from an
-     * application developer point of view, this is the page.
+     * Returns the page that contains this component. Technically, the page itself is an internal object in Tapestry and
+     * this returns the root component of the actual page, but from an application developer point of view, this is the
+     * page.
      */
     Component getPage();
 
@@ -87,8 +85,8 @@ public interface ComponentResources extends ComponentResourcesCommon
     boolean isBound(String parameterName);
 
     /**
-     * Indentifies all parameters that are not formal parameters and writes each as a
-     * attribute/value pair into the current element of the markup writer.
+     * Indentifies all parameters that are not formal parameters and writes each as a attribute/value pair into the
+     * current element of the markup writer.
      *
      * @param writer to which {@link MarkupWriter#attributes(Object[]) attributes} will be written
      */
@@ -100,11 +98,10 @@ public interface ComponentResources extends ComponentResourcesCommon
     Messages getMessages();
 
     /**
-     * Returns the actual type of the bound parameter, or null if the parameter is not bound. This
-     * is primarily used with property bindings, and is used to determine the actual type of the
-     * property, rather than the type of parameter (remember that type coercion automatically
-     * occurs, which can mask significant differences between the parameter type and the bound
-     * property type).
+     * Returns the actual type of the bound parameter, or null if the parameter is not bound. This is primarily used
+     * with property bindings, and is used to determine the actual type of the property, rather than the type of
+     * parameter (remember that type coercion automatically occurs, which can mask significant differences between the
+     * parameter type and the bound property type).
      *
      * @param parameterName used to select the parameter (case is ignored)
      * @return the type of the bound parameter, or null if the parameter is not bound
@@ -153,16 +150,16 @@ public interface ComponentResources extends ComponentResourcesCommon
 
 
     /**
-     * Creates a component action request link as a callback for this component. The event type
-     * and context (as well as the page name and nested component id) will be encoded into a URL. A request for the
-     * URL will {@linkplain #triggerEvent(String, Object[], ComponentEventHandler)}  trigger} the named event
-     * on the component.
+     * Creates a component action request link as a callback for this component. The event type and context (as well as
+     * the page name and nested component id) will be encoded into a URL. A request for the URL will {@linkplain
+     * #triggerEvent(String, Object[], ComponentEventCallback)}  trigger} the named event on the component.
      *
-     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only letters, numbers and the underscore).
-     * @param forForm   if true, the link will be used as the eventType for an HTML form submission, which
-     *                  may affect what information is encoded into the link
-     * @param context   additional objects to be encoded into the path portion of the link; each is
-     *                  converted to a string and URI encoded
+     * @param eventType the type of event to be triggered.  Event types should be Java identifiers (contain only
+     *                  letters, numbers and the underscore).
+     * @param forForm   if true, the link will be used as the eventType for an HTML form submission, which may affect
+     *                  what information is encoded into the link
+     * @param context   additional objects to be encoded into the path portion of the link; each is converted to a
+     *                  string and URI encoded
      * @return link object for the callback
      */
     Link createActionLink(String eventType, boolean forForm, Object... context);
@@ -171,10 +168,10 @@ public interface ComponentResources extends ComponentResourcesCommon
      * Creates a render request link to a specific page.
      *
      * @param pageName the logical name of the page to link to
-     * @param override if true, the context is used even if empty (normally, the target page is allowed
-     *                 to passivate, providing a context, when the provided context is empty)
-     * @param context  the activation context for the page. If omitted, the activation context is
-     *                 obtained from the target paget
+     * @param override if true, the context is used even if empty (normally, the target page is allowed to passivate,
+     *                 providing a context, when the provided context is empty)
+     * @param context  the activation context for the page. If omitted, the activation context is obtained from the
+     *                 target paget
      */
     Link createPageLink(String pageName, boolean override, Object... context);
 }

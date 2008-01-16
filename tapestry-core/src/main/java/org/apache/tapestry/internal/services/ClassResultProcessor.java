@@ -41,7 +41,7 @@ public class ClassResultProcessor implements ComponentEventResultProcessor<Class
         _generator = generator;
     }
 
-    public void processComponentEvent(Class value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(Class value, Component component, String methodDescripion) throws IOException
     {
         String className = value.getName();
         String pageName = _resolver.resolvePageClassNameToPageName(className);

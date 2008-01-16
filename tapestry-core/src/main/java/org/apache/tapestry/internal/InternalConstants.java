@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,13 @@ public final class InternalConstants
      * The name of the query parameter that stores the page activation context inside an action request.
      */
     public static final String PAGE_CONTEXT_NAME = "t:ac";
+
+    /**
+     * The name of a query parameter that stores the active page (used in action links when the page containing the
+     * component is not the same as the page that was rendering).
+     */
+    public static final String ACTIVE_PAGE_NAME = "t:ap";
+
 
     public static final String OBJECT_RENDER_DIV_SECTION = "t-env-data-section";
 

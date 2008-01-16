@@ -25,29 +25,28 @@ import org.slf4j.Logger;
 import java.util.Locale;
 
 /**
- * Operations shared by the public {@link ComponentResources} interface and
- * {@link ComponentPageElement} interface (on the internal side).
+ * Operations shared by the public {@link ComponentResources} interface and {@link ComponentPageElement} interface (on
+ * the internal side).
  */
 public interface ComponentResourcesCommon extends Locatable
 {
     /**
-     * Returns the id of the component. The id will be unique within the component's immediate
-     * container. For a page's root component, the value null is returned.
+     * Returns the id of the component. The id will be unique within the component's immediate container. For a page's
+     * root component, the value null is returned.
      */
     String getId();
 
     /**
-     * Return a string consisting the concatinated ids of all containing components, separated by
-     * periods. In addition, nested ids are always all lower case. I.e., "foo.bar.baz". Returns null
-     * for the root component of a  page.
+     * Return a string consisting the concatinated ids of all containing components, separated by periods. In addition,
+     * nested ids are always all lower case. I.e., "foo.bar.baz". Returns null for the root component of a  page.
      */
     String getNestedId();
 
 
     /**
-     * Returns a string consisting of the logical name of the containing page, and the
-     * {@link #getNestedId() nested id} of this component, separated by a colon. I.e.,
-     * "mypage:foo.bar.baz". For a page, returns just the page's logical name.
+     * Returns a string consisting of the logical name of the containing page, and the {@link #getNestedId() nested id}
+     * of this component, separated by a colon. I.e., "mypage:foo.bar.baz". For a page, returns just the page's logical
+     * name.
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *
@@ -57,39 +56,35 @@ public interface ComponentResourcesCommon extends Locatable
     String getCompleteId();
 
     /**
-     * Triggers a component event. A search for an event handling method will occur, first in the
-     * component, then its container, and so on. When a matching event handler method is located, it
-     * is invoked. If the method returns a value, the value is passed to the handler (if handler is
-     * null, then it is an error for a method to return a non-null value).
+     * Triggers a component event. A search for an event handling method will occur, first in the component, then its
+     * container, and so on. When a matching event handler method is located, it is invoked. If the method returns a
+     * value, the value is passed to the handler (if handler is null, then it is an error for a method to return a
+     * non-null value).
      * <p/>
      * Resolution of event type to event handler methods is case insensitive.
      *
      * @param eventType event type (as determined from the request, or otherwise by design)
-     * @param context   the context (as extracted from the request, or provided by the triggering
-     *                  component); these values may be provided to event handler methods via their
-     *                  parameters (may be null)
-     * @param handler   the handler to be informed of the result, or null if the event is a notification
-     *                  that does not support return values from event handler methods (the value true is
-     *                  allowed even if the handler is null).
-     * @return true if any event handler was invoked (even if no event handler method returns a
-     *         non-null value)
+     * @param context   the context (as extracted from the request, or provided by the triggering component); these
+     *                  values may be provided to event handler methods via their parameters (may be null)
+     * @param callback  the handler to be informed of the result, or null if the event is a notification that does not
+     *                  support return values from event handler methods (the value true is allowed even if the handler
+     *                  is null).
+     * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
      * @throws org.apache.tapestry.runtime.ComponentEventException
-     *          if an event handler method throws a checked
-     *          or unchecked exception
+     *          if an event handler method throws a checked or unchecked exception
      * @see OnEventWorker
      * @see OnEvent
      */
-    boolean triggerEvent(String eventType, Object[] context, ComponentEventHandler handler);
+    boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback callback);
 
     /**
-     * Returns true if the component is currently rendering, false otherwise. This is most often
-     * used to determine if parameter values should be cached.
+     * Returns true if the component is currently rendering, false otherwise. This is most often used to determine if
+     * parameter values should be cached.
      */
     boolean isRendering();
 
     /**
-     * Returns the log instance associated with the component (which is based on the component or
-     * mixin's class name).
+     * Returns the log instance associated with the component (which is based on the component or mixin's class name).
      *
      * @see ComponentModel#getLogger()
      */
@@ -101,8 +96,8 @@ public interface ComponentResourcesCommon extends Locatable
     Locale getLocale();
 
     /**
-     * Returns the name of element that represents the component in its template, or null if the
-     * element was a component type (in the Tapestry namespace).
+     * Returns the name of element that represents the component in its template, or null if the element was a component
+     * type (in the Tapestry namespace).
      *
      * @return the element name
      */
@@ -127,8 +122,8 @@ public interface ComponentResourcesCommon extends Locatable
     Block findBlock(String blockId);
 
     /**
-     * Returns the <em>logical</em> name of the page containing this component. This is the short
-     * name (it often appears in URLs)
+     * Returns the <em>logical</em> name of the page containing this component. This is the short name (it often appears
+     * in URLs)
      *
      * @return the logical name of the page which contains this component
      */

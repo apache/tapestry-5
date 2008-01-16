@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(renderer,
                                                                                                            cache);
 
-        processor.processComponentEvent(component, null, null);
+        processor.processResultValue(component, null, null);
 
         verify();
     }
@@ -84,7 +84,7 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(renderer,
                                                                                                            cache);
 
-        processor.processComponentEvent(component, null, null);
+        processor.processResultValue(component, null, null);
 
         verify();
     }

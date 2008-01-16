@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,24 +24,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Processes component action events sent as requests from the client. Action events include an
- * event type, identify a page and a component, and may provide additional context strings.
+ * Processes component action events sent as requests from the client. Action events include an event type, identify a
+ * page and a component, and may provide additional context strings.
  * <p/>
  * <p/>
- * Forms:
- * <ul>
- * <li>/context/pagename:eventname -- event on the page, no action context</li>
+ * Forms: <ul> <li>/context/pagename:eventname -- event on the page, no action context</li>
  * <li>/context/pagename:eventname/foo/bar -- event on the page with action context "foo", "bar"</li>
  * <li>/context/pagename.foo.bar -- event on component foo.bar within the page, default event, no action context</li>
- * <li>/context/pagename.foo.bar/baz.gnu -- event on component foo.bar within the page, default event, with action context "baz", "gnu"</li>
- * <li>/context/pagename.bar.baz:eventname/foo/gnu -- event on component bar.baz within the page with action context "foo"
- * , "gnu"</li>
- * </ul>
+ * <li>/context/pagename.foo.bar/baz.gnu -- event on component foo.bar within the page, default event, with action
+ * context "baz", "gnu"</li> <li>/context/pagename.bar.baz:eventname/foo/gnu -- event on component bar.baz within the
+ * page with action context "foo" , "gnu"</li> </ul>
  * <p/>
  * <p/>
- * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create".  The context portion isn't the concern
- * of this code, since {@link org.apache.tapestry.services.Request#getPath()} will already have stripped that off.  We can act as if the context is
- * always "/" (the path always starts with a slash).
+ * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create".  The context portion
+ * isn't the concern of this code, since {@link org.apache.tapestry.services.Request#getPath()} will already have
+ * stripped that off.  We can act as if the context is always "/" (the path always starts with a slash).
  * <p/>
  * <p/>
  *
@@ -99,7 +96,7 @@ public class ComponentActionDispatcher implements Dispatcher
 
         if (!matcher.matches()) return false;
 
-        String logicalPageName = matcher.group(LOGICAL_PAGE_NAME);
+        String containingPageName = matcher.group(LOGICAL_PAGE_NAME);
 
         String nestedComponentId = matcher.group(NESTED_ID);
 
@@ -107,7 +104,7 @@ public class ComponentActionDispatcher implements Dispatcher
 
         if (nestedComponentId == null && eventType == null) return false;
 
-        if (!_componentClassResolver.isPageName(logicalPageName)) return false;
+        if (!_componentClassResolver.isPageName(containingPageName)) return false;
 
         String[] eventContext = decodeContext(matcher.group(CONTEXT));
 
@@ -122,8 +119,18 @@ public class ComponentActionDispatcher implements Dispatcher
 
         if (nestedComponentId == null) nestedComponentId = "";
 
-        _componentActionRequestHandler.handle(logicalPageName, nestedComponentId, eventType, eventContext,
-                                              activationContext);
+        String activePageName = request.getParameter(InternalConstants.ACTIVE_PAGE_NAME);
+
+        if (activePageName == null) activePageName = containingPageName;
+
+
+        ComponentActionRequestParameters parameters = new ComponentActionRequestParameters(activePageName,
+                                                                                           containingPageName,
+                                                                                           nestedComponentId, eventType,
+                                                                                           activationContext,
+                                                                                           eventContext);
+
+        _componentActionRequestHandler.handle(parameters);
 
         return true;
     }

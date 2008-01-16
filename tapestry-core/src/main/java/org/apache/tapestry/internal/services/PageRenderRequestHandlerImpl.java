@@ -14,14 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.PageRenderRequestHandler;
-import org.apache.tapestry.services.Response;
 import org.apache.tapestry.services.Traditional;
 
 import java.io.IOException;
@@ -37,52 +33,26 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
     private final PageResponseRenderer _pageResponseRenderer;
 
-    private final Response _response;
-
     public PageRenderRequestHandlerImpl(RequestPageCache cache,
                                         @Traditional ComponentEventResultProcessor resultProcessor,
-                                        PageResponseRenderer pageResponseRenderer, Response response)
+                                        PageResponseRenderer pageResponseRenderer)
     {
         _cache = cache;
         _resultProcessor = resultProcessor;
         _pageResponseRenderer = pageResponseRenderer;
-        _response = response;
     }
 
     public void handle(String logicalPageName, String[] context) throws IOException
     {
         Page page = _cache.get(logicalPageName);
 
-        final Holder<Boolean> holder = Holder.create();
-        final Holder<IOException> exceptionHolder = Holder.create();
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
 
-        ComponentEventHandler handler = new ComponentEventHandler()
-        {
-            @SuppressWarnings("unchecked")
-            public boolean handleResult(Object result, Component component, String methodDescription)
-            {
-                try
-                {
-                    _resultProcessor.processComponentEvent(result, component, methodDescription);
-                }
-                catch (IOException ex)
-                {
-                    exceptionHolder.put(ex);
-                }
-
-                holder.put(true);
-
-                return true; // abort the event
-            }
-        };
-
-        page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, context, handler);
+        page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, context, callback);
 
         // The handler will have asked the result processor to send a response.
 
-        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
-
-        if (holder.hasValue()) return;
+        if (callback.isAborted()) return;
 
         _pageResponseRenderer.renderPageResponse(page);
     }

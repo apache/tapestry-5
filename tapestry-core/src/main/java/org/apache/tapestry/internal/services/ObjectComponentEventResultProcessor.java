@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class ObjectComponentEventResultProcessor implements ComponentEventResult
         _configuredClasses = configuredClasses;
     }
 
-    public void processComponentEvent(Object value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(Object value, Component component, String methodDescripion) throws IOException
     {
         String message = ServicesMessages.invalidComponentEventResult(component, value, methodDescripion,
                                                                       _configuredClasses);

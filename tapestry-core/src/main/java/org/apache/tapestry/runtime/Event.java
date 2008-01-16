@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,28 +14,26 @@
 
 package org.apache.tapestry.runtime;
 
-import org.apache.tapestry.ComponentEventHandler;
-
 /**
- * The core methods related to event handling. Events used in this way exist to gather data from
- * user code, by invoking user methods and capturing the response. Return values from methods, if
- * non-null, are passed to a {@link ComponentEventHandler}. The {@link ComponentEvent} subinterface
- * extends this by providing access to a context, or set of information related to the event, along
- * with additional data used, at runtime, to match events to user code methods.
+ * The core methods related to event handling. Events used in this way exist to gather data from user code, by invoking
+ * user methods and capturing the response. Return values from methods, if non-null, are passed to a {@link
+ * org.apache.tapestry.ComponentEventCallback}. The {@link ComponentEvent} subinterface extends this by providing access
+ * to a context, or set of information related to the event, along with additional data used, at runtime, to match
+ * events to user code methods.
  */
 public interface Event
 {
     /**
-     * Returns true if the event has been aborted (meaning that the return value from some event
-     * handler method was accepted, and processing of the event was terminated).
+     * Returns true if the event has been aborted (meaning that the return value from some event handler method was
+     * accepted, and processing of the event was terminated).
      *
      * @return true if no further event handler methods should be invoked
      */
     boolean isAborted();
 
     /**
-     * Invoke to identify, to the event, what component and method is being acted upon (used for
-     * some kinds of exception reporting).
+     * Invoke to identify, to the event, what component and method is being acted upon (used for some kinds of exception
+     * reporting).
      *
      * @param component         the component instance from which the result was obtained
      * @param methodDescription describes the location (i.e. file name, method name and line number) of the method
@@ -43,8 +41,8 @@ public interface Event
     void setSource(Component component, String methodDescription);
 
     /**
-     * Stores a result for the event. Storing a non-null result value may abort the event (at the
-     * discretion of the {@link ComponentEventHandler}).
+     * Stores a result for the event. Storing a non-null result value may abort the event (at the discretion of the
+     * {@link org.apache.tapestry.ComponentEventCallback}).
      *
      * @param result the result obtained from a method invocations
      * @return true if the event is now aborted

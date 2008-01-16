@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
             {
                 Object[] args = EasyMock.getCurrentArguments();
                 Object[] context = (Object[]) args[1];
-                ComponentEventHandler handler = (ComponentEventHandler) args[2];
+                ComponentEventCallback handler = (ComponentEventCallback) args[2];
 
                 // Pretend that the parser event handler converted it to upper case.
 
@@ -57,7 +57,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventHandler.class))).andAnswer(answer);
+                                               EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
@@ -86,7 +86,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventHandler.class))).andThrow(
+                                               EasyMock.isA(ComponentEventCallback.class))).andThrow(
                 new ComponentEventException(ve.getMessage(), null, ve));
 
 
@@ -124,7 +124,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventHandler.class))).andThrow(cee);
+                                               EasyMock.isA(ComponentEventCallback.class))).andThrow(cee);
 
 
         replay();
@@ -161,7 +161,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventHandler.class))).andReturn(false);
+                                               EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
 
         train_getLocale(resources, locale);
 
@@ -193,7 +193,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
                                                EasyMock.aryEq(new Object[]{value}),
-                                               EasyMock.isA(ComponentEventHandler.class))).andReturn(false);
+                                               EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
 
         expect(translator.toClient(value)).andReturn(clientValue);
 
@@ -225,7 +225,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
             public Object answer() throws Throwable
             {
                 Object[] args = EasyMock.getCurrentArguments();
-                ComponentEventHandler handler = (ComponentEventHandler) args[2];
+                ComponentEventCallback handler = (ComponentEventCallback) args[2];
 
                 return handler.handleResult(clientValue, null, null);
             }
@@ -233,7 +233,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
                                                EasyMock.aryEq(new Object[]{value}),
-                                               EasyMock.isA(ComponentEventHandler.class))).andAnswer(answer);
+                                               EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
@@ -261,7 +261,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
             public Object answer() throws Throwable
             {
                 Object[] args = EasyMock.getCurrentArguments();
-                ComponentEventHandler handler = (ComponentEventHandler) args[2];
+                ComponentEventCallback handler = (ComponentEventCallback) args[2];
 
                 // Return an innappropriate value.
 
@@ -271,7 +271,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.TO_CLIENT_EVENT),
                                                EasyMock.aryEq(new Object[]{value}),
-                                               EasyMock.isA(ComponentEventHandler.class))).andAnswer(answer);
+                                               EasyMock.isA(ComponentEventCallback.class))).andAnswer(answer);
 
 
         replay();
@@ -307,7 +307,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         fv.validate(value);
 
-        ComponentEventHandler handler = null;
+        ComponentEventCallback handler = null;
 
         expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.VALIDATE_EVENT),
                                       EasyMock.aryEq(new Object[]{value}), EasyMock.eq(handler))).andReturn(true);
@@ -335,7 +335,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         ValidationException ve = new ValidationException("Bah!");
         ComponentEventException cee = new ComponentEventException(ve.getMessage(), null, ve);
 
-        ComponentEventHandler handler = null;
+        ComponentEventCallback handler = null;
 
         fv.validate(value);
 

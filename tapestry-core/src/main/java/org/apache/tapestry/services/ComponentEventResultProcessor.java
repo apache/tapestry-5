@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,5 +33,5 @@ public interface ComponentEventResultProcessor<T>
      * @param methodDescripion a description of method which provided the value
      * @throws RuntimeException if the value can not handled
      */
-    void processComponentEvent(T value, Component component, String methodDescripion) throws IOException;
+    void processResultValue(T value, Component component, String methodDescripion) throws IOException;
 }

@@ -14,16 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.ComponentEventResultProcessor;
-import org.apache.tapestry.services.Response;
-import org.apache.tapestry.services.Traditional;
+import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
@@ -47,53 +41,28 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
         _generator = generator;
     }
 
-    public void handle(String logicalPageName, String nestedComponentId, String eventType, String[] context,
-                       String[] activationContext) throws IOException
+    public void handle(ComponentActionRequestParameters parameters) throws IOException
     {
-        Page page = _cache.get(logicalPageName);
+        Page activePage = _cache.get(parameters.getActivePageName());
 
-        // This is the active page, until we know better.
-
-        ComponentPageElement element = page.getComponentElementByNestedId(nestedComponentId);
-
-        final Holder<Boolean> holder = Holder.create();
-        final Holder<IOException> exceptionHolder = Holder.create();
-
-        ComponentEventHandler handler = new ComponentEventHandler()
-        {
-            @SuppressWarnings("unchecked")
-            public boolean handleResult(Object result, Component component, String methodDescription)
-            {
-                try
-                {
-                    _resultProcessor.processComponentEvent(result, component, methodDescription);
-                }
-                catch (IOException ex)
-                {
-                    exceptionHolder.put(ex);
-                }
-
-                holder.put(true);
-
-                return true;
-            }
-        };
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
 
         // If activating the page returns a "navigational result", then don't trigger the action
         // on the component.
 
-        page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, activationContext, handler);
+        activePage.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT,
+                                                 parameters.getPageActivationContext(), callback);
 
-        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+        if (callback.isAborted()) return;
 
-        if (holder.hasValue()) return;
+        Page containerPage = _cache.get(parameters.getContainingPageName());
 
-        element.triggerEvent(eventType, context, handler);
+        ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
-        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
+        element.triggerEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
-        if (holder.hasValue()) return;
+        if (callback.isAborted()) return;
 
-        if (!_response.isCommitted()) _generator.generateResponse(page);
+        if (!_response.isCommitted()) _generator.generateResponse(activePage);
     }
 }

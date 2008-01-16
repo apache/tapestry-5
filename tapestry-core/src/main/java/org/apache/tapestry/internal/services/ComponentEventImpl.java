@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentEventHandler;
+import org.apache.tapestry.ComponentEventCallback;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.runtime.ComponentEvent;
 
@@ -38,11 +38,12 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
      *                               parameters
      * @param handler                invoked when a non-null return value is obtained from an event handler method
      * @param typeCoercer            used when coercing context values to parameter types
-     * @param classLoader            loader used when resolving a class name to a class  (ultimately, this
-     *                               is the class loader used to create the component class; that loader's parent is the Thread's context class loader).
+     * @param classLoader            loader used when resolving a class name to a class  (ultimately, this is the class
+     *                               loader used to create the component class; that loader's parent is the Thread's
+     *                               context class loader).
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, Object[] context,
-                              ComponentEventHandler handler, TypeCoercer typeCoercer,
+                              ComponentEventCallback handler, TypeCoercer typeCoercer,
                               ComponentClassCache componentClassCache)
     {
         super(handler);

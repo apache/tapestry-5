@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.tapestry.internal.services.InvocationTarget;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.ComponentActionRequestHandler;
+import org.apache.tapestry.services.ComponentActionRequestParameters;
 
 import java.io.IOException;
 
@@ -56,8 +57,8 @@ public class ActionLinkInvoker implements ComponentInvoker
     }
 
     /**
-     * Click on the action link and get another link in return. Then follow up the link with another
-     * {@link ComponentInvoker}.
+     * Click on the action link and get another link in return. Then follow up the link with another {@link
+     * ComponentInvoker}.
      *
      * @param invocation The ComponentInvocation object corresponding to the action link.
      * @return The DOM created. Typically you will assert against it.
@@ -86,9 +87,20 @@ public class ActionLinkInvoker implements ComponentInvoker
 
             ActionLinkTarget actionLinkTarget = Defense.cast(target, ActionLinkTarget.class, "target");
 
-            _componentActionRequestHandler.handle(actionLinkTarget.getPageName(), actionLinkTarget
-                    .getComponentNestedId(), actionLinkTarget.getEventType(), invocation
-                    .getContext(), invocation.getActivationContext());
+            ComponentActionRequestParameters parameters = new ComponentActionRequestParameters(
+                    actionLinkTarget.getPageName(),
+
+                    actionLinkTarget.getPageName(),
+
+                    actionLinkTarget.getComponentNestedId(),
+
+                    actionLinkTarget.getEventType(),
+
+                    invocation.getActivationContext(),
+
+                    invocation.getContext());
+
+            _componentActionRequestHandler.handle(parameters);
         }
         catch (IOException e)
         {

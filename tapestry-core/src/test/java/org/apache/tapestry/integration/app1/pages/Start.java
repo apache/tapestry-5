@@ -193,6 +193,9 @@ public class Start
             new Item("leangriddemo", "Lean Grid Demo",
                      "Grid component with lean parameter turned on, to eliminate CSS class attributes in TD and TH elements"),
 
+            new Item("blockcaller", "Action Links off of Active Page",
+                     "Actions can exist on pages other than the active page, via Blocks."),
+
             new Item("unlessdemo", "Unless Demo", "use of the Unless component"));
 
     static

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     {
         final Holder<String> resultHolder = Holder.create();
 
-        ComponentEventHandler handler = new ComponentEventHandler()
+        ComponentEventCallback callback = new ComponentEventCallback()
         {
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
@@ -57,7 +57,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
             }
         };
 
-        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[]{value}, handler);
+        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[]{value}, callback);
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
@@ -70,7 +70,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     {
         final Holder<Object> resultHolder = Holder.create();
 
-        ComponentEventHandler handler = new ComponentEventHandler()
+        ComponentEventCallback callback = new ComponentEventCallback()
         {
             public boolean handleResult(Object result, Component component, String methodDescription)
             {
@@ -81,7 +81,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[]{clientValue}, handler);
+            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[]{clientValue}, callback);
         }
         catch (ComponentEventException ex)
         {
