@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,40 +12,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.translator;
+package org.apache.tapestry.internal.translator;
 
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
-public class DoubleTranslator implements Translator<Double>
+public class FloatTranslator implements Translator<Float>
 {
-    /**
-     * Parses blank values to null, otherwise parses the client value to a double
-     *
-     * @throws ValidationException if the clientValue can not be parsed
-     */
-    public Double parseClient(String clientValue, Messages messages) throws ValidationException
+    public String toClient(Float value)
     {
-        if (InternalUtils.isBlank(clientValue))
-            return null;
+        return value.toString();
+    }
 
+    public Float parseClient(String clientValue, Messages messages) throws ValidationException
+    {
         try
         {
-            return new Double(clientValue.trim());
+            return new Float(clientValue.trim());
         }
         catch (NumberFormatException ex)
         {
             throw new ValidationException(messages.format("number-format-exception", clientValue));
         }
-    }
-
-    /**
-     * Converts null to the blank string, non-null to a string representation.
-     */
-    public String toClient(Double value)
-    {
-        return value == null ? "" : value.toString();
     }
 }

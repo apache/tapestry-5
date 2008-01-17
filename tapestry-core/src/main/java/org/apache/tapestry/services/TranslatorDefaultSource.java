@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,19 +18,18 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.Translator;
 
 /**
- * Used by certain form-control element component to obtain a default translator appropriate to the
- * type of property editted by the component.
+ * Used by certain form-control element component to obtain a default translator appropriate to the type of property
+ * editted by the component.
  */
 public interface TranslatorDefaultSource
 {
     /**
-     * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained
-     * via {@link Binding#getBindingType()}. Performs an inheritanced-based search for the best
-     * match.
+     * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained via {@link
+     * Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
      *
      * @param valueType the type of value for which a default translator is needed
      * @return the matching translator
      * @throws IllegalArgumentException if no translator may be found
      */
-    Translator find(Class valueType);
+    Translator get(Class valueType);
 }

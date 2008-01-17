@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,11 +27,11 @@ import org.apache.tapestry.services.ValidationMessagesSource;
 public interface Translator<T>
 {
     /**
-     * Converts a server-side value to a client-side string. This allows for formatting of the value
-     * in a way appropriate to the end user. The output client value should be parsable by
-     * {@link #parseClient(String, Messages)}.
+     * Converts a server-side value to a client-side string. This allows for formatting of the value in a way
+     * appropriate to the end user. The output client value should be parsable by {@link #parseClient(String,
+     * Messages)}.
      *
-     * @param value the server side value (which may be null)
+     * @param value the server side value (which will not be null)
      * @return client-side value to present to the user
      */
     String toClient(T value);
@@ -39,7 +39,7 @@ public interface Translator<T>
     /**
      * Converts a submitted request value into an appropriate server side value.
      *
-     * @param clientValue (possibly null or the empty string)
+     * @param clientValue to convert to a server value; this will not be the empty string or null
      * @param messages    validator messages assembled by {@link ValidationMessagesSource}
      * @return equivalent server-side value (possibly null)
      * @throws ValidationException if the value can not be parsed

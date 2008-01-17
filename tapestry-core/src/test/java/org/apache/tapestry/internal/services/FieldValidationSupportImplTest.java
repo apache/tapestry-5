@@ -72,6 +72,42 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         verify();
     }
 
+    @Test
+    public void to_client_for_null_value_returns_null_and_bypasses_events_and_translator() throws Exception
+    {
+        ComponentResources resources = mockComponentResources();
+        Translator translator = mockTranslator();
+        ValidationMessagesSource source = mockValidationMessagesSource();
+
+        replay();
+
+
+        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+
+        assertNull(support.parseClient(null, resources, translator));
+
+
+        verify();
+    }
+
+    @Test
+    public void parse_client_for_blank_string_returns_null_and_bypasses_events_and_translator() throws Exception
+    {
+        ComponentResources resources = mockComponentResources();
+        Translator translator = mockTranslator();
+        ValidationException ve = new ValidationException("Just didn't feel right.");
+        ValidationMessagesSource source = mockValidationMessagesSource();
+
+
+        replay();
+
+        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+
+        assertNull(support.parseClient("", resources, translator));
+
+        verify();
+    }
+
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
     @Test
     public void parse_client_event_handler_throws_validation_exception() throws Exception

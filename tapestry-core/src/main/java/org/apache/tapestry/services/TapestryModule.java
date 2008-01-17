@@ -29,6 +29,7 @@ import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
 import org.apache.tapestry.internal.services.*;
+import org.apache.tapestry.internal.translator.*;
 import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
@@ -42,10 +43,6 @@ import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.translator.DoubleTranslator;
-import org.apache.tapestry.translator.IntegerTranslator;
-import org.apache.tapestry.translator.LongTranslator;
-import org.apache.tapestry.translator.StringTranslator;
 import org.apache.tapestry.util.StringToEnumCoercion;
 import org.apache.tapestry.validator.*;
 import org.slf4j.Logger;
@@ -511,20 +508,22 @@ public final class TapestryModule
 
 
     /**
-     * Contributes the basic set of default translators: <ul> <li>Integer</li> <li>String</li> <li>Long</li>
-     * <li>Double</li> </li>
+     * Contributes the basic set of default translators: <ul> <li>String</li> <li>Byte</li> <li>Integer</li>
+     * <li>Long</li> <li>Float</li> <li>Double</li> </li>
      */
     public static void contributeTranslatorDefaultSource(MappedConfiguration<Class, Translator> configuration)
     {
-        configuration.add(Integer.class, new IntegerTranslator());
         configuration.add(String.class, new StringTranslator());
+        configuration.add(Byte.class, new ByteTranslator());
+        configuration.add(Integer.class, new IntegerTranslator());
         configuration.add(Long.class, new LongTranslator());
+        configuration.add(Float.class, new FloatTranslator());
         configuration.add(Double.class, new DoubleTranslator());
     }
 
     /**
-     * Contributes the basic set of named translators: <ul> <li>integer</li> <li>string</li> <li>long</li>
-     * <li>double</li> </ul>
+     * Contributes the basic set of named translators: <ul>  <li>string</li>  <li>byte</li> <li>integer</li>
+     * <li>long</li> <li>float</li> <li>double</li> </ul>
      */
     public static void contributeTranslatorSource(MappedConfiguration<String, Translator> configuration)
     {
@@ -533,9 +532,11 @@ public final class TapestryModule
         // organized (perhaps they should be joined together into a single service, where we
         // identify a name and a match type).
 
-        configuration.add("integer", new IntegerTranslator());
         configuration.add("string", new StringTranslator());
+        configuration.add("byte", new ByteTranslator());
+        configuration.add("integer", new IntegerTranslator());
         configuration.add("long", new LongTranslator());
+        configuration.add("float", new FloatTranslator());
         configuration.add("double", new DoubleTranslator());
     }
 

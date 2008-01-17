@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.translator;
+package org.apache.tapestry.internal.translator;
 
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 public class StringTranslator implements Translator<String>
 {
@@ -26,15 +25,15 @@ public class StringTranslator implements Translator<String>
      */
     public String parseClient(String clientValue, Messages messages) throws ValidationException
     {
-        return InternalUtils.isBlank(clientValue) ? null : clientValue;
+        return clientValue;
     }
 
     /**
-     * Returns the value, or the empty string if value is null.
+     * Returns the value.
      */
     public String toClient(String value)
     {
-        return value == null ? "" : value;
+        return value;
     }
 
 }

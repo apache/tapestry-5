@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class TranslatorDefaultSourceImpl implements TranslatorDefaultSource, Inv
         _registry = StrategyRegistry.newInstance(Translator.class, configuration);
     }
 
-    public Translator find(Class valueType)
+    public Translator get(Class valueType)
     {
         return _registry.get(valueType);
     }
