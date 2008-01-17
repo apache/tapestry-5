@@ -196,7 +196,10 @@ public class Start
             new Item("blockcaller", "Action Links off of Active Page",
                      "Actions can exist on pages other than the active page, via Blocks."),
 
-            new Item("unlessdemo", "Unless Demo", "use of the Unless component"));
+            new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
+
+            new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
+                     "Automatic creation of ValueEncoder using the TypeCoercer"));
 
     static
     {

@@ -1,0 +1,23 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Magic Value Encoder</h1>
+
+    <p>Ok, Magic is too strong a word. This is really based on the TypeCoercer, which is not quite magic (but close).
+    </p>
+
+
+    <t:form>
+        <t:select t:id="number" model="options"/>
+        <br/>
+        <input type="submit" value="Update"/>
+    </t:form>
+
+    <hr/>
+
+    <p>
+        Selected number:
+        <span id="selectednumber">${number}</span>
+    </p>
+
+</html>    

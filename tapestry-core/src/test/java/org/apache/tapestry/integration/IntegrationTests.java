@@ -1392,4 +1392,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText(contextSpan, "1");
     }
+
+    /**
+     * TAPESTRY-1598
+     */
+    @Test
+    public void value_encoder_via_type_coercer()
+    {
+        start("Magic ValueEncoder Demo");
+
+        select("number", "25");
+
+        clickAndWait(SUBMIT);
+
+        String locator = "//span[@id='selectednumber']";
+
+        assertText(locator, "25");
+
+        select("number", "100");
+        clickAndWait(SUBMIT);
+
+        assertText(locator, "100");
+    }
 }

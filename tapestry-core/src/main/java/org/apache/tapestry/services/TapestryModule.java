@@ -1521,13 +1521,13 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes {@link ValueEncoderFactory}s for types: <ul> <li>String <li>Enum </ul>
-     *
-     * @param configuration
+     * Contributes {@link ValueEncoderFactory}s for types: <ul> <li>Object <li>String <li>Enum </ul>
      */
     @SuppressWarnings("unchecked")
-    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration)
+    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
+                                                    ObjectLocator locator)
     {
+        configuration.add(Object.class, locator.autobuild(TypeCoercedValueEncoderFactory.class));
         configuration.add(String.class, new GenericValueEncoderFactory(new StringValueEncoder()));
         configuration.add(Enum.class, new EnumValueEncoderFactory());
     }
