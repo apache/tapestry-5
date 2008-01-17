@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ import org.apache.tapestry.ValueEncoder;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 /**
- * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client
- * side value (the "primary key").
+ * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client side value (the
+ * "primary key").
  */
 public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 {
@@ -34,6 +34,8 @@ public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 
     public String toClient(E value)
     {
+        if (value == null) return null;
+
         return value.name();
     }
 
