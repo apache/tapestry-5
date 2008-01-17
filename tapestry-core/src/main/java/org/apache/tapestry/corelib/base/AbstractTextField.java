@@ -26,44 +26,42 @@ import org.apache.tapestry.services.TranslatorDefaultSource;
 import java.util.Locale;
 
 /**
- * Abstract class for a variety of components that render some variation of a text field. Most of
- * the hooks for user input validation are in this class.
+ * Abstract class for a variety of components that render some variation of a text field. Most of the hooks for user
+ * input validation are in this class.
  * <p/>
- * In particular, all subclasses support the "toclient" and "parseclient" events.  These two events
- * allow the normal {@link Translator} (specified by the translate parameter, but often automatically
- * derived by Tapestry) to be augmented.
+ * In particular, all subclasses support the "toclient" and "parseclient" events.  These two events allow the normal
+ * {@link Translator} (specified by the translate parameter, but often automatically derived by Tapestry) to be
+ * augmented.
  * <p/>
- * If the component container (i.e., the page) provides an event handler method for the "toclient" event,
- * and that handler returns a non-null string, that will be the string value sent to the client. The context
- * passed to the event handler method is the current value of the value parameter.
+ * If the component container (i.e., the page) provides an event handler method for the "toclient" event, and that
+ * handler returns a non-null string, that will be the string value sent to the client. The context passed to the event
+ * handler method is the current value of the value parameter.
  * <p/>
- * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided
- * by the client, and may provide a non-null value as the parsed value.  Returning null allows the normal
- * translator to operate.  The event handler may also throw {@link org.apache.tapestry.ValidationException}.
+ * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided by the client,
+ * and may provide a non-null value as the parsed value.  Returning null allows the normal translator to operate.  The
+ * event handler may also throw {@link org.apache.tapestry.ValidationException}.
  */
 public abstract class AbstractTextField extends AbstractField
 {
     /**
-     * The value to be read and updated. This is not necessarily a string, a translator may be
-     * provided to convert between client side and server side representations. If not bound, a
-     * default binding is made to a property of the container matching the component's id. If no
-     * such property exists, then you will see a runtime exception due to the unbound value
-     * parameter.
+     * The value to be read and updated. This is not necessarily a string, a translator may be provided to convert
+     * between client side and server side representations. If not bound, a default binding is made to a property of the
+     * container matching the component's id. If no such property exists, then you will see a runtime exception due to
+     * the unbound value parameter.
      */
     @Parameter(required = true, principal = true)
     private Object _value;
 
     /**
-     * The object which will perform translation between server-side and client-side
-     * representations. If not specified, a value will usually be generated based on the type of the
-     * value parameter.
+     * The object which will perform translation between server-side and client-side representations. If not specified,
+     * a value will usually be generated based on the type of the value parameter.
      */
     @Parameter(required = true)
     private Translator<Object> _translate;
 
     /**
-     * The object that will perform input validation (which occurs after translation). The translate
-     * binding prefix is generally used to provide this object in a declarative fashion.
+     * The object that will perform input validation (which occurs after translation). The translate binding prefix is
+     * generally used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
@@ -106,12 +104,11 @@ public abstract class AbstractTextField extends AbstractField
 
         if (type == null) return null;
 
-        return _translatorDefaultSource.find(type);
+        return _translatorDefaultSource.get(type);
     }
 
     /**
-     * Computes a default value for the "validate" parameter using
-     * {@link FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
     final FieldValidator defaultValidate()
     {
@@ -125,8 +122,8 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     /**
-     * The default value is a property of the container whose name matches the component's id. May
-     * return null if the container does not have a matching property.
+     * The default value is a property of the container whose name matches the component's id. May return null if the
+     * container does not have a matching property.
      */
     final Binding defaultValue()
     {
@@ -151,18 +148,15 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     /**
-     * Invoked from {@link #begin(MarkupWriter)} to write out the element and attributes (typically,
-     * &lt;input&gt;). The {@link AbstractField#getElementName() elementName} and
-     * {@link AbstractField#getClientId() clientId} properties will already have been set or
-     * updated.
+     * Invoked from {@link #begin(MarkupWriter)} to write out the element and attributes (typically, &lt;input&gt;). The
+     * {@link AbstractField#getElementName() elementName} and {@link AbstractField#getClientId() clientId} properties
+     * will already have been set or updated.
      * <p/>
-     * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will
-     * be responsible for including an {@link AfterRender} phase method to invoke
-     * {@link MarkupWriter#end()}.
+     * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
+     * including an {@link AfterRender} phase method to invoke {@link MarkupWriter#end()}.
      *
      * @param writer markup write to send output to
-     * @param value  the value (either obtained and translated from the value parameter, or obtained
-     *               from the tracker)
+     * @param value  the value (either obtained and translated from the value parameter, or obtained from the tracker)
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
