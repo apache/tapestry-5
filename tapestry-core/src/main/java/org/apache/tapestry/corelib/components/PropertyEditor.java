@@ -27,9 +27,8 @@ import org.apache.tapestry.services.*;
 import java.util.Locale;
 
 /**
- * Used to edit a single property of a bean. This is used primarily by {@link BeanEditForm}. Unlike
- * BeanEditForm, the object to be edited must already exist and the {@linkplain BeanModel model}
- * must be passed in explicitly.
+ * Used to edit a single property of a bean. This is used primarily by {@link BeanEditForm}. Unlike BeanEditForm, the
+ * object to be edited must already exist and the {@linkplain BeanModel model} must be passed in explicitly.
  */
 public class PropertyEditor
 {
@@ -64,19 +63,18 @@ public class PropertyEditor
     }
 
     /**
-     * The object to be edited by the BeanEditor. This will be read when the component renders and
-     * updated when the form for the component is submitted. Typically, the container will listen
-     * for a "prepare" event, in order to ensure that a non-null value is ready to be read or
-     * updated.
+     * The object to be edited by the BeanEditor. This will be read when the component renders and updated when the form
+     * for the component is submitted. Typically, the container will listen for a "prepare" event, in order to ensure
+     * that a non-null value is ready to be read or updated.
      */
     @Parameter(required = true)
     private Object _object;
 
     /**
-     * Where to search for local overrides of property editing blocks as block parameters. Further,
-     * the container of the overrides is used as the source for overridden validation messages. This
-     * is normally the component itself, but when the component is used within a BeanEditForm, it
-     * will be the BeanEditForm's block parameter that will be searched.
+     * Where to search for local overrides of property editing blocks as block parameters. Further, the container of the
+     * overrides is used as the source for overridden validation messages. This is normally the component itself, but
+     * when the component is used within a BeanEditForm, it will be the BeanEditForm's block parameter that will be
+     * searched.
      */
     @Parameter(value = "componentResources")
     private ComponentResources _overrides;
@@ -155,7 +153,7 @@ public class PropertyEditor
 
             public Translator getTranslator()
             {
-                return _translatorDefaultSource.find(_propertyModel.getPropertyType());
+                return _translatorDefaultSource.get(_propertyModel.getPropertyType());
             }
 
             public FieldValidator getValidator(Field field)
@@ -181,8 +179,8 @@ public class PropertyEditor
     }
 
     /**
-     * Called at the end of the form render (or at the end of the form submission) to clean up the
-     * {@link Environment} stack.
+     * Called at the end of the form render (or at the end of the form submission) to clean up the {@link Environment}
+     * stack.
      */
     void cleanupEnvironment()
     {
@@ -212,8 +210,8 @@ public class PropertyEditor
     }
 
     /**
-     * Returns a Block for rendering the property. The Block will be able to access the
-     * {@link PropertyEditContext} via the {@link Environmental} annotation.
+     * Returns a Block for rendering the property. The Block will be able to access the {@link PropertyEditContext} via
+     * the {@link Environmental} annotation.
      */
     Block beginRender()
     {
@@ -240,8 +238,7 @@ public class PropertyEditor
     }
 
     /**
-     * Returns false, to prevent the rendering of the body of the component. PropertyEditor should
-     * not have a body.
+     * Returns false, to prevent the rendering of the body of the component. PropertyEditor should not have a body.
      */
     boolean beforeRenderBody()
     {
