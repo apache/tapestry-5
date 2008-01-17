@@ -18,6 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentEventException;
 import org.apache.tapestry.services.FieldValidationSupport;
@@ -39,6 +40,8 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     @SuppressWarnings({"unchecked"})
     public String toClient(Object value, ComponentResources componentResources, Translator translator)
     {
+        if (value == null) return null;
+
         final Holder<String> resultHolder = Holder.create();
 
         ComponentEventCallback callback = new ComponentEventCallback()
@@ -61,6 +64,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
+
         return translator.toClient(value);
 
     }
@@ -68,6 +72,8 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     public Object parseClient(String clientValue, ComponentResources componentResources, Translator translator)
             throws ValidationException
     {
+        if (InternalUtils.isBlank(clientValue)) return null;
+
         final Holder<Object> resultHolder = Holder.create();
 
         ComponentEventCallback callback = new ComponentEventCallback()
