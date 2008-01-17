@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.annotations.Persist;
 
-/**
- * A source for {@link ValueEncoder} instances of a given type.
- */
-public interface ValueEncoderFactory<V>
+public class MagicValueEncoder
 {
-    /**
-     * For a given type, create an encoder.
-     *
-     * @param type type of object for which an encoder is needed
-     * @return the encoder for the object
-     */
-    ValueEncoder<V> create(Class<V> type);
+    @Persist("flash")
+    private int _number;
+
+    private static final int[] OPTIONS = {5, 10, 25, 100};
+
+    public int getNumber()
+    {
+        return _number;
+    }
+
+    public void setNumber(int number)
+    {
+        _number = number;
+    }
+
+    public int[] getOptions()
+    {
+        return OPTIONS;
+    }
 }

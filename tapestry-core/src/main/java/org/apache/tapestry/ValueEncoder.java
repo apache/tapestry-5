@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,21 +17,20 @@ package org.apache.tapestry;
 import org.apache.tapestry.corelib.components.Select;
 
 /**
- * Used by {@link Select} (and similar components) to encode server side values into client-side
- * strings, and back.
+ * Used by {@link Select} (and similar components) to encode server side values into client-side strings, and back.
  * <p/>
- * Most often a custom implementation is needed for entity type objects, where the
- * {@link #toClient(Object)} method extracts a primary key, and the {@link #toValue(String)}
- * re-acquires the corresponding entity object.
+ * Most often a custom implementation is needed for entity type objects, where the {@link #toClient(Object)} method
+ * extracts a primary key, and the {@link #toValue(String)} re-acquires the corresponding entity object.
  *
  * @see SelectModel
+ * @see org.apache.tapestry.services.ValueEncoderSource
  */
 public interface ValueEncoder<V>
 {
     /**
-     * Converts a value into a client-side representation. The value should be parseable by
-     * {@link #toValue(String)}. In some cases, what is returned is an identifier used to locate
-     * the true object, rather than a string representation of the value itself.
+     * Converts a value into a client-side representation. The value should be parseable by {@link #toValue(String)}. In
+     * some cases, what is returned is an identifier used to locate the true object, rather than a string representation
+     * of the value itself.
      *
      * @param value to be encoded
      * @return a string representation of the value, or the value's identity
@@ -39,8 +38,7 @@ public interface ValueEncoder<V>
     String toClient(V value);
 
     /**
-     * Converts a client-side representation, provided by {@link #toClient(Object)}, back into a
-     * server-side value.
+     * Converts a client-side representation, provided by {@link #toClient(Object)}, back into a server-side value.
      *
      * @param clientValue string representation of the value's identity
      * @return the corresponding entity, or null if not found
