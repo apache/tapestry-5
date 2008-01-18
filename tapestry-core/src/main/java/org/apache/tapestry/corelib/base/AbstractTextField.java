@@ -18,7 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.FieldValidationSupport;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TranslatorDefaultSource;
@@ -35,7 +35,7 @@ import java.util.Locale;
  * <p/>
  * If the component container (i.e., the page) provides an event handler method for the "toclient" event, and that
  * handler returns a non-null string, that will be the string value sent to the client. The context passed to the event
- * handler method is the current value of the value parameter.
+ * handler method is t he current value of the value parameter.
  * <p/>
  * Likewise, on a form submit, the "parseclient" event handler method will be passed the string provided by the client,
  * and may provide a non-null value as the parsed value.  Returning null allows the normal translator to operate.  The
@@ -66,6 +66,14 @@ public abstract class AbstractTextField extends AbstractField
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> _validate = NOOP_VALIDATOR;
+
+    /**
+     * Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may
+     * replace the nulls with some other value. The default strategy leaves nulls alone.  Another built-in strategy,
+     * zero, replaces nulls with the value 0.
+     */
+    @Parameter(defaultPrefix = "nullfieldstrategy", value = "default")
+    private NullFieldStrategy _nulls;
 
     @Environmental
     private ValidationTracker _tracker;
@@ -136,7 +144,25 @@ public abstract class AbstractTextField extends AbstractField
     {
         String value = _tracker.getInput(this);
 
-        if (value == null) value = _fieldValidationSupport.toClient(_value, _resources, _translate);
+        // If this is a response to a form submission, and the user provided a value.
+        // then send that exact value back at them.
+
+        if (value == null)
+        {
+            // Otherwise, get the value from the parameter ...
+
+            Object untranslated = _value;
+
+            // Substitute an alternative for null values.
+            // TODO: May want to coerce untranslated to the bound parameter type, to ensure it is compatible with the translator.
+
+            if (untranslated == null) untranslated = _nulls.replaceToClient();
+
+            // Then let the translator and or various triggered events get it into
+            // a format ready to be sent to the client.
+
+            value = _fieldValidationSupport.toClient(untranslated, _resources, _translate);
+        }
 
         writeFieldTag(writer, value);
 
@@ -170,6 +196,8 @@ public abstract class AbstractTextField extends AbstractField
 
         try
         {
+            if (InternalUtils.isBlank(rawValue)) rawValue = _nulls.replaceFromClient();
+
             Object translated = _fieldValidationSupport.parseClient(rawValue, _resources, _translate);
 
             _fieldValidationSupport.validate(translated, _resources, _validate);

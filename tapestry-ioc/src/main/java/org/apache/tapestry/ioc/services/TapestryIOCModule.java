@@ -56,10 +56,9 @@ public final class TapestryIOCModule
     }
 
     /**
-     * Provides access to additional service lifecycles. One lifecycles is built in ("singleton")
-     * but additional ones are accessed via this service (and its mapped configuration). Only
-     * proxiable services (those with explicit service interfaces) can be managed in terms of a
-     * lifecycle.
+     * Provides access to additional service lifecycles. One lifecycles is built in ("singleton") but additional ones
+     * are accessed via this service (and its mapped configuration). Only proxiable services (those with explicit
+     * service interfaces) can be managed in terms of a lifecycle.
      */
     public static ServiceLifecycleSource build(final Map<String, ServiceLifecycle> configuration)
     {
@@ -82,11 +81,9 @@ public final class TapestryIOCModule
     }
 
     /**
-     * Contributes "DefaultProvider", ordered last, that delegates to
-     * {@link ObjectLocator#getService(Class)}.
+     * Contributes "DefaultProvider", ordered last, that delegates to {@link ObjectLocator#getService(Class)}.
      * <p/>
-     * Contributes "Value", which injects values (not services) triggered by the {@link Value}
-     * annotation.
+     * Contributes "Value", which injects values (not services) triggered by the {@link Value} annotation.
      */
     public static void contributeMasterObjectProvider(OrderedConfiguration<ObjectProvider> configuration,
 
@@ -97,46 +94,22 @@ public final class TapestryIOCModule
     }
 
     /**
-     * Contributes a set of standard type coercions to the {@link TypeCoercer} service:
-     * <ul>
-     * <li>Object to String</li>
-     * <li>String to Double</li>
-     * <li>String to BigDecimal</li>
-     * <li>BigDecimal to Double</li>
-     * <li>Double to BigDecimal</li>
-     * <li>String to BigInteger</li>
-     * <li>BigInteger to Long</li>
-     * <li>String to Long</li>
-     * <li>Long to Byte</li>
-     * <li>Long to Short</li>
-     * <li>Long to Integer</li>
-     * <li>Double to Long</li>
-     * <li>Double to Float</li>
-     * <li>Float to Double</li>
-     * <li>Long to Double</li>
-     * <li>String to Boolean ("false" is always false, other non-blank strings are true)</li>
-     * <li>Long to Boolean (true if long value is non zero)</li>
-     * <li>Null to Boolean (always false)</li>
-     * <li>Null to String (still null)</li>
-     * <li>Collection to Boolean (false if empty)</li>
-     * <li>Object[] to List</li>
-     * <li>primitive[] to List</li>
-     * <li>Object to List (by wrapping as a singleton list)</li>
-     * <li>Null to List (still null)</li>
-     * <li>Null to Long (zero)</li>
-     * <li>Null to BigDecimal (zero)</li>
-     * <li>Null to BigInteger (zero)</li>
-     * <li>String to File</li>
-     * <li>String to {@link org.apache.tapestry.ioc.util.TimeInterval}</li>
-     * <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to Long</li>
-     * </ul>
+     * Contributes a set of standard type coercions to the {@link TypeCoercer} service: <ul> <li>Object to String</li>
+     * <li>String to Double</li> <li>String to BigDecimal</li> <li>BigDecimal to Double</li> <li>Double to
+     * BigDecimal</li> <li>String to BigInteger</li> <li>BigInteger to Long</li> <li>String to Long</li> <li>Long to
+     * Byte</li> <li>Long to Short</li> <li>Long to Integer</li> <li>Double to Long</li> <li>Double to Float</li>
+     * <li>Float to Double</li> <li>Long to Double</li> <li>String to Boolean ("false" is always false, other non-blank
+     * strings are true)</li> <li>Long to Boolean (true if long value is non zero)</li> <li>Null to Boolean (always
+     * false)</li> <li>Null to String (still null)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to
+     * List</li> <li>primitive[] to List</li> <li>Object to List (by wrapping as a singleton list)</li> <li>Null to List
+     * (still null)</li> <li>String to File</li> <li>String to {@link org.apache.tapestry.ioc.util.TimeInterval}</li>
+     * <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to Long</li> </ul>
      * <p/>
-     * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches
-     * when attempting to add coercions from null to various numeric types: we end up having to have
-     * many more coercions for the null case to prevent null --> String --> BigInteger. This may
-     * indicate a weakness in the algorithm, in that coercions through String should be considered
-     * "weaker" than other coercions. Alternately, coercions from null may need to be handled
-     * specially. We'll see if we tweak the algorithm in the future.
+     * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches when attempting to
+     * add coercions from null to various numeric types: we end up having to have many more coercions for the null case
+     * to prevent null --> String --> BigInteger. This may indicate a weakness in the algorithm, in that coercions
+     * through String should be considered "weaker" than other coercions. Alternately, coercions from null may need to
+     * be handled specially. We'll see if we tweak the algorithm in the future.
      */
     @SuppressWarnings("unchecked")
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
@@ -292,38 +265,6 @@ public final class TapestryIOCModule
             }
         });
 
-        add(configuration, void.class, Long.class, new Coercion<Void, Long>()
-        {
-            public Long coerce(Void input)
-            {
-                return 0l;
-            }
-        });
-
-        add(configuration, void.class, BigDecimal.class, new Coercion<Void, BigDecimal>()
-        {
-
-            public BigDecimal coerce(Void input)
-            {
-                return BigDecimal.ZERO;
-            }
-        });
-
-        add(configuration, void.class, BigInteger.class, new Coercion<Void, BigInteger>()
-        {
-            public BigInteger coerce(Void input)
-            {
-                return BigInteger.ZERO;
-            }
-        });
-
-        add(configuration, void.class, Double.class, new Coercion<Void, Double>()
-        {
-            public Double coerce(Void input)
-            {
-                return 0d;
-            }
-        });
 
         add(configuration, Collection.class, Boolean.class, new Coercion<Collection, Boolean>()
         {

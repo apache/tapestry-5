@@ -21,7 +21,6 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.upload.services.MultipartDecoder;
@@ -37,15 +36,15 @@ public class Upload extends AbstractField
     public static final String MULTIPART_ENCTYPE = "multipart/form-data";
 
     /**
-     * The uploaded file. Note: This is only guaranteed to be valid while processing the form
-     * submission. Subsequently the content may have been cleaned up.
+     * The uploaded file. Note: This is only guaranteed to be valid while processing the form submission. Subsequently
+     * the content may have been cleaned up.
      */
     @Parameter(required = true, principal = true)
     private UploadedFile _value;
 
     /**
-     * The object that will perform input validation. The "validate:" binding prefix is generally
-     * used to provide this object in a declarative fashion.
+     * The object that will perform input validation. The "validate:" binding prefix is generally used to provide this
+     * object in a declarative fashion.
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
@@ -77,8 +76,7 @@ public class Upload extends AbstractField
     private RenderDisabled _renderDisabled;
 
     /**
-     * Computes a default value for the "validate" parameter using
-     * {@link FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
     final FieldValidator defaultValidate()
     {

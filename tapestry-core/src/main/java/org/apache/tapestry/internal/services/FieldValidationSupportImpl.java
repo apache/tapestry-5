@@ -21,7 +21,6 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentEventException;
-import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
 public class FieldValidationSupportImpl implements FieldValidationSupport

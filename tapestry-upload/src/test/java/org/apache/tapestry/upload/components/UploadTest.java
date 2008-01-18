@@ -16,7 +16,6 @@ package org.apache.tapestry.upload.components;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.apache.tapestry.upload.services.MultipartDecoder;

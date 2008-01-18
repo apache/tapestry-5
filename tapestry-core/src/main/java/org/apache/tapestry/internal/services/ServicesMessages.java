@@ -395,4 +395,9 @@ class ServicesMessages
     {
         return MESSAGES.format("page-pool-exausted", pageName, locale.toString(), hardLimit);
     }
+
+    static String unknownNullFieldStrategyName(String name, Collection<String> names)
+    {
+        return MESSAGES.format("unknown-null-field-strategy-name", name, InternalUtils.joinSorted(names));
+    }
 }

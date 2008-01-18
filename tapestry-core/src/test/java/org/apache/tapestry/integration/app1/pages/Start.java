@@ -199,7 +199,9 @@ public class Start
             new Item("unlessdemo", "Unless Demo", "use of the Unless component"),
 
             new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
-                     "Automatic creation of ValueEncoder using the TypeCoercer"));
+                     "Automatic creation of ValueEncoder using the TypeCoercer"),
+
+            new Item("NullStrategyDemo", "Null Field Strategy Demo", "use of the nulls parameter of TextField"));
 
     static
     {
