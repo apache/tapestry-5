@@ -18,7 +18,6 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.runtime.ComponentEventException;
-import org.apache.tapestry.services.FieldValidationSupport;
 import org.apache.tapestry.services.ValidationMessagesSource;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;

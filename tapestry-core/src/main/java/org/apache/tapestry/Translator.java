@@ -22,7 +22,7 @@ import org.apache.tapestry.services.ValidationMessagesSource;
  *
  * @param <T>
  * @see org.apache.tapestry.services.TranslatorDefaultSource
- * @see org.apache.tapestry.services.FieldValidationSupport
+ * @see FieldValidationSupport
  */
 public interface Translator<T>
 {

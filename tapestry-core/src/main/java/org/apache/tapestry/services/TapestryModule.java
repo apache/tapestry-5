@@ -19,9 +19,7 @@ import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
 import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.internal.DefaultValidationDecorator;
-import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.*;
 import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator;
 import org.apache.tapestry.internal.beaneditor.ValidateAnnotationConstraintGenerator;
 import org.apache.tapestry.internal.bindings.*;
@@ -112,6 +110,7 @@ public final class TapestryModule
         binder.bind(PageContentTypeAnalyzer.class, PageContentTypeAnalyzerImpl.class);
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
         binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
+        binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -139,8 +138,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes the factory for serveral built-in binding prefixes ("asset", "literal", prop", "block", "component"
-     * "message", "validate", "translate", "var").
+     * Contributes the factory for serveral built-in binding prefixes ("asset", "block", "component", "literal", prop",
+     * "nullfieldstrategy", "message", "validate", "translate", "var").
      */
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration,
 
@@ -165,6 +164,7 @@ public final class TapestryModule
         configuration.add("block", new BlockBindingFactory());
         configuration.add("asset", locator.autobuild(AssetBindingFactory.class));
         configuration.add("var", new RenderVariableBindingFactory());
+        configuration.add("nullfieldstrategy", locator.autobuild(NullFieldStrategyBindingFactory.class));
     }
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
@@ -2056,5 +2056,17 @@ public final class TapestryModule
         if (immediateMode) return locator.autobuild(ImmediateActionRenderResponseGenerator.class);
 
         return locator.autobuild(ActionRenderResponseGeneratorImpl.class);
+    }
+
+    /**
+     * Contributes strategies accessible via the {@link NullFieldStrategySource} service.
+     * <p/>
+     * <dl> <dt>default</dt> <dd>Does nothing, nulls stay null.</dd> <dt>zero</dt> <dd>Null values are converted to
+     * zero.</dd> </dl>
+     */
+    public static void contributeNullFieldStrategySource(MappedConfiguration<String, NullFieldStrategy> configuration)
+    {
+        configuration.add("default", new DefaultNullFieldStrategy());
+        configuration.add("zero", new ZeroNullFieldStrategy());
     }
 }

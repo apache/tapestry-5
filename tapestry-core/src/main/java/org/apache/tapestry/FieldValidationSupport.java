@@ -12,12 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
-
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.FieldValidator;
-import org.apache.tapestry.Translator;
-import org.apache.tapestry.ValidationException;
+package org.apache.tapestry;
 
 /**
  * Services to help with field {@linkplain org.apache.tapestry.Validator validation} and {@linkplain
@@ -35,6 +30,7 @@ public interface FieldValidationSupport
      * @param componentResources used to fire events on the component
      * @param translator         used if the component does not provide a non-null value
      * @return the translated value  or null if the value is null
+     * @see org.apache.tapestry.Translator#toClient(Object)
      */
     String toClient(Object value, ComponentResources componentResources, Translator translator);
 
@@ -51,6 +47,7 @@ public interface FieldValidationSupport
      * @return the input parsed to an object
      * @throws org.apache.tapestry.ValidationException
      *          if the value can't be parsed
+     * @see org.apache.tapestry.Translator#parseClient(String, org.apache.tapestry.ioc.Messages)
      */
     Object parseClient(String clientValue, ComponentResources componentResources, Translator translator)
             throws ValidationException;
@@ -63,6 +60,7 @@ public interface FieldValidationSupport
      * @param componentResources used to trigger events
      * @param validator          performs normal validations
      * @throws ValidationException if the value is not valid
+     * @see org.apache.tapestry.Validator#validate(Field, Object, org.apache.tapestry.ioc.MessageFormatter, Object)
      */
     void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException;

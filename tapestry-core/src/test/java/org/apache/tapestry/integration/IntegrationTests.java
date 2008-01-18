@@ -1414,4 +1414,25 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText(locator, "100");
     }
+
+    /**
+     * TAPESTRY-2056
+     */
+    @Test
+    public void null_field_strategy()
+    {
+        start("Null Field Strategy Demo");
+
+        String locator = "//span[@id='value']";
+
+        assertText(locator, "");
+
+        assertText("//input[@id='number']/@value", "0");
+
+        type("number", "");
+
+        clickAndWait(SUBMIT);
+
+        assertText(locator, "0");
+    }
 }

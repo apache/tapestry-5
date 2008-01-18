@@ -123,6 +123,8 @@ Binding Expressions
 *------------+----------------------------------------------------------------------------------+
 | literal    | A literal string.                                                                |
 *------------+----------------------------------------------------------------------------------+
+| nullfieldstrategy | Used to locate a pre-defined {{{../../apidocs/org/apache/tapestry/NullFieldStrategy.html}NullFieldStrategy}}|
+*------------+----------------------------------------------------------------------------------+
 | message    | Retrieves a value from the component's {{{localization.html}message catalog}}.   |
 *------------+----------------------------------------------------------------------------------+
 | prop       | The name of a property of the containing component to read or update.            |
