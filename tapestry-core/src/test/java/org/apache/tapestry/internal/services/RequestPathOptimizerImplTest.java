@@ -68,9 +68,12 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
 
                               {"/verylongcontextname", "/eventhandlerdemo.barney/one",
                                "/verylongcontextname/eventhandlerdemo.clear/anything",
-                               "../eventhandlerdemo.clear/anything"}
+                               "../eventhandlerdemo.clear/anything"},
 
-        };
+                              {"/verylongcontextname", "/page", "/verylongcontextname/page:sort/foo",
+                               "./page:sort/foo"},
+
+                              {"", "/page", "/page:sort/foo", "/page:sort/foo"}};
     }
 
     @Test(dataProvider = "uri_optimization")

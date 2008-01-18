@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,37 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.corelib.components;
+package org.apache.tapestry.corelib.base;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.corelib.base.AbstractLink;
+import org.apache.tapestry.internal.services.ZoneSetup;
 import org.apache.tapestry.ioc.annotations.Inject;
 
 import java.util.List;
 
-/**
- * Generates a render request link to some other page in the application. If an activation context is supplied (as the
- * context parameter), then the context values will be encoded into the URL. If no context is supplied, then the target
- * page itself will supply the context via a passivate event.
- * <p/>
- * Pages are not required to have an activation context. When a page does have an activation context, the value
- * typically represents the identity of some object displayed or otherwise manipulated by the page.
- */
-public class PageLink extends AbstractLink implements ClientElement
+public abstract class AbstractComponentActionLink extends AbstractLink implements ClientElement
 {
     /**
-     * The logical name of the page to link to.
+     * The context for the link (optional parameter). This list of values will be converted into strings and included in
+     * the URI. The strings will be coerced back to whatever their values are and made available to event handler
+     * methods.
      */
-    @Parameter(required = true, defaultPrefix = "literal")
-    private String _page;
+    @Parameter
+    private List<?> _context;
+
+    /**
+     * Binding zone turns the link into a an Ajax control that causes the related zone to be updated.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _zone;
 
     @Inject
     private ComponentResources _resources;
 
     @Environmental
     private PageRenderSupport _support;
+
+    @Environmental
+    private ZoneSetup _zoneSetup;
 
     /**
      * If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still
@@ -53,27 +56,26 @@ public class PageLink extends AbstractLink implements ClientElement
 
     private String _clientId;
 
-    /**
-     * If provided, this is the activation context for the target page (the information will be encoded into the URL).
-     * If not provided, then the target page will provide its own activation context.
-     */
-    @Parameter
-    private List _context;
-
-    private final Object[] _emptyContext = new Object[0];
-
     void beginRender(MarkupWriter writer)
     {
         if (_disabled) return;
 
         _clientId = _support.allocateClientId(_resources.getId());
 
-        Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
+        Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
 
-        Link link = _resources.createPageLink(_page, _resources.isBound("context"), activationContext);
+        Link link = createLink(contextArray);
 
         writeLink(writer, _clientId, link);
+
+        if (_zone != null) _zoneSetup.linkZone(_clientId, _zone);
     }
+
+    /**
+     * Invoked to create the Link that will become the href attribute of the output.
+     */
+    protected abstract Link createLink(Object[] eventContext);
+
 
     void afterRender(MarkupWriter writer)
     {
@@ -85,10 +87,5 @@ public class PageLink extends AbstractLink implements ClientElement
     public String getClientId()
     {
         return _clientId;
-    }
-
-    void setDisabled(boolean disabled)
-    {
-        _disabled = disabled;
     }
 }
