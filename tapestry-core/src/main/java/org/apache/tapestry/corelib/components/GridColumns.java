@@ -26,30 +26,29 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import java.util.List;
 
 /**
- * Renders out the column headers for the grid. Eventually, this will include control over column
- * sorting, perhaps even column ordering.
+ * Renders out the column headers for the grid. Eventually, this will include control over column sorting, perhaps even
+ * column ordering.
  */
 public class GridColumns
 {
     /**
-     * The object that provides access to bean and data models, which is typically the enclosing
-     * Grid component.
+     * The object that provides access to bean and data models, which is typically the enclosing Grid component.
      */
     @Parameter(value = "componentResources.container")
     private GridModelProvider _dataProvider;
 
     /**
-     * If true, then the CSS class on each &lt;TH&gt; cell will be omitted, which can reduce
-     * the amount of output from the component overall by a considerable amount. Leave this as false, the
-     * default, when you are leveraging the CSS to customize the look and feel of particular columns.
+     * If true, then the CSS class on each &lt;TH&gt; cell will be omitted, which can reduce the amount of output from
+     * the component overall by a considerable amount. Leave this as false, the default, when you are leveraging the CSS
+     * to customize the look and feel of particular columns.
      */
     @Parameter
     private boolean _lean;
 
     /**
-     * The column which is currently being sorted. This value is the column's
-     * {@link PropertyModel#getId() id}, not its {@link PropertyModel#getPropertyName() name}.
-     * This parameter may be null, in which case no column is being used for sorting.
+     * The column which is currently being sorted. This value is the column's {@link PropertyModel#getId() id}, not its
+     * {@link PropertyModel#getPropertyName() name}. This parameter may be null, in which case no column is being used
+     * for sorting.
      */
     @Parameter(required = true)
     private String _sortColumnId;
@@ -61,8 +60,8 @@ public class GridColumns
     private boolean _sortAscending;
 
     @SuppressWarnings("unused")
-    @Component(parameters = {"disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
-    private ActionLink _sort, _sort2;
+    @Component(parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
+    private EventLink _sort, _sort2;
 
     @Inject
     @Path("sort-asc.png")
@@ -105,7 +104,7 @@ public class GridColumns
         return _columnModel.getId().equals(_sortColumnId);
     }
 
-    void onActionFromSort(String columnId)
+    void onSort(String columnId)
     {
         if (columnId.equals(_sortColumnId))
         {
@@ -116,11 +115,6 @@ public class GridColumns
             _sortColumnId = columnId;
             _sortAscending = true;
         }
-    }
-
-    void onActionFromSort2(String columnId)
-    {
-        onActionFromSort(columnId);
     }
 
     public Asset getIcon()

@@ -27,8 +27,8 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
     private final boolean _forceFull;
 
     /**
-     * Used to split a URI up into individual folder/file names. Any number of consecutive slashes is treated as
-     * a single slash.
+     * Used to split a URI up into individual folder/file names. Any number of consecutive slashes is treated as a
+     * single slash.
      */
     private final Pattern SLASH_PATTERN = Pattern.compile("/+");
 
@@ -95,6 +95,21 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
             builder.append(pathTerms[j]);
 
             sep = "/";
+        }
+
+        // A colon before the first slash confuses the browser; it thinks its a really long
+        // protocol specifier (like "http:").
+
+        int firstColon = builder.indexOf(":");
+        if (firstColon > 0)
+        {
+            int slashx = builder.indexOf("/");
+
+            // Prefixing with "./" disambiguates the path and the colon, though
+            // most likely we're going to end up choosing the full path rather than
+            // the relative one.
+
+            if (slashx > firstColon) builder.insert(0, "./");
         }
 
         if (builder.length() < path.length()) return builder.toString();

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
 import static org.apache.tapestry.TapestryConstants.LITERAL_BINDING_PREFIX;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -26,6 +27,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
 /**
  * Provides base utilities for classes that generate clickable links.
  */
+@SupportsInformalParameters
 public abstract class AbstractLink
 {
     @Inject
@@ -50,16 +52,16 @@ public abstract class AbstractLink
     }
 
     /**
-     * Writes an &lt;a&gt; element with the provided link as the href attribute.  A call to
-     * {@link org.apache.tapestry.MarkupWriter#end()} is <em>not</em> provided.            Automatically appends
-     * an anchor if the component's anchor parameter is non-null.  Informal parameters are rendered as well.
+     * Writes an &lt;a&gt; element with the provided link as the href attribute.  A call to {@link
+     * org.apache.tapestry.MarkupWriter#end()} is <em>not</em> provided.            Automatically appends an anchor if
+     * the component's anchor parameter is non-null.  Informal parameters are rendered as well.
      *
      * @param writer         to write markup to
      * @param clientId       value written as the id attribute
      * @param link           the link that will form the href
      * @param namesAndValues additional attributes to write
      */
-    protected void writeLink(MarkupWriter writer, String clientId, Link link, Object... namesAndValues)
+    protected final void writeLink(MarkupWriter writer, String clientId, Link link, Object... namesAndValues)
     {
         Element e = writer.element("a", "href", buildHref(link), "id", clientId);
 
@@ -73,7 +75,7 @@ public abstract class AbstractLink
     /**
      * Used for testing.
      */
-    void inject(String anchor, ComponentInvocationMap map, ComponentResources resources)
+    final void inject(String anchor, ComponentInvocationMap map, ComponentResources resources)
     {
         _anchor = anchor;
         _componentInvocationMap = map;
