@@ -76,9 +76,9 @@ public final class TapestryConstants
 
 
     /**
-     * Symbol which may be set to "true" to force the use of full URIs (not relative URIs) exclusively.
+     * Symbol which may be set to "true" to force the use of absolute URIs (not relative URIs) exclusively.
      */
-    public static final String FORCE_FULL_URIS_SYMBOL = "tapestry.force-full-uris";
+    public static final String FORCE_ABSOLUTE_URIS_SYMBOL = "tapestry.force-absolute-uris";
 
 
     /**

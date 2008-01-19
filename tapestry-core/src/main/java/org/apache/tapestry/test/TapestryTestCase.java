@@ -979,4 +979,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(tracker.getInput(field)).andReturn(input);
     }
+
+    protected final void train_isXHR(Request request, boolean isXHR)
+    {
+        expect(request.isXHR()).andReturn(isXHR).atLeastOnce();
+    }
 }

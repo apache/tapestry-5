@@ -58,7 +58,8 @@ public class LinkImpl implements Link
      * @param optimizer   optimizes complete URLs to appropriate relative URLs
      * @param contextPath path for the context {@link org.apache.tapestry.services.Request#getContextPath()}
      * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry.test.PageTester})
-     * @param forForm     if true, then a Form has requested the Link, in which case, the link should not generated query parameters directly (they will
+     * @param forForm     if true, then a Form has requested the Link, in which case, the link should not generated
+     *                    query parameters directly (they will
      */
     public LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath,
                     ComponentInvocation invocation, boolean forForm)
@@ -90,7 +91,7 @@ public class LinkImpl implements Link
         return _response.encodeURL(buildURI(false));
     }
 
-    public String toFullURI()
+    public String toAbsoluteURI()
     {
         return _response.encodeURL(buildURI(true));
     }

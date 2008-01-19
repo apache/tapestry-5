@@ -170,7 +170,7 @@ public class Autocomplete
             }
         }
 
-        _pageRenderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toFullURI(),
+        _pageRenderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toAbsoluteURI(),
                                      config);
     }
 

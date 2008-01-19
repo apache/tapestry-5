@@ -15,20 +15,20 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * Used to optimize a path for inclusion in the rendered output of the page. When using lots of libraries,
- * nested folders, and page acivation contexts, you can often create a shorter URL as a relative path
- * from the current request URL.  Of course, you need to make sure that's turned off inside an Ajax request
- * since the base URL of the client it totally unknown in that situation.
+ * Used to optimize a path for inclusion in the rendered output of the page. When using lots of libraries, nested
+ * folders, and page acivation contexts, you can often create a shorter URL as a relative path from the current request
+ * URL.  Of course, you need to make sure that's turned off inside an Ajax request since the base URL of the client it
+ * totally unknown in that situation.
  *
- * @see org.apache.tapestry.TapestryConstants#FORCE_FULL_URIS_SYMBOL
+ * @see org.apache.tapestry.TapestryConstants#FORCE_ABSOLUTE_URIS_SYMBOL
  */
 public interface RequestPathOptimizer
 {
     /**
-     * Optimizes the provided path, returning a new path that is shorter but (combined with the current requests'
-     * base URL) will result in the same request URI.  In many cases, this will return the provided path unchanged.
-     * During {@linkplain org.apache.tapestry.services.Request#isXHR() XHR} requests, this will always
-     * return the provided path (no optimization takes place, since the base URI of the client is unknown).
+     * Optimizes the provided path, returning a new path that is shorter but (combined with the current requests' base
+     * URL) will result in the same request URI.  In many cases, this will return the provided path unchanged. During
+     * {@linkplain org.apache.tapestry.services.Request#isXHR() XHR} requests, this will always return the provided path
+     * (no optimization takes place, since the base URI of the client is unknown).
      *
      * @param path to be optimized
      * @return the same path, or a new path that is equivalent, relative to the current request's URL

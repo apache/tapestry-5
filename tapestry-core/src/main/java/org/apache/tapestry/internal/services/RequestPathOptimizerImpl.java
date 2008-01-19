@@ -24,7 +24,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 {
     private final Request _request;
 
-    private final boolean _forceFull;
+    private final boolean _forceAbsolute;
 
     /**
      * Used to split a URI up into individual folder/file names. Any number of consecutive slashes is treated as a
@@ -34,17 +34,17 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
     public RequestPathOptimizerImpl(Request request,
 
-                                    @Symbol(TapestryConstants.FORCE_FULL_URIS_SYMBOL)
-                                    boolean forceFull)
+                                    @Symbol(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL)
+                                    boolean forceAbsolute)
     {
         _request = request;
 
-        _forceFull = forceFull;
+        _forceAbsolute = forceAbsolute;
     }
 
-    public String optimizePath(String path)
+    public String optimizePath(String absolutePath)
     {
-        if (_forceFull || _request.isXHR()) return path;
+        if (_forceAbsolute || _request.isXHR()) return absolutePath;
 
         String requestPath = _request.getPath();
 
@@ -62,7 +62,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
         if (requestPath.equals("/") || requestPath.equals("")) requestTerms = add(requestTerms, "");
 
-        String[] pathTerms = SLASH_PATTERN.split(path);
+        String[] pathTerms = SLASH_PATTERN.split(absolutePath);
 
         builder.setLength(0);
 
@@ -112,12 +112,12 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
             if (slashx > firstColon) builder.insert(0, "./");
         }
 
-        if (builder.length() < path.length()) return builder.toString();
+        if (builder.length() < absolutePath.length()) return builder.toString();
 
-        // The complete path is actually shorter than the relative path, so just return the complete
+        // The absolute path is actually shorter than the relative path, so just return the absolute
         // path.
 
-        return path;
+        return absolutePath;
     }
 
     private String[] add(String[] array, String s)
