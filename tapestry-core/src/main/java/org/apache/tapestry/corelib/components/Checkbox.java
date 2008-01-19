@@ -17,10 +17,8 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Mixin;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.ValidationTracker;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -39,14 +37,17 @@ public class Checkbox extends AbstractField
     private RenderDisabled _renderDisabled;
 
     /**
-     * The value to be read or updated. If not bound, the Checkbox will attempt to edit a property
-     * of its container whose name matches the component's id.
+     * The value to be read or updated. If not bound, the Checkbox will attempt to edit a property of its container
+     * whose name matches the component's id.
      */
     @Parameter(required = true)
     private boolean _value;
 
     @Inject
     private ComponentResources _resources;
+
+    @Environmental
+    private ValidationTracker _tracker;
 
     Binding defaultValue()
     {
@@ -56,13 +57,17 @@ public class Checkbox extends AbstractField
     @BeginRender
     void begin(MarkupWriter writer)
     {
+        String asSubmitted = _tracker.getInput(this);
+
+        boolean checked = asSubmitted != null ? Boolean.parseBoolean(asSubmitted) : _value;
+
         writer.element("input", "type", "checkbox",
 
                        "name", getElementName(),
 
                        "id", getClientId(),
 
-                       "checked", _value ? "checked" : null);
+                       "checked", checked ? "checked" : null);
 
         _resources.renderInformalParameters(writer);
 
@@ -79,6 +84,10 @@ public class Checkbox extends AbstractField
     protected void processSubmission(String elementName)
     {
         String postedValue = _request.getParameter(elementName);
+
+        // record as "true" or "false"
+
+        _tracker.recordInput(this, Boolean.toString(postedValue != null));
 
         _value = postedValue != null;
     }

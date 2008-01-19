@@ -49,8 +49,8 @@ public class DateField extends AbstractField
     private String _format = "%m/%d/%y";
 
     /**
-     * The object that will perform input validation (which occurs after translation). The translate
-     * binding prefix is generally used to provide this object in a declarative fashion.
+     * The object that will perform input validation (which occurs after translation). The translate binding prefix is
+     * generally used to provide this object in a declarative fashion.
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
@@ -58,8 +58,8 @@ public class DateField extends AbstractField
 
 
     /**
-     * If true, then the client-side calendar will show the time as well as the date.  You will probably
-     * need to bind the format parameter as well when this is true, say to <code>%m/%d/%y %H:%M</code>.
+     * If true, then the client-side calendar will show the time as well as the date.  You will probably need to bind
+     * the format parameter as well when this is true, say to <code>%m/%d/%y %H:%M</code>.
      */
     @Parameter
     private boolean _editTime;
@@ -113,9 +113,12 @@ public class DateField extends AbstractField
     @Inject
     private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
 
+    @Inject
+    private FieldValidationSupport _fieldValidationSupport;
+
     /**
-     * The default value is a property of the container whose name matches the component's id. May
-     * return null if the container does not have a matching property.
+     * The default value is a property of the container whose name matches the component's id. May return null if the
+     * container does not have a matching property.
      */
     final Binding defaultValue()
     {
@@ -123,8 +126,7 @@ public class DateField extends AbstractField
     }
 
     /**
-     * Computes a default value for the "validate" parameter using
-     * {@link FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
     final FieldValidator defaultValidate()
     {
@@ -212,10 +214,9 @@ public class DateField extends AbstractField
     }
 
     /**
-     * Invoked to allow subclasses to further configure the parameters passed to the JavaScript
-     * Calendar.setup() function. The values inputField, ifFormat and button are pre-configured.
-     * Subclasses may override this method to configure additional features of the client-side
-     * Calendar. This implementation does nothing.
+     * Invoked to allow subclasses to further configure the parameters passed to the JavaScript Calendar.setup()
+     * function. The values inputField, ifFormat and button are pre-configured. Subclasses may override this method to
+     * configure additional features of the client-side Calendar. This implementation does nothing.
      *
      * @param setup parameters object
      */
@@ -224,7 +225,7 @@ public class DateField extends AbstractField
 
     }
 
-    String formatCurrentValue()
+    private String formatCurrentValue()
     {
         if (_value == null) return "";
 
@@ -234,26 +235,33 @@ public class DateField extends AbstractField
     @Override
     protected void processSubmission(String elementName)
     {
-        // TODO: Validation
-
         String value = _request.getParameter(elementName);
 
-        if (InternalUtils.isBlank(value))
-        {
-            _value = null;
-            return;
-        }
+        _tracker.recordInput(this, value);
+
+        Date parsedValue = null;
 
         try
         {
-            _value = toJavaDateFormat().parse(value);
+            if (InternalUtils.isNonBlank(value)) parsedValue = toJavaDateFormat().parse(value);
 
         }
         catch (ParseException ex)
         {
             _tracker.recordError(this, "Date value is not parseable.");
+            return;
         }
 
+        try
+        {
+            _fieldValidationSupport.validate(parsedValue, _resources, _validate);
+
+            _value = parsedValue;
+        }
+        catch (ValidationException ex)
+        {
+            _tracker.recordError(this, ex.getMessage());
+        }
     }
 
     SimpleDateFormat toJavaDateFormat()

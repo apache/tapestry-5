@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**
- * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate
- * within a {@link RadioContainer} (normally, the {@link RadioGroup} component).
+ * A radio button (i.e., &lt;input type="radio"&gt;). Radio buttons <strong>must</strong> operate within a {@link
+ * RadioContainer} (normally, the {@link RadioGroup} component).
  * <p/>
- * If the value parameter is not bound, then the default value is a property of the container
- * component whose name matches the Radio component's id.
+ * If the value parameter is not bound, then the default value is a property of the container component whose name
+ * matches the Radio component's id.
  */
 public class Radio implements Field
 {
@@ -37,18 +37,16 @@ public class Radio implements Field
     private RadioContainer _container;
 
     /**
-     * The user presentable label for the field. If not provided, a reasonable label is generated
-     * from the component's id, first by looking for a message key named "id-label" (substituting
-     * the component's actual id), then by converting the actual id to a presentable string (for
-     * example, "userId" to "User Id").
+     * The user presentable label for the field. If not provided, a reasonable label is generated from the component's
+     * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
+     * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _label;
 
     /**
-     * The value associated with this radio button. This is used to determine which radio button
-     * will be selected when the page is rendered, and also becomes the value assigned when the form
-     * is submitted.
+     * The value associated with this radio button. This is used to determine which radio button will be selected when
+     * the page is rendered, and also becomes the value assigned when the form is submitted.
      */
     @Parameter(required = true, principal = true)
     private Object _value;
@@ -79,9 +77,8 @@ public class Radio implements Field
     private String _elementName;
 
     /**
-     * If true, then the field will render out with a disabled attribute (to turn off client-side
-     * behavior). Further, a disabled field ignores any value in the request when the form is
-     * submitted.
+     * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
+     * disabled field ignores any value in the request when the form is submitted.
      */
     @Parameter("false")
     private boolean _disabled;
@@ -107,8 +104,8 @@ public class Radio implements Field
     }
 
     /**
-     * Returns true if this component has been expressly disabled (via its disabled parameter), or
-     * if the {@link RadioContainer container} has been disabled.
+     * Returns true if this component has been expressly disabled (via its disabled parameter), or if the {@link
+     * RadioContainer container} has been disabled.
      */
     public boolean isDisabled()
     {
@@ -127,16 +124,7 @@ public class Radio implements Field
         _clientId = _pageRenderSupport.allocateClientId(_resources.getId());
         _elementName = _container.getElementName();
 
-        writer.element(
-                "input",
-                "type",
-                "radio",
-                "id",
-                _clientId,
-                "name",
-                _elementName,
-                "value",
-                value);
+        writer.element("input", "type", "radio", "id", _clientId, "name", _elementName, "value", value);
 
         if (_container.isSelected(_value)) writer.attributes("checked", "checked");
     }

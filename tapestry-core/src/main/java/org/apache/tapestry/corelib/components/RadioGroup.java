@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
 
-public class RadioGroup
+public class RadioGroup implements Field
 {
     /**
      * The property read and updated by the group as a whole.
@@ -30,16 +30,15 @@ public class RadioGroup
     private Object _value;
 
     /**
-     * If true, then the field will render out with a disabled attribute (to turn off client-side
-     * behavior). Further, a disabled field ignores any value in the request when the form is
-     * submitted.
+     * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
+     * disabled field ignores any value in the request when the form is submitted.
      */
     @Parameter("false")
     private boolean _disabled;
 
     /**
-     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to
-     * create client-side string values for the different radio button values.
+     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
+     * string values for the different radio button values.
      *
      * @see ValueEncoderSource
      */
@@ -63,6 +62,9 @@ public class RadioGroup
 
     @Inject
     private Request _request;
+
+    @Environmental
+    private ValidationTracker _tracker;
 
     private String _elementName;
 
@@ -112,12 +114,14 @@ public class RadioGroup
     {
         String clientValue = _request.getParameter(_elementName);
 
+        _tracker.recordInput(this, clientValue);
+
         _value = _encoder.toValue(clientValue);
     }
 
     /**
-     * Obtains the element name for the group, and stores a {@link RadioContainer} into the
-     * {@link Environment} (so that the {@link Radio} components can find it).
+     * Obtains the element name for the group, and stores a {@link RadioContainer} into the {@link Environment} (so that
+     * the {@link Radio} components can find it).
      */
     final void setupRender()
     {
@@ -126,6 +130,11 @@ public class RadioGroup
         ComponentAction<RadioGroup> action = new Setup(name);
 
         _formSupport.storeAndExecute(this, action);
+
+        String submittedValue = _tracker.getInput(this);
+
+        final String selectedValue = submittedValue != null ? submittedValue : _encoder.toClient(_value);
+
 
         _environment.push(RadioContainer.class, new RadioContainer()
         {
@@ -149,7 +158,7 @@ public class RadioGroup
 
             public boolean isSelected(Object value)
             {
-                return TapestryInternalUtils.isEqual(value, _value);
+                return TapestryInternalUtils.isEqual(_encoder.toClient(value), selectedValue);
             }
 
         });
@@ -165,4 +174,33 @@ public class RadioGroup
         _environment.pop(RadioContainer.class);
     }
 
+    public String getElementName()
+    {
+        return _elementName;
+    }
+
+    /**
+     * Always returns null; individual {@link org.apache.tapestry.corelib.components.Radio} components may have their
+     * own label.
+     */
+    public String getLabel()
+    {
+        return null;
+    }
+
+    public boolean isDisabled()
+    {
+        return _disabled;
+    }
+
+    /**
+     * Returns null; the radio group does not render as a tag and so doesn't have an id to share.  RadioGroup implements
+     * {@link org.apache.tapestry.Field} only so it can interact with the {@link org.apache.tapestry.ValidationTracker}.
+     *
+     * @return null
+     */
+    public String getClientId()
+    {
+        return null;
+    }
 }
