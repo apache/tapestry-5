@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class SelectModelRenderer implements SelectModelVisitor
 
         _writer.element("option", "value", clientValue);
 
-        if (isOptionSelected(optionModel)) _writer.attributes("selected", "selected");
+        if (isOptionSelected(optionModel, clientValue)) _writer.attributes("selected", "selected");
 
         writeDisabled(optionModel.isDisabled());
         writeAttributes(optionModel.getAttributes());
@@ -76,10 +76,9 @@ public class SelectModelRenderer implements SelectModelVisitor
     }
 
     /**
-     * If true, then the selected attribute will be written. This implementation always returns
-     * false.
+     * If true, then the selected attribute will be written. This implementation always returns false.
      */
-    protected boolean isOptionSelected(OptionModel optionModel)
+    protected boolean isOptionSelected(OptionModel optionModel, String clientValue)
     {
         return false;
     }

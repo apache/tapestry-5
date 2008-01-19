@@ -21,23 +21,26 @@ import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
+import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.FieldValidatorDefaultSource;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.ValueEncoderFactory;
+import org.apache.tapestry.services.ValueEncoderSource;
 import org.apache.tapestry.util.EnumSelectModel;
 
 import java.util.Locale;
 
 /**
- * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side.
- * An validation decorations will go around the entire &lt;select&gt; element.
+ * Select an item from a list of values, using an [X]HTML &lt;select&gt; element on the client side. An validation
+ * decorations will go around the entire &lt;select&gt; element.
  * <p/>
- * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to
- * convert between server-side values and client-side strings. In many cases, a {@link ValueEncoder}
- * can be generated automatically from the type of the value parameter. The
- * {@link ValueEncoderSource} service provides an encoder in these situations; it can be overriden
- * by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into
- * the service's configuration.
+ * A core part of this component is the {@link ValueEncoder} (the encoder parameter) that is used to convert between
+ * server-side values and client-side strings. In many cases, a {@link ValueEncoder} can be generated automatically from
+ * the type of the value parameter. The {@link ValueEncoderSource} service provides an encoder in these situations; it
+ * can be overriden by binding the encoder parameter, or extended by contributing a {@link ValueEncoderFactory} into the
+ * service's configuration.
  */
 public final class Select extends AbstractField
 {
@@ -50,17 +53,15 @@ public final class Select extends AbstractField
         }
 
         @Override
-        protected boolean isOptionSelected(OptionModel optionModel)
+        protected boolean isOptionSelected(OptionModel optionModel, String clientValue)
         {
-            Object value = optionModel.getValue();
-
-            return value == _value || (value != null && value.equals(_value));
+            return isSelected(clientValue);
         }
     }
 
     /**
-     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to
-     * create client-side string values for the different options.
+     * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
+     * string values for the different options.
      *
      * @see ValueEncoderSource
      */
@@ -75,8 +76,8 @@ public final class Select extends AbstractField
 
     // Maybe this should default to property "<componentId>Model"?
     /**
-     * The model used to identify the option groups and options to be presented to the user. This
-     * can be generated automatically for Enum types.
+     * The model used to identify the option groups and options to be presented to the user. This can be generated
+     * automatically for Enum types.
      */
     @Parameter(required = true)
     private SelectModel _model;
@@ -113,13 +114,22 @@ public final class Select extends AbstractField
     @Mixin
     private RenderDisabled _renderDisabled;
 
+    private String _selectedClientValue;
+
+    private boolean isSelected(String clientValue)
+    {
+        return TapestryInternalUtils.isEqual(clientValue, _selectedClientValue);
+    }
+
     @SuppressWarnings({"unchecked"})
     @Override
     protected void processSubmission(String elementName)
     {
-        String primaryKey = _request.getParameter(elementName);
+        String submittedValue = _request.getParameter(elementName);
 
-        Object selectedValue = _encoder.toValue(primaryKey);
+        _tracker.recordInput(this, submittedValue);
+
+        Object selectedValue = _encoder.toValue(submittedValue);
 
         try
         {
@@ -145,6 +155,9 @@ public final class Select extends AbstractField
         _resources.renderInformalParameters(writer);
 
         // Disabled via mixin
+
+        // Figure out
+
     }
 
     @SuppressWarnings("unchecked")
@@ -167,8 +180,7 @@ public final class Select extends AbstractField
     }
 
     /**
-     * Computes a default value for the "validate" parameter using
-     * {@link FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
     FieldValidator defaultValidate()
     {
@@ -189,6 +201,14 @@ public final class Select extends AbstractField
     @BeforeRenderTemplate
     void options(MarkupWriter writer)
     {
+        _selectedClientValue = _tracker.getInput(this);
+
+        // Use the value passed up in the form submission, if available.
+        // Failing that, see if there is a current value (via the value parameter), and
+        // convert that to a client value for later comparison.
+
+        if (_selectedClientValue == null) _selectedClientValue = _value == null ? null : _encoder.toClient(_value);
+
         SelectModelVisitor renderer = new Renderer(writer);
 
         _model.visit(renderer);
@@ -209,5 +229,10 @@ public final class Select extends AbstractField
     void setValueEncoder(ValueEncoder encoder)
     {
         _encoder = encoder;
+    }
+
+    void setValidationTracker(ValidationTracker tracker)
+    {
+        _tracker = tracker;
     }
 }

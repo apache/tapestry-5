@@ -974,4 +974,9 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(manager.get(asoClass)).andReturn(aso);
     }
+
+    protected final void train_getInput(ValidationTracker tracker, Field field, String input)
+    {
+        expect(tracker.getInput(field)).andReturn(input);
+    }
 }

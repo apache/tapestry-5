@@ -26,25 +26,23 @@ import org.apache.tapestry.services.FormSupport;
 import java.io.Serializable;
 
 /**
- * Provides initialization of the clientId and elementName properties. In addition, adds the
- * {@link RenderInformals}, {@link RenderDisabled} and {@link DiscardBody} mixins.
+ * Provides initialization of the clientId and elementName properties. In addition, adds the {@link RenderInformals},
+ * {@link RenderDisabled} and {@link DiscardBody} mixins.
  */
 @SupportsInformalParameters
 public abstract class AbstractField implements Field
 {
     /**
-     * The user presentable label for the field. If not provided, a reasonable label is generated
-     * from the component's id, first by looking for a message key named "id-label" (substituting
-     * the component's actual id), then by converting the actual id to a presentable string (for
-     * example, "userId" to "User Id").
+     * The user presentable label for the field. If not provided, a reasonable label is generated from the component's
+     * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
+     * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
     @Parameter(defaultPrefix = "literal")
     private String _label;
 
     /**
-     * If true, then the field will render out with a disabled attribute (to turn off client-side
-     * behavior). Further, a disabled field ignores any value in the request when the form is
-     * submitted.
+     * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
+     * disabled field ignores any value in the request when the form is submitted.
      */
     @Parameter("false")
     private boolean _disabled;
@@ -101,12 +99,11 @@ public abstract class AbstractField implements Field
     private static final ProcessSubmissionAction PROCESS_SUBMISSION_ACTION = new ProcessSubmissionAction();
 
     /**
-     * The id used to generate a page-unique client-side identifier for the component. If a
-     * component renders multiple times, a suffix will be appended to the to id to ensure
-     * uniqueness. The uniqued value may be accessed via the
+     * The id used to generate a page-unique client-side identifier for the component. If a component renders multiple
+     * times, a suffix will be appended to the to id to ensure uniqueness. The uniqued value may be accessed via the
      * {@link #getClientId() clientId property}.
      */
-    @Parameter(value = "prop:componentResources.id", defaultPrefix = "literal")
+    @Parameter(value = "prop:componentResources.id", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _clientId;
 
     private String _assignedClientId;
@@ -183,11 +180,9 @@ public abstract class AbstractField implements Field
     }
 
     /**
-     * Used by subclasses to create a default binding to a property of the container matching the
-     * component id.
+     * Used by subclasses to create a default binding to a property of the container matching the component id.
      *
-     * @return a binding to the property, or null if the container does not have a corresponding
-     *         property
+     * @return a binding to the property, or null if the container does not have a corresponding property
      */
     protected final Binding createDefaultParameterBinding(String parameterName)
     {
@@ -195,9 +190,9 @@ public abstract class AbstractField implements Field
     }
 
     /**
-     * Method implemented by subclasses to actually do the work of processing the submission of the
-     * form. The element's elementName property will already have been set. This method is only
-     * invoked if the field is <strong>not {@link #isDisabled() disabled}</strong>.
+     * Method implemented by subclasses to actually do the work of processing the submission of the form. The element's
+     * elementName property will already have been set. This method is only invoked if the field is <strong>not {@link
+     * #isDisabled() disabled}</strong>.
      *
      * @param elementName the name of the element (used to find the correct parameter in the request)
      */
@@ -213,8 +208,7 @@ public abstract class AbstractField implements Field
     }
 
     /**
-     * Allows the validation decorator to write markup after the field has written all of its
-     * markup.
+     * Allows the validation decorator to write markup after the field has written all of its markup.
      */
     @AfterRender
     final void afterDecorator()
@@ -223,9 +217,8 @@ public abstract class AbstractField implements Field
     }
 
     /**
-     * Invoked from subclasses after they have written their tag and (where appropriate) their
-     * informal parameters <em>and</em> have allowed their {@link Validator} to write markup as
-     * well.
+     * Invoked from subclasses after they have written their tag and (where appropriate) their informal parameters
+     * <em>and</em> have allowed their {@link Validator} to write markup as well.
      */
     protected final void decorateInsideField()
     {

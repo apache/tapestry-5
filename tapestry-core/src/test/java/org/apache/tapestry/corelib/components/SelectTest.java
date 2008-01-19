@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.OptionGroupModel;
-import org.apache.tapestry.OptionModel;
-import org.apache.tapestry.SelectModel;
+import org.apache.tapestry.*;
 import org.apache.tapestry.dom.XMLMarkupModel;
 import org.apache.tapestry.internal.OptionGroupModelImpl;
 import org.apache.tapestry.internal.OptionModelImpl;
@@ -39,8 +36,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Mostly, this is about how the Select component renders its {@link SelectModel}. The real nuts
- * and bolts are tested in the integration tests.
+ * Mostly, this is about how the Select component renders its {@link SelectModel}. The real nuts and bolts are tested in
+ * the integration tests.
  */
 public class SelectTest extends InternalBaseTestCase
 {
@@ -48,11 +45,21 @@ public class SelectTest extends InternalBaseTestCase
     @Test
     public void empty_model()
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
+
         select.setModel(new SelectModelImpl(null, null));
+        select.setValidationTracker(tracker);
 
         select.options(null);
+
+        verify();
     }
 
     private String read(String file) throws Exception
@@ -80,14 +87,22 @@ public class SelectTest extends InternalBaseTestCase
     @Test
     public void just_options() throws Exception
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         List<OptionModel> options = TapestryInternalUtils
                 .toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
 
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
+
         select.setModel(new SelectModelImpl(null, options));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
+        select.setValidationTracker(tracker);
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -98,11 +113,51 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("just_options.txt"));
+
+        verify();
+    }
+
+    @Test
+    public void current_selection_from_validation_tracker() throws Exception
+    {
+        ValidationTracker tracker = mockValidationTracker();
+
+        List<OptionModel> options = TapestryInternalUtils
+                .toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
+
+        Select select = new Select();
+
+        train_getInput(tracker, select, "fred");
+
+        replay();
+
+
+        select.setModel(new SelectModelImpl(null, options));
+        select.setValueEncoder(new StringValueEncoder());
+        select.setValue("barney");
+        select.setValidationTracker(tracker);
+
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
+
+        writer.element("select");
+
+        select.options(writer);
+
+        writer.end();
+
+        // fred will be selected, not barney, because the validation tracker
+        // takes precendence.
+
+        assertEquals(writer.toString(), read("current_selection_from_validation_tracker.txt"));
+
+        verify();
     }
 
     @Test
     public void option_attributes() throws Exception
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
         List<OptionModel> options = Arrays.asList(
@@ -110,9 +165,14 @@ public class SelectTest extends InternalBaseTestCase
 
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
         select.setModel(new SelectModelImpl(null, options));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
+        select.setValidationTracker(tracker);
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -123,11 +183,15 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("option_attributes.txt"));
+
+        verify();
     }
 
     @Test
     public void disabled_option() throws Exception
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
         List<OptionModel> options = CollectionFactory.newList(
@@ -135,9 +199,14 @@ public class SelectTest extends InternalBaseTestCase
 
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
         select.setModel(new SelectModelImpl(null, options));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("barney");
+        select.setValidationTracker(tracker);
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -149,11 +218,14 @@ public class SelectTest extends InternalBaseTestCase
 
         assertEquals(writer.toString(), read("disabled_option.txt"));
 
+        verify();
     }
 
     @Test
     public void option_groups() throws Exception
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
                                                              TapestryInternalUtils.toOptionModels("Fred,Barney"));
         OptionGroupModel wives = new OptionGroupModelImpl("Wives", true, TapestryInternalUtils
@@ -162,9 +234,14 @@ public class SelectTest extends InternalBaseTestCase
 
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
         select.setModel(new SelectModelImpl(groupModels, null));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
+        select.setValidationTracker(tracker);
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -175,20 +252,29 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("option_groups.txt"));
+
+        verify();
     }
 
     @Test
     public void option_groups_precede_ungroup_options() throws Exception
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
                                                              TapestryInternalUtils.toOptionModels("Fred,Barney"));
 
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
         select.setModel(new SelectModelImpl(Collections.singletonList(husbands),
                                             TapestryInternalUtils.toOptionModels("Wilma,Betty")));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
+        select.setValidationTracker(tracker);
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -199,11 +285,15 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("option_groups_precede_ungroup_options.txt"));
+
+        verify();
     }
 
     @Test
     public void option_group_attributes() throws Exception
     {
+        ValidationTracker tracker = mockValidationTracker();
+
         Map<String, String> attributes = Collections.singletonMap("class", "pixie");
 
         OptionGroupModel husbands = new OptionGroupModelImpl("Husbands", false,
@@ -212,9 +302,14 @@ public class SelectTest extends InternalBaseTestCase
 
         Select select = new Select();
 
+        train_getInput(tracker, select, null);
+
+        replay();
+
         select.setModel(new SelectModelImpl(Collections.singletonList(husbands), null));
         select.setValueEncoder(new StringValueEncoder());
         select.setValue("Fred");
+        select.setValidationTracker(tracker);
 
         MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
 
@@ -225,5 +320,7 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("option_group_attributes.txt"));
+
+        verify();
     }
 }
