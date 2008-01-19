@@ -111,6 +111,7 @@ public final class TapestryModule
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
         binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
         binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
+        binder.bind(RequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
     }
 
     public static Alias build(Logger logger,
@@ -453,7 +454,8 @@ public final class TapestryModule
      * cached data has changed (see {@link org.apache.tapestry.internal.services.CheckForUpdatesFilter}).
      * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler}
      * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
-     * cookies in the request</dd> </dl>
+     * cookies in the request</dd> <dt>IgnoredPaths</dt> <dd>Forces Tapestry to ignore paths, based on regular
+     * expressions contributed to the IgnoredPathsFilter service.  Ordered after StaticFiles.</dd> </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
@@ -467,7 +469,10 @@ public final class TapestryModule
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
-                                         LocalizationSetter localizationSetter)
+                                         LocalizationSetter localizationSetter,
+
+                                         @InjectService("IgnoredPathsFilter")
+                                         RequestFilter ignoredPathsFilter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -497,6 +502,8 @@ public final class TapestryModule
                 }
             }
         };
+
+        configuration.add("IgnoredPaths", ignoredPathsFilter, "after:StaticFiles");
 
         configuration.add("ErrorFilter", errorFilter);
 
@@ -1635,7 +1642,7 @@ public final class TapestryModule
 
         configuration.add(TapestryConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL, "false");
 
-        configuration.add(TapestryConstants.FORCE_FULL_URIS_SYMBOL, "false");
+        configuration.add(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL, "false");
 
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then

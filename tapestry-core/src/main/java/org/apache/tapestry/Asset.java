@@ -29,7 +29,7 @@ public interface Asset
      * Returns a URL that can be passed, unchanged, to the client in order for it to access the resource. The same value
      * is returned from <code>toString()</code>.
      * <p/>
-     * Note that the returned value may be {@linkplain org.apache.tapestry.TapestryConstants#FORCE_FULL_URIS_SYMBOL
+     * Note that the returned value may be {@linkplain org.apache.tapestry.TapestryConstants#FORCE_ABSOLUTE_URIS_SYMBOL
      * request dependent}. You may cache instances of Asset, but do not cache the client URL path as it may change.
      */
     String toClientURL();

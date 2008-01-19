@@ -218,7 +218,7 @@ public class LinkImplTest extends InternalBaseTestCase
 
 
     @Test
-    public void force_full_uri()
+    public void force_absolute_uri()
     {
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         Response response = mockResponse();
@@ -233,7 +233,7 @@ public class LinkImplTest extends InternalBaseTestCase
                                  new ComponentInvocationImpl(new OpaqueConstantTarget("foo"), new String[0], null),
                                  false);
 
-        assertEquals(link.toFullURI(), ENCODED);
+        assertEquals(link.toAbsoluteURI(), ENCODED);
 
 
         verify();

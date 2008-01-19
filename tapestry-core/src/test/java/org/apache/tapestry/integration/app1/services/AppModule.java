@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,8 +41,8 @@ import java.util.List;
 public class AppModule
 {
     /**
-     * Used to disambiguate services in this module from services in other modules that share the
-     * same service interface.
+     * Used to disambiguate services in this module from services in other modules that share the same service
+     * interface.
      */
     @Target(
             {PARAMETER, FIELD})
@@ -53,6 +53,7 @@ public class AppModule
 
     }
 
+    @Marker(Local.class)
     public RequestFilter buildTimingFilter(final Logger log)
     {
         return new RequestFilter()

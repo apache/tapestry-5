@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,8 +29,8 @@ import org.apache.tapestry.services.Response;
 import org.apache.tapestry.test.PageTester;
 
 /**
- * Used in conjuction with {@link PageTester} to mock up and/or stub out portions of Tapestry that
- * need to be handled differently when testing.
+ * Used in conjuction with {@link PageTester} to mock up and/or stub out portions of Tapestry that need to be handled
+ * differently when testing.
  */
 public class PageTesterModule
 {
@@ -74,6 +74,6 @@ public class PageTesterModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(TapestryConstants.FORCE_FULL_URIS_SYMBOL, "true");
+        configuration.add(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL, "true");
     }
 }

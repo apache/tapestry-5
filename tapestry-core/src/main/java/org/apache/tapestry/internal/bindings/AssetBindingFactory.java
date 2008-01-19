@@ -33,7 +33,7 @@ public class AssetBindingFactory implements BindingFactory
 {
     private final AssetSource _source;
 
-    private final boolean _forceFullURIs;
+    private final boolean _forceAbsoluteURIs;
 
     public class AssetBinding extends AbstractBinding
     {
@@ -66,7 +66,7 @@ public class AssetBindingFactory implements BindingFactory
         @Override
         public boolean isInvariant()
         {
-            return _forceFullURIs;
+            return _forceAbsoluteURIs;
         }
 
         @Override
@@ -77,10 +77,12 @@ public class AssetBindingFactory implements BindingFactory
     }
 
     public AssetBindingFactory(AssetSource source,
-                               @Symbol(TapestryConstants.FORCE_FULL_URIS_SYMBOL)boolean forceFullURIs)
+
+                               @Symbol(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL)
+                               boolean forceAbsoluteURIs)
     {
         _source = source;
-        _forceFullURIs = forceFullURIs;
+        _forceAbsoluteURIs = forceAbsoluteURIs;
     }
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,

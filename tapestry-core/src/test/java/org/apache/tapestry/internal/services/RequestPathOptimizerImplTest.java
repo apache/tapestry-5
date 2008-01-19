@@ -96,7 +96,7 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void force_full_is_a_pass_through()
+    public void force_absolute_is_a_pass_through()
     {
         Request request = mockRequest();
         String path = "/some/path";
@@ -112,8 +112,4 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
         verify();
     }
 
-    private void train_isXHR(Request request, boolean isXHR)
-    {
-        expect(request.isXHR()).andReturn(isXHR).atLeastOnce();
-    }
 }
