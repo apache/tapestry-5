@@ -41,23 +41,31 @@ public class ThreadCleanupHubImpl implements ThreadCleanupHub
         _logger = logger;
     }
 
-    public synchronized void addThreadCleanupListener(ThreadCleanupListener listener)
+    private synchronized List<ThreadCleanupListener> get()
     {
-        _holder.get().add(listener);
+        return _holder.get();
+    }
+
+    private synchronized List<ThreadCleanupListener> getAndRemove()
+    {
+        List<ThreadCleanupListener> result = _holder.get();
+
+        _holder.remove();
+
+        return result;
+    }
+
+    public void addThreadCleanupListener(ThreadCleanupListener listener)
+    {
+        get().add(listener);
     }
 
     /**
      * Instructs the hub to notify all its listeners (for the current thread). It also discards its list of listeners.
      */
-    public synchronized void cleanup()
+    public void cleanup()
     {
-        List<ThreadCleanupListener> listeners = _holder.get();
-
-        // Discard the listeners. In a perfect world, we would set a per-thread flag that prevented
-        // more listeners from being added, until a new thread begins. But we don't have a concept
-        // of thread start, just thread complete.
-
-        _holder.remove();
+        List<ThreadCleanupListener> listeners = getAndRemove();
 
         for (ThreadCleanupListener listener : listeners)
         {
