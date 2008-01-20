@@ -455,7 +455,10 @@ public final class TapestryModule
      * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler}
      * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
      * cookies in the request</dd> <dt>IgnoredPaths</dt> <dd>Forces Tapestry to ignore paths, based on regular
-     * expressions contributed to the IgnoredPathsFilter service.  Ordered after StaticFiles.</dd> </dl>
+     * expressions contributed to the IgnoredPathsFilter service.  Ordered after StaticFiles.</dd>
+     * <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
+     * org.apache.tapestry.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
+     * filter substitutes the request or response). </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
@@ -475,8 +478,6 @@ public final class TapestryModule
                                          RequestFilter ignoredPathsFilter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
-
-        configuration.add("StaticFiles", staticFilesFilter);
 
         RequestFilter errorFilter = new RequestFilter()
         {
@@ -503,14 +504,28 @@ public final class TapestryModule
             }
         };
 
-        configuration.add("IgnoredPaths", ignoredPathsFilter, "after:StaticFiles");
+        RequestFilter storeIntoGlobals = new RequestFilter()
+        {
+            public boolean service(Request request, Response response, RequestHandler handler) throws IOException
+            {
+                _requestGlobals.store(request, response);
 
-        configuration.add("ErrorFilter", errorFilter);
+                return handler.service(request, response);
+            }
+        };
 
         configuration.add("CheckForUpdates",
                           new CheckForUpdatesFilter(_updateListenerHub, checkInterval, updateTimeout), "before:*");
 
-        configuration.add("Localization", new LocalizationFilter(localizationSetter));
+        configuration.add("StaticFiles", staticFilesFilter);
+
+        configuration.add("IgnoredPaths", ignoredPathsFilter, "after:StaticFiles");
+
+        configuration.add("ErrorFilter", errorFilter);
+
+        configuration.add("StoreIntoGlobals", storeIntoGlobals);
+
+        configuration.add("Localization", new LocalizationFilter(localizationSetter), "after:ErrorFilter");
     }
 
 
@@ -851,6 +866,7 @@ public final class TapestryModule
     /**
      * Initializes the application.
      */
+    @Marker(Primary.class)
     public ApplicationInitializer build(Logger logger, List<ApplicationInitializerFilter> configuration)
     {
         ApplicationInitializer terminator = new ApplicationInitializer()
@@ -867,16 +883,22 @@ public final class TapestryModule
 
     public HttpServletRequestHandler build(Logger logger, List<HttpServletRequestFilter> configuration,
 
-                                           @InjectService("RequestHandler")
+                                           @Primary
                                            final RequestHandler handler)
     {
         HttpServletRequestHandler terminator = new HttpServletRequestHandler()
         {
-            public boolean service(HttpServletRequest request, HttpServletResponse response) throws IOException
+            public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
+                    throws IOException
             {
-                _requestGlobals.store(request, response);
+                _requestGlobals.store(servletRequest, servletResponse);
 
-                return handler.service(new RequestImpl(request), new ResponseImpl(response));
+                Request request = new RequestImpl(servletRequest);
+                Response response = new ResponseImpl(servletResponse);
+
+                // Transition from the Servlet API-based pipeline, to the Tapestry-based pipeline.
+
+                return handler.service(request, response);
             }
         };
 
@@ -884,8 +906,11 @@ public final class TapestryModule
                                       configuration, terminator);
     }
 
-    public RequestHandler build(Logger logger, List<RequestFilter> configuration, @InjectService("MasterDispatcher")
-    final Dispatcher masterDispatcher)
+    @Marker(Primary.class)
+    public RequestHandler build(Logger logger, List<RequestFilter> configuration,
+
+                                @Primary
+                                final Dispatcher masterDispatcher)
     {
         RequestHandler terminator = new RequestHandler()
         {
@@ -901,7 +926,8 @@ public final class TapestryModule
     }
 
     public ServletApplicationInitializer build(Logger logger, List<ServletApplicationInitializerFilter> configuration,
-                                               @InjectService("ApplicationInitializer")
+
+                                               @Primary
                                                final ApplicationInitializer initializer)
     {
         ServletApplicationInitializer terminator = new ServletApplicationInitializer()
@@ -1019,6 +1045,7 @@ public final class TapestryModule
     /**
      * Ordered contributions to the MasterDispatcher service allow different URL matching strategies to occur.
      */
+    @Marker(Primary.class)
     public Dispatcher buildMasterDispatcher(List<Dispatcher> configuration)
     {
         return _chainBuilder.build(Dispatcher.class, configuration);
