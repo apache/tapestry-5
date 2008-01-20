@@ -179,4 +179,58 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void get_if_exists_and_it_doesnt()
+    {
+        String strategyName = "ethereal";
+        ApplicationStatePersistenceStrategy strategy = mockApplicationStatePersistenceStrategy();
+        ApplicationStatePersistenceStrategySource source = mockApplicationStatePersistenceStrategySource();
+        Class asoClass = ReadOnlyBean.class;
+        ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
+
+        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
+                                                                                          new ApplicationStateContribution(
+                                                                                                  strategyName,
+                                                                                                  creator));
+
+        train_get(source, strategyName, strategy);
+        train_exists(strategy, asoClass, false);
+
+        replay();
+
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+
+        assertNull(manager.getIfExists(asoClass));
+
+        verify();
+    }
+
+    @Test
+    public void get_if_exists_when_it_does_exist()
+    {
+        String strategyName = "ethereal";
+        ApplicationStatePersistenceStrategy strategy = mockApplicationStatePersistenceStrategy();
+        ApplicationStatePersistenceStrategySource source = mockApplicationStatePersistenceStrategySource();
+        Class asoClass = ReadOnlyBean.class;
+        ApplicationStateCreator<ReadOnlyBean> creator = mockApplicationStateCreator();
+        ReadOnlyBean aso = new ReadOnlyBean();
+
+        Map<Class, ApplicationStateContribution> configuration = Collections.singletonMap(asoClass,
+                                                                                          new ApplicationStateContribution(
+                                                                                                  strategyName,
+                                                                                                  creator));
+
+        train_get(source, strategyName, strategy);
+        train_exists(strategy, asoClass, true);
+        train_get(strategy, asoClass, creator, aso);
+
+        replay();
+
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+
+        assertSame(manager.getIfExists(asoClass), aso);
+
+        verify();
+    }
 }

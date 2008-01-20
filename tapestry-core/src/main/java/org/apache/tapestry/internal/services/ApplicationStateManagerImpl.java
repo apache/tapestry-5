@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,8 +56,8 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
     }
 
     /**
-     * The map will be extended periodically as new ASOs, not in the configuration, are encountered.
-     * Thut is is thread safe.
+     * The map will be extended periodically as new ASOs, not in the configuration, are encountered. Thut is is thread
+     * safe.
      */
     private final Map<Class, ApplicationStateAdapter> _classToAdapter = newConcurrentMap();
 
@@ -125,6 +125,13 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
     public <T> T get(Class<T> asoClass)
     {
         return getAdapter(asoClass).getOrCreate();
+    }
+
+    public <T> T getIfExists(Class<T> asoClass)
+    {
+        ApplicationStateAdapter<T> adapter = getAdapter(asoClass);
+
+        return adapter.exists() ? adapter.getOrCreate() : null;
     }
 
     public <T> void set(Class<T> asoClass, T aso)

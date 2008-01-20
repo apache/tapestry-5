@@ -26,8 +26,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
- * Looks for the {@link ApplicationState} annotation and converts read and write access on such
- * fields into calls to the {@link ApplicationStateManager}.
+ * Looks for the {@link ApplicationState} annotation and converts read and write access on such fields into calls to the
+ * {@link ApplicationStateManager}.
  */
 public class ApplicationStateWorker implements ComponentClassTransformWorker
 {
@@ -53,25 +53,29 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
 
         for (String fieldName : names)
         {
-            String fieldType = transformation.getFieldType(fieldName);
+            processField(fieldName, managerFieldName, transformation);
+        }
+    }
 
-            Class fieldClass = _componentClassCache.forName(fieldType);
+    private void processField(String fieldName, String managerFieldName, ClassTransformation transformation)
+    {
+        String fieldType = transformation.getFieldType(fieldName);
 
-            String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
+        Class fieldClass = _componentClassCache.forName(fieldType);
 
-            replaceRead(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
+        String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
 
-            replaceWrite(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
+        replaceRead(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
 
-            transformation.removeField(fieldName);
+        replaceWrite(transformation, fieldName, fieldType, managerFieldName, typeFieldName);
 
-            String booleanFieldName = fieldName + "Exists";
+        transformation.removeField(fieldName);
 
-            if (transformation.isField(booleanFieldName) && transformation.getFieldType(booleanFieldName).equals(
-                    "boolean"))
-            {
-                replaceFlagRead(transformation, booleanFieldName, typeFieldName, managerFieldName);
-            }
+        String booleanFieldName = fieldName + "Exists";
+
+        if (transformation.isField(booleanFieldName) && transformation.getFieldType(booleanFieldName).equals("boolean"))
+        {
+            replaceFlagRead(transformation, booleanFieldName, typeFieldName, managerFieldName);
         }
     }
 
@@ -111,13 +115,17 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     private void replaceRead(ClassTransformation transformation, String fieldName, String fieldType,
                              String managerFieldName, String typeFieldName)
     {
+        ApplicationState annotation = transformation.getFieldAnnotation(fieldName, ApplicationState.class);
+
 
         String readMethodName = transformation.newMemberName("read", fieldName);
 
         TransformMethodSignature readMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, fieldType,
                                                                                     readMethodName, null, null);
 
-        String body = format("return (%s) %s.get(%s);", fieldType, managerFieldName, typeFieldName);
+        String methodName = annotation.create() ? "get" : "getIfExists";
+
+        String body = format("return (%s) %s.%s(%s);", fieldType, managerFieldName, methodName, typeFieldName);
 
         transformation.addMethod(readMethodSignature, body);
 
