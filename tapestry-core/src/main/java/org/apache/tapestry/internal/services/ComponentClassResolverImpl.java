@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -72,18 +72,23 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private final Map<String, String> _mixinToClassName = newCaseInsensitiveMap();
 
     /**
-     * Page class name to logical name (needed to build URLs). This one is case sensitive, since class names do always have a particular case.
+     * Page class name to logical name (needed to build URLs). This one is case sensitive, since class names do always
+     * have a particular case.
      */
     private final Map<String, String> _pageClassNameToLogicalName = newMap();
 
 
     /**
-     * Used to convert an logical page name to the canonical form of the page name; this ensures that uniform case for page
-     * names is used.
+     * Used to convert an logical page name to the canonical form of the page name; this ensures that uniform case for
+     * page names is used.
      */
     private final Map<String, String> _pageNameToCanonicalPageName = newCaseInsensitiveMap();
 
     private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
+
+    private static final Pattern SPLIT_PACKAGE_PATTERN = Pattern.compile("\\.");
+
+    private static final Pattern SPLIT_FOLDER_PATTERN = Pattern.compile("/");
 
     public ComponentClassResolverImpl(Logger logger,
 
@@ -155,8 +160,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     }
 
     /**
-     * Invoked from within a withRead() block, checks to see if a rebuild is needed,
-     * and then performs the rebuild within a withWrite() block.
+     * Invoked from within a withRead() block, checks to see if a rebuild is needed, and then performs the rebuild
+     * within a withWrite() block.
      */
     private void rebuild()
     {
@@ -292,37 +297,47 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         }
     }
 
-    private static final Pattern SPLIT_PACKAGE_PATTERN = Pattern.compile("\\.");
 
     /**
      * Converts a fully qualified class name to a logical name
      *
      * @param className  fully qualified class name
-     * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the
-     *                   class lives)
-     * @param startPos   start position within the class name to extract the logical name (i.e., after the
-     *                   final '.' in "rootpackage.pages.").
+     * @param pathPrefix prefix to be placed on the logical name (to identify the library from in which the class
+     *                   lives)
+     * @param startPos   start position within the class name to extract the logical name (i.e., after the final '.' in
+     *                   "rootpackage.pages.").
      * @return a short logical name in folder format ('.' replaced with '/')
      */
     private String toLogicalName(String className, String pathPrefix, int startPos)
     {
-        String[] terms = SPLIT_PACKAGE_PATTERN.split(className.substring(startPos));
+        List<String> terms = CollectionFactory.newList();
+
+        addAll(terms, SPLIT_FOLDER_PATTERN, pathPrefix);
+
+        int start = terms.size();
+
+        addAll(terms, SPLIT_PACKAGE_PATTERN, className.substring(startPos));
 
         StringBuilder builder = new StringBuilder(pathPrefix);
         String sep = "";
 
-        String logicalName = terms[terms.length - 1];
+        int count = terms.size();
+
+        String logicalName = terms.get(count - 1);
+
         String unstripped = logicalName;
 
-        for (int i = 0; i < terms.length - 1; i++)
+        for (int i = 0; i < count - 1; i++)
         {
+            String term = terms.get(i);
 
-            String term = terms[i];
+            if (i >= start)
+            {
+                builder.append(sep);
+                builder.append(term);
 
-            builder.append(sep);
-            builder.append(term);
-
-            sep = "/";
+                sep = "/";
+            }
 
             logicalName = stripTerm(term, logicalName);
         }
@@ -333,6 +348,16 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         builder.append(logicalName);
 
         return builder.toString();
+    }
+
+    private void addAll(List<String> terms, Pattern splitter, String input)
+    {
+        for (String term : splitter.split(input))
+        {
+            if (term.equals("")) continue;
+
+            terms.add(term);
+        }
     }
 
     private String stripTerm(String term, String logicalName)
@@ -441,8 +466,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     }
 
     /**
-     * Locates a class name within the provided map, given its logical name. If not found naturally,
-     * a search inside the "core" library is included.
+     * Locates a class name within the provided map, given its logical name. If not found naturally, a search inside the
+     * "core" library is included.
      *
      * @param logicalName            name to search for
      * @param logicalNameToClassName mapping from logical name to class name

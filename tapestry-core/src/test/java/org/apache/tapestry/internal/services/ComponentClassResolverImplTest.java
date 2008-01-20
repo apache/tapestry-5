@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -81,7 +81,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     /**
-     * https://issues.apache.org/jira/browse/TAPESTRY-1541
+     * TAPESTRY-1541
      */
     @Test
     public void page_name_matches_containing_folder_name()
@@ -193,7 +193,6 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         assertEquals(resolver.resolvePageNameToClassName("subfolder/NestedPage"), className);
 
         verify();
-
     }
 
     @Test
@@ -286,7 +285,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         train_for_app_packages(source);
         train_for_packages(source, CORE_ROOT_PACKAGE);
 
-        String className = CORE_ROOT_PACKAGE + ".pages.CorePage";
+        String className = CORE_ROOT_PACKAGE + ".pages.MyCorePage";
 
         train_locateComponentClassNames(locator, CORE_ROOT_PACKAGE + ".pages", className);
 
@@ -297,11 +296,11 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         // Can look like an application page, but still resolves to the core library class name.
 
-        assertTrue(resolver.isPageName("CorePage"));
+        assertTrue(resolver.isPageName("MyCorePage"));
 
         // Or we can give it its true name
 
-        assertTrue(resolver.isPageName("core/corepage"));
+        assertTrue(resolver.isPageName("core/mycorepage"));
 
         assertFalse(resolver.isPageName("UnknownPage"));
 
@@ -401,7 +400,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_found_in_core_lib()
     {
-        String className = CORE_ROOT_PACKAGE + ".pages.CorePage";
+        String className = CORE_ROOT_PACKAGE + ".pages.MyCorePage";
 
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
@@ -417,7 +416,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = create(logger, source, locator,
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
-        assertEquals(resolver.resolvePageNameToClassName("CorePage"), className);
+        assertEquals(resolver.resolvePageNameToClassName("MyCorePage"), className);
 
         verify();
     }
@@ -425,7 +424,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_class_name_resolved_to_core_page()
     {
-        String className = CORE_ROOT_PACKAGE + ".pages.CorePage";
+        String className = CORE_ROOT_PACKAGE + ".pages.MyCorePage";
 
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
@@ -441,7 +440,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = create(logger, source, locator,
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
-        assertEquals(resolver.resolvePageClassNameToPageName(className), "core/CorePage");
+        assertEquals(resolver.resolvePageClassNameToPageName(className), "core/MyCorePage");
 
         verify();
     }
@@ -449,7 +448,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     @Test
     public void page_found_in_library()
     {
-        String className = LIB_ROOT_PACKAGE + ".pages.LibPage";
+        String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
 
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
@@ -467,13 +466,39 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                                                  new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
-        assertEquals(resolver.resolvePageNameToClassName("lib/LibPage"), className);
+        assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
 
         verify();
     }
 
     @Test
     public void lookup_by_logical_name_is_case_insensitive()
+    {
+        String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
+
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_packages(source, LIB_ROOT_PACKAGE);
+        train_for_packages(source, CORE_ROOT_PACKAGE);
+        train_for_app_packages(source);
+
+        train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator,
+                                                 new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                                                 new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+
+        assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
+
+        verify();
+    }
+
+    @Test
+    public void name_stripping_includes_library_folder()
     {
         String className = LIB_ROOT_PACKAGE + ".pages.LibPage";
 
@@ -493,11 +518,39 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                                                  new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
-        assertEquals(resolver.resolvePageNameToClassName("lib/libpage"), className);
-        assertEquals(resolver.resolvePageNameToClassName("LIB/LIBPAGE"), className);
+        assertEquals(resolver.resolvePageNameToClassName("lib/Page"), className);
 
         verify();
     }
+
+    @Test
+    public void name_stripping_for_complex_library_folder_name()
+    {
+        String libPrefix = "lib/deep";
+
+        String className = LIB_ROOT_PACKAGE + ".pages.LibDeepPage";
+
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_packages(source, LIB_ROOT_PACKAGE);
+        train_for_packages(source, CORE_ROOT_PACKAGE);
+        train_for_app_packages(source);
+
+        train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator,
+                                                 new LibraryMapping(libPrefix, LIB_ROOT_PACKAGE),
+                                                 new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+
+        assertEquals(resolver.resolvePageNameToClassName("lib/deep/Page"), className);
+
+        verify();
+    }
+
 
     @Test
     public void class_name_does_not_resolve_to_page_name()
@@ -595,7 +648,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     public void multiple_mappings_for_same_prefix()
     {
         String secondaryLibPackage = "org.examples.addon.lib";
-        String className = secondaryLibPackage + ".pages.LibPage";
+        String className = secondaryLibPackage + ".pages.MyLibPage";
 
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ClassNameLocator locator = newClassNameLocator();
@@ -615,7 +668,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                                                  new LibraryMapping(LIB_PREFIX, secondaryLibPackage),
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
-        assertEquals(resolver.resolvePageNameToClassName("lib/LibPage"), className);
+        assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
 
         verify();
     }
@@ -664,8 +717,8 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     /**
-     * The logic for searching is pretty much identical for both components and pages, so even a
-     * cursory test of component types should nail it.
+     * The logic for searching is pretty much identical for both components and pages, so even a cursory test of
+     * component types should nail it.
      */
     @Test
     public void simple_component_type()
