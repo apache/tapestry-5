@@ -26,14 +26,16 @@ Form component
   The Form component generates a number of {{{event.html}component events}} that
   you may provide event handler methods for.
   
-  When rendering, the Form component emits a "prepare" notification, to allow the 
-  Form's container to setup any fields or properties that will be referenced in the form.
+  When rendering, the Form component emits two notifications: first, "prepareForRender", then "prepare". These
+  allow the Form's container to setup any fields or properties that will be referenced in the form.
   For example, this is a good chance to create a temporary entity object to be rendered, or
   to load an entity from a database to be editted.
   
   When user submits the form on the client, a series of steps occur on the server.
   
-  First, the Form emits a "prepare" notification, as it did when the Form was rendered.
+  First, the Form emits a "prepareForSubmit" notification,
+  then a "prepare" notification.  These allow the container to ensure that objects are set up
+  and ready to receive information from the form submission.
   
   Next, all the fields inside the form are activated to pull values out of the
   incoming request, validate them and (if valid) store the changes.
