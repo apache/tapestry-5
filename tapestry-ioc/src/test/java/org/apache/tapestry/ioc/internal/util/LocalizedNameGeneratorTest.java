@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,11 +57,20 @@ public class LocalizedNameGeneratorTest extends IOCTestCase
         // does not. To keep this test happyt, we selected an all-uppercase
         // locale.
 
-        run(
-                "fred.foo",
-                new Locale("en", "", "GEEK"),
-                "fred_en__GEEK.foo",
-                "fred_en.foo",
-                "fred.foo");
+        run("fred.foo", new Locale("en", "", "GEEK"), "fred_en__GEEK.foo", "fred_en.foo", "fred.foo");
+    }
+
+    @Test
+    public void locale_with_just_language_no_period()
+    {
+        run("context:/blah", Locale.FRENCH, "context:/blah_fr", "context:/blah");
+    }
+
+    @Test
+    public void locale_with_variant_but_no_country_no_period()
+    {
+        run("context:/blah", new Locale("fr", "", "GEEK"), "context:/blah_fr__GEEK", "context:/blah_fr",
+            "context:/blah");
+
     }
 }
