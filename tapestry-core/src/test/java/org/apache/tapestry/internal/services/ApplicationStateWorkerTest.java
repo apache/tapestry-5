@@ -21,6 +21,7 @@ import javassist.NotFoundException;
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.internal.transform.MaybeStateHolder;
 import org.apache.tapestry.internal.transform.StateHolder;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
@@ -170,5 +171,61 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         verify();
     }
 
+
+    @Test
+    public void read_field_with_create_disabled() throws Exception
+    {
+        ApplicationStateManager manager = mockApplicationStateManager();
+        Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel();
+        InternalComponentResources resources = mockInternalComponentResources();
+        ComponentClassCache cache = mockComponentClassCache();
+
+        Class asoClass = SimpleASO.class;
+
+        CtClass ctClass = findCtClass(MaybeStateHolder.class);
+
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _classFactory, logger,
+                                                                                         null);
+        train_forName(cache, asoClass);
+
+        replay();
+
+        new ApplicationStateWorker(manager, cache).transform(transformation, model);
+
+        verify();
+
+        transformation.finish();
+
+        Instantiator instantiator = transformation.createInstantiator();
+
+        Object component = instantiator.newInstance(resources);
+
+        // Test read property
+
+        train_getIfExists(manager, asoClass, null);
+
+        replay();
+
+        assertNull(_access.get(component, "bean"));
+
+        verify();
+
+
+        Object aso = new SimpleASO();
+
+        train_getIfExists(manager, asoClass, aso);
+
+        replay();
+
+        assertSame(_access.get(component, "bean"), aso);
+
+        verify();
+    }
+
+    protected final void train_getIfExists(ApplicationStateManager manager, Class asoClass, Object aso)
+    {
+        expect(manager.getIfExists(asoClass)).andReturn(aso);
+    }
 
 }
