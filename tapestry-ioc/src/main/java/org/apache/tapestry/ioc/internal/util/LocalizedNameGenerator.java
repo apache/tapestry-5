@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import java.util.Locale;
 import java.util.NoSuchElementException;
 
 /**
- * Used in a wide variety of resource searches. Generates a series of name variations from a path
- * (which must include a suffix) and locale.
+ * Used in a wide variety of resource searches. Generates a series of name variations from a path (which must include a
+ * suffix) and locale.
  * <p/>
  * This class is not threadsafe.
  */
@@ -59,6 +59,11 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
     public LocalizedNameGenerator(String path, Locale locale)
     {
         int dotx = path.lastIndexOf('.');
+
+        // When there is no dot in the name, pretend it exists after the
+        // end of the string. The locale extensions will be tacked on there.
+
+        if (dotx == -1) dotx = path.length();
 
         // TODO: Case where there is no suffix
 
@@ -107,8 +112,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
                     // If _country is null, then we've already generated this string
                     // as state LCV and we can continue directly to state L
 
-                    if (InternalUtils.isBlank(_variant) || InternalUtils.isBlank(_country))
-                        continue;
+                    if (InternalUtils.isBlank(_variant) || InternalUtils.isBlank(_country)) continue;
 
                     return;
 
