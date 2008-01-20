@@ -42,14 +42,15 @@ import java.util.List;
 /**
  * An HTML form, which will enclose other components to render out the various types of fields.
  * <p/>
- * A Form emits several notification events; when it renders it sends a {@link #PREPARE prepare} notification event, to
- * allow any listeners to set up the state of the page prior to rendering out the form's content.
+ * A Form emits many notification events. When it renders, it fires a {@link #PREPARE_FOR_RENDER} notification, followed
+ * by a {@link #PREPARE} notification.
  * <p/>
- * When the form is submitted, the component emits four notifications: first another prepare event to allow the page to
- * update its state as necessary to prepare for the form submission, then (after components enclosed by the form have
- * operated), a "validate" event is emitted, to allow for cross-form validation. After that, either a "success" or
- * "failure" event (depending on whether the {@link ValidationTracker} has recorded any errors). Lastly, a "submit"
- * event, for any listeners that care only about form submission, regardless of success or failure.
+ * When the form is submitted, the component emits several notifications: first a {@link #PREPARE_FOR_SUBMIT}, then a
+ * {@link #PREPARE}: these allow the page to update its state as necessary to prepare for the form submission, then
+ * (after components enclosed by the form have operated), a {@link #VALIDATE}event is emitted, to allow for cross-form
+ * validation. After that, either a {@link #SUCCESS} OR {@link #FAILURE} event (depending on whether the {@link
+ * ValidationTracker} has recorded any errors). Lastly, a {@link #SUBMIT} event, for any listeners that care only about
+ * form submission, regardless of success or failure.
  * <p/>
  * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
@@ -57,6 +58,18 @@ import java.util.List;
  */
 public class Form implements ClientElement, FormValidationControl
 {
+
+
+    /**
+     * Invoked before {@link #PREPARE} when rendering out the form.
+     */
+    public static final String PREPARE_FOR_RENDER = "prepareForRender";
+
+    /**
+     * Invoked before {@link #PREPARE} when the form is submitted.
+     */
+    public static final String PREPARE_FOR_SUBMIT = "prepareForSubmit";
+
     /**
      * Invoked to let the containing component(s) prepare for the form rendering or the form submission.
      */
@@ -197,6 +210,8 @@ public class Form implements ClientElement, FormValidationControl
 
         Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
 
+        _resources.triggerEvent(PREPARE_FOR_RENDER, contextArray, null);
+
         _resources.triggerEvent(PREPARE, contextArray, null);
 
         Link link = _resources.createActionLink(TapestryConstants.ACTION_EVENT, true, contextArray);
@@ -290,6 +305,10 @@ public class Form implements ClientElement, FormValidationControl
         try
         {
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_eventResultProcessor);
+
+            _resources.triggerEvent(PREPARE_FOR_SUBMIT, context, callback);
+
+            if (callback.isAborted()) return true;
 
             _resources.triggerEvent(PREPARE, context, callback);
 
