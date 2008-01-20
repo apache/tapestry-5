@@ -42,6 +42,8 @@ public abstract class AbstractLink
     @Inject
     private ComponentResources _resources;
 
+    private Link _link;
+
     private final String buildHref(Link link)
     {
         String href = link.toURI();
@@ -50,6 +52,7 @@ public abstract class AbstractLink
 
         return href + "#" + _anchor;
     }
+
 
     /**
      * Writes an &lt;a&gt; element with the provided link as the href attribute.  A call to {@link
@@ -70,6 +73,20 @@ public abstract class AbstractLink
         _resources.renderInformalParameters(writer);
 
         _componentInvocationMap.store(e, link);
+
+        _link = link;
+    }
+
+    /**
+     * Returns the most recently rendered {@link org.apache.tapestry.Link} for this component.  Subclasses calculate
+     * their link value as they render, and the value is valid until the end of the request, or the next time the same
+     * component renders itself (if inside a loop).
+     *
+     * @return the most recent link, or null
+     */
+    public Link getLink()
+    {
+        return _link;
     }
 
     /**
