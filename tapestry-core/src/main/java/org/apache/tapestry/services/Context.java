@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,23 +14,34 @@
 
 package org.apache.tapestry.services;
 
+import java.io.File;
 import java.net.URL;
 import java.util.List;
 
 /**
- * An API agnostic version of {@link javax.servlet.ServletContext}, used to bridge the gaps between
- * the Servlet API and the Portlet API.
+ * An API agnostic version of {@link javax.servlet.ServletContext}, used to bridge the gaps between the Servlet API and
+ * the Portlet API.
  */
 public interface Context
 {
     /**
-     * Returns a URL to a resource stored within the context. The path should start with a leading
-     * slash.
+     * Returns a URL to a resource stored within the context. The path should start with a leading slash.
      *
-     * @param path
+     * @param path to the resource (with a leading slash)
      * @return the URL for the path, or null if the path does not correspond to a file.
      */
     URL getResource(String path);
+
+    /**
+     * Attempts to find the actual file, on the file system, that would be provided by the servlet container for the
+     * given path (which must start with a leading slash). This may return null if no such file exists, or if the
+     * resource in question is packaged inside a WAR.  If packaged inside a WAR, the contents may be accessed via {@link
+     * #getResource(String)}.
+     *
+     * @param path to  the resource (with a leading slash)
+     * @return the underlying File, or null if no such file
+     */
+    File getRealFile(String path);
 
     /**
      * Returns an initial parameter value defined by servlet.
@@ -38,9 +49,8 @@ public interface Context
     String getInitParameter(String name);
 
     /**
-     * Looks for resources within the web application within the supplied path. The list will be
-     * recurively expanded, as necessary. The path must start with a leading slash, and usually ends
-     * with a slash as well.
+     * Looks for resources within the web application within the supplied path. The list will be recurively expanded, as
+     * necessary. The path must start with a leading slash, and usually ends with a slash as well.
      *
      * @param path to search for (should start with a leading slash)
      * @return the matches, sorted alphabetically

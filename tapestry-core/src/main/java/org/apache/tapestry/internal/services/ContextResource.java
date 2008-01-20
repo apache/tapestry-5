@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import org.apache.tapestry.ioc.internal.util.AbstractResource;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.services.Context;
 
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -57,7 +59,29 @@ public class ContextResource extends AbstractResource
         // and HttpServletContext.getResource() does. This is what I mean when I say that
         // a framework is an accumulation of the combined experience of many users and developers.
 
-        return _context.getResource("/" + getPath());
+        String contextPath = "/" + getPath();
+
+        // Always prefer the actual file to the URL.  This is critical for templates to
+        // reload inside Tomcat.
+
+        File file = _context.getRealFile(contextPath);
+
+        if (file != null && file.exists())
+        {
+            try
+            {
+                return file.toURL();
+            }
+            catch (MalformedURLException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+        }
+
+        // But, when packaged inside a WAR or JAR, the File will not be available, so use whatever
+        // URL we get ... but reloading won't work.
+
+        return _context.getResource(contextPath);
     }
 
     @Override
