@@ -314,30 +314,21 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         addAll(terms, SPLIT_FOLDER_PATTERN, pathPrefix);
 
-        int start = terms.size();
-
         addAll(terms, SPLIT_PACKAGE_PATTERN, className.substring(startPos));
 
-        StringBuilder builder = new StringBuilder(pathPrefix);
+        StringBuilder builder = new StringBuilder();
         String sep = "";
 
-        int count = terms.size();
-
-        String logicalName = terms.get(count - 1);
+        String logicalName = terms.remove(terms.size() - 1);
 
         String unstripped = logicalName;
 
-        for (int i = 0; i < count - 1; i++)
+        for (String term : terms)
         {
-            String term = terms.get(i);
+            builder.append(sep);
+            builder.append(term);
 
-            if (i >= start)
-            {
-                builder.append(sep);
-                builder.append(term);
-
-                sep = "/";
-            }
+            sep = "/";
 
             logicalName = stripTerm(term, logicalName);
         }
