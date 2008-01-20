@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,8 +34,7 @@ import java.util.Set;
 /**
  * Service implementation that manages a cache of parsed component templates.
  */
-public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements
-                                                                                ComponentTemplateSource, UpdateListener
+public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements ComponentTemplateSource, UpdateListener
 {
 
     private final TemplateParser _parser;
@@ -45,10 +44,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     private final URLChangeTracker _tracker;
 
     /**
-     * Caches from a key (combining component name and locale) to a resource. Often, many different
-     * keys will point to the same resource (i.e., "foo:en_US", "foo:en_UK", and "foo:en" may all be
-     * parsed from the same "foo.tml" resource). The resource may end up being null, meaning the
-     * template does not exist in any locale.
+     * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
+     * the same resource (i.e., "foo:en_US", "foo:en_UK", and "foo:en" may all be parsed from the same "foo.tml"
+     * resource). The resource may end up being null, meaning the template does not exist in any locale.
      */
     private final Map<MultiKey, Resource> _templateResources = newConcurrentMap();
 
@@ -85,8 +83,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         this(parser, locator, new URLChangeTracker());
     }
 
-    ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator,
-                                URLChangeTracker tracker)
+    ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator, URLChangeTracker tracker)
     {
         _parser = parser;
         _locator = locator;
@@ -94,9 +91,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     }
 
     /**
-     * Resolves the component name to a {@link Resource} and finds the localization of that resource
-     * (the combination of component name and locale is resolved to a resource). The localized
-     * resource is used as the key to a cache of {@link ComponentTemplate}s.
+     * Resolves the component name to a {@link Resource} and finds the localization of that resource (the combination of
+     * component name and locale is resolved to a resource). The localized resource is used as the key to a cache of
+     * {@link ComponentTemplate}s.
      * <p/>
      * If a template doesn't exist, then the missing ComponentTemplate is returned.
      */
@@ -136,8 +133,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
         URL resourceURL = r.toURL();
 
-        if (resourceURL == null)
-            return _missingTemplate;
+        if (resourceURL == null) return _missingTemplate;
 
         _tracker.add(resourceURL);
 
@@ -160,16 +156,14 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
             // then we've found a match (even if we had to ascend a couple of levels
             // to reach it).
 
-            if (localized != null)
-                return localized;
+            if (localized != null) return localized;
 
             // Not on the classpath, the the locator see if its a) a page and b) a resource inside
             // the context
 
             localized = _locator.findPageTemplateResource(model, locale);
 
-            if (localized != null)
-                return localized;
+            if (localized != null) return localized;
 
             // Otherwise, this component doesn't have its own template ... lets work up to its
             // base class and check there.
@@ -189,9 +183,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
     }
 
     /**
-     * Checks to see if any parsed resource has changed. If so, then all internal caches are
-     * cleared, and an invalidation event is fired. This is brute force ... a more targeted
-     * dependency management strategy may come later.
+     * Checks to see if any parsed resource has changed. If so, then all internal caches are cleared, and an
+     * invalidation event is fired. This is brute force ... a more targeted dependency management strategy may come
+     * later.
      */
     public void checkForUpdates()
     {

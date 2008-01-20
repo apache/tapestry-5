@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,16 +19,20 @@ import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.Context;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.net.URL;
 
 public class ContextResourceTest extends InternalBaseTestCase
 {
     @Test
-    public void get_url() throws Exception
+    public void get_url_no_real_file() throws Exception
     {
+        String path = "/foo/Bar.txt";
         URL url = getClass().getResource("ContextResourceTest.class");
 
         Context context = mockContext();
+
+        expect(context.getRealFile(path)).andReturn(null);
 
         expect(context.getResource("/foo/Bar.txt")).andReturn(url);
 
@@ -37,6 +41,26 @@ public class ContextResourceTest extends InternalBaseTestCase
         Resource r = new ContextResource(context, "foo/Bar.txt");
 
         assertSame(r.toURL(), url);
+
+        verify();
+    }
+
+    @Test
+    public void get_url_file_exists() throws Exception
+    {
+        File f = File.createTempFile("Bar", ".txt");
+
+        String path = "/foo/Bar.txt";
+
+        Context context = mockContext();
+
+        expect(context.getRealFile(path)).andReturn(f);
+
+        replay();
+
+        Resource r = new ContextResource(context, "foo/Bar.txt");
+
+        assertEquals(r.toURL(), f.toURL());
 
         verify();
     }

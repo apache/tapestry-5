@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.services.Context;
 
 import javax.servlet.ServletContext;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
@@ -45,6 +46,13 @@ public class ContextImpl implements Context
         {
             throw new RuntimeException(ex);
         }
+    }
+
+    public File getRealFile(String path)
+    {
+        String realPath = _servletContext.getRealPath(path);
+
+        return realPath == null ? null : new File(realPath);
     }
 
     public String getInitParameter(String name)
@@ -75,10 +83,8 @@ public class ContextImpl implements Context
             {
                 // Folders are queued up for further expansion.
 
-                if (match.endsWith("/"))
-                    queue.push(match);
-                else
-                    result.add(match);
+                if (match.endsWith("/")) queue.push(match);
+                else result.add(match);
             }
 
         }
