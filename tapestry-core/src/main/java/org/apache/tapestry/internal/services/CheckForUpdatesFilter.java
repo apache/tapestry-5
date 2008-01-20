@@ -26,10 +26,9 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Implements a barrier that periodically asks the
- * {@link org.apache.tapestry.internal.services.UpdateListenerHub} to check for updates to files.
- * The UpdateListenerHub is invoked from a write method, meaning that when it is called, all other
- * threads will be blocked.
+ * Implements a barrier that periodically asks the {@link org.apache.tapestry.internal.services.UpdateListenerHub} to
+ * check for updates to files. The UpdateListenerHub is invoked from a write method, meaning that when it is called, all
+ * other threads will be blocked.
  */
 public class CheckForUpdatesFilter implements RequestFilter
 {
@@ -75,8 +74,8 @@ public class CheckForUpdatesFilter implements RequestFilter
         _updateTimeout = updateTimeout;
     }
 
-    public boolean service(final Request request, final Response response,
-                           final RequestHandler handler) throws IOException
+    public boolean service(final Request request, final Response response, final RequestHandler handler)
+            throws IOException
     {
         final Holder<IOException> exceptionHolder = new Holder<IOException>();
 
@@ -106,10 +105,7 @@ public class CheckForUpdatesFilter implements RequestFilter
 
         boolean result = _barrier.withRead(invokable);
 
-        IOException ex = exceptionHolder.get();
-
-        if (ex != null)
-            throw ex;
+        if (exceptionHolder.hasValue()) throw exceptionHolder.get();
 
         return result;
     }
