@@ -28,6 +28,7 @@ import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
@@ -345,7 +346,9 @@ public class Form implements ClientElement, FormValidationControl
             }
             catch (Exception ex)
             {
-                throw new TapestryException(ex.getMessage(), component, ex);
+                Location location = component == null ? null : component.getComponentResources().getLocation();
+
+                throw new TapestryException(ex.getMessage(), location, ex);
             }
             finally
             {

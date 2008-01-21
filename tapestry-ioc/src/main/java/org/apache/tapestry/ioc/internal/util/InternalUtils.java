@@ -33,22 +33,20 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Utilities used within various internal implemenations of Tapestry IOC and the rest of the
- * tapestry-core framework.
+ * Utilities used within various internal implemenations of Tapestry IOC and the rest of the tapestry-core framework.
  */
 
 public class InternalUtils
 {
     /**
-     * Leading punctiation on member names that is stripped off to form a property name or new
-     * member name.
+     * Leading punctiation on member names that is stripped off to form a property name or new member name.
      */
     private static final String NAME_PREFIX = "_$";
 
     /**
-     * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a
-     * {@link Location} (where possible). {@link #asString(Method)} is used under the covers,
-     * to present a detailed, but not excessive, description of the class, method and parameters.
+     * Converts a method to a user presentable string using a {@link ClassFactory} to obtain a {@link Location} (where
+     * possible). {@link #asString(Method)} is used under the covers, to present a detailed, but not excessive,
+     * description of the class, method and parameters.
      *
      * @param method       method to convert to a string
      * @param classFactory used to obtain the {@link Location}
@@ -62,9 +60,8 @@ public class InternalUtils
     }
 
     /**
-     * Converts a method to a user presentable string consisting of the containing class name, the
-     * method name, and the short form of the parameter list (the class name of each parameter type,
-     * shorn of the package name portion).
+     * Converts a method to a user presentable string consisting of the containing class name, the method name, and the
+     * short form of the parameter list (the class name of each parameter type, shorn of the package name portion).
      *
      * @param method
      * @return short string representation
@@ -125,8 +122,7 @@ public class InternalUtils
     }
 
     /**
-     * Strips leading characters defined by {@link InternalUtils#NAME_PREFIX}, then adds the prefix
-     * back in.
+     * Strips leading characters defined by {@link InternalUtils#NAME_PREFIX}, then adds the prefix back in.
      */
     public static String createMemberName(String memberName)
     {
@@ -250,26 +246,48 @@ public class InternalUtils
      */
     public static String join(List elements)
     {
-        StringBuilder buffer = new StringBuilder();
-        boolean first = true;
+        return join(elements, ", ");
+    }
 
-        for (Object o : elements)
+    /**
+     * Joins together some number of elements.
+     *
+     * @param elements  objects to be joined together
+     * @param separator used between elements when joining
+     */
+    public static String join(List elements, String separator)
+    {
+        switch (elements.size())
         {
-            if (!first) buffer.append(", ");
+            case 0:
+                return "";
 
-            buffer.append(String.valueOf(o));
+            case 1:
+                return elements.get(0).toString();
 
-            first = false;
+            default:
+
+                StringBuilder buffer = new StringBuilder();
+                boolean first = true;
+
+                for (Object o : elements)
+                {
+                    if (!first) buffer.append(separator);
+
+                    buffer.append(String.valueOf(o));
+
+                    first = false;
+                }
+
+                return buffer.toString();
         }
-
-        return buffer.toString();
     }
 
     /**
      * Creates a sorted copy of the provided elements, then turns that into a comma separated list.
      *
-     * @return the elements converted to strings, sorted, joined with comma ... or "(none)" if the elements
-     *         are null or empty
+     * @return the elements converted to strings, sorted, joined with comma ... or "(none)" if the elements are null or
+     *         empty
      */
     public static String joinSorted(Collection elements)
     {
@@ -286,8 +304,7 @@ public class InternalUtils
     }
 
     /**
-     * Returns true if the input is null, or is a zero length string (excluding leading/trailing
-     * whitespace).
+     * Returns true if the input is null, or is a zero length string (excluding leading/trailing whitespace).
      */
 
     public static boolean isBlank(String input)
@@ -311,8 +328,8 @@ public class InternalUtils
     }
 
     /**
-     * Sniffs the object to see if it is a {@link Location} or {@link Locatable}. Returns null if
-     * null or not convertable to a location.
+     * Sniffs the object to see if it is a {@link Location} or {@link Locatable}. Returns null if null or not
+     * convertable to a location.
      */
 
     public static Location locationOf(Object location)
@@ -327,8 +344,7 @@ public class InternalUtils
     }
 
     /**
-     * Extracts the string keys from a map and returns them in sorted order. The keys are converted
-     * to strings.
+     * Extracts the string keys from a map and returns them in sorted order. The keys are converted to strings.
      *
      * @param map the map to extract keys from (may be null)
      * @return the sorted keys, or the empty set if map is null
@@ -407,10 +423,10 @@ public class InternalUtils
     }
 
     /**
-     * Searches the string for the final period ('.') character and returns everything after that.
-     * The input string is generally a fully qualified class name, though tapestry-core also uses
-     * this method for the occasional property expression (which is also dot separated). Returns the
-     * input string unchanged if it does not contain a period character.
+     * Searches the string for the final period ('.') character and returns everything after that. The input string is
+     * generally a fully qualified class name, though tapestry-core also uses this method for the occasional property
+     * expression (which is also dot separated). Returns the input string unchanged if it does not contain a period
+     * character.
      */
     public static String lastTerm(String input)
     {
@@ -424,14 +440,12 @@ public class InternalUtils
     }
 
     /**
-     * Searches a class for the "best" constructor, the public constructor with the most parameters.
-     * Returns null if there are no public constructors. If there is more than one constructor with
-     * the maximum number of parameters, it is not determined which will be returned (don't build a
-     * class like that!).
+     * Searches a class for the "best" constructor, the public constructor with the most parameters. Returns null if
+     * there are no public constructors. If there is more than one constructor with the maximum number of parameters, it
+     * is not determined which will be returned (don't build a class like that!).
      *
      * @param clazz to search for a constructor for
-     * @return the constructor to be used to instantiate the class, or null if no appropriate
-     *         constructor was found
+     * @return the constructor to be used to instantiate the class, or null if no appropriate constructor was found
      */
     public static Constructor findAutobuildConstructor(Class clazz)
     {
@@ -467,8 +481,8 @@ public class InternalUtils
     }
 
     /**
-     * Adds a value to a specially organized map where the values are lists of objects. This
-     * somewhat simulates a map that allows mutiple values for the same key.
+     * Adds a value to a specially organized map where the values are lists of objects. This somewhat simulates a map
+     * that allows mutiple values for the same key.
      *
      * @param map   to store value into
      * @param key   for which a value is added

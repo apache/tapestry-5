@@ -18,8 +18,11 @@ import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.FormSupport;
 
 import java.util.List;
@@ -27,13 +30,15 @@ import java.util.List;
 /**
  * Renders out a series of rows within the table.
  * <p/>
- * Inside a {@link Form}, a series of row index numbers are stored into the form (
- * {@linkplain FormSupport#store(Object, ComponentAction) as ComponentActions}). This is not ideal
- * ... in a situation where the data set can shift between the form render and the form submission,
- * this can cause unexpected results, including applying changes to the wrong objects.
+ * Inside a {@link Form}, a series of row index numbers are stored into the form ( {@linkplain FormSupport#store(Object,
+ * ComponentAction) as ComponentActions}). This is not ideal ... in a situation where the data set can shift between the
+ * form render and the form submission, this can cause unexpected results, including applying changes to the wrong
+ * objects.
  */
 public class GridRows
 {
+    private int _startRow;
+
     static class SetupForRow implements ComponentAction<GridRows>
     {
         private static final long serialVersionUID = -3216282071752371975L;
@@ -52,8 +57,22 @@ public class GridRows
     }
 
     /**
-     * Parameter used to set the CSS class for each row (each &lt;tr&gt; element) within the
-     * &lt;tbody&gt;). This is not cached, so it will be recomputed for each row.
+     * The column which is currently being sorted. This value is the column's {@link PropertyModel#getId() id}, not its
+     * {@link PropertyModel#getPropertyName() name}. This parameter may be null, in which case no column is being used
+     * for sorting.
+     */
+    @Parameter(required = true)
+    private String _sortColumnId;
+
+    /**
+     * If true, then the sort is ascending (A - Z), if false the descending (Z - A).
+     */
+    @Parameter(required = true)
+    private boolean _sortAscending;
+
+    /**
+     * Parameter used to set the CSS class for each row (each &lt;tr&gt; element) within the &lt;tbody&gt;). This is not
+     * cached, so it will be recomputed for each row.
      */
     @Parameter(cache = false)
     private String _rowClass;
@@ -77,23 +96,23 @@ public class GridRows
     private int _currentPage;
 
     /**
-     * The current row being rendered, this is primarily an output parameter used to allow the Grid,
-     * and the Grid's container, to know what object is being rendered.
+     * The current row being rendered, this is primarily an output parameter used to allow the Grid, and the Grid's
+     * container, to know what object is being rendered.
      */
     @Parameter(required = true)
     private Object _row;
 
     /**
-     * If true, then the CSS class on each &lt;TD&gt; cell will be omitted, which can reduce
-     * the amount of output from the component overall by a considerable amount. Leave this as false, the
-     * default, when you are leveraging the CSS to customize the look and feel of particular columns.
+     * If true, then the CSS class on each &lt;TD&gt; cell will be omitted, which can reduce the amount of output from
+     * the component overall by a considerable amount. Leave this as false, the default, when you are leveraging the CSS
+     * to customize the look and feel of particular columns.
      */
     @Parameter
     private boolean _lean;
 
     /**
-     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off.
-     * Defaults to false, enabling state saving logic within Forms.
+     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
+     * enabling state saving logic within Forms.
      */
     @SuppressWarnings("unused")
     @Parameter
@@ -114,16 +133,39 @@ public class GridRows
 
     public String getRowClass()
     {
-        return _rowClass;
+        List<String> classes = CollectionFactory.newList();
+
+        // Not a cached parameter, so careful to only access it once.
+
+        String rc = _rowClass;
+
+        if (rc != null) classes.add(rc);
+
+        if (_rowIndex == _startRow) classes.add(GridConstants.FIRST_CLASS);
+
+        if (_rowIndex == _endRow) classes.add(GridConstants.LAST_CLASS);
+
+        return TapestryInternalUtils.toClassAttributeValue(classes);
     }
 
     public String getCellClass()
     {
-        if (_lean) return null;
+        List<String> classes = CollectionFactory.newList();
 
-        String id = _provider.getDataModel().get(_propertyName).getId();
+        if (!_lean)
+        {
+            String id = _provider.getDataModel().get(_propertyName).getId();
 
-        return id + "-cell";
+            classes.add(id + "-cell");
+        }
+
+        if (_columnModel.getId().equals(_sortColumnId))
+        {
+            String sortClassName = _sortAscending ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
+            classes.add(sortClassName);
+        }
+
+        return TapestryInternalUtils.toClassAttributeValue(classes);
     }
 
     void setupRender()
@@ -138,17 +180,16 @@ public class GridRows
 
         if (_currentPage > maxPages) _currentPage = maxPages;
 
-        int startRow = (_currentPage - 1) * _rowsPerPage;
-        _endRow = Math.min(availableRows - 1, startRow + _rowsPerPage - 1);
+        _startRow = (_currentPage - 1) * _rowsPerPage;
+        _endRow = Math.min(availableRows - 1, _startRow + _rowsPerPage - 1);
 
-        _rowIndex = startRow;
+        _rowIndex = _startRow;
 
         _recordingStateInsideForm = !_volatile && _formSupport != null;
     }
 
     /**
-     * Callback method, used when recording state to a form, or called directly when not recording
-     * state.
+     * Callback method, used when recording state to a form, or called directly when not recording state.
      */
     void setupForRow(int rowIndex)
     {

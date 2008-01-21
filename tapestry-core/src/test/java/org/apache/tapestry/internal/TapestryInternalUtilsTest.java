@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;
@@ -432,7 +433,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         assertSame(actual, resources);
 
         verify();
-
     }
 
     @Test
@@ -469,5 +469,21 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         String input = "\u65E5\u672C\u8A9E";
         String expected = "%E6%97%A5%E6%9C%AC%E8%AA%9E";
         assertEquals(TapestryInternalUtils.encodeContext(input), expected);
+    }
+
+    @Test
+    public void to_class_attribute_value_empty()
+    {
+        List<String> classes = Collections.emptyList();
+
+        assertNull(TapestryInternalUtils.toClassAttributeValue(classes));
+    }
+
+    @Test
+    public void to_class_attribute_value_normal()
+    {
+        List<String> classes = CollectionFactory.newList("fred", "barney", "wilma");
+
+        assertEquals(TapestryInternalUtils.toClassAttributeValue(classes), "fred barney wilma");
     }
 }

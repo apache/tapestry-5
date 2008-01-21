@@ -32,15 +32,13 @@ import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.FormSupport;
 
 /**
- * A grid presents tabular data. It is a composite component, created in terms of several
- * sub-components. The sub-components are statically wired to the Grid, as it provides access to the
- * data and other models that they need.
+ * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
+ * sub-components are statically wired to the Grid, as it provides access to the data and other models that they need.
  * <p/>
- * A Grid may operate inside a {@link Form}. By overriding the cell renderers of properties, the
- * default output only behavior can be changed to produce a complex form with individual control for
- * editing properties of each row. This is currently workable but less than ideal -- if the order of
- * rows provided by the {@link GridDataSource} changes between render and form submission, then
- * there's the possibility that data will be applied to the wrong server-side objects.
+ * A Grid may operate inside a {@link Form}. By overriding the cell renderers of properties, the default output only
+ * behavior can be changed to produce a complex form with individual control for editing properties of each row. This is
+ * currently workable but less than ideal -- if the order of rows provided by the {@link GridDataSource} changes between
+ * render and form submission, then there's the possibility that data will be applied to the wrong server-side objects.
  *
  * @see BeanModel
  * @see BeanModelSource
@@ -49,24 +47,24 @@ import org.apache.tapestry.services.FormSupport;
 public class Grid implements GridModelProvider
 {
     /**
-     * The source of data for the Grid to display. This will usually be a List or array but can also
-     * be an explicit {@link GridDataSource}. For Lists and Arrays, a GridDataSource is created
-     * automatically as a wrapper around the underlying List.
+     * The source of data for the Grid to display. This will usually be a List or array but can also be an explicit
+     * {@link GridDataSource}. For Lists and Arrays, a GridDataSource is created automatically as a wrapper around the
+     * underlying List.
      */
     @Parameter(required = true)
     private Object _source;
 
     /**
-     * The number of rows of data displayed on each page. If there are more rows than will fit, the
-     * Grid will divide up the rows into "pages" and (normally) provide a pager to allow the user to
-     * navigate within the overall result set.
+     * The number of rows of data displayed on each page. If there are more rows than will fit, the Grid will divide up
+     * the rows into "pages" and (normally) provide a pager to allow the user to navigate within the overall result
+     * set.
      */
     @Parameter("25")
     private int _rowsPerPage;
 
     /**
-     * Defines where the pager (used to navigate within the "pages" of results) should be displayed:
-     * "top", "bottom", "both" or "none".
+     * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
+     * "both" or "none".
      */
     @Parameter(value = "bottom", defaultPrefix = "literal")
     private GridPagerPosition _pagerPosition;
@@ -81,52 +79,50 @@ public class Grid implements GridModelProvider
     private boolean _sortAscending = true;
 
     /**
-     * Used to store the current object being rendered (for the current row). This is used when
-     * parameter blocks are provided to override the default cell renderer for a particular column
-     * ... the components within the block can use the property bound to the row parameter to know
-     * what they should render.
+     * Used to store the current object being rendered (for the current row). This is used when parameter blocks are
+     * provided to override the default cell renderer for a particular column ... the components within the block can
+     * use the property bound to the row parameter to know what they should render.
      */
     @Parameter
     private Object _row;
 
     /**
-     * The model used to identify the properties to be presented and the order of presentation. The
-     * model may be omitted, in which case a default model is generated from the first object in the
-     * data source (this implies that the objects provided by the source are uniform). The model may
-     * be explicitly specified to override the default behavior, say to reorder or rename columns or
-     * add additional columns.
+     * The model used to identify the properties to be presented and the order of presentation. The model may be
+     * omitted, in which case a default model is generated from the first object in the data source (this implies that
+     * the objects provided by the source are uniform). The model may be explicitly specified to override the default
+     * behavior, say to reorder or rename columns or add additional columns.
      */
     @Parameter
     private BeanModel _model;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names
-     * are case-insensitive.
+     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
+     * case-insensitive.
      */
     @Parameter(defaultPrefix = "literal")
     private String _remove;
 
     /**
-     * A comma-separated list of property names indicating the order in which the properties should
-     * be presented. The names are case insensitive. Any properties not indicated in the list will
-     * be appended to the end of the display order.
+     * A comma-separated list of property names indicating the order in which the properties should be presented. The
+     * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
+     * order.
      */
     @Parameter(defaultPrefix = "literal")
     private String _reorder;
 
     /**
-     * A Block to render instead of the table (and pager, etc.) when the source is empty. The
-     * default is simply the text "There is no data to display". This parameter is used to customize
-     * that message, possibly including components to allow the user to create new objects.
+     * A Block to render instead of the table (and pager, etc.) when the source is empty. The default is simply the text
+     * "There is no data to display". This parameter is used to customize that message, possibly including components to
+     * allow the user to create new objects.
      */
     @Parameter(value = "block:empty")
     private Block _empty;
 
 
     /**
-     * If true, then the CSS class on each &lt;TD&gt; and &lt;TH&gt; cell will be omitted, which can reduce
-     * the amount of output from the component overall by a considerable amount. Leave this as false, the
-     * default, when you are leveraging the CSS to customize the look and feel of particular columns.
+     * If true, then the CSS class on each &lt;TD&gt; and &lt;TH&gt; cell will be omitted, which can reduce the amount
+     * of output from the component overall by a considerable amount. Leave this as false, the default, when you are
+     * leveraging the CSS to customize the look and feel of particular columns.
      */
     @Parameter
     private boolean _lean;
@@ -145,9 +141,8 @@ public class Grid implements GridModelProvider
     private GridDataSource _dataSource;
 
     /**
-     * The CSS class for the tr element for each data row. This can be used to highlight particular
-     * rows, or cycle between CSS values (for the "zebra effect"). If null or not bound, then no
-     * particular CSS class value is used.
+     * The CSS class for the tr element for each data row. This can be used to highlight particular rows, or cycle
+     * between CSS values (for the "zebra effect"). If null or not bound, then no particular CSS class value is used.
      */
     @Parameter(cache = false)
     private String _rowClass;
@@ -158,7 +153,7 @@ public class Grid implements GridModelProvider
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean"})
+            parameters = {"sortColumnId=sortColumnId", "sortAscending=sortAscending", "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean"})
     private GridRows _rows;
 
     @Component(parameters = {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage"})
@@ -173,11 +168,10 @@ public class Grid implements GridModelProvider
     private Delegate _pagerBottom;
 
     /**
-     * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned
-     * off. Defaults to false, enabling state saving persisting within Forms. If a Grid is present
-     * for some reason within a Form, but does not contain any form control components (such as
-     * {@link TextField}), then binding volatile to false will reduce the amount of client-side
-     * state that must be persisted.
+     * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
+     * false, enabling state saving persisting within Forms. If a Grid is present for some reason within a Form, but
+     * does not contain any form control components (such as {@link TextField}), then binding volatile to false will
+     * reduce the amount of client-side state that must be persisted.
      */
     @Parameter
     private boolean _volatile;
