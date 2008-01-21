@@ -1,0 +1,10 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <t:block name="block0">
+        <!-- block0 content -->
+    </t:block>
+    
+    <t:block>
+        <!-- anon block content -->
+    </t:block>
+</html>
