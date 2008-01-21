@@ -830,22 +830,28 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public boolean handleEvent(ComponentEvent event)
     {
-        // Simple case: no mixins
+        try
+        { // Simple case: no mixins
 
-        if (_components == null) return _coreComponent.handleComponentEvent(event);
+            if (_components == null) return _coreComponent.handleComponentEvent(event);
 
-        // Otherwise, iterate over mixins + core component
+            // Otherwise, iterate over mixins + core component
 
-        boolean result = false;
+            boolean result = false;
 
-        for (Component component : _components)
-        {
-            result |= component.handleComponentEvent(event);
+            for (Component component : _components)
+            {
+                result |= component.handleComponentEvent(event);
 
-            if (event.isAborted()) break;
+                if (event.isAborted()) break;
+            }
+
+            return result;
         }
-
-        return result;
+        catch (RuntimeException ex)
+        {
+            throw new TapestryException(ex.getMessage(), this, ex);
+        }
     }
 
     /**

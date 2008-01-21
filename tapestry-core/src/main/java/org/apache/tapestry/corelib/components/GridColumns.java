@@ -19,9 +19,12 @@ import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
 
@@ -78,7 +81,17 @@ public class GridColumns
     @Inject
     private Messages _messages;
 
+
+    private int _columnIndex;
+
+    private int _lastColumnIndex;
+
     private PropertyModel _columnModel;
+
+    void setupRender()
+    {
+        _lastColumnIndex = _dataProvider.getDataModel().getPropertyNames().size() - 1;
+    }
 
     public boolean isSortDisabled()
     {
@@ -87,16 +100,27 @@ public class GridColumns
 
     public String getSortLinkClass()
     {
-        if (isActiveSortColumn()) return _sortAscending ? "t-sort-column-ascending" : "t-sort-column-descending";
+        if (isActiveSortColumn())
+            return _sortAscending ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
 
         return null;
     }
 
     public String getHeaderClass()
     {
-        if (_lean) return null;
+        List<String> classes = CollectionFactory.newList();
 
-        return _columnModel.getId() + "-header";
+        if (!_lean) classes.add(_columnModel.getId() + "-header");
+
+        String sort = getSortLinkClass();
+
+        if (sort != null) classes.add(sort);
+
+        if (_columnIndex == 0) classes.add(GridConstants.FIRST_CLASS);
+
+        if (_columnIndex == _lastColumnIndex) classes.add(GridConstants.LAST_CLASS);
+
+        return TapestryInternalUtils.toClassAttributeValue(classes);
     }
 
     public boolean isActiveSortColumn()
@@ -144,5 +168,18 @@ public class GridColumns
     public void setColumnName(String columnName)
     {
         _columnModel = _dataProvider.getDataModel().get(columnName);
+    }
+
+    /**
+     * Set by the Loop component.
+     */
+    public void setColumnIndex(int columnIndex)
+    {
+        _columnIndex = columnIndex;
+    }
+
+    public int getColumnIndex()
+    {
+        return _columnIndex;
     }
 }

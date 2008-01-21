@@ -1,6 +1,7 @@
 <thead xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <tr>
-        <th t:type="Loop" source="columnNames" value="columnName" volatile="true" class="prop:headerClass">
+        <th t:type="Loop" source="columnNames" value="columnName" volatile="true" class="prop:headerClass"
+            index="columnIndex">
             <a t:id="sort">${columnModel.label}</a>
             <t:if test="columnModel.sortable">
                 <a t:id="sort2">

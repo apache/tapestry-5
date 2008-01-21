@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.Orderer;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
@@ -81,9 +82,9 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Capitalizes the string, and inserts a space before each upper case character (or sequence of
-     * upper case characters). Thus "userId" becomes "User Id", etc. Also, converts underscore into
-     * space (and capitalizes the following word), thus "user_id" also becomes "User Id".
+     * Capitalizes the string, and inserts a space before each upper case character (or sequence of upper case
+     * characters). Thus "userId" becomes "User Id", etc. Also, converts underscore into space (and capitalizes the
+     * following word), thus "user_id" also becomes "User Id".
      */
     public static String toUserPresentable(String id)
     {
@@ -139,8 +140,8 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Converts a string to an {@link OptionModel}. The string is of the form "value=label". If the
-     * equals sign is omitted, then the same value is used for both value and label.
+     * Converts a string to an {@link OptionModel}. The string is of the form "value=label". If the equals sign is
+     * omitted, then the same value is used for both value and label.
      *
      * @param input
      * @return
@@ -160,8 +161,8 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Parses a string input into a series of value=label pairs compatible with
-     * {@link #toOptionModel(String)}. Splits on commas. Ignores whitespace around commas.
+     * Parses a string input into a series of value=label pairs compatible with {@link #toOptionModel(String)}. Splits
+     * on commas. Ignores whitespace around commas.
      *
      * @param input comma seperated list of terms
      * @return list of option models
@@ -179,8 +180,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Wraps the result of {@link #toOptionModels(String)} as a {@link SelectModel} (with no option
-     * groups).
+     * Wraps the result of {@link #toOptionModels(String)} as a {@link SelectModel} (with no option groups).
      *
      * @param input
      * @return
@@ -208,8 +208,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Processes a map input into a series of map entries compatible with
-     * {@link #toOptionModel(Map.Entry)}.
+     * Processes a map input into a series of map entries compatible with {@link #toOptionModel(Map.Entry)}.
      *
      * @param input map of elements
      * @return list of option models
@@ -227,8 +226,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Wraps the result of {@link #toOptionModels(Map)} as a {@link SelectModel} (with no option
-     * groups).
+     * Wraps the result of {@link #toOptionModels(Map)} as a {@link SelectModel} (with no option groups).
      *
      * @param input
      * @return
@@ -254,8 +252,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Processes a list input into a series of objects compatible with
-     * {@link #toOptionModel(Object)}.
+     * Processes a list input into a series of objects compatible with {@link #toOptionModel(Object)}.
      *
      * @param input list of elements
      * @return list of option models
@@ -273,8 +270,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Wraps the result of {@link #toOptionModels(List)} as a {@link SelectModel} (with no option
-     * groups).
+     * Wraps the result of {@link #toOptionModels(List)} as a {@link SelectModel} (with no option groups).
      *
      * @param input
      * @return
@@ -287,8 +283,8 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Parses a key/value pair where the key and the value are seperated by an equals sign. The key
-     * and value are trimmed of leading and trailing whitespace, and returned as a {@link KeyValue}.
+     * Parses a key/value pair where the key and the value are seperated by an equals sign. The key and value are
+     * trimmed of leading and trailing whitespace, and returned as a {@link KeyValue}.
      *
      * @param input
      * @return
@@ -306,9 +302,9 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Used to convert a property expression into a key that can be used to locate various resources
-     * (Blocks, messages, etc.). Strips out any punctuation characters, leaving just words
-     * characters (letters, number and the underscore).
+     * Used to convert a property expression into a key that can be used to locate various resources (Blocks, messages,
+     * etc.). Strips out any punctuation characters, leaving just words characters (letters, number and the
+     * underscore).
      *
      * @param expression
      * @return
@@ -319,8 +315,8 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Looks for a label within the messages based on the id. If found, it is used, otherwise the
-     * name is converted to a user presentable form.
+     * Looks for a label within the messages based on the id. If found, it is used, otherwise the name is converted to a
+     * user presentable form.
      */
     public static String defaultLabel(String id, Messages messages, String propertyExpression)
     {
@@ -332,14 +328,28 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Strips a dotted sequence (such as a property expression, or a qualified class name) down to
-     * the last term of that expression, by locating the last period ('.') in the string.
+     * Strips a dotted sequence (such as a property expression, or a qualified class name) down to the last term of that
+     * expression, by locating the last period ('.') in the string.
      */
     public static String lastTerm(String input)
     {
         int dotx = input.lastIndexOf('.');
 
         return input.substring(dotx + 1);
+    }
+
+    /**
+     * Converts an list of strings into a space-separated string combining them all, suitable for use as an HTML class
+     * attribute value.
+     *
+     * @param classes classes to combine
+     * @return the joined classes, or null if classes is empty
+     */
+    public static String toClassAttributeValue(List<String> classes)
+    {
+        if (classes.isEmpty()) return null;
+
+        return InternalUtils.join(classes, " ");
     }
 
     private static class PropertyOrder implements Comparable<PropertyOrder>
@@ -370,10 +380,9 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Sorts the property names into presentation order. Filters out any properties that have an
-     * explicit {@link OrderBefore}, leaving the remainder. Estimates each propertie's position
-     * based on the relative position of the property's getter. The code assumes that all methods
-     * are readable (have a getter method).
+     * Sorts the property names into presentation order. Filters out any properties that have an explicit {@link
+     * OrderBefore}, leaving the remainder. Estimates each propertie's position based on the relative position of the
+     * property's getter. The code assumes that all methods are readable (have a getter method).
      *
      * @param classAdapter  defines the bean that contains the properties
      * @param classFactory  used to access method line number information
@@ -511,8 +520,8 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Determines if the two values are equal. They are equal if they are the exact same value
-     * (including if they are both null). Otherwise standard equals() comparison is used.
+     * Determines if the two values are equal. They are equal if they are the exact same value (including if they are
+     * both null). Otherwise standard equals() comparison is used.
      *
      * @param <T>
      * @param left
