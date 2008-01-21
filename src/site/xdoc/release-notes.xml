@@ -1,6 +1,6 @@
 <document>
     <!--
-       Copyright 2007 The Apache Software Foundation
+       Copyright 2007, 2008 The Apache Software Foundation
 
        Licensed under the Apache License, Version 2.0 (the "License");
        you may not use this file except in compliance with the License.
@@ -19,6 +19,172 @@
         <title>Tapestry Project Release Notes</title>
     </properties>
     <body>
+
+
+        <h1>Release Notes - Tapestry - Version 5.0.8</h1>
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1315'>TAPESTRY-1315</a>] - Context expression
+                without period results in StringIndexOutOfBoundsException
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1377'>TAPESTRY-1377</a>] - NullPointerException
+                invoking methods on the Request service
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1546'>TAPESTRY-1546</a>] - Add
+                inheritInformalParameters flag to the @Component annotation
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1595'>TAPESTRY-1595</a>] - Add support for
+                ignoring paths that belong to other servlets in the web application
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1598'>TAPESTRY-1598</a>] - Tapestry should not
+                require explicit value encoders (via the encoder parameter) where it can automatically coerce the value
+                between string and the appropriate server-side type
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1600'>TAPESTRY-1600</a>] - Cannot render XML
+                from page templates: XML declaration and namespaces are removed
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1636'>TAPESTRY-1636</a>] - Template reloading
+                in Tomcat doesn't work
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1713'>TAPESTRY-1713</a>] - Tapestry doesn't run
+                correctly on Websphere 6.1 due to an incorrect implementation of HttpServletRequest.getServletPath()
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1823'>TAPESTRY-1823</a>] - It is not possible
+                to create a reasonable implementation of RequestExceptionHandler without importing internal interfaces
+                and services
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1840'>TAPESTRY-1840</a>] - Tapestry 5 does not
+                compile with Java 6
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1849'>TAPESTRY-1849</a>] - There are two
+                virtually identical PersistentLocaleImpl classes, one unused (probably an incomplete refactoring)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1880'>TAPESTRY-1880</a>] - DateField component
+                should support editting of time as well as date
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1926'>TAPESTRY-1926</a>] - DateField disabling
+                does not work
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1941'>TAPESTRY-1941</a>] - ValidationTracker
+                retaining field values inconsistently
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1948'>TAPESTRY-1948</a>] - Null pointer
+                exception when performing a partial page render
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1957'>TAPESTRY-1957</a>] - EnumValueEncoder
+                missing null check when converting to client value
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1984'>TAPESTRY-1984</a>] - Error occurs with a
+                multipart (file upload) request if the request encoding is null
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1988'>TAPESTRY-1988</a>] - Page activation
+                paremeter with escaped ( %2f ) slash ( &quot; / &quot; ) character not passed correctly
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2005'>TAPESTRY-2005</a>] - Using component
+                classes as component parameters fails (Could not find a coercion)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2007'>TAPESTRY-2007</a>] - PNG images related
+                to validation render poorly in IE
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2013'>TAPESTRY-2013</a>] - BeanEditor does not
+                support informal parameters
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2017'>TAPESTRY-2017</a>] - AssetDispatcher
+                doesn't stream asset when the 'If-Modified-Since' header can't be converted to a date
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2019'>TAPESTRY-2019</a>] - Autocompleter mixin
+                now fails with a NullPointerException
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2028'>TAPESTRY-2028</a>] - Mimimize whitespace
+                in the output markup
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2033'>TAPESTRY-2033</a>] - Optimized requests
+                paths are broken for root paths within contexts
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2044'>TAPESTRY-2044</a>] - Component action
+                requests are not capable of handling the case where the active page and the page containing the
+                component are different
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1478'>TAPESTRY-1478</a>] - Validation messages
+                for zh_CN locale
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1502'>TAPESTRY-1502</a>] - Generated URLs
+                should be relative to request base URL
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1599'>TAPESTRY-1599</a>] - Make it possible to
+                differentiate between preparing for a Form render vs. preparing for a Form submission
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1639'>TAPESTRY-1639</a>] - Components that
+                generate hyperlinks (ActionLink, PageLink, EventLink) should have a getLink() method to retrieve the
+                link as generated
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1671'>TAPESTRY-1671</a>] - Need a way to
+                redirect to external URLs
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1739'>TAPESTRY-1739</a>] - Add byte, short and
+                float Translators
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1802'>TAPESTRY-1802</a>] - Add documentation
+                for the intended project layout
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1818'>TAPESTRY-1818</a>] - Template parser
+                should handle CDATA blocks
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1830'>TAPESTRY-1830</a>] - Add ability to store
+                temporary data without having to define new properties
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1940'>TAPESTRY-1940</a>] - Italian translation
+                of messages for Error component, and validation
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1991'>TAPESTRY-1991</a>] - It should be easier
+                to access an Application State Object without forcing its creation
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2008'>TAPESTRY-2008</a>] - Validation popup
+                bubbles are somewhat distracting, should be simplified
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2012'>TAPESTRY-2012</a>] - Add BeanEditor
+                support for data types &quot;password&quot; and &quot;longtext&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2014'>TAPESTRY-2014</a>] - ComponentResources
+                should expose the page's lifecycle to interested listeners
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2021'>TAPESTRY-2021</a>] - It should be
+                possible to turn off the generation of CSS classes for table headers and table cells inside a Grid
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2049'>TAPESTRY-2049</a>] - Avoid reflection
+                when instantiating component instances
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2056'>TAPESTRY-2056</a>] - Add configurable
+                null handling for text fields
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2057'>TAPESTRY-2057</a>] - Add EventLink
+                component that can create a link that triggers an arbitrarily named event in its container
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1526'>TAPESTRY-1526</a>] - Strip the folder
+                name used to identify libraries from logical page names, just as the subfolder is stripped
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1847'>TAPESTRY-1847</a>] - Grid component
+                should output additional CSS classes into TDs to identify first and last column, first and last row
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2006'>TAPESTRY-2006</a>] - Replace naive page
+                pool mechanism with a more realistic one that can handle larger sites
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2042'>TAPESTRY-2042</a>] - Make it possible to
+                merge action requests with rendering, as with Tapestry 4
+            </li>
+        </ul>
 
 
         <h1>Release Notes - Tapestry - Version 5.0.7</h1>
