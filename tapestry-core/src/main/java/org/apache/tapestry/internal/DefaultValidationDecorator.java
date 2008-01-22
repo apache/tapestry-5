@@ -90,7 +90,6 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
     private void addErrorClassToCurrentElement()
     {
-
         _markupWriter.getElement().addClassName(TapestryConstants.ERROR_CLASS);
     }
 }

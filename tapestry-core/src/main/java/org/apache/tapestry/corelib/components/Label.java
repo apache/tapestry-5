@@ -30,8 +30,8 @@ import org.apache.tapestry.services.Heartbeat;
 public class Label
 {
     /**
-     * The for parameter is used to identify the {@link Field} linked to this label (it is named
-     * this way because it results in the for attribute of the label element).
+     * The for parameter is used to identify the {@link Field} linked to this label (it is named this way because it
+     * results in the for attribute of the label element).
      */
     @Parameter(name = "for", required = true, defaultPrefix = "component")
     private Field _field;
@@ -50,17 +50,11 @@ public class Label
     {
         final Field field = _field;
 
+        _decorator.beforeLabel(field);
+
         final Element element = writer.element("label");
 
         _resources.renderInformalParameters(writer);
-
-        // Uh oh! Referencing a private field (that happens to get instrumented up the wazoo) from
-        // a inner class causes a java.lang.Verify error (Unable to pop operand off an empty stack).
-        // Perhaps this is a Javassist error? Shouldn't the inner class be going through a synthetic
-        // accessor method of some kind? Resolved by assigning to a local variable and referencing
-        // that. Layers on layers, oh my!
-
-        final ValidationDecorator decorator = _decorator;
 
         // Since we don't know if the field has rendered yet, we need to defer writing the for
         // attribute until we know the field has rendered (and set its clientId property). That's
@@ -74,7 +68,7 @@ public class Label
 
                 element.forceAttributes("for", fieldId, "id", fieldId + ":label");
 
-                decorator.insideLabel(field, element);
+                _decorator.insideLabel(field, element);
             }
         };
 
@@ -95,5 +89,7 @@ public class Label
         writer.write(_field.getLabel());
 
         writer.end(); // label
+
+        _decorator.afterLabel(_field);
     }
 }

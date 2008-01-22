@@ -201,7 +201,10 @@ public class Start
             new Item("MagicValueEncoder", "Magic ValueEncoder Demo",
                      "Automatic creation of ValueEncoder using the TypeCoercer"),
 
-            new Item("NullStrategyDemo", "Null Field Strategy Demo", "use of the nulls parameter of TextField"));
+            new Item("NullStrategyDemo", "Null Field Strategy Demo", "use of the nulls parameter of TextField"),
+
+            new Item("OverrideValidationDecorator", "Override Validation Decorator",
+                     "override the default validation decorator"));
 
     static
     {

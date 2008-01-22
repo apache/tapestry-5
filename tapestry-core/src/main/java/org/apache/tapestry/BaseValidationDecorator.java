@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,19 @@ package org.apache.tapestry;
 import org.apache.tapestry.dom.Element;
 
 /**
- * Base implementation of {@link ValidationDecorator} that does nothing. Subclasses may override
- * specific methods, knowing that all other methods do nothing at all.
+ * Base implementation of {@link ValidationDecorator} that does nothing. Subclasses may override specific methods,
+ * knowing that all other methods do nothing at all.
  */
-public abstract class BaseValidationDecorator implements ValidationDecorator
+public class BaseValidationDecorator implements ValidationDecorator
 {
+
+    public void beforeLabel(Field field)
+    {
+    }
+
+    public void afterLabel(Field field)
+    {
+    }
 
     public void afterField(Field field)
     {
