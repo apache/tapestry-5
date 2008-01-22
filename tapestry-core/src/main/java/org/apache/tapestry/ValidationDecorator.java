@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,32 +17,51 @@ package org.apache.tapestry;
 import org.apache.tapestry.dom.Element;
 
 /**
- * An object responsible for performing decorations around fields and field labels. The decorator is
- * notified at intervals by the fields and labels.
+ * An object responsible for performing decorations around fields and field labels. The decorator is notified at
+ * intervals by the fields and labels.
+ * <p/>
+ * In most western languages (written left to right) the label will render before the field, so the properties of the
+ * Field may not be set yet (or may reflect a previous looping's rendering). It may be necessary to {@linkplain
+ * org.apache.tapestry.services.Heartbeat#defer(Runnable)} defer any rendering} until after the Label and the Field have
+ * both had their change to initialize and render.
  */
 public interface ValidationDecorator
 {
     /**
-     * Invoked after the label has rendered its tag, but before it has rendered content inside the
-     * tag, to allow the decorator to write additional attributes.
+     * Invoked by a {@link org.apache.tapestry.corelib.components.Label} before rendering itself.
+     *
+     * @param field for this label
+     */
+    void beforeLabel(Field field);
+
+    /**
+     * Invoked after the label has rendered its tag, but before it has rendered content inside the tag, to allow the
+     * decorator to write additional attributes.
      *
      * @param field        the field corresponding to the label
      * @param labelElement the element for this label
      */
     void insideLabel(Field field, Element labelElement);
 
+
     /**
-     * Renders immediately before the field itself. The field will typically render a single
-     * element, though a complex field may render multiple elements or even some JavaScript.
+     * Invoked by {@link org.apache.tapestry.corelib.components.Label} after rendering itself.
+     *
+     * @param field
+     */
+    void afterLabel(Field field);
+
+    /**
+     * Renders immediately before the field itself. The field will typically render a single element, though a complex
+     * field may render multiple elements or even some JavaScript.
      *
      * @param field
      */
     void beforeField(Field field);
 
     /**
-     * Invoked at a point where the decorator may write additional attributes into the field.
-     * Generally speaking, you will want to
-     * {@linkplain ComponentResources#renderInformalParameters(MarkupWriter) render informal parameters}
+     * Invoked at a point where the decorator may write additional attributes into the field. Generally speaking, you
+     * will want to {@linkplain ComponentResources#renderInformalParameters(MarkupWriter) render informal parameters}
      * <strong>before</strong> invoking this method.
      *
      * @param field

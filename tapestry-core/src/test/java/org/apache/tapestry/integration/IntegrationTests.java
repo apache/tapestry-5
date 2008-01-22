@@ -1435,4 +1435,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText(locator, "0");
     }
+
+    /**
+     * TAPESTRY-1647
+     */
+    @Test
+    public void label_invokes_validation_decorator_at_correct_time()
+    {
+        start("Override Validation Decorator");
+
+        assertSourcePresent(
+                "[Before label for Value]<label for=\"value\" id=\"value:label\">Value</label>[After label for Value][Before field Value]");
+    }
 }
