@@ -26,6 +26,7 @@ import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.services.ComponentClassResolver;
+import org.easymock.EasyMock;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
@@ -56,7 +57,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
 
         train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
 
-        train_newRootComponentElement(elementFactory, PAGE_CLASS_NAME, rootElement);
+        train_newRootComponentElement(elementFactory, PAGE_CLASS_NAME, rootElement, LOCALE);
 
         train_getComponentResources(rootElement, resources);
         train_getComponentModel(resources, model);
@@ -108,7 +109,7 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = mockComponentClassResolver();
 
         train_resolvePageNameToClassName(resolver, LOGICAL_PAGE_NAME, PAGE_CLASS_NAME);
-        train_newRootComponentElement(elementFactory, PAGE_CLASS_NAME, rootElement);
+        train_newRootComponentElement(elementFactory, PAGE_CLASS_NAME, rootElement, LOCALE);
 
         train_getComponentResources(rootElement, resources);
         train_getComponentModel(resources, model);
@@ -156,8 +157,10 @@ public class PageLoaderImplTest extends InternalBaseTestCase
         train_getComponentClassName(childModel, CHILD_CLASS_NAME);
         train_getTemplate(templateSource, childModel, LOCALE, childTemplate);
         train_isMissing(childTemplate, true);
-        train_newRenderBodyElement(elementFactory, childElement, body);
-        childElement.addToTemplate(body);
+
+        // This will be the RenderBody element ...
+
+        childElement.addToTemplate(EasyMock.isA(PageElement.class));
 
         replay();
 

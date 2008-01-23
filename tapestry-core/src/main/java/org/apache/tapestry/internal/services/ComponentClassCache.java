@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * A cache for converting between class names and component (or other) classes.  For component classes,
- * ensures that the class is the transformed class.
+ * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
+ * class is the transformed class.
  */
 public interface ComponentClassCache
 {
     /**
-     * Gets the Class instance for the give name.
+     * Gets the Class instance for then give name.
      *
      * @param className fully qualified class name
      * @return the class instance

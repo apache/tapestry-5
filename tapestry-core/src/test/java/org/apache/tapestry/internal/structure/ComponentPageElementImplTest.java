@@ -55,7 +55,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         ComponentResources resources = cpe.getComponentResources();
 
@@ -85,7 +85,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         ComponentResources resources = cpe.getComponentResources();
 
@@ -115,7 +115,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         ComponentResources resources = cpe.getComponentResources();
         assertFalse(resources.isBound("fred"));
@@ -142,7 +142,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addBlock("myblock", block1);
 
@@ -179,7 +179,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.bindParameter("barney", binding);
 
@@ -207,7 +207,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.containingPageDidLoad();
 
@@ -251,8 +251,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null, ins, coercer, null,
-                                                                    null, l);
+        ComponentPageElementImpl cpe = new ComponentPageElementImpl(page, container, "myid", null, ins, l, null);
 
         try
         {
@@ -286,7 +285,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         assertFalse(cpe.getComponentResources().isInvariant("fred"));
 
@@ -304,8 +303,8 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
         Binding binding = mockBinding();
+        PageResources resources = mockPageResources();
 
         train_getSupportsInformalParameters(model, true);
 
@@ -317,11 +316,11 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         train_get(binding, boundValue);
 
-        train_coerce(coercer, boundValue, Long.class, boundValue);
+        train_coerce(resources, boundValue, Long.class, boundValue);
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, resources);
 
         cpe.bindParameter("barney", binding);
 
@@ -330,13 +329,14 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         verify();
     }
 
+
     @Test
     public void write_binding()
     {
         Page page = newPage(PAGE_NAME);
         Component component = mockComponent();
         ComponentModel model = mockComponentModel();
-        TypeCoercer coercer = mockTypeCoercer();
+        PageResources resources = mockPageResources();
         Binding binding = mockBinding();
 
         Instantiator ins = newInstantiator(component, model);
@@ -347,13 +347,13 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         expect(binding.getBindingType()).andReturn(Integer.class);
 
-        train_coerce(coercer, 23, Integer.class, 23);
+        train_coerce(resources, 23, Integer.class, 23);
 
         binding.set(23);
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, resources);
 
         cpe.bindParameter("barney", binding);
 
@@ -374,7 +374,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         try
         {
@@ -407,7 +407,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addEmbeddedElement(childElement);
 
@@ -440,7 +440,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addEmbeddedElement(child1);
 
@@ -476,7 +476,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addMixin(mixinIns);
 
@@ -502,7 +502,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addMixin(mixinIns);
 
@@ -538,7 +538,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, coercer, null, null);
+        ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
 
         cpe.addMixin(mixinInstantiator);
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,18 +17,20 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 
 /**
- * A dispatcher is responsible for recognizing an incoming request. Dispatchers form an ordered
- * chain of command, with each dispatcher responsible for recognizing requests that it can process.
+ * A dispatcher is responsible for recognizing an incoming request. Dispatchers form an ordered chain of command, with
+ * each dispatcher responsible for recognizing requests that it can process.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry.ioc.OrderedConfiguration, ClasspathAssetAliasManager, org.apache.tapestry.internal.services.ResourceCache, org.apache.tapestry.internal.services.ResourceStreamer, PageRenderRequestHandler, ComponentActionRequestHandler, ComponentClassResolver, String)
+ * @see org.apache.tapestry.services.TapestryModule#contributeMasterDispatcher(org.apache.tapestry.ioc.OrderedConfiguration,
+ *      ClasspathAssetAliasManager, org.apache.tapestry.internal.services.ResourceCache,
+ *      org.apache.tapestry.internal.services.ResourceStreamer, PageRenderRequestHandler, ComponentEventRequestHandler ,
+ *      ComponentClassResolver, String)
  */
 public interface Dispatcher
 {
     /**
      * Analyzes the incoming request and performs an appropriate operation for each.
      *
-     * @return true if a response was delivered, false if the servlet container should be allowed to
-     *         handle the request
+     * @return true if a response was delivered, false if the servlet container should be allowed to handle the request
      */
     boolean dispatch(Request request, Response response) throws IOException;
 }

@@ -18,7 +18,6 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.internal.services.ComponentEventImpl;
 import org.apache.tapestry.internal.services.EventImpl;
 import org.apache.tapestry.internal.services.Instantiator;
@@ -30,11 +29,9 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.ParameterModel;
 import org.apache.tapestry.runtime.*;
-import org.apache.tapestry.services.ComponentMessagesSource;
 import org.slf4j.Logger;
 
 import java.util.Iterator;
@@ -43,14 +40,14 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Implements {@link org.apache.tapestry.internal.structure.PageElement} and {@link
- * org.apache.tapestry.internal.InternalComponentResources}, and represents a component within an overall page. Much of
- * a component page element's behavior is delegated to user code, via a {@link org.apache.tapestry.runtime.Component}
- * instance.
+ * Implements {@link org.apache.tapestry.internal.structure.PageElement} and represents a component within an overall
+ * page. Much of a component page element's behavior is delegated to user code, via a {@link
+ * org.apache.tapestry.runtime.Component} instance.
  * <p/>
- * Once instantiated, a ComponentPageElementImpl should be registered as a {@link org.apache.tapestry.internal.structure.Page}.
- * This could be done inside the constructors, but that tends to complicate unit tests, so its done by {@link
- * org.apache.tapestry.internal.services.PageElementFactoryImpl}.
+ * Once instantiated, a ComponentPageElement should be registered as a {@linkplain
+ * org.apache.tapestry.internal.structure.Page#addLifecycleListener(org.apache.tapestry.runtime.PageLifecycleListener)
+ * lifecycle listener}. This could be done inside the constructors, but that tends to complicate unit tests, so its done
+ * by {@link org.apache.tapestry.internal.services.PageElementFactoryImpl}.
  * <p/>
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
@@ -359,6 +356,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private final String _elementName;
 
+    private final PageResources _pageResources;
+
     private final RenderCommand _cleanupRender = new RenderCommand()
     {
         public void render(final MarkupWriter writer, RenderQueue queue)
@@ -416,8 +415,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     // is the component to which the mixins are attached.
     private final Component _coreComponent;
 
-    private final ComponentMessagesSource _messagesSource;
-
     /**
      * Component lifecycle instances for all mixins; the core component is added to this list during page load. This is
      * only used in the case that a component has mixins (in which case, the core component is listed last).
@@ -443,6 +440,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     private boolean _rendering;
 
+    /**
+     * Used to detect mismatches calls to {@link MarkupWriter#element(String, Object[])} } and {@link
+     * org.apache.tapestry.MarkupWriter#end()}.  The expectation is that any element(s) begun by this component during
+     * rendering will be balanced by end() calls, resulting in the current element reverting to its initial value.
+     */
     private Element _elementAtSetup;
 
     private final RenderCommand _setupRender = new RenderCommand()
@@ -483,33 +485,36 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     };
 
     // We know that, at the very least, there will be an element to force the component to render
-    // its body,
-    // so there's no reason to wait to initialize the list.
+    // its body, so there's no reason to wait to initialize the list.
 
     private final List<PageElement> _template = newList();
 
-    private final TypeCoercer _typeCoercer;
 
-    private final ComponentClassCache _componentClassCache;
+    public ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location)
+    {
+        ComponentPageElementImpl child = new ComponentPageElementImpl(_page, this, id, elementName, instantiator,
+                                                                      location, _pageResources);
+
+        addEmbeddedElement(child);
+
+        return child;
+    }
 
     /**
      * Constructor for other components embedded within the root component or at deeper levels of the hierarchy.
      *
-     * @param page           ultimately containing this component
-     * @param container      component immediately containing this component (may be null for a root component)
-     * @param id             unique (within the container) id for this component (may be null for a root component)
-     * @param elementName    the name of the element which represents this component in the template, or null for
-     *                       &lt;comp&gt; element or a page component
-     * @param instantiator   used to create the new component instance and access the component's model
-     * @param typeCoercer    used when coercing parameter values
-     * @param messagesSource Provides access to the component's message catalog
-     * @param location       location of the element (within a template), used as part of exception reporting
+     * @param page          ultimately containing this component
+     * @param container     component immediately containing this component (may be null for a root component)
+     * @param id            unique (within the container) id for this component (may be null for a root component)
+     * @param elementName   the name of the element which represents this component in the template, or null for
+     *                      &lt;comp&gt; element or a page component
+     * @param instantiator  used to create the new component instance and access the component's model
+     * @param location      location of the element (within a template), used as part of exception reporting
+     * @param pageResources Provides access to common methods of various services
      */
 
-    public ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
-                                    Instantiator instantiator, TypeCoercer typeCoercer,
-                                    ComponentClassCache componentClassCache, ComponentMessagesSource messagesSource,
-                                    Location location)
+    ComponentPageElementImpl(Page page, ComponentPageElement container, String id, String elementName,
+                             Instantiator instantiator, Location location, PageResources pageResources)
     {
         super(location);
 
@@ -517,10 +522,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         _container = container;
         _id = id;
         _elementName = elementName;
-        _typeCoercer = typeCoercer;
-        _componentClassCache = componentClassCache;
-
-        _messagesSource = messagesSource;
+        _pageResources = pageResources;
 
         ComponentResources containerResources = container == null ? null : container
                 .getComponentResources();
@@ -555,8 +557,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             }
         }
 
-        _coreResources = new InternalComponentResourcesImpl(_page, this, containerResources, instantiator, _typeCoercer,
-                                                            _messagesSource, _componentClassCache);
+        _coreResources = new InternalComponentResourcesImpl(_page, this, containerResources, instantiator,
+                                                            _pageResources);
 
         _coreComponent = _coreResources.getComponent();
     }
@@ -564,10 +566,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     /**
      * Constructor for the root component of a page.
      */
-    public ComponentPageElementImpl(Page page, Instantiator instantiator, TypeCoercer typeCoercer,
-                                    ComponentClassCache componentClassCache, ComponentMessagesSource messagesSource)
+    public ComponentPageElementImpl(Page page, Instantiator instantiator, PageResources pageResources)
     {
-        this(page, null, null, null, instantiator, typeCoercer, componentClassCache, messagesSource, null);
+        this(page, null, null, null, instantiator, null, pageResources);
     }
 
     public void addEmbeddedElement(ComponentPageElement child)
@@ -595,9 +596,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String mixinName = TapestryInternalUtils.lastTerm(mixinClassName);
 
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(_page, this, _coreResources,
-                                                                                      instantiator, _typeCoercer,
-                                                                                      _messagesSource,
-                                                                                      _componentClassCache);
+                                                                                      instantiator, _pageResources);
 
         // TODO: Check for name collision?
 
@@ -828,30 +827,22 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _nestedId;
     }
 
-    public boolean handleEvent(ComponentEvent event)
+    public boolean dispatchEvent(ComponentEvent event)
     {
-        try
-        { // Simple case: no mixins
+        if (_components == null) return _coreComponent.dispatchComponentEvent(event);
 
-            if (_components == null) return _coreComponent.handleComponentEvent(event);
+        // Otherwise, iterate over mixins + core component
 
-            // Otherwise, iterate over mixins + core component
+        boolean result = false;
 
-            boolean result = false;
-
-            for (Component component : _components)
-            {
-                result |= component.handleComponentEvent(event);
-
-                if (event.isAborted()) break;
-            }
-
-            return result;
-        }
-        catch (RuntimeException ex)
+        for (Component component : _components)
         {
-            throw new TapestryException(ex.getMessage(), this, ex);
+            result |= component.dispatchComponentEvent(event);
+
+            if (event.isAborted()) break;
         }
+
+        return result;
     }
 
     /**
@@ -877,7 +868,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             while (i.hasNext()) callback.run(i.next());
         }
-        catch (Exception ex)
+        catch (RuntimeException ex)
         {
             throw new TapestryException(ex.getMessage(), getLocation(), ex);
         }
@@ -946,15 +937,49 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             }
         };
 
+        RuntimeException rootException = null;
+
+        // Because I don't like to reassign parameters.
+
+        String currentEventType = eventType;
+        Object[] currentContext = context;
 
         while (component != null)
         {
-            ComponentEvent event = new ComponentEventImpl(eventType, componentId, context, wrapped, _typeCoercer,
-                                                          _componentClassCache);
+            try
+            {
+                ComponentEvent event = new ComponentEventImpl(currentEventType, componentId, currentContext, wrapped,
+                                                              _pageResources);
 
-            result |= component.handleEvent(event);
+                result |= component.dispatchEvent(event);
 
-            if (event.isAborted()) return result;
+                if (event.isAborted()) return result;
+            }
+            catch (RuntimeException ex)
+            {
+                // An exception in an event handler method
+                // while we're trying to handle a previous exception!
+
+                if (rootException != null) throw rootException;
+
+                // We know component is not null and therefore has a component resources that
+                // should have a location.
+
+                Location location = component.getComponentResources().getLocation();
+
+                // Wrap it up to help ensure that a location is available to the event handler method or,
+                // more likely, to the exception report page.
+
+                rootException = new ComponentEventException(ex.getMessage(), eventType, context, location, ex);
+
+                // Switch over to triggering an "exception" event, starting in the component that
+                // threw the exception.
+
+                currentEventType = "exception";
+                currentContext = new Object[]{rootException};
+
+                continue;
+            }
 
             // On each bubble up, make the event appear to come from the previous component
             // in which the event was triggered.
@@ -963,6 +988,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
             component = component.getContainerElement();
         }
+
+        // If there was a handler for the exception event, it is required to return a non-null (and non-boolean) value
+        // to tell Tapestry what to do.  Since that didn't happen, we have no choice but to rethrow the (wrapped)
+        // exception.
+
+        if (rootException != null) throw rootException;
 
         return result;
     }

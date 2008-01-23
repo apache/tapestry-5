@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,20 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.services;
+package org.apache.tapestry.internal.structure;
 
-import java.lang.annotation.*;
-
+import java.util.Locale;
 
 /**
- * Marker annotation for a service that should be used for traditional page oriented requests, as opposed to Ajax
- * requests (that send ad-hoc or {@linkplain PartialMarkupRenderer partial page markup} responses.
- *
- * @see ComponentEventRequestHandler
+ * Provides access to the {@link PageResources} facade.
  */
-@Target({ElementType.PARAMETER, ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface Traditional
+public interface PageResourcesSource
 {
+    /**
+     * Gets (or creates) an instance of {@link PageResources} for the indicated locale.
+     *
+     * @param locale to create the resources for
+     * @return the resources
+     */
+    PageResources get(Locale locale);
 }

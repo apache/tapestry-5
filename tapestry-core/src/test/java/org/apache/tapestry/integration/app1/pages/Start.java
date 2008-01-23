@@ -204,7 +204,9 @@ public class Start
             new Item("NullStrategyDemo", "Null Field Strategy Demo", "use of the nulls parameter of TextField"),
 
             new Item("OverrideValidationDecorator", "Override Validation Decorator",
-                     "override the default validation decorator"));
+                     "override the default validation decorator"),
+
+            new Item("ExceptionEventDemo", "Exception Event Demo", "handling component event exceptions"));
 
     static
     {

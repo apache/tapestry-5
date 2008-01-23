@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ public class EventMethodTranslate
         // And it gets tricky because we probably should trim spaces!
 
         if (input.equalsIgnoreCase("zero")) return 0;
+
+        if (input.equalsIgnoreCase("i")) throw new ValidationException("Rational numbers only, please.");
 
         // Get the default behavior.
 

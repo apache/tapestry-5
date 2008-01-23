@@ -19,8 +19,8 @@ import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.util.ExceptionUtils;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.ComponentEventException;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
 public class FieldValidationSupportImpl implements FieldValidationSupport
@@ -88,9 +88,9 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         {
             componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[]{clientValue}, callback);
         }
-        catch (ComponentEventException ex)
+        catch (RuntimeException ex)
         {
-            ValidationException ve = ex.get(ValidationException.class);
+            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
 
             if (ve != null) throw ve;
 
@@ -115,9 +115,9 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         {
             componentResources.triggerEvent(VALIDATE_EVENT, new Object[]{value}, null);
         }
-        catch (ComponentEventException ex)
+        catch (RuntimeException ex)
         {
-            ValidationException ve = ex.get(ValidationException.class);
+            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
 
             if (ve != null) throw ve;
 

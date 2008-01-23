@@ -21,7 +21,7 @@ import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
-public class ImmediateActionRenderResponseFilter implements ComponentActionRequestFilter
+public class ImmediateActionRenderResponseFilter implements ComponentEventRequestFilter
 {
     private final Request _request;
 
@@ -36,7 +36,7 @@ public class ImmediateActionRenderResponseFilter implements ComponentActionReque
         _response = response;
     }
 
-    public void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler)
+    public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
             throws IOException
     {
         handler.handle(parameters);

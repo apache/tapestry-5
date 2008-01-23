@@ -536,4 +536,5 @@ public class TapestryInternalUtils
 
         return left.equals(right);
     }
+
 }

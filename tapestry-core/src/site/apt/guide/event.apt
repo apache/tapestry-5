@@ -212,3 +212,38 @@ Event Method Exceptions
 
   Your event handler method may even declare that it "throws Exception" if that is more convienient.
 
+
+Intercepting Event Exceptions
+
+  When an event handler method throws an exception (checked or runtime), Tapestry gives the component and
+  its containing page a chance to handle the exception, before continuing on to
+  report the exception.
+
+  Tapestry fires a new event, of type "exception", passing the thrown exception as the context.  In fact,
+  the exception is wrapped inside a
+  {{{../../apidocs/org/apache/tapestry/runtime/ComponentEventException.html}ComponentEventException}}, from which
+  you may extract the event type and context.
+
+  Thus:
+
+---
+  Object onException(Throwable cause)
+  {
+    _message = cause.getMessage();
+
+    return this;
+  }
+---
+
+  The return value of the exception event handler <replaces> the return value of original event handler method.
+  For the typical case (an exception thrown by an "activate" or "action" event), this will be
+  a {{{pagenav.html}navigational response}} such as a page instance or page name.
+
+  This can be handy for handling cases where the data in the URL is misformatted.
+
+  In the above example, the navigational response is the page itself.
+
+  If there is no exception event handler, or the exception event handler returns null (or is void), then
+  then the exception will be passed to the
+  {{{../../apidocs/org/apache/tapestry/services/RequestExceptionHandler.html}RequestExceptionHandler}} service,
+  which (in default configuraton) will be render the exception page.

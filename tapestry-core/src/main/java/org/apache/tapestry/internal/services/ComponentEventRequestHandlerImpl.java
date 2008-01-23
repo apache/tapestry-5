@@ -21,7 +21,7 @@ import org.apache.tapestry.services.*;
 
 import java.io.IOException;
 
-public class ComponentActionRequestHandlerImpl implements ComponentActionRequestHandler
+public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHandler
 {
     private final ComponentEventResultProcessor _resultProcessor;
 
@@ -31,9 +31,9 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
 
     private final ActionRenderResponseGenerator _generator;
 
-    public ComponentActionRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
-                                             RequestPageCache cache, Response response,
-                                             ActionRenderResponseGenerator generator)
+    public ComponentEventRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
+                                            RequestPageCache cache, Response response,
+                                            ActionRenderResponseGenerator generator)
     {
         _resultProcessor = resultProcessor;
         _cache = cache;
@@ -41,7 +41,7 @@ public class ComponentActionRequestHandlerImpl implements ComponentActionRequest
         _generator = generator;
     }
 
-    public void handle(ComponentActionRequestParameters parameters) throws IOException
+    public void handle(ComponentEventRequestParameters parameters) throws IOException
     {
         Page activePage = _cache.get(parameters.getActivePageName());
 

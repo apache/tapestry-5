@@ -45,8 +45,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, coercer,
-                                                                                  null, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
 
         resources.renderInformalParameters(writer);
 
@@ -73,8 +72,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, coercer,
-                                                                                  null, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
 
         resources.bindParameter("fred", binding);
 
@@ -90,11 +88,11 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         Instantiator ins = mockInstantiator(component);
         MarkupWriter writer = mockMarkupWriter();
-        TypeCoercer coercer = mockTypeCoercer();
         ComponentModel model = mockComponentModel();
         Binding binding = mockBinding();
         Object rawValue = new Object();
         String convertedValue = "*converted*";
+        PageResources pageResources = mockPageResources();
 
         train_getNestedId(element, "foo.bar");
 
@@ -104,14 +102,14 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         train_get(binding, rawValue);
 
-        train_coerce(coercer, rawValue, String.class, convertedValue);
+        train_coerce(pageResources, rawValue, String.class, convertedValue);
 
         writer.attributes("fred", convertedValue);
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, coercer,
-                                                                                  null, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins,
+                                                                                  pageResources);
 
         resources.bindParameter("fred", binding);
 
@@ -138,7 +136,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null, null);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
 
         resources.storeRenderVariable("myRenderVar", value);
 
@@ -171,7 +169,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null, null);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -209,8 +207,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null,
-                                                                                  null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -249,8 +246,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null, null,
-                                                                                  null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
 
 
         try
@@ -285,8 +281,7 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, ins, null, null,
-                                                                                  null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, ins, null);
 
         resources.addPageLifecycleListener(listener);
 

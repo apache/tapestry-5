@@ -18,7 +18,8 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import static org.apache.tapestry.TapestryConstants.PROP_BINDING_PREFIX;
-import org.apache.tapestry.internal.parser.*;
+import org.apache.tapestry.internal.parser.AttributeToken;
+import org.apache.tapestry.internal.parser.ExpansionToken;
 import org.apache.tapestry.internal.structure.*;
 import org.apache.tapestry.ioc.Location;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
@@ -29,9 +30,9 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.ComponentMessagesSource;
 
 import java.util.List;
+import java.util.Locale;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
@@ -41,11 +42,9 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     private final TypeCoercer _typeCoercer;
 
-    private final ComponentClassCache _componentClassCache;
-
     private final BindingSource _bindingSource;
 
-    private final ComponentMessagesSource _messagesSource;
+    private final PageResourcesSource _pageResourcesSource;
 
     private static final String EXPANSION_START = "${";
 
@@ -65,48 +64,14 @@ public class PageElementFactoryImpl implements PageElementFactory
     }
 
     public PageElementFactoryImpl(ComponentInstantiatorSource componentInstantiatorSource,
-                                  ComponentClassResolver resolver, TypeCoercer typeCoercer,
-                                  ComponentClassCache componentClassCache, BindingSource bindingSource,
-                                  ComponentMessagesSource messagesSource)
+                                  ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
+                                  PageResourcesSource pageResourcesSource)
     {
         _componentInstantiatorSource = componentInstantiatorSource;
         _componentClassResolver = resolver;
         _typeCoercer = typeCoercer;
-        _componentClassCache = componentClassCache;
         _bindingSource = bindingSource;
-        _messagesSource = messagesSource;
-    }
-
-    /**
-     * Singleton instance that represents any close tag of any element in any template.
-     */
-    private final PageElement _endElement = new PageElement()
-    {
-        public void render(MarkupWriter writer, RenderQueue queue)
-        {
-            writer.end();
-        }
-
-        @Override
-        public String toString()
-        {
-            return "End";
-        }
-    };
-
-    public PageElement newStartElement(StartElementToken token)
-    {
-        return new StartElementPageElement(token.getNamespaceURI(), token.getName());
-    }
-
-    public PageElement newTextElement(TextToken token)
-    {
-        return new TextPageElement(token.getText());
-    }
-
-    public PageElement newEndElement()
-    {
-        return _endElement;
+        _pageResourcesSource = pageResourcesSource;
     }
 
     public PageElement newAttributeElement(ComponentResources componentResources, AttributeToken token)
@@ -256,14 +221,9 @@ public class PageElementFactoryImpl implements PageElementFactory
             // how the component elements are nested within the loading component's
             // template.
 
-            ComponentPageElementImpl result = new ComponentPageElementImpl(page, container, id, elementName,
-                                                                           instantiator, _typeCoercer,
-                                                                           _componentClassCache, _messagesSource,
-                                                                           location);
+            ComponentPageElement result = container.newChild(id, elementName, instantiator, location);
 
             page.addLifecycleListener(result);
-
-            container.addEmbeddedElement(result);
 
             addMixins(result, instantiator);
 
@@ -292,16 +252,17 @@ public class PageElementFactoryImpl implements PageElementFactory
         }
     }
 
-    public ComponentPageElement newRootComponentElement(Page page, String componentType)
+    public ComponentPageElement newRootComponentElement(Page page, String componentType, Locale locale)
     {
         Instantiator instantiator = _componentInstantiatorSource.findInstantiator(componentType);
 
-        ComponentPageElementImpl result = new ComponentPageElementImpl(page, instantiator, _typeCoercer,
-                                                                       _componentClassCache, _messagesSource);
+        PageResources pageResources = _pageResourcesSource.get(locale);
 
-        addMixins(result, instantiator);
+        ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, pageResources);
 
         page.addLifecycleListener(result);
+
+        addMixins(result, instantiator);
 
         return result;
     }
@@ -311,23 +272,6 @@ public class PageElementFactoryImpl implements PageElementFactory
         ComponentModel model = instantiator.getModel();
         for (String mixinClassName : model.getMixinClassNames())
             addMixinByClassName(component, mixinClassName);
-    }
-
-    public PageElement newRenderBodyElement(final ComponentPageElement component)
-    {
-        return new PageElement()
-        {
-            public void render(MarkupWriter writer, RenderQueue queue)
-            {
-                component.enqueueBeforeRenderBody(queue);
-            }
-
-            @Override
-            public String toString()
-            {
-                return String.format("RenderBody[%s]", component.getNestedId());
-            }
-        };
     }
 
     public void addMixinByTypeName(ComponentPageElement component, String mixinType)
@@ -343,16 +287,6 @@ public class PageElementFactoryImpl implements PageElementFactory
                 .findInstantiator(mixinClassName);
 
         component.addMixin(mixinInstantiator);
-    }
-
-    public PageElement newCommentElement(CommentToken token)
-    {
-        return new CommentPageElement(token.getComment());
-    }
-
-    public PageElement newDTDElement(DTDToken token)
-    {
-        return new DTDPageElement(token.getName(), token.getPublicId(), token.getSystemId());
     }
 
     public Binding newBinding(String parameterName, ComponentResources loadingComponentResources,

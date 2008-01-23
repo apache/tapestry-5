@@ -486,4 +486,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
 
         assertEquals(TapestryInternalUtils.toClassAttributeValue(classes), "fred barney wilma");
     }
+
+
 }

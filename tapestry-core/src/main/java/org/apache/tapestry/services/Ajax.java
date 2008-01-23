@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,10 +18,10 @@ import java.lang.annotation.*;
 
 
 /**
- * Marker annotation for services related to processing an Ajax request (rather than
- * a {@linkplain org.apache.tapestry.services.Traditional traditional request}).
+ * Marker annotation for services related to processing an Ajax request (rather than a {@linkplain
+ * org.apache.tapestry.services.Traditional traditional request}).
  *
- * @see org.apache.tapestry.services.ComponentActionRequestHandler
+ * @see ComponentEventRequestHandler
  */
 @Target({ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

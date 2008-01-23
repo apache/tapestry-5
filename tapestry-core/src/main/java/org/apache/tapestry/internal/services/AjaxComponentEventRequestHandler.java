@@ -25,10 +25,10 @@ import org.apache.tapestry.services.*;
 import java.io.IOException;
 
 /**
- * Similar to {@link ComponentActionRequestHandlerImpl}, but built around the Ajax request cycle, where the action
+ * Similar to {@link ComponentEventRequestHandlerImpl}, but built around the Ajax request cycle, where the action
  * request sends back an immediate JSON response containing the new content.
  */
-public class AjaxComponentActionRequestHandler implements ComponentActionRequestHandler
+public class AjaxComponentEventRequestHandler implements ComponentEventRequestHandler
 {
     private final RequestPageCache _cache;
 
@@ -40,9 +40,9 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
 
     private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
 
-    public AjaxComponentActionRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue,
-                                             @Ajax ComponentEventResultProcessor resultProcessor,
-                                             PageContentTypeAnalyzer pageContentTypeAnalyzer)
+    public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue,
+                                            @Ajax ComponentEventResultProcessor resultProcessor,
+                                            PageContentTypeAnalyzer pageContentTypeAnalyzer)
     {
         _cache = cache;
         _queue = queue;
@@ -51,7 +51,7 @@ public class AjaxComponentActionRequestHandler implements ComponentActionRequest
         _request = request;
     }
 
-    public void handle(ComponentActionRequestParameters parameters) throws IOException
+    public void handle(ComponentEventRequestParameters parameters) throws IOException
     {
         Page activePage = _cache.get(parameters.getActivePageName());
 

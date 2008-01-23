@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,44 +14,41 @@
 
 package org.apache.tapestry.runtime;
 
+import org.apache.tapestry.ioc.internal.util.TapestryException;
+
 /**
- * An exception thrown while invoking a component event handler method.
+ * A wrapper exception around any exception thrown when invoking a component event handler. In some cases, the
+ * underlying exception may have been a declared exception, and will be wrapped in a RuntimeException.
+ *
+ * @see org.apache.tapestry.ioc.util.ExceptionUtils#findCause(Throwable, Class)
  */
-public class ComponentEventException extends RuntimeException
+public class ComponentEventException extends TapestryException
 {
-    private final String _methodDescription;
+    private final String _eventType;
+    private final Object[] _context;
 
     /**
-     * @param message           message describing the problem, usually obtained from the underly cause exception
-     * @param methodDescription describes the method being invoke that threw the cause exception
-     * @param cause             the underlying exception actually thrown by the event handler method
+     * @param message   exception message
+     * @param eventType type of event that triggered the exception
+     * @param context   context passed with the failed event
+     * @param location  location of the component while failed (may be null)
+     * @param cause     underlying exception
      */
-    public ComponentEventException(String message, String methodDescription, Throwable cause)
+    public ComponentEventException(String message, String eventType, Object[] context, Object location, Throwable cause)
     {
-        super(message, cause);
+        super(message, location, cause);
 
-        _methodDescription = methodDescription;
+        _eventType = eventType;
+        _context = context;
     }
 
-    public String getMethodDescription()
+    public String getEventType()
     {
-        return _methodDescription;
+        return _eventType;
     }
 
-    /**
-     * Checks to see if the root cause of this exception is assignable to the provided type. Returns the
-     * root cause, cast to the given value if so, or null otherwise.
-     *
-     * @param exceptionType type of exception to check for
-     * @return the root cause, or null if the root cause is null or not assignable to the provided exception type
-     */
-    public <T extends Exception> T get(Class<T> exceptionType)
+    public Object[] getContext()
     {
-        Throwable cause = getCause();
-
-        if (cause != null && exceptionType.isAssignableFrom(cause.getClass())) return exceptionType.cast(cause);
-
-        return null;
+        return _context;
     }
-
 }

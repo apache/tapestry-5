@@ -26,6 +26,7 @@ import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.structure.PageElement;
+import org.apache.tapestry.internal.structure.PageResources;
 import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
@@ -239,12 +240,6 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         expect(model.getComponentClassName()).andReturn(className).atLeastOnce();
     }
 
-    protected final void train_newRenderBodyElement(PageElementFactory elementFactory, ComponentPageElement component,
-                                                    PageElement body)
-    {
-        expect(elementFactory.newRenderBodyElement(component)).andReturn(body);
-    }
-
     protected final PageElement mockPageElement()
     {
         return newMock(PageElement.class);
@@ -322,9 +317,10 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     }
 
     protected final void train_newRootComponentElement(PageElementFactory elementFactory, String className,
-                                                       ComponentPageElement rootElement)
+                                                       ComponentPageElement rootElement, Locale locale)
     {
-        expect(elementFactory.newRootComponentElement(isA(Page.class), eq(className))).andReturn(rootElement);
+        expect(elementFactory.newRootComponentElement(isA(Page.class), eq(className), eq(locale))).andReturn(
+                rootElement);
     }
 
     protected final void train_getModel(Instantiator ins, ComponentModel model)
@@ -582,5 +578,21 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final void train_getRenderingPage(PageRenderQueue queue, Page page)
     {
         expect(queue.getRenderingPage()).andReturn(page);
+    }
+
+    protected final PageResources mockPageResources()
+    {
+        return newMock(PageResources.class);
+    }
+
+    protected final void train_toClass(PageResources resources, String className, Class toClass)
+    {
+        expect(resources.toClass(className)).andReturn(toClass).atLeastOnce();
+    }
+
+    protected final <S, T> void train_coerce(PageResources pageResources, S input, Class<T> expectedType,
+                                             T coercedValue)
+    {
+        expect(pageResources.coerce(input, expectedType)).andReturn(coercedValue);
     }
 }

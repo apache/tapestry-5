@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.internal.structure.PageResources;
 import org.apache.tapestry.runtime.ComponentEvent;
 
 public class ComponentEventImpl extends EventImpl implements ComponentEvent
@@ -26,9 +26,7 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     private final Object[] _context;
 
-    private final TypeCoercer _typeCoercer;
-
-    private final ComponentClassCache _componentClassCache;
+    private final PageResources _pageResources;
 
     /**
      * @param eventType              non blank string used to identify the type of event that was triggered
@@ -37,22 +35,17 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
      * @param context                an array of values that can be made available to handler methods via method
      *                               parameters
      * @param handler                invoked when a non-null return value is obtained from an event handler method
-     * @param typeCoercer            used when coercing context values to parameter types
-     * @param classLoader            loader used when resolving a class name to a class  (ultimately, this is the class
-     *                               loader used to create the component class; that loader's parent is the Thread's
-     *                               context class loader).
+     * @param pageResources          provides access to common resources and services
      */
     public ComponentEventImpl(String eventType, String originatingComponentId, Object[] context,
-                              ComponentEventCallback handler, TypeCoercer typeCoercer,
-                              ComponentClassCache componentClassCache)
+                              ComponentEventCallback handler, PageResources pageResources)
     {
         super(handler);
 
         _eventType = eventType;
         _originatingComponentId = originatingComponentId;
+        _pageResources = pageResources;
         _context = context != null ? context : new Object[0];
-        _typeCoercer = typeCoercer;
-        _componentClassCache = componentClassCache;
     }
 
     public boolean matches(String eventType, String componentId, int parameterCount)
@@ -69,9 +62,9 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
                 .contextIndexOutOfRange(getMethodDescription()));
         try
         {
-            Class desiredType = _componentClassCache.forName(desiredTypeName);
+            Class desiredType = _pageResources.toClass(desiredTypeName);
 
-            return _typeCoercer.coerce(_context[index], desiredType);
+            return _pageResources.coerce(_context[index], desiredType);
         }
         catch (Exception ex)
         {
