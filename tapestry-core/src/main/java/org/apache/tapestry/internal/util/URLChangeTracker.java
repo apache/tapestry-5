@@ -17,17 +17,16 @@ package org.apache.tapestry.internal.util;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 
 import java.io.File;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
 
 /**
- * Given a (growing) set of URLs, can periodically check to see if any of the underlying resources
- * has changed. This class is capable of using either millisecond-level granularity or second-level
- * granularity. Millisecond-level granularity is used by default. Second-level granularity is
- * provided for compatibility with browsers vis-a-vis resource caching -- that's how granular they
- * get with their "If-Modified-Since", "Last-Modified" and "Expires" headers.
+ * Given a (growing) set of URLs, can periodically check to see if any of the underlying resources has changed. This
+ * class is capable of using either millisecond-level granularity or second-level granularity. Millisecond-level
+ * granularity is used by default. Second-level granularity is provided for compatibility with browsers vis-a-vis
+ * resource caching -- that's how granular they get with their "If-Modified-Since", "Last-Modified" and "Expires"
+ * headers.
  */
 public class URLChangeTracker
 {
@@ -46,8 +45,7 @@ public class URLChangeTracker
     }
 
     /**
-     * Creates a new URL change tracker, using either millisecond-level granularity or second-level
-     * granularity.
+     * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity.
      *
      * @param granularitySeconds whether or not to use second-level granularity
      */
@@ -57,8 +55,8 @@ public class URLChangeTracker
     }
 
     /**
-     * Stores a new URL into the tracker, or returns the previous time stamp for a previously added
-     * URL. Filters out all non-file URLs.
+     * Stores a new URL into the tracker, or returns the previous time stamp for a previously added URL. Filters out all
+     * non-file URLs.
      *
      * @param url of the resource to add
      * @return the current timestamp for the URL, or 0 if not a file URL
@@ -67,34 +65,40 @@ public class URLChangeTracker
     {
         if (!url.getProtocol().equals("file")) return 0;
 
+        File resourceFile = toFile(url);
+
+        if (_fileToTimestamp.containsKey(resourceFile)) return _fileToTimestamp.get(resourceFile);
+
+        long timestamp = readTimestamp(resourceFile);
+
+        // A quick and imperfect fix for TAPESTRY-1918.  When a file
+        // is added, add the directory containing the file as well.
+
+        _fileToTimestamp.put(resourceFile, timestamp);
+
+        File dir = resourceFile.getParentFile();
+
+        if (!_fileToTimestamp.containsKey(dir))
+        {
+            long dirTimestamp = readTimestamp(dir);
+            _fileToTimestamp.put(dir, dirTimestamp);
+        }
+
+
+        return timestamp;
+    }
+
+    private File toFile(URL url)
+    {
+        // http://weblogs.java.net/blog/kohsuke/archive/2007/04/how_to_convert.html
+
         try
         {
-            URI resourceURI = url.toURI();
-            File resourceFile = new File(resourceURI);
-
-            if (_fileToTimestamp.containsKey(resourceFile)) return _fileToTimestamp.get(resourceFile);
-
-            long timestamp = readTimestamp(resourceFile);
-
-            // A quick and imperfect fix for TAPESTRY-1918.  When a file
-            // is added, add the directory containing the file as well.
-
-            _fileToTimestamp.put(resourceFile, timestamp);
-
-            File dir = resourceFile.getParentFile();
-
-            if (!_fileToTimestamp.containsKey(dir))
-            {
-                long dirTimestamp = readTimestamp(dir);
-                _fileToTimestamp.put(dir, dirTimestamp);
-            }
-
-
-            return timestamp;
+            return new File(url.toURI());
         }
         catch (URISyntaxException ex)
         {
-            throw new RuntimeException(ex);
+            return new File(url.getPath());
         }
     }
 
@@ -107,8 +111,7 @@ public class URLChangeTracker
     }
 
     /**
-     * Re-acquires the last updated timestamp for each URL and returns true if any timestamp has
-     * changed.
+     * Re-acquires the last updated timestamp for each URL and returns true if any timestamp has changed.
      */
     public boolean containsChanges()
     {
@@ -133,8 +136,7 @@ public class URLChangeTracker
     }
 
     /**
-     * Returns the time that the specified file was last modified, possibly rounded down to the
-     * nearest second.
+     * Returns the time that the specified file was last modified, possibly rounded down to the nearest second.
      */
     private long readTimestamp(File file)
     {
@@ -153,8 +155,7 @@ public class URLChangeTracker
     }
 
     /**
-     * Needed for testing; changes file timestamps so that a change will be detected by
-     * {@link #containsChanges()}.
+     * Needed for testing; changes file timestamps so that a change will be detected by {@link #containsChanges()}.
      */
     public void forceChange()
     {
