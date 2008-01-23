@@ -1,0 +1,9 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+<h1>Post Login</h1>
+    
+    <p>
+        You have provided the correct user name and password.
+    </p>    
+    
+</html>

@@ -1,0 +1,10 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  
+  <h1>Renderable Demo</h1>
+  
+  <p>
+    The following text is provided by a Renderable: [<t:delegate to="renderable"/>]
+  </p>
+  
+  
+</html>

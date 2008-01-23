@@ -1,0 +1,14 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>BeanEdit Component Demo</h1>
+    
+<t:beandisplay t:id="registrationdata">
+  <t:parameter name="citizen">
+    <t:if test="registrationdata.citizen">U.S. Citizen
+      <t:parameter name="else">
+        Resident Alien
+      </t:parameter>
+    </t:if>
+  </t:parameter>
+</t:beandisplay>
+    
+</html>

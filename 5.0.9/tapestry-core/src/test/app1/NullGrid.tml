@@ -1,0 +1,9 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    
+    <h1>Null Grid Demo</h1>
+    
+    <p>Default behavior for when a Grid is passed null for source.</p>
+    
+    <table t:type="Grid" source="null"/>
+    
+</html>

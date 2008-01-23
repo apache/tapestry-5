@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<html><head><link href="foo.css" rel="stylesheet" type="text/css"/><link href="bar/baz.css" media="print" rel="stylesheet" type="text/css"/></head><body><p>Ready to be updated with styles.</p></body></html>

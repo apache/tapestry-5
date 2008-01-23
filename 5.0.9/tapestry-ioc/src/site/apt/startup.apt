@@ -1,0 +1,28 @@
+ ----
+ Registry Startup
+ ----
+ 
+Registry Startup
+
+  It is possible to provide extra logic to be executed at Registry startup, by making contributions to the 
+  RegistryStartup service configuration.
+  
+  The values contributed are Runnable objects.  The configuration is ordered, so it is possible to control
+  in what order the objects are executed.
+  
+  RegistryStartup occurs after eager loaded services are instantiated.
+  
+  Here's an example of a module that makes a contribution.
+  
+----
+
+public class MyModule
+{
+  public static void contributeRegistryStartup(OrderedConfiguration<Runnable> configuration)
+  {
+    configuration.add("MyContributionName", new Runnable() { ... });
+  }
+}
+----
+
+  Generally, these contributions are in the form of inner classes; if they were services, they could just be eagerly loaded.
