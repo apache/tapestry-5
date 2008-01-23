@@ -1198,7 +1198,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         type("count", "13");
         clickAndWait(SUBMIT);
 
-        assertTextPresent("Thirteen is an unlucky number.");
+        assertTextPresent("Event Handler Method Translate", "Thirteen is an unlucky number.");
+
+        type("count", "i");
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("Event Handler Method Translate", "Rational numbers only, please.");
     }
 
     @Test
@@ -1446,5 +1451,32 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertSourcePresent(
                 "[Before label for Value]<label for=\"value\" id=\"value:label\">Value</label>[After label for Value][Before field Value]");
+    }
+
+    /**
+     * TAPESTRY-1724
+     */
+    @Test
+    public void component_event_errors()
+    {
+        start("Exception Event Demo", "enable", "force invalid activation context");
+
+        assertTextPresent(
+                "Exception: Exception in method org.apache.tapestry.integration.app1.pages.ExceptionEventDemo.onActivate(float)");
+
+        clickAndWait("link=force invalid event context");
+
+        assertTextPresent(
+                "Exception: Exception in method org.apache.tapestry.integration.app1.pages.ExceptionEventDemo.onActionFromFail(float)");
+
+        // Revert to normal handling: return null from the onException() event handler method.
+
+        clickAndWait("link=disable");
+
+        clickAndWait("link=force invalid event context");
+
+        assertTextPresent("An unexpected application exception has occurred.",
+                          "org.apache.tapestry.ioc.internal.util.TapestryException", "java.lang.NumberFormatException");
+
     }
 }

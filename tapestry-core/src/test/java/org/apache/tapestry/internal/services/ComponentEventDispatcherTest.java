@@ -22,12 +22,12 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-public class ComponentActionDispatcherTest extends InternalBaseTestCase
+public class ComponentEventDispatcherTest extends InternalBaseTestCase
 {
     @Test
     public void no_dot_or_colon_in_path() throws Exception
     {
-        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -35,16 +35,16 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler, null);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
         verify();
     }
 
-    protected final ComponentActionRequestHandler newComponentActionRequestHandler()
+    protected final ComponentEventRequestHandler newComponentActionRequestHandler()
     {
-        return newMock(ComponentActionRequestHandler.class);
+        return newMock(ComponentEventRequestHandler.class);
     }
 
     @Test
@@ -117,16 +117,16 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void page_activation_context_in_request() throws Exception
     {
-        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
-        ComponentActionRequestParameters expectedParameters = new ComponentActionRequestParameters("mypage", "mypage",
-                                                                                                   "", "eventname",
-                                                                                                   new String[]{"alpha",
-                                                                                                                "beta"},
-                                                                                                   new String[0]);
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("mypage", "mypage", "",
+                                                                                                 "eventname",
+                                                                                                 new String[]{"alpha",
+                                                                                                              "beta"},
+                                                                                                 new String[0]);
 
         train_getPath(request, "/mypage:eventname");
 
@@ -140,7 +140,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -150,16 +150,15 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void different_active_and_containing_pages() throws Exception
     {
-        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
-        ComponentActionRequestParameters expectedParameters = new ComponentActionRequestParameters("activepage",
-                                                                                                   "mypage", "",
-                                                                                                   "eventname",
-                                                                                                   new String[0],
-                                                                                                   new String[0]);
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("activepage", "mypage",
+                                                                                                 "", "eventname",
+                                                                                                 new String[0],
+                                                                                                 new String[0]);
 
         train_getPath(request, "/mypage:eventname");
 
@@ -173,7 +172,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -183,7 +182,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     @Test
     public void request_path_reference_non_existent_page() throws Exception
     {
-        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -194,7 +193,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -204,17 +203,17 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
     private void test(String requestPath, String containerPageName, String nestedComponentId, String eventType,
                       String... eventContext) throws IOException
     {
-        ComponentActionRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
-        ComponentActionRequestParameters expectedParameters = new ComponentActionRequestParameters(containerPageName,
-                                                                                                   containerPageName,
-                                                                                                   nestedComponentId,
-                                                                                                   eventType,
-                                                                                                   new String[0],
-                                                                                                   eventContext);
+        ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters(containerPageName,
+                                                                                                 containerPageName,
+                                                                                                 nestedComponentId,
+                                                                                                 eventType,
+                                                                                                 new String[0],
+                                                                                                 eventContext);
 
         train_getPath(request, requestPath);
 
@@ -228,7 +227,7 @@ public class ComponentActionDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentActionDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
 
         assertTrue(dispatcher.dispatch(request, response));
 

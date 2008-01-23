@@ -16,7 +16,6 @@ package org.apache.tapestry.internal.structure;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.internal.InternalComponentResources;
-import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Location;
@@ -27,12 +26,10 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseIns
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
-import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.ComponentMessagesSource;
 import org.slf4j.Logger;
 
 import java.util.Locale;
@@ -52,18 +49,14 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private final ComponentPageElement _element;
 
-    private final TypeCoercer _typeCoercer;
-
     private final Component _component;
 
     private final ComponentResources _containerResources;
 
-    private final ComponentClassCache _componentClassCache;
-
     // Case insensitive
     private Map<String, Binding> _bindings;
 
-    private final ComponentMessagesSource _messagesSource;
+    private final PageResources _pageResources;
 
     private Messages _messages;
 
@@ -72,16 +65,13 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
                                           ComponentResources containerResources, Instantiator componentInstantiator,
-                                          TypeCoercer typeCoercer, ComponentMessagesSource messagesSource,
-                                          ComponentClassCache componentClassCache)
+                                          PageResources elementResources)
     {
         _page = page;
         _element = element;
         _containerResources = containerResources;
-        _componentClassCache = componentClassCache;
+        _pageResources = elementResources;
         _componentModel = componentInstantiator.getModel();
-        _typeCoercer = typeCoercer;
-        _messagesSource = messagesSource;
 
         _nestedId = _element.getNestedId();
 
@@ -218,7 +208,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             Object boundValue = b.get();
 
-            return _typeCoercer.coerce(boundValue, expectedType);
+            return _pageResources.coerce(boundValue, expectedType);
         }
         catch (Exception ex)
         {
@@ -229,7 +219,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Object readParameter(String parameterName, String desiredTypeName)
     {
-        Class parameterType = _componentClassCache.forName(desiredTypeName);
+        Class parameterType = _pageResources.toClass(desiredTypeName);
 
         return readParameter(parameterName, parameterType);
     }
@@ -250,7 +240,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         try
         {
-            Object coerced = _typeCoercer.coerce(parameterValue, bindingType);
+            Object coerced = _pageResources.coerce(parameterValue, bindingType);
 
             b.set(coerced);
         }
@@ -302,7 +292,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             if (value instanceof Block) continue;
 
-            String valueString = _typeCoercer.coerce(value, String.class);
+            String valueString = _pageResources.coerce(value, String.class);
 
             writer.attributes(name, valueString);
         }
@@ -332,7 +322,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Messages getMessages()
     {
-        if (_messages == null) _messages = _messagesSource.getMessages(_componentModel, getLocale());
+        if (_messages == null) _messages = _pageResources.getMessages(_componentModel);
 
         return _messages;
     }

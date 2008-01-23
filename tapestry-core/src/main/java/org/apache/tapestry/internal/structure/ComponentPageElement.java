@@ -19,20 +19,22 @@ import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry.internal.services.Instantiator;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.model.ParameterModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentEvent;
+import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.runtime.RenderQueue;
 
 /**
- * Extended version of {@link org.apache.tapestry.internal.structure.PageElement} for elements that
- * are, in fact, components (rather than just static markup).
+ * Extended version of {@link org.apache.tapestry.internal.structure.PageElement} for elements that are, in fact,
+ * components (rather than just static markup).
  */
-public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, PageElement, BodyPageElement
+public interface ComponentPageElement extends ComponentResourcesCommon, InternalComponentResourcesCommon, PageElement, BodyPageElement, PageLifecycleListener
 {
     /**
-     * Returns the core component associated with this page element (as opposed to any mixins
-     * attached to the component).
+     * Returns the core component associated with this page element (as opposed to any mixins attached to the
+     * component).
      */
     Component getComponent();
 
@@ -52,11 +54,10 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     ComponentPageElement getContainerElement();
 
     /**
-     * Used during the construction of a page. Adds a page element as part of the template for this
-     * page element. A page element will eventually render by sequentially rendering these elements.
-     * A page elements template is really just the outermost portions of the component's template
-     * ... where a template contains elements that are all components, those components will receive
-     * portions of the template as their body.
+     * Used during the construction of a page. Adds a page element as part of the template for this page element. A page
+     * element will eventually render by sequentially rendering these elements. A page elements template is really just
+     * the outermost portions of the component's template ... where a template contains elements that are all
+     * components, those components will receive portions of the template as their body.
      */
     void addToTemplate(PageElement element);
 
@@ -68,8 +69,8 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     void addBlock(String blockId, Block block);
 
     /**
-     * Adds a component to its container. The embedded component's id must be unique within the
-     * container (after the id is converted to lower case).
+     * Adds a component to its container. The embedded component's id must be unique within the container (after the id
+     * is converted to lower case).
      */
     void addEmbeddedElement(ComponentPageElement child);
 
@@ -95,21 +96,33 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
     void enqueueBeforeRenderBody(RenderQueue queue);
 
     /**
-     * Asks each mixin and component to {@link Component#handleComponentEvent(ComponentEvent)},
-     * returning true if any handler was found.
+     * Asks each mixin and component to {@link Component#dispatchComponentEvent(ComponentEvent)}, returning true if any
+     * handler was found.
      *
      * @param event to be handled
      * @return true if a handler was found
      */
-    boolean handleEvent(ComponentEvent event);
+    boolean dispatchEvent(ComponentEvent event);
 
     /**
-     * Searches the component (and its mixins) for a formal parameter matching the given name. If
-     * found, the {@link ParameterModel#getDefaultBindingPrefix() default binding prefix} is
-     * returned. Otherwise the parameter is an informal parameter, and null is returned.
+     * Searches the component (and its mixins) for a formal parameter matching the given name. If found, the {@link
+     * ParameterModel#getDefaultBindingPrefix() default binding prefix} is returned. Otherwise the parameter is an
+     * informal parameter, and null is returned.
      *
      * @param parameterName the name of the parameter, possibly qualified with the mixin class name
      * @return the default binding prefix, or null
      */
     String getDefaultBindingPrefix(String parameterName);
+
+    /**
+     * Creates a new child component of the invoked component.  The new element will be added as an embedded element of
+     * its container.
+     *
+     * @param id           simple id of the new component
+     * @param elementName  name of the component's element in its container's template
+     * @param instantiator used to create a component instance, and access the component's model
+     * @param location     location of the element within its container's template
+     * @return the new component
+     */
+    ComponentPageElement newChild(String id, String elementName, Instantiator instantiator, Location location);
 }

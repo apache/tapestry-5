@@ -17,13 +17,13 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 
 /**
- * Filter interface for {@link ComponentActionRequestHandler}.
+ * Filter interface for {@link ComponentEventRequestHandler}.
  *
  * @see org.apache.tapestry.services.TapestryModule#contributeComponentActionRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration,
- *      org.apache.tapestry.internal.services.RequestEncodingInitializer, ComponentActionRequestHandler,
+ *      org.apache.tapestry.internal.services.RequestEncodingInitializer, ComponentEventRequestHandler ,
  *      org.apache.tapestry.ioc.ObjectLocator) }
  */
-public interface ComponentActionRequestFilter
+public interface ComponentEventRequestFilter
 {
     /**
      * Filter for a component action request.
@@ -31,5 +31,5 @@ public interface ComponentActionRequestFilter
      * @param parameters defining details of the request
      * @param handler    to delegate to
      */
-    void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler) throws IOException;
+    void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler) throws IOException;
 }

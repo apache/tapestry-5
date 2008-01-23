@@ -27,6 +27,8 @@ import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
 import org.apache.tapestry.internal.services.*;
+import org.apache.tapestry.internal.structure.PageResourcesSource;
+import org.apache.tapestry.internal.structure.PageResourcesSourceImpl;
 import org.apache.tapestry.internal.translator.*;
 import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.*;
@@ -112,6 +114,7 @@ public final class TapestryModule
         binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
         binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
         binder.bind(RequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
+        binder.bind(PageResourcesSource.class, PageResourcesSourceImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -1171,6 +1174,14 @@ public final class TapestryModule
         configuration.add(StreamResponse.class, new StreamResponseResultProcessor(_response));
     }
 
+    /**
+     * The MasterDispatcher is a chain-of-command of individual Dispatchers, each handling (like a servlet) a particular
+     * kind of incoming request. <dl> <dt>RootPath</dt> <dd>Renders the start page for the "/" request</dd>
+     * <dt>Asset</dt> <dd>Provides access to classpath assets</dd> <dt>PageRender</dt> <dd>Identifies the page name and
+     * activation context and forwards onto {@link PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies
+     * the {@link ComponentEventRequestParameters} and forwards onto the {@link ComponentEventRequestHandler}</dd>
+     * </dl>
+     */
     public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
 
                                            ClasspathAssetAliasManager aliasManager,
@@ -1181,7 +1192,7 @@ public final class TapestryModule
 
                                            PageRenderRequestHandler pageRenderRequestHandler,
 
-                                           @Traditional ComponentActionRequestHandler componentActionRequestHandler,
+                                           @Traditional ComponentEventRequestHandler componentEventRequestHandler,
 
                                            ComponentClassResolver componentClassResolver,
 
@@ -1201,8 +1212,8 @@ public final class TapestryModule
 
         configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler));
 
-        configuration.add("ComponentAction",
-                          new ComponentActionDispatcher(componentActionRequestHandler, componentClassResolver),
+        configuration.add("ComponentEvent",
+                          new ComponentEventDispatcher(componentEventRequestHandler, componentClassResolver),
                           "after:PageRender");
     }
 
@@ -1578,26 +1589,26 @@ public final class TapestryModule
      * Builds the component action request handler for traditional (non-Ajax) requests. These typically result in a
      * redirect to a Tapestry render URL.
      *
-     * @see org.apache.tapestry.internal.services.ComponentActionRequestHandlerImpl
+     * @see org.apache.tapestry.internal.services.ComponentEventRequestHandlerImpl
      */
     @Marker(Traditional.class)
-    public ComponentActionRequestHandler buildComponentActionRequestHandler(
-            List<ComponentActionRequestFilter> configuration, Logger logger, ServiceResources resources)
+    public ComponentEventRequestHandler buildComponentActionRequestHandler(
+            List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
-        return _pipelineBuilder.build(logger, ComponentActionRequestHandler.class, ComponentActionRequestFilter.class,
-                                      configuration, resources.autobuild(ComponentActionRequestHandlerImpl.class));
+        return _pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
+                                      configuration, resources.autobuild(ComponentEventRequestHandlerImpl.class));
     }
 
     /**
-     * Builds the action request handler for Ajax requests, based on {@link org.apache.tapestry.internal.services.AjaxComponentActionRequestHandler}.
+     * Builds the action request handler for Ajax requests, based on {@link org.apache.tapestry.internal.services.AjaxComponentEventRequestHandler}.
      * Filters on the request handler are supported here as well.
      */
     @Marker(Ajax.class)
-    public ComponentActionRequestHandler buildAjaxComponentActionRequestHandler(
-            List<ComponentActionRequestFilter> configuration, Logger logger, ServiceResources resources)
+    public ComponentEventRequestHandler buildAjaxComponentActionRequestHandler(
+            List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
-        return _pipelineBuilder.build(logger, ComponentActionRequestHandler.class, ComponentActionRequestFilter.class,
-                                      configuration, resources.autobuild(AjaxComponentActionRequestHandler.class));
+        return _pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
+                                      configuration, resources.autobuild(AjaxComponentEventRequestHandler.class));
     }
 
     /**
@@ -2045,14 +2056,14 @@ public final class TapestryModule
      * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
      * response, which is the normal behavior) </dd> </dl>
      */
-    public void contributeComponentActionRequestHandler(
-            OrderedConfiguration<ComponentActionRequestFilter> configuration,
-            final RequestEncodingInitializer encodingInitializer, @Ajax ComponentActionRequestHandler ajaxHandler,
-            ObjectLocator locator)
+    public void contributeComponentActionRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
+                                                        final RequestEncodingInitializer encodingInitializer,
+                                                        @Ajax ComponentEventRequestHandler ajaxHandler,
+                                                        ObjectLocator locator)
     {
-        ComponentActionRequestFilter requestEncodingFilter = new ComponentActionRequestFilter()
+        ComponentEventRequestFilter requestEncodingFilter = new ComponentEventRequestFilter()
         {
-            public void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler)
+            public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
                     throws IOException
             {
                 encodingInitializer.initializeRequestEncoding(parameters.getActivePageName());

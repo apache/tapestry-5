@@ -42,6 +42,9 @@ HttpServletRequestHandler Pipeline
     {{{../../apidocs/org/apache/tapestry/services/RequestHandler.html}RequestHandler}} pipeline.
  
   []
+
+  Primarily, this exists to bridge from the Servlet API objects to the corresponding Tapestry objects.  This is the basis
+  for the planned portlet integration for Tapestry.
      
 RequestHandler Pipeline
  
@@ -50,7 +53,7 @@ RequestHandler Pipeline
    Tapestry require access to information in the request, such as query parameters, that information is obtained from the
    Request (or Response) objects.
    
-   The pipeline includes a number of built-in filters.  
+   The pipeline includes a number of built-in filters:  
    
    * CheckForUpdates is responsible for {{{reload.html}class and template reloading}}.
    
@@ -60,7 +63,7 @@ RequestHandler Pipeline
      the request, so that the servlet container can handle the reuest normally.
    
    * ErrorFilter catches uncaught exceptions from the lower levels of Tapestry and presents the exception report page.
-     This involves the {{{../../apidocs/org/apache/tapestry/services/RequestExceptionHandler.html}alias:RequestExceptionHandler}} service,
+     This involves the {{{../../apidocs/org/apache/tapestry/services/RequestExceptionHandler.html}RequestExceptionHandler}} service,
      which is responsible for initializing and rendering the
      {{{../../apidocs/org/apache/tapestry/corelib/pages/ExceptionReport.html}core/ExceptionReport}} page. 
     
@@ -101,9 +104,9 @@ Master Dispatcher Service
   a page name "mypage". Assuming the second search was succesful, the page would be activated with the context "27".  If no logical page name
   can be identified, control passes to the next dispatcher.
 
-* ComponentAction
+* ComponentEvent
 
-  The component action dispatcher is used to trigger events in components.
+  The component event dispatcher is used to trigger events in components.
   
   The URL identifies the name of the page, then a series of component ids (the path from the page down to the specific component), then the name of the event to be
   triggered on the component. The remaining path elements are used as the context for the <event> (not for the page activation, which
@@ -133,7 +136,5 @@ Request Service
   {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/shadow.html}shadow}}
   of the RequestGlobals services' request property. That is, any methods invoked
   on this service are delegated to the request object stored inside the RequestGlobals.
-  
-  This service is also accessible with the object reference <<<alias:Request>>>.
    
   

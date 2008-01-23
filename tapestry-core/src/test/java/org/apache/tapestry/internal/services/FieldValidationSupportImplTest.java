@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.*;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.runtime.ComponentEventException;
 import org.apache.tapestry.services.ValidationMessagesSource;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;
@@ -122,7 +121,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
                                                EasyMock.isA(ComponentEventCallback.class))).andThrow(
-                new ComponentEventException(ve.getMessage(), null, ve));
+                new RuntimeException(ve));
 
 
         replay();
@@ -151,7 +150,6 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         ComponentResources resources = mockComponentResources();
         Translator translator = mockTranslator();
         RuntimeException re = new RuntimeException("Just didn't feel right.");
-        ComponentEventException cee = new ComponentEventException(re.getMessage(), null, re);
         ValidationMessagesSource source = mockValidationMessagesSource();
 
         String clientValue = "abracadabra";
@@ -159,7 +157,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventCallback.class))).andThrow(cee);
+                                               EasyMock.isA(ComponentEventCallback.class))).andThrow(re);
 
 
         replay();
@@ -172,10 +170,9 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
             unreachable();
         }
-        catch (ComponentEventException ex)
+        catch (RuntimeException ex)
         {
-            assertSame(ex, cee);
-            assertSame(ex.getCause(), re);
+            assertSame(ex, re);
         }
 
 
@@ -368,14 +365,14 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         Object value = new Object();
 
         ValidationException ve = new ValidationException("Bah!");
-        ComponentEventException cee = new ComponentEventException(ve.getMessage(), null, ve);
+        RuntimeException re = new RuntimeException(ve);
 
         ComponentEventCallback handler = null;
 
         fv.validate(value);
 
         expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.VALIDATE_EVENT),
-                                      EasyMock.aryEq(new Object[]{value}), EasyMock.eq(handler))).andThrow(cee);
+                                      EasyMock.aryEq(new Object[]{value}), EasyMock.eq(handler))).andThrow(re);
 
 
         replay();

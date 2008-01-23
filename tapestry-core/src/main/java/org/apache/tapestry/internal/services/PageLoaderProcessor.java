@@ -108,8 +108,43 @@ class PageLoaderProcessor
 
     private final ComponentTemplateSource _templateSource;
 
-    public PageLoaderProcessor(ComponentTemplateSource templateSource, PageElementFactory pageElementFactory,
-                               LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
+    private static final PageElement END_ELEMENT = new PageElement()
+    {
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            writer.end();
+        }
+
+        @Override
+        public String toString()
+        {
+            return "End";
+        }
+    };
+
+    private static class RenderBodyElement implements PageElement
+    {
+        private final ComponentPageElement _component;
+
+        public RenderBodyElement(ComponentPageElement component)
+        {
+            _component = component;
+        }
+
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            _component.enqueueBeforeRenderBody(queue);
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("RenderBody[%s]", _component.getNestedId());
+        }
+    }
+
+    PageLoaderProcessor(ComponentTemplateSource templateSource, PageElementFactory pageElementFactory,
+                        LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
     {
         _templateSource = templateSource;
         _pageElementFactory = pageElementFactory;
@@ -163,10 +198,12 @@ class PageLoaderProcessor
 
 
     /**
-     * @param model                embededded model defining the new component, from an {@link org.apache.tapestry.annotations.Component} annotation
+     * @param model                embededded model defining the new component, from an {@link
+     *                             org.apache.tapestry.annotations.Component} annotation
      * @param loadingComponent     the currently loading container component
      * @param newComponent         the new child of the container whose parameters are being bound
-     * @param newComponentBindings map of bindings for the new component (used to handle inheriting of informal parameters)
+     * @param newComponentBindings map of bindings for the new component (used to handle inheriting of informal
+     *                             parameters)
      */
     private void bindParametersFromModel(EmbeddedComponentModel model, ComponentPageElement loadingComponent,
                                          ComponentPageElement newComponent, Map<String, Binding> newComponentBindings)
@@ -192,12 +229,12 @@ class PageLoaderProcessor
     }
 
     /**
-     * Creates a new binding, or returns an existing binding (or null) for the "inherit:" binding
-     * prefix. Mostly a wrapper around
-     * {@link BindingSource#newBinding(String, ComponentResources, ComponentResources, String, String, Location)
+     * Creates a new binding, or returns an existing binding (or null) for the "inherit:" binding prefix. Mostly a
+     * wrapper around {@link BindingSource#newBinding(String, ComponentResources, ComponentResources, String, String,
+     * Location)
      *
-     * @return the new binding, or an existing binding (if inherited), or null (if inherited, and
-     *         the containing parameter is not bound)
+     * @return the new binding, or an existing binding (if inherited), or null (if inherited, and the containing
+     *         parameter is not bound)
      */
     private Binding findBinding(ComponentPageElement loadingComponent, ComponentPageElement component, String name,
                                 String value, String defaultBindingPrefix, Location location)
@@ -245,10 +282,6 @@ class PageLoaderProcessor
         return defaultBindingPrefix != null ? defaultBindingPrefix : informalParameterBindingPrefix;
     }
 
-    private PageElement newRenderBodyElement()
-    {
-        return _pageElementFactory.newRenderBodyElement(_loadingElement);
-    }
 
     private void addToBody(PageElement element)
     {
@@ -276,7 +309,7 @@ class PageLoaderProcessor
 
     private void body()
     {
-        addToBody(newRenderBodyElement());
+        addToBody(new RenderBodyElement(_loadingElement));
 
         // BODY tokens are *not* matched by END_ELEMENT tokens. Nor will there be
         // text or comment content "inside" the BODY.
@@ -284,19 +317,17 @@ class PageLoaderProcessor
 
     private void comment(CommentToken token)
     {
-        PageElement commentElement = _pageElementFactory.newCommentElement(token);
+        PageElement commentElement = new CommentPageElement(token.getComment());
 
         addToBody(commentElement);
     }
 
     /**
-     * Invoked whenever a token (start, startComponent, etc.) is encountered that will eventually
-     * have a matching end token. Sets up the behavior for the end token.
+     * Invoked whenever a token (start, startComponent, etc.) is encountered that will eventually have a matching end
+     * token. Sets up the behavior for the end token.
      *
-     * @param discard if true, the end is discarded (if false the end token is added to the active body
-     *                element)
-     * @param command command to execute to return processor state back to what it was before the
-     *                command executed
+     * @param discard if true, the end is discarded (if false the end token is added to the active body element)
+     * @param command command to execute to return processor state back to what it was before the command executed
      */
     private void configureEnd(boolean discard, Runnable command)
     {
@@ -311,12 +342,7 @@ class PageLoaderProcessor
 
         boolean discard = _discardEndTagStack.pop();
 
-        if (!discard)
-        {
-            PageElement element = _pageElementFactory.newEndElement();
-
-            addToBody(element);
-        }
+        if (!discard) addToBody(END_ELEMENT);
 
         Runnable command = _endElementCommandStack.pop();
 
@@ -349,8 +375,8 @@ class PageLoaderProcessor
     }
 
     /**
-     * As currently implemented, this should be invoked just once and then the PageLoaderProcessor
-     * instance should be discarded.
+     * As currently implemented, this should be invoked just once and then the PageLoaderProcessor instance should be
+     * discarded.
      */
     public Page loadPage(String logicalPageName, String pageClassName, Locale locale)
     {
@@ -384,7 +410,7 @@ class PageLoaderProcessor
 
     private void loadRootComponent(String className)
     {
-        ComponentPageElement rootComponent = _pageElementFactory.newRootComponentElement(_page, className);
+        ComponentPageElement rootComponent = _pageElementFactory.newRootComponentElement(_page, className, _locale);
 
         _page.setRootElement(rootComponent);
 
@@ -392,10 +418,9 @@ class PageLoaderProcessor
     }
 
     /**
-     * Do you smell something? I'm smelling that this class needs to be redesigned to not need a
-     * central method this large and hard to test. I think a lot of instance and local variables
-     * need to be bundled up into some kind of process object. This code is effectively too big to
-     * be tested except through integration testing.
+     * Do you smell something? I'm smelling that this class needs to be redesigned to not need a central method this
+     * large and hard to test. I think a lot of instance and local variables need to be bundled up into some kind of
+     * process object. This code is effectively too big to be tested except through integration testing.
      */
     private void loadTemplateForComponent(ComponentPageElement loadingElement)
     {
@@ -410,7 +435,7 @@ class PageLoaderProcessor
 
         if (template.isMissing())
         {
-            _loadingElement.addToTemplate(newRenderBodyElement());
+            _loadingElement.addToTemplate(new RenderBodyElement(_loadingElement));
             return;
         }
 
@@ -684,7 +709,6 @@ class PageLoaderProcessor
                 }
             };
 
-
             _finalization.add(finalizer);
         }
 
@@ -707,8 +731,8 @@ class PageLoaderProcessor
     }
 
     /**
-     * Invoked when a component's end tag is reached, to check and process informal parameters as per the
-     * {@link org.apache.tapestry.model.EmbeddedComponentModel#getInheritInformalParameters()} flag.
+     * Invoked when a component's end tag is reached, to check and process informal parameters as per the {@link
+     * org.apache.tapestry.model.EmbeddedComponentModel#getInheritInformalParameters()} flag.
      *
      * @param loadingComponent     the container component that was loaded
      * @param model
@@ -736,7 +760,7 @@ class PageLoaderProcessor
 
     private void startElement(StartElementToken token)
     {
-        PageElement element = _pageElementFactory.newStartElement(token);
+        PageElement element = new StartElementPageElement(token.getNamespaceURI(), token.getName());
 
         addToBody(element);
 
@@ -752,7 +776,7 @@ class PageLoaderProcessor
 
     private void text(TextToken token)
     {
-        PageElement element = _pageElementFactory.newTextElement(token);
+        PageElement element = new TextPageElement(token.getText());
 
         addToBody(element);
     }
@@ -762,7 +786,7 @@ class PageLoaderProcessor
         // first DTD encountered wins.
         if (_dtdAdded) return;
 
-        PageElement element = _pageElementFactory.newDTDElement(token);
+        PageElement element = new DTDPageElement(token.getName(), token.getPublicId(), token.getSystemId());
         // since rendering via the markup writer is to the document tree,
         // we don't really care where this gets placed in the tree; the
         // DTDPageElement will set the dtd of the document directly, rather than

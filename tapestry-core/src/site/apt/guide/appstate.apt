@@ -55,7 +55,17 @@ Check for Creation
 
   This companion field is used to see if the ASO already exists. It is not annotated; it is located by name ("Exists" is appended to the name of the field
   storing the ASO). It must be type boolean and must be a private instance variable.  
-  
+
+  Alternately, you may allow for the state being null:
+
++---+
+  @ApplicationState(create=false)
+  private MyState _myState;
++---+
+
+  In this case, the _myState field will be null if the MyState ASO does not exist, but will be non-null if it has been
+  created (either by assigning a value to the field, or by a different ASO field where create is true).
+
 Persistence Strategies
 
   Each ASO is managed according to a persistence strategy. The default persistence strategy, "session", stores the ASOs inside the session.

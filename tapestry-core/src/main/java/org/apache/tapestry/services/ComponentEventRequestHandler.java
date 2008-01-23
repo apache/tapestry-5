@@ -26,9 +26,9 @@ import java.io.IOException;
  *
  * @see ActionLink
  * @see Form
- * @see ComponentActionRequestFilter
+ * @see ComponentEventRequestFilter
  */
-public interface ComponentActionRequestHandler
+public interface ComponentEventRequestHandler
 {
     /**
      * Handler for a component action request which will trigger an event on a component and use the return value to
@@ -36,5 +36,5 @@ public interface ComponentActionRequestHandler
      *
      * @param parameters defining the requst
      */
-    void handle(ComponentActionRequestParameters parameters) throws IOException;
+    void handle(ComponentEventRequestParameters parameters) throws IOException;
 }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import org.apache.tapestry.runtime.RenderCommand;
 import java.io.IOException;
 
 /**
- * Used to render portions of a page as part of an
- * {@linkplain AjaxComponentActionRequestHandler Ajax request}.    This encapsulates
- * rendering of the partial response and then the construction of a {@linkplain org.apache.tapestry.json.JSONObject JSON reply}.
- * Works with the pipeline defined by the {@link org.apache.tapestry.services.PartialMarkupRenderer} service.
+ * Used to render portions of a page as part of an {@linkplain AjaxComponentEventRequestHandler Ajax request}.    This
+ * encapsulates rendering of the partial response and then the construction of a {@linkplain
+ * org.apache.tapestry.json.JSONObject JSON reply}. Works with the pipeline defined by the {@link
+ * org.apache.tapestry.services.PartialMarkupRenderer} service.
  *
  * @see org.apache.tapestry.internal.services.PageRenderQueue
  */

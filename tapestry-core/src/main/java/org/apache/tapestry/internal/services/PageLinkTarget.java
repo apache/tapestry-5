@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * It represents a component invocation target for a page link. It is passed to an
- * {@link org.apache.tapestry.services.ComponentActionRequestHandler} by both the
- * {@link org.apache.tapestry.test.PageTester} and the real Tapestry code
- * {@link org.apache.tapestry.internal.services.PageRenderDispatcher} in order to invoke a page
- * link.
+ * It represents a component invocation target for a page link. It is passed to an {@link
+ * org.apache.tapestry.services.ComponentEventRequestHandler} by both the {@link org.apache.tapestry.test.PageTester}
+ * and the real Tapestry code {@link org.apache.tapestry.internal.services.PageRenderDispatcher} in order to invoke a
+ * page link.
  */
 public class PageLinkTarget implements InvocationTarget
 {

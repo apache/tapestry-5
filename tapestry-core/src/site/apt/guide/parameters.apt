@@ -374,7 +374,7 @@ Computed Parameter Binding Defaults
   @Inject
   private ComponentResources _resources;
   
-  @Inject("alias:BindingSource")
+  @Inject
   private BindingSource _bindingSource;
   
   Binding defaultMessage()

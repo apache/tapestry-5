@@ -19,9 +19,6 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.MarkupModel;
 import org.apache.tapestry.dom.XMLMarkupModel;
 import org.apache.tapestry.internal.parser.AttributeToken;
-import org.apache.tapestry.internal.parser.StartElementToken;
-import org.apache.tapestry.internal.parser.TextToken;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.PageElement;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
@@ -37,32 +34,6 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 {
     private static MarkupModel _xmlModel = new XMLMarkupModel();
 
-    @Test
-    public void start_element()
-    {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
-        MarkupWriter writer = new MarkupWriterImpl();
-        Location l = mockLocation();
-        RenderQueue queue = mockRenderQueue();
-
-        replay();
-
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
-        StartElementToken token = new StartElementToken("http://foo.com", "fred", l);
-
-        PageElement element = factory.newStartElement(token);
-
-        element.render(writer, queue);
-
-
-        writer.defineNamespace("http://foo.com", "");
-
-        verify();
-
-        assertEquals(element.toString(), "Start[http://foo.com fred]");
-        assertEquals(writer.toString(), "<fred xmlns=\"http://foo.com\"></fred>");
-    }
 
     @Test
     public void attribute()
@@ -75,7 +46,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null);
         AttributeToken token = new AttributeToken(null, "name", "value", l);
 
         PageElement element = factory.newAttributeElement(null, token);
@@ -89,98 +60,6 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
         assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<root name=\"value\"/>");
     }
 
-    @Test
-    public void end_element()
-    {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
-        MarkupWriter writer = new MarkupWriterImpl(_xmlModel);
-        RenderQueue queue = mockRenderQueue();
-
-        replay();
-
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
-
-        PageElement element = factory.newEndElement();
-
-        writer.element("root");
-        writer.write("before");
-        writer.element("nested");
-
-        element.render(writer, queue);
-
-        writer.write("after");
-
-        verify();
-
-        assertEquals(element.toString(), "End");
-        assertEquals(writer.toString(), "<?xml version=\"1.0\"?>\n<root>before<nested/>after</root>");
-    }
-
-    @Test
-    public void end_element_is_singleton()
-    {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
-
-        replay();
-
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
-
-        PageElement element1 = factory.newEndElement();
-        PageElement element2 = factory.newEndElement();
-
-        assertSame(element2, element1);
-
-        verify();
-    }
-
-    @Test
-    public void text_element()
-    {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
-        MarkupWriter writer = new MarkupWriterImpl();
-        Location l = mockLocation();
-        RenderQueue queue = mockRenderQueue();
-
-        replay();
-
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
-        TextToken token = new TextToken("some text", l);
-
-        PageElement element = factory.newTextElement(token);
-
-        writer.element("root");
-        element.render(writer, queue);
-
-        verify();
-
-        assertEquals(element.toString(), "Text[some text]");
-        assertEquals(writer.toString(), "<root>some text</root>");
-    }
-
-    @Test
-    public void render_body_element()
-    {
-        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
-        ComponentClassResolver resolver = mockComponentClassResolver();
-        RenderQueue queue = mockRenderQueue();
-        ComponentPageElement component = mockComponentPageElement();
-        MarkupWriter writer = newMock(MarkupWriter.class);
-
-        component.enqueueBeforeRenderBody(queue);
-
-        replay();
-
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, null, null, null, null);
-
-        PageElement element = factory.newRenderBodyElement(component);
-
-        element.render(writer, queue);
-
-        verify();
-    }
 
     @Test
     public void unclosed_attribute_expression()
@@ -197,8 +76,7 @@ public class PageElementFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer, null, bindingSource,
-                                                                messagesSource);
+        PageElementFactory factory = new PageElementFactoryImpl(source, resolver, typeCoercer, bindingSource, null);
 
         try
         {

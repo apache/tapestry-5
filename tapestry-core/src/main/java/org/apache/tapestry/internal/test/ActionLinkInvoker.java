@@ -22,8 +22,8 @@ import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.InvocationTarget;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.services.ComponentActionRequestHandler;
-import org.apache.tapestry.services.ComponentActionRequestParameters;
+import org.apache.tapestry.services.ComponentEventRequestHandler;
+import org.apache.tapestry.services.ComponentEventRequestParameters;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ public class ActionLinkInvoker implements ComponentInvoker
 
     private final ComponentInvoker _followupInvoker;
 
-    private final ComponentActionRequestHandler _componentActionRequestHandler;
+    private final ComponentEventRequestHandler _componentEventRequestHandler;
 
     private final ComponentInvocationMap _componentInvocationMap;
 
@@ -47,8 +47,8 @@ public class ActionLinkInvoker implements ComponentInvoker
     {
         _registry = registry;
         _followupInvoker = followupInvoker;
-        _componentActionRequestHandler = _registry.getService("ComponentActionRequestHandler",
-                                                              ComponentActionRequestHandler.class);
+        _componentEventRequestHandler = _registry.getService("ComponentActionRequestHandler",
+                                                             ComponentEventRequestHandler.class);
 
         _response = _registry.getObject(TestableResponse.class, null);
 
@@ -87,7 +87,7 @@ public class ActionLinkInvoker implements ComponentInvoker
 
             ActionLinkTarget actionLinkTarget = Defense.cast(target, ActionLinkTarget.class, "target");
 
-            ComponentActionRequestParameters parameters = new ComponentActionRequestParameters(
+            ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(
                     actionLinkTarget.getPageName(),
 
                     actionLinkTarget.getPageName(),
@@ -100,7 +100,7 @@ public class ActionLinkInvoker implements ComponentInvoker
 
                     invocation.getContext());
 
-            _componentActionRequestHandler.handle(parameters);
+            _componentEventRequestHandler.handle(parameters);
         }
         catch (IOException e)
         {

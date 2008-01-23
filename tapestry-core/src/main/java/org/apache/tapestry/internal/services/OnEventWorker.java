@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,15 +18,13 @@ import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.runtime.ComponentEventException;
 import org.apache.tapestry.services.*;
 
 import java.util.List;
 
 /**
- * Provides implementations of the
- * {@link Component#handleComponentEvent(org.apache.tapestry.runtime.ComponentEvent)} method, based
- * on {@link OnEvent} annotations.
+ * Provides implementations of the {@link Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}
+ * method, based on {@link OnEvent} annotations.
  */
 public class OnEventWorker implements ComponentClassTransformWorker
 {
@@ -56,11 +54,6 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         builder.addln("if ($1.isAborted()) return $_;");
 
-        builder.addln("String methodDescription = null;");
-
-        // Because we track the methodDescription inside a local variable, we can have a single
-        // encompassing try..catch for all possible events for this component.
-
         builder.addln("try");
         builder.begin();
 
@@ -69,14 +62,17 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         builder.end(); // try
 
-        builder.addln("catch (Exception ex)");
-        builder.begin();
-        builder.addln("throw new %s(ex.getMessage(), methodDescription, ex);", ComponentEventException.class.getName());
-        builder.end();
+        // Runtime exceptions pass right through.
+
+        builder.addln("catch (RuntimeException ex) { throw ex; }");
+
+        // Wrap others in a RuntimeException to communicate them up.
+
+        builder.addln("catch (Exception ex) { throw new RuntimeException(ex); } ");
 
         builder.end();
 
-        transformation.extendMethod(TransformConstants.HANDLE_COMPONENT_EVENT, builder.toString());
+        transformation.extendMethod(TransformConstants.DISPATCH_COMPONENT_EVENT, builder.toString());
     }
 
     private void addCodeForMethod(BodyBuilder builder, TransformMethodSignature method,
@@ -90,7 +86,6 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         String eventType = extractEventType(method, annotation);
 
-
         String componentId = extractComponentId(method, annotation);
 
 
@@ -102,11 +97,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         builder.addln("$_ = true;");
 
-        // Several subsequent calls need to know the method name.
-
-        builder.addln("methodDescription = \"%s\";", transformation.getMethodIdentifier(method));
-        builder.addln("$1.setSource(this, methodDescription);");
-
+        builder.addln("$1.setSource(this, \"%s\");", transformation.getMethodIdentifier(method));
 
         boolean isNonVoid = !method.getReturnType().equals("void");
 

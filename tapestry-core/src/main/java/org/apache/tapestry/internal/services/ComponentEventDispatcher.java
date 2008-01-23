@@ -44,18 +44,18 @@ import java.util.regex.Pattern;
  *
  * @see LinkFactory#createActionLink(org.apache.tapestry.internal.structure.Page, String, String,boolean, Object...)
  */
-public class ComponentActionDispatcher implements Dispatcher
+public class ComponentEventDispatcher implements Dispatcher
 {
     private final ComponentClassResolver _componentClassResolver;
 
-    private final ComponentActionRequestHandler _componentActionRequestHandler;
+    private final ComponentEventRequestHandler _componentEventRequestHandler;
 
     private final String[] _emptyString = new String[0];
 
-    public ComponentActionDispatcher(ComponentActionRequestHandler componentActionRequestHandler,
-                                     ComponentClassResolver componentClassResolver)
+    public ComponentEventDispatcher(ComponentEventRequestHandler componentEventRequestHandler,
+                                    ComponentClassResolver componentClassResolver)
     {
-        _componentActionRequestHandler = componentActionRequestHandler;
+        _componentEventRequestHandler = componentEventRequestHandler;
         _componentClassResolver = componentClassResolver;
     }
 
@@ -124,13 +124,13 @@ public class ComponentActionDispatcher implements Dispatcher
         if (activePageName == null) activePageName = containingPageName;
 
 
-        ComponentActionRequestParameters parameters = new ComponentActionRequestParameters(activePageName,
-                                                                                           containingPageName,
-                                                                                           nestedComponentId, eventType,
-                                                                                           activationContext,
-                                                                                           eventContext);
+        ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(activePageName,
+                                                                                         containingPageName,
+                                                                                         nestedComponentId, eventType,
+                                                                                         activationContext,
+                                                                                         eventContext);
 
-        _componentActionRequestHandler.handle(parameters);
+        _componentEventRequestHandler.handle(parameters);
 
         return true;
     }

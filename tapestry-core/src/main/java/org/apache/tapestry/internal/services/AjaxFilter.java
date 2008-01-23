@@ -22,22 +22,22 @@ import java.io.IOException;
  * A filter that intercepts Ajax-oriented requests, thos that originate on the client-side using XmlHttpRequest. In
  * these cases, the action processing occurs normally, but the response is quite different.
  */
-public class AjaxFilter implements ComponentActionRequestFilter
+public class AjaxFilter implements ComponentEventRequestFilter
 {
     private final Request _request;
 
-    private final ComponentActionRequestHandler _ajaxHandler;
+    private final ComponentEventRequestHandler _ajaxHandler;
 
-    public AjaxFilter(Request request, @Ajax ComponentActionRequestHandler ajaxHandler)
+    public AjaxFilter(Request request, @Ajax ComponentEventRequestHandler ajaxHandler)
     {
         _request = request;
         _ajaxHandler = ajaxHandler;
     }
 
-    public void handle(ComponentActionRequestParameters parameters, ComponentActionRequestHandler handler)
+    public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
             throws IOException
     {
-        ComponentActionRequestHandler next = _request.isXHR() ? _ajaxHandler : handler;
+        ComponentEventRequestHandler next = _request.isXHR() ? _ajaxHandler : handler;
 
         next.handle(parameters);
     }

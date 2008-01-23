@@ -18,13 +18,13 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.OnEvent;
 
 /**
- * Interface that defines the lifecycle of a component, within a page, allowing for callbacks into
- * the component for many different events. This interface is part of the public API for Tapestry,
- * but is <em>not</em> expected to be directly implemented by component classes; it should only be
- * implemented as part of the component class transformation process.
+ * Interface that defines the lifecycle of a component, within a page, allowing for callbacks into the component for
+ * many different events. This interface is part of the public API for Tapestry, but is <em>not</em> expected to be
+ * directly implemented by component classes; it should only be implemented as part of the component class
+ * transformation process.
  * <p/>
- * Most of the methods are related to render phases; see the corresponding annotations and component
- * rendering documentation to see how they relate to each other.
+ * Most of the methods are related to render phases; see the corresponding annotations and component rendering
+ * documentation to see how they relate to each other.
  * <p/>
  * This interface is likely to change without notice.
  */
@@ -32,10 +32,9 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
 {
 
     /**
-     * Lifecycle method invoked at the end of the
-     * {@link org.apache.tapestry.annotations.CleanupRender} render phase. There is no annotation
-     * for this method, it is part of CleanupRender, but is always invoked. Its specific use is to
-     * allow components to clean up cached parameter values.
+     * Lifecycle method invoked at the end of the {@link org.apache.tapestry.annotations.CleanupRender} render phase.
+     * There is no annotation for this method, it is part of CleanupRender, but is always invoked. Its specific use is
+     * to allow components to clean up cached parameter values.
      */
     void postRenderCleanup();
 
@@ -70,8 +69,8 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
     void afterRenderBody(MarkupWriter writer, Event event);
 
     /**
-     * Generally used to write the close tag matching any open tag written by
-     * {@link #beginRender(org.apache.tapestry.MarkupWriter, Event)}.
+     * Generally used to write the close tag matching any open tag written by {@link
+     * #beginRender(org.apache.tapestry.MarkupWriter, Event)}.
      */
     void afterRender(MarkupWriter writer, Event event);
 
@@ -81,12 +80,12 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
     void cleanupRender(MarkupWriter writer, Event event);
 
     /**
-     * Invoked to handle a component event. Methods with the {@link OnEvent} annotation (or the matching
-     * naming convention) will be invoked until one returns a non-null value.
+     * Invoked to handle a component event. Methods with the {@link OnEvent} annotation (or the matching naming
+     * convention) will be invoked until one returns a non-null value.
      *
      * @param event
      * @return true if any handler was found (and invoked), false otherwise
-     * @throws ComponentEventException if an event handler throws an exception
+     * @throws RuntimeException wrapping any checked exceptions that are thrown by individual event handler methods
      */
-    boolean handleComponentEvent(ComponentEvent event);
+    boolean dispatchComponentEvent(ComponentEvent event);
 }
