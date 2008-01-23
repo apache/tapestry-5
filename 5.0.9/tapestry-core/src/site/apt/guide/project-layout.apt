@@ -1,0 +1,63 @@
+ ---
+ Project Layout
+ ---
+
+Project Layout
+
+  This is the <suggested> layout for your Tapestry project; it is the layout of folders and files
+  created by the {{{../../quickstart/}Tapestry Quickstart Archetype}}.  If you are creating your
+  own build using Ant, you may use whatever conventions work for you ... as long as everything gets
+  packaged up into the right place in the target WAR.
+
+  Parts of this project layout mimics the format of an <exploded WAR> (a WAR file unpackaged onto the
+  file system).  This will often enable you to run your application directly from your workspace,
+  without any special build or packaging process, while developing.  Each of the major IDEs has plugins
+  to allow you to accomplish this task ... and its one of the factors (combined with
+  {{{reload.html}live class reloading}}) that makes working with Tapestry a breeze.
+
+  Below is a sample project, whose root package is <<<com.example.myapp>>>:
+
+[../images/projectlayout.png] Project Layout
+
+* Main source files
+
+  Main Java source files, the files that will be compiled into the WAR file, are
+  in <<<src/main/java>>>.  This is <only> Java source files.  You can see
+  the <<<Start.java>>> source file inside the <<<pages>>> subpackage, and
+  the <<<Layout.java>>> source file inside the <<<components>>> subpackage.  The package names
+  demonstrated here are required, dictated by the
+  rules for {{{component-classes.html}component classes}}.
+
+  Compiled Java classes will ultimately be packaged in the WAR inside the
+   <<<WEB-INF/classes>>> folder.
+
+* Classpath Resources
+
+  Resource files are under <<<src/main/resources>>>.  This includes the
+  {{{localization.html}message catalog}} for the Start page (<<<Start.properties>>>),
+  as well as the message catalog and
+  {{{templates.html}component template}} for the Layout component (<<<Layout.tml>>>).  These files will
+  also be packaged into the <<<WEB-INF/classes>>> folder of the WAR.
+
+  Component templates will always be stored in the resources folder.  Templates for pages may be packaged in the WAR proper instead.
+
+* Context Resources
+
+  The WAR is built primarily from the <<<src/main/webapp>>> folder; this is where ordinary files are stored
+  (such as images and stylesheets).  Page templates may also be stored here (<<<Start.tml>>>).  The file <<<src/main/webapp/WEB-INF/web.xml>>>
+  is the servlet container deployment descriptor, which has a very specific
+  {{{conf.html}configuration}} for Tapestry.
+
+  The build tool (usually Maven) will be responsible for putting compiled classes and resources into the <<<WEB-INF/classes>>>
+  folder of the WAR, and for putting the Tapestry library, and its dependencies (as well as any additional libraries defined
+  by your application) into the <<<WEB-INF/lib>>> folder.
+
+* Testing
+
+  The folders <<<src/test/java>>> and <<<src/test/resources>>> are used when compiling and executing tests. Files in these
+  folders are <not> packaged into the final WAR.
+
+  
+
+
+  
