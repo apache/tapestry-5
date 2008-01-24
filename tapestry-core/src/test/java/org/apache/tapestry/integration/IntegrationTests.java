@@ -1479,4 +1479,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                           "org.apache.tapestry.ioc.internal.util.TapestryException", "java.lang.NumberFormatException");
 
     }
+
+    /**
+     * TAPESTRY-1416
+     */
+
+    @Test
+    public void adding_new_columns_to_grid_programattically()
+    {
+        start("Added Grid Columns Demo", "Title Length");
+
+        assertTextSeries("//th[%d]", 1, "Title", "View", "Title Length", "Dummy");
+
+        // The rendered &nbsp; becomes just a blank string.
+        assertTextSeries("//tr[1]/td[%d]", 1, "7", "view", "1", "");
+    }
 }
