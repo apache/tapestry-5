@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,16 @@ import org.apache.tapestry.ValidationDecorator;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.Heartbeat;
 
 /**
  * Generates a &lt;label&gt; element for a particular field.
+ * <p/>
+ * <p/>
+ * A Label will render its body, if it has one.  However, in most cases it will not have a body, and will render it's
+ * {@linkplain org.apache.tapestry.Field#getLabel()} field's label} as it's body. Remember, however, that it is the
+ * field label that will be used in any error messages.
  */
 @SupportsInformalParameters
 public class Label
@@ -45,6 +51,8 @@ public class Label
     @Inject
     private ComponentResources _resources;
 
+    private Element _labelElement;
+
     @BeginRender
     void begin(MarkupWriter writer)
     {
@@ -52,12 +60,12 @@ public class Label
 
         _decorator.beforeLabel(field);
 
-        final Element element = writer.element("label");
+        _labelElement = writer.element("label");
 
         _resources.renderInformalParameters(writer);
 
-        // Since we don't know if the field has rendered yet, we need to defer writing the for
-        // attribute until we know the field has rendered (and set its clientId property). That's
+        // Since we don't know if the field has rendered yet, we need to defer writing the for and id
+        // attributes until we know the field has rendered (and set its clientId property). That's
         // exactly what Heartbeat is for.
 
         Runnable command = new Runnable()
@@ -66,27 +74,24 @@ public class Label
             {
                 String fieldId = field.getClientId();
 
-                element.forceAttributes("for", fieldId, "id", fieldId + ":label");
+                _labelElement.forceAttributes("for", fieldId, "id", fieldId + ":label");
 
-                _decorator.insideLabel(field, element);
+                _decorator.insideLabel(field, _labelElement);
             }
         };
 
         _heartbeat.defer(command);
     }
 
-    @BeforeRenderBody
-    boolean renderBody()
-    {
-        // Don't render the body of the component even if there is one.
-
-        return false;
-    }
-
     @AfterRender
     void after(MarkupWriter writer)
     {
-        writer.write(_field.getLabel());
+        // If the Label element has a body that renders some non-blank output, that takes precendence
+        // over the label string provided by the field.
+
+        boolean bodyIsBlank = InternalUtils.isBlank(_labelElement.getChildMarkup());
+
+        if (bodyIsBlank) writer.write(_field.getLabel());
 
         writer.end(); // label
 
