@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,14 +32,17 @@ public class ClassFabUtilsTest extends IOCTestCase
     @DataProvider(name = "provider")
     public Object[][] createInputs()
     {
-        return new Object[][]
-                {
-                        {"java.lang.Object", "java.lang.Object"},
-                        {"int", "int"},
-                        {"int[]", "[I"},
-                        {"java.lang.Throwable[]", "[Ljava.lang.Throwable;"},
-                        {"byte[][]", "[[B"},
-                        {"java.lang.Runnable[][]", "[[Ljava.lang.Runnable;"}};
+        return new Object[][]{{"java.lang.Object", "java.lang.Object"},
+
+                              {"int", "int"},
+
+                              {"int[]", "[I"},
+
+                              {"java.lang.Throwable[]", "[Ljava.lang.Throwable;"},
+
+                              {"byte[][]", "[[B"},
+
+                              {"java.lang.Runnable[][]", "[[Ljava.lang.Runnable;"}};
     }
 
     @Test(dataProvider = "typeCodeProvider")
@@ -51,16 +54,17 @@ public class ClassFabUtilsTest extends IOCTestCase
     @DataProvider(name = "typeCodeProvider")
     public Object[][] get_type_code_provider()
     {
-        return new Object[][]
-                {
-                        {int.class, "I"},
-                        {int[].class, "[I"},
-                        {Thread.class, "Ljava/lang/Thread;"},
-                        {Thread[].class, "[Ljava/lang/Thread;"},
-                        {Double[][].class, "[[Ljava/lang/Double;"},
-                        {void.class, "V"},
+        return new Object[][]{{int.class, "I"},
 
-                };
+                              {int[].class, "[I"},
+
+                              {Thread.class, "Ljava/lang/Thread;"},
+
+                              {Thread[].class, "[Ljava/lang/Thread;"},
+
+                              {Double[][].class, "[[Ljava/lang/Double;"},
+
+                              {void.class, "V"}};
     }
 
     @Test
@@ -80,5 +84,17 @@ public class ClassFabUtilsTest extends IOCTestCase
     {
         assertEquals(ClassFabUtils.getWrapperType(int.class), Integer.class);
         assertEquals(ClassFabUtils.getWrapperType(getClass()), getClass());
+    }
+
+    @Test
+    public void unwrap_method_from_wrapper_type()
+    {
+        assertEquals(ClassFabUtils.getUnwrapMethodName(Boolean.class), "booleanValue");
+    }
+
+    @Test
+    public void primitive_type_from_wrapper_type()
+    {
+        assertSame(ClassFabUtils.getPrimitiveType(Boolean.class), boolean.class);
     }
 }

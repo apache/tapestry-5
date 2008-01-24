@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,8 +23,7 @@ import java.lang.reflect.Modifier;
 import java.util.Map;
 
 /**
- * Handy method useful when creating new classes using
- * {@link org.apache.tapestry.ioc.services.ClassFab}.
+ * Handy method useful when creating new classes using {@link org.apache.tapestry.ioc.services.ClassFab}.
  */
 public final class ClassFabUtils
 {
@@ -44,8 +43,8 @@ public final class ClassFabUtils
     }
 
     /**
-     * Returns a class name derived from the provided interfaceClass. The package part of the
-     * interface name is stripped out, and the result passed to {@link #generateClassName(String)}.
+     * Returns a class name derived from the provided interfaceClass. The package part of the interface name is stripped
+     * out, and the result passed to {@link #generateClassName(String)}.
      */
 
     public static String generateClassName(Class interfaceClass)
@@ -54,9 +53,9 @@ public final class ClassFabUtils
     }
 
     /**
-     * Javassist needs the class name to be as it appears in source code, even for arrays. Invoking
-     * getName() on a Class instance representing an array returns the internal format (i.e, "[...;"
-     * or something). This returns it as it would appear in Java code.
+     * Javassist needs the class name to be as it appears in source code, even for arrays. Invoking getName() on a Class
+     * instance representing an array returns the internal format (i.e, "[...;" or something). This returns it as it
+     * would appear in Java code.
      */
     public static String toJavaClassName(Class inputClass)
     {
@@ -66,8 +65,8 @@ public final class ClassFabUtils
     }
 
     /**
-     * Returns true if the method is the standard toString() method. Very few interfaces will ever
-     * include this method as part of the interface, but we have to be sure.
+     * Returns true if the method is the standard toString() method. Very few interfaces will ever include this method
+     * as part of the interface, but we have to be sure.
      */
     public static boolean isToString(Method method)
     {
@@ -80,14 +79,17 @@ public final class ClassFabUtils
 
     private static class PrimitiveInfo
     {
+        private final Class _primitiveType;
+
         private final String _typeCode;
 
         private final Class _wrapperType;
 
         private final String _unwrapMethod;
 
-        public PrimitiveInfo(String typeCode, Class wrapperType, String unwrapMethod)
+        public PrimitiveInfo(Class primitiveType, String typeCode, Class wrapperType, String unwrapMethod)
         {
+            _primitiveType = primitiveType;
             _typeCode = typeCode;
             _wrapperType = wrapperType;
             _unwrapMethod = unwrapMethod;
@@ -107,32 +109,40 @@ public final class ClassFabUtils
         {
             return _wrapperType;
         }
+
+        public Class getPrimitiveType()
+        {
+            return _primitiveType;
+        }
     }
 
-    private static final Map<String, PrimitiveInfo> PRIMITIVE_INFO = newMap();
+    private static final Map<String, PrimitiveInfo> PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO = newMap();
+    private static final Map<Class, PrimitiveInfo> WRAPPER_TYPE_TO_PRIMITIVE_INFO = newMap();
 
     static
     {
-        add("boolean", "Z", Boolean.class, "booleanValue");
-        add("short", "S", Short.class, "shortValue");
-        add("int", "I", Integer.class, "intValue");
-        add("long", "J", Long.class, "longValue");
-        add("float", "F", Float.class, "floatValue");
-        add("double", "D", Double.class, "doubleValue");
-        add("char", "C", Character.class, "charValue");
-        add("byte", "B", Byte.class, "byteValue");
+        add(boolean.class, "Z", Boolean.class, "booleanValue");
+        add(short.class, "S", Short.class, "shortValue");
+        add(int.class, "I", Integer.class, "intValue");
+        add(long.class, "J", Long.class, "longValue");
+        add(float.class, "F", Float.class, "floatValue");
+        add(double.class, "D", Double.class, "doubleValue");
+        add(char.class, "C", Character.class, "charValue");
+        add(byte.class, "B", Byte.class, "byteValue");
     }
 
-    private static void add(String primitiveType, String typeCode, Class wrapperType,
-                            String unwrapMethod)
+    private static void add(Class primitiveType, String typeCode, Class wrapperType, String unwrapMethod)
     {
-        PRIMITIVE_INFO.put(primitiveType, new PrimitiveInfo(typeCode, wrapperType, unwrapMethod));
+        PrimitiveInfo info = new PrimitiveInfo(primitiveType, typeCode, wrapperType, unwrapMethod);
+
+        PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.put(primitiveType.getName(), info);
+
+        WRAPPER_TYPE_TO_PRIMITIVE_INFO.put(wrapperType, info);
     }
 
     /**
-     * Translates types from standard Java format to Java VM format. For example, java.util.Locale
-     * remains java.util.Locale, but int[][] is translated to [[I and java.lang.Object[] to
-     * [Ljava.lang.Object;
+     * Translates types from standard Java format to Java VM format. For example, java.util.Locale remains
+     * java.util.Locale, but int[][] is translated to [[I and java.lang.Object[] to [Ljava.lang.Object;
      */
     public static String toJVMBinaryName(String type)
     {
@@ -148,10 +158,9 @@ public final class ClassFabUtils
             type = type.substring(0, type.length() - 2);
         }
 
-        PrimitiveInfo pi = PRIMITIVE_INFO.get(type);
+        PrimitiveInfo pi = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type);
 
-        if (pi != null)
-            buffer.append(pi.getTypeCode());
+        if (pi != null) buffer.append(pi.getTypeCode());
         else
         {
             buffer.append("L");
@@ -163,12 +172,19 @@ public final class ClassFabUtils
     }
 
     /**
-     * Given one of the primitive types, returns the name of the method that will unwrap the wrapped
-     * type to the primitive type.
+     * Given one of the primitive types, returns the name of the method that will unwrap the wrapped type to the
+     * primitive type.
      */
     public static String getUnwrapMethodName(String primitiveTypeName)
     {
-        return PRIMITIVE_INFO.get(primitiveTypeName).getUnwrapMethod();
+        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveTypeName).getUnwrapMethod();
+    }
+
+    public static String getUnwrapMethodName(Class wrapperType)
+    {
+        PrimitiveInfo info = WRAPPER_TYPE_TO_PRIMITIVE_INFO.get(wrapperType);
+
+        return info.getUnwrapMethod();
     }
 
     /**
@@ -177,17 +193,22 @@ public final class ClassFabUtils
 
     public static String getWrapperTypeName(String primitiveType)
     {
-        return PRIMITIVE_INFO.get(primitiveType).getWrapperType().getName();
+        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveType).getWrapperType().getName();
+    }
+
+    public static Class getPrimitiveType(Class wrapperType)
+    {
+        return WRAPPER_TYPE_TO_PRIMITIVE_INFO.get(wrapperType).getPrimitiveType();
     }
 
     /**
-     * Given some type (possibly a primitive) returns the corresponding primitive type. For
-     * non-primitives, the provided type is returned.
+     * Given some type (possibly a primitive) returns the corresponding primitive type. For non-primitives, the provided
+     * type is returned.
      */
     public static Class getWrapperType(Class primitiveType)
     {
         if (primitiveType.isPrimitive())
-            return PRIMITIVE_INFO.get(primitiveType.getName()).getWrapperType();
+            return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveType.getName()).getWrapperType();
 
         return primitiveType; // Not a primitive!
     }
@@ -196,7 +217,7 @@ public final class ClassFabUtils
     {
         if (type.equals(void.class)) return "V";
 
-        if (type.isPrimitive()) return PRIMITIVE_INFO.get(type.getName()).getTypeCode();
+        if (type.isPrimitive()) return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName()).getTypeCode();
 
         if (type.isArray()) return "[" + getTypeCode(type.getComponentType());
 
@@ -204,10 +225,9 @@ public final class ClassFabUtils
     }
 
     /**
-     * Creates a proxy for a given service interface around an {@link ObjectCreator} that can
-     * provide (on demand) an object (implementing the service interface) to delegate to. The
-     * ObjectCreator will be invoked on every method invocation ( if it is caching, that should be
-     * internal to its implementation).
+     * Creates a proxy for a given service interface around an {@link ObjectCreator} that can provide (on demand) an
+     * object (implementing the service interface) to delegate to. The ObjectCreator will be invoked on every method
+     * invocation ( if it is caching, that should be internal to its implementation).
      *
      * @param <T>
      * @param classFab         used to create the new class
@@ -216,13 +236,12 @@ public final class ClassFabUtils
      * @param description      description to be returned from the proxy's toString() method
      * @return the instantiated proxy object
      */
-    public static <T> T createObjectCreatorProxy(ClassFab classFab, Class<T> serviceInterface,
-                                                 ObjectCreator creator, String description)
+    public static <T> T createObjectCreatorProxy(ClassFab classFab, Class<T> serviceInterface, ObjectCreator creator,
+                                                 String description)
     {
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
 
-        classFab.addConstructor(new Class[]
-                {ObjectCreator.class}, null, "_creator = $1;");
+        classFab.addConstructor(new Class[]{ObjectCreator.class}, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

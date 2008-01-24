@@ -1238,18 +1238,32 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             ConstructorArg arg = _constructorArgs.get(i);
 
-            Class argType = toClass(arg.getType().getName());
+            CtClass argCtType = arg.getType();
+            Class argType = toClass(argCtType.getName());
+
+            boolean primitive = argCtType.isPrimitive();
+
+            Class fieldType = primitive ? ClassFabUtils.getPrimitiveType(argType) : argType;
 
             String fieldName = "_param_" + i;
 
             constructorParameterTypes[i + 1] = argType;
             constructorParameterValues[i + 1] = arg.getValue();
 
-            cf.addField(fieldName, argType);
+            cf.addField(fieldName, fieldType);
 
             // $1 is model, $2 is description, to $3 is first dynamic parameter.
 
-            constructor.addln("%s = $%d;", fieldName, i + 2);
+            constructor.add("%s = $%d", fieldName, i + 2);
+
+            if (primitive)
+            {
+                String methodName = ClassFabUtils.getUnwrapMethodName(argType);
+
+                constructor.add(".%s()", methodName);
+            }
+
+            constructor.addln(";");
 
             newInstance.add(", %s", fieldName);
         }
