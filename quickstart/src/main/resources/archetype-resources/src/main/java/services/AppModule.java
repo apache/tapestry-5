@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package ${packageName}.services;
 
 import java.io.IOException;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
@@ -52,7 +53,12 @@ public class AppModule
         // you can extend this list of locales (it's a comma seperated series of locale names;
         // the first locale name is the default when there's no reasonable match).
         
-        configuration.add("tapestry.supported-locales", "en");
+        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en");
+
+        // The factory default is true but during the early stages of an application
+        // overriding to false is a good idea. In addition, this is often overridden
+        // on the command line as -Dtapestry.production-mode=false
+        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
     }
     
 

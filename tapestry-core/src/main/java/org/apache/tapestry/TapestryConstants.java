@@ -66,6 +66,12 @@ public final class TapestryConstants
     public static final String RESPONSE_ENCODING = "tapestry.response-encoding";
 
     /**
+     * Indicates whether Tapestry is running in production mode or developer mode.  The primary difference is
+     * how exceptions are reported.
+     */
+    public static final String PRODUCTION_MODE_SYMBOL = "tapestry.production-mode";
+
+    /**
      * CSS class name that causes a rendered element to be invisible on the client side.
      */
     public static final String INVISIBLE_CLASS = "t-invisible";

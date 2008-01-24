@@ -120,10 +120,10 @@ Configuring Tapestry
      When true, all URIs will be absolute URIs (including the
      context path, and the complete path for the request).
 
-  [tapestry.scriptaculous]
-    The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
-    to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.0
-    (including Prototype 1.6.0).
+  [tapestry.production-mode]
+    A flag (true or false) indicating whether the application is running in production or in development. The default
+    is true, which means that runtime exceptions are not reported with full detail (only the root exception message
+    is displayed, not the entire stack of exceptions, properties and other information shown in development mode).
 
   [tapestry.page-pool.active-window]
     The time interval that an instantiated page instance may be cached before being removed. As pages are
@@ -156,6 +156,11 @@ Configuring Tapestry
   [tapestry.page-pool.soft-wait]
     The time interval that Tapestry will wait for a page instance to become available before deciding whether to create
     an entirely new page instance.  The default is "10 ms".
+
+  [tapestry.scriptaculous]
+    The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
+    to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.0
+    (including Prototype 1.6.0).
 
   [tapestry.start-page-name]
     The logical name of the start page, the page that is rendered for the <root URL>.  This is normally "start".    

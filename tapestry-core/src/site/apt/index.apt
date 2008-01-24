@@ -13,6 +13,9 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
 
+  * Tapestry now differentiates between development mode and production mode, primarily in how
+    it reports runtime exceptions.  It defaults to production mode.   
+
   * Components can now supply an event handler for type "exception" which will be invoked when
     an exception occurs in a component event handler method. This is useful for handling errors
     with the context for the "activate" event.
