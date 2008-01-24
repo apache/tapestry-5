@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,16 +26,14 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
 import java.text.Format;
 
 /**
- * A component for formatting output. If the component is represented in the template using an
- * element, then the element (plus any informal parameters) will be output around the formatted
- * value.
+ * A component for formatting output. If the component is represented in the template using an element, then the element
+ * (plus any informal parameters) will be output around the formatted value.
  */
 @SupportsInformalParameters
 public class Output
 {
     /**
-     * The value to be output (before formatting). If the formatted value is blank, no output is
-     * produced.
+     * The value to be output (before formatting). If the formatted value is blank, no output is produced.
      */
     @Parameter(required = true)
     private Object _value;
@@ -47,8 +45,15 @@ public class Output
     private Format _format;
 
     /**
-     * The element name, derived from the component template. This can even be overridden manually
-     * if desired (for example, to sometimes render a surrounding element and other times not).
+     * If true, the default, then output is filtered, escaping any reserved characters. If false, the output is written
+     * raw.
+     */
+    @Parameter
+    private boolean _filter = true;
+
+    /**
+     * The element name, derived from the component template. This can even be overridden manually if desired (for
+     * example, to sometimes render a surrounding element and other times not).
      */
     @Parameter("componentResources.elementName")
     private String _elementName;
@@ -79,7 +84,8 @@ public class Output
                 _resources.renderInformalParameters(writer);
             }
 
-            writer.write(formatted);
+            if (_filter) writer.write(formatted);
+            else writer.writeRaw(formatted);
 
             if (_elementName != null) writer.end();
         }
@@ -89,10 +95,11 @@ public class Output
 
     // For testing.
 
-    void setup(Object value, Format format, String elementName, ComponentResources resources)
+    void setup(Object value, Format format, boolean filter, String elementName, ComponentResources resources)
     {
         _value = value;
         _format = format;
+        _filter = filter;
         _elementName = elementName;
         _resources = resources;
     }
