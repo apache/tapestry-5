@@ -66,7 +66,7 @@ public class Grid implements GridModelProvider
      * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
      * "both" or "none".
      */
-    @Parameter(value = "bottom", defaultPrefix = "literal")
+    @Parameter(value = "top", defaultPrefix = "literal")
     private GridPagerPosition _pagerPosition;
 
     @Persist

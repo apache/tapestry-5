@@ -42,6 +42,10 @@ IMG.t-error-icon {
     margin-left: 4px;
 }
 
+IMG.t-sort-icon {
+    margin-left: 4px;
+}
+
 DIV.t-exception-message {
     font-style: italic;
     font-size: 12pt;

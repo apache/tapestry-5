@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry.corelib.base;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
@@ -26,13 +27,13 @@ import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.PropertyOutputContext;
 
 /**
- * Base class for components that output a property value using a {@link PropertyModel}. There's a
- * relationship between such a component and its container, as the container may provide messages in
- * its message catalog needed by the {@link Block}s that render the values. In addition, the
- * component may be passed Block parameters that are output overrides for specified properties.
+ * Base class for components that output a property value using a {@link PropertyModel}. There's a relationship between
+ * such a component and its container, as the container may provide messages in its message catalog needed by the {@link
+ * Block}s that render the values. In addition, the component may be passed Block parameters that are output overrides
+ * for specified properties.
  * <p/>
- * Subclasses will implement a <code>beginRender()</code> method that invokes
- * {@link #renderPropertyValue(MarkupWriter, String)}.
+ * Subclasses will implement a <code>beginRender()</code> method that invokes {@link #renderPropertyValue(MarkupWriter,
+ * String)}.
  *
  * @see BeanBlockSource
  */
@@ -46,15 +47,15 @@ public class AbstractPropertyOutput
     private PropertyModel _model;
 
     /**
-     * Resources used to search for block parameter overrides (this is normally the enclosing Grid
-     * component's resources).
+     * Resources used to search for block parameter overrides (this is normally the enclosing Grid component's
+     * resources).
      */
     @Parameter(required = true)
     private ComponentResources _overrides;
 
     /**
-     * Identifies the object being rendered. The component will extract a property from the object
-     * and render its value (or delegate to a {@link Block} that will do so).
+     * Identifies the object being rendered. The component will extract a property from the object and render its value
+     * (or delegate to a {@link Block} that will do so).
      */
     @Parameter(required = true)
     private Object _object;
@@ -73,9 +74,8 @@ public class AbstractPropertyOutput
     }
 
     /**
-     * Invoked from subclasses to do the rendering. The subclass controls the naming convention for
-     * locating an overriding Block parameter (it is the name of the property possibly suffixed with
-     * a value).
+     * Invoked from subclasses to do the rendering. The subclass controls the naming convention for locating an
+     * overriding Block parameter (it is the name of the property possibly suffixed with a value).
      */
     protected Object renderPropertyValue(MarkupWriter writer, String overrideBlockId)
     {
@@ -133,7 +133,9 @@ public class AbstractPropertyOutput
 
     private Object readPropertyForObject()
     {
-        return _model.getConduit().get(_object);
+        PropertyConduit conduit = _model.getConduit();
+
+        return conduit == null ? null : conduit.get(_object);
     }
 
     private Messages getOverrideMessages()

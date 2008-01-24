@@ -206,7 +206,9 @@ public class Start
             new Item("OverrideValidationDecorator", "Override Validation Decorator",
                      "override the default validation decorator"),
 
-            new Item("ExceptionEventDemo", "Exception Event Demo", "handling component event exceptions"));
+            new Item("ExceptionEventDemo", "Exception Event Demo", "handling component event exceptions"),
+
+            new Item("AddedGridColumnsDemo", "Added Grid Columns Demo", "programatically adding grid columns"));
 
     static
     {
