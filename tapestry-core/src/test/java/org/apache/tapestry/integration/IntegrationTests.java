@@ -377,7 +377,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("SimpleForm");
 
         assertText("//label[@id='disabled:label']", "Disabled");
-        assertText("//label[@id='email:label']", "Email");
+
+        // This demonstrates TAPESTRY-1642:
+        assertText("//label[@id='email:label']", "User Email");
+
         assertText("//label[@id='message:label']", "Incident Message");
         assertText("//label[@id='operatingSystem:label']", "Operating System");
         assertText("//label[@id='department:label']", "Department");
@@ -513,9 +516,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("BeanEditor Demo", "Clear Data");
         clickAndWait(SUBMIT);
-
-        assertTextPresent("(First Name is Required)", "You must provide a value for First Name.",
-                          "Everyone has to have a last name!", "Year of Birth requires a value of at least 1900.");
 
         // Part of the override for the firstName property
 
