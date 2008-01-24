@@ -104,7 +104,8 @@ public class AppModule
     {
         configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,fr");
         configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
-        
+        configuration.add(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL, "false");
+
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
     }
 
