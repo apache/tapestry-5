@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
 
 import java.util.List;
 
-public abstract class AbstractComponentActionLink extends AbstractLink implements ClientElement
+public abstract class AbstractComponentActionLink extends AbstractLink
 {
     /**
      * The context for the link (optional parameter). This list of values will be converted into strings and included in
@@ -47,28 +47,19 @@ public abstract class AbstractComponentActionLink extends AbstractLink implement
     @Environmental
     private ZoneSetup _zoneSetup;
 
-    /**
-     * If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still
-     * rendered.
-     */
-    @Parameter("false")
-    private boolean _disabled;
-
-    private String _clientId;
-
     void beginRender(MarkupWriter writer)
     {
-        if (_disabled) return;
+        if (isDisabled()) return;
 
-        _clientId = _support.allocateClientId(_resources.getId());
+        String clientId = _support.allocateClientId(_resources.getId());
 
         Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
 
         Link link = createLink(contextArray);
 
-        writeLink(writer, _clientId, link);
+        writeLink(writer, clientId, link);
 
-        if (_zone != null) _zoneSetup.linkZone(_clientId, _zone);
+        if (_zone != null) _zoneSetup.linkZone(clientId, _zone);
     }
 
     /**
@@ -76,16 +67,11 @@ public abstract class AbstractComponentActionLink extends AbstractLink implement
      */
     protected abstract Link createLink(Object[] eventContext);
 
-
     void afterRender(MarkupWriter writer)
     {
-        if (_disabled) return;
+        if (isDisabled()) return;
 
         writer.end(); // <a>
     }
 
-    public String getClientId()
-    {
-        return _clientId;
-    }
 }
