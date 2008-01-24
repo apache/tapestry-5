@@ -1449,8 +1449,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Override Validation Decorator");
 
+        // This is sub-optimal, as it doesn't esnure that the before/after field values really do wrap around
+        // the field (they do, but that's hard to prove!).
+
         assertSourcePresent(
-                "[Before label for Value]<label for=\"value\" id=\"value:label\">Value</label>[After label for Value][Before field Value]");
+                "[Before label for Value]<label for=\"value\" id=\"value:label\">Value</label>[After label for Value]",
+                "[Before field Value]", "[After field Value]");
     }
 
     /**

@@ -23,6 +23,8 @@ New And Of Note
   * Page instances are now cached more efficiently, with Tapestry attempting to control how many instances
     are created, and culling unused instances periodically.
 
+  * Component templates are stripped of unnecessary whitespace.
+
   * New Unless component (like an If component, but inverted).
 
   * Support for "password" and "longtext" data types (for use with the BeanEditor), and a new

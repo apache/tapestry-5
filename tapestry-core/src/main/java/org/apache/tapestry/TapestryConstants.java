@@ -66,8 +66,8 @@ public final class TapestryConstants
     public static final String RESPONSE_ENCODING = "tapestry.response-encoding";
 
     /**
-     * Indicates whether Tapestry is running in production mode or developer mode.  The primary difference is
-     * how exceptions are reported.
+     * Indicates whether Tapestry is running in production mode or developer mode.  The primary difference is how
+     * exceptions are reported.
      */
     public static final String PRODUCTION_MODE_SYMBOL = "tapestry.production-mode";
 
@@ -98,6 +98,12 @@ public final class TapestryConstants
      * one of these values.
      */
     public static final String SUPPORTED_LOCALES_SYMBOL = "tapestry.supported-locales";
+
+    /**
+     * Controls whether whitespace is compressed by default in templates, or left as is. The factory default is to
+     * compress whitespace. This can be overridden using the xml:space attribute inside template elements.
+     */
+    public static final String COMPRESS_WHITESPACE_SYMBOL = "tapestry.compress-whitespace";
 
     private TapestryConstants()
     {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.parser.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -60,15 +62,15 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private static final Pattern ID_PATTERN = Pattern.compile("^[a-z]\\w*$", Pattern.CASE_INSENSITIVE);
 
     /**
-     * Any amount of mixed simple whitespace (space, tab, form feed) mixed with at least one carriage return or line feed,
-     * followed by any amount of whitespace.  Will be reduced to a single linefeed.
+     * Any amount of mixed simple whitespace (space, tab, form feed) mixed with at least one carriage return or line
+     * feed, followed by any amount of whitespace.  Will be reduced to a single linefeed.
      */
     private static final Pattern REDUCE_LINEBREAKS_PATTERN = Pattern.compile("[ \\t\\f]*[\\r\\n]\\s*",
                                                                              Pattern.MULTILINE);
 
     /**
-     * Used when compressing whitespace, matches any sequence of simple whitespace (space, tab, formfeed). Applied
-     * after REDUCE_LINEBREAKS_PATTERN.
+     * Used when compressing whitespace, matches any sequence of simple whitespace (space, tab, formfeed). Applied after
+     * REDUCE_LINEBREAKS_PATTERN.
      */
     private static final Pattern REDUCE_WHITESPACE_PATTERN = Pattern.compile("[ \\t\\f]+", Pattern.MULTILINE);
 
@@ -90,11 +92,13 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private final List<TemplateToken> _tokens = newList();
 
+    private final boolean _compressWhitespaceDefault;
+
     /**
      * Because {@link org.xml.sax.ContentHandler#startPrefixMapping(String, String)} events arrive before the
      * corresponding {@link org.xml.sax.ContentHandler#startElement(String, String, String, org.xml.sax.Attributes)}
-     * events, we need to accumlate the {@link org.apache.tapestry.internal.parser.DefineNamespacePrefixToken}s
-     * ahead of time to get the correct ordering in the output tokens list.
+     * events, we need to accumlate the {@link org.apache.tapestry.internal.parser.DefineNamespacePrefixToken}s ahead of
+     * time to get the correct ordering in the output tokens list.
      */
     private final List<DefineNamespacePrefixToken> _defineNamespaceTokens = newList();
 
@@ -149,10 +153,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     };
 
 
-    public TemplateParserImpl(Logger logger, Map<String, URL> configuration)
+    public TemplateParserImpl(Logger logger, Map<String, URL> configuration,
+
+                              @Symbol(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL)
+                              boolean compressWhitespaceDefault)
     {
         _logger = logger;
         _configuration = configuration;
+        _compressWhitespaceDefault = compressWhitespaceDefault;
 
         reset();
     }
@@ -177,7 +185,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     public ComponentTemplate parseTemplate(Resource templateResource)
     {
-        _compressWhitespace = true;
+        _compressWhitespace = _compressWhitespaceDefault;
 
         if (_reader == null)
         {
@@ -250,8 +258,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
 
     /**
-     * Adds tokens corresponding to the content in the text buffer. For a non-CDATA section, we also
-     * search for expansions (thus we may add more than one token). Clears the text buffer.
+     * Adds tokens corresponding to the content in the text buffer. For a non-CDATA section, we also search for
+     * expansions (thus we may add more than one token). Clears the text buffer.
      */
     private void processTextBuffer()
     {
@@ -287,11 +295,11 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     }
 
     /**
-     * Scans the text, using a regular expression pattern, for expansion patterns, and adds
-     * appropriate tokens for what it finds.
+     * Scans the text, using a regular expression pattern, for expansion patterns, and adds appropriate tokens for what
+     * it finds.
      *
-     * @param text to add as {@link org.apache.tapestry.internal.parser.TextToken}s
-     *             and {@link org.apache.tapestry.internal.parser.ExpansionToken}s
+     * @param text to add as {@link org.apache.tapestry.internal.parser.TextToken}s and {@link
+     *             org.apache.tapestry.internal.parser.ExpansionToken}s
      */
     private void addTokensForText(String text)
     {
@@ -352,9 +360,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     }
 
     /**
-     * Checks to see if currently inside a t:body element (which should always be empty). Content is
-     * ignored inside a body. If inside a body, then a warning is logged (but only one warning per
-     * body element).
+     * Checks to see if currently inside a t:body element (which should always be empty). Content is ignored inside a
+     * body. If inside a body, then a warning is logged (but only one warning per body element).
      *
      * @return true if inside t:body, false otherwise
      */
@@ -526,8 +533,8 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     /**
      * @param attributes     the attributes for the element
      * @param namespaceURI   the namespace URI for the element (or the empty string)
-     * @param elementName    the name of the element (to be assigned to the new token), may be null for a
-     *                       component in the Tapestry namespace
+     * @param elementName    the name of the element (to be assigned to the new token), may be null for a component in
+     *                       the Tapestry namespace
      * @param identifiedType the type of the element, usually null, but may be the component type derived from
      */
     private void startPossibleComponent(Attributes attributes, String namespaceURI, String elementName,

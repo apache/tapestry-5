@@ -82,7 +82,14 @@ Configuring Tapestry
   These symbols are always defined in terms of strings, that are coerced to the appropriate type (a number,
   a boolean, etc.).  Of special note are <time intervals>, which are specified in a
   {{{../../apidocs/org/apache/tapestry/ioc/util/TimeInterval.html}particular format}}.
-  
+
+
+  [tapestry.compress-whitespace]
+
+    A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
+    (this can be fine-tuned using the standard xml:space attribute on an element in the template).
+    When this flag is false, then whitespace is retained by default (but can still be overridden).
+
   [tapestry.default-cookie-max-age]
     The default time interval that cookies created by Tapestry will be kept in the client web browser.
     The dfault value is equal to one week. 

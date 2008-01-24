@@ -1691,6 +1691,8 @@ public final class TapestryModule
 
         configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "true");
 
+        configuration.add(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL, "true");
+
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
         // delete the old version folder (or keep it around). This should be more manageable than
