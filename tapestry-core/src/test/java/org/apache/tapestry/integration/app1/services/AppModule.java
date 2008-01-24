@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.integration.app1.services;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
@@ -101,7 +102,9 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add("tapestry.supported-locales", "en,fr");
+        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,fr");
+        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
+        
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
     }
 

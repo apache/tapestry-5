@@ -14,8 +14,10 @@
 
 package org.apache.tapestry.corelib.pages;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Meta;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry.ioc.services.ExceptionInfo;
@@ -26,8 +28,8 @@ import org.apache.tapestry.services.Session;
 import java.util.List;
 
 /**
- * Responsible for reporting runtime exceptions. This page is quite verbose and is usually
- * overridden in a production application.
+ * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
+ * application.
  */
 @Meta("tapestry.response-content-type=text/html")
 public class ExceptionReport implements ExceptionReporter
@@ -46,8 +48,16 @@ public class ExceptionReport implements ExceptionReporter
     @Inject
     private Request _request;
 
+    @Inject
+    @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
+    private boolean _productionMode;
+
+    private Throwable _rootException;
+
     public void reportException(Throwable exception)
     {
+        _rootException = exception;
+
         ExceptionAnalysis analysis = _analyzer.analyze(exception);
 
         _stack = analysis.getExceptionInfos();
@@ -118,5 +128,15 @@ public class ExceptionReport implements ExceptionReporter
     public Object getAttributeValue()
     {
         return getSession().getAttribute(_attributeName);
+    }
+
+    public boolean isProductionMode()
+    {
+        return _productionMode;
+    }
+
+    public Throwable getRootException()
+    {
+        return _rootException;
     }
 }
