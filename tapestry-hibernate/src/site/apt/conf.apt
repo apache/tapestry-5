@@ -35,7 +35,7 @@ public static void contributeHibernateSessionSource(OrderedConfiguration<Hiberna
   
   By default, the package <application-root-package>.entities is scanned as described above. If you have additional packages containing 
   entities, you must 
-  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/configuration.html}contribute}} them to the tapestry.hibernate.HibernateEntityPackageManager 
+  {{{../tapestry-ioc/configuration.html}contribute}} them to the tapestry.hibernate.HibernateEntityPackageManager 
   service configuration.
   
   Example:

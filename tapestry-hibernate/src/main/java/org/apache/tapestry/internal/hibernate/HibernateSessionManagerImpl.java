@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,9 +50,15 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
         return _session;
     }
 
+    /**
+     * Commits the transaction at the end of the request, then closes the session. The transaction commit should largely
+     * be a no-op, since it's expected that {@link #commit()} will have been invoked after any real changes.
+     */
     public void threadDidCleanup()
     {
         _transaction.commit();
+
+        _session.close();
     }
 
 }
