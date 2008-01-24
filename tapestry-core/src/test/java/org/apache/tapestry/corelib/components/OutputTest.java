@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,19 +20,25 @@ import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.text.*;
+import java.text.DecimalFormat;
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
 import java.util.Locale;
 
 public class OutputTest extends TapestryTestCase
 {
     private final Number _value = 22.7d;
 
-    private final NumberFormat _format = DecimalFormat.getInstance(Locale.US);
+    private final DecimalFormat _format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+
+    private final DecimalFormat _filterFormat = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
 
     @BeforeClass
     public void setup()
     {
-        ((DecimalFormat) _format).applyPattern("0.00");
+        _format.applyPattern("0.00");
+        _filterFormat.applyPattern("<0.00>");
     }
 
     @Test
@@ -45,7 +51,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, _format, null, resources);
+        component.setup(_value, _format, true, null, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
@@ -54,6 +60,50 @@ public class OutputTest extends TapestryTestCase
         verify();
 
         assertEquals(writer.toString(), "<root>22.70</root>");
+    }
+
+    @Test
+    public void simple_output_with_filter()
+    {
+        MarkupWriter writer = createMarkupWriter();
+        ComponentResources resources = mockComponentResources();
+
+        replay();
+
+        Output component = new Output();
+
+        component.setup(_value, _filterFormat, true, null, resources);
+
+        writer.element("root");
+        assertFalse(component.beginRender(writer));
+        writer.end();
+
+        verify();
+
+        assertEquals(writer.toString(), "<root>&lt;22.70&gt;</root>");
+    }
+
+    @Test
+    public void simple_output_with_filter_disabled()
+    {
+        MarkupWriter writer = createMarkupWriter();
+        ComponentResources resources = mockComponentResources();
+
+        replay();
+
+        Output component = new Output();
+
+        component.setup(_value, _filterFormat, false, null, resources);
+
+        writer.element("root");
+        assertFalse(component.beginRender(writer));
+        writer.end();
+
+        verify();
+
+        // It's not valid XML output, but that's why it's called programmer error :-)
+
+        assertEquals(writer.toString(), "<root><22.70></root>");
     }
 
     @Test
@@ -66,7 +116,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(null, _format, null, resources);
+        component.setup(null, _format, true, null, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
@@ -92,7 +142,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, _format, elementName, resources);
+        component.setup(_value, _format, true, elementName, resources);
 
         assertFalse(component.beginRender(writer));
 
@@ -131,7 +181,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, format, elementName, resources);
+        component.setup(_value, format, true, elementName, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
