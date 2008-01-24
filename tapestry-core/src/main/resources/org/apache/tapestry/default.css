@@ -366,3 +366,7 @@ DIV.t-error-popup {
 HTML>BODY DIV.t-error-popup {
     background: transparent url( 'error-bevel-right.png' ) no-repeat scroll top right;
 }
+
+UL.t-data-list LI {
+    list-style-type: square;
+}

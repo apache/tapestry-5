@@ -26,6 +26,8 @@ import org.apache.tapestry.internal.bindings.*;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.grid.CollectionGridDataSource;
 import org.apache.tapestry.internal.grid.NullDataSource;
+import org.apache.tapestry.internal.renderers.ListRenderer;
+import org.apache.tapestry.internal.renderers.ObjectArrayRenderer;
 import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.structure.PageResourcesSource;
 import org.apache.tapestry.internal.structure.PageResourcesSourceImpl;
@@ -1233,15 +1235,17 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes a default object renderer for type Object, plus specialized renderers for {@link Request} and {@link
-     * Location}.
+     * Contributes a default object renderer for type Object, plus specialized renderers for {@link Request}, {@link
+     * Location}, List, and Object[].
      */
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
                                          @InjectService("LocationRenderer")
                                          ObjectRenderer locationRenderer,
 
-                                         final TypeCoercer typeCoercer)
+                                         final TypeCoercer typeCoercer,
+
+                                         ObjectLocator locator)
     {
         configuration.add(Object.class, new ObjectRenderer()
         {
@@ -1266,6 +1270,9 @@ public final class TapestryModule
         };
 
         configuration.add(ClassTransformation.class, preformatted);
+
+        configuration.add(List.class, locator.autobuild(ListRenderer.class));
+        configuration.add(Object[].class, locator.autobuild(ObjectArrayRenderer.class));
     }
 
 
