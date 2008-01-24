@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,16 @@
 
 package org.apache.tapestry.hibernate;
 
-import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-/** Modifies the Hibernate configuration in some way before the {@link SessionFactory} is created.
+/**
+ * Defines the interface for a chain-of-command that updates Hibernate configuration in some way before the {@link
+ * org.hibernate.SessionFactory} is created.
  */
-public interface HibernateConfigurer {
-	void configure(Configuration configuration);
+public interface HibernateConfigurer
+{
+    /**
+     * Passed the configuration so as to make changes.
+     */
+    void configure(Configuration configuration);
 }

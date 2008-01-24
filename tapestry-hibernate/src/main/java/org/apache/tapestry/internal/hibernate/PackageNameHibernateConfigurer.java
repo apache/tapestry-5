@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,23 +21,28 @@ import org.apache.tapestry.ioc.internal.util.Defense;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 
-/** Adds entity classes from a given set of packages to the configuration.
+/**
+ * Adds entity classes from a given set of packages to the configuration.
  */
-public final class PackageNameHibernateConfigurer implements HibernateConfigurer {
-	private final HibernateEntityPackageManager _packageManager;
-	private final ClassNameLocator _classNameLocator;
-	
-	public PackageNameHibernateConfigurer(HibernateEntityPackageManager packageManager, ClassNameLocator classNameLocator) {
-		super();
-		_packageManager = packageManager;
-		_classNameLocator = classNameLocator;
-	}
+public final class PackageNameHibernateConfigurer implements HibernateConfigurer
+{
+    private final HibernateEntityPackageManager _packageManager;
 
-	public void configure(Configuration configuration) {
-		Defense.cast(configuration, AnnotationConfiguration.class, "configuration");
-		AnnotationConfiguration cfg = (AnnotationConfiguration)configuration;
+    private final ClassNameLocator _classNameLocator;
 
-		ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+    public PackageNameHibernateConfigurer(HibernateEntityPackageManager packageManager,
+                                          ClassNameLocator classNameLocator)
+    {
+        _packageManager = packageManager;
+        _classNameLocator = classNameLocator;
+    }
+
+    public void configure(Configuration configuration)
+    {
+        Defense.cast(configuration, AnnotationConfiguration.class, "configuration");
+        AnnotationConfiguration cfg = (AnnotationConfiguration) configuration;
+
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
         for (String packageName : _packageManager.getPackageNames())
         {
@@ -48,6 +53,7 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
                 try
                 {
                     Class entityClass = contextClassLoader.loadClass(className);
+
                     cfg.addAnnotatedClass(entityClass);
                 }
                 catch (ClassNotFoundException ex)
@@ -56,6 +62,6 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
                 }
             }
         }
-	}
+    }
 
 }
