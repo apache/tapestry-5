@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.corelib.base;
 
+import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
@@ -28,7 +29,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
  * Provides base utilities for classes that generate clickable links.
  */
 @SupportsInformalParameters
-public abstract class AbstractLink
+public abstract class AbstractLink implements ClientElement
 {
     @Inject
     private ComponentInvocationMap _componentInvocationMap;
@@ -39,10 +40,19 @@ public abstract class AbstractLink
     @Parameter(defaultPrefix = LITERAL_BINDING_PREFIX)
     private String _anchor;
 
+    /**
+     * If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still
+     * rendered.
+     */
+    @Parameter("false")
+    private boolean _disabled;
+
     @Inject
     private ComponentResources _resources;
 
     private Link _link;
+
+    private String _clientId;
 
     private final String buildHref(Link link)
     {
@@ -75,6 +85,7 @@ public abstract class AbstractLink
         _componentInvocationMap.store(e, link);
 
         _link = link;
+        _clientId = clientId;
     }
 
     /**
@@ -87,6 +98,24 @@ public abstract class AbstractLink
     public Link getLink()
     {
         return _link;
+    }
+
+    /**
+     * Returns the unique client id for this element. This is valid only after the component has rendered (its start
+     * tag), and then only if the component is {@linkplain #isDisabled() enabled}.
+     */
+    public String getClientId()
+    {
+        return _clientId;
+    }
+
+    /**
+     * Returns true if the component is disabled (as per its disabled parameter). Disabled link components should not
+     * render a tag, but should still render their body.
+     */
+    public boolean isDisabled()
+    {
+        return _disabled;
     }
 
     /**
