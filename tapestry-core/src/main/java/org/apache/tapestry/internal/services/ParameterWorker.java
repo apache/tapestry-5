@@ -27,8 +27,8 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
- * Responsible for identifying parameters via the {@link org.apache.tapestry.annotations.Parameter}
- * annotation on component fields. This is one of the most complex of the transformations.
+ * Responsible for identifying parameters via the {@link org.apache.tapestry.annotations.Parameter} annotation on
+ * component fields. This is one of the most complex of the transformations.
  */
 public class ParameterWorker implements ComponentClassTransformWorker
 {

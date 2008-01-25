@@ -10,21 +10,15 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.
+// limitations under the License.package org.apache.tapestry.integration.app1.pages;
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.integration.app1.pages;
 
-/**
- * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
- * class is the transformed class.
- */
-public interface ComponentClassCache
+public class PrimitiveArrayParameterDemo
 {
-    /**
-     * Gets the Class instance for then give name.
-     *
-     * @param className fully qualified class name, or an primtive type name, or an array name (in source format)
-     * @return the class instance
-     */
-    Class forName(String className);
+
+    public int[] getValues()
+    {
+        return new int[]{1, 3, 5, 7, 9};
+    }
 }
