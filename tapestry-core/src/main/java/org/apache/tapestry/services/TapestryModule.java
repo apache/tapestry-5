@@ -1599,7 +1599,7 @@ public final class TapestryModule
      * @see org.apache.tapestry.internal.services.ComponentEventRequestHandlerImpl
      */
     @Marker(Traditional.class)
-    public ComponentEventRequestHandler buildComponentActionRequestHandler(
+    public ComponentEventRequestHandler buildComponentEventRequestHandler(
             List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
         return _pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
@@ -2067,10 +2067,10 @@ public final class TapestryModule
      * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
      * response, which is the normal behavior) </dd> </dl>
      */
-    public void contributeComponentActionRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
-                                                        final RequestEncodingInitializer encodingInitializer,
-                                                        @Ajax ComponentEventRequestHandler ajaxHandler,
-                                                        ObjectLocator locator)
+    public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
+                                                       final RequestEncodingInitializer encodingInitializer,
+                                                       @Ajax ComponentEventRequestHandler ajaxHandler,
+                                                       ObjectLocator locator)
     {
         ComponentEventRequestFilter requestEncodingFilter = new ComponentEventRequestFilter()
         {
