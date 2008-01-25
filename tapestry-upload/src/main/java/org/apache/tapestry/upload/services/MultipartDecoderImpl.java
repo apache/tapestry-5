@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,6 +19,8 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 
@@ -29,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of multipart decoder for servlets.
+ * Implementation of multipart decoder for servlets.  This implementation is perthread scope.
  */
 class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 {
@@ -43,8 +45,19 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 
     private final long _maxFileSize;
 
-    public MultipartDecoderImpl(String repositoryLocation, int repositoryThreshold, long maxRequestSize,
-                                long maxFileSize)
+    public MultipartDecoderImpl(
+
+            @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
+            String repositoryLocation,
+
+            @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
+            int repositoryThreshold,
+
+            @Symbol(UploadSymbols.REQUESTSIZE_MAX)
+            long maxRequestSize,
+
+            @Symbol(UploadSymbols.FILESIZE_MAX)
+            long maxFileSize)
     {
         _repositoryLocation = repositoryLocation;
         _repositoryThreshold = repositoryThreshold;
@@ -59,7 +72,6 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 
     public HttpServletRequest decode(HttpServletRequest request)
     {
-        // String encoding = request.getCharacterEncoding();
         List<FileItem> fileItems = parseRequest(request);
 
         return processFileItems(request, fileItems);
@@ -106,7 +118,6 @@ class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
         }
 
         ParametersServletRequestWrapper wrapper = new ParametersServletRequestWrapper(request);
-
 
         String encoding = request.getCharacterEncoding();
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,22 +16,19 @@ package org.apache.tapestry.upload.services;
 
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
-import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.annotations.Scope;
-import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.services.HttpServletRequestFilter;
 import org.apache.tapestry.services.LibraryMapping;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 public class UploadModule
 {
-    private static boolean _shutdownListenerSet;
+    private static final AtomicBoolean _needToAddShutdownListener = new AtomicBoolean(true);
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
     {
@@ -40,33 +37,20 @@ public class UploadModule
         configuration.add(new LibraryMapping("core", "org.apache.tapestry.upload"));
     }
 
-    @Scope("perthread")
+    @Scope(IOCConstants.PERTHREAD_SCOPE)
     public synchronized static MultipartDecoder buildMultipartDecoder(ThreadCleanupHub threadCleanupHub,
 
                                                                       RegistryShutdownHub shutdownHub,
 
-                                                                      @Inject @Symbol(UploadSymbols.REPOSITORY_LOCATION)
-                                                                      String repositoryPath,
-
-                                                                      @Symbol(UploadSymbols.REPOSITORY_THRESHOLD)
-                                                                      int repositoryThreshold,
-
-                                                                      @Symbol(UploadSymbols.REQUESTSIZE_MAX)
-                                                                      long maxRequestSize,
-
-                                                                      @Symbol(UploadSymbols.FILESIZE_MAX)
-                                                                      long maxFileSize,
-
-                                                                      SymbolSource symbolSource)
+                                                                      ObjectLocator locator)
     {
-        MultipartDecoderImpl multipartDecoder = new MultipartDecoderImpl(repositoryPath, repositoryThreshold,
-                                                                         maxRequestSize, maxFileSize);
+        MultipartDecoderImpl multipartDecoder = locator.autobuild(MultipartDecoderImpl.class);
 
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.
         threadCleanupHub.addThreadCleanupListener(multipartDecoder);
 
-        if (_shutdownListenerSet)
+        if (_needToAddShutdownListener.getAndSet(false))
         {
             shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
             {
@@ -75,8 +59,6 @@ public class UploadModule
                     FileCleaner.exitWhenFinished();
                 }
             });
-
-            _shutdownListenerSet = true;
         }
 
         return multipartDecoder;

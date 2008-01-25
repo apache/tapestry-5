@@ -3,6 +3,8 @@
 
     <h1>Tapestry 5 Integration Application 1</h1>
 
+    <p>${items.size()} standard test pages</p>
+
     <ul>
         <li t:type="loop" source="items" value="item">
             <t:pagelink page="prop:item.pageName">${item.label}</t:pagelink>
