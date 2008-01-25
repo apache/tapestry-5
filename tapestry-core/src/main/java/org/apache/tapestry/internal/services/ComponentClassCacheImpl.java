@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
 import java.util.Map;
@@ -43,11 +44,15 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
 
         if (result == null)
         {
+            // This step is necessary to handle primitives and, especially, primitive arrays.
+
+            String jvmName = ClassFabUtils.toJVMBinaryName(className);
+
             ClassLoader componentLoader = _classFactory.getClassLoader();
 
             try
             {
-                result = Class.forName(className, true, componentLoader);
+                result = Class.forName(jvmName, true, componentLoader);
             }
             catch (ClassNotFoundException ex)
             {

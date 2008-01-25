@@ -12,19 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.integration.app1.components;
 
-/**
- * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
- * class is the transformed class.
- */
-public interface ComponentClassCache
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.annotations.Parameter;
+
+public class IntArrayWriter
 {
-    /**
-     * Gets the Class instance for then give name.
-     *
-     * @param className fully qualified class name, or an primtive type name, or an array name (in source format)
-     * @return the class instance
-     */
-    Class forName(String className);
+    @Parameter
+    private int[] _array;
+
+    boolean beginRender(MarkupWriter writer)
+    {
+        writer.element("ul");
+
+        for (int x : _array)
+        {
+            writer.element("li");
+            writer.write(String.valueOf(x));
+            writer.end();
+        }
+
+        writer.end();
+
+        return false; // don't render body, etc.
+    }
 }

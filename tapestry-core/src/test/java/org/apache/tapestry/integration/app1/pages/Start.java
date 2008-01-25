@@ -210,6 +210,9 @@ public class Start
 
             new Item("AddedGridColumnsDemo", "Added Grid Columns Demo", "programatically adding grid columns"),
 
+            new Item("PrimitiveArrayParameterDemo", "Primitive Array Parameter Demo",
+                     "use primitive array as parameter type"),
+
             new Item("TrackEditor", "Generic Page Class Demo",
                      "demo use of generics with component classes and, particularily, with property types"));
 

@@ -1511,4 +1511,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertSourcePresent("<label for=\"title\" id=\"title:label\">Title</label>");
     }
+
+    /**
+     * TAPESTRY-2088
+     */
+    @Test
+    public void primitive_array_as_parameter_type()
+    {
+        start("Primitive Array Parameter Demo");
+
+        assertSourcePresent("<ul><li>1</li><li>3</li><li>5</li><li>7</li><li>9</li></ul>");
+    }
 }

@@ -79,7 +79,7 @@ Third Party Libraries
   and new and improved integrations.
 
 *--+--+--+
-| <<Library>> | <<Author >> | <<Description >>
+| <<Library>> | <<Author>> | <<Description>>
 *--+--+--+
 | {{{http://equanda.org/equanda-tapestry5/}equanda-tapestry5}} |   Joachim Van der Auwera |      Components useful for building enterprise applications. Includes Accordion, Tabs, Formtraversal. Amongst other things, these focus on easy input of data without the need for a mouse.
 *--+--+--+
