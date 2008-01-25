@@ -73,7 +73,15 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
                               {"/verylongcontextname", "/page", "/verylongcontextname/page:sort/foo",
                                "./page:sort/foo"},
 
-                              {"", "/page", "/page:sort/foo", "/page:sort/foo"}};
+                              {"", "/page", "/page:sort/foo", "/page:sort/foo"},
+
+                              // TAPESTRY-2046
+
+                              {"/attendance", "/view/sites", "/attendance/assets/tapestry/tapestry.js",
+                               "../assets/tapestry/tapestry.js"}
+
+
+        };
     }
 
     @Test(dataProvider = "uri_optimization")
