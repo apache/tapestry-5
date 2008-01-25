@@ -83,8 +83,8 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     }
 
     /**
-     * Or call this the "Hibernate" case; Hibernate creates sub-classes of entity classes in its own
-     * class loader to do all sorts of proxying. This trips up Javassist.
+     * Or call this the "Hibernate" case; Hibernate creates sub-classes of entity classes in its own class loader to do
+     * all sorts of proxying. This trips up Javassist.
      */
     @Test
     public void handle_beans_from_unexpected_classloader() throws Exception
@@ -110,6 +110,22 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         PropertyConduit conduit = _source.create(proxyClass, "firstName");
 
         assertEquals(conduit.get(simple), "Howard");
+    }
+
+    @Test
+    public void generics()
+    {
+        String string = "surprise";
+        StringHolder stringHolder = new StringHolder();
+        stringHolder.put(string);
+        StringHolderBean bean = new StringHolderBean();
+        bean.setValue(stringHolder);
+
+        PropertyConduit conduit = _source.create(StringHolderBean.class, "value.get()");
+
+        assertSame(conduit.get(bean), string);
+
+        assertSame(conduit.getPropertyType(), String.class);
     }
 
 }

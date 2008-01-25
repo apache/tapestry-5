@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import java.lang.reflect.Method;
 
 /**
- * Provides access to a single property within a class. Acts as an {@link AnnotationProvider}; when searching
- * for annotations, the read method (if present) is checked first, followed by the write method.
+ * Provides access to a single property within a class. Acts as an {@link AnnotationProvider}; when searching for
+ * annotations, the read method (if present) is checked first, followed by the write method.
  *
  * @see org.apache.tapestry.ioc.services.ClassPropertyAdapter
  */
@@ -60,8 +60,8 @@ public interface PropertyAdapter extends AnnotationProvider
     Object get(Object instance);
 
     /**
-     * Updates the property value. The provided value must not be null if the property type is
-     * primitive, and must otherwise be of the proper type.
+     * Updates the property value. The provided value must not be null if the property type is primitive, and must
+     * otherwise be of the proper type.
      *
      * @param instance to update
      * @param value    new value for the property
@@ -73,4 +73,11 @@ public interface PropertyAdapter extends AnnotationProvider
      * Returns the type of the property.
      */
     Class getType();
+
+    /**
+     * Returns true if the return type of the read method is not the same as the property type. This can occur when the
+     * property has been defined using generics, in which case, the method's type may be Object when the property type
+     * is something more specific. This method is primarily used when generating runtime code related to the property.
+     */
+    boolean isCastRequired();
 }
