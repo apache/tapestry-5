@@ -1611,7 +1611,7 @@ public final class TapestryModule
      * Filters on the request handler are supported here as well.
      */
     @Marker(Ajax.class)
-    public ComponentEventRequestHandler buildAjaxComponentActionRequestHandler(
+    public ComponentEventRequestHandler buildAjaxComponentEventRequestHandler(
             List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
         return _pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,

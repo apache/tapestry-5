@@ -38,7 +38,7 @@ public class ImmediateActionRenderResponseGenerator implements ActionRenderRespo
     {
         Defense.notNull(page, "page");
 
-        // This can happen when the ComponentActionRequestHandlerImpl notices that the response
+        // This can happen when the ComponentEventRequestHandlerImpl notices that the response
         // is not yet committed, and sets up to render a default response for the page containing
         // the component.
         if (_request.getAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE) != null) return;
@@ -46,7 +46,7 @@ public class ImmediateActionRenderResponseGenerator implements ActionRenderRespo
         // We are somewhere in the middle of processing an action request, possibly something
         // complicated like a form submission.  Tapestry components are not re-entrant, so we
         // can't render the request right now, instead we record that we need to render
-        // a response as an attribute, and let a filter on the ComponentActionRequestHandler service
+        // a response as an attribute, and let a filter on the ComponentEventRequestHandler service
         // do the work.
 
         _request.setAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE, page);

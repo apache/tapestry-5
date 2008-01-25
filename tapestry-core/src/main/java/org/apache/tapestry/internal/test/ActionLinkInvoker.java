@@ -47,7 +47,7 @@ public class ActionLinkInvoker implements ComponentInvoker
     {
         _registry = registry;
         _followupInvoker = followupInvoker;
-        _componentEventRequestHandler = _registry.getService("ComponentActionRequestHandler",
+        _componentEventRequestHandler = _registry.getService("ComponentEventRequestHandler",
                                                              ComponentEventRequestHandler.class);
 
         _response = _registry.getObject(TestableResponse.class, null);
