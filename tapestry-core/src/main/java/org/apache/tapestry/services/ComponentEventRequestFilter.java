@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * Filter interface for {@link ComponentEventRequestHandler}.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeComponentActionRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration,
+ * @see org.apache.tapestry.services.TapestryModule#contributeComponentEventRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration,
  *      org.apache.tapestry.internal.services.RequestEncodingInitializer, ComponentEventRequestHandler ,
  *      org.apache.tapestry.ioc.ObjectLocator) }
  */
