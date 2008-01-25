@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,11 +15,13 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
@@ -40,7 +42,12 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 
             if (pd.getPropertyType() == null) continue;
 
-            PropertyAdapter pa = new PropertyAdapterImpl(pd);
+            Method readMethod = pd.getReadMethod();
+
+            Class propertyType = readMethod == null ? pd.getPropertyType() : GenericsUtils.extractGenericReturnType(
+                    beanType, readMethod);
+
+            PropertyAdapter pa = new PropertyAdapterImpl(pd.getName(), propertyType, readMethod, pd.getWriteMethod());
 
             _adapters.put(pa.getName(), pa);
         }
@@ -83,8 +90,7 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
     {
         PropertyAdapter pa = _adapters.get(name);
 
-        if (pa == null)
-            throw new IllegalArgumentException(ServiceMessages.noSuchProperty(_beanType, name));
+        if (pa == null) throw new IllegalArgumentException(ServiceMessages.noSuchProperty(_beanType, name));
 
         return pa;
     }

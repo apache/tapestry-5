@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 
-import java.beans.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -33,6 +32,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
     private final Class _type;
 
+    private final boolean _castRequired;
+
     public PropertyAdapterImpl(String name, Class type, Method readMethod, Method writeMethod)
     {
         _name = notBlank(name, "name");
@@ -40,12 +41,8 @@ public class PropertyAdapterImpl implements PropertyAdapter
 
         _readMethod = readMethod;
         _writeMethod = writeMethod;
-    }
 
-    public PropertyAdapterImpl(PropertyDescriptor descriptor)
-    {
-        this(descriptor.getName(), descriptor.getPropertyType(), descriptor.getReadMethod(),
-             descriptor.getWriteMethod());
+        _castRequired = readMethod != null && readMethod.getReturnType() != type;
     }
 
     public String getName()
@@ -133,5 +130,10 @@ public class PropertyAdapterImpl implements PropertyAdapter
         if (result == null && _writeMethod != null) result = _writeMethod.getAnnotation(annotationClass);
 
         return result;
+    }
+
+    public boolean isCastRequired()
+    {
+        return _castRequired;
     }
 }

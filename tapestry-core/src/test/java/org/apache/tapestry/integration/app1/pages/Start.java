@@ -208,7 +208,10 @@ public class Start
 
             new Item("ExceptionEventDemo", "Exception Event Demo", "handling component event exceptions"),
 
-            new Item("AddedGridColumnsDemo", "Added Grid Columns Demo", "programatically adding grid columns"));
+            new Item("AddedGridColumnsDemo", "Added Grid Columns Demo", "programatically adding grid columns"),
+
+            new Item("TrackEditor", "Generic Page Class Demo",
+                     "demo use of generics with component classes and, particularily, with property types"));
 
     static
     {

@@ -1498,4 +1498,17 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // The rendered &nbsp; becomes just a blank string.
         assertTextSeries("//tr[1]/td[%d]", 1, "7", "view", "1", "");
     }
+
+    /**
+     * TAPESTRY-1518
+     */
+    @Test
+    public void generic_page_type()
+    {
+        start("Generic Page Class Demo");
+
+        assertTextPresent("Editor for org.apache.tapestry.integration.app1.data.Track");
+
+        assertSourcePresent("<label for=\"title\" id=\"title:label\">Title</label>");
+    }
 }

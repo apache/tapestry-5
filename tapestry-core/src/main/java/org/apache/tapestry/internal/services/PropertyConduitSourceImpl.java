@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.GenericsUtils;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.services.ComponentLayer;
@@ -30,9 +31,51 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class PropertyConduitSourceImpl implements PropertyConduitSource, InvalidationListener
 {
+    private interface ReadInfo extends AnnotationProvider
+    {
+        /**
+         * The name of the method to invoke.
+         */
+        String getMethodName();
+
+        /**
+         * The return type of the method, or the type of the property.
+         */
+        Class getType();
+
+        /**
+         * True if an explicit cast to the return type is needed (typically because of generics).
+         */
+        boolean isCastRequired();
+    }
+
+
+    /**
+     * Result from writing the property navigation portion of the expression.  For getter methods, the navigation is all
+     * terms in the expression; for setter methods, the navigation is all but the last term.
+     */
+    private interface PropertyNavigationResult
+    {
+        /**
+         * The name of the variable holding the final step in the expression.
+         */
+        String getFinalStepVariable();
+
+        /**
+         * The type of the final step variable.
+         */
+        Class getFinalStepType();
+
+        /**
+         * The method read information for the final term in the navigation portion of the expression.
+         */
+        ReadInfo getFinalReadInfo();
+    }
+
     private static final String PARENS = "()";
 
     private final PropertyAccess _access;
@@ -52,6 +95,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
                                                                              new Class[]{Object.class, Object.class},
                                                                              null);
+
+    private final Pattern SPLIT_AT_DOTS = Pattern.compile("\\.");
 
     public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer ClassFactory classFactory)
     {
@@ -95,9 +140,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     }
 
     /**
-     * Clears its cache when the component class loader is invalidated; this is because it will be
-     * common to generated conduits rooted in a component class (which will no longer be valid and
-     * must be released to the garbage collector).
+     * Clears its caches when the component class loader is invalidated; this is because it will be common to generate
+     * conduits rooted in a component class (which will no longer be valid and must be released to the garbage
+     * collector).
      */
     public void objectWasInvalidated()
     {
@@ -105,11 +150,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         _classToEffectiveClass.clear();
     }
 
+
     /**
-     * Builds a subclass of {@link BasePropertyConduit} that implements the get() and set() methods
-     * and overrides the constructor. In a worst-case race condition, we may build two (or more)
-     * conduits for the same rootClass/expression, and it will get sorted out when the conduit is
-     * stored into the cache.
+     * Builds a subclass of {@link BasePropertyConduit} that implements the get() and set() methods and overrides the
+     * constructor. In a worst-case race condition, we may build two (or more) conduits for the same
+     * rootClass/expression, and it will get sorted out when the conduit is stored into the cache.
      *
      * @param rootClass
      * @param expression
@@ -123,15 +168,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         classFab.addConstructor(new Class[]{Class.class, AnnotationProvider.class, String.class}, null, "super($$);");
 
-        String[] terms = expression.split("\\.");
+        String[] terms = SPLIT_AT_DOTS.split(expression);
 
-        final Method readMethod = buildGetter(rootClass, classFab, expression, terms);
+        final ReadInfo readInfo = buildGetter(rootClass, classFab, expression, terms);
         final Method writeMethod = buildSetter(rootClass, classFab, expression, terms);
 
         // A conduit is either readable or writable, otherwise there will already have been
         // an error about unknown method name or property name.
 
-        Class propertyType = readMethod != null ? readMethod.getReturnType() : writeMethod
+        Class propertyType = readInfo != null ? readInfo.getType() : writeMethod
                 .getParameterTypes()[0];
 
         String description = String.format("PropertyConduit[%s %s]", rootClass.getName(), expression);
@@ -140,10 +185,9 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         AnnotationProvider provider = new AnnotationProvider()
         {
-
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
-                T result = readMethod == null ? null : readMethod.getAnnotation(annotationClass);
+                T result = readInfo == null ? null : readInfo.getAnnotation(annotationClass);
 
                 if (result == null && writeMethod != null) result = writeMethod.getAnnotation(annotationClass);
 
@@ -163,19 +207,60 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     }
 
-    private Method buildGetter(Class rootClass, ClassFab classFab, String expression, String[] terms)
+    private ReadInfo buildGetter(Class rootClass, ClassFab classFab, String expression, String[] terms)
     {
         BodyBuilder builder = new BodyBuilder();
+
         builder.begin();
 
+        PropertyNavigationResult result = writePropertyNavigationCode(builder, rootClass, expression, terms, false);
+
+
+        if (result == null)
+        {
+            builder.clear();
+            builder
+                    .addln("throw new RuntimeException(\"Expression %s for class %s is write-only.\");", expression,
+                           rootClass.getName());
+        }
+        else
+        {
+            builder.addln("return %s;", result.getFinalStepVariable());
+
+            builder.end();
+        }
+
+        classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
+
+
+        return result == null ? null : result.getFinalReadInfo();
+    }
+
+    /**
+     * Writes the code for navigation
+     *
+     * @param builder
+     * @param rootClass
+     * @param expression
+     * @param terms
+     * @param forSetter  if true, then the last term is not read since it will be updated
+     * @return
+     */
+    private PropertyNavigationResult writePropertyNavigationCode(BodyBuilder builder, Class rootClass,
+                                                                 String expression, String[] terms, boolean forSetter)
+    {
         builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootClass));
         String previousStep = "root";
 
         Class activeType = rootClass;
-        Method result = null;
-        boolean writeOnly = false;
+        ReadInfo readInfo = null;
 
-        for (int i = 0; i < terms.length; i++)
+        // For a setter method, the navigation stops with  the penultimate
+        // term in the expression (the final term is what gets updated).
+
+        int lastIndex = forSetter ? terms.length - 1 : terms.length;
+
+        for (int i = 0; i < lastIndex; i++)
         {
             String thisStep = "step" + (i + 1);
             String term = terms[i];
@@ -183,45 +268,75 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             boolean nullable = term.endsWith("?");
             if (nullable) term = term.substring(0, term.length() - 1);
 
-            Method readMethod = readMethodForTerm(activeType, expression, term, (i < terms.length - 1));
+            // All the navigation terms in the expression must be readable properties.
+            // The only exception is the final term in a reader method.
 
-            if (readMethod == null)
-            {
-                writeOnly = true;
-                break;
-            }
+            boolean mustExist = forSetter || i < terms.length - 1;
+
+            readInfo = readInfoForTerm(activeType, expression, term, mustExist);
+
+            // Means the property for this step exists but is write only, which is a problem!
+            // This can only happen for getter methods, we return null to indicate that
+            // the expression is write-only.
+
+            if (readInfo == null) return null;
 
             // If a primitive type, convert to wrapper type
 
-            Class termType = ClassFabUtils.getWrapperType(readMethod.getReturnType());
+            Class termType = readInfo.getType();
+            Class wrappedType = ClassFabUtils.getWrapperType(termType);
 
-            // $w is harmless for non-wrapper types.
+            String termJavaName = ClassFabUtils.toJavaClassName(wrappedType);
+            builder.add("%s %s = ", termJavaName, thisStep);
 
-            builder.addln("%s %s = ($w) %s.%s();", ClassFabUtils.toJavaClassName(termType), thisStep, previousStep,
-                          readMethod.getName());
+            // Casts are needed for primitives, and for the case where
+            // generics are involved.
 
-            if (nullable) builder.addln("if (%s == null) return null;", thisStep);
+            if (termType.isPrimitive())
+            {
+                builder.add(" ($w) ");
+            }
+            else if (readInfo.isCastRequired())
+            {
+                builder.add(" (%s) ", termJavaName);
+            }
 
-            activeType = termType;
-            result = readMethod;
+            builder.addln("%s.%s();", previousStep, readInfo.getMethodName());
+
+            if (nullable)
+            {
+                builder.add("if (%s == null) return", thisStep);
+
+                if (!forSetter) builder.add(" null");
+
+                builder.addln(";");
+            }
+
+            activeType = wrappedType;
             previousStep = thisStep;
         }
 
-        builder.addln("return %s;", previousStep);
+        final String finalStepVariable = previousStep;
+        final Class finalStepType = activeType;
+        final ReadInfo finalReadInfo = readInfo;
 
-        builder.end();
-
-        if (writeOnly)
+        return new PropertyNavigationResult()
         {
-            builder.clear();
-            builder
-                    .addln("throw new java.lang.RuntimeException(\"Expression %s for class %s is write-only.\");",
-                           expression, rootClass.getName());
-        }
+            public String getFinalStepVariable()
+            {
+                return finalStepVariable;
+            }
 
-        classFab.addMethod(Modifier.PUBLIC, GET_SIGNATURE, builder.toString());
+            public Class getFinalStepType()
+            {
+                return finalStepType;
+            }
 
-        return result;
+            public ReadInfo getFinalReadInfo()
+            {
+                return finalReadInfo;
+            }
+        };
     }
 
     private Method buildSetter(Class rootClass, ClassFab classFab, String expression, String[] terms)
@@ -229,46 +344,19 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
 
-        builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootClass));
-        String previousStep = "root";
+        PropertyNavigationResult result = writePropertyNavigationCode(builder, rootClass, expression, terms, true);
 
-        Class activeType = rootClass;
+        // Because we pass true for the forSetter parameter, we know that the expression for the leading
+        // terms is a chain of readable expressions.  But is the final term writable?
 
-        for (int i = 0; i < terms.length - 1; i++)
-        {
-            String thisStep = "step" + (i + 1);
-            String term = terms[i];
-
-            boolean nullable = term.endsWith("?");
-            if (nullable) term = term.substring(0, term.length() - 1);
-
-            Method readMethod = readMethodForTerm(activeType, expression, term, true);
-
-            // If a primitive type, convert to wrapper type
-
-            Class termType = ClassFabUtils.getWrapperType(readMethod.getReturnType());
-
-            // $w is harmless for non-wrapper types.
-
-            builder.addln("%s %s = ($w) %s.%s();", ClassFabUtils.toJavaClassName(termType), thisStep, previousStep,
-                          readMethod.getName());
-
-            if (nullable) builder.addln("if (%s == null) return;", thisStep);
-
-            activeType = termType;
-            previousStep = thisStep;
-        }
-
-        // When writing, the last step is different.
-
-        Method writeMethod = writeMethodForTerm(activeType, expression, terms[terms.length - 1]);
+        Method writeMethod = writeMethodForTerm(result.getFinalStepType(), expression, terms[terms.length - 1]);
 
         if (writeMethod == null)
         {
             builder.clear();
             builder
-                    .addln("throw new java.lang.RuntimeException(\"Expression %s for class %s is read-only.\");",
-                           expression, rootClass.getName());
+                    .addln("throw new RuntimeException(\"Expression %s for class %s is read-only.\");", expression,
+                           rootClass.getName());
             classFab.addMethod(Modifier.PUBLIC, SET_SIGNATURE, builder.toString());
 
             return null;
@@ -278,9 +366,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         Class wrapperType = ClassFabUtils.getWrapperType(parameterType);
 
+        // Cast the parameter from Object to the expected type for the method.
+
         builder.addln("%s value = (%<s) $2;", ClassFabUtils.toJavaClassName(wrapperType));
 
-        builder.add("%s.%s(value", previousStep, writeMethod.getName());
+        // Invoke the method, possibly converting a wrapper type to a primitive type along the way.
+
+        builder.add("%s.%s(value", result.getFinalStepVariable(), writeMethod.getName());
 
         if (parameterType != wrapperType)
             builder.add(".%s()", ClassFabUtils.getUnwrapMethodName(parameterType.getName()));
@@ -307,39 +399,89 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         return adapter.getWriteMethod();
     }
 
-    private Method readMethodForTerm(Class activeType, String expression, String term, boolean mustExist)
+    private ReadInfo readInfoForTerm(Class activeType, String expression, String term, boolean mustExist)
     {
         if (term.endsWith(PARENS))
         {
-            Method method = null;
             String methodName = term.substring(0, term.length() - PARENS.length());
 
             try
             {
-                method = activeType.getMethod(methodName);
+                final Method method = activeType.getMethod(methodName);
+
+                if (method.getReturnType().equals(void.class))
+                    throw new RuntimeException(ServicesMessages.methodIsVoid(term, activeType, expression));
+
+
+                final Class genericType = GenericsUtils.extractGenericReturnType(activeType, method);
+
+                return new ReadInfo()
+                {
+                    public String getMethodName()
+                    {
+                        return method.getName();
+                    }
+
+                    public Class getType()
+                    {
+                        return genericType;
+                    }
+
+                    public boolean isCastRequired()
+                    {
+                        return genericType != method.getReturnType();
+                    }
+
+                    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+                    {
+                        return method.getAnnotation(annotationClass);
+                    }
+                };
+
             }
             catch (NoSuchMethodException ex)
             {
                 throw new RuntimeException(ServicesMessages.methodNotFound(term, activeType, expression), ex);
             }
 
-            if (method.getReturnType().equals(void.class))
-                throw new RuntimeException(ServicesMessages.methodIsVoid(term, activeType, expression));
-
-            return method;
         }
 
+        // Otherwise, just a property name.
+
         ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
-        PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
+        final PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
         if (adapter == null) throw new RuntimeException(
                 ServicesMessages.noSuchProperty(activeType, term, expression, classAdapter.getPropertyNames()));
 
-        Method m = adapter.getReadMethod();
+        if (!adapter.isRead())
+        {
+            if (mustExist) throw new RuntimeException(ServicesMessages.writeOnlyProperty(term, activeType, expression));
 
-        if (m == null && mustExist)
-            throw new RuntimeException(ServicesMessages.writeOnlyProperty(term, activeType, expression));
+            return null;
+        }
 
-        return m;
+        return new ReadInfo()
+        {
+            public String getMethodName()
+            {
+                return adapter.getReadMethod().getName();
+            }
+
+            public Class getType()
+            {
+                return adapter.getType();
+            }
+
+            public boolean isCastRequired()
+            {
+                return adapter.isCastRequired();
+            }
+
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return adapter.getAnnotation(annotationClass);
+            }
+        };
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.apache.tapestry.ioc.internal.services;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
+import org.apache.tapestry.ioc.internal.util.Pair;
+import org.apache.tapestry.ioc.internal.util.StringLongPair;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
@@ -332,6 +334,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         assertTrue(pa.isRead());
         assertFalse(pa.isUpdate());
+        assertFalse(pa.isCastRequired());
 
         assertNull(pa.getWriteMethod());
         assertEquals(pa.getReadMethod(), findMethod(Bean.class, "getReadOnly"));
@@ -447,5 +450,33 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter("readOnly");
 
         assertNull(pa.getAnnotation(Scope.class));
+    }
+
+    @Test
+    public void using_generics()
+    {
+        ClassPropertyAdapter cpa1 = _access.getAdapter(StringLongPair.class);
+
+        PropertyAdapter pa1 = cpa1.getPropertyAdapter("key");
+        assertSame(pa1.getType(), String.class);
+        assertTrue(pa1.isCastRequired());
+
+        PropertyAdapter pa2 = cpa1.getPropertyAdapter("value");
+        assertSame(pa2.getType(), Long.class);
+        assertTrue(pa2.isCastRequired());
+
+        // On the base class, which defines the generic parameter type variables,
+        // the properties just look like Object.
+
+        ClassPropertyAdapter cpa2 = _access.getAdapter(Pair.class);
+
+        pa1 = cpa2.getPropertyAdapter("key");
+        assertSame(pa1.getType(), Object.class);
+        assertFalse(pa1.isCastRequired());
+
+        pa2 = cpa2.getPropertyAdapter("value");
+        assertSame(pa2.getType(), Object.class);
+        assertFalse(pa2.isCastRequired());
+
     }
 }
