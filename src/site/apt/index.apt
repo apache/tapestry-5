@@ -89,6 +89,8 @@ Third Party Libraries
 *--+--+--+
 | {{{http://code.google.com/p/tapestry5-components/}T5Components}} | Sven Homburg | Ajax-enabled components based on Prototype and Scriptaculous. |
 *--+--+--+
+| {{{http://tacos.sourceforge.net/tacos5/tacos-seam/}tacos-seam}} | Igor Drobiazko | Intregrates with {{{http://www.jboss.com/products/seam}JBoss Seam}}
+*--+--+--+
 | {{{http://www.localhost.nu/java/tapestry5-acegi/}tapestry5-acegi}} | Robin Helgelin  | Integration with the Acegi path-based security framework. |
 *--+--+--+
 | {{{http://code.google.com/p/tapestry5-treegrid/}tapestry5-treegrid}} | Gabriel Landais |  Combination tree navigation and data grid, based on sstree. |
