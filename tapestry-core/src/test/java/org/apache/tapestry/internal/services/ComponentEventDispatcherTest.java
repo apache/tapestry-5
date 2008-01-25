@@ -27,7 +27,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void no_dot_or_colon_in_path() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
 
@@ -42,7 +42,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         verify();
     }
 
-    protected final ComponentEventRequestHandler newComponentActionRequestHandler()
+    protected final ComponentEventRequestHandler newComponentEventRequestHandler()
     {
         return newMock(ComponentEventRequestHandler.class);
     }
@@ -117,7 +117,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void page_activation_context_in_request() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -150,7 +150,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void different_active_and_containing_pages() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -182,7 +182,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void request_path_reference_non_existent_page() throws Exception
     {
-        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
@@ -203,7 +203,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     private void test(String requestPath, String containerPageName, String nestedComponentId, String eventType,
                       String... eventContext) throws IOException
     {
-        ComponentEventRequestHandler handler = newComponentActionRequestHandler();
+        ComponentEventRequestHandler handler = newComponentEventRequestHandler();
         Request request = mockRequest();
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
