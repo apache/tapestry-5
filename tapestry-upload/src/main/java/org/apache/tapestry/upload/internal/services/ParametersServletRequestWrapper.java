@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.services;
+package org.apache.tapestry.upload.internal.services;
 
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.services.Dispatcher;
@@ -25,8 +25,8 @@ import java.util.Enumeration;
 import java.util.Map;
 
 /**
- * Wrapper for HttpServletRequest that overrides the parameter methods of the wrapped request. i.e.
- * parameters are retrieved from the wrapper rather than the real request.
+ * Wrapper for HttpServletRequest that overrides the parameter methods of the wrapped request. i.e. parameters are
+ * retrieved from the wrapper rather than the real request.
  */
 public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
 {
@@ -92,10 +92,9 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
     }
 
     /**
-     * Ignores any attempt to set the character encoding. Tapestry attempts to set the encoding
-     * <em>after</em> the page name has been identified by the correct {@link Dispatcher}, and
-     * that's too late from the perspective of the Servlet API as HttpServlet.getInputStream() will
-     * already have been called.
+     * Ignores any attempt to set the character encoding. Tapestry attempts to set the encoding <em>after</em> the page
+     * name has been identified by the correct {@link Dispatcher}, and that's too late from the perspective of the
+     * Servlet API as HttpServlet.getInputStream() will already have been called.
      */
     @Override
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException

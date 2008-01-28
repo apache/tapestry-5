@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.services;
+package org.apache.tapestry.upload.internal.services;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.tapestry.upload.services.UploadedFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Implentation of {@link UploadedFile} for FileItems.
+ * Implentation of {@link org.apache.tapestry.upload.services.UploadedFile} for FileItems.
  */
 public class UploadedFileItem implements UploadedFile
 {
