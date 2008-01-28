@@ -481,6 +481,8 @@ Tapestry.FieldEventManager.prototype = {
 
     validateInput : function(event)
     {
+        if (this.field.disabled) return;
+        
         // Clear out old decorations.  It's easier to remove the decorations
         // and then re-add them if the field is in error than it is to
         // toggle them on or off at the end.
@@ -497,7 +499,6 @@ Tapestry.FieldEventManager.prototype = {
 
         this.validators.each(function(tuple)
         {
-
             var acceptBlank = tuple[0];
             var validator = tuple[1];
 
