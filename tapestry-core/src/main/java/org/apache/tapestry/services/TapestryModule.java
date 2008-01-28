@@ -195,24 +195,27 @@ public final class TapestryModule
     }
 
     /**
-     * Adds a number of standard component class transform workers: <ul> <li>Retain -- allows fields to retain their
-     * values between requests</li> <li>Persist -- allows fields to store their their value persistently between
-     * requests</li> <li>Parameter -- identifies parameters based on the {@link org.apache.tapestry.annotations.Parameter}
-     * annotation</li> <li>Component -- identifies embedded components based on the {@link
-     * org.apache.tapestry.annotations.Component} annotation</li> <li>Mixin -- adds a mixin as part of a component's
-     * implementation</li> <li>Environment -- allows fields to contain values extracted from the {@link Environment}
-     * service</li> <li>Inject -- used with the {@link Inject} annotation, when a value is supplied</li> <li>InjectPage
-     * -- adds code to allow access to other pages via the {@link InjectPage} field annotation</li> <li>InjectBlock --
-     * allows a block from the template to be injected into a field</li> <li>IncludeStylesheet -- supports the {@link
-     * org.apache.tapestry.annotations.IncludeStylesheet} annotation</li> <li>IncludeJavaScriptLibrary -- supports the
-     * {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation</li> <li>SupportsInformalParameters
-     * -- checks for the annotation</li> <li>Meta -- checks for meta data and adds it to the component model
-     * <li>ApplicationState -- converts fields that reference application state objects <li>UnclaimedField -- identifies
-     * unclaimed fields and resets them to null/0/false at the end of the request</li> <li>RenderCommand -- ensures all
-     * components also implement {@link RenderCommand}</li> <li>SetupRender, BeginRender, etc. -- correspond to
-     * component render phases and annotations</li> <li>InvokePostRenderCleanupOnResources -- makes sure {@link
+     * Adds a number of standard component class transform workers: <dl> <dt>Retain </dt> <dd> allows fields to retain
+     * their values between requests</dd> <dt>Persist </dt> <dd> allows fields to store their their value persistently
+     * between requests</dd> <dt>Parameter </dt> <dd> identifies parameters based on the {@link
+     * org.apache.tapestry.annotations.Parameter} annotation</dd> <dt>Component </dt> <dd> identifies embedded
+     * components based on the {@link org.apache.tapestry.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>
+     * adds a mixin as part of a component's implementation</dd> <dt>Environment </dt> <dd> allows fields to contain
+     * values extracted from the {@link Environment} service</dd> <dt>Inject </dt> <dd> used with the {@link Inject}
+     * annotation, when a value is supplied</dd> <dt>InjectPage </dt> <dd> adds code to allow access to other pages via
+     * the {@link InjectPage} field annotation</dd> <dt>InjectBlock </dt> <dd> allows a block from the template to be
+     * injected into a field</dd> <dt>IncludeStylesheet </dt> <dd> supports the {@link
+     * org.apache.tapestry.annotations.IncludeStylesheet} annotation</dd> <dt>IncludeJavaScriptLibrary </dt> <dd>
+     * supports the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation</dd>
+     * <dt>SupportsInformalParameters </dt> <dd> checks for the annotation</dd> <dt>Meta </dt> <dd> checks for meta data
+     * and adds it to the component model <dt>ApplicationState </dt> <dd> converts fields that reference application
+     * state objects <dt>UnclaimedField </dt> <dd> identifies unclaimed fields and resets them to null/0/false at the
+     * end of the request</dd> <dt>RenderCommand </dt> <dd> ensures all components also implement {@link
+     * RenderCommand}</dd> <dt>SetupRender, BeginRender, etc. </dt> <dd> correspond to component render phases and
+     * annotations</dd> <dt>InvokePostRenderCleanupOnResources </dt> <dd> makes sure {@link
      * org.apache.tapestry.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
-     * finishes rendering</li> </ul>
+     * finishes rendering</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
+     * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link ResponseEncoding} annotation</dd> </dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -284,6 +287,9 @@ public final class TapestryModule
                           "after:SetupRender");
 
         configuration.add("InvokePostRenderCleanupOnResources", new InvokePostRenderCleanupOnResourcesWorker());
+
+        configuration.add("ContentType", new ContentTypeWorker());
+        configuration.add("ResponseEncoding", new ResponseEncodingWorker());
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.
