@@ -43,7 +43,7 @@ public class ResponseRendererImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer, null, null);
+        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer, null);
 
         assertSame(renderer.findContentType(component), contentType);
 
@@ -66,7 +66,7 @@ public class ResponseRendererImplTest extends InternalBaseTestCase
 
         replay();
 
-        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer, pageResponseRenderer, response);
+        ResponseRenderer renderer = new ResponseRendererImpl(cache, analyzer, pageResponseRenderer);
 
         renderer.renderPageMarkupResponse(pageName);
 

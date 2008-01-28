@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,23 +19,23 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Used to acquire bindings for component parameters. The BindingSource service strips off the binding prefix
- * to locate a {@link org.apache.tapestry.services.BindingFactory}.
+ * Used to acquire bindings for component parameters. The BindingSource service strips off the binding prefix to locate
+ * a {@link org.apache.tapestry.services.BindingFactory}.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeBindingSource(org.apache.tapestry.ioc.MappedConfiguration, AssetSource, BindingFactory, FieldValidatorSource, TranslatorSource)
+ * @see org.apache.tapestry.services.TapestryModule#contributeBindingSource(org.apache.tapestry.ioc.MappedConfiguration,
+ *      AssetSource, BindingFactory, FieldValidatorSource, TranslatorSource, org.apache.tapestry.ioc.ObjectLocator)
  */
 public interface BindingSource
 {
     /**
-     * Examines the expression and strips off the leading prefix. The prefix is used to choose the
-     * appropriate {@link BindingFactory}, which recieves the description, the expression (after
-     * the prefix), and the location. If the prefix doesn't exist, or if there's no prefix, then the
-     * factory for the default prefix (often "literal") is used (and passed the full prefix).
+     * Examines the expression and strips off the leading prefix. The prefix is used to choose the appropriate {@link
+     * BindingFactory}, which recieves the description, the expression (after the prefix), and the location. If the
+     * prefix doesn't exist, or if there's no prefix, then the factory for the default prefix (often "literal") is used
+     * (and passed the full prefix).
      * <p/>
-     * The binding represents a connection between the container and the component (the component is
-     * usually the child of the container, though in a few cases, it is the component itself). In
-     * most cases, the expression is evaluated in terms of the resources of the <em>container</em>
-     * and the component is ignored.
+     * The binding represents a connection between the container and the component (the component is usually the child
+     * of the container, though in a few cases, it is the component itself). In most cases, the expression is evaluated
+     * in terms of the resources of the <em>container</em> and the component is ignored.
      *
      * @param description   description of the binding, such as "parameter foo"
      * @param container     typically, the parent of the component
@@ -49,15 +49,14 @@ public interface BindingSource
                        String defaultPrefix, String expression, Location location);
 
     /**
-     * A simpler version of
-     * {@link #newBinding(String, ComponentResources, ComponentResources, String, String, Location)}
-     * that defaults the values for several parameters. This is used in most cases. The default
-     * binding prefix will be "prop". Most often, this is used to create a new default binding.
+     * A simpler version of {@link #newBinding(String, ComponentResources, ComponentResources, String, String,
+     * Location)} that defaults the values for several parameters. This is used in most cases. The default binding
+     * prefix will be "prop". Most often, this is used to create a new default binding.
      *
      * @param description   description of the binding, such as "parameter foo"
      * @param container     typically, the parent of the component. This value will be used as the container
-     *                      <em>and</em> the component, so whatever type of expression is evaluated, will be
-     *                      evaulated in terms of this component
+     *                      <em>and</em> the component, so whatever type of expression is evaluated, will be evaulated
+     *                      in terms of this component
      * @param defaultPrefix the default prefix used when the expression itself does not have a prefix
      * @param expression    the binding
      * @return a binding

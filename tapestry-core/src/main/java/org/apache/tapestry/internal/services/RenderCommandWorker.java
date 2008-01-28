@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.internal.InternalComponentResourcesCommon;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
@@ -26,21 +25,20 @@ import org.apache.tapestry.services.TransformMethodSignature;
 import java.lang.reflect.Modifier;
 
 /**
- * Ensures that all components implement {@link RenderCommand} by delegating to
- * {@link InternalComponentResourcesCommon#queueRender(org.apache.tapestry.runtime.RenderQueue)}.
+ * Ensures that all components implement {@link RenderCommand} by delegating to {@link
+ * org.apache.tapestry.internal.InternalComponentResources#queueRender(org.apache.tapestry.runtime.RenderQueue)}.
  */
 public class RenderCommandWorker implements ComponentClassTransformWorker
 {
     private final TransformMethodSignature RENDER_SIGNATURE = new TransformMethodSignature(Modifier.PUBLIC, "void",
-                                                                                           "render", new String[]
-            {MarkupWriter.class.getName(), RenderQueue.class.getName()}, null);
+                                                                                           "render", new String[]{
+            MarkupWriter.class.getName(), RenderQueue.class.getName()}, null);
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         // Subclasses don't need to bother, they'll inherit from super-classes.
 
-        if (model.getParentModel() != null)
-            return;
+        if (model.getParentModel() != null) return;
 
         transformation.addImplementedInterface(RenderCommand.class);
 
