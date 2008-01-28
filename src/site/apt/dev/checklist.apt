@@ -174,11 +174,8 @@ On success: roll it out!
   
 ----
 > cd ~hlship/public_html/tapestry-ibiblio-rsynch-repository/
-> tar cf - * | ( cd /www/people.apache.org/repo/m2-ibiblio-rsync-repository && tar xvf - )
+> rsync -av * /www/people.apache.org/repo/m2-ibiblio-rsync-repository
 ----
-
-  This is an old hack for merging one directory into another.  <Could this be done easier using rsync?>
-  
   The aritfacts copied to m2-ibiblio-rsync-repository will (eventually) by copied to the central Maven ibiblio repository, where they will be
   visible to every Maven user.
   
