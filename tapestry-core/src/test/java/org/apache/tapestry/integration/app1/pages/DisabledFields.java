@@ -15,6 +15,7 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.internal.services.StringValueEncoder;
 
 import java.util.Date;
@@ -30,6 +31,7 @@ public class DisabledFields
 
     private List<String> _values;
 
+    @Validate("required")
     public String getStringValue()
     {
         return _stringValue;

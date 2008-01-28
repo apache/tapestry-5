@@ -37,6 +37,7 @@
 
         <br/>
 
-        <t:submit t:id="submit" disabled="true"/>
+        <t:submit t:id="submit" disabled="true" value="Disabled Submit"/>
+        <input type="submit" value="Continue"/>
     </t:form>
 </html>
