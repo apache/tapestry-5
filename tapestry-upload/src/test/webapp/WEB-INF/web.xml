@@ -1,6 +1,6 @@
-<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
-        <!--
-   Copyright 2007 The Apache Software Foundation
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   Copyright 2006, 2008 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,19 +15,22 @@
    limitations under the License.
 -->
 
-        <web-app>
-        <display-name>Tapestry-Upload Integration Test Application</display-name>
-        <context-param>
+<!DOCTYPE web-app
+        PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd">
+<web-app>
+    <display-name>Tapestry-Upload Integration Test Application</display-name>
+    <context-param>
         <param-name>tapestry.app-package</param-name>
         <param-value>org.example.upload</param-value>
-        </context-param>
-        <filter>
+    </context-param>
+    <filter>
         <filter-name>app</filter-name>
         <filter-class>org.apache.tapestry.TapestryFilter</filter-class>
-        </filter>
-        <filter-mapping>
+    </filter>
+    <filter-mapping>
         <filter-name>app</filter-name>
         <url-pattern>/*</url-pattern>
-        </filter-mapping>
+    </filter-mapping>
 
-        </web-app>
+</web-app>

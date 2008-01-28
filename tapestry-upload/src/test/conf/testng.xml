@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <!-- 
-   Copyright 2007 The Apache Software Foundation
+   Copyright 2007, 2008 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
         <parameter name="tapestry.integration-webapp" value="src/test/webapp"/>
         <packages>
             <package name="org.apache.tapestry.upload.components"/>
-            <package name="org.apache.tapestry.upload.services"/>
+            <package name="org.apache.tapestry.upload.internal.services"/>
             <!-- One day might be able to run this too -->
             <!--package name="org.apache.tapestry.upload.integration"/-->
         </packages>

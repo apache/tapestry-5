@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.upload.services;
+package org.apache.tapestry.upload.internal.services;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -23,6 +23,9 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry.upload.services.MultipartDecoder;
+import org.apache.tapestry.upload.services.UploadSymbols;
+import org.apache.tapestry.upload.services.UploadedFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
@@ -33,7 +36,7 @@ import java.util.Map;
 /**
  * Implementation of multipart decoder for servlets.  This implementation is perthread scope.
  */
-class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
+public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 {
     private final Map<String, UploadedFileItem> _uploads = newMap();
 

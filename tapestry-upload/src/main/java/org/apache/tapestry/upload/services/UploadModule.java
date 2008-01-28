@@ -23,6 +23,8 @@ import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.services.HttpServletRequestFilter;
 import org.apache.tapestry.services.LibraryMapping;
+import org.apache.tapestry.upload.internal.services.MultipartDecoderImpl;
+import org.apache.tapestry.upload.internal.services.MultipartServletRequestFilter;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
