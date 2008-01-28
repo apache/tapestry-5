@@ -138,7 +138,7 @@ public interface Page
     /**
      * Gets a change for a field within the component.
      *
-     * @param element   the element for which a persistent field value is required
+     * @param nestedId  the nested component id of the component containing the field
      * @param fieldName the name of the persistent field
      * @return the value, or null if no value is stored
      */

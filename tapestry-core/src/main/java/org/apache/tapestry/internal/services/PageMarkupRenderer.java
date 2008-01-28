@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,14 +18,13 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
 
 /**
- * Service used to render page markup using a MarkupWriter.  This is  used when rendering a complete
- * page as part of a {@linkplain org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl page render request},
+ * Service used to render page markup using a MarkupWriter.  This is  used when rendering a complete page as part of a
+ * {@linkplain org.apache.tapestry.internal.services.PageRenderRequestHandlerImpl page render request},
  */
 public interface PageMarkupRenderer
 {
     /**
-     * Initializes the rendering using the
-     * {@link org.apache.tapestry.services.PageRenderInitializer} chain of command.
+     * Initializes the rendering using the {@link org.apache.tapestry.services.MarkupRenderer} pipeline.
      *
      * @param page   page to render
      * @param writer receives the markup

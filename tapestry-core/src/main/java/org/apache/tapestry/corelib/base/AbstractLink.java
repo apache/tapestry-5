@@ -54,7 +54,7 @@ public abstract class AbstractLink implements ClientElement
 
     private String _clientId;
 
-    private final String buildHref(Link link)
+    private String buildHref(Link link)
     {
         String href = link.toURI();
 

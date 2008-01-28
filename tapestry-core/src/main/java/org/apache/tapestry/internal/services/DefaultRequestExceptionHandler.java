@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ExceptionReporter;
 import org.apache.tapestry.services.RequestExceptionHandler;
-import org.apache.tapestry.services.Response;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -32,16 +31,12 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
     private final PageResponseRenderer _renderer;
 
-    private final Response _response;
-
     private final Logger _logger;
 
-    public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Response response,
-                                          Logger logger)
+    public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger)
     {
         _pageCache = pageCache;
         _renderer = renderer;
-        _response = response;
         _logger = logger;
     }
 

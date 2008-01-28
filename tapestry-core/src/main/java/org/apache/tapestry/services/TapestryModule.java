@@ -700,8 +700,6 @@ public final class TapestryModule
 
     private final StrategyBuilder _strategyBuilder;
 
-    private final LinkFactory _linkFactory;
-
     private final PropertyAccess _propertyAccess;
 
     private final ClassFactory _componentClassFactory;
@@ -744,8 +742,6 @@ public final class TapestryModule
 
                           ComponentInstantiatorSource componentInstantiatorSource,
 
-                          LinkFactory linkFactory,
-
                           PropertyAccess propertyAccess,
 
                           @ComponentLayer ClassFactory componentClassFactory,
@@ -771,7 +767,6 @@ public final class TapestryModule
         _environment = environment;
         _strategyBuilder = strategyBuilder;
         _componentInstantiatorSource = componentInstantiatorSource;
-        _linkFactory = linkFactory;
         _propertyAccess = propertyAccess;
         _componentClassFactory = componentClassFactory;
 

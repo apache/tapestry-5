@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,6 +13,8 @@
 // limitations under the License.
 
 package org.apache.tapestry.internal.services;
+
+import org.apache.tapestry.internal.TapestryInternalUtils;
 
 /**
  * Validator type and constraint values parsed from a validator specification.
@@ -53,20 +55,12 @@ class ValidatorSpecification
     @Override
     public boolean equals(Object other)
     {
-        if (other == null || other.getClass() != getClass())
-            return false;
+        if (other == null || other.getClass() != getClass()) return false;
 
         ValidatorSpecification ov = (ValidatorSpecification) other;
 
-        if (!_validatorType.equals(ov._validatorType))
-            return false;
+        if (!_validatorType.equals(ov._validatorType)) return false;
 
-        if (_constraintValue == ov._constraintValue)
-            return true;
-
-        if (_constraintValue == null)
-            return false;
-
-        return _constraintValue.equals(ov._constraintValue);
+        return TapestryInternalUtils.isEqual(_constraintValue, ov._constraintValue);
     }
 }

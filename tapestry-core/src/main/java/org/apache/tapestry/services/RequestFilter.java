@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,10 +17,12 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 
 /**
- * Filter interface for {@link org.apache.tapestry.services.RequestHandler}. Implementations of
- * this interface may be contributed into the RequestHandler service configuration.
+ * Filter interface for {@link org.apache.tapestry.services.RequestHandler}. Implementations of this interface may be
+ * contributed into the RequestHandler service configuration.
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration, Context, RequestExceptionHandler, long, long, org.apache.tapestry.internal.services.LocalizationSetter)
+ * @see org.apache.tapestry.services.TapestryModule#contributeRequestHandler(org.apache.tapestry.ioc.OrderedConfiguration,
+ *      Context, RequestExceptionHandler, long, long, org.apache.tapestry.internal.services.LocalizationSetter,
+ *      RequestFilter)
  */
 public interface RequestFilter
 {

@@ -43,42 +43,32 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import java.util.List;
 
 /**
- * A JSONArray is an ordered sequence of values. Its external text form is a string wrapped in
- * square brackets with commas separating the values. The internal form is an object having
- * <code>get</code> and <code>opt</code> methods for accessing the values by index, and
- * <code>put</code> methods for adding or replacing values. The values can be any of these types:
- * <code>Boolean</code>, <code>JSONArray</code>, <code>JSONObject</code>,
- * <code>Number</code>, <code>String</code>, or the <code>JSONObject.NULL object</code>.
+ * A JSONArray is an ordered sequence of values. Its external text form is a string wrapped in square brackets with
+ * commas separating the values. The internal form is an object having <code>get</code> and <code>opt</code> methods for
+ * accessing the values by index, and <code>put</code> methods for adding or replacing values. The values can be any of
+ * these types: <code>Boolean</code>, <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>,
+ * <code>String</code>, or the <code>JSONObject.NULL object</code>.
  * <p/>
- * The constructor can convert a JSON text into a Java object. The <code>toString</code> method
- * converts to JSON text.
+ * The constructor can convert a JSON text into a Java object. The <code>toString</code> method converts to JSON text.
  * <p/>
- * A <code>get</code> method returns a value if one can be found, and throws an exception if one
- * cannot be found. An <code>opt</code> method returns a default value instead of throwing an
- * exception, and so is useful for obtaining optional values.
+ * A <code>get</code> method returns a value if one can be found, and throws an exception if one cannot be found. An
+ * <code>opt</code> method returns a default value instead of throwing an exception, and so is useful for obtaining
+ * optional values.
  * <p/>
- * The generic <code>get()</code> and <code>opt()</code> methods return an object which you can
- * cast or query for type. There are also typed <code>get</code> and <code>opt</code> methods
- * that do type checking and type coersion for you.
+ * The generic <code>get()</code> and <code>opt()</code> methods return an object which you can cast or query for type.
+ * There are also typed <code>get</code> and <code>opt</code> methods that do type checking and type coersion for you.
  * <p/>
- * The texts produced by the <code>toString</code> methods strictly conform to JSON syntax rules.
- * The constructors are more forgiving in the texts they will accept:
- * <ul>
- * <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear just before the closing
- * bracket.</li>
- * <li>The <code>null</code> value will be inserted when there is <code>,</code>&nbsp;<small>(comma)</small>
- * elision.</li>
- * <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single quote)</small>.</li>
- * <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote,
- * and if they do not contain leading or trailing spaces, and if they do not contain any of these
- * characters: <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and if they
- * are not the reserved words <code>true</code>, <code>false</code>, or <code>null</code>.</li>
- * <li>Values can be separated by <code>;</code> <small>(semicolon)</small> as well as by
- * <code>,</code> <small>(comma)</small>.</li>
- * <li>Numbers may have the <code>0-</code> <small>(octal)</small> or <code>0x-</code>
- * <small>(hex)</small> prefix.</li>
- * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
- * </ul>
+ * The texts produced by the <code>toString</code> methods strictly conform to JSON syntax rules. The constructors are
+ * more forgiving in the texts they will accept: <ul> <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear
+ * just before the closing bracket.</li> <li>The <code>null</code> value will be inserted when there is
+ * <code>,</code>&nbsp;<small>(comma)</small> elision.</li> <li>Strings may be quoted with
+ * <code>'</code>&nbsp;<small>(single quote)</small>.</li> <li>Strings do not need to be quoted at all if they do not
+ * begin with a quote or single quote, and if they do not contain leading or trailing spaces, and if they do not contain
+ * any of these characters: <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and if they are not
+ * the reserved words <code>true</code>, <code>false</code>, or <code>null</code>.</li> <li>Values can be separated by
+ * <code>;</code> <small>(semicolon)</small> as well as by <code>,</code> <small>(comma)</small>.</li> <li>Numbers may
+ * have the <code>0-</code> <small>(octal)</small> or <code>0x-</code> <small>(hex)</small> prefix.</li> <li>Comments
+ * written in the slashshlash, slashstar, and hash conventions will be ignored.</li> </ul>
  *
  * @author JSON.org
  * @version 2
@@ -179,8 +169,7 @@ public final class JSONArray
     }
 
     /**
-     * Get the boolean value associated with an index. The string values "true" and "false" are
-     * converted to boolean.
+     * Get the boolean value associated with an index. The string values "true" and "false" are converted to boolean.
      *
      * @param index The index must be between 0 and length() - 1.
      * @return The truth.
@@ -222,7 +211,7 @@ public final class JSONArray
         {
             if (value instanceof Number) return ((Number) value).doubleValue();
 
-            return Double.valueOf((String) value).doubleValue();
+            return Double.valueOf((String) value);
         }
         catch (Exception e)
         {
@@ -317,9 +306,8 @@ public final class JSONArray
     }
 
     /**
-     * Make a string from the contents of this JSONArray. The <code>separator</code> string is
-     * inserted between each element. Warning: This method assumes that the data structure is
-     * acyclical.
+     * Make a string from the contents of this JSONArray. The <code>separator</code> string is inserted between each
+     * element. Warning: This method assumes that the data structure is acyclical.
      *
      * @param separator A string that will be inserted between the elements.
      * @return a string.
@@ -353,8 +341,8 @@ public final class JSONArray
     /**
      * Append an object value. This increases the array's length by one.
      *
-     * @param value An object value. The value should be a Boolean, Double, Integer, JSONArray,
-     *              JSONObject, Long, or String, or the JSONObject.NULL object.
+     * @param value An object value. The value should be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or
+     *              String, or the JSONObject.NULL object.
      * @return
      */
     public JSONArray put(Object value)
@@ -369,12 +357,12 @@ public final class JSONArray
     }
 
     /**
-     * Put or replace an object value in the JSONArray. If the index is greater than the length of
-     * the JSONArray, then null elements will be added as necessary to pad it out.
+     * Put or replace an object value in the JSONArray. If the index is greater than the length of the JSONArray, then
+     * null elements will be added as necessary to pad it out.
      *
      * @param index The subscript.
-     * @param value The value to put into the array. The value should be a Boolean, Double, Integer,
-     *              JSONArray, JSONObject, Long, or String, or the JSONObject.NULL object.
+     * @param value The value to put into the array. The value should be a Boolean, Double, Integer, JSONArray,
+     *              JSONObject, Long, or String, or the JSONObject.NULL object.
      * @return
      * @throws RuntimeException If the index is negative or if the the value is an invalid number.
      */
@@ -405,9 +393,9 @@ public final class JSONArray
     }
 
     /**
-     * Make a JSON text of this JSONArray. For compactness, no unnecessary whitespace is added. If
-     * it is not possible to produce a syntactically correct JSON text then null will be returned
-     * instead. This could occur if the array contains an invalid number.
+     * Make a JSON text of this JSONArray. For compactness, no unnecessary whitespace is added. If it is not possible to
+     * produce a syntactically correct JSON text then null will be returned instead. This could occur if the array
+     * contains an invalid number.
      * <p/>
      * Warning: This method assumes that the data structure is acyclical.
      *

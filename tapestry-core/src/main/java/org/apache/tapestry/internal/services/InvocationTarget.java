@@ -15,15 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * It represents target for a {@link org.apache.tapestry.internal.services.ComponentInvocation}.
- * For example, it may be a page or an action for a component within a page.
+ * It represents target for a {@link org.apache.tapestry.internal.services.ComponentInvocation}. For example, it may be
+ * a page or an action for a component within a page.
  */
 public interface InvocationTarget
 {
-
-    /**
-     * @see ComponentInvocation#getPath()
-     */
     String getPath();
-
 }

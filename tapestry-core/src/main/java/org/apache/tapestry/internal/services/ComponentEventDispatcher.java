@@ -90,8 +90,6 @@ public class ComponentEventDispatcher implements Dispatcher
 
     public boolean dispatch(Request request, Response response) throws IOException
     {
-        String path = request.getPath();
-
         Matcher matcher = PATH_PATTERN.matcher(request.getPath());
 
         if (!matcher.matches()) return false;
