@@ -61,6 +61,8 @@ public class Start
     private static final List<Item> ITEMS = CollectionFactory.newList(
             new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
+            new Item("RenderErrorDemo", "Render Error Demo", "reporting of errors while rendering"),
+
             new Item("nested/AssetDemo", "AssetDemo", "declaring an image using Assets"),
 
             new Item("blockdemo", "BlockDemo", "use of blocks to control rendering"),

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -84,6 +84,11 @@ public class RenderQueueImplTest extends InternalBaseTestCase
 
         RenderQueueImpl queue = new RenderQueueImpl(logger);
 
+        queue.startComponent("foo");
+        queue.startComponent("bar");
+        queue.endComponent();
+        queue.startComponent("baz");
+
         queue.push(rc);
 
         try
@@ -91,9 +96,11 @@ public class RenderQueueImplTest extends InternalBaseTestCase
             queue.run(writer);
             unreachable();
         }
-        catch (RuntimeException ex)
+        catch (RenderQueueException ex)
         {
-            assertSame(ex, t);
+            assertSame(ex.getCause(), t);
+
+            assertArraysEqual(ex.getActiveComponentIds(), new String[]{"foo", "baz"});
         }
 
         verify();

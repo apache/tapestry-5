@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
@@ -25,6 +26,8 @@ public class RenderQueueImpl implements RenderQueue
     private static final int INITIAL_QUEUE_DEPTH = 100;
 
     private final Stack<RenderCommand> _queue = new Stack<RenderCommand>(INITIAL_QUEUE_DEPTH);
+
+    private final Stack<String> _nestedIds = new Stack<String>(INITIAL_QUEUE_DEPTH);
 
     private final Logger _logger;
 
@@ -63,9 +66,23 @@ public class RenderQueueImpl implements RenderQueue
             // This will likely leave the page in a dirty state, and it will not go back into the
             // page pool.
 
-            _logger.error(ServicesMessages.renderQueueError(command, ex), ex);
+            String message = ServicesMessages.renderQueueError(command, ex);
 
-            throw ex;
+            _logger.error(message, ex);
+
+            throw new RenderQueueException(message, _nestedIds.getSnapshot(), ex);
         }
+    }
+
+    public void startComponent(String componentId)
+    {
+        Defense.notBlank(componentId, "componentId");
+
+        _nestedIds.push(componentId);
+    }
+
+    public void endComponent()
+    {
+        _nestedIds.pop();
     }
 }

@@ -52,6 +52,17 @@ import java.util.Map;
  */
 public class ComponentPageElementImpl extends BaseLocatable implements ComponentPageElement, PageLifecycleListener
 {
+    /**
+     * @see #render(org.apache.tapestry.MarkupWriter, org.apache.tapestry.runtime.RenderQueue)
+     */
+    private static final RenderCommand POP_COMPONENT_ID = new RenderCommand()
+    {
+        public void render(MarkupWriter writer, RenderQueue queue)
+        {
+            queue.endComponent();
+        }
+    };
+
     private static final ComponentCallback CONTAINING_PAGE_DID_ATTACH = new ComponentCallback()
     {
         public void run(Component component)
@@ -892,6 +903,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return String.format("%s[%s]", phaseName, _completeId);
     }
 
+
     /**
      * Pushes the SetupRender phase state onto the queue.
      */
@@ -903,6 +915,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // Once we start rendering, the page is considered dirty, until we cleanup post render.
 
         _page.incrementDirtyCount();
+
+        queue.startComponent(_completeId);
+
+        queue.push(POP_COMPONENT_ID);
 
         queue.push(_setupRender);
     }

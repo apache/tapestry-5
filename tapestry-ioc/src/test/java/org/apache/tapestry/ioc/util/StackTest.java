@@ -59,19 +59,26 @@ public class StackTest extends TestBase
 
         assertTrue(stack.isEmpty());
 
-        stack.push("fred");
-        assertEquals(stack.peek(), "fred");
+        final String fred = "fred";
+        final String barney = "barney";
+
+        stack.push(fred);
+        assertEquals(stack.peek(), fred);
         assertFalse(stack.isEmpty());
 
-        stack.push("barney");
-        assertEquals(stack.peek(), "barney");
+        stack.push(barney);
+        assertEquals(stack.peek(), barney);
 
         assertEquals(stack.toString(), "Stack[barney, fred]");
 
-        assertEquals(stack.pop(), "barney");
-        assertEquals(stack.peek(), "fred");
+        Object[] snapshot = stack.getSnapshot();
 
-        assertEquals(stack.pop(), "fred");
+        assertArraysEqual(snapshot, new Object[]{fred, barney});
+
+        assertEquals(stack.pop(), barney);
+        assertEquals(stack.peek(), fred);
+
+        assertEquals(stack.pop(), fred);
         assertTrue(stack.isEmpty());
     }
 
