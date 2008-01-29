@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,22 +20,14 @@ import com.sun.javadoc.AnnotationDesc.ElementValuePair;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
- * Generates an XML file that identifies all the classes that contain parameters, and all the
- * parameters within each component class. This XML is later converted into part of the Maven
- * generated HTML site.
+ * Generates an XML file that identifies all the classes that contain parameters, and all the parameters within each
+ * component class. This XML is later converted into part of the Maven generated HTML site.
  * <p/>
- * To keep the -doclet parameter passed to javadoc simple, this class should not have any outside
- * dependencies.
- * <p/>
- * Works in two passes: First we find any classes that have a field that has the parameter
- * annotation. Second we locate any subclasses of the initial set of classes, regardless of whether
- * they have a parameter or not.
+ * To keep the -doclet parameter passed to javadoc simple, this class should not have any outside dependencies.
  */
 public class ParametersDoclet extends Doclet
 {
@@ -47,18 +39,10 @@ public class ParametersDoclet extends Doclet
     {
         private PrintWriter _out;
 
-        private RootDoc _root;
-
-        private final Set<ClassDoc> _processed = new HashSet<ClassDoc>();
-
-        private final Pattern _stripper = java.util.regex.Pattern.compile(
-                "(<.*?>|&.*?;)",
-                Pattern.DOTALL);
+        private final Pattern _stripper = Pattern.compile("(<.*?>|&.*?;)", Pattern.DOTALL);
 
         public void run(String outputPath, RootDoc root) throws Exception
         {
-            _root = root;
-
             File output = new File(outputPath);
 
             _out = new PrintWriter(output);
@@ -66,32 +50,19 @@ public class ParametersDoclet extends Doclet
             println("<component-parameters>");
 
             for (ClassDoc cd : root.classes())
-            {
-                emitClass(cd, false);
-            }
-
-            for (ClassDoc potential : _root.classes())
-            {
-                for (ClassDoc potentialParent : _processed)
-                {
-                    if (potential.subclassOf(potentialParent))
-                    {
-                        emitClass(potential, true);
-                        break;
-                    }
-                }
-            }
+                emitClass(cd);
 
             println("</component-parameters>");
 
             _out.close();
         }
 
-        private void emitClass(ClassDoc classDoc, boolean forceClassOutput)
+        private void emitClass(ClassDoc classDoc)
         {
-            if (_processed.contains(classDoc)) return;
-
             if (!classDoc.isPublic()) return;
+
+            // Components must be root classes, not nested classes.
+            if (classDoc.containingClass() != null) return;
 
             // Check for a no-args public constructor
 
@@ -108,7 +79,11 @@ public class ParametersDoclet extends Doclet
 
             if (!found) return;
 
-            boolean wroteClass = false;
+            println("<class name=\"%s\" super-class=\"%s\">", classDoc.qualifiedTypeName(),
+                    classDoc.superclass().qualifiedTypeName());
+            print("<description>");
+            printDescription(classDoc);
+            println("</description>", classDoc.commentText());
 
             for (FieldDoc fd : classDoc.fields())
             {
@@ -120,23 +95,13 @@ public class ParametersDoclet extends Doclet
 
                 if (annotationValues == null) continue;
 
-                if (!wroteClass)
-                {
-                    printClassDescriptionStart(classDoc);
-                    wroteClass = true;
-                }
-
                 String name = annotationValues.get("name");
                 if (name == null) name = fd.name().replaceAll("^[$_]*", "");
 
-                print(
-                        "<parameter name=\"%s\" type=\"%s\" default=\"%s\" required=\"%s\" cache=\"%s\" default-prefix=\"%s\">",
-                        name,
-                        fd.type().qualifiedTypeName(),
-                        get(annotationValues, "value", ""),
-                        get(annotationValues, "required", "false"),
-                        get(annotationValues, "cache", "true"),
-                        get(annotationValues, "defaultPrefix", "prop"));
+                print("<parameter name=\"%s\" type=\"%s\" default=\"%s\" required=\"%s\" cache=\"%s\" default-prefix=\"%s\">",
+                      name, fd.type().qualifiedTypeName(), get(annotationValues, "value", ""),
+                      get(annotationValues, "required", "false"), get(annotationValues, "cache", "true"),
+                      get(annotationValues, "defaultPrefix", "prop"));
 
                 // Body of a parameter is the comment text.
 
@@ -145,27 +110,7 @@ public class ParametersDoclet extends Doclet
                 println("\n</parameter>");
             }
 
-            if (wroteClass)
-                println("</class>");
-            else if (forceClassOutput)
-            {
-                printClassDescriptionStart(classDoc);
-                println("</class>");
-            }
-
-            if (wroteClass || forceClassOutput) _processed.add(classDoc);
-
-        }
-
-        private void printClassDescriptionStart(ClassDoc classDoc)
-        {
-            println(
-                    "<class name=\"%s\" super-class=\"%s\">",
-                    classDoc.qualifiedTypeName(),
-                    classDoc.superclass().qualifiedTypeName());
-            print("<description>");
-            printDescription(classDoc);
-            println("</description>", classDoc.commentText());
+            println("</class>");
         }
 
         private String get(Map<String, String> map, String key, String defaultValue)
@@ -179,8 +124,7 @@ public class ParametersDoclet extends Doclet
         {
             for (AnnotationDesc annotation : fd.annotations())
             {
-                if (annotation.annotationType().qualifiedTypeName().equals(
-                        "org.apache.tapestry.annotations.Parameter"))
+                if (annotation.annotationType().qualifiedTypeName().equals("org.apache.tapestry.annotations.Parameter"))
                 {
                     Map<String, String> result = new HashMap<String, String>();
 
@@ -231,16 +175,13 @@ public class ParametersDoclet extends Doclet
                         continue;
                     }
 
-                    if (seeTag.referencedClassName() != null)
-                        builder.append(seeTag.referencedClassName());
+                    if (seeTag.referencedClassName() != null) builder.append(seeTag.referencedClassName());
 
                     if (seeTag.referencedMemberName() != null)
                     {
                         builder.append("#");
                         builder.append(seeTag.referencedMemberName());
                     }
-
-                    continue;
                 }
             }
 
@@ -281,8 +222,7 @@ public class ParametersDoclet extends Doclet
             // TODO: Check for duplicate -o?
         }
 
-        if (_outputPath == null)
-            reporter.printError(String.format("Usage: javadoc %s path", OUTPUT_PATH_OPTION));
+        if (_outputPath == null) reporter.printError(String.format("Usage: javadoc %s path", OUTPUT_PATH_OPTION));
 
         return true;
     }
