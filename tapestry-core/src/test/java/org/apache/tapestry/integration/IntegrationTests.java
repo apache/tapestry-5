@@ -1522,4 +1522,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertSourcePresent("<ul><li>1</li><li>3</li><li>5</li><li>7</li><li>9</li></ul>");
     }
+
+    /**
+     * TAPESTRY-2097
+     */
+    @Test
+    public void render_queue_exception()
+    {
+        start("Render Error Demo");
+
+        assertTextPresent("An unexpected application exception has occurred");
+
+        for (String s : new String[]{"RenderErrorDemo", "RenderErrorDemo:border", "RenderErrorDemo:echo"})
+        {
+            assertSourcePresent(String.format("<li>%s</li>", s));
+        }
+
+    }
 }

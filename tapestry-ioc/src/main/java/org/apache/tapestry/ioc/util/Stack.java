@@ -17,11 +17,9 @@ package org.apache.tapestry.ioc.util;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 /**
- * A simple, streamlined implementation of {@link java.util.Stack}. The implementation is
- * <em>not</em> threadsafe.
+ * A simple, streamlined implementation of {@link java.util.Stack}. The implementation is <em>not</em> threadsafe.
  *
- * @param <E>
- * the type of elements stored in the map
+ * @param <E> the type of elements stored in the map
  * @see CollectionFactory#newStack()
  */
 public class Stack<E>
@@ -43,8 +41,8 @@ public class Stack<E>
     }
 
     /**
-     * @param initialSize the initial size of the internal array (which will be expanded as necessary). For
-     *                    best efficiency, set this to the maximum depth of the stack.
+     * @param initialSize the initial size of the internal array (which will be expanded as necessary). For best
+     *                    efficiency, set this to the maximum depth of the stack.
      */
     public Stack(int initialSize)
     {
@@ -147,5 +145,21 @@ public class Stack<E>
         builder.append("]");
 
         return builder.toString();
+    }
+
+    /**
+     * Returns a snapshot of the current state of the stack as an array of objects. The first object is the deepest in
+     * the stack, the last object is the most shallowest (most recently pushed onto the stack).  The returned array may
+     * be manipulated (it is a copy).
+     *
+     * @return the stack as an object array
+     */
+    public Object[] getSnapshot()
+    {
+        Object[] result = new Object[_index + 1];
+
+        System.arraycopy(_items, 0, result, 0, _index + 1);
+
+        return result;
     }
 }

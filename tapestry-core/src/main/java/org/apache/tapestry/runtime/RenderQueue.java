@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry.runtime;
 
 /**
- * A stateful object that manages the process of rendering a page. Rending a page in Tapestry is
- * based on a command queue.
+ * A stateful object that manages the process of rendering a page. Rending a page in Tapestry is based on a command
+ * queue.
  */
 public interface RenderQueue
 {
@@ -24,4 +24,18 @@ public interface RenderQueue
      * Adds the new command to the front of the queue.
      */
     void push(RenderCommand command);
+
+    /**
+     * Indicates that a component is starting its render. A stack of active component ids is used for exception
+     * reporting.
+     *
+     * @param componentId of component that is rendering
+     */
+    void startComponent(String componentId);
+
+    /**
+     * Corresponds to {@link #startComponent(String)}, used to denote when the most recently started component finishes
+     * rendering.
+     */
+    void endComponent();
 }
