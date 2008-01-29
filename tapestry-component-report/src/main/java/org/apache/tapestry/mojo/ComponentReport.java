@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.mojo;
 
-import nu.xom.Builder;
-import nu.xom.Document;
-import nu.xom.Element;
-import nu.xom.Elements;
+import nu.xom.*;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -35,13 +32,11 @@ import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.DefaultConsumer;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
- * The component report generates documentation about components and parameters within the current
- * project.
+ * The component report generates documentation about components and parameters within the current project.
  *
  * @goal component-report
  * @requiresDependencyResolution compile
@@ -82,6 +77,12 @@ public class ComponentReport extends AbstractMavenReport
     private String outputDirectory;
 
     /**
+     * @parameter expression="${project.build.directory}/generated-site/xdoc"
+     * @required
+     */
+    private File generatedDocsDirectory;
+
+    /**
      * Working directory for temporary files.
      *
      * @parameter default-value="target"
@@ -90,9 +91,8 @@ public class ComponentReport extends AbstractMavenReport
     private String workDirectory;
 
     /**
-     * Relative path from the generated report to the API documentation (Javadoc). Defaults to
-     * "apidocs" but will often be changed to "../apidocs" when documentation is created at the
-     * project level.
+     * Relative path from the generated report to the API documentation (Javadoc). Defaults to "apidocs" but will often
+     * be changed to "../apidocs" when documentation is created at the project level.
      *
      * @parameter default-value="apidocs"
      * @required
@@ -132,6 +132,14 @@ public class ComponentReport extends AbstractMavenReport
         return "component-parameters";
     }
 
+    private static final String REFERENCE_DIR = "ref";
+
+    /**
+     * Generates the report; this consist of the index page
+     *
+     * @param locale
+     * @throws MavenReportException
+     */
     @Override
     protected void executeReport(Locale locale) throws MavenReportException
     {
@@ -139,50 +147,49 @@ public class ComponentReport extends AbstractMavenReport
 
         getLog().info("Executing ComponentReport ...");
 
-        Sink sink = getSink();
-
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text("Component Index");
-        sink.sectionTitle1_();
-        sink.list();
-
-        for (String className : InternalUtils.sortedKeys(descriptions))
+        try
         {
-            String simpleName = InternalUtils.lastTerm(className);
+            File refDir = new File(generatedDocsDirectory, REFERENCE_DIR);
 
-            sink.listItem();
+            refDir.mkdirs();
 
-            // Something is converting the name attribute of the anchors to lower case, so
-            // we'll follow suit.
+            Sink sink = getSink();
 
-            sink.link("#" + fixup(className));
-            sink.text(simpleName);
-            sink.link_();
+            sink.section1();
+            sink.sectionTitle1();
+            sink.text("Component Index");
+            sink.sectionTitle1_();
+            sink.list();
 
-            sink.listItem_();
+            for (String className : InternalUtils.sortedKeys(descriptions))
+            {
+                sink.listItem();
+
+                sink.link(REFERENCE_DIR + "/" + className + ".html");
+
+                sink.text(className);
+                sink.link_();
+
+                writeClassDescription(descriptions, refDir, sink, className);
+
+
+                sink.listItem_();
+            }
+
+            sink.list_();
+
         }
-
-        sink.list_();
-
-        for (String className : InternalUtils.sortedKeys(descriptions))
+        catch (Exception ex)
         {
-            writeClassDescription(descriptions, sink, className);
+            throw new MavenReportException(ex.getMessage(), ex);
         }
-
     }
 
-    /**
-     * Convert to lower case, remove all period characters.
-     */
-    private String fixup(String input)
+    private void writeClassDescription(Map<String, ClassDescription> descriptions, File refDir, Sink sink,
+                                       String className) throws Exception
     {
-        return input.toLowerCase().replaceAll("\\.", "");
-    }
+        Element root = new Element("document");
 
-    private void writeClassDescription(Map<String, ClassDescription> descriptions, Sink sink,
-                                       String className)
-    {
         ClassDescription cd = descriptions.get(className);
 
         Map<String, ParameterDescription> parameters = newMap(cd.getParameters());
@@ -204,79 +211,78 @@ public class ComponentReport extends AbstractMavenReport
 
         Collections.reverse(parents);
 
-        sink.section2();
 
-        sink.sectionTitle2();
-        sink.anchor(fixup(className));
-        sink.text(className);
-        sink.anchor_();
+        Element properties = new Element("properties");
+        root.appendChild(properties);
 
-        sink.sectionTitle2_();
+        Element title = new Element("title");
+        properties.appendChild(title);
 
-        sink.paragraph();
-        sink.text(cd.getDescription());
-        sink.paragraph_();
+        title.appendChild(String.format("Component Reference: %s", className));
 
-        sink.paragraph();
+        // XOM is pretty verbose; it really needs a builder/fluent interface.
 
-        String javadocURL = String.format("%s/%s.html", apidocs, className.replace('.', '/'));
+        Element body = new Element("body");
+        root.appendChild(body);
 
-        sink.link(javadocURL);
-        sink.text("[JavaDoc]");
-        sink.link_();
 
-        sink.paragraph_();
+        Element section = addSection(body, className);
+
+        Element para = new Element("p");
+        section.appendChild(para);
+        para.appendChild(cd.getDescription());
+
+        para = new Element("p");
+        section.appendChild(para);
+
+        String javadocURL = String.format("../%s/%s.html", apidocs, className.replace('.', '/'));
+
+        addLink(para, javadocURL, "[JavaDoc]");
+
 
         if (!parents.isEmpty())
         {
-            sink.sectionTitle3();
-            sink.text("Component inheritance");
-            sink.sectionTitle3_();
-
-            sink.list();
-            sink.listItem();
+            section = addSection(body, "Component Inheritance");
+            Element container = section;
 
             for (String name : parents)
             {
-                sink.link("#" + fixup(name));
-                sink.text(name);
-                sink.link_();
+                Element ul = new Element("ul");
+                container.appendChild(ul);
 
-                sink.list();
-                sink.listItem();
-            }
+                Element li = new Element("li");
+                ul.appendChild(li);
 
-            sink.text(className);
+                addLink(li, name + ".html", name);
 
-            for (int i = 0; i <= parents.size(); i++)
-            {
-                sink.listItem_();
-                sink.list_();
+                container = li;
             }
         }
 
+
         if (!parameters.isEmpty())
         {
-            List<String> flags = newList();
+            section = addSection(body, "Component Parameters");
 
-            sink.sectionTitle3();
-            sink.text("Parameters");
-            sink.sectionTitle3_();
+            Element table = new Element("table");
 
-            sink.table();
-            sink.tableRow();
+            section.appendChild(table);
+
+            Element headerRow = new Element("tr");
+            table.appendChild(headerRow);
 
             for (String header : PARAMETER_HEADERS)
             {
-                sink.tableHeaderCell();
-                sink.text(header);
-                sink.tableHeaderCell_();
+                addChild(headerRow, "th", header);
             }
 
-            sink.tableRow_();
+
+            List<String> flags = newList();
+
 
             for (String name : InternalUtils.sortedKeys(parameters))
             {
+
                 ParameterDescription pd = parameters.get(name);
 
                 flags.clear();
@@ -284,38 +290,41 @@ public class ComponentReport extends AbstractMavenReport
 
                 if (!pd.getCache()) flags.add("NOT Cached");
 
-                sink.tableRow();
 
-                cell(sink, pd.getName());
-                cell(sink, pd.getType());
-                cell(sink, InternalUtils.join(flags));
-                cell(sink, pd.getDefaultValue());
-                cell(sink, pd.getDefaultPrefix());
-                cell(sink, pd.getDescription());
+                Element row = new Element("tr");
+                table.appendChild(row);
 
-                sink.tableRow_();
-
+                addChild(row, "td", pd.getName());
+                addChild(row, "td", pd.getType());
+                addChild(row, "td", InternalUtils.join(flags));
+                addChild(row, "td", pd.getDefaultValue());
+                addChild(row, "td", pd.getDefaultPrefix());
+                addChild(row, "td", pd.getDescription());
             }
-
-            sink.table_();
         }
 
-        sink.section2_();
+
+        Document document = new Document(root);
+
+        File outputFile = new File(refDir, className + ".xml");
+
+        FileOutputStream fos = new FileOutputStream(outputFile);
+
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+
+        PrintWriter writer = new PrintWriter(bos);
+
+        writer.print(document.toXML());
+
+        writer.close();
     }
 
-    private void cell(Sink sink, String value)
-    {
-        sink.tableCell();
-        sink.text(value);
-        sink.tableCell_();
-    }
-
-    private final static String[] PARAMETER_HEADERS =
-            {"Name", "Type", "Flags", "Default", "Default Prefix", "Description"};
+    private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
+                                                       "Description"};
 
     private Map<String, ClassDescription> runJavadoc() throws MavenReportException
     {
-        getLog().info("Running JavaDoc to collection component parameter data ...");
+        getLog().info("Running JavaDoc to collect component parameter data ...");
 
         Commandline command = new Commandline();
 
@@ -325,24 +334,22 @@ public class ComponentReport extends AbstractMavenReport
         }
         catch (IOException ex)
         {
-            throw new MavenReportException("Unable to locate javadoc command: " + ex.getMessage(),
-                                           ex);
+            throw new MavenReportException("Unable to locate javadoc command: " + ex.getMessage(), ex);
         }
 
         String parametersPath = workDirectory + File.separator + "component-parameters.xml";
 
-        String[] arguments =
-                {"-private", "-o", parametersPath,
+        String[] arguments = {"-private", "-o", parametersPath,
 
-                 "-subpackages", rootPackage,
+                              "-subpackages", rootPackage,
 
-                 "-doclet", ParametersDoclet.class.getName(),
+                              "-doclet", ParametersDoclet.class.getName(),
 
-                 "-docletpath", docletPath(),
+                              "-docletpath", docletPath(),
 
-                 "-sourcepath", sourcePath(),
+                              "-sourcepath", sourcePath(),
 
-                 "-classpath", classPath()};
+                              "-classpath", classPath()};
 
         command.addArguments(arguments);
 
@@ -425,9 +432,8 @@ public class ComponentReport extends AbstractMavenReport
 
             File file = artifact.getFile();
 
-            if (file == null)
-                throw new MavenReportException(
-                        "Unable to execute Javadoc: compile dependencies are not fully resolved.");
+            if (file == null) throw new MavenReportException(
+                    "Unable to execute Javadoc: compile dependencies are not fully resolved.");
 
             paths.add(file.getAbsolutePath());
         }
@@ -447,19 +453,15 @@ public class ComponentReport extends AbstractMavenReport
 
             if (exitCode != 0)
             {
-                String message = String.format(
-                        "Javadoc exit code: %d - %s\nCommand line was: %s",
-                        exitCode,
-                        err.getOutput(),
-                        command);
+                String message = String.format("Javadoc exit code: %d - %s\nCommand line was: %s", exitCode,
+                                               err.getOutput(), command);
 
                 throw new MavenReportException(message);
             }
         }
         catch (CommandLineException ex)
         {
-            throw new MavenReportException("Unable to execute javadoc command: " + ex.getMessage(),
-                                           ex);
+            throw new MavenReportException("Unable to execute javadoc command: " + ex.getMessage(), ex);
         }
 
         // ----------------------------------------------------------------------
@@ -487,9 +489,7 @@ public class ComponentReport extends AbstractMavenReport
         File executable = initialGuessAtJavadocFile(executableName);
 
         if (!executable.exists() || !executable.isFile())
-            throw new MavenReportException(String.format(
-                    "Path %s does not exist or is not a file.",
-                    executable));
+            throw new MavenReportException(String.format("Path %s does not exist or is not a file.", executable));
 
         return executable.getAbsolutePath();
     }
@@ -499,8 +499,7 @@ public class ComponentReport extends AbstractMavenReport
         if (SystemUtils.IS_OS_MAC_OSX)
             return new File(SystemUtils.getJavaHome() + File.separator + "bin", executableName);
 
-        return new File(SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin",
-                        executableName);
+        return new File(SystemUtils.getJavaHome() + File.separator + ".." + File.separator + "bin", executableName);
     }
 
     private String toArgumentPath(List<String> paths)
@@ -576,8 +575,7 @@ public class ComponentReport extends AbstractMavenReport
             String type = node.getAttributeValue("type");
 
             int dotx = type.lastIndexOf('.');
-            if (dotx > 0 && type.substring(0, dotx).equals("java.lang"))
-                type = type.substring(dotx + 1);
+            if (dotx > 0 && type.substring(0, dotx).equals("java.lang")) type = type.substring(dotx + 1);
 
             String defaultValue = node.getAttributeValue("default");
             boolean required = Boolean.parseBoolean(node.getAttributeValue("required"));
@@ -585,10 +583,42 @@ public class ComponentReport extends AbstractMavenReport
             String defaultPrefix = node.getAttributeValue("default-prefix");
             String description = node.getValue();
 
-            ParameterDescription pd = new ParameterDescription(name, type, defaultValue,
-                                                               defaultPrefix, required, cache, description);
+            ParameterDescription pd = new ParameterDescription(name, type, defaultValue, defaultPrefix, required, cache,
+                                                               description);
 
             cd.getParameters().put(name, pd);
         }
+    }
+
+    private Element addSection(Element container, String name)
+    {
+        Element section = new Element("section");
+        container.appendChild(section);
+
+        section.addAttribute(new Attribute("name", name));
+
+        return section;
+    }
+
+    private Element addLink(Element container, String URL, String text)
+    {
+        Element link = new Element("a");
+        container.appendChild(link);
+
+        link.addAttribute(new Attribute("href", URL));
+
+        link.appendChild(text);
+
+        return link;
+    }
+
+    private Element addChild(Element container, String elementName, String text)
+    {
+        Element child = new Element(elementName);
+        container.appendChild(child);
+
+        child.appendChild(text);
+
+        return child;
     }
 }
