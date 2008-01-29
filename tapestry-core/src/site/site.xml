@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <!-- 
-   Copyright 2006, 2007 The Apache Software Foundation
+   Copyright 2006, 2007, 2008 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@
         -->
         <menu name="Tapestry Core">
             <item name="Introduction" href="/index.html"/>
-            <item name="Component Reference" href="component-parameters.html"/>
+            <item name="Component Reference" href="ref/index.html"/>
             <item name="Upgrade from Tapestry 4" href="/upgrade.html"/>
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
         </menu>

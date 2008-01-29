@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,48 +26,51 @@ import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**
- * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output is a
- * series of &lt;div&gt; elements for the property names and property values.
+ * Used to display the properties of a bean, using an underlying {@link BeanModel}. The output is a series of
+ * &lt;div&gt; elements for the property names and property values.   Only properties that have a known data type are
+ * displayed.
+ *
+ * @see org.apache.tapestry.beaneditor.DataType
+ * @see BeanModel
  */
 @SupportsInformalParameters
 public class BeanDisplay
 {
 
     /**
-     * The object to be rendered; if not explicitly bound, a default binding to a property whose
-     * name matches this component's id will be used.
+     * The object to be rendered; if not explicitly bound, a default binding to a property whose name matches this
+     * component's id will be used.
      */
     @Parameter(required = true)
     private Object _object;
 
     /**
-     * The model that identifies the parameters to be displayed, their order, and every other
-     * aspect. If not specified, a default bean model will be created from the type of the object
-     * bound to the object parameter.
+     * The model that identifies the parameters to be displayed, their order, and every other aspect. If not specified,
+     * a default bean model will be created from the type of the object bound to the object parameter.
      */
     @Parameter
     private BeanModel _model;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names
-     * are case-insensitive.
+     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
+     * case-insensitive.
      */
     @Parameter(defaultPrefix = "literal")
     private String _remove;
 
     /**
-     * A comma-separated list of property names indicating the order in which the properties should
-     * be presented. The names are case insensitive. Any properties not indicated in the list will
-     * be appended to the end of the display order.
+     * A comma-separated list of property names indicating the order in which the properties should be presented. The
+     * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
+     * order.
      */
     @Parameter(defaultPrefix = "literal")
     private String _reorder;
 
     /**
-     * Where to search for local overrides of property display blocks as block parameters. Further,
-     * the container of the overrides is used as the source for overridden validation messages. This
-     * is normally the component itself, but when the component is used within a BeanEditForm, it
-     * will be the BeanEditForm's block parameter that will be searched.
+     * Where to search for local overrides of property display blocks as block parameters. Further, the container of the
+     * overrides is used as the source for overridden validation messages. This is normally the component itself, but
+     * when the component is used within a BeanEditForm, it will be the BeanEditForm's block parameter that will be
+     * searched.
      */
     @Parameter(value = "componentResources")
     private ComponentResources _overrides;
@@ -98,9 +101,8 @@ public class BeanDisplay
 
     void setupRender()
     {
-        if (_model == null)
-            _model = _modelSource.create(_object.getClass(), false, _overrides
-                    .getContainerResources());
+        if (_model == null) _model = _modelSource.create(_object.getClass(), false, _overrides
+                .getContainerResources());
 
         if (_remove != null) BeanModelUtils.remove(_model, _remove);
 
