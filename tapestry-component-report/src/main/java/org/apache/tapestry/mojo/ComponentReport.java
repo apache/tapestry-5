@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ import nu.xom.*;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.model.Resource;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.reporting.AbstractMavenReport;
 import org.apache.maven.reporting.MavenReportException;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -44,6 +46,15 @@ import java.util.*;
  */
 public class ComponentReport extends AbstractMavenReport
 {
+    /**
+     * Subdirectory containing the component reference pages and index.
+     */
+    private static final String REFERENCE_DIR = "ref";
+
+    private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
+                                                       "Description"};
+
+
     /**
      * Identifies the application root package.
      *
@@ -127,12 +138,12 @@ public class ComponentReport extends AbstractMavenReport
         return "Component Reference";
     }
 
+
     public String getOutputName()
     {
-        return "component-parameters";
+        return REFERENCE_DIR + "/index";
     }
 
-    private static final String REFERENCE_DIR = "ref";
 
     /**
      * Generates the report; this consist of the index page
@@ -145,13 +156,16 @@ public class ComponentReport extends AbstractMavenReport
     {
         Map<String, ClassDescription> descriptions = runJavadoc();
 
-        getLog().info("Executing ComponentReport ...");
+        getLog().info("Generating reference pages ...");
 
         try
         {
             File refDir = new File(generatedDocsDirectory, REFERENCE_DIR);
 
             refDir.mkdirs();
+
+
+            List<File> docSearchPath = createDocSearchPath();
 
             Sink sink = getSink();
 
@@ -165,12 +179,12 @@ public class ComponentReport extends AbstractMavenReport
             {
                 sink.listItem();
 
-                sink.link(REFERENCE_DIR + "/" + className + ".html");
+                sink.link(className + ".html");
 
                 sink.text(className);
                 sink.link_();
 
-                writeClassDescription(descriptions, refDir, sink, className);
+                writeClassDescription(descriptions, refDir, docSearchPath, sink, className);
 
 
                 sink.listItem_();
@@ -185,8 +199,28 @@ public class ComponentReport extends AbstractMavenReport
         }
     }
 
-    private void writeClassDescription(Map<String, ClassDescription> descriptions, File refDir, Sink sink,
-                                       String className) throws Exception
+    private List<File> createDocSearchPath()
+    {
+        List<File> result = CollectionFactory.newList();
+
+        for (String sourceRoot : (List<String>) project.getCompileSourceRoots())
+        {
+            result.add(new File(sourceRoot));
+        }
+
+
+        for (Resource r : (List<Resource>) project.getResources())
+        {
+            String dir = r.getDirectory();
+
+            result.add(new File(dir));
+        }
+
+        return result;
+    }
+
+    private void writeClassDescription(Map<String, ClassDescription> descriptions, File refDir,
+                                       List<File> docSearchPath, Sink sink, String className) throws Exception
     {
         Element root = new Element("document");
 
@@ -211,34 +245,21 @@ public class ComponentReport extends AbstractMavenReport
 
         Collections.reverse(parents);
 
-
-        Element properties = new Element("properties");
-        root.appendChild(properties);
-
-        Element title = new Element("title");
-        properties.appendChild(title);
-
-        title.appendChild(String.format("Component Reference: %s", className));
-
         // XOM is pretty verbose; it really needs a builder/fluent interface.
+
+        Element properties = addChild(root, "properties");
+        addChild(properties, "title", String.format("Component Reference: %s", className));
 
         Element body = new Element("body");
         root.appendChild(body);
 
-
         Element section = addSection(body, className);
 
-        Element para = new Element("p");
-        section.appendChild(para);
-        para.appendChild(cd.getDescription());
-
-        para = new Element("p");
-        section.appendChild(para);
+        addChild(section, "p", cd.getDescription());
 
         String javadocURL = String.format("../%s/%s.html", apidocs, className.replace('.', '/'));
 
-        addLink(para, javadocURL, "[JavaDoc]");
-
+        addLink(addChild(section, "p"), javadocURL, "[JavaDoc]");
 
         if (!parents.isEmpty())
         {
@@ -247,16 +268,17 @@ public class ComponentReport extends AbstractMavenReport
 
             for (String name : parents)
             {
-                Element ul = new Element("ul");
-                container.appendChild(ul);
 
-                Element li = new Element("li");
-                ul.appendChild(li);
+                Element ul = addChild(container, "ul");
+
+                Element li = addChild(ul, "li");
 
                 addLink(li, name + ".html", name);
 
                 container = li;
             }
+
+            addChild(addChild(container, "ul"), "li", className);
         }
 
 
@@ -272,24 +294,19 @@ public class ComponentReport extends AbstractMavenReport
             table.appendChild(headerRow);
 
             for (String header : PARAMETER_HEADERS)
-            {
                 addChild(headerRow, "th", header);
-            }
-
 
             List<String> flags = newList();
 
-
             for (String name : InternalUtils.sortedKeys(parameters))
             {
-
                 ParameterDescription pd = parameters.get(name);
 
                 flags.clear();
+
                 if (pd.getRequired()) flags.add("Required");
 
                 if (!pd.getCache()) flags.add("NOT Cached");
-
 
                 Element row = new Element("tr");
                 table.appendChild(row);
@@ -304,9 +321,17 @@ public class ComponentReport extends AbstractMavenReport
         }
 
 
+        addExternalDocumentation(body, docSearchPath, className);
+
+        addChild(body, "hr");
+
+        addLink(addChild(body, "p"), "index.html", "Back to index");
+
         Document document = new Document(root);
 
         File outputFile = new File(refDir, className + ".xml");
+
+        getLog().info(String.format("Writing %s", outputFile));
 
         FileOutputStream fos = new FileOutputStream(outputFile);
 
@@ -319,8 +344,40 @@ public class ComponentReport extends AbstractMavenReport
         writer.close();
     }
 
-    private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
-                                                       "Description"};
+    private void addExternalDocumentation(Element body, List<File> docSearchPath, String className)
+            throws ParsingException, IOException
+    {
+        String pathExtension = className.replace(".", SystemUtils.FILE_SEPARATOR) + ".xdoc";
+
+        for (File path : docSearchPath)
+        {
+            File file = new File(path, pathExtension);
+
+            getLog().debug(String.format("Checking for %s", file));
+
+            if (!file.exists()) continue;
+
+            getLog().info(String.format("Reading extra documentation from %s", file));
+
+            Builder builder = new Builder();
+
+            Document doc = builder.build(file);
+
+            // Transfer the nodes inside document/body into our body
+
+            Element incomingBody = doc.getRootElement().getFirstChildElement("body");
+
+            for (int i = 0; i < incomingBody.getChildCount(); i++)
+            {
+                Node incoming = incomingBody.getChild(i).copy();
+
+                body.appendChild(incoming);
+            }
+
+            return;
+        }
+    }
+
 
     private Map<String, ClassDescription> runJavadoc() throws MavenReportException
     {
@@ -602,14 +659,19 @@ public class ComponentReport extends AbstractMavenReport
 
     private Element addLink(Element container, String URL, String text)
     {
-        Element link = new Element("a");
-        container.appendChild(link);
+        Element link = addChild(container, "a", text);
 
         link.addAttribute(new Attribute("href", URL));
 
-        link.appendChild(text);
-
         return link;
+    }
+
+    private Element addChild(Element container, String elementName)
+    {
+        Element child = new Element(elementName);
+        container.appendChild(child);
+
+        return child;
     }
 
     private Element addChild(Element container, String elementName, String text)

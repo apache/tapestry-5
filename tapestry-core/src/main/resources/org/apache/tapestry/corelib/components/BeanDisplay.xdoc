@@ -1,0 +1,135 @@
+<document>
+    <body>
+        <section name="Examples">
+
+            <p>
+                The bean to display will be a property of the containing page. In this example we are making
+                the bean a persistent property, but there are other options. Presumably, some other page
+                obtains the bean and invokes the setBean() method.
+            </p>
+
+            <p>
+                You may pass override parameters for specific properties, in which case you have control
+                over how that property will be rendered. As an example, we'll render the lastName as upper-case.
+            </p>
+
+            <subsection name="MyBean.java">
+                <source><![CDATA[
+public class MyBean
+{
+    private long _id;
+    
+    private String _firstName;
+
+    private String _lastName;
+
+    private int _age;
+
+    public long getId() { return _id; }
+
+    @NonVisual
+    public void setId(long id) { _id = id; }
+
+    public String getFirstName() { return _firstName; }
+
+    public void setFirstName(String firstName) { _firstName = firstName; }
+
+    public String getLastName() { return _lastName; }
+
+    public void setLastName(String lastName) { _lastName = lastName; }
+
+    public int getAge() { return _age; }
+
+    public void setAge(int age) { _age = age; }
+}]]></source>
+
+                <p>The @NonVisual annotation prevents the id from being displayed.</p>
+
+            </subsection>
+
+            <subsection name="MyPage.java">
+                <source><![CDATA[
+public class MyPage
+{
+    @Persist
+    private MyBean _bean;
+
+    public MyBean getBean()
+    {
+      return _bean;
+    }
+
+    public void setBean(MyBean bean)
+    {
+      _bean = bean;
+    }
+}]]></source>
+
+
+            </subsection>
+
+
+            <subsection name="MyPage.tml">
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>My Bean</h1>
+
+        <t:beandisplay object="bean">
+            <t:parameter name="lastname">
+                ${bean.lastname.toUpperCase()}
+            </t:parameter>
+        </t:beandisplay>
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    The
+                    <code><![CDATA[<t:parameter>]]></code>
+                    element
+                    is an
+                    <em>override</em>
+                    for the property. The name is
+                    matched against a property of the bean.
+                </p>
+
+                <p>
+                    Here we are leveraging the ability to invoke methods as part of a property expression.
+                    We are also highlighting Tapestry's case insensitivity ("lastname" vs. "lastName"), though
+                    that does not yet apply to method names of beans.
+                </p>
+
+            </subsection>
+
+
+        </section>
+
+        <section name="Notes">
+
+            <p>
+                You can re-order the properties using the reorder parameter:
+            </p>
+
+            <source><![CDATA[<t:beandisplay object="bean" reorder="lastname,firstname"/>]]></source>
+
+            <p>
+                You can accomplish the same thing by changing the order of the
+                getter methods in the bean class (that sets the default order).
+            </p>
+
+            <p>
+                You can also remove properties with the remove parameter, which is equivalent to the
+                @NonVisual annotation.
+            </p>
+
+            <p>
+                You might find
+                <code><![CDATA[<t:beandisplay object="this"/>]]></code>
+                useful on occasion. It will display all the properties of the current page.
+            </p>
+
+        </section>
+
+    </body>
+</document>

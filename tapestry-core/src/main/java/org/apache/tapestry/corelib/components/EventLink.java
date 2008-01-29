@@ -18,7 +18,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.corelib.base.AbstractComponentActionLink;
+import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
@@ -31,15 +31,20 @@ import org.apache.tapestry.ioc.annotations.Inject;
  * This allows slightly shorter URLs but also allows multiple components within the same container to generate identical
  * URLs for common actions.
  */
-public class EventLink extends AbstractComponentActionLink
+public class EventLink extends AbstractComponentEventLink
 {
     /**
-     * The name of the event to be triggered in the parent component.  An {@link org.apache.tapestry.corelib.components.ActionLink}
-     * triggers an "action" event on itself, and EventLink component triggers any arbitrary event on <em>its
-     * container</em>.
+     * The name of the event to be triggered in the parent component. Defaults to the id of the component. An {@link
+     * org.apache.tapestry.corelib.components.ActionLink} triggers an "action" event on itself, and EventLink component
+     * triggers any arbitrary event on <em>its container</em>.
      */
-    @Parameter(required = true, defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _event;
+
+    String defaultEvent()
+    {
+        return _resources.getId();
+    }
 
     @Inject
     private ComponentResources _resources;

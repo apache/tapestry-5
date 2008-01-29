@@ -17,13 +17,13 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import static org.apache.tapestry.TapestryConstants.ACTION_EVENT;
-import org.apache.tapestry.corelib.base.AbstractComponentActionLink;
+import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
  * Component that triggers an action on the server with a subsequent full page refresh.
  */
-public class ActionLink extends AbstractComponentActionLink
+public class ActionLink extends AbstractComponentEventLink
 {
     @Inject
     private ComponentResources _resources;
