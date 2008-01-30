@@ -42,7 +42,7 @@ public class Account
                 <p>
                     We store the account's id as
                     <em>event context</em>
-                    inside the URL. The accounts id will
+                    inside the URL. The account's id will
                     be part of the URL and will be accessible when the event request is later triggered.
                 </p>
 
@@ -103,8 +103,8 @@ public class ViewAccount
             <p>
                 Rarely, you might need to pass more information in the context. For example, perhaps
                 account id is not enought to uniquely identify the Account object in question - hypothetically,
-                you may need to include a componany id as well as the account id. You can
-                build an object array:
+                you may need to include a company id as well as the account id. You can
+                build an object array to contain both values:
             </p>
 
             <source><![CDATA[

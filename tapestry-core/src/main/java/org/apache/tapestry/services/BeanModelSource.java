@@ -24,6 +24,8 @@ import org.apache.tapestry.beaneditor.OrderBefore;
  * <p/>
  * BeanModels are the basis for the {@link org.apache.tapestry.corelib.components.BeanEditor} and {@link
  * org.apache.tapestry.corelib.components.Grid} comopnents.
+ *
+ * @see org.apache.tapestry.services.PropertyConduitSource
  */
 public interface BeanModelSource
 {
