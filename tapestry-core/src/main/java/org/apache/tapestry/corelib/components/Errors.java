@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,15 +25,15 @@ import org.apache.tapestry.services.FormSupport;
 import java.util.List;
 
 /**
- * Standard validation error presenter. Must be enclosed by a {@link org.apache.tapestry.corelib.components.Form} component. If errors are
- * present, renders a div element around a banner message and around an unnumbered list of error
- * messages.         Renders nothing if the {@link org.apache.tapestry.ValidationTracker} shows no errors.
+ * Standard validation error presenter. Must be enclosed by a {@link org.apache.tapestry.corelib.components.Form}
+ * component. If errors are present, renders a div element around a banner message and around an unnumbered list of
+ * error messages. Renders nothing if the {@link org.apache.tapestry.ValidationTracker} shows no errors.
  */
 public class Errors
 {
     /**
-     * The banner message displayed above the errors. The default value is "You must correct the
-     * following errors before you may continue.".
+     * The banner message displayed above the errors. The default value is "You must correct the following errors before
+     * you may continue.".
      */
     @Parameter("message:default-banner")
     private String _banner;
@@ -53,9 +53,6 @@ public class Errors
 
     void beginRender(MarkupWriter writer)
     {
-        // TODO: Would be nice if there was a Location to report ... can we add a Location property
-        // to ComponentResources?
-
         if (_tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
 
         if (!_tracker.getHasErrors()) return;
