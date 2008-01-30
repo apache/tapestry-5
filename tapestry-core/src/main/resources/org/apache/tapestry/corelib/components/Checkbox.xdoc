@@ -1,0 +1,91 @@
+<document>
+    <body>
+        <section name="Examples">
+
+
+            <p>
+                In this example, a Checkbox will be used alone to manipulate a property of the page.
+            </p>
+
+            <subsection name="ViewAccounts.tml">
+
+                <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>View Accounts</h1>
+
+        <t:form>
+            <t:checkbox t:id="showall" onclick="this.form.submit();"/> <t:label for="showall"/>
+        </t:form>
+
+        <t:grid t:id="accounts"/>
+
+    </body>
+</html>
+]]></source>
+
+                <p>
+                    The Grid component will do most of the work in terms of displaying the account data.
+                </p>
+
+                <p>
+                    Normally, we should bind the value parameter explicitly; here the component's id, "showAll",
+                    matches against a property of the page and the value parameter is automatically bound
+                    as a convienience.
+                </p>
+
+                <p>
+                    A small amount of JavaScript is provided in-line to submit the form when the checkbox is clicked.
+                </p>
+
+                <p>
+                    All Tapestry form control element components must be enclosed by a Form component.
+                </p>
+
+                <p>
+                    The Label component is responsible for rendering a &lt;label&gt; element connected to the checkbox.
+                    This
+                    is good for accessibility, it also provides a larger "target" to click on.
+                    The label's text will be "Show All", derived from the property name. Using a Label component is
+                    optional
+                    but recommended.
+                </p>
+
+
+            </subsection>
+
+            <subsection name="ViewAccounts.java">
+
+                <source><![CDATA[
+public class ViewAccount
+{
+    @Persist
+    private boolean _showAll;
+
+    @Inject
+    private AccountDAO _accountDAO;
+
+    public boolean isShowAll() { return _showAll; }
+
+    public void setShowAll(boolean showAll) { _showAll = showAll; }
+
+    public List<Account> getAccounts()
+    {
+        return _showAll ? _accountDAO.getAllAccounts() : _accountDAO.getActiveAccounts();
+    }
+}]]></source>
+
+                <p>
+                    The component updates the _showAll field, and that's used to determine which
+                    set of accounts should be provided to the Grid component. As always in Tapestry, you
+                    must be careful to mark fields persistent if they need to hold their value between
+                    the action request (the form submission) and the render request.
+                </p>
+
+
+            </subsection>
+
+
+        </section>
+    </body>
+</document>
