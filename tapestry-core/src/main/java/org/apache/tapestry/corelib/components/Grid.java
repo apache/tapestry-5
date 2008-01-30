@@ -27,7 +27,6 @@ import org.apache.tapestry.grid.GridModelProvider;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.internal.bindings.AbstractBinding;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.FormSupport;
 
@@ -48,11 +47,11 @@ public class Grid implements GridModelProvider
 {
     /**
      * The source of data for the Grid to display. This will usually be a List or array but can also be an explicit
-     * {@link GridDataSource}. For Lists and Arrays, a GridDataSource is created automatically as a wrapper around the
-     * underlying List.
+     * {@link GridDataSource}. For Lists and object arrays, a GridDataSource is created automatically as a wrapper
+     * around the underlying List.
      */
     @Parameter(required = true)
-    private Object _source;
+    private GridDataSource _source;
 
     /**
      * The number of rows of data displayed on each page. If there are more rows than will fit, the Grid will divide up
@@ -68,15 +67,6 @@ public class Grid implements GridModelProvider
      */
     @Parameter(value = "top", defaultPrefix = "literal")
     private GridPagerPosition _pagerPosition;
-
-    @Persist
-    private int _currentPage = 1;
-
-    @Persist
-    private String _sortColumnId;
-
-    @Persist
-    private boolean _sortAscending = true;
 
     /**
      * Used to store the current object being rendered (for the current row). This is used when parameter blocks are
@@ -127,18 +117,14 @@ public class Grid implements GridModelProvider
     @Parameter
     private boolean _lean;
 
-    @Inject
-    private ComponentResources _resources;
-
-    @Inject
-    private BeanModelSource _modelSource;
-
-    @Inject
-    private TypeCoercer _typeCoercer;
-
-    // Transformed version of the source parameter.
-
-    private GridDataSource _dataSource;
+    /**
+     * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
+     * false, enabling state persisting within Forms. If a Grid is present for some reason within a Form, but does not
+     * contain any form control components (such as {@link TextField}), then binding volatile to false will reduce the
+     * amount of client-side state that must be persisted.
+     */
+    @Parameter
+    private boolean _volatile;
 
     /**
      * The CSS class for the tr element for each data row. This can be used to highlight particular rows, or cycle
@@ -146,6 +132,22 @@ public class Grid implements GridModelProvider
      */
     @Parameter(cache = false)
     private String _rowClass;
+
+    @Persist
+    private int _currentPage = 1;
+
+    @Persist
+    private String _sortColumnId;
+
+    @Persist
+    private boolean _sortAscending = true;
+
+    @Inject
+    private ComponentResources _resources;
+
+    @Inject
+    private BeanModelSource _modelSource;
+
 
     @SuppressWarnings("unused")
     @Component(parameters = {"sortColumnId=sortColumnId", "sortAscending=sortAscending", "lean=inherit:lean"})
@@ -167,14 +169,6 @@ public class Grid implements GridModelProvider
     @Component(parameters = "to=pagerBottom")
     private Delegate _pagerBottom;
 
-    /**
-     * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
-     * false, enabling state saving persisting within Forms. If a Grid is present for some reason within a Form, but
-     * does not contain any form control components (such as {@link TextField}), then binding volatile to false will
-     * reduce the amount of client-side state that must be persisted.
-     */
-    @Parameter
-    private boolean _volatile;
 
     @Environmental(false)
     private FormSupport _formSupport;
@@ -190,9 +184,10 @@ public class Grid implements GridModelProvider
             {
                 // Get the default row type from the data source
 
-                Class rowType = _dataSource.getRowType();
+                Class rowType = _source.getRowType();
 
-                if (rowType == null) throw new RuntimeException("xxx -- no source to determine list type from");
+                if (rowType == null) throw new RuntimeException(
+                        "Unable to determine the bean type for rows from the GridDataSource. You should bind the model parameter explicitly.");
 
                 // Properties do not have to be read/write
 
@@ -229,20 +224,18 @@ public class Grid implements GridModelProvider
 
         setupDataSource();
 
-        return _dataSource.getAvailableRows() == 0 ? _empty : null;
+        return _source.getAvailableRows() == 0 ? _empty : null;
     }
 
     void setupDataSource()
     {
-        _dataSource = _typeCoercer.coerce(_source, GridDataSource.class);
-
         if (_remove != null) BeanModelUtils.remove(_model, _remove);
 
         if (_reorder != null) BeanModelUtils.reorder(_model, _reorder);
 
         // If there's no rows, display the empty block placeholder.
 
-        int availableRows = _dataSource.getAvailableRows();
+        int availableRows = _source.getAvailableRows();
 
         if (availableRows == 0) return;
 
@@ -265,7 +258,7 @@ public class Grid implements GridModelProvider
         int startIndex = (_currentPage - 1) * _rowsPerPage;
         int endIndex = Math.min(startIndex + _rowsPerPage - 1, availableRows - 1);
 
-        _dataSource.prepare(startIndex, endIndex, sortModel, _sortAscending);
+        _source.prepare(startIndex, endIndex, sortModel, _sortAscending);
     }
 
     Object beginRender()
@@ -273,7 +266,7 @@ public class Grid implements GridModelProvider
         // Skip rendering of component (template, body, etc.) when there's nothing to display.
         // The empty placeholder will already have rendered.
 
-        if (_dataSource.getAvailableRows() == 0) return false;
+        if (_source.getAvailableRows() == 0) return false;
 
         return null;
     }
@@ -285,7 +278,7 @@ public class Grid implements GridModelProvider
 
     public GridDataSource getDataSource()
     {
-        return _dataSource;
+        return _source;
     }
 
     public String getRowClass()
