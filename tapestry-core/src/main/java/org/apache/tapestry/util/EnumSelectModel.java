@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,14 +26,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum
- * instance name and the provides message catalog:
- * <ul>
- * <li>As key <em>ClassName</em>-<em>name</em> if present. The class name excludes the
- * package portion. Ex: "ElementType.LOCAL_VARIABLE"
- * <li>As key <em>name</em> if present, i.e., "LOCAL_VARIABLE".
- * <li>As a user-presentable version of the name, i.e., "Local Variable".
- * </ul>
+ * A basic select model for a particular Enum type. The labels for each Enum are drawn from the Enum instance name and
+ * the provides message catalog: <ul> <li>As key <em>ClassName</em>.<em>name</em> if present. The class name excludes
+ * the package portion. Ex: "ElementType.LOCAL_VARIABLE" <li>As key <em>name</em> if present, i.e., "LOCAL_VARIABLE".
+ * <li>As a user-presentable version of the name, i.e., "Local Variable". </ul>
  */
 public final class EnumSelectModel extends AbstractSelectModel implements Serializable
 {
@@ -51,7 +47,7 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
         notNull(enumClass, "enumClass");
         notNull(messages, "messages");
 
-        String prefix = TapestryInternalUtils.lastTerm(enumClass.getName());
+        String prefix = enumClass.getSimpleName();
 
         for (T value : values)
         {
