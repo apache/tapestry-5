@@ -87,7 +87,7 @@ public class StackTest extends TestBase
     {
         final int LIMIT = 1000;
 
-        Stack<Integer> stack = newStack();
+        Stack<Integer> stack = newStack(10);
 
         for (int i = 0; i < LIMIT; i++)
         {

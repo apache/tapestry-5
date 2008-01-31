@@ -1237,7 +1237,7 @@ public final class TapestryModule
 
     /**
      * Contributes a default object renderer for type Object, plus specialized renderers for {@link Request}, {@link
-     * Location}, List, and Object[].
+     * Location}, {@link ComponentResources}, List, and Object[].
      */
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
@@ -1274,6 +1274,7 @@ public final class TapestryModule
 
         configuration.add(List.class, locator.autobuild(ListRenderer.class));
         configuration.add(Object[].class, locator.autobuild(ObjectArrayRenderer.class));
+        configuration.add(ComponentResources.class, locator.autobuild(ComponentResourcesRenderer.class));
     }
 
 

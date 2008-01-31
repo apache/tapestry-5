@@ -15,6 +15,7 @@
 package org.apache.tapestry.integration;
 
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
+import org.apache.tapestry.integration.app1.pages.RenderErrorDemo;
 import org.apache.tapestry.internal.services.InjectContainerWorker;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
@@ -1533,10 +1534,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("An unexpected application exception has occurred");
 
-        for (String s : new String[]{"RenderErrorDemo", "RenderErrorDemo:border", "RenderErrorDemo:echo"})
-        {
-            assertSourcePresent(String.format("<li>%s</li>", s));
-        }
+        // Just sample a smattering of the vast amount of data in the exception report.
 
+        assertTextPresent("RenderErrorDemo", "class " + RenderErrorDemo.class.getName(), "RenderErrorDemo:border",
+                          "RenderErrorDemo:echo");
     }
 }
