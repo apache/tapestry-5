@@ -29,8 +29,7 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import java.util.List;
 
 /**
- * Renders out the column headers for the grid. Eventually, this will include control over column sorting, perhaps even
- * column ordering.
+ * Renders out the column headers for the grid, including links (where appropriate) to control column sorting.
  */
 public class GridColumns
 {
@@ -41,9 +40,9 @@ public class GridColumns
     private GridModelProvider _dataProvider;
 
     /**
-     * If true, then the CSS class on each &lt;TH&gt; cell will be omitted, which can reduce the amount of output from
-     * the component overall by a considerable amount. Leave this as false, the default, when you are leveraging the CSS
-     * to customize the look and feel of particular columns.
+     * If true, then the CSS class on each &lt;TH&gt; element will be omitted, which can reduce the amount of output
+     * from the component overall by a considerable amount. Leave this as false, the default, when you are leveraging
+     * the CSS to customize the look and feel of particular columns.
      */
     @Parameter
     private boolean _lean;
@@ -57,7 +56,7 @@ public class GridColumns
     private String _sortColumnId;
 
     /**
-     * If true, then the sort is ascending (A - Z), if false the descending (Z - A).
+     * If true, then the sort is ascending (A - Z), if false then descending (Z - A).
      */
     @Parameter(required = true)
     private boolean _sortAscending;

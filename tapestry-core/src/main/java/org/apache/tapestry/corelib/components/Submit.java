@@ -27,18 +27,17 @@ import org.apache.tapestry.services.Heartbeat;
 import org.apache.tapestry.services.Request;
 
 /**
- * Corresponds to &lt;input type="submit"&gt;, a client-side element that can force the enclosing
- * form to submit. The submit responsible for the form submission will post a notification that
- * allows the application to know that it was the responsible entity. The notification is named
- * "selected" and has no context.
+ * Corresponds to &lt;input type="submit"&gt;, a client-side element that can force the enclosing form to submit. The
+ * submit responsible for the form submission will post a notification that allows the application to know that it was
+ * the responsible entity. The notification is named "selected" and has no context.
  */
 public final class Submit extends AbstractField
 {
     static final String SELECTED_EVENT = "selected";
 
     /**
-     * If true, then any notification sent by the component will be deferred until the end of the
-     * form submission (this is usually desirable).
+     * If true (the default), then any notification sent by the component will be deferred until the end of the form
+     * submission (this is usually desirable).
      */
     @Parameter
     private boolean _defer = true;
@@ -97,8 +96,7 @@ public final class Submit extends AbstractField
 
         // When not deferred, don't wait, fire the event now (actually, at the end of the current
         // heartbeat). This is most likely because the Submit is inside a Loop and some contextual
-        // information will change if we defer. Another option might be to wait until the next
-        // heartbeak?
+        // information will change if we defer.
 
         if (_defer) _formSupport.defer(sendNotification);
         else _heartbeat.defer(sendNotification);

@@ -15,6 +15,7 @@
 package org.apache.tapestry.mojo;
 
 import nu.xom.*;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -28,7 +29,6 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.codehaus.doxia.sink.Sink;
 import org.codehaus.doxia.site.renderer.SiteRenderer;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -145,6 +145,9 @@ public class ComponentReport extends AbstractMavenReport
     }
 
 
+    private final static Set<String> SUPPORTED_SUBPACKAGES = CollectionFactory.newSet("base", "components", "mixins",
+                                                                                      "pages");
+
     /**
      * Generates the report; this consist of the index page
      *
@@ -175,8 +178,34 @@ public class ComponentReport extends AbstractMavenReport
             sink.sectionTitle1_();
             sink.list();
 
+            String currentSubpackage = null;
+
             for (String className : InternalUtils.sortedKeys(descriptions))
             {
+                String subpackage = extractSubpackage(className);
+
+                if (!SUPPORTED_SUBPACKAGES.contains(subpackage)) continue;
+
+                if (!subpackage.equals(currentSubpackage))
+                {
+                    if (currentSubpackage != null)
+                    {
+                        sink.list_();
+                        sink.section2_();
+                    }
+
+                    sink.section2();
+                    sink.sectionTitle2();
+                    sink.text(StringUtils.capitalize(subpackage));
+                    sink.sectionTitle2_();
+
+
+                    sink.list();
+
+                    currentSubpackage = subpackage;
+                }
+
+
                 sink.listItem();
 
                 sink.link(className + ".html");
@@ -190,13 +219,24 @@ public class ComponentReport extends AbstractMavenReport
                 sink.listItem_();
             }
 
-            sink.list_();
+            if (currentSubpackage != null)
+            {
+                sink.list_();
+                sink.section2_();
+            }
 
         }
         catch (Exception ex)
         {
             throw new MavenReportException(ex.getMessage(), ex);
         }
+    }
+
+    private String extractSubpackage(String className)
+    {
+        int dotx = className.indexOf(".", rootPackage.length() + 1);
+
+        return className.substring(rootPackage.length() + 1, dotx);
     }
 
     private List<File> createDocSearchPath()

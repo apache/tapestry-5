@@ -1,0 +1,99 @@
+<document>
+    <body>
+        <section name="Simple Example">
+
+            <p>
+                A simple example, selecting one of three strings:
+            </p>
+
+            <subsection name="SelectColor.tml (partial)">
+                <source><![CDATA[
+    Select a color:
+    <t:select t:id="color" model="literal:Red,Blue,Green"/>
+]]></source>
+
+                <p>
+                    When the model parameter is a string, it is broken apart at the commas.
+                </p>
+
+                <p>
+                    When using this approach, you'll commonly put the list into the message catalog,
+                    and reference it using a "message:" binding.
+                </p>
+
+            </subsection>
+
+        </section>
+
+        <section name="Enum Example">
+
+            <p>Working with Enums is, amazingly, even easier (and more so than with the Radio component).</p>
+
+            <subsection name="CardType.java">
+
+                <source><![CDATA[
+public enum CardType
+{
+    MASTER_CARD, VISA, AMERICAN_EXPRESS, DINERS_CLUB, DISCOVER
+}
+]]></source>
+
+            </subsection>
+
+            <subsection name="Payment.tml (partial)">
+
+                <source><![CDATA[
+
+    <t:select t:id="type"/>
+
+            ]]></source>
+
+
+                <p>
+                    Here again, Tapestry is binding the value parameter to the type property, based on the component's
+                    id.
+                    In addition, because the property type of the property in question is an enum, a SelectModel
+                    is automatically generated.
+                </p>
+
+            </subsection>
+
+            <subsection name="Payment.java (partial)">
+
+                <source><![CDATA[
+                                                                                                     
+public class Payment
+{
+    . . .
+
+    @Persist
+    private CardType _type;
+
+    public CardType getType() { return _type; }
+
+    public void setType(CardType type) { _type = type; }
+
+    . . .
+}]]></source>
+
+
+            </subsection>
+
+            <subsection name="Payment.properties">
+
+                <source><![CDATA[DINERS_CLUB=Diner's Club]]></source>
+
+                <p>
+                    Tapestry is able to make very good guesses about the labels to use in the Select component, it
+                    <em>humanizes</em>
+                    the enum names to user presentable labels: "Master Card", "Visa", etc.
+                    However, it doesn't get "Diner's Club" just right, so we provide an override in the page's
+                    message catalog.
+                </p>
+
+            </subsection>
+
+        </section>
+
+    </body>
+</document>

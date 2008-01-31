@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,12 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Basic looping class; loops over a number of items (provided by its source parameter), rendering
- * its body for each one. It turns out that gettting the component to <em>not</em> store its state
- * in the Form is very tricky and, in fact, a series of commands for starting and ending heartbeats,
- * and advancing through the iterator, are still stored. For a non-volatile Loop inside the form,
- * the Loop stores a series of commands that start and end heartbeats and store state (either as
- * full objects when there is not encoder, or as client-side objects when there is an encoder).
+ * Basic looping class; loops over a number of items (provided by its source parameter), rendering its body for each
+ * one. It turns out that gettting the component to <em>not</em> store its state in the Form is very tricky and, in
+ * fact, a series of commands for starting and ending heartbeats, and advancing through the iterator, are still stored.
+ * For a non-volatile Loop inside the form, the Loop stores a series of commands that start and end heartbeats and store
+ * state (either as full objects when there the encoder parameter is not bound, or as client-side objects when there is
+ * an encoder).
  */
 @SupportsInformalParameters
 public class Loop
@@ -53,8 +53,8 @@ public class Loop
     };
 
     /**
-     * Setup command for volatile rendering. Volatile rendering relies on re-acquiring the Iterator
-     * and working our way through it (and hoping for the best!).
+     * Setup command for volatile rendering. Volatile rendering relies on re-acquiring the Iterator and working our way
+     * through it (and hoping for the best!).
      */
     private static final ComponentAction<Loop> SETUP_FOR_VOLATILE = new ComponentAction<Loop>()
     {
@@ -68,9 +68,8 @@ public class Loop
     };
 
     /**
-     * Advances to next value in a volatile way. So, the <em>number</em> of steps is intrinsically
-     * stored in the Form (as the number of ADVANCE_VOLATILE commands), but the actual values are
-     * expressly stored only on the server.
+     * Advances to next value in a volatile way. So, the <em>number</em> of steps is intrinsically stored in the Form
+     * (as the number of ADVANCE_VOLATILE commands), but the actual values are expressly stored only on the server.
      */
     private static final ComponentAction<Loop> ADVANCE_VOLATILE = new ComponentAction<Loop>()
     {
@@ -83,8 +82,8 @@ public class Loop
     };
 
     /**
-     * Used in both volatile and non-volatile mode to end the current heartbeat (started by either
-     * ADVANCE_VOLATILE or one of the RestoreState commands). Also increments the index.
+     * Used in both volatile and non-volatile mode to end the current heartbeat (started by either ADVANCE_VOLATILE or
+     * one of the RestoreState commands). Also increments the index.
      */
     private static final ComponentAction<Loop> END_HEARTBEAT = new ComponentAction<Loop>()
     {
@@ -98,8 +97,7 @@ public class Loop
     };
 
     /**
-     * Restores a state value (this is the case when there is no encoder and the complete value is
-     * stored).
+     * Restores a state value (this is the case when there is no encoder and the complete value is stored).
      */
     static class RestoreState implements ComponentAction<Loop>
     {
@@ -119,8 +117,7 @@ public class Loop
     }
 
     /**
-     * Restores the value using a stored primary key via
-     * {@link PrimaryKeyEncoder#toValue(Serializable)}.
+     * Restores the value using a stored primary key via {@link PrimaryKeyEncoder#toValue(Serializable)}.
      */
     static class RestoreStateViaEncodedPrimaryKey implements ComponentAction<Loop>
     {
@@ -169,15 +166,15 @@ public class Loop
     private Iterable<?> _source;
 
     /**
-     * Optional primary key converter; if provided and inside a form and not volatile, then each
-     * iterated value is converted and stored into the form.
+     * Optional primary key converter; if provided and inside a form and not volatile, then each iterated value is
+     * converted and stored into the form.
      */
     @Parameter
     private PrimaryKeyEncoder<Serializable, Object> _encoder;
 
     /**
-     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off.
-     * Defaults to false, enabling state saving logic within Forms.
+     * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
+     * enabling state saving logic within Forms.
      */
     @Parameter
     private boolean _volatile;
@@ -186,8 +183,8 @@ public class Loop
     private FormSupport _formSupport;
 
     /**
-     * The element to render. If not null, then the loop will render the indicated element around
-     * its body (on each pass through the loop). The default is derived from the component template.
+     * The element to render. If not null, then the loop will render the indicated element around its body (on each pass
+     * through the loop). The default is derived from the component template.
      */
     @Parameter(value = "prop:componentResources.elementName", defaultPrefix = "literal")
     private String _elementName;

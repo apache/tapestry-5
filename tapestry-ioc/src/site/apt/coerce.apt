@@ -36,7 +36,7 @@ Type Coercion
 Contributing new Coercions
 
   TypeCoercer is extensible, you may add new coercions as desired.  For example, let's say you have a Money type that represents
-  an amount of some currency, and you want to be able to convert between BigDecimal and Money.  Further, let's assume that
+  an amount of some currency, and you want to be able to convert from  BigDecimal to Money.  Further, let's assume that
   Money has a constructor that accepts a BigDecimal as its parameter.  We'll use a little Tapestry IOC configuration jujitsu to
   inform the TypeCoercer about this coercion.
   

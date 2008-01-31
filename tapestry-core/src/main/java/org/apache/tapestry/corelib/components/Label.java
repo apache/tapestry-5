@@ -27,10 +27,10 @@ import org.apache.tapestry.services.Heartbeat;
 /**
  * Generates a &lt;label&gt; element for a particular field.
  * <p/>
- * <p/>
- * A Label will render its body, if it has one.  However, in most cases it will not have a body, and will render it's
- * {@linkplain org.apache.tapestry.Field#getLabel()} field's label} as it's body. Remember, however, that it is the
- * field label that will be used in any error messages.
+ * A Label will render its body, if it has one.  However, in most cases it will not have a body, and will render its
+ * {@linkplain org.apache.tapestry.Field#getLabel() field's label} as it's body. Remember, however, that it is the field
+ * label that will be used in any error messages. The Label component allows for client- and server-side validation
+ * error decorations.
  */
 @SupportsInformalParameters
 public class Label

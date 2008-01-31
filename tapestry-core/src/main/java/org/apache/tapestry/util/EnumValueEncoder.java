@@ -18,8 +18,7 @@ import org.apache.tapestry.ValueEncoder;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 /**
- * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client side value (the
- * "primary key").
+ * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client side value.
  */
 public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 {

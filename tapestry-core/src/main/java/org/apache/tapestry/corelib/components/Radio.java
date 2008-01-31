@@ -93,6 +93,9 @@ public class Radio implements Field
         return _defaultProvider.defaultBinding("value", _resources);
     }
 
+    /**
+     * Returns the element name provided by the containing {@link org.apache.tapestry.RadioContainer}.
+     */
     public String getElementName()
     {
         return _elementName;

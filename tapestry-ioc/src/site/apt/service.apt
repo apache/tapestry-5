@@ -465,7 +465,7 @@ Injecting Resources
   
   * java.lang.String: unique id for the service
     
-  * {{{http://www.slf4j.org/api/org/slf4j/Logger.html}org.slf5j.Logger}}: logger for the service
+  * {{{http://www.slf4j.org/api/org/slf4j/Logger.html}org.slf4j.Logger}}: logger for the service
   
   * java.lang.Class: service interface implemented by the service to be constructed
   
@@ -576,13 +576,13 @@ Builtin Services
 *---------------------+-----------------------------------------------------------------------------------------+
 | <<Service Id>>      | <<Service Interface>>                                                                   |
 *---------------------+-----------------------------------------------------------------------------------------+
-| ClassFactory        | {{{../apidocs/org/apache/tapestry/ioc/services/ClassFactory.html}ClassFactory}}            |
+| ClassFactory        | {{{../apidocs/org/apache/tapestry/ioc/services/ClassFactory.html}ClassFactory}}         |
 *---------------------+-----------------------------------------------------------------------------------------+
-| LogSource           | {{{../apidocs/org/apache/tapestry/ioc/LogSource.html}LogSource}}                           |
+| LoggerSource        | {{{../apidocs/org/apache/tapestry/ioc/LoggerSource.html}LoggerSource}}                  |
 *---------------------+-----------------------------------------------------------------------------------------+
-| RegistryShutdownHub | {{{../apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}       |
+| RegistryShutdownHub | {{{../apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}    |
 *---------------------+-----------------------------------------------------------------------------------------+
-| ThreadCleanupHub    | {{{../apidocs/org/apache/tapestry/ioc/services/ThreadCleanupHub.html}ThreadCleanupHub}}    |
+| ThreadCleanupHub    | {{{../apidocs/org/apache/tapestry/ioc/services/ThreadCleanupHub.html}ThreadCleanupHub}} |
 *---------------------+-----------------------------------------------------------------------------------------+
 
   Consult the JavaDoc for each of these services to identify under what circumstances you'll need to use them.
@@ -606,7 +606,7 @@ Mutually Dependant Services
     return indexer;
   }
     
-  public static build(Indexer indexer)
+  public static Indexed build(Indexer indexer)
   {
     return new FileSystemImpl(indexer);
   }  
@@ -616,7 +616,7 @@ Mutually Dependant Services
    of them will be created ... let's say its FileSystem. The buildFileSystem() builder
    method will be invoked, and a proxy to Indexer will be passed in.  Inside the
    FileSystemImpl constructor (or at some later date), a method of the Indexer service
-   will be invoked, at which point, the builderIndexer() method is invoke. It still receives
+   will be invoked, at which point, the builderIndexer() method is invoked. It still receives
    the proxy to the FileSystem service.
    
    If the order is reversed, such that Indexer is built before FileSystem, everything still
@@ -627,7 +627,7 @@ Mutually Dependant Services
     
    The exception to this rule is a service that depends on itself <during construction>.
    This can occur when (indirectly, through other services) building the service
-   trys to invoke a method on the service being built. This can happen when the service
+   tries to invoke a method on the service being built. This can happen when the service
    implemention's constructor invoke methods on service dependencies passed into it,
    or when the service builder method itself does the same. This is actually a very rare
    case and difficult to illustrate.
