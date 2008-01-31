@@ -23,9 +23,8 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * Static factory methods to ease the creation of new collection types (when using generics). Most
- * of these method leverage the compiler's ability to match generic types by return value. Typical
- * usage (with a static import):
+ * Static factory methods to ease the creation of new collection types (when using generics). Most of these method
+ * leverage the compiler's ability to match generic types by return value. Typical usage (with a static import):
  * <p/>
  * <pre>
  * Map&lt;Foo, Bar&gt; map = newMap();
@@ -134,6 +133,11 @@ public final class CollectionFactory
     public static <T> Stack<T> newStack()
     {
         return new Stack<T>();
+    }
+
+    public static <T> Stack<T> newStack(int initialSize)
+    {
+        return new Stack<T>(initialSize);
     }
 
     public static <V> Map<String, V> newCaseInsensitiveMap()

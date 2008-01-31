@@ -916,7 +916,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         _page.incrementDirtyCount();
 
-        queue.startComponent(_completeId);
+        queue.startComponent(_coreResources);
 
         queue.push(POP_COMPONENT_ID);
 

@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.runtime;
 
+import org.apache.tapestry.ComponentResources;
+
 /**
  * A stateful object that manages the process of rendering a page. Rending a page in Tapestry is based on a command
  * queue.
@@ -26,12 +28,11 @@ public interface RenderQueue
     void push(RenderCommand command);
 
     /**
-     * Indicates that a component is starting its render. A stack of active component ids is used for exception
-     * reporting.
+     * Indicates that a component is starting its render. A stack of active components is used for exception reporting.
      *
-     * @param componentId of component that is rendering
+     * @param resources identifies the component that is rendering
      */
-    void startComponent(String componentId);
+    void startComponent(ComponentResources resources);
 
     /**
      * Corresponds to {@link #startComponent(String)}, used to denote when the most recently started component finishes

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.RenderCommand;
@@ -56,6 +57,10 @@ public class RenderQueueImplTest extends InternalBaseTestCase
     @Test
     public void command_failed()
     {
+        ComponentResources foo = mockInternalComponentResources();
+        ComponentResources bar = mockInternalComponentResources();
+        ComponentResources baz = mockInternalComponentResources();
+
         final RuntimeException t = new RuntimeException("Oops.");
 
         RenderCommand rc = new RenderCommand()
@@ -84,10 +89,10 @@ public class RenderQueueImplTest extends InternalBaseTestCase
 
         RenderQueueImpl queue = new RenderQueueImpl(logger);
 
-        queue.startComponent("foo");
-        queue.startComponent("bar");
+        queue.startComponent(foo);
+        queue.startComponent(bar);
         queue.endComponent();
-        queue.startComponent("baz");
+        queue.startComponent(baz);
 
         queue.push(rc);
 
@@ -100,7 +105,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         {
             assertSame(ex.getCause(), t);
 
-            assertArraysEqual(ex.getActiveComponentIds(), new String[]{"foo", "baz"});
+            assertArraysEqual(ex.getActiveComponents(), new Object[]{foo, baz});
         }
 
         verify();

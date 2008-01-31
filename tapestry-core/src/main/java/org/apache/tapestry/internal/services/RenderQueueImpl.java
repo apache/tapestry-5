@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.runtime.RenderCommand;
@@ -25,9 +27,9 @@ public class RenderQueueImpl implements RenderQueue
 {
     private static final int INITIAL_QUEUE_DEPTH = 100;
 
-    private final Stack<RenderCommand> _queue = new Stack<RenderCommand>(INITIAL_QUEUE_DEPTH);
+    private final Stack<RenderCommand> _queue = CollectionFactory.newStack(INITIAL_QUEUE_DEPTH);
 
-    private final Stack<String> _nestedIds = new Stack<String>(INITIAL_QUEUE_DEPTH);
+    private final Stack<ComponentResources> _renderingComponents = CollectionFactory.newStack();
 
     private final Logger _logger;
 
@@ -70,19 +72,19 @@ public class RenderQueueImpl implements RenderQueue
 
             _logger.error(message, ex);
 
-            throw new RenderQueueException(message, _nestedIds.getSnapshot(), ex);
+            throw new RenderQueueException(message, _renderingComponents.getSnapshot(), ex);
         }
     }
 
-    public void startComponent(String componentId)
+    public void startComponent(ComponentResources resources)
     {
-        Defense.notBlank(componentId, "componentId");
+        Defense.notNull(resources, "resources");
 
-        _nestedIds.push(componentId);
+        _renderingComponents.push(resources);
     }
 
     public void endComponent()
     {
-        _nestedIds.pop();
+        _renderingComponents.pop();
     }
 }

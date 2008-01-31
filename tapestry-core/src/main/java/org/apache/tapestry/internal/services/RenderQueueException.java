@@ -16,19 +16,23 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 
+/**
+ * Exception used when rendering, to capture the stack of active components (for propery reporting in the exception
+ * page).
+ */
 public class RenderQueueException extends TapestryException
 {
-    private final Object[] _activeComponentIds;
+    private final Object[] _activeComponents;
 
-    public RenderQueueException(String message, Object[] activeComponentIds, Throwable cause)
+    public RenderQueueException(String message, Object[] activeComponents, Throwable cause)
     {
         super(message, cause);
 
-        _activeComponentIds = activeComponentIds;
+        _activeComponents = activeComponents;
     }
 
-    public Object[] getActiveComponentIds()
+    public Object[] getActiveComponents()
     {
-        return _activeComponentIds;
+        return _activeComponents;
     }
 }
