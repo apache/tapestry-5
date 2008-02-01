@@ -14,16 +14,16 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestFilter;
-import org.apache.tapestry.services.RequestHandler;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.HttpServletRequestFilter;
+import org.apache.tapestry.services.HttpServletRequestHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.regex.Pattern;
 
-public class IgnoredPathsFilter implements RequestFilter
+public class IgnoredPathsFilter implements HttpServletRequestFilter
 {
     private final Pattern[] _ignoredPatterns;
 
@@ -41,14 +41,23 @@ public class IgnoredPathsFilter implements RequestFilter
         }
     }
 
-    public boolean service(Request request, Response response, RequestHandler handler) throws IOException
+    public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
+            throws IOException
     {
-        String path = request.getPath();
+        // The servlet path should be "/", and path info is everything after that.
+
+        String path = request.getServletPath();
+        String pathInfo = request.getPathInfo();
+
+        if (pathInfo != null) path += pathInfo;
+
 
         for (Pattern p : _ignoredPatterns)
         {
             if (p.matcher(path).matches()) return false;
         }
+
+        // Not a match, so let it go.
 
         return handler.service(request, response);
     }

@@ -105,6 +105,17 @@ public final class TapestryConstants
      */
     public static final String COMPRESS_WHITESPACE_SYMBOL = "tapestry.compress-whitespace";
 
+    /**
+     * Time interval defining how often Tapestry will check for updates to local files (including classes). This number
+     * can be raised in a production environment.
+     */
+    public static final String FILE_CHECK_INTERVAL_SYMBOL = "tapestry.file-check-interval";
+
+    /**
+     * Time interval that sets how long Tapestry will wait to obtain the exclusive lock needed to check local files.
+     */
+    public static final String FILE_CHECK_UPDATE_TIMEOUT_SYMBOL = "tapestry.file-check-update-timeout";
+
     private TapestryConstants()
     {
     }

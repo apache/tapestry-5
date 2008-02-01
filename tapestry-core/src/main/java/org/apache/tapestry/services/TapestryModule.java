@@ -115,7 +115,7 @@ public final class TapestryModule
         binder.bind(ResponseRenderer.class, ResponseRendererImpl.class);
         binder.bind(RequestPathOptimizer.class, RequestPathOptimizerImpl.class);
         binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
-        binder.bind(RequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
+        binder.bind(HttpServletRequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
         binder.bind(PageResourcesSource.class, PageResourcesSourceImpl.class);
     }
 
@@ -458,6 +458,15 @@ public final class TapestryModule
         configuration.add("Service", new ServiceAnnotationObjectProvider(), "before:Alias");
     }
 
+
+    public static void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
+
+                                                           @InjectService("IgnoredPathsFilter")
+                                                           HttpServletRequestFilter ignoredPathsFilter)
+    {
+        configuration.add("IgnoredPaths", ignoredPathsFilter);
+    }
+
     /**
      * Continues a number of filters into the RequestHandler service: <dl> <dt>StaticFiles</dt> <dd>Checks to see if the
      * request is for an actual file, if so, returns true to let the servlet container process the request</dd>
@@ -465,8 +474,7 @@ public final class TapestryModule
      * cached data has changed (see {@link org.apache.tapestry.internal.services.CheckForUpdatesFilter}).
      * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler}
      * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
-     * cookies in the request</dd> <dt>IgnoredPaths</dt> <dd>Forces Tapestry to ignore paths, based on regular
-     * expressions contributed to the IgnoredPathsFilter service.  Ordered after StaticFiles.</dd>
+     * cookies in the request</dd>
      * <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
      * org.apache.tapestry.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
      * filter substitutes the request or response). </dl>
@@ -476,17 +484,15 @@ public final class TapestryModule
                                          final RequestExceptionHandler exceptionHandler,
 
                                          // @Inject not needed because its a long, not a String
-                                         @Symbol("tapestry.file-check-interval") @IntermediateType(TimeInterval.class)
+                                         @Symbol(TapestryConstants.FILE_CHECK_INTERVAL_SYMBOL)
+                                         @IntermediateType(TimeInterval.class)
                                          long checkInterval,
 
-                                         @Symbol("tapestry.file-check-update-timeout")
+                                         @Symbol(TapestryConstants.FILE_CHECK_UPDATE_TIMEOUT_SYMBOL)
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
-                                         LocalizationSetter localizationSetter,
-
-                                         @InjectService("IgnoredPathsFilter")
-                                         RequestFilter ignoredPathsFilter)
+                                         LocalizationSetter localizationSetter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
 
@@ -529,8 +535,6 @@ public final class TapestryModule
                           new CheckForUpdatesFilter(_updateListenerHub, checkInterval, updateTimeout), "before:*");
 
         configuration.add("StaticFiles", staticFilesFilter);
-
-        configuration.add("IgnoredPaths", ignoredPathsFilter, "after:StaticFiles");
 
         configuration.add("ErrorFilter", errorFilter);
 
@@ -1669,8 +1673,8 @@ public final class TapestryModule
         // Remember this is request-to-request time, presumably it'll take the developer more than
         // one second to make a change, save it, and switch back to the browser.
 
-        configuration.add("tapestry.file-check-interval", "1 s");
-        configuration.add("tapestry.file-check-update-timeout", "50 ms");
+        configuration.add(TapestryConstants.FILE_CHECK_INTERVAL_SYMBOL, "1 s");
+        configuration.add(TapestryConstants.FILE_CHECK_UPDATE_TIMEOUT_SYMBOL, "50 ms");
 
         // This should be overridden for particular applications.
         configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,it,zh_CN");

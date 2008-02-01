@@ -66,10 +66,13 @@ public class UploadModule
         return multipartDecoder;
     }
 
+    /**
+     * Contributes a filter, "MultipartFilter" after "IgnoredPaths".
+     */
     public static void contributeHttpServletRequestHandler(OrderedConfiguration<HttpServletRequestFilter> configuration,
                                                            MultipartDecoder multipartDecoder)
     {
-        configuration.add("MultipartFilter", new MultipartServletRequestFilter(multipartDecoder));
+        configuration.add("MultipartFilter", new MultipartServletRequestFilter(multipartDecoder), "after:IgnoredPaths");
     }
 
     public static void contributeFactoryDefaults(MappedConfiguration<String, String> configuration)

@@ -139,6 +139,7 @@ public class Start
 
             new Item("ValidBeanEditorDemo", "Client Validation Demo", "BeanEditor with validation enabled"),
 
+            new Item("Unreachable", "Unreachable Page", "page not reachable due to IgnoredPathsFilter"),
 
             new Item("renderabledemo", "Renderable Demo", "shows that render phase methods can return a Renderable"),
 

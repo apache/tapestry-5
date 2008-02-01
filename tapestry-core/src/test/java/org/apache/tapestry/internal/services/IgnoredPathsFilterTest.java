@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestFilter;
-import org.apache.tapestry.services.RequestHandler;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.HttpServletRequestFilter;
+import org.apache.tapestry.services.HttpServletRequestHandler;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,11 +30,12 @@ public class IgnoredPathsFilterTest extends TapestryTestCase
     @Test
     public void no_match() throws IOException
     {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        RequestHandler handler = mockRequestHandler();
+        HttpServletRequest request = mockHttpServletRequest();
+        HttpServletResponse response = mockHttpServletResponse();
+        HttpServletRequestHandler handler = mockHttpServletRequestHandler();
 
-        train_getPath(request, "/barney");
+        train_getServletPath(request, "/");
+        train_getPathInfo(request, "barney");
 
         train_service(handler, request, response, true);
 
@@ -43,7 +44,31 @@ public class IgnoredPathsFilterTest extends TapestryTestCase
 
         replay();
 
-        RequestFilter filter = new IgnoredPathsFilter(configuration);
+        HttpServletRequestFilter filter = new IgnoredPathsFilter(configuration);
+
+        assertTrue(filter.service(request, response, handler));
+
+        verify();
+    }
+
+    @Test
+    public void no_path_info() throws Exception
+    {
+        HttpServletRequest request = mockHttpServletRequest();
+        HttpServletResponse response = mockHttpServletResponse();
+        HttpServletRequestHandler handler = mockHttpServletRequestHandler();
+
+        train_getServletPath(request, "/");
+        train_getPathInfo(request, null);
+
+        train_service(handler, request, response, true);
+
+        List<String> configuration = CollectionFactory.newList("/fred");
+
+
+        replay();
+
+        HttpServletRequestFilter filter = new IgnoredPathsFilter(configuration);
 
         assertTrue(filter.service(request, response, handler));
 
@@ -53,17 +78,18 @@ public class IgnoredPathsFilterTest extends TapestryTestCase
     @Test
     public void path_excluded() throws Exception
     {
-        Request request = mockRequest();
-        Response response = mockResponse();
-        RequestHandler handler = mockRequestHandler();
+        HttpServletRequest request = mockHttpServletRequest();
+        HttpServletResponse response = mockHttpServletResponse();
+        HttpServletRequestHandler handler = mockHttpServletRequestHandler();
 
-        train_getPath(request, "/barney/rubble");
+        train_getServletPath(request, "/");
+        train_getPathInfo(request, "barney/rubble");
 
         List<String> configuration = CollectionFactory.newList("/barney.*");
 
         replay();
 
-        RequestFilter filter = new IgnoredPathsFilter(configuration);
+        HttpServletRequestFilter filter = new IgnoredPathsFilter(configuration);
 
         assertFalse(filter.service(request, response, handler));
 

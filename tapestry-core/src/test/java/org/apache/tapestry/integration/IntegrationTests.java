@@ -1289,31 +1289,31 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         String[] paths = new String[]{"//input[@id='textfield']",
 
-                                      "//input[@id='passwordfield']",
+                "//input[@id='passwordfield']",
 
-                                      "//textarea[@id='textarea']",
+                "//textarea[@id='textarea']",
 
-                                      "//input[@id='checkbox']",
+                "//input[@id='checkbox']",
 
-                                      "//select[@id='select']",
+                "//select[@id='select']",
 
-                                      "//input[@id='radio1']",
+                "//input[@id='radio1']",
 
-                                      "//input[@id='radio2']",
+                "//input[@id='radio2']",
 
-                                      "//input[@id='datefield']",
+                "//input[@id='datefield']",
 
-                                      "//button[@id='datefield:trigger']",
+                "//button[@id='datefield:trigger']",
 
-                                      "//select[@id='palette:avail']",
+                "//select[@id='palette:avail']",
 
-                                      "//button[@id='palette:select']",
+                "//button[@id='palette:select']",
 
-                                      "//button[@id='palette:deselect']",
+                "//button[@id='palette:deselect']",
 
-                                      "//select[@id='palette']",
+                "//select[@id='palette']",
 
-                                      "//input[@id='submit']"};
+                "//input[@id='submit']"};
 
         for (String path : paths)
         {
@@ -1538,5 +1538,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("RenderErrorDemo", "class " + RenderErrorDemo.class.getName(), "RenderErrorDemo:border",
                           "RenderErrorDemo:echo");
+    }
+
+    /**
+     * TAPESTRY-1594
+     */
+    @Test
+    public void ignored_paths_filter()
+    {
+        start("Unreachable Page");
+
+        assertTextPresent("HTTP ERROR: 404");
     }
 }
