@@ -18,6 +18,7 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
+import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.Request;
@@ -107,6 +108,11 @@ public class AppModule
         configuration.add(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL, "false");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
+    }
+
+    public static void contributeIgnoredPathsFilter(Configuration<String> configuration)
+    {
+        configuration.add("/unreachable");
     }
 
     public ToDoDatabase buildToDoDatabase()

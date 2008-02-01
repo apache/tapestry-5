@@ -984,4 +984,25 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(request.isXHR()).andReturn(isXHR).atLeastOnce();
     }
+
+    protected void train_getPathInfo(HttpServletRequest request, String pathInfo)
+    {
+        expect(request.getPathInfo()).andReturn(pathInfo).atLeastOnce();
+    }
+
+    protected final void train_service(HttpServletRequestHandler handler, HttpServletRequest request,
+                                       HttpServletResponse response, boolean result) throws IOException
+    {
+        expect(handler.service(request, response)).andReturn(result);
+    }
+
+    protected final void train_getServletPath(HttpServletRequest request, String path)
+    {
+        expect(request.getServletPath()).andReturn(path).atLeastOnce();
+    }
+
+    protected final HttpServletRequestHandler mockHttpServletRequestHandler()
+    {
+        return newMock(HttpServletRequestHandler.class);
+    }
 }

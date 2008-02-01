@@ -42,7 +42,7 @@
         </menu>
 
         <menu name="Documentation">
-            <item name="Reference" href="index.html"/>
+            <item name="Reference" href="ref/index.html"/>
         </menu>
 
         <menu ref="reports"/>
