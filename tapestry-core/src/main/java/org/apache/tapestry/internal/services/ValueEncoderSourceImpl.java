@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.events.InvalidationListener;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
@@ -29,13 +31,15 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
 {
     private final StrategyRegistry<ValueEncoderFactory> _registry;
 
+    private final Map<Class, ValueEncoder> _cache = CollectionFactory.newConcurrentMap();
+
     public ValueEncoderSourceImpl(Map<Class, ValueEncoderFactory> configuration)
     {
         _registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
     }
 
     @SuppressWarnings("unchecked")
-    public ValueEncoder createEncoder(String parameterName, ComponentResources resources)
+    public ValueEncoder getEncoderForParameter(String parameterName, ComponentResources resources)
     {
         notBlank(parameterName, "parameterName");
         notNull(resources, "resources");
@@ -44,13 +48,31 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
 
         if (parameterType == null) return null;
 
-        ValueEncoderFactory factory = _registry.get(parameterType);
+        return getEncoderForType(parameterType);
+    }
 
-        return factory.create(parameterType);
+    @SuppressWarnings({"unchecked"})
+    public <T> ValueEncoder<T> getEncoderForType(Class<T> type)
+    {
+        Defense.notNull(type, "type");
+
+        ValueEncoder<T> result = _cache.get(type);
+
+        if (result == null)
+        {
+            ValueEncoderFactory<T> factory = _registry.get(type);
+
+            result = factory.create(type);
+
+            _cache.put(type, result);
+        }
+
+        return result;
     }
 
     public void objectWasInvalidated()
     {
         _registry.clearCache();
+        _cache.clear();
     }
 }

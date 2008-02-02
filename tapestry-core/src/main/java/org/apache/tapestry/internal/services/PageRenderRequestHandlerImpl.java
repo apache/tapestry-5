@@ -18,6 +18,7 @@ import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.PageRenderRequestHandler;
+import org.apache.tapestry.services.PageRenderRequestParameters;
 import org.apache.tapestry.services.Traditional;
 
 import java.io.IOException;
@@ -42,13 +43,14 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
         _pageResponseRenderer = pageResponseRenderer;
     }
 
-    public void handle(String logicalPageName, String[] context) throws IOException
+    public void handle(PageRenderRequestParameters parameters) throws IOException
     {
-        Page page = _cache.get(logicalPageName);
+        Page page = _cache.get(parameters.getLogicalPageName());
 
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
 
-        page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, context, callback);
+        page.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT, parameters.getActivationContext(),
+                                                  callback);
 
         // The handler will have asked the result processor to send a response.
 

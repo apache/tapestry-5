@@ -15,15 +15,26 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.internal.EmptyEventContext;
 import org.apache.tapestry.internal.InternalConstants;
+import org.apache.tapestry.internal.URLEventContext;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.*;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 public class ComponentEventDispatcherTest extends InternalBaseTestCase
 {
+    private ContextValueEncoder _contextValueEncoder;
+
+    @BeforeClass
+    public void setup()
+    {
+        _contextValueEncoder = getService(ContextValueEncoder.class);
+    }
+
     @Test
     public void no_dot_or_colon_in_path() throws Exception
     {
@@ -35,7 +46,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, null);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, null, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -122,11 +133,15 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
         Response response = mockResponse();
         ComponentClassResolver resolver = mockComponentClassResolver();
 
+
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("mypage", "mypage", "",
                                                                                                  "eventname",
-                                                                                                 new String[]{"alpha",
-                                                                                                              "beta"},
-                                                                                                 new String[0]);
+                                                                                                 new URLEventContext(
+                                                                                                         _contextValueEncoder,
+                                                                                                         new String[]{
+                                                                                                                 "alpha",
+                                                                                                                 "beta"}),
+                                                                                                 new EmptyEventContext());
 
         train_getPath(request, "/mypage:eventname");
 
@@ -140,7 +155,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, _contextValueEncoder);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -157,8 +172,8 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         ComponentEventRequestParameters expectedParameters = new ComponentEventRequestParameters("activepage", "mypage",
                                                                                                  "", "eventname",
-                                                                                                 new String[0],
-                                                                                                 new String[0]);
+                                                                                                 new EmptyEventContext(),
+                                                                                                 new EmptyEventContext());
 
         train_getPath(request, "/mypage:eventname");
 
@@ -172,7 +187,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, _contextValueEncoder);
 
         assertTrue(dispatcher.dispatch(request, response));
 
@@ -193,7 +208,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, null);
 
         assertFalse(dispatcher.dispatch(request, response));
 
@@ -212,8 +227,10 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
                                                                                                  containerPageName,
                                                                                                  nestedComponentId,
                                                                                                  eventType,
-                                                                                                 new String[0],
-                                                                                                 eventContext);
+                                                                                                 new EmptyEventContext(),
+                                                                                                 new URLEventContext(
+                                                                                                         _contextValueEncoder,
+                                                                                                         eventContext));
 
         train_getPath(request, requestPath);
 
@@ -227,7 +244,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver);
+        Dispatcher dispatcher = new ComponentEventDispatcher(handler, resolver, _contextValueEncoder);
 
         assertTrue(dispatcher.dispatch(request, response));
 

@@ -22,7 +22,7 @@ import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.services.ContextValueEncoder;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 import org.easymock.EasyMock;
@@ -38,18 +38,18 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
     private static final String PAGE_LOGICAL_NAME = "sub/MyPage";
 
-    private TypeCoercer _typeCoercer;
+    private ContextValueEncoder _contextValueEncoder;
 
     @BeforeClass
     public void setup()
     {
-        _typeCoercer = getObject(TypeCoercer.class, null);
+        _contextValueEncoder = getObject(ContextValueEncoder.class, null);
     }
 
     @AfterClass
     public void cleanup()
     {
-        _typeCoercer = null;
+        _contextValueEncoder = null;
     }
 
     @Test
@@ -114,7 +114,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer, null);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder);
 
         factory.addListener(listener);
 
@@ -158,7 +158,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer, null);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false, "biff", "bazz");
@@ -201,7 +201,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, _typeCoercer, optimizer, null);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, true);
@@ -247,7 +247,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, null);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, _contextValueEncoder);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
@@ -364,7 +364,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, queue);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
+                                                  _contextValueEncoder);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
@@ -413,7 +414,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, queue);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
+                                                  _contextValueEncoder);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(containingPage, null, "myaction", false);
@@ -463,7 +465,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, _typeCoercer, optimizer, queue);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
+                                                  _contextValueEncoder);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, nestedId, eventName, false, context);

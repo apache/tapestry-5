@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.EventContext;
+import org.apache.tapestry.internal.EmptyEventContext;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;
@@ -28,28 +30,29 @@ public class RootPathDispatcher implements Dispatcher
 
     private final PageRenderRequestHandler _handler;
 
-
     private final String _startPageName;
 
-    private final String[] _emptyContext = new String[0];
+    private static final EventContext EMPTY_CONTEXT = new EmptyEventContext();
 
-    public RootPathDispatcher(final ComponentClassResolver componentClassResolver,
-                              final PageRenderRequestHandler handler, final String startPageName)
+    private final PageRenderRequestParameters _parameters;
+
+    public RootPathDispatcher(ComponentClassResolver componentClassResolver,
+                              PageRenderRequestHandler handler, String startPageName)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;
         _startPageName = startPageName;
+
+        _parameters = new PageRenderRequestParameters(_startPageName, EMPTY_CONTEXT);
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
     {
         // Only match the root path
 
-        if (!request.getPath().equals("/")) return false;
-
-        if (_componentClassResolver.isPageName(_startPageName))
+        if (request.getPath().equals("/") && _componentClassResolver.isPageName(_startPageName))
         {
-            _handler.handle(_startPageName, _emptyContext);
+            _handler.handle(_parameters);
 
             return true;
         }

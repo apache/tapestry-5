@@ -26,6 +26,7 @@ import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
@@ -928,8 +929,36 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return String.format("ComponentPageElement[%s]", _completeId);
     }
 
-    public boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback callback)
+    public boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback)
     {
+        return triggerContextEvent(eventType,
+                                   createParameterContext(contextValues == null ? new Object[0] : contextValues),
+                                   callback);
+    }
+
+    private EventContext createParameterContext(final Object... values)
+    {
+
+        return new EventContext()
+        {
+            public int getCount()
+            {
+                return values.length;
+            }
+
+            public <T> T get(Class<T> desiredType, int index)
+            {
+                return _pageResources.coerce(values[index], desiredType);
+            }
+        };
+    }
+
+
+    public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
+    {
+        Defense.notBlank(eventType, "eventType");
+        Defense.notNull(context, "context");
+
         boolean result = false;
 
         ComponentPageElement component = this;
@@ -957,7 +986,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         // Because I don't like to reassign parameters.
 
         String currentEventType = eventType;
-        Object[] currentContext = context;
+        EventContext currentContext = context;
 
         while (component != null)
         {
@@ -991,7 +1020,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 // threw the exception.
 
                 currentEventType = "exception";
-                currentContext = new Object[]{rootException};
+                currentContext = createParameterContext(rootException);
 
                 continue;
             }

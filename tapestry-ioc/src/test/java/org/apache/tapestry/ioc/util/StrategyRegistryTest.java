@@ -56,7 +56,7 @@ public class StrategyRegistryTest extends IOCTestCase
     }
 
     @Test
-    public void adapter_found()
+    public void adapter_not_found_when_non_error()
     {
         Runnable r1 = mockRunnable();
         Runnable r2 = mockRunnable();

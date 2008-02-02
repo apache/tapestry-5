@@ -14,9 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.ioc.internal.util.Defense;
-
-import java.util.Arrays;
 
 /**
  * Encapsulates all the information that may be provided in a component event request URL.
@@ -27,11 +26,12 @@ public final class ComponentEventRequestParameters
     private final String _containingPageName;
     private final String _nestedComponentId;
     private final String _eventType;
-    private final String[] _pageActivationContext;
-    private final String[] _eventContext;
+    private final EventContext _pageActivationContext;
+    private final EventContext _eventContext;
 
     public ComponentEventRequestParameters(String activePageName, String containingPageName, String nestedComponentId,
-                                           String eventType, String[] pageActivationContext, String[] eventContext)
+                                           String eventType, EventContext pageActivationContext,
+                                           EventContext eventContext)
     {
         Defense.notBlank(activePageName, "activePageName");
         Defense.notBlank(containingPageName, "containingPageName");
@@ -59,11 +59,29 @@ public final class ComponentEventRequestParameters
 
         if (!_activePageName.equals(that._activePageName)) return false;
         if (!_containingPageName.equals(that._containingPageName)) return false;
-        if (!Arrays.equals(_eventContext, that._eventContext)) return false;
         if (!_eventType.equals(that._eventType)) return false;
         if (!_nestedComponentId.equals(that._nestedComponentId)) return false;
 
-        return Arrays.equals(_pageActivationContext, that._pageActivationContext);
+        if (!isEqual(_eventContext, that._eventContext)) return false;
+
+        return isEqual(_pageActivationContext, that._pageActivationContext);
+    }
+
+    private boolean isEqual(EventContext left, EventContext right)
+    {
+        if (left == right) return true;
+
+        int count = left.getCount();
+
+        if (count != right.getCount()) return false;
+
+        for (int i = 0; i < count; i++)
+        {
+            if (!left.get(Object.class, i).equals(right.get(Object.class, i)))
+                return false;
+        }
+
+        return true;
     }
 
 
@@ -106,8 +124,10 @@ public final class ComponentEventRequestParameters
 
     /**
      * The activation context for the <em>active page</em>, possibly empty (but not null).
+     *
+     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext, org.apache.tapestry.ComponentEventCallback)
      */
-    public String[] getPageActivationContext()
+    public EventContext getPageActivationContext()
     {
         return _pageActivationContext;
     }
@@ -115,10 +135,9 @@ public final class ComponentEventRequestParameters
     /**
      * The event context information passed in the URL.  Possibly empty (not not null).
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#triggerEvent(String, Object[],
-     *      org.apache.tapestry.ComponentEventCallback)
+     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext, org.apache.tapestry.ComponentEventCallback)
      */
-    public String[] getEventContext()
+    public EventContext getEventContext()
     {
         return _eventContext;
     }
