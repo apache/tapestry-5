@@ -216,6 +216,10 @@ public class Start
             new Item("PrimitiveArrayParameterDemo", "Primitive Array Parameter Demo",
                      "use primitive array as parameter type"),
 
+            new Item("RenderPhaseMethodExceptionDemo", "Render Phase Method Exception Demo",
+                     "render phase methods may throw checked exceptions"),
+
+
             new Item("TrackEditor", "Generic Page Class Demo",
                      "demo use of generics with component classes and, particularily, with property types"));
 

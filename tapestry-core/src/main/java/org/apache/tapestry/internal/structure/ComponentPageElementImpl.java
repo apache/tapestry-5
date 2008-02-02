@@ -121,7 +121,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             return _result;
         }
 
-        public boolean handleResult(Object result, Component component, String methodDescription)
+        public boolean handleResult(Object result)
         {
             if (result instanceof Boolean)
             {
@@ -155,8 +155,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 return false;
             }
 
-            throw new TapestryException(StructureMessages.wrongEventResultType(methodDescription, Boolean.class),
-                                        component, null);
+            throw new RuntimeException(StructureMessages.wrongPhaseResultType(Boolean.class));
         }
 
         private void add(RenderCommand command)
@@ -942,14 +941,14 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         ComponentEventCallback wrapped = new ComponentEventCallback()
         {
-            public boolean handleResult(Object result, Component component, String methodDescription)
+            public boolean handleResult(Object result)
             {
                 // Boolean value is not passed to the handler; it will be true (abort event)
                 // or false (continue looking for event handlers).
 
                 if (result instanceof Boolean) return (Boolean) result;
 
-                return providedHandler.handleResult(result, component, methodDescription);
+                return providedHandler.handleResult(result);
             }
         };
 

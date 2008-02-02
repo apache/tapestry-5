@@ -35,10 +35,9 @@ public interface Event
      * Invoke to identify, to the event, what component and method is being acted upon (used for some kinds of exception
      * reporting).
      *
-     * @param component         the component instance from which the result was obtained
      * @param methodDescription describes the location (i.e. file name, method name and line number) of the method
      */
-    void setSource(Component component, String methodDescription);
+    void setMethodDescription(String methodDescription);
 
     /**
      * Stores a result for the event. Storing a non-null result value may abort the event (at the discretion of the

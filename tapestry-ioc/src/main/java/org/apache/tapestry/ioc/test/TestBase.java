@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -150,7 +150,8 @@ public class TestBase extends Assert
         String message = t.getMessage();
 
         for (String substring : substrings)
-            assertTrue(message.contains(substring));
+            assertTrue(message.contains(substring),
+                       String.format("String '%s' not found in '%s'.", substring, message));
     }
 
     /**

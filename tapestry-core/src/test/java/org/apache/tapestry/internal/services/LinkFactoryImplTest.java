@@ -322,7 +322,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 ComponentEventCallback handler = (ComponentEventCallback) EasyMock
                         .getCurrentArguments()[2];
 
-                handler.handleResult(new Object[]{"foo", "bar"}, null, null);
+                handler.handleResult(new Object[]{"foo", "bar"});
 
                 return true;
             }

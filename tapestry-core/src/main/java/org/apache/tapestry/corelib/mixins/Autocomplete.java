@@ -24,7 +24,6 @@ import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.json.JSONObject;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.util.TextStreamResponse;
@@ -186,7 +185,7 @@ public class Autocomplete
 
         ComponentEventCallback callback = new ComponentEventCallback()
         {
-            public boolean handleResult(Object result, Component component, String methodDescription)
+            public boolean handleResult(Object result)
             {
                 List matches = _coercer.coerce(result, List.class);
 

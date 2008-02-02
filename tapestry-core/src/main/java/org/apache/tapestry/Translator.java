@@ -39,7 +39,7 @@ public interface Translator<T>
     /**
      * Converts a submitted request value into an appropriate server side value.
      *
-     * @param clientValue to convert to a server value; this will not be the empty string or null
+     * @param clientValue to convert to a server value; this will not be null, but may be blank
      * @param messages    validator messages assembled by {@link ValidationMessagesSource}
      * @return equivalent server-side value (possibly null)
      * @throws ValidationException if the value can not be parsed

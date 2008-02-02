@@ -1550,4 +1550,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("HTTP ERROR: 404");
     }
+
+    /**
+     * TAPESTRY-2085
+     */
+    @Test
+    public void render_phase_methods_may_throw_checked_exceptions()
+    {
+        start("Render Phase Method Exception Demo");
+
+        assertTextPresent(
+                "Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: java.sql.SQLException: Simulated JDBC exception while rendering.");
+    }
 }

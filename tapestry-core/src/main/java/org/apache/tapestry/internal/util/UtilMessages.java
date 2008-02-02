@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,10 +25,9 @@ class UtilMessages
     {
     }
 
-    static String noReturnValueAccepted(String eventType, String componentId, Object returnValue,
-                                        String methodDescription)
+    static String noReturnValueAccepted(String eventType, String componentId, Object returnValue)
     {
         return MESSAGES.format("no-return-value-accepted", eventType, componentId, String
-                .valueOf(returnValue), methodDescription);
+                .valueOf(returnValue));
     }
 }

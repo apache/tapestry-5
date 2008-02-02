@@ -202,10 +202,9 @@ class ServicesMessages
         return MESSAGES.format("page-is-dirty", page);
     }
 
-    static String componentInstanceIsNotAPage(String methodDescription, Component component, Component result)
+    static String componentInstanceIsNotAPage(Component result)
     {
-        return MESSAGES.format("component-instance-is-not-a-page", methodDescription, component
-                .getComponentResources().getCompleteId(), result.getComponentResources()
+        return MESSAGES.format("component-instance-is-not-a-page", result.getComponentResources()
                 .getCompleteId());
     }
 
@@ -270,7 +269,7 @@ class ServicesMessages
 
     }
 
-    static String invalidComponentEventResult(Component component, Object result, String methodDescription,
+    static String invalidComponentEventResult(Object result,
                                               Collection<Class> configuredResultTypes)
     {
         List<String> classNames = CollectionFactory.newList();
@@ -278,8 +277,7 @@ class ServicesMessages
         for (Class c : configuredResultTypes)
             classNames.add(c.getName());
 
-        return MESSAGES.format("invalid-component-event-result", component.getComponentResources()
-                .getCompleteId(), result, methodDescription, ClassFabUtils.toJavaClassName(result
+        return MESSAGES.format("invalid-component-event-result", result, ClassFabUtils.toJavaClassName(result
                 .getClass()), InternalUtils.joinSorted(classNames));
     }
 

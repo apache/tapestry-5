@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
@@ -41,7 +40,7 @@ public class ClassResultProcessor implements ComponentEventResultProcessor<Class
         _generator = generator;
     }
 
-    public void processResultValue(Class value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(Class value) throws IOException
     {
         String className = value.getName();
         String pageName = _resolver.resolvePageClassNameToPageName(className);

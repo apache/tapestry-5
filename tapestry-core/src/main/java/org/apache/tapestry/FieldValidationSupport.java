@@ -26,30 +26,32 @@ public interface FieldValidationSupport
      * the component to see if it can perform the conversion. If the value is null, then no event is fired and the
      * translator is <em>not</em> invoked, the return value is simply null.
      *
-     * @param value              to be converted to a client-side string
+     * @param value              to be converted to a client-side string, which may be null
      * @param componentResources used to fire events on the component
      * @param translator         used if the component does not provide a non-null value
+     * @param nullFieldStrategy  used to convert a null server side value to an appropriate client side value
      * @return the translated value  or null if the value is null
      * @see org.apache.tapestry.Translator#toClient(Object)
      */
-    String toClient(Object value, ComponentResources componentResources, Translator translator);
+    String toClient(Object value, ComponentResources componentResources, Translator translator,
+                    NullFieldStrategy nullFieldStrategy);
 
     /**
      * A wrapper around {@link org.apache.tapestry.Translator#parseClient(String, org.apache.tapestry.ioc.Messages)}.
-     * First a "parseclient" event is fired; the translator is only invoked if that returns null.
-     * <p/>
-     * If the client value is null or blank, then no event is fired and the translator is not invoked.  Instead, the
-     * return value is null.
+     * First a "parseclient" event is fired; the translator is only invoked if that returns null (typically
+     * because there is not handler for the event).
      *
-     * @param clientValue        the value provided by the client (not null or blank)
+     * @param clientValue        the value provided by the client (not null)
      * @param componentResources used to trigger events
      * @param translator         translator that will do the work if the component event returns null
+     * @param nullFieldStrategy  used to convert null/blank values from client into non-null server side values
      * @return the input parsed to an object
      * @throws org.apache.tapestry.ValidationException
      *          if the value can't be parsed
      * @see org.apache.tapestry.Translator#parseClient(String, org.apache.tapestry.ioc.Messages)
      */
-    Object parseClient(String clientValue, ComponentResources componentResources, Translator translator)
+    Object parseClient(String clientValue, ComponentResources componentResources, Translator translator,
+                       NullFieldStrategy nullFieldStrategy)
             throws ValidationException;
 
     /**

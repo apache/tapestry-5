@@ -35,7 +35,7 @@ public class NotificationEventCallbackTest extends InternalBaseTestCase
 
         NotificationEventCallback callback = new NotificationEventCallback(EVENT_TYPE, COMPLETE_ID);
 
-        assertTrue(callback.handleResult(Boolean.TRUE, component, METHOD));
+        assertTrue(callback.handleResult(Boolean.TRUE));
 
         verify();
     }
@@ -49,7 +49,7 @@ public class NotificationEventCallbackTest extends InternalBaseTestCase
 
         NotificationEventCallback callback = new NotificationEventCallback(EVENT_TYPE, COMPLETE_ID);
 
-        assertFalse(callback.handleResult(Boolean.FALSE, component, METHOD));
+        assertFalse(callback.handleResult(Boolean.FALSE));
 
         verify();
     }
@@ -57,25 +57,21 @@ public class NotificationEventCallbackTest extends InternalBaseTestCase
     @Test
     public void other_values_force_exception()
     {
-        Component component = mockComponent();
         String result = "*RESULT*";
-
-        replay();
 
         NotificationEventCallback callback = new NotificationEventCallback(EVENT_TYPE, COMPLETE_ID);
 
         try
         {
-            callback.handleResult(result, component, METHOD);
+            callback.handleResult(result);
             unreachable();
         }
         catch (IllegalArgumentException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "Event 'myEventType' from foo.bar.baz received an event handler method return value of *RESULT* from foo.components.Baz.bar(). " + "This type of event does not support return values from event handler methods.");
+            assertMessageContains(ex,
+                                  "Event 'myEventType' from foo.bar.baz received an event handler method return value of *RESULT*.",
+                                  "This type of event does not support return values from event handler methods.");
         }
-
-        verify();
     }
 
 }

@@ -126,7 +126,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"27"}, handler, null);
 
-        event.setSource(component, "foo.Bar.baz()");
+        event.setMethodDescription("foo.Bar.baz()");
 
         try
         {
@@ -151,7 +151,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"abc"}, handler, null);
 
-        event.setSource(component, "foo.Bar.baz()");
+        event.setMethodDescription("foo.Bar.baz()");
 
         try
         {
@@ -184,7 +184,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
 
-        event.setSource(component, methodDescription);
+        event.setMethodDescription(methodDescription);
 
         assertFalse(event.isAborted());
 
@@ -209,7 +209,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
 
-        event.setSource(component, methodDescription);
+        event.setMethodDescription(methodDescription);
 
         assertFalse(event.storeResult(result));
 
@@ -228,7 +228,7 @@ public class ComponentEventImplTest extends InternalBaseTestCase
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
 
-        event.setSource(component, "foo.Bar.baz()");
+        event.setMethodDescription("foo.Bar.baz()");
 
         assertFalse(event.storeResult(null));
 
@@ -245,18 +245,18 @@ public class ComponentEventImplTest extends InternalBaseTestCase
         ComponentEventCallback handler = mockComponentEventHandler();
         Component component = mockComponent();
 
-        expect(handler.handleResult(result, component, "foo.Bar.baz()")).andReturn(true);
+        expect(handler.handleResult(result)).andReturn(true);
 
         replay();
 
         ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
 
-        event.setSource(component, "foo.Bar.baz()");
+        event.setMethodDescription("foo.Bar.baz()");
         event.storeResult(result);
 
         try
         {
-            event.setSource(component, "foo.Bar.biff()");
+            event.setMethodDescription("foo.Bar.biff()");
             event.storeResult(null);
             unreachable();
         }

@@ -18,7 +18,6 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TranslatorDefaultSource;
@@ -65,7 +64,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> _validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> _validate;
 
     /**
      * Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may
@@ -122,7 +121,7 @@ public abstract class AbstractTextField extends AbstractField
     {
         Class type = _resources.getBoundType("value");
 
-        if (type == null) return null;
+        if (type == null) return NOOP_VALIDATOR;
 
         return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
                                                                    _resources.getContainerMessages(), _locale, type,
@@ -150,18 +149,10 @@ public abstract class AbstractTextField extends AbstractField
         if (value == null)
         {
             // Otherwise, get the value from the parameter ...
-
-            Object untranslated = _value;
-
-            // Substitute an alternative for null values.
-            // TODO: May want to coerce untranslated to the bound parameter type, to ensure it is compatible with the translator.
-
-            if (untranslated == null) untranslated = _nulls.replaceToClient();
-
             // Then let the translator and or various triggered events get it into
             // a format ready to be sent to the client.
 
-            value = _fieldValidationSupport.toClient(untranslated, _resources, _translate);
+            value = _fieldValidationSupport.toClient(_value, _resources, _translate, _nulls);
         }
 
         writeFieldTag(writer, value);
@@ -196,9 +187,7 @@ public abstract class AbstractTextField extends AbstractField
 
         try
         {
-            if (InternalUtils.isBlank(rawValue)) rawValue = _nulls.replaceFromClient();
-
-            Object translated = _fieldValidationSupport.parseClient(rawValue, _resources, _translate);
+            Object translated = _fieldValidationSupport.parseClient(rawValue, _resources, _translate, _nulls);
 
             _fieldValidationSupport.validate(translated, _resources, _validate);
 

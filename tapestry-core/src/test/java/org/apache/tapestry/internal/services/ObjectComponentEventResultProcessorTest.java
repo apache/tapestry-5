@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.test.TapestryTestCase;
@@ -29,7 +28,7 @@ public class ObjectComponentEventResultProcessorTest extends TapestryTestCase
 {
     @SuppressWarnings("unchecked")
     @Test
-    public void invocation_is_failure()
+    public void invocation_is_failure() throws Exception
     {
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();
@@ -46,17 +45,16 @@ public class ObjectComponentEventResultProcessorTest extends TapestryTestCase
 
         try
         {
-            p.processResultValue(result, component, "foo.component.Gnop.blip()");
+            p.processResultValue(result);
             unreachable();
         }
-        catch (TapestryException ex)
+        catch (RuntimeException ex)
         {
-            assertEquals(ex.getMessage(),
-                         "An event handler for component foo.Bar:gnip.gnop returned the value *INVALID* (from method foo.component.Gnop.blip()).  " + "Return type java.lang.String can not be handled.  " + "Configured return types are java.lang.String, java.util.List, java.util.Map.");
-        }
-        catch (java.io.IOException e)
-        {
-            throw new RuntimeException(e);
+            assertMessageContains(ex,
+                                  "A component event handler method returned the value *INVALID*.",
+                                  "Return type java.lang.String can not be handled.",
+                                  "Configured return types are java.lang.String, java.util.List, java.util.Map.");
+
         }
     }
 }

@@ -12,28 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.NullFieldStrategy;
+import java.sql.SQLException;
 
-/**
- * Treats nulls to or from the client as if they were 0's.
- */
-public class ZeroNullFieldStrategy implements NullFieldStrategy
+public class RenderPhaseMethodExceptionDemo
 {
-    /**
-     * Returns the value 0.
-     */
-    public Object replaceToClient()
+    void beginRender() throws SQLException
     {
-        return 0L;
-    }
-
-    /**
-     * Returns "0".
-     */
-    public String replaceFromClient()
-    {
-        return "0";
+        throw new SQLException("Simulated JDBC exception while rendering.");
     }
 }

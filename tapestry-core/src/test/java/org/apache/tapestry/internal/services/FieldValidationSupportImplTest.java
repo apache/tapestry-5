@@ -35,6 +35,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         ComponentResources resources = mockComponentResources();
         Translator translator = mockTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
 
@@ -49,7 +50,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
                 // Pretend that the parser event handler converted it to upper case.
 
-                return handler.handleResult(context[0].toString().toUpperCase(), null, null);
+                return handler.handleResult(context[0].toString().toUpperCase());
             }
         };
 
@@ -63,7 +64,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         FieldValidationSupport support = new FieldValidationSupportImpl(source);
 
-        Object actual = support.parseClient(clientValue, resources, translator);
+        Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
         assertEquals(actual, clientValue.toUpperCase());
 
@@ -71,39 +72,48 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
     }
 
     @Test
-    public void to_client_for_null_value_returns_null_and_bypasses_events_and_translator() throws Exception
+    public void parse_client_for_null_value_returns_null_and_bypasses_events_and_translator() throws Exception
     {
+        Messages messages = mockMessages();
         ComponentResources resources = mockComponentResources();
         Translator translator = mockTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
+        Locale locale = Locale.GERMAN;
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
+
+        String clientValue = "";
+
+        train_replaceFromClient(nullFieldStrategy, "");
+
+        ignoreEvent(resources, FieldValidationSupportImpl.PARSE_CLIENT_EVENT, clientValue);
+
+        train_getLocale(resources, locale);
+
+        train_getValidationMessages(source, locale, messages);
+
+        expect(translator.parseClient(clientValue, messages)).andReturn("");
 
         replay();
 
-
         FieldValidationSupport support = new FieldValidationSupportImpl(source);
 
-        assertNull(support.parseClient(null, resources, translator));
+        Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
+        assertEquals(actual, "");
 
         verify();
     }
 
-    @Test
-    public void parse_client_for_blank_string_returns_null_and_bypasses_events_and_translator() throws Exception
+    private void ignoreEvent(ComponentResources resources, String event, Object... context)
     {
-        ComponentResources resources = mockComponentResources();
-        Translator translator = mockTranslator();
-        ValidationException ve = new ValidationException("Just didn't feel right.");
-        ValidationMessagesSource source = mockValidationMessagesSource();
+        EasyMock.expect(resources.triggerEvent(EasyMock.eq(event),
+                                               EasyMock.aryEq(context),
+                                               EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
+    }
 
-
-        replay();
-
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
-
-        assertNull(support.parseClient("", resources, translator));
-
-        verify();
+    protected final void train_replaceFromClient(NullFieldStrategy nullFieldStrategy, String value)
+    {
+        expect(nullFieldStrategy.replaceFromClient()).andReturn(value).atLeastOnce();
     }
 
     @SuppressWarnings({"ThrowableInstanceNeverThrown"})
@@ -114,9 +124,9 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         Translator translator = mockTranslator();
         ValidationException ve = new ValidationException("Just didn't feel right.");
         ValidationMessagesSource source = mockValidationMessagesSource();
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
-
 
         EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
                                                EasyMock.isA(Object[].class),
@@ -130,7 +140,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         try
         {
-            support.parseClient(clientValue, resources, translator);
+            support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
             unreachable();
         }
@@ -151,6 +161,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         Translator translator = mockTranslator();
         RuntimeException re = new RuntimeException("Just didn't feel right.");
         ValidationMessagesSource source = mockValidationMessagesSource();
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
 
@@ -166,7 +177,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         try
         {
-            support.parseClient(clientValue, resources, translator);
+            support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
             unreachable();
         }
@@ -187,13 +198,11 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         Translator translator = mockTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
         Locale locale = Locale.GERMAN;
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
 
-
-        EasyMock.expect(resources.triggerEvent(EasyMock.eq(FieldValidationSupportImpl.PARSE_CLIENT_EVENT),
-                                               EasyMock.isA(Object[].class),
-                                               EasyMock.isA(ComponentEventCallback.class))).andReturn(false);
+        ignoreEvent(resources, FieldValidationSupportImpl.PARSE_CLIENT_EVENT, clientValue);
 
         train_getLocale(resources, locale);
 
@@ -205,7 +214,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         FieldValidationSupport support = new FieldValidationSupportImpl(source);
 
-        Object actual = support.parseClient(clientValue, resources, translator);
+        Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
         assertEquals(actual, "foobar");
 
@@ -220,6 +229,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         ComponentResources resources = mockComponentResources();
         Translator translator = mockTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         String clientValue = "abracadabra";
 
@@ -233,7 +243,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         FieldValidationSupport support = new FieldValidationSupportImpl(source);
 
-        String actual = support.toClient(value, resources, translator);
+        String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
         assertEquals(actual, clientValue);
 
@@ -248,6 +258,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         ComponentResources resources = mockComponentResources();
         Translator translator = mockTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
+        NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
 
         final String clientValue = "abracadabra";
 
@@ -259,7 +270,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
                 Object[] args = EasyMock.getCurrentArguments();
                 ComponentEventCallback handler = (ComponentEventCallback) args[2];
 
-                return handler.handleResult(clientValue, null, null);
+                return handler.handleResult(clientValue);
             }
         };
 
@@ -272,7 +283,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         FieldValidationSupport support = new FieldValidationSupportImpl(source);
 
-        String actual = support.toClient(value, resources, translator);
+        String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
         assertEquals(actual, clientValue);
 
@@ -297,7 +308,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
                 // Return an innappropriate value.
 
-                return handler.handleResult(this, null, null);
+                return handler.handleResult(this);
             }
         };
 
@@ -313,7 +324,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         try
         {
 
-            support.toClient(value, resources, translator);
+            support.toClient(value, resources, translator, null);
 
             unreachable();
         }

@@ -1,4 +1,4 @@
-// Copyright  2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry;
 
-
 /**
  * Defines a strategy, used by {@link Field} components such as {@link org.apache.tapestry.corelib.components.TextField},
  * to handle the case where either the server-side value to be sent (as a string) to the client, or the client-side
@@ -26,15 +25,16 @@ public interface NullFieldStrategy
 {
     /**
      * Provides a replacement value for null, when converting the server-side object to a client-side string. The
-     * replacement value will be passed to {@link FieldValidationSupport#toClient(Object, ComponentResources,
-     * Translator)}.
+     * replacement value, if non-null, will be passed to {@link org.apache.tapestry.Translator#toClient(Object)}.
      */
     Object replaceToClient();
 
     /**
      * Provides a replacement value for a null or blank string passed from the client to the server as part of a form
-     * submission. This replacement value will be passed to {@link FieldValidationSupport#parseClient(String,
-     * ComponentResources, Translator)} as if it were the value supplied by the user.
+     * submission. This replacement value will be passed to
+     * {@link org.apache.tapestry.Translator#parseClient(String, org.apache.tapestry.ioc.Messages)}  as if it were the value supplied by the user.
+     *
+     * @return replacement value (this must not be null)
      */
     String replaceFromClient();
 }

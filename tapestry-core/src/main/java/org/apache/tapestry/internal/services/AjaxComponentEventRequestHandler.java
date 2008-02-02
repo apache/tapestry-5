@@ -81,7 +81,7 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         JSONObject reply = new JSONObject();
 
-        _resultProcessor.processResultValue(reply, null, null);
+        _resultProcessor.processResultValue(reply);
 
     }
 }
