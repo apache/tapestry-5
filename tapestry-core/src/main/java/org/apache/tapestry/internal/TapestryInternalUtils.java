@@ -40,12 +40,15 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Shared utility methods used by various implementation classes.
  */
 public class TapestryInternalUtils
 {
+    private static final Pattern NON_WORD_PATTERN = Pattern.compile("[^\\w]");
+
     private static final URLCodec CODEC = new URLCodec()
     {
 
@@ -301,17 +304,18 @@ public class TapestryInternalUtils
         return new KeyValue(key.trim(), value.trim());
     }
 
+
     /**
      * Used to convert a property expression into a key that can be used to locate various resources (Blocks, messages,
      * etc.). Strips out any punctuation characters, leaving just words characters (letters, number and the
      * underscore).
      *
-     * @param expression
-     * @return
+     * @param expression a property expression
+     * @return the expression with punctuation removed
      */
     public static String extractIdFromPropertyExpression(String expression)
     {
-        return expression.replaceAll("[^\\w]", "");
+        return replace(expression, NON_WORD_PATTERN, "");
     }
 
     /**
@@ -503,8 +507,17 @@ public class TapestryInternalUtils
         return getLabelForEnum(messages, prefix, value);
     }
 
+    /**
+     * Encodes a string for inclusion in a URL.  Slashes and percents are converted
+     * to "%25" and "%2F" respectively, then the entire string is  URL encoded.
+     *
+     * @param input string to include, may not be blank
+     * @return encoded input
+     */
     public static String encodeContext(String input)
     {
+        Defense.notBlank(input, "input");
+
         try
         {
             return CODEC.encode(escapePercentAndSlash(input));
@@ -515,14 +528,36 @@ public class TapestryInternalUtils
         }
     }
 
-    public static String escapePercentAndSlash(String input)
+    private static final String PERCENT = "%";
+    private static final Pattern PERCENT_PATTERN = Pattern.compile(PERCENT);
+    private static final String ENCODED_PERCENT = "%25";
+    private static final Pattern ENCODED_PERCENT_PATTERN = Pattern.compile(ENCODED_PERCENT);
+
+    private static final String SLASH = "/";
+    private static final Pattern SLASH_PATTERN = Pattern.compile(SLASH);
+    private static final String ENCODED_SLASH = "%2F";
+    private static final Pattern ENCODED_SLASH_PATTERN = Pattern.compile(ENCODED_SLASH, Pattern.CASE_INSENSITIVE);
+
+    static String escapePercentAndSlash(String input)
     {
-        return input.replaceAll("%", "%25").replaceAll("/", "%2F");
+        return replace(replace(input, PERCENT_PATTERN, ENCODED_PERCENT), SLASH_PATTERN, ENCODED_SLASH);
     }
 
+    /**
+     * Used to decode certain escaped characters that are replaced
+     * when using {@link #encodeContext(String)}}.
+     *
+     * @param input a previously encoded string
+     * @return the string with slash and percent characters restored
+     */
     public static String unescapePercentAndSlash(String input)
     {
-        return input.replaceAll("%2[Ff]", "/").replaceAll("%25", "%");
+        return replace(replace(input, ENCODED_SLASH_PATTERN, SLASH), ENCODED_PERCENT_PATTERN, PERCENT);
+    }
+
+    private static String replace(String input, Pattern pattern, String replacement)
+    {
+        return pattern.matcher(input).replaceAll(replacement);
     }
 
     /**
@@ -530,9 +565,9 @@ public class TapestryInternalUtils
      * both null). Otherwise standard equals() comparison is used.
      *
      * @param <T>
-     * @param left
-     * @param right
-     * @return
+     * @param left  value to compare, possibly null
+     * @param right value to compare, possibly null
+     * @return true if same value, both null, or equal
      */
     public static <T> boolean isEqual(T left, T right)
     {

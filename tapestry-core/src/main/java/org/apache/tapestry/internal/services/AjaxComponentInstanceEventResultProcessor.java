@@ -36,7 +36,7 @@ public class AjaxComponentInstanceEventResultProcessor implements ComponentEvent
         _cache = cache;
     }
 
-    public void processResultValue(Component value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(Component value) throws IOException
     {
         ComponentResources resources = value.getComponentResources();
 

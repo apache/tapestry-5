@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.runtime.Component;
-
 import java.io.IOException;
 
 /**
@@ -28,10 +26,8 @@ public interface ComponentEventResultProcessor<T>
     /**
      * For a given, non-null return value from a component event method, construct and send a response.
      *
-     * @param value            the value returned from a method
-     * @param component        the component on which a method was invoked
-     * @param methodDescripion a description of method which provided the value
+     * @param value the value returned from a method
      * @throws RuntimeException if the value can not handled
      */
-    void processResultValue(T value, Component component, String methodDescripion) throws IOException;
+    void processResultValue(T value) throws IOException;
 }

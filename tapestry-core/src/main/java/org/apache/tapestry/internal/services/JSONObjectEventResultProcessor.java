@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.json.JSONObject;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
 
@@ -37,7 +36,7 @@ public class JSONObjectEventResultProcessor implements ComponentEventResultProce
         _response = response;
     }
 
-    public void processResultValue(JSONObject value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(JSONObject value) throws IOException
     {
         PrintWriter pw = _response.getPrintWriter("text/javascript");
 

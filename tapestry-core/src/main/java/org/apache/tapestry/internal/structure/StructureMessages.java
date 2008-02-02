@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -66,9 +66,9 @@ final class StructureMessages
         return MESSAGES.format("detach-failure", listener, cause);
     }
 
-    static String wrongEventResultType(String method, Class expectedType)
+    static String wrongPhaseResultType(Class expectedType)
     {
-        return MESSAGES.format("wrong-event-result-type", method, expectedType.getName());
+        return MESSAGES.format("wrong-phase-result-type", expectedType.getName());
     }
 
     static String blockNotFound(String componentId, String blockId)

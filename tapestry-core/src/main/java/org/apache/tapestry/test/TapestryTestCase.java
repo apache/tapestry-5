@@ -60,8 +60,6 @@ public abstract class TapestryTestCase extends IOCTestCase
      * Creates a new markup writer instance (not a markup writer mock). Output can be directed at the writer, which uses
      * the default (HTML) markup model. The writer's toString() value represents all the collected markup in the
      * writer.
-     *
-     * @return
      */
     protected final MarkupWriter createMarkupWriter()
     {
@@ -712,7 +710,7 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final void train_handleResult(ComponentEventCallback handler, Object result, Component component,
                                             String methodDescription, boolean abort)
     {
-        expect(handler.handleResult(result, component, methodDescription)).andReturn(abort);
+        expect(handler.handleResult(result)).andReturn(abort);
     }
 
     protected final void train_inError(ValidationTracker tracker, Field field, boolean inError)
@@ -1004,5 +1002,10 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final HttpServletRequestHandler mockHttpServletRequestHandler()
     {
         return newMock(HttpServletRequestHandler.class);
+    }
+
+    protected final NullFieldStrategy mockNullFieldStrategy()
+    {
+        return newMock(NullFieldStrategy.class);
     }
 }

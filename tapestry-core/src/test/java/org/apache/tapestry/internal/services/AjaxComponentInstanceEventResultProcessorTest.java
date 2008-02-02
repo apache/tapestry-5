@@ -53,7 +53,7 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(renderer,
                                                                                                            cache);
 
-        processor.processResultValue(component, null, null);
+        processor.processResultValue(component);
 
         verify();
     }
@@ -84,7 +84,7 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(renderer,
                                                                                                            cache);
 
-        processor.processResultValue(component, null, null);
+        processor.processResultValue(component);
 
         verify();
     }

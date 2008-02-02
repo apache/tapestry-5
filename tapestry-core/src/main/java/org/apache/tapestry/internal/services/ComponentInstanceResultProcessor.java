@@ -38,12 +38,12 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         _generator = generator;
     }
 
-    public void processResultValue(Component value, Component component, String methodDescription) throws IOException
+    public void processResultValue(Component value) throws IOException
     {
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
-            _logger.warn(ServicesMessages.componentInstanceIsNotAPage(methodDescription, component, value));
+            _logger.warn(ServicesMessages.componentInstanceIsNotAPage(value));
 
         // We have all these layers and layers between us and the page instance, but its easy to
         // extract the page class name and quickly re-resolve that to the page instance.

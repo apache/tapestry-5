@@ -1138,7 +1138,7 @@ public final class TapestryModule
     {
         configuration.add(Link.class, new ComponentEventResultProcessor<Link>()
         {
-            public void processResultValue(Link value, Component component, String methodDescripion) throws IOException
+            public void processResultValue(Link value) throws IOException
             {
                 _response.sendRedirect(value);
             }
@@ -1146,7 +1146,7 @@ public final class TapestryModule
 
         configuration.add(URL.class, new ComponentEventResultProcessor<URL>()
         {
-            public void processResultValue(URL value, Component component, String methodDescripion) throws IOException
+            public void processResultValue(URL value) throws IOException
             {
                 _response.sendRedirect(value.toExternalForm());
             }

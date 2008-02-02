@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -118,12 +118,24 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
         Iterator<TransformMethodSignature> i = _reverse ? InternalUtils.reverseIterator(methods) : methods
                 .iterator();
 
+        builder.addln("try");
+        builder.begin();
+
         while (i.hasNext())
             addMethodCallToBody(builder, i.next(), transformation);
 
         // In reverse order in a a subclass, invoke the super method last.
 
         if (_reverse && !model.isRootClass()) builder.addln("super.%s($$);", _lifecycleMethodName);
+
+
+        builder.end(); // try
+
+        // Let runtime exceptions work up (they'll be caught at a higher level.
+        // Wrap checked exceptions for later reporting.
+
+        builder.addln("catch (RuntimeException ex) { throw ex; }");
+        builder.addln("catch (Exception ex) { throw new RuntimeException(ex); }");
 
         builder.end();
 
@@ -139,12 +151,13 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
     {
         boolean isVoid = sig.getReturnType().equals("void");
 
+        builder.addln("$2.setMethodDescription(\"%s\");", transformation.getMethodIdentifier(sig));
+
         if (!isVoid)
         {
             // If we're not going to invoke storeResult(), then there's no reason to invoke
-            // setSource().
+            // setMethodDescription().
 
-            builder.addln("$2.setSource(this, \"%s\");", transformation.getMethodIdentifier(sig));
             builder.add("if ($2.storeResult(($w) ");
         }
 

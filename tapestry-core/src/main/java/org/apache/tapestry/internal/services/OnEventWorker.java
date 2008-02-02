@@ -97,7 +97,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         builder.addln("$_ = true;");
 
-        builder.addln("$1.setSource(this, \"%s\");", transformation.getMethodIdentifier(method));
+        builder.addln("$1.setMethodDescription(\"%s\");", transformation.getMethodIdentifier(method));
 
         boolean isNonVoid = !method.getReturnType().equals("void");
 

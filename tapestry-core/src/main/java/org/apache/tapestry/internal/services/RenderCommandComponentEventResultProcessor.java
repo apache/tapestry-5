@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
@@ -34,7 +33,7 @@ public class RenderCommandComponentEventResultProcessor implements ComponentEven
         _renderer = renderer;
     }
 
-    public void processResultValue(RenderCommand value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(RenderCommand value) throws IOException
     {
         _renderer.renderPartialPageMarkup(value);
     }

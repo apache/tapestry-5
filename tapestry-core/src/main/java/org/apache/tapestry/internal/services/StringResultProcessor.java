@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ public class StringResultProcessor implements ComponentEventResultProcessor<Stri
         _generator = generator;
     }
 
-    public void processResultValue(String value, Component component, String methodDescripion) throws IOException
+    public void processResultValue(String value) throws IOException
     {
         Page page = _requestPageCache.get(value);
 

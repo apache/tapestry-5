@@ -26,7 +26,6 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
@@ -210,7 +209,7 @@ public class LinkFactoryImpl implements LinkFactory
         ComponentEventCallback callback = new ComponentEventCallback()
         {
             @SuppressWarnings("unchecked")
-            public boolean handleResult(Object result, Component component, String methodDescription)
+            public boolean handleResult(Object result)
             {
                 PassivateContextHandler contextHandler = _registry.getByInstance(result);
 

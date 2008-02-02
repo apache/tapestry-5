@@ -52,7 +52,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
                                                                                                   generator);
 
-        processor.processResultValue(result, source, METHOD_DESCRIPTION);
+        processor.processResultValue(result);
 
         verify();
     }
@@ -61,10 +61,8 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
     public void warning_for_component_is_not_root_component() throws Exception
     {
         Component value = mockComponent();
-        Component source = mockComponent();
         Component containerResources = mockComponent();
         ComponentResources valueResources = mockComponentResources();
-        ComponentResources sourceResources = mockComponentResources();
         Logger logger = mockLogger();
         RequestPageCache cache = mockRequestPageCache();
         Page page = mockPage();
@@ -74,13 +72,11 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         train_getComponentResources(value, valueResources);
 
         train_getContainer(valueResources, containerResources);
-        train_getComponentResources(source, sourceResources);
 
-        train_getCompleteId(sourceResources, PAGE_NAME + ":source");
         train_getCompleteId(valueResources, PAGE_NAME + ":child");
 
         logger
-                .warn("Method foo.bar.Baz.biff() (for component Zoop:source) returned component Zoop:child, which is not a page component. The page containing the component will render the client response.");
+                .warn("Component Zoop:child was returned from an event handler method, but is not a page component. The page containing the component will render the client response.");
 
         train_getPageName(valueResources, PAGE_NAME);
         train_get(cache, PAGE_NAME, page);
@@ -92,7 +88,7 @@ public class ComponentInstanceResultProcessorTest extends InternalBaseTestCase
         ComponentEventResultProcessor<Component> processor = new ComponentInstanceResultProcessor(logger, cache,
                                                                                                   generator);
 
-        processor.processResultValue(value, source, METHOD_DESCRIPTION);
+        processor.processResultValue(value);
 
         verify();
     }

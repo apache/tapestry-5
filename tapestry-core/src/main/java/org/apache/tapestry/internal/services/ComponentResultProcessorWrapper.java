@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 
 import java.io.IOException;
@@ -36,11 +35,11 @@ public class ComponentResultProcessorWrapper implements ComponentEventCallback
         _processor = processor;
     }
 
-    public boolean handleResult(Object result, Component component, String methodDescription)
+    public boolean handleResult(Object result)
     {
         try
         {
-            _processor.processResultValue(result, component, methodDescription);
+            _processor.processResultValue(result);
         }
         catch (IOException ex)
         {
@@ -53,12 +52,11 @@ public class ComponentResultProcessorWrapper implements ComponentEventCallback
     }
 
     /**
-     * Returns true if {@link #handleResult(Object, org.apache.tapestry.runtime.Component, String)} was invoked, false
+     * Returns true if {@link org.apache.tapestry.ComponentEventCallback#handleResult(Object)} was invoked, false
      * otherwise.
      *
      * @return true if the event was aborted
-     * @throws IOException if {@link ComponentEventResultProcessor#processResultValue(Object,
-     *                     org.apache.tapestry.runtime.Component, String)} threw an IOException
+     * @throws IOException if {@link ComponentEventResultProcessor#processResultValue(Object)} threw an IOException
      */
     public boolean isAborted() throws IOException
     {

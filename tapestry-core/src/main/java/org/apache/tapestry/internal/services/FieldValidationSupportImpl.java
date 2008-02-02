@@ -18,9 +18,9 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.ExceptionUtils;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
 public class FieldValidationSupportImpl implements FieldValidationSupport
@@ -37,15 +37,18 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     }
 
     @SuppressWarnings({"unchecked"})
-    public String toClient(Object value, ComponentResources componentResources, Translator translator)
+    public String toClient(Object value, ComponentResources componentResources, Translator translator,
+                           NullFieldStrategy nullFieldStrategy)
     {
-        if (value == null) return null;
+        Defense.notNull(componentResources, "componentResources");
+        Defense.notNull(translator, "translator");
+        Defense.notNull(nullFieldStrategy, "nullFieldStrategy");
 
         final Holder<String> resultHolder = Holder.create();
 
         ComponentEventCallback callback = new ComponentEventCallback()
         {
-            public boolean handleResult(Object result, Component component, String methodDescription)
+            public boolean handleResult(Object result)
             {
                 // What's nice is that the ComponentEventException will automatically identify
                 // the method description.
@@ -63,21 +66,45 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
+        Object effectiveValue = value;
 
-        return translator.toClient(value);
+        if (effectiveValue == null)
+            effectiveValue = nullFieldStrategy.replaceToClient();
+
+        // We don't translate null.
+
+        if (effectiveValue == null)
+            return null;
+
+        return translator.toClient(effectiveValue);
 
     }
 
-    public Object parseClient(String clientValue, ComponentResources componentResources, Translator translator)
+    public Object parseClient(String clientValue, ComponentResources componentResources, Translator translator,
+                              NullFieldStrategy nullFieldStrategy)
             throws ValidationException
     {
-        if (InternalUtils.isBlank(clientValue)) return null;
+        Defense.notNull(componentResources, "componentResources");
+        Defense.notNull(translator, "translator");
+        Defense.notNull(nullFieldStrategy, "nullFieldStrategy");
+
+        String effectiveValue = clientValue;
+
+        if (InternalUtils.isBlank(effectiveValue))
+        {
+
+            effectiveValue = nullFieldStrategy.replaceFromClient();
+
+            if (effectiveValue == null)
+                throw new NullPointerException(
+                        String.format("Client value provided by %s is null.", nullFieldStrategy));
+        }
 
         final Holder<Object> resultHolder = Holder.create();
 
         ComponentEventCallback callback = new ComponentEventCallback()
         {
-            public boolean handleResult(Object result, Component component, String methodDescription)
+            public boolean handleResult(Object result)
             {
                 resultHolder.put(result);
                 return true;
@@ -86,15 +113,11 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[]{clientValue}, callback);
+            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[]{effectiveValue}, callback);
         }
         catch (RuntimeException ex)
         {
-            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
-
-            if (ve != null) throw ve;
-
-            throw ex;
+            rethrowValidationException(ex);
         }
 
         if (resultHolder.hasValue()) return resultHolder.get();
@@ -103,12 +126,31 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         Messages messages = _messagesSource.getValidationMessages(componentResources.getLocale());
 
-        return translator.parseClient(clientValue, messages);
+        return translator.parseClient(effectiveValue, messages);
+    }
+
+    /**
+     * Checks for a {@link org.apache.tapestry.ValidationException} inside the outer exception and
+     * throws that, otherwise rethrows the runtime exception.
+     *
+     * @param outerException initially caught exception
+     * @throws ValidationException if found
+     */
+    private void rethrowValidationException(RuntimeException outerException) throws ValidationException
+    {
+        ValidationException ve = ExceptionUtils.findCause(outerException, ValidationException.class);
+
+        if (ve != null) throw ve;
+
+        throw outerException;
     }
 
     public void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException
     {
+        Defense.notNull(componentResources, "componentResources");
+        Defense.notNull(validator, "validator");
+
         validator.validate(value);
 
         try
@@ -117,11 +159,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         }
         catch (RuntimeException ex)
         {
-            ValidationException ve = ExceptionUtils.findCause(ex, ValidationException.class);
-
-            if (ve != null) throw ve;
-
-            throw ex;
+            rethrowValidationException(ex);
         }
     }
 }

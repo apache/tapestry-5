@@ -15,7 +15,6 @@
 package org.apache.tapestry.internal.util;
 
 import org.apache.tapestry.ComponentEventCallback;
-import org.apache.tapestry.runtime.Component;
 
 /**
  * A {@link org.apache.tapestry.ComponentEventCallback} used for notification events. Event handler methods may return
@@ -33,12 +32,12 @@ public class NotificationEventCallback implements ComponentEventCallback
         _completeId = completeId;
     }
 
-    public boolean handleResult(Object result, Component component, String methodDescription)
+    public boolean handleResult(Object result)
     {
         if (result instanceof Boolean) return ((Boolean) result);
 
         throw new IllegalArgumentException(
-                UtilMessages.noReturnValueAccepted(_eventType, _completeId, result, methodDescription));
+                UtilMessages.noReturnValueAccepted(_eventType, _completeId, result));
     }
 
 }

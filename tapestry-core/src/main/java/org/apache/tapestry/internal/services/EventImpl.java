@@ -16,14 +16,11 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.Event;
 
 public class EventImpl implements Event
 {
     private boolean _aborted;
-
-    private Component _component;
 
     private String _methodDescription;
 
@@ -39,9 +36,8 @@ public class EventImpl implements Event
         return _aborted;
     }
 
-    public void setSource(Component component, String methodDescription)
+    public void setMethodDescription(String methodDescription)
     {
-        _component = component;
         _methodDescription = methodDescription;
     }
 
@@ -57,7 +53,7 @@ public class EventImpl implements Event
                 .componentEventIsAborted(_methodDescription));
 
 
-        if (result != null) _aborted |= _handler.handleResult(result, _component, _methodDescription);
+        if (result != null) _aborted |= _handler.handleResult(result);
 
         return _aborted;
     }
