@@ -75,7 +75,7 @@ public class RadioGroup implements Field
 
     final ValueEncoder defaultEncoder()
     {
-        return _valueEncoderSource.createEncoder("value", _resources);
+        return _valueEncoderSource.getEncoderForParameter("value", _resources);
     }
 
     private static class Setup implements ComponentAction<RadioGroup>

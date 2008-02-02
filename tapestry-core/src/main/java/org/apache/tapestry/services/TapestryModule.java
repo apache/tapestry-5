@@ -117,6 +117,7 @@ public final class TapestryModule
         binder.bind(NullFieldStrategySource.class, NullFieldStrategySourceImpl.class);
         binder.bind(HttpServletRequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
         binder.bind(PageResourcesSource.class, PageResourcesSourceImpl.class);
+        binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -1203,6 +1204,8 @@ public final class TapestryModule
 
                                            ComponentClassResolver componentClassResolver,
 
+                                           ContextValueEncoder contextValueEncoder,
+
                                            @Symbol("tapestry.start-page-name")
                                            String startPageName)
     {
@@ -1217,10 +1220,12 @@ public final class TapestryModule
 
         configuration.add("Asset", new AssetDispatcher(streamer, aliasManager, resourceCache), "before:PageRender");
 
-        configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler));
+        configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler,
+                                                                 contextValueEncoder));
 
         configuration.add("ComponentEvent",
-                          new ComponentEventDispatcher(componentEventRequestHandler, componentClassResolver),
+                          new ComponentEventDispatcher(componentEventRequestHandler, componentClassResolver,
+                                                       contextValueEncoder),
                           "after:PageRender");
     }
 
@@ -1240,8 +1245,8 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes a default object renderer for type Object, plus specialized renderers for {@link Request}, {@link
-     * Location}, {@link ComponentResources}, List, and Object[].
+     * Contributes a default object renderer for type Object, plus specialized renderers for {@link org.apache.tapestry.services.Request}, {@link
+     * org.apache.tapestry.ioc.Location}, {@link org.apache.tapestry.ComponentResources}, {@link org.apache.tapestry.EventContext}, List, and Object[].
      */
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
@@ -1279,6 +1284,7 @@ public final class TapestryModule
         configuration.add(List.class, locator.autobuild(ListRenderer.class));
         configuration.add(Object[].class, locator.autobuild(ObjectArrayRenderer.class));
         configuration.add(ComponentResources.class, locator.autobuild(ComponentResourcesRenderer.class));
+        configuration.add(EventContext.class, locator.autobuild(EventContextRenderer.class));
     }
 
 

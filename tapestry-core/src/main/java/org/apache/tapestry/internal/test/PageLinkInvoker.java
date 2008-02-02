@@ -14,12 +14,16 @@
 
 package org.apache.tapestry.internal.test;
 
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.dom.Document;
+import org.apache.tapestry.internal.URLEventContext;
 import org.apache.tapestry.internal.services.ComponentInvocation;
 import org.apache.tapestry.internal.services.InvocationTarget;
 import org.apache.tapestry.internal.services.PageLinkTarget;
 import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry.services.ContextValueEncoder;
 import org.apache.tapestry.services.PageRenderRequestHandler;
+import org.apache.tapestry.services.PageRenderRequestParameters;
 
 import java.io.IOException;
 
@@ -36,12 +40,16 @@ public class PageLinkInvoker implements ComponentInvoker
 
     private final TestableResponse _response;
 
+    private final ContextValueEncoder _contextValueEncoder;
+
     public PageLinkInvoker(Registry registry)
     {
         _registry = registry;
+
         _pageRenderRequestHandler = _registry.getService(PageRenderRequestHandler.class);
         _markupWriterFactory = _registry.getService(TestableMarkupWriterFactory.class);
         _response = _registry.getService(TestableResponse.class);
+        _contextValueEncoder = _registry.getService(ContextValueEncoder.class);
     }
 
     /**
@@ -58,7 +66,12 @@ public class PageLinkInvoker implements ComponentInvoker
 
             PageLinkTarget pageLinkTarget = (PageLinkTarget) target;
 
-            _pageRenderRequestHandler.handle(pageLinkTarget.getPageName(), invocation.getContext());
+            EventContext activationContext
+                    = new URLEventContext(_contextValueEncoder, invocation.getContext());
+            PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageLinkTarget.getPageName(),
+                                                                                     activationContext);
+
+            _pageRenderRequestHandler.handle(parameters);
 
             return _markupWriterFactory.getLatestMarkupWriter().getDocument();
         }

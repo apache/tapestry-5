@@ -154,6 +154,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _element.triggerEvent(eventType, context, handler);
     }
 
+    public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
+    {
+        return _element.triggerContextEvent(eventType, context, callback);
+    }
+
     public String getNestedId()
     {
         return _element.getNestedId();

@@ -16,12 +16,13 @@ package org.apache.tapestry.internal.structure;
 
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry.services.ContextValueEncoder;
 
 /**
  * Provides access to common methods of various services, needed by implementations of {@link ComponentPageElement} and
  * {@link org.apache.tapestry.internal.InternalComponentResources}.
  */
-public interface PageResources
+public interface PageResources extends ContextValueEncoder
 {
     /**
      * Used to obtain a {@link org.apache.tapestry.ioc.Messages} instance for a particular component. If the component

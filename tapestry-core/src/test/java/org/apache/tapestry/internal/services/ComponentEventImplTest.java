@@ -15,10 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.internal.structure.PageResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentEvent;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -44,10 +44,13 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void matches_on_event_type()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
+        EventContext context = mockEventContext();
+
+        train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
 
         assertTrue(event.matches("eventType", "someId", 0));
         assertFalse(event.matches("foo", "someId", 0));
@@ -59,10 +62,13 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void event_type_match_is_case_insensitive()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
+        EventContext context = mockEventContext();
+
+        train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
 
         assertTrue(event.matches("EVENTTYPE", "someid", 0));
 
@@ -73,10 +79,13 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void matches_on_component_id()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
+        EventContext context = mockEventContext();
+
+        train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
 
         assertTrue(event.matches("eventType", "someId", 0));
 
@@ -89,9 +98,13 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void component_id_matches_are_case_insensitive()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
+        EventContext context = mockEventContext();
+
+        train_getCount(context, 0);
 
         replay();
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", null, handler, null);
+
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
 
         assertTrue(event.matches("eventtype", "SOMEID", 0));
 
@@ -103,15 +116,19 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         ComponentEventCallback handler = mockComponentEventHandler();
         PageResources resources = mockPageResources();
+        EventContext context = mockEventContext();
+        Integer value = new Integer(27);
 
         train_toClass(resources, "java.lang.Integer", Integer.class);
-        train_coerce(resources, "27", Integer.class, new Integer(27));
+
+        train_getCount(context, 2);
+        train_get(context, Integer.class, 0, value);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"27"}, handler, resources);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources);
 
-        assertEquals(event.coerceContext(0, "java.lang.Integer"), new Integer(27));
+        assertSame(event.coerceContext(0, "java.lang.Integer"), value);
 
         verify();
     }
@@ -120,11 +137,13 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void coerce_when_not_enough_context()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
-        Component component = mockComponent();
+        EventContext context = mockEventContext();
+
+        train_getCount(context, 0);
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"27"}, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, null);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -145,11 +164,18 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     public void unable_to_coerce()
     {
         ComponentEventCallback handler = mockComponentEventHandler();
-        Component component = mockComponent();
+        EventContext context = mockEventContext();
+        PageResources resources = mockPageResources();
+
+        train_toClass(resources, Integer.class.getName(), Integer.class);
+
+        train_getCount(context, 1);
+
+        expect(context.get(Integer.class, 0)).andThrow(new NumberFormatException("Not so easy, is it?"));
 
         replay();
 
-        ComponentEvent event = new ComponentEventImpl("eventType", "someId", new String[]{"abc"}, handler, null);
+        ComponentEvent event = new ComponentEventImpl("eventType", "someId", context, handler, resources);
 
         event.setMethodDescription("foo.Bar.baz()");
 
@@ -174,11 +200,10 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         Object result = new Object();
         String methodDescription = "foo.Bar.baz()";
-        Component component = mockComponent();
 
         ComponentEventCallback handler = mockComponentEventHandler();
 
-        train_handleResult(handler, result, component, methodDescription, true);
+        train_handleResult(handler, result, true);
 
         replay();
 
@@ -200,10 +225,9 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         Object result = new Object();
         String methodDescription = "foo.Bar.baz()";
-        Component component = mockComponent();
         ComponentEventCallback handler = mockComponentEventHandler();
 
-        train_handleResult(handler, result, component, methodDescription, false);
+        train_handleResult(handler, result, false);
 
         replay();
 
@@ -221,7 +245,6 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     @Test
     public void store_null_result_does_not_abort_or_invoke_handler()
     {
-        Component component = mockComponent();
         ComponentEventCallback handler = mockComponentEventHandler();
 
         replay();
@@ -243,7 +266,6 @@ public class ComponentEventImplTest extends InternalBaseTestCase
     {
         Object result = new Object();
         ComponentEventCallback handler = mockComponentEventHandler();
-        Component component = mockComponent();
 
         expect(handler.handleResult(result)).andReturn(true);
 

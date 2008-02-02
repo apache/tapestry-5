@@ -19,6 +19,7 @@ import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.ComponentMessagesSource;
+import org.apache.tapestry.services.ContextValueEncoder;
 
 import java.util.Locale;
 import java.util.Map;
@@ -33,12 +34,15 @@ public class PageResourcesSourceImpl implements PageResourcesSource
 
     private final ComponentClassCache _componentClassCache;
 
+    private final ContextValueEncoder _contextValueEncoder;
+
     public PageResourcesSourceImpl(ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
-                                   ComponentClassCache componentClassCache)
+                                   ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder)
     {
         _componentMessagesSource = componentMessagesSource;
         _typeCoercer = typeCoercer;
         _componentClassCache = componentClassCache;
+        _contextValueEncoder = contextValueEncoder;
     }
 
     public PageResources get(Locale locale)
@@ -49,7 +53,8 @@ public class PageResourcesSourceImpl implements PageResourcesSource
 
         if (result == null)
         {
-            result = new PageResourcesImpl(locale, _componentMessagesSource, _typeCoercer, _componentClassCache);
+            result = new PageResourcesImpl(locale, _componentMessagesSource, _typeCoercer, _componentClassCache,
+                                           _contextValueEncoder);
 
             // Small race condition here, where we may create two instances of PRI for the same locale,
             // but that's not worth worrying about.

@@ -107,7 +107,7 @@ public class PageTester implements ComponentInvoker
         map.put(PageLinkTarget.class, new PageLinkInvoker(_registry));
         map.put(ActionLinkTarget.class, new ActionLinkInvoker(_registry, this, _invocationMap));
 
-        _invokerRegistry = new StrategyRegistry<ComponentInvoker>(ComponentInvoker.class, map);
+        _invokerRegistry = StrategyRegistry.newInstance(ComponentInvoker.class, map);
     }
 
     /**

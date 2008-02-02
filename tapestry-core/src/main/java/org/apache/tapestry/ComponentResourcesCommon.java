@@ -56,16 +56,22 @@ public interface ComponentResourcesCommon extends Locatable
     String getCompleteId();
 
     /**
+     * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}.
+     * Wraps the context values into an {@link EventContext}.
+     */
+    boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback);
+
+    /**
      * Triggers a component event. A search for an event handling method will occur, first in the component, then its
      * container, and so on. When a matching event handler method is located, it is invoked. If the method returns a
-     * value, the value is passed to the handler (if handler is null, then it is an error for a method to return a
+     * value, the value is passed to the callback (if callback is null, then it is an error for a method to return a
      * non-null value).
      * <p/>
      * Resolution of event type to event handler methods is case insensitive.
      *
      * @param eventType event type (as determined from the request, or otherwise by design)
      * @param context   the context (as extracted from the request, or provided by the triggering component); these
-     *                  values may be provided to event handler methods via their parameters (may be null)
+     *                  values may be provided to event handler methods via their parameters (may not be null)
      * @param callback  the handler to be informed of the result, or null if the event is a notification that does not
      *                  support return values from event handler methods (the value true is allowed even if the handler
      *                  is null).
@@ -75,7 +81,7 @@ public interface ComponentResourcesCommon extends Locatable
      * @see OnEventWorker
      * @see OnEvent
      */
-    boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback callback);
+    boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback);
 
     /**
      * Returns true if the component is currently rendering, false otherwise. This is most often used to determine if

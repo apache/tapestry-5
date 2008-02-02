@@ -50,8 +50,8 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
         // If activating the page returns a "navigational result", then don't trigger the action
         // on the component.
 
-        activePage.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT,
-                                                 parameters.getPageActivationContext(), callback);
+        activePage.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT,
+                                                        parameters.getPageActivationContext(), callback);
 
         if (callback.isAborted()) return;
 
@@ -59,7 +59,7 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
-        element.triggerEvent(parameters.getEventType(), parameters.getEventContext(), callback);
+        element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
         if (callback.isAborted()) return;
 

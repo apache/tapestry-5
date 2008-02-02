@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.internal.structure.PageResources;
 import org.apache.tapestry.runtime.ComponentEvent;
 
@@ -24,7 +25,7 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     private final String _originatingComponentId;
 
-    private final Object[] _context;
+    private final EventContext _context;
 
     private final PageResources _pageResources;
 
@@ -32,12 +33,11 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
      * @param eventType              non blank string used to identify the type of event that was triggered
      * @param originatingComponentId the id of the component that triggered the event (this will likely need to change
      *                               somewhat)
-     * @param context                an array of values that can be made available to handler methods via method
-     *                               parameters
+     * @param context                provides access to parameter values
      * @param handler                invoked when a non-null return value is obtained from an event handler method
      * @param pageResources          provides access to common resources and services
      */
-    public ComponentEventImpl(String eventType, String originatingComponentId, Object[] context,
+    public ComponentEventImpl(String eventType, String originatingComponentId, EventContext context,
                               ComponentEventCallback handler, PageResources pageResources)
     {
         super(handler);
@@ -45,26 +45,27 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
         _eventType = eventType;
         _originatingComponentId = originatingComponentId;
         _pageResources = pageResources;
-        _context = context != null ? context : new Object[0];
+        _context = context;
     }
 
     public boolean matches(String eventType, String componentId, int parameterCount)
     {
         return _eventType.equalsIgnoreCase(
-                eventType) && _context.length >= parameterCount && (_originatingComponentId.equalsIgnoreCase(
+                eventType) && _context.getCount() >= parameterCount && (_originatingComponentId.equalsIgnoreCase(
                 componentId) || componentId.equals(""));
     }
 
     @SuppressWarnings("unchecked")
     public Object coerceContext(int index, String desiredTypeName)
     {
-        if (index >= _context.length) throw new IllegalArgumentException(ServicesMessages
+        if (index >= _context.getCount()) throw new IllegalArgumentException(ServicesMessages
                 .contextIndexOutOfRange(getMethodDescription()));
         try
         {
             Class desiredType = _pageResources.toClass(desiredTypeName);
 
-            return _pageResources.coerce(_context[index], desiredType);
+            return _context.get(desiredType, index);
+
         }
         catch (Exception ex)
         {
@@ -75,6 +76,13 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     public Object[] getContext()
     {
-        return _context;
+        int count = _context.getCount();
+
+        Object[] result = new Object[count];
+
+        for (int i = 0; i < count; i++)
+            result[i] = _context.get(Object.class, i);
+
+        return result;
     }
 }

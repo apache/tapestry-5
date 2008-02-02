@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,9 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.URLEventContext;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;
@@ -31,10 +33,14 @@ public class PageRenderDispatcher implements Dispatcher
 
     private final PageRenderRequestHandler _handler;
 
-    public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler)
+    private final ContextValueEncoder _contextValueEncoder;
+
+    public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler,
+                                ContextValueEncoder contextValueEncoder)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;
+        _contextValueEncoder = contextValueEncoder;
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -63,7 +69,12 @@ public class PageRenderDispatcher implements Dispatcher
                 String[] context = atEnd ? new String[0] : convertActivationContext(path
                         .substring(nextslashx + 1));
 
-                _handler.handle(pageName, context);
+                EventContext activationContext
+                        = new URLEventContext(_contextValueEncoder, context);
+
+                PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
+
+                _handler.handle(parameters);
 
                 return true;
             }

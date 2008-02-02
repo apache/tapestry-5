@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.internal.test;
 
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ComponentResourcesCommon;
-import org.apache.tapestry.ContentType;
-import org.apache.tapestry.Link;
+import org.apache.tapestry.*;
 import org.apache.tapestry.internal.*;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.parser.ComponentTemplate;
@@ -594,5 +591,20 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
                                              T coercedValue)
     {
         expect(pageResources.coerce(input, expectedType)).andReturn(coercedValue);
+    }
+
+    protected final EventContext mockEventContext()
+    {
+        return newMock(EventContext.class);
+    }
+
+    protected final <T> void train_get(EventContext context, Class<T> type, int index, T value)
+    {
+        expect(context.get(type, index)).andReturn(value);
+    }
+
+    protected final void train_getCount(EventContext context, int count)
+    {
+        expect(context.getCount()).andReturn(count).atLeastOnce();
     }
 }

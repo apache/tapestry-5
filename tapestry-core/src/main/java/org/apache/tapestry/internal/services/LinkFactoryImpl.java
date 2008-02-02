@@ -24,8 +24,8 @@ import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
+import org.apache.tapestry.services.ContextValueEncoder;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Response;
 
@@ -44,7 +44,7 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final RequestPageCache _pageCache;
 
-    private final TypeCoercer _typeCoercer;
+    private final ContextValueEncoder _contextValueEncoder;
 
     private final RequestPathOptimizer _optimizer;
 
@@ -61,26 +61,19 @@ public class LinkFactoryImpl implements LinkFactory
     }
 
     public LinkFactoryImpl(Request request,
-
                            Response encoder,
-
                            ComponentInvocationMap componentInvocationMap,
-
                            RequestPageCache pageCache,
-
-                           TypeCoercer typeCoercer,
-
                            RequestPathOptimizer optimizer,
-
-                           PageRenderQueue pageRenderQueue)
+                           PageRenderQueue pageRenderQueue, ContextValueEncoder contextValueEncoder)
     {
         _request = request;
         _response = encoder;
         _componentInvocationMap = componentInvocationMap;
         _pageCache = pageCache;
-        _typeCoercer = typeCoercer;
         _optimizer = optimizer;
         _pageRenderQueue = pageRenderQueue;
+        _contextValueEncoder = contextValueEncoder;
 
         Map<Class, PassivateContextHandler> registrations = newMap();
 
@@ -233,7 +226,7 @@ public class LinkFactoryImpl implements LinkFactory
         String[] result = new String[context.length];
 
         for (int i = 0; i < context.length; i++)
-            result[i] = _typeCoercer.coerce(context[i], String.class);
+            result[i] = _contextValueEncoder.toClient(context[i]);
 
         return result;
     }

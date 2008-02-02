@@ -19,6 +19,7 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.ComponentMessagesSource;
+import org.apache.tapestry.services.ContextValueEncoder;
 
 import java.util.Locale;
 
@@ -32,13 +33,16 @@ public class PageResourcesImpl implements PageResources
 
     private final ComponentClassCache _componentClassCache;
 
+    private final ContextValueEncoder _contextValueEncoder;
+
     public PageResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
-                             ComponentClassCache componentClassCache)
+                             ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder)
     {
         _componentMessagesSource = componentMessagesSource;
         _locale = locale;
         _typeCoercer = typeCoercer;
         _componentClassCache = componentClassCache;
+        _contextValueEncoder = contextValueEncoder;
     }
 
     public Messages getMessages(ComponentModel componentModel)
@@ -54,5 +58,15 @@ public class PageResourcesImpl implements PageResources
     public Class toClass(String className)
     {
         return _componentClassCache.forName(className);
+    }
+
+    public String toClient(Object value)
+    {
+        return _contextValueEncoder.toClient(value);
+    }
+
+    public <T> T toValue(Class<T> requiredType, String clientValue)
+    {
+        return _contextValueEncoder.toValue(requiredType, clientValue);
     }
 }

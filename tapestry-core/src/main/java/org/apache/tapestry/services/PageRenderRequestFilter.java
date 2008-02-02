@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,8 @@ public interface PageRenderRequestFilter
      * Invoked to activate and render a page. The return value of the event handler method(s) for
      * the activate event may result in an action response generator being returned.
      *
-     * @param logicalPageName the logical name of the page to activate and render
-     * @param context         context data, supplied by the page at render time, extracted from the render URL
-     * @param handler         to delegate the invocation to
+     * @param parameters defines the page name and activation context
+     * @param handler    to delegate the invocation to
      */
-    void handle(String logicalPageName, String[] context, PageRenderRequestHandler handler);
+    void handle(PageRenderRequestParameters parameters, PageRenderRequestHandler handler);
 }

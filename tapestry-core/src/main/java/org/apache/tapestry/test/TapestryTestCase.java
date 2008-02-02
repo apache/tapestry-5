@@ -707,8 +707,8 @@ public abstract class TapestryTestCase extends IOCTestCase
     }
 
     @SuppressWarnings("unchecked")
-    protected final void train_handleResult(ComponentEventCallback handler, Object result, Component component,
-                                            String methodDescription, boolean abort)
+    protected final void train_handleResult(ComponentEventCallback handler, Object result,
+                                            boolean abort)
     {
         expect(handler.handleResult(result)).andReturn(abort);
     }
@@ -1007,5 +1007,30 @@ public abstract class TapestryTestCase extends IOCTestCase
     protected final NullFieldStrategy mockNullFieldStrategy()
     {
         return newMock(NullFieldStrategy.class);
+    }
+
+    protected final ValueEncoderSource mockValueEncoderSource()
+    {
+        return newMock(ValueEncoderSource.class);
+    }
+
+    protected final ValueEncoder mockValueEncoder()
+    {
+        return newMock(ValueEncoder.class);
+    }
+
+    protected final void train_toClient(ValueEncoder valueEncoder, Object value, String encoded)
+    {
+        expect(valueEncoder.toClient(value)).andReturn(encoded);
+    }
+
+    protected final void train_getEncoderForType(ValueEncoderSource source, Class type, ValueEncoder valueEncoder)
+    {
+        expect(source.getEncoderForType(type)).andReturn(valueEncoder).atLeastOnce();
+    }
+
+    protected final void train_toValue(ValueEncoder valueEncoder, String clientValue, Object value)
+    {
+        expect(valueEncoder.toValue(clientValue)).andReturn(value);
     }
 }

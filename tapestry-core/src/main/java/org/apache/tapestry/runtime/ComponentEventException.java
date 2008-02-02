@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.runtime;
 
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 
 /**
@@ -25,7 +26,8 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 public class ComponentEventException extends TapestryException
 {
     private final String _eventType;
-    private final Object[] _context;
+
+    private final EventContext _context;
 
     /**
      * @param message   exception message
@@ -34,7 +36,8 @@ public class ComponentEventException extends TapestryException
      * @param location  location of the component while failed (may be null)
      * @param cause     underlying exception
      */
-    public ComponentEventException(String message, String eventType, Object[] context, Object location, Throwable cause)
+    public ComponentEventException(String message, String eventType, EventContext context, Object location,
+                                   Throwable cause)
     {
         super(message, location, cause);
 
@@ -47,7 +50,7 @@ public class ComponentEventException extends TapestryException
         return _eventType;
     }
 
-    public Object[] getContext()
+    public EventContext getContext()
     {
         return _context;
     }

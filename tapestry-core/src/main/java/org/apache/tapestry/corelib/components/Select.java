@@ -163,7 +163,7 @@ public final class Select extends AbstractField
     @SuppressWarnings("unchecked")
     ValueEncoder defaultEncoder()
     {
-        return _valueEncoderSource.createEncoder("value", _resources);
+        return _valueEncoderSource.getEncoderForParameter("value", _resources);
     }
 
     @SuppressWarnings("unchecked")

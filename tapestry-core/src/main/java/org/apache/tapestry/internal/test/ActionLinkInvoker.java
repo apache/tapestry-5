@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.test;
 
 import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Document;
+import org.apache.tapestry.internal.URLEventContext;
 import org.apache.tapestry.internal.services.ActionLinkTarget;
 import org.apache.tapestry.internal.services.ComponentInvocation;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
@@ -24,6 +25,7 @@ import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.ComponentEventRequestHandler;
 import org.apache.tapestry.services.ComponentEventRequestParameters;
+import org.apache.tapestry.services.ContextValueEncoder;
 
 import java.io.IOException;
 
@@ -42,6 +44,8 @@ public class ActionLinkInvoker implements ComponentInvoker
 
     private final TestableResponse _response;
 
+    private final ContextValueEncoder _contextValueEncoder;
+
     public ActionLinkInvoker(Registry registry, ComponentInvoker followupInvoker,
                              ComponentInvocationMap componentInvocationMap)
     {
@@ -53,6 +57,7 @@ public class ActionLinkInvoker implements ComponentInvoker
         _response = _registry.getObject(TestableResponse.class, null);
 
         _componentInvocationMap = componentInvocationMap;
+        _contextValueEncoder = _registry.getService(ContextValueEncoder.class);
 
     }
 
@@ -96,9 +101,9 @@ public class ActionLinkInvoker implements ComponentInvoker
 
                     actionLinkTarget.getEventType(),
 
-                    invocation.getActivationContext(),
+                    new URLEventContext(_contextValueEncoder, invocation.getActivationContext()),
 
-                    invocation.getContext());
+                    new URLEventContext(_contextValueEncoder, invocation.getContext()));
 
             _componentEventRequestHandler.handle(parameters);
         }

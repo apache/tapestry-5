@@ -28,8 +28,7 @@ public interface PageRenderRequestHandler
      * {@link org.apache.tapestry.services.ComponentEventResultProcessor} may be used to send an alternate response
      * (typically, a redirect).
      *
-     * @param logicalPageName the logical name of the page to activate and render
-     * @param context         context data, supplied by the page at render time, extracted from the render URL
+     * @param parameters defines the page name and activation context
      */
-    void handle(String logicalPageName, String[] context) throws IOException;
+    void handle(PageRenderRequestParameters parameters) throws IOException;
 }

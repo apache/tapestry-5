@@ -14,9 +14,12 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.internal.EmptyEventContext;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.internal.URLEventContext;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;
@@ -27,7 +30,6 @@ import java.util.regex.Pattern;
  * Processes component action events sent as requests from the client. Action events include an event type, identify a
  * page and a component, and may provide additional context strings.
  * <p/>
- * <p/>
  * Forms: <ul> <li>/context/pagename:eventname -- event on the page, no action context</li>
  * <li>/context/pagename:eventname/foo/bar -- event on the page with action context "foo", "bar"</li>
  * <li>/context/pagename.foo.bar -- event on component foo.bar within the page, default event, no action context</li>
@@ -35,12 +37,9 @@ import java.util.regex.Pattern;
  * context "baz", "gnu"</li> <li>/context/pagename.bar.baz:eventname/foo/gnu -- event on component bar.baz within the
  * page with action context "foo" , "gnu"</li> </ul>
  * <p/>
- * <p/>
  * The page name portion may itself consist of a series of folder names, i.e., "admin/user/create".  The context portion
  * isn't the concern of this code, since {@link org.apache.tapestry.services.Request#getPath()} will already have
  * stripped that off.  We can act as if the context is always "/" (the path always starts with a slash).
- * <p/>
- * <p/>
  *
  * @see LinkFactory#createActionLink(org.apache.tapestry.internal.structure.Page, String, String,boolean, Object...)
  */
@@ -50,13 +49,17 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private final ComponentEventRequestHandler _componentEventRequestHandler;
 
-    private final String[] _emptyString = new String[0];
+    private final ContextValueEncoder _contextValueEncoder;
+
+    private final EventContext _emptyContext = new EmptyEventContext();
 
     public ComponentEventDispatcher(ComponentEventRequestHandler componentEventRequestHandler,
-                                    ComponentClassResolver componentClassResolver)
+                                    ComponentClassResolver componentClassResolver,
+                                    ContextValueEncoder contextValueEncoder)
     {
         _componentEventRequestHandler = componentEventRequestHandler;
         _componentClassResolver = componentClassResolver;
+        _contextValueEncoder = contextValueEncoder;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -104,12 +107,9 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (!_componentClassResolver.isPageName(containingPageName)) return false;
 
-        String[] eventContext = decodeContext(matcher.group(CONTEXT));
+        EventContext eventContext = decodeContext(matcher.group(CONTEXT));
 
-        String activationContextValue = request.getParameter(InternalConstants.PAGE_CONTEXT_NAME);
-
-        String[] activationContext = activationContextValue == null ? _emptyString : decodeContext(
-                activationContextValue);
+        EventContext activationContext = decodeContext(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
         // The event type is often omitted, and defaults to "action".
 
@@ -133,18 +133,19 @@ public class ComponentEventDispatcher implements Dispatcher
         return true;
     }
 
-    private String[] decodeContext(String input)
+
+    private EventContext decodeContext(String input)
     {
-        if (input == null) return _emptyString;
+        if (input == null) return _emptyContext;
 
-        String[] result = SLASH_PATTERN.split(input);
+        String[] values = SLASH_PATTERN.split(input);
 
-        for (int i = 0; i < result.length; i++)
+        for (int i = 0; i < values.length; i++)
         {
-            result[i] = TapestryInternalUtils.unescapePercentAndSlash(result[i]);
+            values[i] = TapestryInternalUtils.unescapePercentAndSlash(values[i]);
         }
 
-        return result;
+        return new URLEventContext(_contextValueEncoder, values);
     }
 
 }

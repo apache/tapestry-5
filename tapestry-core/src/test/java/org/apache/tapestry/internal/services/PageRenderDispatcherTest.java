@@ -15,16 +15,29 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.services.*;
-import static org.easymock.EasyMock.*;
+import org.easymock.EasyMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
+import org.easymock.IAnswer;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 public class PageRenderDispatcherTest extends InternalBaseTestCase
 {
+    private ContextValueEncoder _contextValueEncoder;
+
+    @BeforeClass
+    public void setup()
+    {
+        _contextValueEncoder = getService(ContextValueEncoder.class);
+    }
+
     @Test
     public void not_a_page_request() throws Exception
     {
@@ -40,7 +53,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
 
         assertFalse(d.dispatch(request, response));
 
@@ -60,7 +73,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         replay();
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
 
         assertFalse(d.dispatch(request, response));
 
@@ -99,7 +112,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[0], null, false);
+        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[0], false);
 
         renderer.renderPageResponse(page);
 
@@ -107,7 +120,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
 
         assertTrue(d.dispatch(request, response));
 
@@ -146,7 +159,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[]{"zip", "zoom"}, null, false);
+        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[]{"zip", "zoom"}, false);
 
         renderer.renderPageResponse(page);
 
@@ -154,7 +167,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, _contextValueEncoder);
 
         assertTrue(d.dispatch(request, response));
 
@@ -166,10 +179,30 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         return newMock(ComponentEventResultProcessor.class);
     }
 
-    private void train_triggerEvent(ComponentPageElement element, String eventType, Object[] context,
-                                    ComponentEventCallback handler, boolean handled)
+    private void train_triggerContextEvent(ComponentPageElement element, String eventType, final Object[] context,
+                                           final boolean handled)
     {
-        expect(element.triggerEvent(eq(eventType), aryEq(context), isA(ComponentEventCallback.class))).andReturn(
-                handled);
+        IAnswer<Boolean> answer = new IAnswer<Boolean>()
+        {
+            public Boolean answer() throws Throwable
+            {
+                Object[] arguments = EasyMock.getCurrentArguments();
+
+                EventContext ec = (EventContext) arguments[1];
+
+                assertEquals(ec.getCount(), context.length);
+
+                for (int i = 0; i < context.length; i++)
+                {
+                    assertEquals(ec.get(Object.class, i), context[i]);
+                }
+
+
+                return handled;
+            }
+        };
+
+        expect(element.triggerContextEvent(eq(eventType), isA(EventContext.class),
+                                           isA(ComponentEventCallback.class))).andAnswer(answer);
     }
 }
