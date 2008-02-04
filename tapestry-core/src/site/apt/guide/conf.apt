@@ -85,7 +85,6 @@ Configuring Tapestry
 
 
   [tapestry.compress-whitespace]
-
     A flag (true or false).  When true (the default) whitespace in component templates is compressed by default
     (this can be fine-tuned using the standard xml:space attribute on an element in the template).
     When this flag is false, then whitespace is retained by default (but can still be overridden).
