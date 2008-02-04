@@ -28,6 +28,7 @@ import java.util.List;
  * the type of the primary key, used to identify the value (which must be serializable)
  * @param <V>
  * the type of value identified by the key
+ * @see ValueEncoder
  */
 public interface PrimaryKeyEncoder<K extends Serializable, V>
 {

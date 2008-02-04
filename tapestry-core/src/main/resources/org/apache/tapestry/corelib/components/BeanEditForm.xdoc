@@ -1,14 +1,26 @@
 <document>
     <body>
-        <section name="Examples">
+
+        <p>
+            The BeanEditForm component is a convienent wrapper around three components:
+            <a href="Form.html">Form</a>,
+            <a href="Errors.html">Errors</a>
+            and<a href="BeanEditor.html">BeanEditor</a>.
+        </p>
+
+        <section name="Simple Example">
 
             <p>
-                The bean to edit will be a property of the containing page.
+                Using the bean editor, we can easily create a simple form for collecting information
+                from the user. In this example, we'll collect a little bit of data about a User:
             </p>
 
             <p>
-                You may pass override parameters for specific properties, in which case you have control
-                over how that property will be editted.
+                <img src="beaneditform_ref_simple.png"/>
+            </p>
+
+            <p>
+                The bean to edit will be a property of the containing page.
             </p>
 
             <subsection name="User.java">
@@ -48,29 +60,18 @@ public class User
 
             <subsection name="CreateUser.tml">
 
-                <p>
-                    We are overriding the editor for the age property with a Slider
-                    component (rather than the default, which would be a numeric text field).
-                    Alas this Slider component does not exist.
-                </p>
-
                 <source><![CDATA[
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
         <h1>Create New User</h1>
 
-        <t:beaneditform t:id="user" submitlabel="message:create-user">
-            <t:parameter name="age">
-               <t:label for="age"/>
-               <t:slider min="18" max="99" t:id="age" value="user.age"/>
-            </t:parameter>
-        </t:beaneditform>
+        <t:beaneditform t:id="user" submitlabel="message:create-user"/>
     </body>
 </html>
 ]]></source>
 
                 <p>
-                    Nominally, we should have to bind the object parameterof the BeanEditForm component. However, as
+                    Nominally, we should have to bind the object parameter of the BeanEditForm component. However, as
                     a convienience, Tapestry has defaulted the object parameter
                     based on the component id. This works because the CreateUser class
                     includes a property named "user", which matches the BeanEditForm component's id.
@@ -88,16 +89,6 @@ public class User
                     <code><![CDATA[<t:beaneditform t:id="address" object="registration.address"/>]]></code>
                 </p>
 
-                <p>
-                    The
-                    <code><![CDATA[<t:parameter>]]></code>
-                    element
-                    is an
-                    <em>override</em>
-                    for the property. The name is
-                    matched against a property of the bean. We need to provide a Label and an appropriate
-                    editor component (here, the hypothetical Slider component).
-                </p>
 
             </subsection>
 
@@ -165,7 +156,7 @@ public class CreateUser
                 <p>
                     Notice that we don't instantiate the User object ourselves; instead we let the BeanEditForm
                     component
-                    do that for us. It's capable of doing so because the User class has the default public no arguments
+                    do that for us. It's capable of doing so because the User class has a default public no arguments
                     constructor.
                 </p>
 
@@ -181,6 +172,103 @@ public class CreateUser
                     Returning a class from an event handler method (<code>UserAdmin.class</code>) will
                     activate the indicated page as the response page. As always, a redirect to to the response page is
                     sent to the client.
+                </p>
+
+            </subsection>
+
+        </section>
+
+        <section name="Validations and Overrides">
+
+            <p>
+                By placing some annotations on the properties of the User class, we can enable client-side
+                validations. In addition, we can override the default editor components for a property
+                to add some additional instructions.
+            </p>
+
+            <subsection name="User.java (partial)">
+
+                <source><![CDATA[
+    @Validate("required")
+    public String getFirstName() { return _firstName; }
+
+    public void setFirstName(String firstName) { _firstName = firstName; }
+
+    @Validate("required")
+    public String getLastName() { return _lastName; }
+
+    public void setLastName(String lastName) { _lastName = lastName; }
+
+    @Validate("min=18,max=99")
+    public int getAge() { return _age; }
+
+    public void setAge(int age) { _age = age; }]]>    </source>
+
+                <p>
+                    The new @Validate annotations added to the first name and last name properties indicates that a
+                    non-blank
+                    value must be provided. For the age property we are setting minimum and maximum values as well.
+                </p>
+
+                <p>
+                    Validation for each field occurs when the form is submitted, and when the user tabs out of a field.
+                    If you submit
+                    immediately, Tapestry will display popup bubbles for each field identifying the error:
+                </p>
+
+                <p>
+                    <img src="beaneditform_ref_validation1.png"/>
+                </p>
+
+                <p>
+                    In addition, fields with errors are marked with a red X, the font for the first turns red, and the
+                    label
+                    for the field turns red. We're providing a lot of feedback to the user.
+                    After a moment, all the bubbles except for the current field fade. Bubbles fade in and out as you
+                    tab from field to field.
+                </p>
+
+                <p>
+                    <img src="beaneditform_ref_validation2.png"/>
+                </p>
+
+
+            </subsection>
+
+
+            <subsection name="CreateUser.tml (partial)">
+
+                <p>
+                    We can customize how individual properties are editted. Here we'll
+                    add a small reminder next to the age property:
+                </p>
+
+                <p>
+                    <img src="beaneditform_ref_customized.png"/>
+                </p>
+
+                <source><![CDATA[
+        <t:beaneditform t:id="user" submitlabel="message:create-user">
+            <t:parameter name="age">
+                <t:label for="age"/>
+                <t:textfield t:id="age" value="user.age"/>
+                <em>
+                    Users must be between 18 and 99.
+                </em>
+            </t:parameter>
+        </t:beaneditform>]]></source>
+
+                <p>
+                    The
+                    <code><![CDATA[<t:parameter>]]></code>
+                    element
+                    is an
+                    <em>override</em>
+                    for the property. The name is
+                    matched against a property of the bean. We need to provide a
+                    <a href="Label.html">Label</a>
+                    component, and an appropriate
+                    editor component.
                 </p>
 
             </subsection>

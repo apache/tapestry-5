@@ -52,7 +52,7 @@ public class ComponentReport extends AbstractMavenReport
     private static final String REFERENCE_DIR = "ref";
 
     private final static String[] PARAMETER_HEADERS = {"Name", "Type", "Flags", "Default", "Default Prefix",
-                                                       "Description"};
+            "Description"};
 
 
     /**
@@ -92,6 +92,12 @@ public class ComponentReport extends AbstractMavenReport
      * @required
      */
     private File generatedDocsDirectory;
+
+    /**
+     * @parameter expression="${project.build.directory}/generated-site/resources"
+     * @required
+     */
+    private File generatedResourcesDirectory;
 
     /**
      * Working directory for temporary files.
@@ -208,12 +214,12 @@ public class ComponentReport extends AbstractMavenReport
 
                 sink.listItem();
 
-                sink.link(className + ".html");
+                sink.link(toPath(className) + ".html");
 
                 sink.text(className);
                 sink.link_();
 
-                writeClassDescription(descriptions, refDir, docSearchPath, sink, className);
+                writeClassDescription(descriptions, refDir, docSearchPath, className);
 
 
                 sink.listItem_();
@@ -232,9 +238,18 @@ public class ComponentReport extends AbstractMavenReport
         }
     }
 
+    private String toPath(String className)
+    {
+        return className.replace('.', '/');
+    }
+
     private String extractSubpackage(String className)
     {
         int dotx = className.indexOf(".", rootPackage.length() + 1);
+
+        // For classes directly in the root package.
+
+        if (dotx < 1) return "";
 
         return className.substring(rootPackage.length() + 1, dotx);
     }
@@ -260,8 +275,17 @@ public class ComponentReport extends AbstractMavenReport
     }
 
     private void writeClassDescription(Map<String, ClassDescription> descriptions, File refDir,
-                                       List<File> docSearchPath, Sink sink, String className) throws Exception
+                                       List<File> docSearchPath, String className) throws Exception
     {
+
+        int dotx = className.lastIndexOf('.');
+        String packageName = className.substring(0, dotx);
+        File outputDir = new File(refDir, toPath(packageName));
+        outputDir.mkdirs();
+
+        File outputFile = new File(refDir, toPath(className) + ".xml");
+
+
         Element root = new Element("document");
 
         ClassDescription cd = descriptions.get(className);
@@ -297,9 +321,21 @@ public class ComponentReport extends AbstractMavenReport
 
         addChild(section, "p", cd.getDescription());
 
-        String javadocURL = String.format("../%s/%s.html", apidocs, className.replace('.', '/'));
 
-        addLink(addChild(section, "p"), javadocURL, "[JavaDoc]");
+        StringBuilder javadocURL = new StringBuilder(200);
+
+        int depth = packageName.split("\\.").length;
+
+        // One extra to account for the "ref" directory.
+
+        for (int i = 0; i <= depth; i++)
+        {
+            javadocURL.append("../");
+        }
+
+        javadocURL.append(apidocs).append("/").append(toPath(className)).append(".html");
+
+        addLink(addChild(section, "p"), javadocURL.toString(), "[JavaDoc]");
 
         if (!parents.isEmpty())
         {
@@ -369,7 +405,6 @@ public class ComponentReport extends AbstractMavenReport
 
         Document document = new Document(root);
 
-        File outputFile = new File(refDir, className + ".xml");
 
         getLog().info(String.format("Writing %s", outputFile));
 
@@ -387,7 +422,10 @@ public class ComponentReport extends AbstractMavenReport
     private void addExternalDocumentation(Element body, List<File> docSearchPath, String className)
             throws ParsingException, IOException
     {
-        String pathExtension = className.replace(".", SystemUtils.FILE_SEPARATOR) + ".xdoc";
+        String classNamePath = toPath(className);
+
+
+        String pathExtension = classNamePath + ".xdoc";
 
         for (File path : docSearchPath)
         {
@@ -414,8 +452,53 @@ public class ComponentReport extends AbstractMavenReport
                 body.appendChild(incoming);
             }
 
+            Nodes nodes = doc.query("//img/@src");
+
+            int lastslashx = classNamePath.lastIndexOf('/');
+            String packagePath = classNamePath.substring(0, lastslashx);
+
+            File generatedRefRoot = new File(generatedResourcesDirectory, REFERENCE_DIR);
+            File generatedPackageRoot = new File(generatedRefRoot, packagePath);
+
+            for (int i = 0; i < nodes.size(); i++)
+            {
+                Node src = nodes.get(i);
+
+                String srcPath = src.getValue();
+
+                File imgFile = new File(path, packagePath + "/" + srcPath);
+                File imgTargetFile = new File(generatedPackageRoot, srcPath);
+
+                copy(imgFile, imgTargetFile);
+            }
+
+
             return;
         }
+    }
+
+    private void copy(File sourceFile, File targetFile) throws IOException
+    {
+        getLog().info(String.format("Copying image file %s to %s", sourceFile, targetFile));
+
+        targetFile.getParentFile().mkdirs();
+
+        byte[] buffer = new byte[20000];
+
+        InputStream in = new BufferedInputStream(new FileInputStream(sourceFile));
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(targetFile));
+
+        while (true)
+        {
+            int length = in.read(buffer);
+
+            if (length < 0) break;
+
+            out.write(buffer, 0, length);
+        }
+
+        in.close();
+        out.close();
     }
 
 
@@ -438,15 +521,15 @@ public class ComponentReport extends AbstractMavenReport
 
         String[] arguments = {"-private", "-o", parametersPath,
 
-                              "-subpackages", rootPackage,
+                "-subpackages", rootPackage,
 
-                              "-doclet", ParametersDoclet.class.getName(),
+                "-doclet", ParametersDoclet.class.getName(),
 
-                              "-docletpath", docletPath(),
+                "-docletpath", docletPath(),
 
-                              "-sourcepath", sourcePath(),
+                "-sourcepath", sourcePath(),
 
-                              "-classpath", classPath()};
+                "-classpath", classPath()};
 
         command.addArguments(arguments);
 

@@ -51,7 +51,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String _submitLabel;
 
     /**
-     * The object to be edited by the BeanEditor. This will be read when the component renders and updated when the form
+     * The object to be edited. This will be read when the component renders and updated when the form
      * for the component is submitted. Typically, the container will listen for a "prepare" event, in order to ensure
      * that a non-null value is ready to be read or updated. Often, the BeanEditForm can create the object as needed
      * (assuming a public, no arguments constructor).  The object property defaults to a property with the same name as

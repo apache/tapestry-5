@@ -132,10 +132,6 @@ DIV.t-beandisplay {
     width: auto;
 }
 
-FORM.t-beaneditor LABEL:after {
-    content: ":";
-}
-
 DIV.t-beaneditor-row {
     padding: 4px 0px 2px 0px;
 }
@@ -145,7 +141,7 @@ DIV.t-beaneditor LABEL:after {
 }
 
 DIV.t-beaneditor LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
-    width: 10%;
+    width: 250px;
     display: block;
     float: left;
     text-align: right;
