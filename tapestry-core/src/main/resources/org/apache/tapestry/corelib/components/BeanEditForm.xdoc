@@ -5,8 +5,23 @@
             The BeanEditForm component is a convienent wrapper around three components:
             <a href="Form.html">Form</a>,
             <a href="Errors.html">Errors</a>
-            and<a href="BeanEditor.html">BeanEditor</a>.
+            and
+            <a href="BeanEditor.html">BeanEditor</a>.
         </p>
+
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="BeanDisplay.html">BeanDisplay</a>
+                </li>
+                <li>
+                    <a href="Grid.html">Grid</a>
+                </li>
+            </ul>
+
+        </section>
 
         <section name="Simple Example">
 

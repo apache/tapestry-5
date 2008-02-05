@@ -1,9 +1,23 @@
 <document>
     <body>
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="Form.html">Form</a>
+                </li>
+                <li>
+                    <a href="Select.html">Select</a>
+                </li>
+            </ul>
+
+        </section>
+
         <section name="Examples">
             <p>
                 Radio components are always used in conjunction with
-                a RadioGroup component. The RadioComponent defines the property
+                a RadioGroup component. The RadioGroup defines the property
                 that will be read and updated, and the individual Radio
                 components determine what value will be assigned to the property.
             </p>
@@ -12,6 +26,10 @@
                 Our example will be part of a page that collects credit card information.
                 We'll just be showing the portions related to
                 a set of radio buttons for choosing the type of credit card.
+            </p>
+
+            <p>
+                <img src="radio_ref.png"/>
             </p>
 
             <subsection name="CardType.java">
@@ -25,19 +43,39 @@ public enum CardType
 
             </subsection>
 
-            <subsection name="Payment.tml (partial)">
+            <subsection name="Payment.tml">
 
                 <source><![CDATA[
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <body>
+        <h1>Order Payment</h1>
 
-    <t:radiogroup t:id="type" t:encoder="cardTypeEncoder"/>
-        <t:radio t:id="masterCard"/> <t:label for="masterCard"/>
-        <t:radio t:id="visa"/> <t:label for="visa"/>
-        <t:radio t:id="amex"/> <t:label for="amex"/>
-        <t:radio t:id="dinersClub"/> <t:label for="dinersClub"/>
-        <t:radio t:id="discover"/> <t:label for="discover"/>
-    </t:radiogroup>
+        <t:form>
+            <t:label for="cardNumber"/>:
 
-            ]]></source>
+            <t:textfield t:id="cardNumber" size="16"/>
+
+            <br/>
+
+            <t:label for="type"/>:
+
+            <t:radiogroup t:id="type" t:encoder="cardTypeEncoder">
+                <t:radio t:id="masterCard"/>
+                <t:label for="masterCard"/>
+                <t:radio t:id="visa"/>
+                <t:label for="visa"/>
+                <t:radio t:id="amex"/>
+                <t:label for="amex"/>
+                <t:radio t:id="dinersClub"/>
+                <t:label for="dinersClub"/>
+                <t:radio t:id="discover"/>
+                <t:label for="discover"/>
+            </t:radiogroup>
+
+        </t:form>
+
+    </body>
+</html>]]></source>
 
                 <p>
                     The advantage of using radio buttons here, rather than a drop down list,
@@ -90,7 +128,7 @@ public class Payment
 
                 <p>
                     We use a number of read-only properties to provide
-                    each Radio component with its Enum value, that will
+                    each Radio component with its corresponding enum value, that will
                     ultimately be assigned to the page's type property
                     (if that corresponding Radio component is selected by the user).
                 </p>
@@ -101,6 +139,18 @@ public class Payment
                     than you will use a whole array of Radio components as in this example.
                 </p>
 
+            </subsection>
+
+            <subsection name="Payment.properties">
+
+                <p>
+                    We override the default generated labels for a few fields and enum values:
+                </p>
+
+                <source><![CDATA[
+cardnumber-label=Credit Card Number
+type-label=Credit Card Type
+dinersclub-label=Diner's Club]]></source>
             </subsection>
 
         </section>

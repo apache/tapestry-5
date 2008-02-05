@@ -1,10 +1,9 @@
 <document>
     <body>
-        <section name="Examples">
-
-            <p>
-                Examples are provided with the documentation of the Radio component.
-            </p>
-        </section>
+        <p>
+            Examples are provided with the documentation of the
+            <a href="Radio.html">Radio</a>
+            component.
+        </p>
     </body>
 </document>

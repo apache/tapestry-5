@@ -1,5 +1,16 @@
 <document>
     <body>
+        <section name="Related Components">
+            <ul>
+                <li>
+                    <a href="BeanEditForm">BeanEditForm</a>
+                </li>
+                <li>
+                    <a href="BeanDisplay">BeanDisplay</a>
+                </li>
+            </ul>
+        </section>
+
         <section name="Simple Example">
 
             <p>
@@ -7,7 +18,22 @@
                 underlying concept and share quite a bit of code.
             </p>
 
-            <p>In this example, we'll display a list of users.</p>
+            <p>In this example, we'll display a list of users. We'll also show some basic customization, to convert a
+                column
+                from just text, to a clickable link.
+            </p>
+
+            <p>
+                <img src="grid_ref1.png"/>
+            </p>
+
+            <p>This example shows much of the default behavior, using a collection of randomly generated users.
+                The column order is determined by the order of the getter methods in the User class. The columns are
+                sortable, and
+                because there are more results than will fit on a single page, page navigation is included (the
+                navigation
+                disappears for small result sets).
+            </p>
 
             <subsection name="User.java">
                 <source><![CDATA[
@@ -39,7 +65,7 @@ public class User
     public void setAge(int age) { _age = age; }
 }]]></source>
 
-                <p>The @NonVisual annotation prevents the id from being displayed.</p>
+                <p>The @NonVisual annotation prevents the id property from being displayed.</p>
 
             </subsection>
 
@@ -57,7 +83,7 @@ public class User
 
         <t:grid source="users" row="user">
             <t:parameter name="lastnamecell">
-                <t:pagelink page="viewuser" context="user.id">${user.lastname}</t:pagelink>
+                <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
             </t:parameter>
         </t:grid>
     </body>
@@ -69,8 +95,7 @@ public class User
                     The parameter name
                     <code><em>property</em>cell
                     </code>
-                    is used
-                    to override the rendering of cells for one property. As usual, case is ignored. Here we
+                    is used to override the rendering of cells for one property. As usual, case is ignored. Here we
                     use a PageLink component to link to a ViewUser page, passing the id of the user as
                     activation context for the target page.
                 </p>
@@ -83,6 +108,7 @@ public class User
                 </p>
 
                 <p>
+                    <strong>Note:</strong>
                     Overriding of headers, the clickable links at the top of columns, is not yet implemented.
                 </p>
 
@@ -108,7 +134,8 @@ public class UserList
 
             <p>
                 The UserList class exists to provide access to the UserDAO service, and to act as a holder
-                for the user property, needed when the Grid is rendering.
+                for the user property, needed when the Grid is rendering. We need it here because we've
+                overridden the rendering of the lastName property.
             </p>
 
         </section>
@@ -123,18 +150,22 @@ public class UserList
             <subsection name="UserList.tml">
 
                 <p>
-                    We want to make the user's last name a clickable link to a detail page for the user.
+                    We want to make the user's last name a clickable link to delete
+                    the user for that row.
                 </p>
 
+                <p>
+                    <img src="grid_ref2.png"/>
+                </p>
 
                 <source><![CDATA[
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
         <h1>List Users</h1>
 
-        <t:grid source="users" model="model" row="user">
+        <t:grid source="users" row="user" model="model">
             <t:parameter name="lastnamecell">
-                <t:pagelink page="viewuser" context="user.id">${user.lastname}</t:pagelink>
+                <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
             </t:parameter>
             <t:parameter name="deletecell">
                 <t:actionlink t:id="delete" context="user.id">Delete</t:actionlink>
@@ -171,7 +202,7 @@ public class UserList
     private final BeanModel _model;
 
     {
-        _model = _source.create(User.class, true, _resources);
+        _model = _beanModelSource.create(User.class, true, _resources);
 
         _model.add("delete", null);
     }
@@ -189,7 +220,7 @@ public class UserList
     void onActionFromDelete(long userId)
     {
         _userDAO.remove(userId);
-    }
+    }  
 }]]></source>
 
                 <p>

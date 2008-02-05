@@ -1,21 +1,34 @@
 <document>
     <body>
+
+        <section name="Related Components">
+
+            <ul>
+                <li>
+                    <a href="BeanEditForm.html">BeanEditForm</a>
+                </li>
+                <li>
+                    <a href="Grid.html">Grid</a>
+                </li>
+            </ul>
+
+        </section>
+
         <section name="Examples">
 
             <p>
-                The bean to display will be a property of the containing page. In this example we are making
-                the bean a persistent property, but there are other options. Presumably, some other page
-                obtains the bean and invokes the setBean() method.
+                Here, we'll display a User object, consisting
+                of a first name, last name and age. We'll also customize the output of the last name property, to
+                display the name in all upper-case. The result:
             </p>
 
             <p>
-                You may pass override parameters for specific properties, in which case you have control
-                over how that property will be rendered. As an example, we'll render the lastName as upper-case.
+                <img src="beandisplay_ref.png"/>
             </p>
 
-            <subsection name="MyBean.java">
+            <subsection name="User.java">
                 <source><![CDATA[
-public class MyBean
+public class User
 {
     private long _id;
     
@@ -43,39 +56,42 @@ public class MyBean
     public void setAge(int age) { _age = age; }
 }]]></source>
 
-                <p>The @NonVisual annotation prevents the id from being displayed.</p>
+                <p>The @NonVisual annotation prevents the id property from being displayed.</p>
 
             </subsection>
 
-            <subsection name="MyPage.java">
+            <subsection name="ViewUser.java">
                 <source><![CDATA[
-public class MyPage
+public class ViewUser
 {
     @Persist
-    private MyBean _bean;
+    private User _user;
 
-    public MyBean getBean()
+    public User getUser()
     {
-      return _bean;
+        return _user;
     }
 
-    public void setBean(MyBean bean)
+    public void setUser(User user)
     {
-      _bean = bean;
+        _user = user;
     }
 }]]></source>
 
+                <p>
+                    Presumably, some other page is obtaining the User instance and invoking the setUser() method.
+                </p>
 
             </subsection>
 
 
-            <subsection name="MyPage.tml">
+            <subsection name="ViewUser.tml">
                 <source><![CDATA[
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
-        <h1>My Bean</h1>
+        <h1>View User</h1>
 
-        <t:beandisplay object="bean">
+        <t:beandisplay object="user">
             <t:parameter name="lastname">
                 ${bean.lastname.toUpperCase()}
             </t:parameter>
@@ -87,8 +103,7 @@ public class MyPage
                 <p>
                     The
                     <code><![CDATA[<t:parameter>]]></code>
-                    element
-                    is an
+                    element is an
                     <em>override</em>
                     for the property. The name is
                     matched against a property of the bean.
@@ -101,8 +116,6 @@ public class MyPage
                 </p>
 
             </subsection>
-
-
         </section>
 
         <section name="Notes">
@@ -111,11 +124,12 @@ public class MyPage
                 You can re-order the properties using the reorder parameter:
             </p>
 
-            <source><![CDATA[<t:beandisplay object="bean" reorder="lastname,firstname"/>]]></source>
+            <source><![CDATA[<t:beandisplay object="user" reorder="lastname,firstname"/>]]></source>
 
             <p>
                 You can accomplish the same thing by changing the order of the
-                getter methods in the bean class (that sets the default order).
+                getter methods in the bean class. The default order in which properties are
+                displayed is not alphabetical, it is the order of the getter methods.
             </p>
 
             <p>
@@ -127,6 +141,20 @@ public class MyPage
                 You might find
                 <code><![CDATA[<t:beandisplay object="this"/>]]></code>
                 useful on occasion. It will display all the properties of the current page.
+            </p>
+
+            <p>
+                As with the
+                <a href="BeanEditForm.html">BeanEditForm</a>
+                component,
+                you may override the labels displayed for the fields using
+                the page's message catalog.
+            </p>
+
+            <p>
+                Please refer to the
+                <a href="PageLink.html">PageLink</a>
+                component documentation for an alternate way to manage _user field.
             </p>
 
         </section>

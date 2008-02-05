@@ -37,6 +37,14 @@ public class RadioGroup implements Field
     private boolean _disabled;
 
     /**
+     * The user presentable label for the field. If not provided, a reasonable label is generated from the component's
+     * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
+     * converting the actual id to a presentable string (for example, "userId" to "User Id").
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _label;
+
+    /**
      * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
      * string values for the different radio button values.
      *
@@ -71,6 +79,11 @@ public class RadioGroup implements Field
     final Binding defaultValue()
     {
         return _defaultProvider.defaultBinding("value", _resources);
+    }
+
+    String defaultLabel()
+    {
+        return _defaultProvider.defaultLabel(_resources);
     }
 
     final ValueEncoder defaultEncoder()
@@ -167,7 +180,7 @@ public class RadioGroup implements Field
     }
 
     /**
-     * Pops the {@link RadioContainer}.
+     * Pops the {@link RadioContainer} off the Environment.
      */
     final void afterRender()
     {
@@ -179,13 +192,9 @@ public class RadioGroup implements Field
         return _elementName;
     }
 
-    /**
-     * Always returns null; individual {@link org.apache.tapestry.corelib.components.Radio} components may have their
-     * own label.
-     */
     public String getLabel()
     {
-        return null;
+        return _label;
     }
 
     public boolean isDisabled()
