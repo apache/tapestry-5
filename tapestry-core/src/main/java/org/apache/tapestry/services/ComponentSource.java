@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.tapestry.runtime.Component;
 
 /**
  * Used by classes that need to retrieve a component by its complete id, or a page by its logical
- * page name or root component class. The complete id is the FQCN of the containing page, a colon,
+ * page name or root component class. The complete id is the logical name of the containing page, a colon,
  * and the nested component id. It may also just be the page name (for the root component of a
  * page).
  */

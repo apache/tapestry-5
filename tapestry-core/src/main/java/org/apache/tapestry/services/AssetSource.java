@@ -43,8 +43,9 @@ public interface AssetSource
      * @param path         relative to the base resource
      * @param locale       locale to localize the final resource to, or null for the thread's current locale
      * @return the asset
+     * @throws RuntimeException if the asset can not be found
      */
-    Asset findAsset(Resource baseResource, String path, Locale locale);
+    Asset getAsset(Resource baseResource, String path, Locale locale);
 
     /**
      * Convienience for finding assets on the classpath.

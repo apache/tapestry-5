@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -69,10 +69,10 @@ public class AssetSourceImpl implements AssetSource
 
     public Asset getClasspathAsset(String path, Locale locale)
     {
-        return findAsset(null, path, locale);
+        return getAsset(null, path, locale);
     }
 
-    public Asset findAsset(Resource baseResource, String path, Locale locale)
+    public Asset getAsset(Resource baseResource, String path, Locale locale)
     {
         notBlank(path, "path");
 

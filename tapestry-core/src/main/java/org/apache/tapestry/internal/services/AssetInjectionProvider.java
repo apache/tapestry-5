@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ public class AssetInjectionProvider implements InjectionProvider
 
         String resourcesFieldName = transformation.getResourcesFieldName();
 
-        String statement = format("%s = (%s) %s.findAsset(%s, \"%s\", %s.getLocale());", fieldName, fieldType.getName(),
+        String statement = format("%s = (%s) %s.getAsset(%s, \"%s\", %s.getLocale());", fieldName, fieldType.getName(),
                                   sourceFieldName, baseResourceFieldName, expanded, resourcesFieldName);
 
         transformation.extendConstructor(statement);

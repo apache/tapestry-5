@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -55,11 +55,11 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         // First try creates it:
 
-        assertSame(source.findAsset(_baseResource, "SimpleComponent.properties", Locale.UK), asset);
+        assertSame(source.getAsset(_baseResource, "SimpleComponent.properties", Locale.UK), asset);
 
         // Second try shows that it is cached
 
-        assertSame(source.findAsset(_baseResource, "SimpleComponent.properties", Locale.UK), asset);
+        assertSame(source.getAsset(_baseResource, "SimpleComponent.properties", Locale.UK), asset);
 
         verify();
     }
@@ -142,14 +142,14 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         AssetSource source = new AssetSourceImpl(threadLocale, configuration);
 
-        assertSame(source.findAsset(
+        assertSame(source.getAsset(
                 _baseResource,
                 "classpath:org/apache/tapestry/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
         // Check that a leading slash is not a problem:
 
-        assertSame(source.findAsset(
+        assertSame(source.getAsset(
                 _baseResource,
                 "classpath:/org/apache/tapestry/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
@@ -170,7 +170,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         try
         {
-            source.findAsset(
+            source.getAsset(
                     _baseResource,
                     "classpath:org/apache/tapestry/internal/services/SimpleComponent.properties",
                     Locale.UK);
@@ -199,7 +199,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         try
         {
-            source.findAsset(_baseResource, "DoesNotExist.properties", Locale.UK);
+            source.getAsset(_baseResource, "DoesNotExist.properties", Locale.UK);
             unreachable();
         }
         catch (RuntimeException ex)

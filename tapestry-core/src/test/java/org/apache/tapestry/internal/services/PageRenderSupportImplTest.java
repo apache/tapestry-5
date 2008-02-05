@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         SymbolSource symbolSource = mockSymbolSource();
 
         train_expandSymbols(symbolSource, CORE_ASSET_PATH_UNEXPANDED, CORE_ASSET_PATH);
-        train_findAsset(assetSource, null, CORE_ASSET_PATH, null, coreAsset);
+        train_getAsset(assetSource, null, CORE_ASSET_PATH, null, coreAsset);
 
         train_toClientURL(coreAsset, CORE_ASSET_URL);
         builder.addScriptLink(CORE_ASSET_URL);
@@ -108,7 +108,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         train_expandSymbols(source, path, expanded);
 
-        train_findAsset(assetSource, null, expanded, null, asset);
+        train_getAsset(assetSource, null, expanded, null, asset);
 
         train_toClientURL(asset, ASSET_URL);
         builder.addScriptLink(ASSET_URL);

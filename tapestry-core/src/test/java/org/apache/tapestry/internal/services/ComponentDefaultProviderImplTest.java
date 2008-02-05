@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null);
 
         assertSame(provider.defaultLabel(resources), message);
 
@@ -72,7 +72,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null);
 
         assertEquals(provider.defaultLabel(resources), "My Field");
 
@@ -100,7 +100,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource);
+        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null);
 
         assertNull(source.defaultBinding(parameterName, resources));
 
@@ -141,7 +141,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource);
+        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null);
 
         assertSame(source.defaultBinding(parameterName, resources), binding);
 

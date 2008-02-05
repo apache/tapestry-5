@@ -90,7 +90,7 @@ public class AssetBindingFactory implements BindingFactory
     {
         Resource baseResource = container.getBaseResource();
 
-        Asset asset = _source.findAsset(baseResource, expression, container.getLocale());
+        Asset asset = _source.getAsset(baseResource, expression, container.getLocale());
 
         return new AssetBinding(description, asset, location);
     }

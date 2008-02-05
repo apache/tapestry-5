@@ -12,43 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.internal.renderers;
 
-import org.apache.tapestry.EventContext;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.annotations.Primary;
 import org.apache.tapestry.services.ObjectRenderer;
 
 /**
- * Renders out the values stored inside a {@link EventContext}.
+ * Renders {@link ComponentResources} instance, showing the complete id and the class name and the location (if a
+ * location is available, it won't be for pages).
  */
-public class EventContextRenderer implements ObjectRenderer<EventContext>
+public class ComponentResourcesRenderer implements ObjectRenderer<ComponentResources>
 {
     private final ObjectRenderer _masterRenderer;
 
-    public EventContextRenderer(@Primary ObjectRenderer masterRenderer)
+    public ComponentResourcesRenderer(@Primary ObjectRenderer masterRenderer)
     {
         _masterRenderer = masterRenderer;
     }
 
-
-    public void render(EventContext object, MarkupWriter writer)
+    public void render(ComponentResources object, MarkupWriter writer)
     {
-        int count = object.getCount();
+        writer.writef("%s (class %s)", object.getCompleteId(), object.getComponentModel().getComponentClassName());
 
-        if (count == 0) return;
+        Location location = object.getLocation();
 
-        writer.element("ul", "class", "t-data-list");
-
-        for (int i = 0; i < count; i++)
+        if (location != null)
         {
-            writer.element("li");
-
-            _masterRenderer.render(object.get(Object.class, i), writer);
-
+            writer.element("br");
             writer.end();
-        }
 
-        writer.end();
+            _masterRenderer.render(location, writer);
+        }
     }
 }

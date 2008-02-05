@@ -32,7 +32,7 @@ public class ContextValueEncoderImplTest extends InternalBaseTestCase
         String encoded = "twentythree";
 
 
-        train_getEncoderForType(source, Long.class, valueEncoder);
+        train_getValueEncoder(source, Long.class, valueEncoder);
         train_toClient(valueEncoder, value, encoded);
 
         replay();
@@ -55,7 +55,7 @@ public class ContextValueEncoderImplTest extends InternalBaseTestCase
         String clientValue = "twentythree";
 
 
-        train_getEncoderForType(source, Long.class, valueEncoder);
+        train_getValueEncoder(source, Long.class, valueEncoder);
         train_toValue(valueEncoder, clientValue, value);
 
         replay();

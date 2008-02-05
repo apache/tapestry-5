@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
     {
         String expanded = _symbolSource.expandSymbols(path);
 
-        Asset asset = _assetSource.findAsset(null, expanded, null);
+        Asset asset = _assetSource.getAsset(null, expanded, null);
 
         _builder.addScriptLink(asset.toClientURL());
     }

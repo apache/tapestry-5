@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class AssetObjectProviderTest extends InternalBaseTestCase
         train_getAnnotation(annotationProvider, Path.class, pathAnnotation);
         train_value(pathAnnotation, path);
         train_expandSymbols(symbolSource, path, expanded);
-        train_findAsset(source, null, expanded, null, asset);
+        train_getAsset(source, null, expanded, null, asset);
         train_coerce(typeCoercer, asset, Asset.class, asset);
 
         replay();

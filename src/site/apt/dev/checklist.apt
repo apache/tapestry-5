@@ -176,6 +176,7 @@ On success: roll it out!
 > cd ~hlship/public_html/tapestry-ibiblio-rsynch-repository/
 > rsync -av * /www/people.apache.org/repo/m2-ibiblio-rsync-repository
 ----
+
   The aritfacts copied to m2-ibiblio-rsync-repository will (eventually) by copied to the central Maven ibiblio repository, where they will be
   visible to every Maven user.
   

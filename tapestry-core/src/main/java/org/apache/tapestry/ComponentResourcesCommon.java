@@ -50,7 +50,7 @@ public interface ComponentResourcesCommon extends Locatable
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *
-     * @see ComponentSource
+     * @see org.apache.tapestry.services.ComponentSource#getComponent(String) 
      */
 
     String getCompleteId();

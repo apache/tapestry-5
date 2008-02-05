@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class AssetObjectProvider implements ObjectProvider
 
         String expanded = _symbolSource.expandSymbols(path.value());
 
-        Asset asset = _source.findAsset(null, expanded, null);
+        Asset asset = _source.getAsset(null, expanded, null);
 
         return _typeCoercer.coerce(asset, objectType);
     }

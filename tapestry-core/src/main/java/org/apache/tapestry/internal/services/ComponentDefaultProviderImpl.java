@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,12 +17,16 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
+import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.ValueEncoderSource;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {
@@ -30,14 +34,20 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     private final BindingSource _bindingSource;
 
-    public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource)
+    private final ValueEncoderSource _valueEncoderSource;
+
+    public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource,
+                                        ValueEncoderSource valueEncoderSource)
     {
         _propertyAccess = propertyAccess;
         _bindingSource = bindingSource;
+        _valueEncoderSource = valueEncoderSource;
     }
 
     public String defaultLabel(ComponentResources resources)
     {
+        notNull(resources, "resources");
+
         String componentId = resources.getId();
         String key = componentId + "-label";
 
@@ -48,11 +58,14 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         return TapestryInternalUtils.toUserPresentable(componentId);
     }
 
-    public Binding defaultBinding(String parameterName, ComponentResources componentResources)
+    public Binding defaultBinding(String parameterName, ComponentResources resources)
     {
-        String componentId = componentResources.getId();
+        notBlank(parameterName, "parameterName");
+        notNull(resources, "resources");
 
-        Component container = componentResources.getContainer();
+        String componentId = resources.getId();
+
+        Component container = resources.getContainer();
 
         // Only provide a default binding if the container actually contains the property.
         // This sets up an error condition for when the parameter is not bound, and
@@ -61,12 +74,24 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         if (_propertyAccess.getAdapter(container).getPropertyAdapter(componentId) == null)
             return null;
 
-        ComponentResources containerResources = componentResources.getContainerResources();
+        ComponentResources containerResources = resources.getContainerResources();
 
         return _bindingSource.newBinding(
                 "default " + parameterName,
                 containerResources,
                 TapestryConstants.PROP_BINDING_PREFIX,
                 componentId);
+    }
+
+    public ValueEncoder defaultValueEncoder(String parameterName, ComponentResources resources)
+    {
+        notBlank(parameterName, "parameterName");
+        notNull(resources, "resources");
+
+        Class parameterType = resources.getBoundType(parameterName);
+
+        if (parameterType == null) return null;
+
+        return _valueEncoderSource.getValueEncoder(parameterType);
     }
 }
