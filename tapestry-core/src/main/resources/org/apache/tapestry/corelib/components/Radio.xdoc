@@ -59,7 +59,7 @@ public enum CardType
 
             <t:label for="type"/>:
 
-            <t:radiogroup t:id="type" t:encoder="cardTypeEncoder">
+            <t:radiogroup t:id="type">
                 <t:radio t:id="masterCard"/>
                 <t:label for="masterCard"/>
                 <t:radio t:id="visa"/>
@@ -102,11 +102,6 @@ public class Payment
 
     @Persist
     private CardType _type;
-
-    public ValueEncoder getCardTypeEncoder()
-    {
-        return new EnumValueEncoder(CardType.class);  
-    }
 
     public CardType getType() { return _type; }
 
