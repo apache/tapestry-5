@@ -66,9 +66,6 @@ public class RadioGroup implements Field
     private Environment _environment;
 
     @Inject
-    private ValueEncoderSource _valueEncoderSource;
-
-    @Inject
     private Request _request;
 
     @Environmental
@@ -88,7 +85,7 @@ public class RadioGroup implements Field
 
     final ValueEncoder defaultEncoder()
     {
-        return _valueEncoderSource.getEncoderForParameter("value", _resources);
+        return _defaultProvider.defaultValueEncoder("value", _resources);
     }
 
     private static class Setup implements ComponentAction<RadioGroup>

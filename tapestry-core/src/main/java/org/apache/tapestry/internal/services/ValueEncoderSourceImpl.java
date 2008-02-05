@@ -14,13 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.ValueEncoderFactory;
 import org.apache.tapestry.services.ValueEncoderSource;
@@ -38,21 +35,8 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
         _registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
     }
 
-    @SuppressWarnings("unchecked")
-    public ValueEncoder getEncoderForParameter(String parameterName, ComponentResources resources)
-    {
-        notBlank(parameterName, "parameterName");
-        notNull(resources, "resources");
-
-        Class parameterType = resources.getBoundType(parameterName);
-
-        if (parameterType == null) return null;
-
-        return getEncoderForType(parameterType);
-    }
-
     @SuppressWarnings({"unchecked"})
-    public <T> ValueEncoder<T> getEncoderForType(Class<T> type)
+    public <T> ValueEncoder<T> getValueEncoder(Class<T> type)
     {
         Defense.notNull(type, "type");
 

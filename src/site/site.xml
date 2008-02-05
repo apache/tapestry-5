@@ -75,6 +75,7 @@
         <menu name="Developer Info">
             <item name="Environment" href="dev/env.html"/>
             <item name="Release Checklist" href="dev/checklist.html"/>
+            <item name="Bible" href="dev/bible.html"/>
         </menu>
 
         <menu ref="reports"/>

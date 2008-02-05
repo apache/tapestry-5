@@ -39,7 +39,7 @@ import java.util.List;
  * <p/>
  * Instances of this class are not designed to be thread safe, access to an instance should be restricted to a single
  * thread. In fact, the design of this type is to allow stateless singletons in multiple threads to work on
- * thread-specific data (within the ClassTransformation). *
+ * thread-specific data (within the ClassTransformation). 
  * <p/>
  * The majority of methods concern the <em>declared</em> members (field and methods) of a specific class, rather than
  * any fields or methods inherited from a base class.

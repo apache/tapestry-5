@@ -256,6 +256,52 @@ delete-label=Delete user?]]></source>
             </p>
 
 
+            <subsection name="CSS">
+
+                <p>The Grid component is designed to be customized via CSS. As it renders &lt;th&gt;, &lt;tr&gt; and
+                    &lt;td&gt; elements,
+                    it generates CSS class attributes for each element. You can then add customized CSS rules, even
+                    overriding the Tapestry defaults,
+                    to present the Grid as desired.
+                </p>
+
+                <dl>
+                    <dt><em>propertyId</em>-header
+                    </dt>
+                    <dd>Added to &lt;th&gt; elements to allow customization of a particular column's header.</dd>
+
+                    <dt><em>propertyId</em>-cell
+                    </dt>
+                    <dd>Added to &lt;td&gt; elements to allow customization of a particular column's data cells.</dd>
+
+                    <dt>t-first</dt>
+                    <dd>Added to the first &lt;th&gt; and the first &lt;tr&gt; of the &lt;tbody&gt; (the data portion of
+                        the table).
+                    </dd>
+
+                    <dt>t-last</dt>
+                    <dd>Added to the last &lt;th&gt; and the last &lt;tr&gt;.</dd>
+
+                    <dt>t-sort-column-ascending</dt>
+                    <dd>Added to the &lt;th&gt; and all corresponding &lt;td&gt; elements for the column that is the
+                        current sort column (if any,
+                        for ascending sort).
+                    </dd>
+
+                    <dt>t-sort-column-descending</dt>
+                    <dd>As with t-soft-column-ascending, but for a descending sort.</dd>
+
+                </dl>
+
+                <p>
+                    The added CSS classes can get quite verbose; the Grid's lean parameter allows the first two CSS
+                    class attribute values
+                    (the two related to the property for a column) to be omitted. Even in lean mode, the other
+                    CSS class attribute values are rendered.
+                </p>
+
+            </subsection>
+
         </section>
 
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,14 +14,11 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ComponentResourcesCommon;
-import org.apache.tapestry.Field;
+import org.apache.tapestry.*;
 
 /**
  * A service that can be injected into a component to provide common defaults for various
- * parameters.
+ * types of parameters.
  */
 public interface ComponentDefaultProvider
 {
@@ -44,4 +41,14 @@ public interface ComponentDefaultProvider
      * @return the binding, or null if the container does not have a matching property
      */
     Binding defaultBinding(String parameterName, ComponentResources resources);
+
+    /**
+     * Gets or creates a value encoder based on the <em>type</em> of the named parameter.  ValueEncoders are cached based on type.
+     *
+     * @param parameterName the name of the parameter whose type is used to locate a {@link org.apache.tapestry.services.ValueEncoderFactory}
+     * @param resources     the resources of the component, from which parameter and its type are extracted
+     * @return the value encoder, or null if the type of the parameter is not known
+     */
+    ValueEncoder defaultValueEncoder(String parameterName, ComponentResources resources);
+
 }

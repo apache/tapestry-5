@@ -78,7 +78,7 @@ public class ViewUser
                     Rendering out the User object, using a
                     <a href="BeanDisplay.html">BeanDisplay</a>
                     component, is easy, and the template doesn't have to know or
-                    care about the context, it just reads the user property.
+                    care about the page activation context; it just reads the user property.
                 </p>
 
             </subsection>

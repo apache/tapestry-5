@@ -154,7 +154,7 @@ public class ViewUser
             <p>
                 Please refer to the
                 <a href="PageLink.html">PageLink</a>
-                component documentation for an alternate way to manage _user field.
+                component documentation for an alternate way to manage the _user field.
             </p>
 
         </section>

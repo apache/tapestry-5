@@ -32,7 +32,7 @@ public class ContextValueEncoderImpl implements ContextValueEncoder
     {
         Defense.notNull(value, "value");
 
-        ValueEncoder encoder = _valueEncoderSource.getEncoderForType(value.getClass());
+        ValueEncoder encoder = _valueEncoderSource.getValueEncoder(value.getClass());
 
         return encoder.toClient(value);
     }
@@ -42,7 +42,7 @@ public class ContextValueEncoderImpl implements ContextValueEncoder
     {
         Defense.notNull(requiredType, "requiredType");
 
-        ValueEncoder<T> encoder = _valueEncoderSource.getEncoderForType(requiredType);
+        ValueEncoder<T> encoder = _valueEncoderSource.getValueEncoder(requiredType);
 
         return encoder.toValue(clientValue);
     }

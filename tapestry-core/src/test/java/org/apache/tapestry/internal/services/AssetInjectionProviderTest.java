@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,7 +83,7 @@ public class AssetInjectionProviderTest extends InternalBaseTestCase
         // tests for that.
 
         ct
-                .extendConstructor("myField = (java.lang.Object) as.findAsset(br, \"foo.gif\", rez.getLocale());");
+                .extendConstructor("myField = (java.lang.Object) as.getAsset(br, \"foo.gif\", rez.getLocale());");
 
         ct.makeReadOnly(fieldName);
 

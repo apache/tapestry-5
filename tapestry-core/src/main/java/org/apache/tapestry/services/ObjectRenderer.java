@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry.MarkupWriter;
 
 /**
  * A strategy interface used for converting an object into markup that describes that object. This
- * is primarily used in terms of an {@link ExceptionReporter} page.
+ * is primarily used in terms of an {@link org.apache.tapestry.services.ExceptionReporter} page.
  */
 public interface ObjectRenderer<T>
 {

@@ -392,9 +392,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         transformation.extendMethod(eq(signature), codeEq(join(body)));
     }
 
-    protected final void train_findAsset(AssetSource source, Resource root, String path, Locale locale, Asset asset)
+    protected final void train_getAsset(AssetSource source, Resource root, String path, Locale locale, Asset asset)
     {
-        expect(source.findAsset(root, path, locale)).andReturn(asset);
+        expect(source.getAsset(root, path, locale)).andReturn(asset);
     }
 
     protected final void train_findFieldsWithAnnotation(ClassTransformation transformation,
@@ -1024,9 +1024,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(valueEncoder.toClient(value)).andReturn(encoded);
     }
 
-    protected final void train_getEncoderForType(ValueEncoderSource source, Class type, ValueEncoder valueEncoder)
+    protected final void train_getValueEncoder(ValueEncoderSource source, Class type, ValueEncoder valueEncoder)
     {
-        expect(source.getEncoderForType(type)).andReturn(valueEncoder).atLeastOnce();
+        expect(source.getValueEncoder(type)).andReturn(valueEncoder).atLeastOnce();
     }
 
     protected final void train_toValue(ValueEncoder valueEncoder, String clientValue, Object value)

@@ -24,10 +24,7 @@ import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.services.FieldValidatorDefaultSource;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.ValueEncoderFactory;
-import org.apache.tapestry.services.ValueEncoderSource;
+import org.apache.tapestry.services.*;
 import org.apache.tapestry.util.EnumSelectModel;
 
 import java.util.Locale;
@@ -69,6 +66,9 @@ public final class Select extends AbstractField
     private ValueEncoder _encoder;
 
     @Inject
+    private ComponentDefaultProvider _defaultProvider;
+
+    @Inject
     private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
 
     @Inject
@@ -103,9 +103,6 @@ public final class Select extends AbstractField
      */
     @Parameter(required = true, principal = true)
     private Object _value;
-
-    @Inject
-    private ValueEncoderSource _valueEncoderSource;
 
     @Inject
     private FieldValidationSupport _fieldValidationSupport;
@@ -163,7 +160,7 @@ public final class Select extends AbstractField
     @SuppressWarnings("unchecked")
     ValueEncoder defaultEncoder()
     {
-        return _valueEncoderSource.getEncoderForParameter("value", _resources);
+        return _defaultProvider.defaultValueEncoder("value", _resources);
     }
 
     @SuppressWarnings("unchecked")
