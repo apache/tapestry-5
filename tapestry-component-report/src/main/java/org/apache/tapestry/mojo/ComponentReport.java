@@ -178,9 +178,15 @@ public class ComponentReport extends AbstractMavenReport
 
             Sink sink = getSink();
 
+            sink.head();
+            sink.title();
+            sink.text("Component Reference");
+            sink.title_();
+            sink.head_();
+
             sink.section1();
             sink.sectionTitle1();
-            sink.text("Component Index");
+            sink.text("Component Reference");
             sink.sectionTitle1_();
             sink.list();
 
@@ -326,14 +332,15 @@ public class ComponentReport extends AbstractMavenReport
 
         int depth = packageName.split("\\.").length;
 
-        // One extra to account for the "ref" directory.
 
-        for (int i = 0; i <= depth; i++)
+        for (int i = 0; i < depth; i++)
         {
             javadocURL.append("../");
         }
 
-        javadocURL.append(apidocs).append("/").append(toPath(className)).append(".html");
+        String pathToRefRoot = javadocURL.toString();
+
+        javadocURL.append("../").append(apidocs).append("/").append(toPath(className)).append(".html");
 
         addLink(addChild(section, "p"), javadocURL.toString(), "[JavaDoc]");
 
@@ -401,7 +408,7 @@ public class ComponentReport extends AbstractMavenReport
 
         addChild(body, "hr");
 
-        addLink(addChild(body, "p"), "index.html", "Back to index");
+        addLink(addChild(body, "p"), pathToRefRoot + "index.html", "Back to index");
 
         Document document = new Document(root);
 
