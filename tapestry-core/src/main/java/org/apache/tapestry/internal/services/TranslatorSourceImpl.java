@@ -30,7 +30,7 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
 
     private final StrategyRegistry<Translator> _registry;
 
-    public TranslatorSourceImpl(final Map<String, Translator> translators)
+    public TranslatorSourceImpl(Map<String, Translator> translators)
     {
         _translators = translators;
 
@@ -41,7 +41,7 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
             typeToTranslator.put(t.getType(), t);
         }
 
-        _registry = StrategyRegistry.newInstance(Translator.class, typeToTranslator);
+        _registry = StrategyRegistry.newInstance(Translator.class, typeToTranslator, true);
     }
 
     public Translator get(String name)
@@ -62,7 +62,6 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
 
         if (result == null)
         {
-
             List<String> names = CollectionFactory.newList();
 
             for (Class type : _registry.getTypes())
