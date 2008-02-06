@@ -190,6 +190,58 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
         {
             assertEquals(ex.getMessage(), expectedMessage);
         }
+    }
 
+    @Test
+    public void find_by_type()
+    {
+        Translator t = mockTranslator();
+        Map<String, Translator> configuration = CollectionFactory.newMap();
+
+        configuration.put("string", t);
+
+        train_getType(t, String.class);
+
+        replay();
+
+        TranslatorSource source = new TranslatorSourceImpl(configuration);
+
+        assertSame(source.getByType(String.class), t);
+        assertSame(source.findByType(String.class), t);
+        assertNull(source.findByType(Integer.class));
+
+        verify();
+    }
+
+    @Test
+    public void get_by_type_not_found()
+    {
+        Translator string = mockTranslator();
+        Translator bool = mockTranslator();
+
+        Map<String, Translator> configuration = CollectionFactory.newMap();
+
+        configuration.put("string", string);
+        configuration.put("boolean", bool);
+
+        train_getType(string, String.class);
+        train_getType(bool, Boolean.class);
+
+        replay();
+
+        TranslatorSource source = new TranslatorSourceImpl(configuration);
+
+        try
+        {
+            source.getByType(Integer.class);
+            unreachable();
+        }
+        catch (IllegalArgumentException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "No translator is defined for type java.lang.Integer.  Registered types: java.lang.Boolean, java.lang.String.");
+        }
+
+        verify();
     }
 }
