@@ -1,6 +1,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 <!-- 
-   Copyright 2007 The Apache Software Foundation
+   Copyright 2007, 2008 The Apache Software Foundation
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
    limitations under the License.
 -->
 
-<suite name="Tapestry IOC" parallel="false" annotations="1.5" verbose="0">
-    <test name="Tapestry IOC">
+<suite name="Tapestry IOC" thread-count="10" timeOut="60000" annotations="1.5" verbose="2" parallel="tests">
+    <test name="Public APIs">
         <packages>
             <package name="org.apache.tapestry.ioc"/>
             <package name="org.apache.tapestry.ioc.services"/>
             <package name="org.apache.tapestry.ioc.util"/>
+        </packages>
+    </test>
+    <test name="Internals">
+        <packages>
             <package name="org.apache.tapestry.ioc.internal"/>
             <package name="org.apache.tapestry.ioc.internal.services"/>
             <package name="org.apache.tapestry.ioc.internal.util"/>

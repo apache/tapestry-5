@@ -18,9 +18,9 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.TranslatorDefaultSource;
 
 import java.util.Locale;
 
@@ -78,9 +78,6 @@ public abstract class AbstractTextField extends AbstractField
     private ValidationTracker _tracker;
 
     @Inject
-    private TranslatorDefaultSource _translatorDefaultSource;
-
-    @Inject
     private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
 
     @Inject
@@ -99,19 +96,16 @@ public abstract class AbstractTextField extends AbstractField
     @Mixin
     private RenderDisabled _renderDisabled;
 
+    @Inject
+    private ComponentDefaultProvider _defaultProvider;
+
     /**
-     * Computes a default value for the "translate" parameter using {@link TranslatorDefaultSource}.
+     * Computes a default value for the "translate" parameter using
+     * {@link org.apache.tapestry.services.ComponentDefaultProvider#defaultTranslator(String, org.apache.tapestry.ComponentResources)}.
      */
     final Translator defaultTranslate()
     {
-        // Because the value parameter is a principal parameter, we know that it will be bound (even
-        // via its default parameter) by the time this method is invoked.
-
-        Class type = _resources.getBoundType("value");
-
-        if (type == null) return null;
-
-        return _translatorDefaultSource.get(type);
+        return _defaultProvider.defaultTranslator("value", _resources);
     }
 
     /**

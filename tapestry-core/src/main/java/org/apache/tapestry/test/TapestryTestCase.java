@@ -871,9 +871,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(source.create(beanClass, filterReadOnly, containerResources)).andReturn(model);
     }
 
-    protected final void train_getBoundType(ComponentResources resources, Class type)
+    protected final void train_getBoundType(ComponentResources resources, String parameterName, Class type)
     {
-        expect(resources.getBoundType("object")).andReturn(type);
+        expect(resources.getBoundType(parameterName)).andReturn(type);
     }
 
     protected final BeanModel mockBeanModel()

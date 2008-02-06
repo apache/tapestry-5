@@ -30,6 +30,9 @@ import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.InternalRegistry;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
+import org.apache.tapestry.ioc.services.PropertyAccess;
+import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
@@ -38,6 +41,7 @@ import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.TapestryModule;
+import org.apache.tapestry.services.TranslatorSource;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
@@ -606,5 +610,23 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final void train_getCount(EventContext context, int count)
     {
         expect(context.getCount()).andReturn(count).atLeastOnce();
+    }
+
+    protected final TranslatorSource mockTranslatorSource()
+    {
+        return newMock(TranslatorSource.class);
+    }
+
+    protected final void train_getPropertyAdapter(ClassPropertyAdapter classPropertyAdapter,
+                                                  String propertyName, PropertyAdapter propertyAdapter)
+    {
+        expect(classPropertyAdapter.getPropertyAdapter(propertyName)).andReturn(propertyAdapter)
+                .atLeastOnce();
+    }
+
+    protected final void train_getAdapter(PropertyAccess access, Object object,
+                                          ClassPropertyAdapter classPropertyAdapter)
+    {
+        expect(access.getAdapter(object)).andReturn(classPropertyAdapter);
     }
 }

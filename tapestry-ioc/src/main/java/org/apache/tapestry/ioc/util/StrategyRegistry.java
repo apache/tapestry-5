@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,9 +14,11 @@
 
 package org.apache.tapestry.ioc.util;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.InheritanceSearch;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -145,6 +147,8 @@ public final class StrategyRegistry<A>
             if (result != null) return result;
         }
 
+        if (_allowNonMatch) return null;
+
         // Report the error. These things really confused the hell out of people in Tap4, so we're
         // going the extra mile on the exception message.
 
@@ -152,10 +156,16 @@ public final class StrategyRegistry<A>
         for (Class t : _registrations.keySet())
             names.add(t.getName());
 
-        if (_allowNonMatch) return null;
-
         throw new IllegalArgumentException(UtilMessages
                 .noStrategyAdapter(type, _adapterType, names));
+    }
+
+    /**
+     * Returns the registered types for which adapters are available.
+     */
+    public Collection<Class> getTypes()
+    {
+        return CollectionFactory.newList(_registrations.keySet());
     }
 
     @Override

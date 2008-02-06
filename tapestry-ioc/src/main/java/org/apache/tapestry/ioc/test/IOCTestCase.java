@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
-import org.apache.tapestry.ioc.services.MasterObjectProvider;
-import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.ioc.services.ThreadLocale;
-import org.apache.tapestry.ioc.services.TypeCoercer;
+import org.apache.tapestry.ioc.services.*;
 import static org.easymock.EasyMock.isA;
 import org.slf4j.Logger;
 
@@ -375,5 +372,20 @@ public class IOCTestCase extends TestBase
     protected final IntermediateType newIntermediateType()
     {
         return newMock(IntermediateType.class);
+    }
+
+    protected final PropertyAdapter mockPropertyAdapter()
+    {
+        return newMock(PropertyAdapter.class);
+    }
+
+    protected final ClassPropertyAdapter mockClassPropertyAdapter()
+    {
+        return newMock(ClassPropertyAdapter.class);
+    }
+
+    protected final PropertyAccess mockPropertyAccess()
+    {
+        return newMock(PropertyAccess.class);
     }
 }

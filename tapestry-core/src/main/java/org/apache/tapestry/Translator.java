@@ -37,6 +37,13 @@ public interface Translator<T>
     String toClient(T value);
 
     /**
+     * Returns the type of  the server-side value.
+     *
+     * @return a type
+     */
+    Class<T> getType();
+
+    /**
      * Converts a submitted request value into an appropriate server side value.
      *
      * @param clientValue to convert to a server value; this will not be null, but may be blank

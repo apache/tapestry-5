@@ -20,6 +20,11 @@ import org.apache.tapestry.ioc.Messages;
 
 public class StringTranslator implements Translator<String>
 {
+    public Class<String> getType()
+    {
+        return String.class;
+    }
+
     /**
      * Returns the client value (or null, if the client value is blank).
      */

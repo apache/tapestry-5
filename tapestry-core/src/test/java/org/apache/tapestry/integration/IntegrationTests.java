@@ -1562,4 +1562,33 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(
                 "Render queue error in BeginRender[RenderPhaseMethodExceptionDemo]: java.sql.SQLException: Simulated JDBC exception while rendering.");
     }
+
+    /**
+     * TAPESTRY-2085
+     */
+    @Test
+    public void wrapper_types_with_text_field()
+    {
+        start("TextField Wrapper Types", "clear");
+
+        assertFieldValue("count", "");
+        assertText("value", "null");
+
+        type("count", "0");
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("count", "0");
+        assertText("value", "0");
+
+        type("count", "1");
+        clickAndWait(SUBMIT);
+
+        assertFieldValue("count", "1");
+        assertText("value", "1");
+
+        clickAndWait("link=clear");
+
+        assertFieldValue("count", "");
+        assertText("value", "null");
+    }
 }

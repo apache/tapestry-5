@@ -18,10 +18,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class StrategyRegistryTest extends IOCTestCase
 {
@@ -51,6 +48,31 @@ public class StrategyRegistryTest extends IOCTestCase
                     ex.getMessage(),
                     "No adapter from type java.util.Set to type java.lang.Runnable is available (registered types are java.util.List, java.util.Map).");
         }
+
+        verify();
+    }
+
+    @Test
+    public void get_types()
+    {
+
+        Runnable r1 = mockRunnable();
+        Runnable r2 = mockRunnable();
+
+        replay();
+        Map<Class, Runnable> registrations = newMap();
+
+        registrations.put(List.class, r1);
+        registrations.put(Map.class, r2);
+
+        StrategyRegistry<Runnable> r = StrategyRegistry.newInstance(Runnable.class, registrations);
+
+
+        Collection<Class> types = r.getTypes();
+
+        assertEquals(types.size(), 2);
+        assertTrue(types.contains(List.class));
+        assertTrue(types.contains(Map.class));
 
         verify();
     }

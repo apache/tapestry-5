@@ -23,6 +23,11 @@ import org.apache.tapestry.ioc.Messages;
  */
 public final class IntegerTranslator implements Translator<Integer>
 {
+    public Class<Integer> getType()
+    {
+        return Integer.class;
+    }
+
     /**
      * Parses blank values to null, otherwise parses the client value to an integer.
      *

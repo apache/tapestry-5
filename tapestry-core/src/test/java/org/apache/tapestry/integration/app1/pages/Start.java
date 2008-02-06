@@ -73,6 +73,8 @@ public class Start
 
             new Item("instancemixin", "InstanceMixin", "mixin added to a particular component instance"),
 
+            new Item("TextFieldWrapperTypeDemo", "TextField Wrapper Types",
+                     "use of TextField to edit numeric wrapper types (not primitives) "),
 
             new Item("EnvironmentalDemo", "Environmental Annotation Usage",
                      "Storing and retrieving Environmental values"),
