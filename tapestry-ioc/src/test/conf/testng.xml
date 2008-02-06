@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 
-<suite name="Tapestry IOC" thread-count="10" timeOut="60000" annotations="1.5" verbose="2" parallel="tests">
+<suite name="Tapestry IOC" thread-count="10" annotations="1.5" verbose="2" parallel="tests">
     <test name="Public APIs">
         <packages>
             <package name="org.apache.tapestry.ioc"/>

@@ -15,7 +15,7 @@
    limitations under the License.
 -->
 
-<suite name="Tapestry Core" thread-count="10" timeOut="60000" annotations="1.5" verbose="2" parallel="tests">
+<suite name="Tapestry Core" thread-count="10" annotations="1.5" verbose="2" parallel="tests">
     <test name="Integration Tests">
         <packages>
             <package name="org.apache.tapestry.integration"/>
