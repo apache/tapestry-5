@@ -28,12 +28,8 @@
                     iterate over those page names and store each into its value parameter.
                 </p>
 
-                <p>Often, the value parameter will be bound to a writable property of the container,
-                    but here we are using the "var:" binding prefix to store the page name into
-                    a temporary render variable.
-                </p>
 
-
+                
             </subsection>
 
 
@@ -211,7 +207,7 @@ public class EditOrder
                 </p>
 
                 <p>
-                    Accounding for those situations would largely be encapsulated inside
+                    Accounting for those situations would largely be encapsulated inside
                     the PrimeryKeyEncoder instance.
                 </p>
 

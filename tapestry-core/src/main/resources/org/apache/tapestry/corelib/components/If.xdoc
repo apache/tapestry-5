@@ -40,8 +40,7 @@
 
             <dl>
                 <dt>String</dt>
-                <dd>True if non-blank</dd>
-
+                <dd>True if non-blank and not the literal string "false" (case insensitive)</dd>
                 <dt>Number</dt>
                 <dd>True if non-zero</dd>
                 <dt>Collection</dt>

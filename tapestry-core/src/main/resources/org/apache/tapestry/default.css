@@ -269,6 +269,7 @@ DIV.t-palette {
 
 DIV.t-palette SELECT {
     margin-bottom: 2px;
+    width: 200px;
 }
 
 DIV.t-palette-title {
