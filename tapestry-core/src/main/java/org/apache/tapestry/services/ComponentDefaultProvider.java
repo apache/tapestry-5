@@ -51,4 +51,13 @@ public interface ComponentDefaultProvider
      */
     ValueEncoder defaultValueEncoder(String parameterName, ComponentResources resources);
 
+    /**
+     * Provides a translator based on the bound parameter type, if possible.
+     *
+     * @param parameterName
+     * @param resources
+     * @return the translator, or null
+     */
+    Translator defaultTranslator(String parameterName, ComponentResources resources);
+
 }

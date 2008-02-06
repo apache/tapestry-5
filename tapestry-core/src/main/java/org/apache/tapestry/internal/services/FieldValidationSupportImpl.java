@@ -20,6 +20,7 @@ import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.ioc.util.ExceptionUtils;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
@@ -31,9 +32,12 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
     private final ValidationMessagesSource _messagesSource;
 
-    public FieldValidationSupportImpl(ValidationMessagesSource messagesSource)
+    private final TypeCoercer _typeCoercer;
+
+    public FieldValidationSupportImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer)
     {
         _messagesSource = messagesSource;
+        _typeCoercer = typeCoercer;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -69,14 +73,20 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         Object effectiveValue = value;
 
         if (effectiveValue == null)
+        {
             effectiveValue = nullFieldStrategy.replaceToClient();
 
-        // We don't translate null.
+            // Don't try to coerce or translate null.
 
-        if (effectiveValue == null)
-            return null;
+            if (effectiveValue == null) return null;
+        }
 
-        return translator.toClient(effectiveValue);
+        // And now, whether its a value from a bound property, or from the null field strategy,
+        // get it into the right format for the translator and let it translate.
+
+        Object coerced = _typeCoercer.coerce(effectiveValue, translator.getType());
+
+        return translator.toClient(coerced);
 
     }
 
@@ -92,12 +102,9 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         if (InternalUtils.isBlank(effectiveValue))
         {
-
             effectiveValue = nullFieldStrategy.replaceFromClient();
 
-            if (effectiveValue == null)
-                throw new NullPointerException(
-                        String.format("Client value provided by %s is null.", nullFieldStrategy));
+            if (effectiveValue == null) return null;
         }
 
         final Holder<Object> resultHolder = Holder.create();
@@ -145,6 +152,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         throw outerException;
     }
 
+    @SuppressWarnings({"unchecked"})
     public void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException
     {

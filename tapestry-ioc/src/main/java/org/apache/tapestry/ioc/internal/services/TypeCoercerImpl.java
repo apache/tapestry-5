@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -205,6 +205,8 @@ public class TypeCoercerImpl implements TypeCoercer
     @SuppressWarnings("unchecked")
     private Coercion findOrCreateCoercion(Class sourceType, Class targetType)
     {
+        if (sourceType == void.class) return searchForNullCoercion(targetType);
+
         // These are instance variables because this method may be called concurrently.
         // On a true race, we may go to the work of seeking out and/or fabricating
         // a tuple twice, but it's more likely that different threads are looking
@@ -238,10 +240,6 @@ public class TypeCoercerImpl implements TypeCoercer
             queueIntermediates(sourceType, tuple, consideredTuples, queue);
         }
 
-        // A default rule for coercing nulls if nothing better is found.
-
-        if (sourceType == void.class) return COERCION_NULL_TO_OBJECT;
-
         // Not found anywhere. Identify the source and target type and a (sorted) list of
         // all the known coercions.
 
@@ -249,7 +247,36 @@ public class TypeCoercerImpl implements TypeCoercer
                 sourceType,
                 targetType,
                 buildCoercionCatalog()));
+    }
 
+    /**
+     * Coercion from null is special; we match based on the target type and its not
+     * a spanning search. In many cases, we return a pass-thru that leaves the value as null.
+     *
+     * @param targetType desired type
+     * @return the coercion
+     */
+    private Coercion searchForNullCoercion(Class targetType)
+    {
+        List<CoercionTuple> tuples = _sourceTypeToTuple.get(void.class);
+
+        // We know it will never be null, because we make contributions
+        // to ensure this, but a little check doesn't hurt.
+
+        if (tuples != null)
+        {
+            for (CoercionTuple tuple : tuples)
+            {
+                Class tupleTargetType = tuple.getTargetType();
+
+                if (targetType.equals(tupleTargetType)) return tuple.getCoercion();
+            }
+        }
+
+        // Typical case: no match, this coercion passes the null through
+        // as null.
+
+        return COERCION_NULL_TO_OBJECT;
     }
 
     /**
@@ -288,6 +315,11 @@ public class TypeCoercerImpl implements TypeCoercer
                 queue.addLast(tuple);
                 consideredTuples.add(tuple);
             }
+
+            // Don't pull in Object -> type coercions when doing
+            // a search from null.
+
+            if (sourceType == void.class) return;
         }
     }
 

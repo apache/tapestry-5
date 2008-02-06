@@ -73,7 +73,6 @@ public final class TapestryModule
         binder.bind(ApplicationStatePersistenceStrategySource.class,
                     ApplicationStatePersistenceStrategySourceImpl.class);
         binder.bind(BindingSource.class, BindingSourceImpl.class);
-        binder.bind(TranslatorSource.class, TranslatorSourceImpl.class);
         binder.bind(PersistentFieldManager.class, PersistentFieldManagerImpl.class);
         binder.bind(FieldValidatorSource.class, FieldValidatorSourceImpl.class);
         binder.bind(ApplicationGlobals.class, ApplicationGlobalsImpl.class);
@@ -543,21 +542,6 @@ public final class TapestryModule
         configuration.add("Localization", new LocalizationFilter(localizationSetter), "after:ErrorFilter");
     }
 
-
-    /**
-     * Contributes the basic set of default translators: <ul> <li>String</li> <li>Byte</li> <li>Integer</li>
-     * <li>Long</li> <li>Float</li> <li>Double</li> </li>
-     */
-    public static void contributeTranslatorDefaultSource(MappedConfiguration<Class, Translator> configuration)
-    {
-        configuration.add(String.class, new StringTranslator());
-        configuration.add(Byte.class, new ByteTranslator());
-        configuration.add(Integer.class, new IntegerTranslator());
-        configuration.add(Long.class, new LongTranslator());
-        configuration.add(Float.class, new FloatTranslator());
-        configuration.add(Double.class, new DoubleTranslator());
-    }
-
     /**
      * Contributes the basic set of named translators: <ul>  <li>string</li>  <li>byte</li> <li>integer</li>
      * <li>long</li> <li>float</li> <li>double</li> </ul>
@@ -1005,10 +989,10 @@ public final class TapestryModule
         return service;
     }
 
-    public TranslatorDefaultSource buildTranslatorDefaultSource(ServiceResources resources)
+    public TranslatorSource buildTranslatorSource(ServiceResources resources)
     {
-        TranslatorDefaultSourceImpl service = resources
-                .autobuild(TranslatorDefaultSourceImpl.class);
+        TranslatorSourceImpl service = resources
+                .autobuild(TranslatorSourceImpl.class);
 
         _componentInstantiatorSource.addInvalidationListener(service);
 

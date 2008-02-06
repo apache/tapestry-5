@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.ValueEncoder;
+import org.apache.tapestry.*;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
@@ -26,6 +23,7 @@ import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.TranslatorSource;
 import org.apache.tapestry.services.ValueEncoderSource;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
@@ -36,12 +34,15 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
     private final ValueEncoderSource _valueEncoderSource;
 
+    private final TranslatorSource _translatorSource;
+
     public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource,
-                                        ValueEncoderSource valueEncoderSource)
+                                        ValueEncoderSource valueEncoderSource, TranslatorSource translatorSource)
     {
         _propertyAccess = propertyAccess;
         _bindingSource = bindingSource;
         _valueEncoderSource = valueEncoderSource;
+        _translatorSource = translatorSource;
     }
 
     public String defaultLabel(ComponentResources resources)
@@ -93,5 +94,17 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         if (parameterType == null) return null;
 
         return _valueEncoderSource.getValueEncoder(parameterType);
+    }
+
+    public Translator defaultTranslator(String parameterName, ComponentResources resources)
+    {
+        notBlank(parameterName, "parameterName");
+        notNull(resources, "resources");
+
+        Class type = resources.getBoundType(parameterName);
+
+        if (type == null) return null;
+
+        return _translatorSource.findByType(type);
     }
 }

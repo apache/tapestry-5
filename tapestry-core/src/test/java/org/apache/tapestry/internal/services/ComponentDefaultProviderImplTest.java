@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.Translator;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
@@ -25,6 +26,7 @@ import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
+import org.apache.tapestry.services.TranslatorSource;
 import org.testng.annotations.Test;
 
 public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
@@ -48,7 +50,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, null);
 
         assertSame(provider.defaultLabel(resources), message);
 
@@ -72,7 +74,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null);
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, null);
 
         assertEquals(provider.defaultLabel(resources), "My Field");
 
@@ -88,8 +90,8 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         ComponentResources resources = mockComponentResources();
         Component container = mockComponent();
-        PropertyAccess access = newPropertyAccess();
-        ClassPropertyAdapter classPropertyAdapter = newClassPropertyAdapter();
+        PropertyAccess access = mockPropertyAccess();
+        ClassPropertyAdapter classPropertyAdapter = mockClassPropertyAdapter();
         BindingSource bindingSource = mockBindingSource();
 
         train_getId(resources, id);
@@ -100,7 +102,8 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null);
+        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null,
+                                                                           null);
 
         assertNull(source.defaultBinding(parameterName, resources));
 
@@ -116,9 +119,9 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         ComponentResources resources = mockComponentResources();
         Component container = mockComponent();
-        PropertyAccess access = newPropertyAccess();
-        ClassPropertyAdapter classPropertyAdapter = newClassPropertyAdapter();
-        PropertyAdapter propertyAdapter = newPropertyAdapter();
+        PropertyAccess access = mockPropertyAccess();
+        ClassPropertyAdapter classPropertyAdapter = mockClassPropertyAdapter();
+        PropertyAdapter propertyAdapter = mockPropertyAdapter();
         BindingSource bindingSource = mockBindingSource();
         Binding binding = mockBinding();
         ComponentResources containerResources = mockComponentResources();
@@ -141,38 +144,49 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null);
+        ComponentDefaultProvider source = new ComponentDefaultProviderImpl(access, bindingSource, null,
+                                                                           null);
 
         assertSame(source.defaultBinding(parameterName, resources), binding);
 
         verify();
     }
 
-    protected final PropertyAdapter newPropertyAdapter()
+    @Test
+    public void default_translator_property_type_is_null()
     {
-        return newMock(PropertyAdapter.class);
+        TranslatorSource source = mockTranslatorSource();
+        ComponentResources resources = mockComponentResources();
+
+        train_getBoundType(resources, "object", null);
+
+        replay();
+
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, source);
+
+        assertNull(provider.defaultTranslator("object", resources));
+
+        verify();
     }
 
-    protected final ClassPropertyAdapter newClassPropertyAdapter()
+    @Test
+    public void default_translator()
     {
-        return newMock(ClassPropertyAdapter.class);
+        TranslatorSource source = mockTranslatorSource();
+        ComponentResources resources = mockComponentResources();
+        Translator translator = mockTranslator();
+
+        train_getBoundType(resources, "object", Integer.class);
+
+        expect(source.findByType(Integer.class)).andReturn(translator);
+
+        replay();
+
+        ComponentDefaultProvider provider = new ComponentDefaultProviderImpl(null, null, null, source);
+
+        assertSame(provider.defaultTranslator("object", resources), translator);
+
+        verify();
     }
 
-    protected final PropertyAccess newPropertyAccess()
-    {
-        return newMock(PropertyAccess.class);
-    }
-
-    protected final void train_getPropertyAdapter(ClassPropertyAdapter classPropertyAdapter,
-                                                  String propertyName, PropertyAdapter propertyAdapter)
-    {
-        expect(classPropertyAdapter.getPropertyAdapter(propertyName)).andReturn(propertyAdapter)
-                .atLeastOnce();
-    }
-
-    protected final void train_getAdapter(PropertyAccess access, Object object,
-                                          ClassPropertyAdapter classPropertyAdapter)
-    {
-        expect(access.getAdapter(object)).andReturn(classPropertyAdapter);
-    }
 }

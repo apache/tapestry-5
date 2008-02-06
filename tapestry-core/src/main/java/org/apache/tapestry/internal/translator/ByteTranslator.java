@@ -25,6 +25,11 @@ public class ByteTranslator implements Translator<Byte>
         return value.toString();
     }
 
+    public Class<Byte> getType()
+    {
+        return Byte.class;
+    }
+
     public Byte parseClient(String clientValue, Messages messages) throws ValidationException
     {
         try

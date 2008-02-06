@@ -32,6 +32,14 @@ Type Coercion
    * Long --\> Integer
    
    []
+
+Coercing from null
+
+  Coercing from null is special; it is not a spanning search as with the other types.
+  Either there is a specific coercion from null to the desired type, or no coercion
+  takes places (and the coerced value is null).
+
+  The only built-in null coercion is from null to boolean (which is always false).
    
 Contributing new Coercions
 

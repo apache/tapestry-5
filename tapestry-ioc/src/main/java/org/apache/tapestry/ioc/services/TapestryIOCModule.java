@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -100,16 +100,10 @@ public final class TapestryIOCModule
      * Byte</li> <li>Long to Short</li> <li>Long to Integer</li> <li>Double to Long</li> <li>Double to Float</li>
      * <li>Float to Double</li> <li>Long to Double</li> <li>String to Boolean ("false" is always false, other non-blank
      * strings are true)</li> <li>Long to Boolean (true if long value is non zero)</li> <li>Null to Boolean (always
-     * false)</li> <li>Null to String (still null)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to
-     * List</li> <li>primitive[] to List</li> <li>Object to List (by wrapping as a singleton list)</li> <li>Null to List
-     * (still null)</li> <li>String to File</li> <li>String to {@link org.apache.tapestry.ioc.util.TimeInterval}</li>
+     * false)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to
+     * List</li> <li>primitive[] to List</li> <li>Object to List (by wrapping as a singleton list)</li>  <li>String to File</li>
+     * <li>String to {@link org.apache.tapestry.ioc.util.TimeInterval}</li>
      * <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to Long</li> </ul>
-     * <p/>
-     * The coercion of String to Long, BigInteger, Double and BigDecimal causes some minor headaches when attempting to
-     * add coercions from null to various numeric types: we end up having to have many more coercions for the null case
-     * to prevent null --> String --> BigInteger. This may indicate a weakness in the algorithm, in that coercions
-     * through String should be considered "weaker" than other coercions. Alternately, coercions from null may need to
-     * be handled specially. We'll see if we tweak the algorithm in the future.
      */
     @SuppressWarnings("unchecked")
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
@@ -119,28 +113,6 @@ public final class TapestryIOCModule
             public String coerce(Object input)
             {
                 return input.toString();
-            }
-        });
-
-        // This is necessary, otherwise we get a failure because void --> Object : Object --> String
-        // throws an NPE
-
-        add(configuration, void.class, String.class, new Coercion<Void, String>()
-        {
-            public String coerce(Void input)
-            {
-                return null;
-            }
-        });
-
-        // This keeps a null -> List from being null -> Object : Object -> List (i.e., an empty List
-        // of a single null).
-
-        add(configuration, void.class, List.class, new Coercion<Void, List>()
-        {
-            public List coerce(Void input)
-            {
-                return null;
             }
         });
 

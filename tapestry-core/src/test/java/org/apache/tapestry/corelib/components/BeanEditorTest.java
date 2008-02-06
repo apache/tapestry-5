@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class BeanEditorTest extends TapestryTestCase
         BeanModelSource source = mockBeanModelSource();
         BeanModel model = mockBeanModel();
 
-        train_getBoundType(resources, RegistrationData.class);
+        train_getBoundType(resources, "object", RegistrationData.class);
 
         train_getContainerResources(overrides, containerResources);
 
@@ -62,7 +62,7 @@ public class BeanEditorTest extends TapestryTestCase
         ComponentResources resources = mockComponentResources();
         Location l = mockLocation();
 
-        train_getBoundType(resources, Runnable.class);
+        train_getBoundType(resources, "object", Runnable.class);
 
         train_getCompleteId(resources, "Foo.bar");
 

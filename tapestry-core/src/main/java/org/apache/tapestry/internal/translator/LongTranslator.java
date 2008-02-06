@@ -23,6 +23,11 @@ import org.apache.tapestry.ioc.Messages;
  */
 public class LongTranslator implements Translator<Long>
 {
+    public Class<Long> getType()
+    {
+        return Long.class;
+    }
+
     /**
      * Parses blank values to null, otherwise parses the client value to a long
      *

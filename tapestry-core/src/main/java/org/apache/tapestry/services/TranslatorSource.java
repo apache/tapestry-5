@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,4 +29,23 @@ public interface TranslatorSource
      * @throws RuntimeException if no translator is configured for the provided name
      */
     Translator get(String name);
+
+    /**
+     * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained via {@link
+     * org.apache.tapestry.Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
+     *
+     * @param valueType the type of value for which a default translator is needed
+     * @return the matching translator, or null if no match can be found
+     */
+    Translator findByType(Class valueType);
+
+    /**
+     * Finds a {@link Translator} that is appropriate to the given type, which is usually obtained via {@link
+     * org.apache.tapestry.Binding#getBindingType()}. Performs an inheritanced-based search for the best match.
+     *
+     * @param valueType the type of value for which a default translator is needed
+     * @return the matching translator
+     * @throws IllegalArgumentException if no known validator matches the provided type
+     */
+    Translator getByType(Class valueType);
 }

@@ -1,4 +1,4 @@
-// Copyright  2008 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,28 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal;
+package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.NullFieldStrategy;
+import org.apache.tapestry.annotations.Persist;
 
-/**
- * Default strategy, which is to do nothing: null values stay null.
- */
-public class DefaultNullFieldStrategy implements NullFieldStrategy
+public class TextFieldWrapperTypeDemo
 {
-    /**
-     * Returns null.
-     */
-    public Object replaceToClient()
+    @Persist
+    private Integer _count;
+
+    public Integer getCount()
     {
-        return null;
+        return _count;
     }
 
-    /**
-     * Returns the empty string.
-     */
-    public String replaceFromClient()
+    public void setCount(Integer count)
     {
-        return null;
+        _count = count;
     }
+
+    public boolean isCountNull() { return _count == null; }
+
+    void onActionFromClear() { _count = null; }
 }

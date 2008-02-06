@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -92,9 +92,6 @@ public class PropertyEditor
     private BeanModel _model;
 
     @Inject
-    private TranslatorDefaultSource _translatorDefaultSource;
-
-    @Inject
     private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
 
     @Inject
@@ -116,6 +113,9 @@ public class PropertyEditor
     private FormSupport _formSupport;
 
     private PropertyModel _propertyModel;
+
+    @Inject
+    private TranslatorSource _translatorSource;
 
     /**
      * Creates a {@link PropertyEditContext} and pushes it onto the {@link Environment} stack.
@@ -153,7 +153,7 @@ public class PropertyEditor
 
             public Translator getTranslator()
             {
-                return _translatorDefaultSource.get(_propertyModel.getPropertyType());
+                return _translatorSource.getByType(_propertyModel.getPropertyType());
             }
 
             public FieldValidator getValidator(Field field)

@@ -44,4 +44,9 @@ public class DoubleTranslator implements Translator<Double>
     {
         return value.toString();
     }
+
+    public Class<Double> getType()
+    {
+        return Double.class;
+    }
 }

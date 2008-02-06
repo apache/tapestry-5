@@ -16,17 +16,27 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.corelib.internal.InternalMessages;
+import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.ValidationMessagesSource;
-import org.apache.tapestry.test.TapestryTestCase;
 import org.easymock.EasyMock;
 import org.easymock.IAnswer;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Locale;
 
-public class FieldValidationSupportImplTest extends TapestryTestCase
+public class FieldValidationSupportImplTest extends InternalBaseTestCase
 {
+    private TypeCoercer _typeCoercer;
+
+    @BeforeClass
+    public void setup()
+    {
+        _typeCoercer = getService(TypeCoercer.class);
+    }
+
 
     @SuppressWarnings({"unchecked"})
     @Test
@@ -62,7 +72,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
         replay();
 
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -95,7 +105,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -136,7 +146,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         try
         {
@@ -173,7 +183,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         try
         {
@@ -212,7 +222,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         Object actual = support.parseClient(clientValue, resources, translator, nullFieldStrategy);
 
@@ -225,11 +235,13 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
     @Test
     public void to_client_via_translator()
     {
-        Object value = new Object();
+        Object value = new Integer(99);
         ComponentResources resources = mockComponentResources();
         Translator translator = mockTranslator();
         ValidationMessagesSource source = mockValidationMessagesSource();
         NullFieldStrategy nullFieldStrategy = mockNullFieldStrategy();
+
+        expect(translator.getType()).andReturn(Integer.class);
 
         String clientValue = "abracadabra";
 
@@ -241,7 +253,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
@@ -281,7 +293,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, null);
 
         String actual = support.toClient(value, resources, translator, nullFieldStrategy);
 
@@ -319,7 +331,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, null);
 
         try
         {
@@ -358,7 +370,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
         support.validate(value, resources, fv);
 
@@ -388,7 +400,7 @@ public class FieldValidationSupportImplTest extends TapestryTestCase
 
         replay();
 
-        FieldValidationSupport support = new FieldValidationSupportImpl(source);
+        FieldValidationSupport support = new FieldValidationSupportImpl(source, _typeCoercer);
 
 
         try

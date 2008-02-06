@@ -20,6 +20,11 @@ import org.apache.tapestry.ioc.Messages;
 
 public class FloatTranslator implements Translator<Float>
 {
+    public Class<Float> getType()
+    {
+        return Float.class;
+    }
+
     public String toClient(Float value)
     {
         return value.toString();

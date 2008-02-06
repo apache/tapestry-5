@@ -398,4 +398,10 @@ class ServicesMessages
     {
         return MESSAGES.format("unknown-null-field-strategy-name", name, InternalUtils.joinSorted(names));
     }
+
+    public static String noTranslatorForType(Class valueType, Collection<String> typeNames)
+    {
+        return MESSAGES.format("no-translator-for-type", ClassFabUtils.toJavaClassName(valueType),
+                               InternalUtils.joinSorted(typeNames));
+    }
 }
