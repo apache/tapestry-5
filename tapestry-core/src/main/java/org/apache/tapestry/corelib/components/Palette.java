@@ -49,20 +49,19 @@ import java.util.Set;
  * addition, two extra buttons appear to move items up and down within the selected list.
  * <p/>
  * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the
- * columns, etc. By default, the &lt;select&gt; element's widths are driven by the length of the
- * longest &lt;option&gt;, and it is common to override this to a fixed value:
+ * columns, etc. By default, the &lt;select&gt; element's widths are 200px, and  it is common to override this to a specific
+ * value:
  * <p/>
  * <pre>
  * &lt;style&gt;
  * DIV.t-palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
+ * <p>
+ * You'll want to ensure that both &lt;select&gt; in each column is the same width, otherwise the display will update poorly
+ * as options are moved from one column to the other.
  * <p/>
- * <p/>
- * This ensures that the two columns are the same width, and that the column widths don't change as
- * items move back and forth.
- * <p/>
- * Option groups within the {@link SelectModel} will be rendered, but are not supported by the many
+ * Option groups within the {@link SelectModel} will be rendered, but are not supported by many
  * browsers, and are not fully handled on the client side.
  */
 @IncludeJavaScriptLibrary("palette.js")
