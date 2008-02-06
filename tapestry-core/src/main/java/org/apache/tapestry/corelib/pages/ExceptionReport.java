@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
- * application.
+ * application. When {@link org.apache.tapestry.TapestryConstants#PRODUCTION_MODE_SYMBOL} is "true", it is very abbreviated.
  */
 @Meta("tapestry.response-content-type=text/html")
 public class ExceptionReport implements ExceptionReporter
