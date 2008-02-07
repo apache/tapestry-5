@@ -25,7 +25,7 @@ Template Location
   might be <<<src/main/java/org/example/myapp/components/MyComponent.java>>>.
   The corresponding template will be <<<src/main/resources/org/example/myapp/components/MyComponent.tml>>>.
   
-  Likewise, the Java class for a component might be <<<src/main/java/org/example/myapp/pages/MyPage.java>>> and
+  Likewise, the Java class for a page might be <<<src/main/java/org/example/myapp/pages/MyPage.java>>> and
   the corresponding template will be <<<src/main/resources/org/example/myapp/pages/MyPage.tml>>>.
   
   The template and the compiled class will be packaged together in the WEB-INF/classes folder of the application WAR.
@@ -224,7 +224,7 @@ Expansions
   Expansions are allowed inside text, and inside attributes of ordinary elements, and component elements.  For example:
   
 +---+
-  <img src="${request.contextPath}/images/catalog/product_${productId}"/>
+  <img src="${request.contextPath}/images/catalog/product_${productId}.png"/>
 +---+
 
   In this hypothetical example, the component class is providing a request property and a productId property, and these are being
