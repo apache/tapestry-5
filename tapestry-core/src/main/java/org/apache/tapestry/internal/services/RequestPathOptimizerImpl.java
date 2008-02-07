@@ -109,7 +109,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
             // most likely we're going to end up choosing the full path rather than
             // the relative one.
 
-            if (slashx > firstColon) builder.insert(0, "./");
+            if (slashx < 0 || slashx > firstColon) builder.insert(0, "./");
         }
 
         if (builder.length() < absolutePath.length()) return builder.toString();
