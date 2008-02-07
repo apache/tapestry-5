@@ -594,7 +594,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Grid Demo");
 
-        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Rating");
+        // "Sort Rating" via the header cell override (TAPESTRY-2081)
+
+        assertTextSeries("//th[%d]", 1, "Title", "Album", "Artist", "Genre", "Play Count", "Sort Rating");
 
         // Strange: I thought tr[1] was the header row ???
 
@@ -624,26 +626,21 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Sort ascending (and we're on the last page, with the highest ratings).
 
-        clickAndWait("link=Rating");
+        clickAndWait("link=Sort Rating");
 
-        // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
-
-        assertText("//img[@id='rating:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
-        assertText("//img[@id='rating:sort']/@alt", "[Asc]");
 
         assertTextSeries("//tr[22]/td[%d]", 1, "Mona Lisa Overdrive", "Labyrinth", "Juno Reactor", "Dance", "31",
                          "*****");
 
         // Toggle to sort descending
 
-        clickAndWait("link=Rating");
-
-        assertText("//img[@id='rating:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
-        assertText("//img[@id='rating:sort']/@alt", "[Desc]");
+        clickAndWait("link=Sort Rating");
 
         assertTextSeries("//tr[1]/td[%d]", 1, "Hey Blondie", "Out from Out Where");
 
         clickAndWait("link=Title");
+
+        // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
         assertText("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
         assertText("//img[@id='title:sort']/@alt", "[Asc]");
@@ -651,6 +648,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=1");
 
         assertText("//tr[1]/td[1]", "(untitled hidden track)");
+
+        clickAndWait("link=Title");
+
+        assertText("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
+        assertText("//img[@id='title:sort']/@alt", "[Desc]");
     }
 
     @Test

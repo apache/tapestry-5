@@ -101,6 +101,13 @@ public class User
                 </p>
 
                 <p>
+                    The Grid component takes care of the &lt;td&gt; element, and the provided block parameter
+                    provides the content
+                    <em>inside</em>
+                    the &lt;td&gt;.
+                </p>
+
+                <p>
                     For the block to know what is being rendered, we bind the row parameter of the Grid
                     to the user property of the page. The Grid will keep updating this property
                     just before it renders each row (using its own internal renderers, or the ones
@@ -108,8 +115,13 @@ public class User
                 </p>
 
                 <p>
-                    <strong>Note:</strong>
-                    Overriding of headers, the clickable links at the top of columns, is not yet implemented.
+                    The header for a column may be overridden in the same way, using a parameter name
+                    of
+                    <code><em>property</em>header
+                    </code>
+                    . The parameter block will provide the content
+                    inside the &lt;th&gt; element. The provided block is responsible for
+                    providing any links or icons related to sorting.
                 </p>
 
             </subsection>
@@ -262,17 +274,16 @@ delete-label=Delete user?]]></source>
                     &lt;td&gt; elements,
                     it generates CSS class attributes for each element. You can then add customized CSS rules, even
                     overriding the Tapestry defaults,
-                    to present the Grid as desired.
+                    to present the Grid as desired. This is often used to set the width of a column to a fixed value.
                 </p>
 
                 <dl>
-                    <dt><em>propertyId</em>-header
+                    <dt>
+                        <em>propertyId</em>
                     </dt>
-                    <dd>Added to &lt;th&gt; elements to allow customization of a particular column's header.</dd>
-
-                    <dt><em>propertyId</em>-cell
-                    </dt>
-                    <dd>Added to &lt;td&gt; elements to allow customization of a particular column's data cells.</dd>
+                    <dd>Added to &lt;th&gt; elements to allow customization of a particular column's header,
+                        and added to &lt;td&gt; elements to allow customization of a particular column's data cells.
+                    </dd>
 
                     <dt>t-first</dt>
                     <dd>Added to the first &lt;th&gt; and the first &lt;tr&gt; of the &lt;tbody&gt; (the data portion of
@@ -294,9 +305,8 @@ delete-label=Delete user?]]></source>
                 </dl>
 
                 <p>
-                    The added CSS classes can get quite verbose; the Grid's lean parameter allows the first two CSS
-                    class attribute values
-                    (the two related to the property for a column) to be omitted. Even in lean mode, the other
+                    The added CSS classes can get quite verbose; the Grid's lean parameter allows the propertyId CSS
+                    class attribute value to be omitted. Even in lean mode, the other
                     CSS class attribute values are rendered.
                 </p>
 

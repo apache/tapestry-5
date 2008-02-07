@@ -71,12 +71,12 @@ public class PropertyEditor
     private Object _object;
 
     /**
-     * Where to search for local overrides of property editing blocks as block parameters. Further, the container of the
-     * overrides is used as the source for overridden validation messages. This is normally the component itself, but
-     * when the component is used within a BeanEditForm, it will be the BeanEditForm's block parameter that will be
+     * Where to search for local overrides of property editing blocks as block parameters.
+     * This is normally the containing component of the PropertyEditor, but
+     * when the component is used within a BeanEditor, it will be the BeanEditForm's block parameters that will be
      * searched.
      */
-    @Parameter(value = "componentResources")
+    @Parameter(value = "componentResources.containerResources")
     private ComponentResources _overrides;
 
     /**

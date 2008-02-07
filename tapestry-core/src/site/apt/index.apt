@@ -30,7 +30,7 @@ New And Of Note
   * New Unless component (like an If component, but inverted).
 
   * Support for "password" and "longtext" data types (for use with the BeanEditor), and a new
-    {{{../apidocs/org/apache/tapestry/corelib/components/TextOutput.html}TextOutput}} component.
+    {{{ref/org/apache/tapestry/corelib/components/TextOutput.html}TextOutput}} component.
 
   * The new "var:" binding prefix allows for temporary, untyped storage
     of render-time values without having to define a new component property.

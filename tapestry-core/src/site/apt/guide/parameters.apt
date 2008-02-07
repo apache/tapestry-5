@@ -238,10 +238,6 @@ Validate Bindings
   For example:  <<<validate:required,minLength=5>>> would presumably enforce that a field
   requires a value, with at least five characters.
   
-  TODO: More ability to escape or quote constraint values. Ability to reference methods
-  or properties of the container to perform some of the validation.  Links to
-  proper discussion of validation, once the code and documentation is ready.
-  
 Translate Bindings
 
   The "translate:" binding prefix is also related to input validator. It is the name
@@ -257,7 +253,7 @@ Informal Parameters
   Some components support <informal parameters>, additional parameters beyond the formally defined parameters.
   Informal parameters will be rendered into the output as additional attributes on the tag rendered by
   the component.  Generally speaking, components that have a 1:1 relationship with a particular HTML tag
-  (such as {{{../../apidocs/org/apache/tapestry/corelib/components/TextField.html}TextField}} and 
+  (such as {{{../ref/org/apache/tapestry/corelib/components/TextField.html}TextField}} and 
   \<input\> will support informal parameters.
   
   Informal parameters are often used to set the CSS class of an element, or to specify client-side event handlers.

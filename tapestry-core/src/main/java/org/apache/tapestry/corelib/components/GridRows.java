@@ -20,7 +20,7 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.grid.GridModel;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.FormSupport;
@@ -57,20 +57,6 @@ public class GridRows
     }
 
     /**
-     * The column which is currently being sorted. This value is the column's {@link PropertyModel#getId() id}, not its
-     * {@link PropertyModel#getPropertyName() name}. This parameter may be null, in which case no column is being used
-     * for sorting.
-     */
-    @Parameter(required = true)
-    private String _sortColumnId;
-
-    /**
-     * If true, then the sort is ascending (A - Z), if false the descending (Z - A).
-     */
-    @Parameter(required = true)
-    private boolean _sortAscending;
-
-    /**
      * Parameter used to set the CSS class for each row (each &lt;tr&gt; element) within the &lt;tbody&gt;). This is not
      * cached, so it will be recomputed for each row.
      */
@@ -81,7 +67,7 @@ public class GridRows
      * Object that provides access to the bean and data models used to render the Grid.
      */
     @Parameter(value = "componentResources.container")
-    private GridModelProvider _provider;
+    private GridModel _gridModel;
 
     /**
      * Number of rows displayed on each page. Long result sets are split across multiple pages.
@@ -154,14 +140,15 @@ public class GridRows
 
         if (!_lean)
         {
-            String id = _provider.getDataModel().get(_propertyName).getId();
+            String id = _gridModel.getDataModel().get(_propertyName).getId();
 
-            classes.add(id + "-cell");
+            classes.add(id);
         }
 
-        if (_columnModel.getId().equals(_sortColumnId))
+        if (_columnModel.getId().equals(_gridModel.getSortColumnId()))
         {
-            String sortClassName = _sortAscending ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
+            String sortClassName = _gridModel.isSortAscending() ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
+
             classes.add(sortClassName);
         }
 
@@ -170,7 +157,7 @@ public class GridRows
 
     void setupRender()
     {
-        GridDataSource dataSource = _provider.getDataSource();
+        GridDataSource dataSource = _gridModel.getDataSource();
 
         int availableRows = dataSource.getAvailableRows();
 
@@ -193,7 +180,7 @@ public class GridRows
      */
     void setupForRow(int rowIndex)
     {
-        _row = _provider.getDataSource().getRowValue(rowIndex);
+        _row = _gridModel.getDataSource().getRowValue(rowIndex);
 
     }
 
@@ -217,7 +204,7 @@ public class GridRows
 
     public List<String> getPropertyNames()
     {
-        return _provider.getDataModel().getPropertyNames();
+        return _gridModel.getDataModel().getPropertyNames();
     }
 
     public String getPropertyName()
@@ -229,7 +216,7 @@ public class GridRows
     {
         _propertyName = propertyName;
 
-        _columnModel = _provider.getDataModel().get(propertyName);
+        _columnModel = _gridModel.getDataModel().get(propertyName);
     }
 
     public Object getRow()

@@ -15,12 +15,15 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Asset;
+import org.apache.tapestry.Block;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
+import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridConstants;
-import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.grid.GridModel;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -31,13 +34,14 @@ import java.util.List;
 /**
  * Renders out the column headers for the grid, including links (where appropriate) to control column sorting.
  */
+@SupportsInformalParameters
 public class GridColumns
 {
     /**
      * The object that provides access to bean and data models, which is typically the enclosing Grid component.
      */
     @Parameter(value = "componentResources.container")
-    private GridModelProvider _dataProvider;
+    private GridModel _gridModel;
 
     /**
      * If true, then the CSS class on each &lt;TH&gt; element will be omitted, which can reduce the amount of output
@@ -48,18 +52,12 @@ public class GridColumns
     private boolean _lean;
 
     /**
-     * The column which is currently being sorted. This value is the column's {@link PropertyModel#getId() id}, not its
-     * {@link PropertyModel#getPropertyName() name}. This parameter may be null, in which case no column is being used
-     * for sorting.
+     * Where to look for informal parameter Blocks used to override column headers.  The default is to look for such overrides
+     * in the GridColumns component itself, but this is usually overridden.
      */
-    @Parameter(required = true)
-    private String _sortColumnId;
+    @Parameter("componentResources")
+    private ComponentResources _overrides;
 
-    /**
-     * If true, then the sort is ascending (A - Z), if false then descending (Z - A).
-     */
-    @Parameter(required = true)
-    private boolean _sortAscending;
 
     @SuppressWarnings("unused")
     @Component(parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
@@ -80,6 +78,8 @@ public class GridColumns
     @Inject
     private Messages _messages;
 
+    @Inject
+    private Block _standardHeader;
 
     private int _columnIndex;
 
@@ -89,7 +89,7 @@ public class GridColumns
 
     void setupRender()
     {
-        _lastColumnIndex = _dataProvider.getDataModel().getPropertyNames().size() - 1;
+        _lastColumnIndex = _gridModel.getDataModel().getPropertyNames().size() - 1;
     }
 
     public boolean isSortDisabled()
@@ -100,7 +100,7 @@ public class GridColumns
     public String getSortLinkClass()
     {
         if (isActiveSortColumn())
-            return _sortAscending ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
+            return _gridModel.isSortAscending() ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
 
         return null;
     }
@@ -109,7 +109,7 @@ public class GridColumns
     {
         List<String> classes = CollectionFactory.newList();
 
-        if (!_lean) classes.add(_columnModel.getId() + "-header");
+        if (!_lean) classes.add(_columnModel.getId());
 
         String sort = getSortLinkClass();
 
@@ -124,39 +124,31 @@ public class GridColumns
 
     public boolean isActiveSortColumn()
     {
-        return _columnModel.getId().equals(_sortColumnId);
+        return _columnModel.getId().equals(_gridModel.getSortColumnId());
     }
 
     void onSort(String columnId)
     {
-        if (columnId.equals(_sortColumnId))
-        {
-            _sortAscending = !_sortAscending;
-        }
-        else
-        {
-            _sortColumnId = columnId;
-            _sortAscending = true;
-        }
+        _gridModel.updateSort(columnId);
     }
 
     public Asset getIcon()
     {
-        if (isActiveSortColumn()) return _sortAscending ? _ascendingAsset : _descendingAsset;
+        if (isActiveSortColumn()) return _gridModel.isSortAscending() ? _ascendingAsset : _descendingAsset;
 
         return _sortableAsset;
     }
 
     public String getIconLabel()
     {
-        String key = isActiveSortColumn() ? (_sortAscending ? "ascending" : "descending") : "sortable";
+        String key = isActiveSortColumn() ? (_gridModel.isSortAscending() ? "ascending" : "descending") : "sortable";
 
         return _messages.get(key);
     }
 
     public List<String> getColumnNames()
     {
-        return _dataProvider.getDataModel().getPropertyNames();
+        return _gridModel.getDataModel().getPropertyNames();
     }
 
     public PropertyModel getColumnModel()
@@ -166,7 +158,7 @@ public class GridColumns
 
     public void setColumnName(String columnName)
     {
-        _columnModel = _dataProvider.getDataModel().get(columnName);
+        _columnModel = _gridModel.getDataModel().get(columnName);
     }
 
     /**
@@ -180,5 +172,14 @@ public class GridColumns
     public int getColumnIndex()
     {
         return _columnIndex;
+    }
+
+    public Block getBlockForColumn()
+    {
+        Block override = _overrides.getBlockParameter(_columnModel.getId() + "Header");
+
+        if (override != null) return override;
+
+        return _standardHeader;
     }
 }

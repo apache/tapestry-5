@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -82,8 +82,8 @@ public class BeanEditor
     /**
      * Where to search for local overrides of property editing blocks as block parameters. Further,
      * the container of the overrides is used as the source for overridden validation messages. This
-     * is normally the component itself, but when the component is used within a BeanEditForm, it
-     * will be the BeanEditForm's block parameter that will be searched.
+     * is normally the BeanEditor component itself, but when the component is used within a BeanEditForm, it
+     * will be the BeanEditForm's resources that will be searched.
      */
     @Parameter(value = "componentResources")
     private ComponentResources _overrides;

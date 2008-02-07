@@ -23,7 +23,7 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
 import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.grid.GridModelProvider;
+import org.apache.tapestry.grid.GridModel;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.internal.bindings.AbstractBinding;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -34,16 +34,18 @@ import org.apache.tapestry.services.FormSupport;
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
  * sub-components are statically wired to the Grid, as it provides access to the data and other models that they need.
  * <p/>
- * A Grid may operate inside a {@link Form}. By overriding the cell renderers of properties, the default output only
+ * A Grid may operate inside a {@link org.apache.tapestry.corelib.components.Form}. By overriding the cell renderers of
+ * properties, the default output-only
  * behavior can be changed to produce a complex form with individual control for editing properties of each row. This is
  * currently workable but less than ideal -- if the order of rows provided by the {@link GridDataSource} changes between
  * render and form submission, then there's the possibility that data will be applied to the wrong server-side objects.
  *
- * @see BeanModel
- * @see BeanModelSource
+ * @see org.apache.tapestry.beaneditor.BeanModel
+ * @see org.apache.tapestry.services.BeanModelSource
+ * @see org.apache.tapestry.grid.GridDataSource
  */
 @SupportsInformalParameters
-public class Grid implements GridModelProvider
+public class Grid implements GridModel
 {
     /**
      * The source of data for the Grid to display. This will usually be a List or array but can also be an explicit
@@ -150,12 +152,13 @@ public class Grid implements GridModelProvider
 
 
     @SuppressWarnings("unused")
-    @Component(parameters = {"sortColumnId=sortColumnId", "sortAscending=sortAscending", "lean=inherit:lean"})
+    @Component(
+            parameters = {"lean=inherit:lean", "overrides=componentResources"})
     private GridColumns _columns;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"sortColumnId=sortColumnId", "sortAscending=sortAscending", "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean"})
+            parameters = {"rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean"})
     private GridRows _rows;
 
     @Component(parameters = {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage"})
@@ -296,6 +299,10 @@ public class Grid implements GridModelProvider
         _currentPage = currentPage;
     }
 
+    /**
+     * Returns the current row being rendered by the Grid. This property can be accessed
+     * as an alternative to binding the row parameter.
+     */
     public Object getRow()
     {
         return _row;
@@ -344,5 +351,18 @@ public class Grid implements GridModelProvider
     public Object getPagerBottom()
     {
         return _pagerPosition.isMatchBottom() ? _pager : null;
+    }
+
+    public void updateSort(String columnId)
+    {
+        if (columnId.equals(_sortColumnId))
+        {
+            _sortAscending = !_sortAscending;
+            return;
+        }
+
+        _sortColumnId = columnId;
+        _sortAscending = true;
+
     }
 }

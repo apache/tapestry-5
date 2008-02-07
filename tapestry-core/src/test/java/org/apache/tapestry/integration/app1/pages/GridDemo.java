@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
+import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.corelib.components.Grid;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.integration.app1.services.MusicLibrary;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -26,6 +28,9 @@ public class GridDemo
     private MusicLibrary _library;
 
     private Track _track;
+
+    @Component
+    private Grid _grid;
 
     public Track getTrack()
     {
@@ -41,4 +46,7 @@ public class GridDemo
     {
         return _library.getTracks();
     }
+
+    void onActionFromSortRating() { _grid.updateSort("rating"); }
+
 }

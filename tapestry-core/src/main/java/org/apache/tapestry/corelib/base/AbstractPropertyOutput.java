@@ -39,7 +39,6 @@ import org.apache.tapestry.services.PropertyOutputContext;
  */
 public class AbstractPropertyOutput
 {
-
     /**
      * Model for property displayed by the cell.
      */
