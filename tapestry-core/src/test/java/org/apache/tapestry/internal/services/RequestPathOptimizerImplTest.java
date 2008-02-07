@@ -26,60 +26,68 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
     {
         return new Object[][]{{"/context", "/foo/bar.png", "/context/foo/baz.png", "baz.png"},
 
-                              {"/context", "/foo/bar.gif", "/context/foo//baz.gif", "baz.gif"},
+                {"/context", "/foo/bar.gif", "/context/foo//baz.gif", "baz.gif"},
 
-                              {"/context", "/foo//bar.css", "/context/foo/baz.css", "baz.css"},
+                {"/context", "/foo//bar.css", "/context/foo/baz.css", "baz.css"},
 
-                              {"", "/foo/bar.css", "/foo/baz.css", "baz.css"},
+                {"", "/foo/bar.css", "/foo/baz.css", "baz.css"},
 
-                              {"/reallylongcontexttoensureitisrelative", "/foo/bar/baz/biff.gif",
-                               "/reallylongcontexttoensureitisrelative/gnip/gnop.gif", "../../../gnip/gnop.gif"},
+                {"/reallylongcontexttoensureitisrelative", "/foo/bar/baz/biff.gif",
+                        "/reallylongcontexttoensureitisrelative/gnip/gnop.gif", "../../../gnip/gnop.gif"},
 
-                              {"", "/foo/bar/baz/biff/yepthisissolongthatabsoluteurlisshorter/dude", "/gnip/gnop",
-                               "/gnip/gnop"},
+                {"", "/foo/bar/baz/biff/yepthisissolongthatabsoluteurlisshorter/dude", "/gnip/gnop",
+                        "/gnip/gnop"},
 
-                              {"", "/foo/bar", "/foo/bar/baz/bif", "bar/baz/bif"},
+                {"", "/foo/bar", "/foo/bar/baz/bif", "bar/baz/bif"},
 
-                              {"", "/foo/bar/baz/bif", "/foo", "/foo"},
+                {"", "/foo/bar/baz/bif", "/foo", "/foo"},
 
-                              {"/ctx", "/foo/bar/baz/bif", "/ctx/foo", "/ctx/foo"},
+                {"/ctx", "/foo/bar/baz/bif", "/ctx/foo", "/ctx/foo"},
 
-                              {"/anotherobnoxiouslylongcontextthatiwllforcerelative", "/foo/bar/baz/bif",
-                               "/anotherobnoxiouslylongcontextthatiwllforcerelative/foo", "../../../foo"},
+                {"/anotherobnoxiouslylongcontextthatiwllforcerelative", "/foo/bar/baz/bif",
+                        "/anotherobnoxiouslylongcontextthatiwllforcerelative/foo", "../../../foo"},
 
-                              // A couple of better examples, see TAPESTRY-2033
+                // A couple of better examples, see TAPESTRY-2033
 
-                              {"/manager", "", "/manager/asset/foo.gif", "asset/foo.gif"},
+                {"/manager", "", "/manager/asset/foo.gif", "asset/foo.gif"},
 
-                              {"", "", "/asset/foo.gif", "asset/foo.gif"},
+                {"", "", "/asset/foo.gif", "asset/foo.gif"},
 
-                              {"", "/griddemo.grid.columns.sort/title", "/assets/default.css", "/assets/default.css"},
+                {"", "/griddemo.grid.columns.sort/title", "/assets/default.css", "/assets/default.css"},
 
-                              {"/example", "/", "/example/assets/tapestry/default.css", "assets/tapestry/default.css"},
+                {"/example", "/", "/example/assets/tapestry/default.css", "assets/tapestry/default.css"},
 
-                              {"/example", "/newaccount", "/example/assets/tapestry/default.css",
-                               "assets/tapestry/default.css"},
+                {"/example", "/newaccount", "/example/assets/tapestry/default.css",
+                        "assets/tapestry/default.css"},
 
-                              {"/verylongcontextname", "/style/app.css", "/verylongcontextname/asset/foo.gif",
-                               "../asset/foo.gif"},
+                {"/verylongcontextname", "/style/app.css", "/verylongcontextname/asset/foo.gif",
+                        "../asset/foo.gif"},
 
-                              {"", "/eventhandlerdemo.barney/one", "/eventhandlerdemo.clear/anything",
-                               "/eventhandlerdemo.clear/anything"},
+                {"", "/eventhandlerdemo.barney/one", "/eventhandlerdemo.clear/anything",
+                        "/eventhandlerdemo.clear/anything"},
 
-                              {"/verylongcontextname", "/eventhandlerdemo.barney/one",
-                               "/verylongcontextname/eventhandlerdemo.clear/anything",
-                               "../eventhandlerdemo.clear/anything"},
+                {"/verylongcontextname", "/eventhandlerdemo.barney/one",
+                        "/verylongcontextname/eventhandlerdemo.clear/anything",
+                        "../eventhandlerdemo.clear/anything"},
 
-                              {"/verylongcontextname", "/page", "/verylongcontextname/page:sort/foo",
-                               "./page:sort/foo"},
+                {"/verylongcontextname", "/page", "/verylongcontextname/page:sort/foo",
+                        "./page:sort/foo"},
 
-                              {"", "/page", "/page:sort/foo", "/page:sort/foo"},
+                {"", "/page", "/page:sort/foo", "/page:sort/foo"},
 
-                              // TAPESTRY-2046
+                // TAPESTRY-2046
 
-                              {"/attendance", "/view/sites", "/attendance/assets/tapestry/tapestry.js",
-                               "../assets/tapestry/tapestry.js"}
+                {"/attendance", "/view/sites", "/attendance/assets/tapestry/tapestry.js",
+                        "../assets/tapestry/tapestry.js"},
 
+                // TAPESTRY-2095
+
+                {"", "/", "/component:event", "/component:event"},
+
+                // Make sure the ./ prefix is added even when the relative path doesn't contain
+                // a slash ... otherwise, invalid URL component:event (i.e., "component" protocol, not "http").
+
+                {"/verylongcontextname", "/", "/verylongcontextname/component:event", "./component:event"}
 
         };
     }
