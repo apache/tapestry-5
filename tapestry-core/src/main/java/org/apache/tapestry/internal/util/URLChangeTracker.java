@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.util;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Map;
@@ -47,7 +48,7 @@ public class URLChangeTracker
     /**
      * Creates a new URL change tracker, using either millisecond-level granularity or second-level granularity.
      *
-     * @param granularitySeconds whether or not to use second-level granularity
+     * @param granularitySeconds whether or not to use second granularity (as opposed to millisecond granularity)
      */
     public URLChangeTracker(boolean granularitySeconds)
     {
@@ -59,11 +60,11 @@ public class URLChangeTracker
      * non-file URLs.
      *
      * @param url of the resource to add
-     * @return the current timestamp for the URL, or 0 if not a file URL
+     * @return the current timestamp for the URL (possibly rounded off for granularity reasons)
      */
     public long add(URL url)
     {
-        if (!url.getProtocol().equals("file")) return 0;
+        if (!url.getProtocol().equals("file")) return timestampForNonFileURL(url);
 
         File resourceFile = toFile(url);
 
@@ -86,6 +87,22 @@ public class URLChangeTracker
 
 
         return timestamp;
+    }
+
+    private long timestampForNonFileURL(URL url)
+    {
+        long timestamp;
+
+        try
+        {
+            timestamp = url.openConnection().getLastModified();
+        }
+        catch (IOException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
+        return applyGranularity(timestamp);
     }
 
     private File toFile(URL url)
@@ -142,14 +159,17 @@ public class URLChangeTracker
     {
         if (!file.exists()) return FILE_DOES_NOT_EXIST_TIMESTAMP;
 
-        long timestamp = file.lastModified();
+        return applyGranularity(file.lastModified());
+    }
 
+    private long applyGranularity(long timestamp)
+    {
         // For coarse granularity (accurate only to the last second), remove the milliseconds since
         // the last full second. This is for compatibility with client HTTP requests, which
         // are only accurate to one second. The extra level of detail creates false positives
         // for changes, and undermines HTTP response caching in the client.
 
-        if (_granularitySeconds) timestamp -= timestamp % 1000;
+        if (_granularitySeconds) return timestamp - (timestamp % 1000);
 
         return timestamp;
     }
