@@ -548,10 +548,6 @@ public final class TapestryModule
      */
     public static void contributeTranslatorSource(MappedConfiguration<String, Translator> configuration)
     {
-        // Fortunately, the translators are tiny, so we don't have to worry about the slight
-        // duplication between this and TranslatorDefaultSource, though it is a pain to keep the two
-        // organized (perhaps they should be joined together into a single service, where we
-        // identify a name and a match type).
 
         configuration.add("string", new StringTranslator());
         configuration.add("byte", new ByteTranslator());
@@ -671,7 +667,7 @@ public final class TapestryModule
     {
         // make the name match the annotation class name.
 
-        String name = TapestryInternalUtils.lastTerm(annotationClass.getName());
+        String name = annotationClass.getSimpleName();
 
         configuration.add(name, new ComponentLifecycleMethodWorker(signature, annotationClass, reverse));
     }

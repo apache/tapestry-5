@@ -18,9 +18,10 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 /**
  * An immutable object that represents a mapping from one type to another. This is also the
- * contribution type when buildign the TypeCoercer service. Wraps a {@link Coercion} object that
+ * contribution type when building the {@link org.apache.tapestry.ioc.services.TypeCoercer} service.
+ * Wraps a {@link org.apache.tapestry.ioc.services.Coercion} object that
  * performs the work with additional properties that describe the input and output types of the
- * coercion, needed when searching for an appropriate coercion (or combination of coercions).
+ * coercion, needed when searching for an appropriate coercion (or sequence of coercions).
  *
  * @param <S>
  * source (input) type

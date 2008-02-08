@@ -75,7 +75,7 @@ New Asset Domains
   If you wish to create new domains for assets, for example to allow assets to be stored on the file system or in a database,
   you may define a new
   {{{../../apidocs/org/apache/tapestry/services/AssetFactory.html}AssetFactory}}
-  and contribute it to the tapestry.AssetSource service configuration.  
+  and contribute it to the AssetSource service configuration.  
   
 Simplified Paths
 
@@ -89,7 +89,7 @@ Simplified Paths
     public static void contributeClasspathAssetAliasManager(
             MappedConfiguration<String, String> configuration)
     {
-        configuration.add("tapestry/", "org/apache/tapestry/");
+        configuration.add("tapestry", "org/apache/tapestry");
     }
 +---+
 

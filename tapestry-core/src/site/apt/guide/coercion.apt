@@ -42,7 +42,7 @@ public class Count
 TypeCoercer Service
 
   The TypeCoercer service is responsible for this type coercion. This service is part of the tapestry-ioc module, and 
-  is {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/coerce.html}documented there}}.  The service
+  is {{{../../tapestry-ioc/coerce.html}documented there}}.  The service
   is quite extensible, allowing for new types and coercions to be added easily.  The TapestryModule contributes a few additional
   coercions into the TypeCoercer service.
   
