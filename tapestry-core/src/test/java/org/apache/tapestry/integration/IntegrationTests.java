@@ -1623,6 +1623,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         for (int i = 1; i <= 5; i++)
             assertTextPresent("ToDo #" + i);
+    }
 
+    /**
+     * TAPESTRY-2114
+     */
+    @Test
+    public void boolean_properties_can_user_get_or_is()
+    {
+        start("Boolean Property Demo", "clear");
+
+        assertText("usingGet", "false");
+        assertText("usingIs", "false");
+
+        clickAndWait("set");
+
+        assertText("usingGet", "true");
+        assertText("usingIs", "true");
     }
 }
