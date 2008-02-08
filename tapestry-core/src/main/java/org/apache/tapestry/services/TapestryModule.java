@@ -1533,7 +1533,7 @@ public final class TapestryModule
 
         configuration.add("PageRenderSupport", pageRenderSupport);
         configuration.add("ZoneSupport", zoneSupport, "after:PageRenderSupport");
-        configuration.add("Heatbeat", heartbeat, "after:PageRenderSupport");
+        configuration.add("Heartbeat", heartbeat, "after:PageRenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
