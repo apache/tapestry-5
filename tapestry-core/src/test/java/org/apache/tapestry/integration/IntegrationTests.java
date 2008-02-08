@@ -1607,4 +1607,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertFieldValue("count", "");
         assertText("value", "null");
     }
+
+    /**
+     * TAPESTRY-1901
+     */
+    @Test
+    public void delete_rows_from_grid()
+    {
+        start("Delete From Grid", "setup the database", "2");
+
+        for (int i = 6; i <= 10; i++)
+            clickAndWait("link=ToDo #" + i);
+
+        // A rather clumsy way to ensure we're back on the first page.
+
+        for (int i = 1; i <= 5; i++)
+            assertTextPresent("ToDo #" + i);
+
+    }
 }

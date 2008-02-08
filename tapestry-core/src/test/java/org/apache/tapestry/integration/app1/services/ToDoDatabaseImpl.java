@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ public class ToDoDatabaseImpl implements ToDoDatabase
     {
         _items.clear();
     }
+
 
     public void reset()
     {
@@ -105,5 +106,14 @@ public class ToDoDatabaseImpl implements ToDoDatabase
 
         _items.put(id, item.clone());
     }
+
+    public void remove(long itemId)
+    {
+        ToDoItem item = _items.remove(itemId);
+
+        if (item == null)
+            throw new RuntimeException(String.format("ToDoItem #%d not found.", itemId));
+    }
+
 
 }

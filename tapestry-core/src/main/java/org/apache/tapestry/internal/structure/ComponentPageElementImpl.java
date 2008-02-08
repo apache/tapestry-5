@@ -988,6 +988,12 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         String currentEventType = eventType;
         EventContext currentContext = context;
 
+        // Track the location of the original component for the event, even as we work our way up
+        // the hierarchy. This may not be ideal if we trigger an "exception" event ... or maybe
+        // it's right (it's the location of the originally thrown exception).
+
+        Location location = component.getComponentResources().getLocation();
+
         while (component != null)
         {
             try
@@ -1008,8 +1014,6 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
                 // We know component is not null and therefore has a component resources that
                 // should have a location.
-
-                Location location = component.getComponentResources().getLocation();
 
                 // Wrap it up to help ensure that a location is available to the event handler method or,
                 // more likely, to the exception report page.

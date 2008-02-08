@@ -258,10 +258,20 @@ public class Grid implements GridModel
             }
         }
 
+
+        int maxPage = ((availableRows - 1) / _rowsPerPage) + 1;
+
+        // This captures when the number of rows has decreased, typically due to deletions.
+
+        if (_currentPage > maxPage)
+            _currentPage = maxPage;
+
         int startIndex = (_currentPage - 1) * _rowsPerPage;
+
         int endIndex = Math.min(startIndex + _rowsPerPage - 1, availableRows - 1);
 
         _source.prepare(startIndex, endIndex, sortModel, _sortAscending);
+
     }
 
     Object beginRender()
