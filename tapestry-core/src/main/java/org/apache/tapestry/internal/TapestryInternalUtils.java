@@ -538,7 +538,14 @@ public class TapestryInternalUtils
     private static final String ENCODED_SLASH = "%2F";
     private static final Pattern ENCODED_SLASH_PATTERN = Pattern.compile(ENCODED_SLASH, Pattern.CASE_INSENSITIVE);
 
-    static String escapePercentAndSlash(String input)
+    /**
+     * Encodes percent and slash characters in the string for later decoding via
+     * {@link #unescapePercentAndSlash(String)}.
+     *
+     * @param input string to encode
+     * @return modified string
+     */
+    public static String escapePercentAndSlash(String input)
     {
         return replace(replace(input, PERCENT_PATTERN, ENCODED_PERCENT), SLASH_PATTERN, ENCODED_SLASH);
     }

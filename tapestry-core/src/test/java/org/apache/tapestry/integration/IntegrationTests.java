@@ -774,6 +774,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void page_context_in_form()
+    {
+        start("Page Context in Form");
+
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertFieldValue("t:ac", "betty/wilma/context with spaces/context%2Fwith%2Fslashes");
+
+        clickAndWait(SUBMIT);
+
+        assertTextSeries("//li[%d]", 1, "betty", "wilma", "context with spaces", "context/with/slashes");
+        assertFieldValue("t:ac", "betty/wilma/context with spaces/context%2Fwith%2Fslashes");
+    }
+
+    @Test
     public void client_side_validation()
     {
         start("Client Validation Demo");
