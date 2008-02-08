@@ -138,6 +138,7 @@ public class Start
 
             new Item("pagelinkcontext", "PageLink Context Demo", "passing explicit context in a page render link"),
 
+            new Item("pagecontextinform", "Page Context in Form", "passivate/activate page context in Form"),
 
             new Item("ValidBeanEditorDemo", "Client Validation Demo", "BeanEditor with validation enabled"),
 
@@ -220,7 +221,6 @@ public class Start
 
             new Item("RenderPhaseMethodExceptionDemo", "Render Phase Method Exception Demo",
                      "render phase methods may throw checked exceptions"),
-
 
             new Item("TrackEditor", "Generic Page Class Demo",
                      "demo use of generics with component classes and, particularily, with property types"));

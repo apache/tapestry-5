@@ -140,7 +140,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         // Now see if the page has an activation context.
 
-        addActivationContextToLink(link, activationContext);
+        addActivationContextToLink(link, activationContext, forForm);
 
         _componentInvocationMap.store(link, invocation);
 
@@ -150,7 +150,7 @@ public class LinkFactoryImpl implements LinkFactory
         return link;
     }
 
-    private void addActivationContextToLink(Link link, String[] activationContext)
+    private void addActivationContextToLink(Link link, String[] activationContext, boolean forForm)
     {
         if (activationContext.length == 0) return;
 
@@ -160,7 +160,9 @@ public class LinkFactoryImpl implements LinkFactory
         {
             if (i > 0) builder.append("/");
 
-            builder.append(TapestryInternalUtils.encodeContext(activationContext[i]));
+            builder.append(forForm
+                           ? TapestryInternalUtils.escapePercentAndSlash(activationContext[i])
+                           : TapestryInternalUtils.encodeContext(activationContext[i]));
         }
 
         link.addParameter(InternalConstants.PAGE_CONTEXT_NAME, builder.toString());
