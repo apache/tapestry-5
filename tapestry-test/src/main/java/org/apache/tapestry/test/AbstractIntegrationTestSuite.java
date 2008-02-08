@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -47,6 +47,11 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     public static final String DEFAULT_WEB_APP_ROOT = "src/main/webapp";
 
     /**
+     * Default browser in which to run tests - firefox
+     */
+    public static final String DEFAULT_WEB_BROWSER_COMMAND = "*firefox";
+
+    /**
      * 15 seconds
      */
     public static final String PAGE_LOAD_TIMEOUT = "15000";
@@ -64,6 +69,8 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
 
     private final String _webappRoot;
 
+    private final String _seleniumBrowserCommand;
+
     private JettyRunner _jettyRunner;
 
     private Selenium _selenium;
@@ -75,7 +82,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
      */
     public AbstractIntegrationTestSuite()
     {
-        this(DEFAULT_WEB_APP_ROOT);
+        this(DEFAULT_WEB_APP_ROOT, DEFAULT_WEB_BROWSER_COMMAND);
     }
 
     /**
@@ -83,7 +90,18 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
      */
     protected AbstractIntegrationTestSuite(String webAppRoot)
     {
+        this(webAppRoot, DEFAULT_WEB_BROWSER_COMMAND);
+    }
+
+    /**
+     * @param webAppRoot     web application root (default src/main/webapp)
+     * @param browserCommand browser command to pass to selenium. Default is *firefox, syntax for custom
+     *                       browsers is *custom &lt;path_to_browser&gt;, e.g. *custom /usr/lib/mozilla-firefox/firefox
+     */
+    protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand)
+    {
         _webappRoot = webAppRoot;
+        _seleniumBrowserCommand = browserCommand;
     }
 
     protected final void assertSourcePresent(String... expected)
@@ -190,7 +208,8 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
 
         _server.start();
 
-        CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT, "*firefox", BASE_URL);
+        CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT,
+                                                       _seleniumBrowserCommand, BASE_URL);
 
         _selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
 
