@@ -21,6 +21,10 @@ DIV.t-error UL {
 }
 
 DIV.t-error LI {
+    margin-left: 20px;
+}
+
+HTML>BODY DIV.t-error LI {
     margin-left: -20px;
 }
 
