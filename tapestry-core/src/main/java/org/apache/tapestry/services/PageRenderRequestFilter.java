@@ -14,6 +14,8 @@
 
 package org.apache.tapestry.services;
 
+import java.io.IOException;
+
 /**
  * Filter interface for {@link PageRenderRequestHandler}, which allows extra behaviors to be
  * injected into the processing of a page render request.
@@ -27,5 +29,5 @@ public interface PageRenderRequestFilter
      * @param parameters defines the page name and activation context
      * @param handler    to delegate the invocation to
      */
-    void handle(PageRenderRequestParameters parameters, PageRenderRequestHandler handler);
+    void handle(PageRenderRequestParameters parameters, PageRenderRequestHandler handler) throws IOException;
 }
