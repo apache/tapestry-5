@@ -23,6 +23,7 @@
 
         <h1>Release Notes - Tapestry - Version 5.0.10</h1>
 
+
         <h2>Bug
         </h2>
         <ul>
@@ -160,6 +161,9 @@
         <h2>Task
         </h2>
         <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1851'>TAPESTRY-1851</a>] - Extend scripts and
+                Ant build.xml to make rolling out a release easier
+            </li>
             <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2069'>TAPESTRY-2069</a>] - Replace LGPL
                 JavaScript calendar with a properly licensed one
             </li>
