@@ -1,0 +1,12 @@
+<html>
+    <head>
+        <title>Start</title>
+    </head>
+    <body>
+        <h1>Start page</h1>
+
+        <p>
+            The Start page should not be visible, because of the onActivate() event handler method.
+        </p>
+    </body>
+</html>
