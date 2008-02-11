@@ -15,10 +15,8 @@
 package org.apache.tapestry.corelib.mixins;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.InjectContainer;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Path;
+import org.apache.tapestry.ContentType;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.internal.services.ResponseRenderer;
 import org.apache.tapestry.internal.util.Holder;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -54,6 +52,7 @@ import java.util.List;
  * }
  * </pre>
  */
+@IncludeJavaScriptLibrary("${tapestry.scriptaculous}/controls.js")
 public class Autocomplete
 {
     static final String EVENT_NAME = "autocomplete";
@@ -82,10 +81,6 @@ public class Autocomplete
     private MarkupWriterFactory _factory;
 
     @Inject
-    @Path("${tapestry.scriptaculous}/controls.js")
-    private Asset _controlsLibrary;
-
-    @Inject
     @Path("classpath:org/apache/tapestry/ajax-loader.gif")
     private Asset _loader;
 
@@ -112,11 +107,6 @@ public class Autocomplete
      */
     @Parameter(defaultPrefix = "literal")
     private String _tokens;
-
-    void setupRender()
-    {
-        _pageRenderSupport.addScriptLink(_controlsLibrary);
-    }
 
     /**
      * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt;

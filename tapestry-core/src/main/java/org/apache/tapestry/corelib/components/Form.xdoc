@@ -129,7 +129,7 @@
                 <ul>
                     <li>prepareForSubmit</li>
                     <li>prepare</li>
-                    <li>validate</li>
+                    <li>validateForm</li>
                     <li>failure
                         <em>or</em>
                         success
@@ -138,7 +138,7 @@
                 </ul>
 
                 <p>
-                    The validate event is to allow the page to
+                    The validateForm event is to allow the page to
                     perform cross-field validation. The failure or success
                     event is fired based on whether there are or are not any
                     validation errors.

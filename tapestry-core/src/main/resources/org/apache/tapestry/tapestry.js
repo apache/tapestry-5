@@ -69,9 +69,7 @@ var Tapestry = {
 
             if (form.firstError)
             {
-                field = $(field);
-                if (field.focus) field.focus();
-                if (field.select) field.select();
+                $(field).activate();
 
                 form.firstError = false;
             }
@@ -185,7 +183,7 @@ Tapestry.ElementAdditions = {
     // and its icon.
     decorateForValidationError : function (element, event, message)
     {
-        $(element).fieldEventManager.addDecorations(event, message);
+        $(element).fieldEventManager.addDecorations(message);
     }
 };
 
@@ -437,7 +435,7 @@ Tapestry.FieldEventManager.prototype = {
     // Removes decorations on the field and label (the "t-error" CSS class) and makes the icon
     // invisible.  A field that has special decoration needs will override this method.
 
-    removeDecorations : function(event)
+    removeDecorations : function()
     {
         this.field.removeClassName("t-error");
 
@@ -455,7 +453,7 @@ Tapestry.FieldEventManager.prototype = {
     // event - the validation event
     // message - error message
 
-    addDecorations : function(event, message)
+    addDecorations : function(message)
     {
         this.field.addClassName("t-error");
 
@@ -514,7 +512,7 @@ Tapestry.FieldEventManager.prototype = {
         });
 
         if (! event.error)
-            this.removeDecorations(event);
+            this.removeDecorations();
     }
 };
 

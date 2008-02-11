@@ -48,7 +48,7 @@ import java.util.List;
  * <p/>
  * When the form is submitted, the component emits several notifications: first a {@link #PREPARE_FOR_SUBMIT}, then a
  * {@link #PREPARE}: these allow the page to update its state as necessary to prepare for the form submission, then
- * (after components enclosed by the form have operated), a {@link #VALIDATE}event is emitted, to allow for cross-form
+ * (after components enclosed by the form have operated), a {@link #VALIDATE_FORM}event is emitted, to allow for cross-form
  * validation. After that, either a {@link #SUCCESS} OR {@link #FAILURE} event (depending on whether the {@link
  * ValidationTracker} has recorded any errors). Lastly, a {@link #SUBMIT} event, for any listeners that care only about
  * form submission, regardless of success or failure.
@@ -86,7 +86,7 @@ public class Form implements ClientElement, FormValidationControl
      * Event type for a notification to perform validation of submitted data. This allows a listener to perform
      * cross-field validation. This occurs before the {@link #SUCCESS} or {@link #FAILURE} notification.
      */
-    public static final String VALIDATE = "validate";
+    public static final String VALIDATE_FORM = "validateForm";
 
     /**
      * Event type for a notification after the form has submitted, when there are no errors in the validation tracker.
@@ -366,7 +366,7 @@ public class Form implements ClientElement, FormValidationControl
 
             _tracker = tracker;
 
-            _resources.triggerEvent(VALIDATE, context, callback);
+            _resources.triggerEvent(VALIDATE_FORM, context, callback);
 
             if (callback.isAborted()) return true;
 

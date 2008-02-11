@@ -178,14 +178,14 @@ public final class TapestryModule
                                                             @Symbol("tapestry.scriptaculous.path")
                                                             String scriptaculousPath,
 
-                                                            @Symbol("tapestry.jscalendar.path")
-                                                            String jscalendarPath)
+                                                            @Symbol("tapestry.datepicker.path")
+                                                            String datepickerPath)
     {
         configuration.add("tapestry", "org/apache/tapestry");
 
         configuration.add("scriptaculous", scriptaculousPath);
 
-        configuration.add("jscalendar", jscalendarPath);
+        configuration.add("datepicker", datepickerPath);
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
@@ -1694,10 +1694,10 @@ public final class TapestryModule
         configuration.add("tapestry.scriptaculous", "classpath:${tapestry.scriptaculous.path}");
         configuration.add("tapestry.scriptaculous.path", "org/apache/tapestry/scriptaculous_1_8");
 
-        // Likewise for jscalendar, currently version 1.0
+        // Likewise for WebFX DatePicker, currently version 1.0.6
 
-        configuration.add("tapestry.jscalendar.path", "org/apache/tapestry/jscalendar-1.0");
-        configuration.add("tapestry.jscalendar", "classpath:${tapestry.jscalendar.path}");
+        configuration.add("tapestry.datepicker.path", "org/apache/tapestry/datepicker_106");
+        configuration.add("tapestry.datepicker", "classpath:${tapestry.datepicker.path}");
     }
 
     public PageTemplateLocator build(@ContextProvider AssetFactory contextAssetFactory,

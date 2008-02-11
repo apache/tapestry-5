@@ -287,7 +287,7 @@ Overriding the Translator with Events
   }
 +---+
 
-  The event handler has precendence over the translator.  Here it checks for the empty string
+  The event handler metohd has precendence over the translator.  Here it checks for the empty string
   (and note that the input may be null!) and evaluates that as zero.
 
   Again, returning null lets the normal translator do its work.
@@ -296,7 +296,7 @@ Overriding the Translator with Events
   {{{../../apidocs/org/apache/tapestry/ValidationException.html}ValidationException}} to indicate a value
   that can't be parsed.
 
-  Now, what if you want to perform your own custom validation?  That's another event: "validate":
+  Now, what if you want to perform your own custom validation?  That's another event: "validateInput":
 
 +---+
   void onValidateFromCount(Integer value) throws ValidationException

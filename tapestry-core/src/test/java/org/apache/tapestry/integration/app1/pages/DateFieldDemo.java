@@ -55,9 +55,4 @@ public class DateFieldDemo
     {
         _asteroidImpact = asteroidImpact;
     }
-
-    public String getAsteroidImpactFormatted()
-    {
-        return new SimpleDateFormat("MM/dd/yyyy hh:mm").format(_asteroidImpact);
-    }
 }

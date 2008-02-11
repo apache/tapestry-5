@@ -314,9 +314,9 @@ DIV.t-palette-spacer {
     clear: left;
 }
 
-BUTTON.t-calendar-trigger {
-    margin-left: 3px;
-    padding: none;
+IMG.t-calendar-trigger {
+    padding-left: 3px;
+    cursor: pointer;
 }
 
 DIV.t-autocomplete-menu UL {

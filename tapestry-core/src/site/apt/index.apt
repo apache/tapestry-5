@@ -13,6 +13,9 @@ New And Of Note
   Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
   recently.
 
+  * Form components now trigger a "validateForm" event, not a "validate" event (so as to avoid conflict
+    with the "validate" event triggered by TextFields).
+
   * Tapestry now understands JDK 1.5 Generics, allowing for simple parameterized types for properties of data objects and components.
 
   * Tapestry now differentiates between development mode and production mode, primarily in how

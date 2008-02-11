@@ -201,11 +201,17 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
+-------------------------------------------------------------------------------
+
 This module, tapestry-core, includes a number of resources with seperate copyrights and licenses.
+
+-------------------------------------------------------------------------------
 
 JAVASSIST
 
-Javassist is not bundled with tapestry-core, but is bound to it.
+Javassist is not bundled with tapestry-core, but tapestry-core is not functional without Javassist.
+Javassist is bundled under a dual license: Mozilla Public License when distributed outside of JBoss,
+LGPL when distributed as part of JBoss.
 
 MOZILLA PUBLIC LICENSE
 Version 1.1
@@ -376,6 +382,7 @@ EXHIBIT A -Mozilla Public License.
       Alternatively, the contents of this file may be used under the terms of the GNU Lesser General Public License Version 2.1 or later (the "LGPL"), in which case the provisions of the LGPL are applicable instead of those above. If you wish to allow use of your version of this file only under the terms of the LGPL, and not to allow others to use your version of this file under the terms of the MPL, indicate your decision by deleting the provisions above and replace them with the notice and other provisions required by the LGPL. If you do not delete the provisions above, a recipient may use your version of this file under the terms of either the MPL or the LGPL.
 
 
+-------------------------------------------------------------------------------
 
 PROTOTYPE
 
@@ -396,6 +403,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+-------------------------------------------------------------------------------
 
 SCRIPTACULOUS
 
@@ -420,19 +428,10 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+-------------------------------------------------------------------------------
 
-DYNARCH.COM DHTML/JAVASCRIPT CALENDAR
+WEBFX DATEPICKER
 
-The DHTML Calendar
--------------------
-
-  Author: Mihai Bazon, <mihai_bazon@yahoo.com>
-          http://dynarch.com/mishoo/
-
-  This program is free software published under the
-  terms of the GNU Lesser General Public License.
-
-  For the entire license text please refer to
-  http://www.gnu.org/licenses/lgpl.html
+Distributed under the terms of the Apache Software License 2.0.
   
   

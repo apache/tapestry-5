@@ -9,7 +9,7 @@ Logging of Tapestry Components and Pages
   
   The default configuration for logging uses 
   {{{http://logging.apache.org/log4j/}Log4J}} as the logging toolkit, though
-  {{{http://tapestry.apache.org/tapestry5/tapestry-ioc/logging.html}this can be changed}}.
+  {{{../../tapestry-ioc/logging.html}this can be changed}}.
   
   
 Class to Logger
@@ -117,7 +117,7 @@ add constructor: org.apache.tapestry.integration.app1.pages.MerryChristmas(org.a
   
 TRACE Level
 
-  At the TRACE level ''for pages'' enables extremely verbose logging of every activity that drives the rendering of output, such as each component
+  At the TRACE level <for pages> enables extremely verbose logging of every activity that drives the rendering of output, such as each component
   working its way through the {{{rendering.html}rendering stage machine}}.  Example:
   
 ----
