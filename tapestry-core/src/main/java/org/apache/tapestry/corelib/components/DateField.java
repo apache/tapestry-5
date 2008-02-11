@@ -16,17 +16,18 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry.annotations.IncludeStylesheet;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.Request;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +38,8 @@ import java.util.Locale;
  * href="http://www.dynarch.com/projects/calendar/">dynarch.com DHTML/JavaScript Calendar</a>.
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
+@IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
+@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js", "datefield.js"})
 public class DateField extends AbstractField
 {
     /**
@@ -44,9 +47,6 @@ public class DateField extends AbstractField
      */
     @Parameter(required = true, principal = true)
     private Date _value;
-
-    @Parameter(defaultPrefix = "literal")
-    private String _format = "%m/%d/%y";
 
     /**
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
@@ -56,41 +56,8 @@ public class DateField extends AbstractField
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> _validate = NOOP_VALIDATOR;
 
-
-    /**
-     * If true, then the client-side calendar will show the time as well as the date.  You will probably need to bind
-     * the format parameter as well when this is true, say to <code>%m/%d/%y %H:%M</code>.
-     */
-    @Parameter
-    private boolean _editTime;
-
-    // We will eventually make the skins & themes more configurable.
-
-    @Inject
-    @Path("${tapestry.jscalendar}/skins/aqua/theme.css")
-    private Asset _themeStylesheet;
-
-    // Would be nice to use the stripped version when in production mode. Have to define "production
-    // mode" first.
-    @Inject
-    @Path("${tapestry.jscalendar}/calendar.js")
-    private Asset _mainScript;
-
-    // Their naming convention isn't our naming convention, so we're locked to the english
-    // version regardless of the application's current locale.
-
-    @Inject
-    @Path("${tapestry.jscalendar}/lang/calendar-en.js")
-    private Asset _localizationScript;
-
-    @Inject
-    @Path("${tapestry.jscalendar}/calendar-setup.js")
-    private Asset _setupScript;
-
-    // TODO: Make this more configurable
-    @Inject
-    @Path("${tapestry.jscalendar}/img.gif")
-    private Asset _defaultIcon;
+    @Parameter(defaultPrefix = "asset", value = "datefield.gif")
+    private Asset _icon;
 
     @Environmental
     private PageRenderSupport _support;
@@ -116,6 +83,8 @@ public class DateField extends AbstractField
     @Inject
     private FieldValidationSupport _fieldValidationSupport;
 
+    private final DateFormat _format = new SimpleDateFormat("MM/dd/yy");
+
     /**
      * The default value is a property of the container whose name matches the component's id. May return null if the
      * container does not have a matching property.
@@ -139,17 +108,12 @@ public class DateField extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        _support.addStylesheetLink(_themeStylesheet, null);
-        _support.addScriptLink(_mainScript, _localizationScript, _setupScript);
-
         String value = _tracker.getInput(this);
 
         if (value == null) value = formatCurrentValue();
 
         String clientId = getClientId();
         String triggerId = clientId + ":trigger";
-
-        // TODO: Support a disabled parameter
 
         writer.element("input",
 
@@ -173,39 +137,26 @@ public class DateField extends AbstractField
 
         // Now the trigger icon.
 
-        writer.element("button",
+        writer.element("img",
+
+                       "id", triggerId,
 
                        "class", "t-calendar-trigger",
 
-                       "id", triggerId);
-
-        writeDisabled(writer);
-
-
-        writer.element("img",
-
-                       "src", _defaultIcon.toClientURL(),
+                       "src", _icon.toClientURL(),
 
                        "alt", "[Show]");
         writer.end(); // img
-        writer.end(); // button
 
         // The setup parameters passed to Calendar.setup():
 
         JSONObject setup = new JSONObject();
 
-        setup.put("inputField", clientId);
-        setup.put("ifFormat", _format);
-        setup.put("button", triggerId);
+        setup.put("field", clientId);
 
+        // TODO: consolodate DatePicker initialization across the page.
 
-        if (_editTime) setup.put("showsTime", true);
-
-        // Let subclasses do more.
-
-        configure(setup);
-
-        _support.addScript("Calendar.setup(%s);", setup);
+        _support.addScript("new Tapestry.DateField(%s);", setup);
     }
 
     private void writeDisabled(MarkupWriter writer)
@@ -213,23 +164,12 @@ public class DateField extends AbstractField
         if (isDisabled()) writer.attributes("disabled", "disabled");
     }
 
-    /**
-     * Invoked to allow subclasses to further configure the parameters passed to the JavaScript Calendar.setup()
-     * function. The values inputField, ifFormat and button are pre-configured. Subclasses may override this method to
-     * configure additional features of the client-side Calendar. This implementation does nothing.
-     *
-     * @param setup parameters object
-     */
-    protected void configure(JSONObject setup)
-    {
-
-    }
 
     private String formatCurrentValue()
     {
         if (_value == null) return "";
 
-        return toJavaDateFormat().format(_value);
+        return _format.format(_value);
     }
 
     @Override
@@ -243,7 +183,9 @@ public class DateField extends AbstractField
 
         try
         {
-            if (InternalUtils.isNonBlank(value)) parsedValue = toJavaDateFormat().parse(value);
+            if (InternalUtils.isNonBlank(value))
+                parsedValue =
+                        _format.parse(value);
 
         }
         catch (ParseException ex)
@@ -264,47 +206,6 @@ public class DateField extends AbstractField
         }
     }
 
-    SimpleDateFormat toJavaDateFormat()
-    {
-        String format = _format;
-
-        StringBuilder builder = new StringBuilder();
-
-        int startx = 0;
-
-        while (true)
-        {
-            int nextx = format.indexOf('%', startx);
-
-            if (nextx < 0)
-            {
-                builder.append(format.substring(startx));
-                break;
-            }
-
-            builder.append(format.subSequence(startx, nextx));
-
-            char ch = format.charAt(nextx + 1);
-
-            String prefix = Character.isUpperCase(ch) ? "sym-up" : "sym-";
-
-            String key = prefix + ch;
-
-            if (!_messages.contains(key))
-            {
-                String message = _messages.format("unknown-symbol", ch, format);
-
-                throw new TapestryException(message, _resources.getLocation(), null);
-            }
-
-            builder.append(_messages.get(key));
-
-            startx = nextx + 2;
-        }
-
-        return new SimpleDateFormat(builder.toString());
-    }
-
     void injectResources(ComponentResources resources)
     {
         _resources = resources;
@@ -313,10 +214,5 @@ public class DateField extends AbstractField
     void injectMessages(Messages messages)
     {
         _messages = messages;
-    }
-
-    void injectFormat(String format)
-    {
-        _format = format;
     }
 }

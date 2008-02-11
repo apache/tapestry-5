@@ -1138,15 +1138,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("DateField Demo");
 
         type("birthday", "12/24/66");
-        type("asteroidImpact", "05/28/2046 10:44");
+        type("asteroidImpact", "05/28/2046");
 
         clickAndWait(SUBMIT);
 
         assertTextPresent("Birthday: [12/24/1966]");
-        assertTextPresent("Impact: [05/28/2046 10:44]");
+        assertTextPresent("Impact: [05/28/2046]");
 
         assertFieldValue("birthday", "12/24/66");
-        assertFieldValue("asteroidImpact", "05/28/2046 10:44");
+        assertFieldValue("asteroidImpact", "05/28/46");
     }
 
     /**
@@ -1318,8 +1318,6 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "//input[@id='radio2']",
 
                 "//input[@id='datefield']",
-
-                "//button[@id='datefield:trigger']",
 
                 "//select[@id='palette:avail']",
 

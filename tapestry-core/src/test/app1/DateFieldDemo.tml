@@ -15,7 +15,7 @@
 
             <div class="t-beaneditor-row">
                 <t:label for="asteroidImpact"/>
-                <t:datefield t:id="asteroidImpact" editTime="true" format="%m/%d/%Y %H:%M"/>
+                <t:datefield t:id="asteroidImpact"/>
             </div>
 
 
@@ -33,7 +33,7 @@
         </p>
 
         <p>
-            Impact: [${asteroidImpactFormatted}]
+            Impact: [<t:output value="asteroidImpact" format="dateFormat"/>]
         </p>
     </t:if>
 

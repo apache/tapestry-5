@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,16 +16,12 @@ package org.apache.tapestry.grid;
 
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.corelib.components.Grid;
 
 /**
- * Defines how a {@link Grid} components (and its sub-components) gain access to the row data that
+ * Defines how a {@link Grid} component (and its sub-components) gain access to the row data that
  * is displayed on the page. In many cases, this is just a wrapper around a simple List, but the
  * abstractions exist to support access to a large data set that is accessible in sections.
- * <p/>
- * This interface is still under development, as we work out the best approach to handling a
- * {@link Grid} inside a {@link Form} using a large dataset.
  */
 public interface GridDataSource
 {
