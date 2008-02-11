@@ -1,0 +1,81 @@
+ ----
+ Tapestry Component Parameters Report
+ ----
+ 
+Tapestry Component Parameters Report
+
+  This report generates a comprehensive listing of all the components in your module (either a component library or
+  a Tapestry application). For each component, the inheritance, description and complete set of parameters (including inherited parameters)
+  are displayed.
+
+  The documentation is generated from a mix of JavaDoc and annotations on the classes themselves, and from
+  external documentation you may provide.
+
+
+* Providing External Documentation
+
+  The external documentation is optional, and takes the form of a file, stored in the same package
+  as the component class, with the extension ".xdoc".
+
+  External documentation is in the {{{http://maven.apache.org/doxia/references/xdoc-format.html}Maven XDoc Format}},
+  which can be thought of as a somewhat rigid, stripped down version of XHTML.
+
+  The component report will extract the content of the \<body\> element and add it to the documention it
+  automatically generates.  It will also copy any images (the <<<src>>> attribute of any \<img\> element)
+  to the corresponding output folder.
+
+  The documentation is generated into a directory structure that mimics the package structure; thus links
+  to component documentation for components in the same package is just a link to another file (with a .html extension)
+  in the same folder.
+
+  Example:
+
+----
+<document>
+    <body>
+        <section name="Related Components">
+            <ul>
+                <li><a href="Foo.html">Foo</a></ul>
+                <li><a href="Bar.html">Bar</a></ul>
+            </ul>
+         </section>
+
+         <section name="Examples">
+
+            <p>The Baz component can be used to generate a gloop style of interface:</p>
+
+            <p><img src="baz_ref.png"/></p>
+
+            . . .
+----  
+
+
+  External documentation files (the .xdoc files and any related image files)
+  can be either on the Java main path (i.e., src/main/java) or on the resources path
+  (src/main/resources).  At this time, you should place them under src/main/java such that
+  the files are not packaged in your library JAR or application WAR.
+  
+* Generating the Report
+
+  Just add the following to the reporting/plugins section of your POM:
+  
++---+
+<plugin>
+    <groupId>org.apache.tapestry</groupId>
+    <artifactId>tapestry-component-report</artifactId>
+    <version>5.0.x</version>
+    <configuration>
+        <rootPackage>org.example.myapp</rootPackage>
+    </configuration>                
+</plugin>
++---+
+
+  Be sure the update the \<version\> element with the current version of the Maven plugin, and update the
+  \<rootPackage\> element with the value for your application (this will match the value you configure inside
+  your
+  {{{../tapestry-core/conf.html}web.xml}}).
+  
+* Limitations
+  
+  Doesn't have any way to generate parameters for base classes from another library; the tools assume that the components
+  are entirely self-contained within the current model.

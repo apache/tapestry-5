@@ -1,0 +1,18 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <head>
+    <title>Create New Address</title>
+  </head>
+  <body>
+
+    <style>
+      DIV.t-beaneditor LABEL { 
+        width: 200px;
+      }
+    </style>
+
+    <h1>Create New Address</h1>
+
+    <t:beaneditform submitlabel="message:submit-label" object="address"/>
+
+  </body>
+</html>
