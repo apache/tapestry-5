@@ -89,6 +89,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
     private static final Pattern SPLIT_PACKAGE_PATTERN = Pattern.compile("\\.");
 
     private static final Pattern SPLIT_FOLDER_PATTERN = Pattern.compile("/");
+    private static final int LOGICAL_NAME_BUFFER_SIZE = 40;
 
     public ComponentClassResolverImpl(Logger logger,
 
@@ -285,15 +286,18 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         for (String name : classNames)
         {
-            String logicalName = toLogicalName(name, pathPrefix, startPos);
+            String logicalName = toLogicalName(name, pathPrefix, startPos, true);
+            String unstrippedName = toLogicalName(name, pathPrefix, startPos, false);
 
             if (isPage)
             {
                 _pageClassNameToLogicalName.put(name, logicalName);
                 _pageNameToCanonicalPageName.put(logicalName, logicalName);
+                _pageNameToCanonicalPageName.put(unstrippedName, logicalName);
             }
 
             logicalNameToClassName.put(logicalName, name);
+            logicalNameToClassName.put(unstrippedName, name);
         }
     }
 
@@ -306,9 +310,10 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
      *                   lives)
      * @param startPos   start position within the class name to extract the logical name (i.e., after the final '.' in
      *                   "rootpackage.pages.").
+     * @param stripTerms
      * @return a short logical name in folder format ('.' replaced with '/')
      */
-    private String toLogicalName(String className, String pathPrefix, int startPos)
+    private String toLogicalName(String className, String pathPrefix, int startPos, boolean stripTerms)
     {
         List<String> terms = CollectionFactory.newList();
 
@@ -316,7 +321,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
         addAll(terms, SPLIT_PACKAGE_PATTERN, className.substring(startPos));
 
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(LOGICAL_NAME_BUFFER_SIZE);
         String sep = "";
 
         String logicalName = terms.remove(terms.size() - 1);
@@ -330,7 +335,7 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
             sep = "/";
 
-            logicalName = stripTerm(term, logicalName);
+            if (stripTerms) logicalName = stripTerm(term, logicalName);
         }
 
         if (logicalName.equals("")) logicalName = unstripped;

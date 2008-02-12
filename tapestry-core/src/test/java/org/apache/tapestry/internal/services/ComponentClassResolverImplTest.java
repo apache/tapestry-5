@@ -169,6 +169,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
         ComponentClassResolver resolver = create(logger, source, locator);
 
         assertEquals(resolver.resolvePageNameToClassName("admin/edit/User"), className);
+        assertEquals(resolver.resolvePageNameToClassName("admin/edit/AdminUserEdit"), className);
 
         verify();
     }
@@ -547,6 +548,7 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/deep/Page"), className);
+        assertEquals(resolver.resolvePageNameToClassName("lib/deep/LibDeepPage"), className);
 
         verify();
     }
