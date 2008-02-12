@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public interface Registry extends ObjectLocator
      * Invoked at the end of a request to discard any thread-specific information accumulated during
      * the current request.
      *
-     * @see org.apache.tapestry.ioc.services.ThreadCleanupHub
+     * @see org.apache.tapestry.ioc.services.PerthreadManager
      * @see org.apache.tapestry.ioc.services.ThreadCleanupListener
      */
     void cleanupThread();

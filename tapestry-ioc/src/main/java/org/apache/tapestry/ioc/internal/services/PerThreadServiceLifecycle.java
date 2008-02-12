@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,11 +25,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
 /**
- * Allows a service to exist "per thread" (in each thread). This involves an inner proxy, with a
- * ThreadLocal whose initial value is derived from a {@link org.apache.tapestry.ioc.ObjectCreator}.
- * Method invocations are delegated to the per-thread service instance. The proxy also implements
- * {@link org.apache.tapestry.ioc.services.ThreadCleanupListener} so that it can discard the
- * per-thread implementation.
+ * Allows a service to exist "per thread" (in each thread). This involves an inner proxy,
+ * which caches an object
+ * derived from a {@link org.apache.tapestry.ioc.ObjectCreator} as a key in the
+ * {@link org.apache.tapestry.ioc.services.PerthreadManager}.
+ * Method invocations are delegated to the per-thread service instance.
  * <p/>
  * This scheme ensures that, although the service builder method will be invoked many times over the
  * life of the application, the service decoration process occurs only once. The final calling chain
@@ -37,26 +37,26 @@ import java.lang.reflect.Modifier;
  */
 public class PerThreadServiceLifecycle implements ServiceLifecycle
 {
-    private final ThreadCleanupHub _threadCleanupHub;
+    private final PerthreadManager _perthreadManager;
 
     private final ClassFactory _classFactory;
 
     private static final String PER_THREAD_METHOD_NAME = "_perThreadInstance";
 
-    public PerThreadServiceLifecycle(ThreadCleanupHub threadCleanupHub,
+    public PerThreadServiceLifecycle(PerthreadManager perthreadManager,
 
                                      @Builtin
                                      ClassFactory classFactory)
     {
-        _threadCleanupHub = threadCleanupHub;
+        _perthreadManager = perthreadManager;
         _classFactory = classFactory;
     }
 
-    public Object createService(ServiceResources resources, final ObjectCreator creator)
+    public Object createService(ServiceResources resources, ObjectCreator creator)
     {
         Class proxyClass = createProxyClass(resources);
 
-        ObjectCreator perThreadCreator = new PerThreadServiceCreator(_threadCleanupHub, creator);
+        ObjectCreator perThreadCreator = new PerThreadServiceCreator(_perthreadManager, creator);
 
         try
         {

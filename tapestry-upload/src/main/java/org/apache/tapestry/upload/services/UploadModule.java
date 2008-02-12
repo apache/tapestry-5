@@ -18,9 +18,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.io.FileCleaner;
 import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.services.PerthreadManager;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.RegistryShutdownListener;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.services.HttpServletRequestFilter;
 import org.apache.tapestry.services.LibraryMapping;
 import org.apache.tapestry.upload.internal.services.MultipartDecoderImpl;
@@ -40,7 +40,7 @@ public class UploadModule
     }
 
     @Scope(IOCConstants.PERTHREAD_SCOPE)
-    public synchronized static MultipartDecoder buildMultipartDecoder(ThreadCleanupHub threadCleanupHub,
+    public synchronized static MultipartDecoder buildMultipartDecoder(PerthreadManager perthreadManager,
 
                                                                       RegistryShutdownHub shutdownHub,
 
@@ -50,7 +50,7 @@ public class UploadModule
 
         // This is proabably overkill since the FileCleaner should catch temporary files, but lets
         // be safe.
-        threadCleanupHub.addThreadCleanupListener(multipartDecoder);
+        perthreadManager.addThreadCleanupListener(multipartDecoder);
 
         if (_needToAddShutdownListener.getAndSet(false))
         {

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -128,7 +128,7 @@ public class RegistryStartupTest extends IOCTestCase
 
         assertTrue(StartupModule._startupInvoked);
 
-        // Ideally we'd have a way to show that the ThreadCleanupHub was notified after
+        // Ideally we'd have a way to show that the PerthreadManager was notified after
         // RegistryStartup did its thing, but ...
 
         r.shutdown();

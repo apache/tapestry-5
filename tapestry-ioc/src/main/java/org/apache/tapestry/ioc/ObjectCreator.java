@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,7 +21,8 @@ package org.apache.tapestry.ioc;
 public interface ObjectCreator
 {
     /**
-     * Create and return the object.
+     * Create and return the object.  In some limited circumstances, the implementation may cache
+     * the result, returning the same object for repeated calls.
      */
     Object createObject();
 }

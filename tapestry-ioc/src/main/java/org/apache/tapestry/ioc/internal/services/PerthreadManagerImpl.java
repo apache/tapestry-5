@@ -14,50 +14,60 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.services.PerthreadManager;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 import org.slf4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 
-public class ThreadCleanupHubImpl implements ThreadCleanupHub
+public class PerthreadManagerImpl implements PerthreadManager
 {
-    private static class ListHolder extends ThreadLocal<List<ThreadCleanupListener>>
+    private static final String LISTENERS_KEY = "PerthreadManager.listenerList";
+
+    private static class MapHolder extends ThreadLocal<Map>
     {
         @Override
-        protected List<ThreadCleanupListener> initialValue()
+        protected Map initialValue()
         {
-            return newList();
+            return CollectionFactory.newMap();
         }
     }
 
     private final Logger _logger;
 
-    private final ListHolder _holder = new ListHolder();
+    private final MapHolder _holder = new MapHolder();
 
-    public ThreadCleanupHubImpl(Logger logger)
+    public PerthreadManagerImpl(Logger logger)
     {
         _logger = logger;
     }
 
-    private synchronized List<ThreadCleanupListener> get()
+
+    private synchronized Map getPerthreadMap()
     {
         return _holder.get();
     }
 
-    private synchronized List<ThreadCleanupListener> getAndRemove()
-    {
-        List<ThreadCleanupListener> result = _holder.get();
 
-        _holder.remove();
+    private List<ThreadCleanupListener> getListeners()
+    {
+        List<ThreadCleanupListener> result = (List<ThreadCleanupListener>) get(LISTENERS_KEY);
+
+        if (result == null)
+        {
+            result = CollectionFactory.newList();
+            put(LISTENERS_KEY, result);
+        }
 
         return result;
     }
 
+
     public void addThreadCleanupListener(ThreadCleanupListener listener)
     {
-        get().add(listener);
+        getListeners().add(listener);
     }
 
     /**
@@ -65,7 +75,9 @@ public class ThreadCleanupHubImpl implements ThreadCleanupHub
      */
     public void cleanup()
     {
-        List<ThreadCleanupListener> listeners = getAndRemove();
+        List<ThreadCleanupListener> listeners = getListeners();
+
+        put(LISTENERS_KEY, null);
 
         for (ThreadCleanupListener listener : listeners)
         {
@@ -79,6 +91,22 @@ public class ThreadCleanupHubImpl implements ThreadCleanupHub
             }
         }
 
+        // Listeners should not re-add themselves or store any per-thread state here,
+        // it will be lost.
+
+        synchronized (this)
+        {
+            _holder.remove();
+        }
     }
 
+    public void put(Object key, Object value)
+    {
+        getPerthreadMap().put(key, value);
+    }
+
+    public Object get(Object key)
+    {
+        return getPerthreadMap().get(key);
+    }
 }

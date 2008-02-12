@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.def.ServiceDef;
+import org.apache.tapestry.ioc.internal.services.PerthreadManagerImpl;
 import org.apache.tapestry.ioc.internal.services.RegistryShutdownHubImpl;
-import org.apache.tapestry.ioc.internal.services.ThreadCleanupHubImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
@@ -40,7 +40,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private static final String REGISTRY_SHUTDOWN_HUB_SERVICE_ID = "RegistryShutdownHub";
 
-    static final String THREAD_CLEANUP_HUB_SERVICE_ID = "ThreadCleanupHub";
+    static final String PERTHREAD_MANAGER_SERVICE_ID = "PerthreadManager";
 
     private static final String SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID = "ServiceActivityScoreboard";
 
@@ -81,7 +81,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private final Map<String, ServiceLifecycle> _lifecycles = newCaseInsensitiveMap();
 
-    private final ThreadCleanupHubImpl _cleanupHub;
+    private final PerthreadManager _perthreadManager;
 
     private final ClassFactory _classFactory;
 
@@ -135,11 +135,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, _classFactory);
 
-        Logger logger = loggerForBuiltinService(THREAD_CLEANUP_HUB_SERVICE_ID);
+        Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
-        _cleanupHub = new ThreadCleanupHubImpl(logger);
+        _perthreadManager = new PerthreadManagerImpl(logger);
 
-        addBuiltin(THREAD_CLEANUP_HUB_SERVICE_ID, ThreadCleanupHub.class, _cleanupHub);
+        addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, _perthreadManager);
 
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
@@ -314,7 +314,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         _lock.check();
 
-        _cleanupHub.cleanup();
+        _perthreadManager.cleanup();
     }
 
     private Module locateModuleForService(String serviceId)
