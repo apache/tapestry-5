@@ -1145,8 +1145,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("Birthday: [12/24/1966]");
         assertTextPresent("Impact: [05/28/2046]");
 
-        assertFieldValue("birthday", "12/24/66");
-        assertFieldValue("asteroidImpact", "05/28/46");
+        assertFieldValue("birthday", "12/24/1966");
+        assertFieldValue("asteroidImpact", "05/28/2046");
     }
 
     /**

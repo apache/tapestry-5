@@ -83,7 +83,16 @@ public class DateField extends AbstractField
     @Inject
     private FieldValidationSupport _fieldValidationSupport;
 
-    private final DateFormat _format = new SimpleDateFormat("MM/dd/yy");
+    /**
+     * For output, format nicely and unambiguously as four digits.
+     */
+    private final DateFormat _outputFormat = new SimpleDateFormat("MM/dd/yyyy");
+
+    /**
+     * When the user types a value, they may only type two digits for the year; SimpleDateFormat
+     * will do something reasonable.  If they use the popup, it will be unambiguously 4 digits.
+     */
+    private final DateFormat _inputFormat = new SimpleDateFormat("MM/dd/yy");
 
     /**
      * The default value is a property of the container whose name matches the component's id. May return null if the
@@ -169,7 +178,7 @@ public class DateField extends AbstractField
     {
         if (_value == null) return "";
 
-        return _format.format(_value);
+        return _outputFormat.format(_value);
     }
 
     @Override
@@ -185,7 +194,7 @@ public class DateField extends AbstractField
         {
             if (InternalUtils.isNonBlank(value))
                 parsedValue =
-                        _format.parse(value);
+                        _inputFormat.parse(value);
 
         }
         catch (ParseException ex)
