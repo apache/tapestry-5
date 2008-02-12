@@ -24,7 +24,7 @@ public interface ZoneSetup
      * an element (typically, a &lt;div&gt;).  A Zone may have handlers
      * used to initially show it, or to highlight it when its content changes.
      * Such handlers are referenced by name, as functions of the
-     * Tapestry.ZoneEffects object.
+     * Tapestry.ZoneEffect object.
      *
      * @param clientId           client-side id of the element that will be updated by the zone
      * @param showFunctionName   name of the function used to initially show the zone (if not visible), or null for default

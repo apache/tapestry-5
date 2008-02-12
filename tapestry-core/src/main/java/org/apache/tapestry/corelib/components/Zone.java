@@ -38,7 +38,7 @@ import org.apache.tapestry.json.JSONObject;
  * When a user clicks an {@link org.apache.tapestry.corelib.components.ActionLink} whose zone parameter is set,
  * the corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
  * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show and update
- * parameters are the <em>names</em> of functions attached to the Tapestry.ZoneEffects object.
+ * parameters are the <em>names</em> of functions attached to the Tapestry.ZoneEffect object.
  * <p/>
  * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
  */
@@ -46,7 +46,7 @@ import org.apache.tapestry.json.JSONObject;
 public class Zone implements ClientElement
 {
     /**
-     * Name of a function on the client-side Tapestry.ZoneEffects object that is invoked to
+     * Name of a function on the client-side Tapestry.ZoneEffect object that is invoked to
      * make the Zone's &lt;div&gt; visible before being updated.  If not specified, then
      * the basic "show" method is used.
      */
@@ -54,7 +54,7 @@ public class Zone implements ClientElement
     private String _show;
 
     /**
-     * Name of a function on the client-side Tapestry.ZoneEffects object that is invoked
+     * Name of a function on the client-side Tapestry.ZoneEffect object that is invoked
      * after the Zone's content has been updated. If not specified, then the basic "highlight"
      * method is used, which performs a classic "yellow fade" to indicate to the user
      * that and update has taken place.

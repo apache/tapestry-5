@@ -274,7 +274,7 @@ Ajax Components and Mixins
    then reference those ids inside ActionLink components. Using Zone components inside any kind of loop
    may cause additional problems, as Tapestry will <uniqueify> the client id you specify (appending an index number).
 
-   The show and update function names are converted to lower case; all the methods of Tapestry.ZoneEffects should have
+   The show and update function names are converted to lower case; all the methods of Tapestry.ZoneEffect should have
    all lower-case names.  Because client-side JavaScript is so fluid (new methods may be added to
    existing objects), Tapestry makes no attempt to validate the function names ... however, if the names
    are not valid, then the default show and highlight methods will be used.
