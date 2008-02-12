@@ -694,7 +694,7 @@ public final class TapestryModule
 
     private final UpdateListenerHub _updateListenerHub;
 
-    private final ThreadCleanupHub _threadCleanupHub;
+    private final PerthreadManager _perthreadManager;
 
     private final ChainBuilder _chainBuilder;
 
@@ -730,7 +730,9 @@ public final class TapestryModule
 
                           @ComponentLayer ClassFactory componentClassFactory,
 
-                          UpdateListenerHub updateListenerHub, ThreadCleanupHub threadCleanupHub,
+                          UpdateListenerHub updateListenerHub,
+
+                          PerthreadManager perthreadManager,
 
                           ComponentTemplateSource componentTemplateSource,
 
@@ -755,7 +757,7 @@ public final class TapestryModule
         _componentClassFactory = componentClassFactory;
 
         _updateListenerHub = updateListenerHub;
-        _threadCleanupHub = threadCleanupHub;
+        _perthreadManager = perthreadManager;
         _componentTemplateSource = componentTemplateSource;
         _request = request;
         _response = response;
@@ -1772,7 +1774,7 @@ public final class TapestryModule
     {
         RequestPageCacheImpl service = new RequestPageCacheImpl(pagePool);
 
-        _threadCleanupHub.addThreadCleanupListener(service);
+        _perthreadManager.addThreadCleanupListener(service);
 
         return service;
     }

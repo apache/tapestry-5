@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.slf4j.Logger;
 import org.testng.annotations.Test;
 
-public class ThreadCleanupHubImplTest extends IOCTestCase
+public class PerthreadManagerImplTest extends IOCTestCase
 {
     @Test
     public void no_listeners()
@@ -28,7 +28,7 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
 
         replay();
 
-        new ThreadCleanupHubImpl(logger).cleanup();
+        new PerthreadManagerImpl(logger).cleanup();
 
         verify();
     }
@@ -43,7 +43,7 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
 
         replay();
 
-        ThreadCleanupHubImpl hub = new ThreadCleanupHubImpl(logger);
+        PerthreadManagerImpl hub = new PerthreadManagerImpl(logger);
 
         hub.addThreadCleanupListener(listener);
 
@@ -88,7 +88,7 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
 
         replay();
 
-        ThreadCleanupHubImpl hub = new ThreadCleanupHubImpl(logger);
+        PerthreadManagerImpl hub = new PerthreadManagerImpl(logger);
 
         hub.addThreadCleanupListener(listener);
 
@@ -109,7 +109,7 @@ public class ThreadCleanupHubImplTest extends IOCTestCase
     //
     // replay();
     //
-    // final ThreadCleanupHub hub = new ThreadCleanupHubImpl(log);
+    // final PerthreadManager hub = new PerthreadManagerImpl(log);
     //
     // hub.addThreadCleanupListener(l1);
     //

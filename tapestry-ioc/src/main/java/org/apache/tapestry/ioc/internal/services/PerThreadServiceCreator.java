@@ -18,44 +18,42 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.ObjectCreator;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
-import org.apache.tapestry.ioc.services.ThreadCleanupListener;
+import org.apache.tapestry.ioc.services.PerthreadManager;
 
 /**
- * Provides per-thread implementations of services, along with end-of-request thread cleanup.
+ * Provides per-thread implementations of services.
  */
-public class PerThreadServiceCreator extends ThreadLocal implements ThreadCleanupListener, ObjectCreator
+public class PerThreadServiceCreator implements ObjectCreator
 {
-    private final ThreadCleanupHub _threadCleanupHub;
+    private final PerthreadManager _perthreadManager;
 
     private final ObjectCreator _delegate;
 
-    public PerThreadServiceCreator(ThreadCleanupHub threadCleanupHub, ObjectCreator delegate)
+    public PerThreadServiceCreator(PerthreadManager perthreadManager, ObjectCreator delegate)
     {
-        _threadCleanupHub = threadCleanupHub;
+        _perthreadManager = perthreadManager;
         _delegate = delegate;
     }
 
-    @Override
-    protected Object initialValue()
+    /**
+     * For each thread, the first call will use the delegate
+     * {@link org.apache.tapestry.ioc.ObjectCreator} to create an instance,
+     * and later calls will reuse the same per-thread instance. The instance
+     * is stored in the {@link org.apache.tapestry.ioc.services.PerthreadManager} and will
+     * be released at the end of the request.
+     */
+    public Object createObject()
     {
-        // First time the value is accessed per thread, set up a callback to clear out the
-        // value (at the end of the request) and use the creator to create a new instance.
+        // Use the ObjectCreator instance as the key.  it will be unique.
 
-        _threadCleanupHub.addThreadCleanupListener(this);
+        Object perthreadInstance = _perthreadManager.get(_delegate);
 
-        return _delegate.createObject();
+        if (perthreadInstance == null)
+        {
+            perthreadInstance = _delegate.createObject();
+            _perthreadManager.put(_delegate, perthreadInstance);
+        }
+
+        return perthreadInstance;
     }
-
-    public synchronized Object createObject()
-    {
-        // Get (or create) the service.
-        return get();
-    }
-
-    public synchronized void threadDidCleanup()
-    {
-        remove();
-    }
-
 }

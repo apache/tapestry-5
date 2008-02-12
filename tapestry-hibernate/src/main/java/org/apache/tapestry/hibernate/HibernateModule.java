@@ -27,8 +27,8 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.services.PerthreadManager;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
-import org.apache.tapestry.ioc.services.ThreadCleanupHub;
 import org.apache.tapestry.services.AliasContribution;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -69,11 +69,11 @@ public class HibernateModule
      * initially, and is committed at the end of the request.
      */
     @Scope(PERTHREAD_SCOPE)
-    public static HibernateSessionManager build(HibernateSessionSource sessionSource, ThreadCleanupHub threadCleanupHub)
+    public static HibernateSessionManager build(HibernateSessionSource sessionSource, PerthreadManager perthreadManager)
     {
         HibernateSessionManagerImpl service = new HibernateSessionManagerImpl(sessionSource);
 
-        threadCleanupHub.addThreadCleanupListener(service);
+        perthreadManager.addThreadCleanupListener(service);
 
         return service;
     }

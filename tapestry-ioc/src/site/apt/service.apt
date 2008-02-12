@@ -582,7 +582,7 @@ Builtin Services
 *---------------------+-----------------------------------------------------------------------------------------+
 | RegistryShutdownHub | {{{../apidocs/org/apache/tapestry/ioc/RegistryShutdownHub.html}RegistryShutdownHub}}    |
 *---------------------+-----------------------------------------------------------------------------------------+
-| ThreadCleanupHub    | {{{../apidocs/org/apache/tapestry/ioc/services/ThreadCleanupHub.html}ThreadCleanupHub}} |
+| PerthreadManager    | {{{../apidocs/org/apache/tapestry/ioc/services/PerthreadManager.html}PerthreadManager}} |
 *---------------------+-----------------------------------------------------------------------------------------+
 
   Consult the JavaDoc for each of these services to identify under what circumstances you'll need to use them.

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ import java.util.EventListener;
 /**
  * Listener interface for object that need to know about thread event cleanup.
  * <p/>
- * Note that registration with the {@link org.apache.tapestry.ioc.services.ThreadCleanupHub} is a
+ * Note that registration with the {@link org.apache.tapestry.ioc.services.PerthreadManager} is a
  * one-shot affair; it lasts no longer than the next cleanup.
- *
- * @see org.apache.tapestry.ioc.services.ThreadCleanupHub
  */
 public interface ThreadCleanupListener extends EventListener
 {
     /**
-     * Invoked by {@link org.apache.tapestry.ioc.services.ThreadCleanupHub} service when a thread
+     * Invoked by {@link org.apache.tapestry.ioc.services.PerthreadManager} service when a thread
      * performs and end-of-request cleanup.
      */
     void threadDidCleanup();
