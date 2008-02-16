@@ -33,6 +33,11 @@ public interface PageRenderQueue
     void initializeForCompletePage(Page page);
 
     /**
+     * Sets the default page that will render the response.
+     */
+    void setRenderingPage(Page page);
+
+    /**
      * Returns the page that is rendering markup content.
      */
     Page getRenderingPage();
@@ -41,6 +46,11 @@ public interface PageRenderQueue
      * Initializes the queue for rendering of a portion of a page.
      */
     void initializeForPartialPageRender(RenderCommand rootCommand);
+
+    /**
+     * Returns true if {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)} has been invoked.
+     */
+    boolean isPartialRenderInitialized();
 
     /**
      * Render to the write, as setup by the initialize method.

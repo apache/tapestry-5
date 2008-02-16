@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,46 +18,38 @@ import org.apache.tapestry.ContentType;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.json.JSONObject;
-import org.apache.tapestry.runtime.RenderCommand;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.MarkupWriterFactory;
+import org.apache.tapestry.services.PartialMarkupRenderer;
+import org.apache.tapestry.services.Request;
+import org.apache.tapestry.services.Response;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRenderer
 {
-    private final Environment _environment;
-
     private final MarkupWriterFactory _factory;
 
     private final Request _request;
+
     private final Response _response;
 
     private final PartialMarkupRenderer _partialMarkupRenderer;
 
-    private final PageRenderQueue _pageRenderQueue;
-
-    public AjaxPartialResponseRendererImpl(Environment environment, MarkupWriterFactory factory, Request request,
-                                           Response response, PartialMarkupRenderer partialMarkupRenderer,
-                                           PageRenderQueue pageRenderQueue)
+    public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory, Request request,
+                                           Response response, PartialMarkupRenderer partialMarkupRenderer)
     {
-        _environment = environment;
         _factory = factory;
         _request = request;
         _response = response;
         _partialMarkupRenderer = partialMarkupRenderer;
-        _pageRenderQueue = pageRenderQueue;
     }
 
-    public void renderPartialPageMarkup(RenderCommand rootRenderCommand) throws IOException
+    public void renderPartialPageMarkup() throws IOException
     {
-        _environment.clear();
-
         // This is a complex area as we are trying to keep public and private services properly
         // seperated, and trying to keep stateless and stateful (i.e., perthread scope) services
         // seperated. So we inform the stateful queue service what it needs to do here ...
-
-        _pageRenderQueue.initializeForPartialPageRender(rootRenderCommand);
 
         ContentType pageContentType = (ContentType) _request.getAttribute(
                 InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);

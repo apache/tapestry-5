@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.runtime.RenderCommand;
-
 import java.io.IOException;
 
 /**
@@ -29,9 +27,9 @@ import java.io.IOException;
 public interface AjaxPartialResponseRenderer
 {
     /**
-     * Used to render a partial response as part of an Ajax action request.
-     *
-     * @param renderCommand command that will be executed to render the content
+     * Used to render a partial response as part of an Ajax action request. A call
+     * to {@link org.apache.tapestry.internal.services.PageRenderQueue#initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)}
+     * should precede this call.
      */
-    void renderPartialPageMarkup(RenderCommand renderCommand) throws IOException;
+    void renderPartialPageMarkup() throws IOException;
 }

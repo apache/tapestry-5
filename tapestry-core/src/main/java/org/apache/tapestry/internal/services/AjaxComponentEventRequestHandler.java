@@ -40,15 +40,22 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
     private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
 
+    private final Environment _environment;
+
+    private final AjaxPartialResponseRenderer _partialRenderer;
+
     public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue,
                                             @Ajax ComponentEventResultProcessor resultProcessor,
-                                            PageContentTypeAnalyzer pageContentTypeAnalyzer)
+                                            PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
+                                            AjaxPartialResponseRenderer partialRenderer)
     {
         _cache = cache;
         _queue = queue;
         _resultProcessor = resultProcessor;
         _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
         _request = request;
+        _environment = environment;
+        _partialRenderer = partialRenderer;
     }
 
     public void handle(ComponentEventRequestParameters parameters) throws IOException
@@ -57,15 +64,17 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
 
+
         activePage.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT,
                                                         parameters.getPageActivationContext(), callback);
+
 
         if (callback.isAborted()) return;
 
         // If we end up doing a partial render, the page render queue service needs to know the
         // page that will be rendered (for logging purposes, if nothing else).
 
-        _queue.initializeForCompletePage(activePage);
+        _queue.setRenderingPage(activePage);
 
         ContentType contentType = _pageContentTypeAnalyzer.findContentType(activePage);
 
@@ -75,9 +84,20 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
+        // In many cases, the triggered element is a Form that needs to be able to
+        // pass it's event handler return values to the correct result processor.
+
+        _environment.push(ComponentEventResultProcessor.class, _resultProcessor);
+
         element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
-        if (callback.isAborted()) return;
+        _environment.pop(ComponentEventResultProcessor.class);
+
+        if (_queue.isPartialRenderInitialized())
+        {
+            _partialRenderer.renderPartialPageMarkup();
+            return;
+        }
 
         JSONObject reply = new JSONObject();
 

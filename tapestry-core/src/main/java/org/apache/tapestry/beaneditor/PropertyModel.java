@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.apache.tapestry.beaneditor;
 import org.apache.tapestry.PropertyConduit;
 
 /**
- * Part of a {@link BeanModel} that defines the attributes of a single property of a bean.
+ * Part of a {@link org.apache.tapestry.beaneditor.BeanModel} that defines the attributes of a single property of a bean.
  */
 public interface PropertyModel
 {

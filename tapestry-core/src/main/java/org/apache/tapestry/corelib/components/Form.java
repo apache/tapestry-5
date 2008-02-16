@@ -26,6 +26,7 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
+import org.apache.tapestry.internal.services.ZoneSetup;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry.ioc.Location;
@@ -59,8 +60,6 @@ import java.util.List;
  */
 public class Form implements ClientElement, FormValidationControl
 {
-
-
     /**
      * Invoked before {@link #PREPARE} when rendering out the form.
      */
@@ -131,6 +130,13 @@ public class Form implements ClientElement, FormValidationControl
     @Parameter("true")
     private boolean _clientValidation;
 
+    /**
+     * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates
+     * the indicated zone.  Often a Form will update the same zone that contains it.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _zone;
+
     @Inject
     private Environment _environment;
 
@@ -167,9 +173,14 @@ public class Form implements ClientElement, FormValidationControl
     @Mixin
     private RenderInformals _renderInformals;
 
-    @Inject
-    @Traditional
-    private ComponentEventResultProcessor _eventResultProcessor;
+    /**
+     * Set up via the traditional or Ajax component event request handler
+     */
+    @Environmental
+    private ComponentEventResultProcessor _componentEventResultProcessor;
+
+    @Environmental
+    private ZoneSetup _zoneSetup;
 
     private String _name;
 
@@ -200,6 +211,8 @@ public class Form implements ClientElement, FormValidationControl
         _name = _pageRenderSupport.allocateClientId(_resources.getId());
 
         _formSupport = new FormSupportImpl(_name, _actions);
+
+        if (_zone != null) _zoneSetup.linkZone(_name, _zone);
 
         // TODO: Forms should not allow to nest. Perhaps a set() method instead of a push() method
         // for this kind of check?  
@@ -305,7 +318,8 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-            ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_eventResultProcessor);
+            ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
+                    _componentEventResultProcessor);
 
             _resources.triggerEvent(PREPARE_FOR_SUBMIT, context, callback);
 

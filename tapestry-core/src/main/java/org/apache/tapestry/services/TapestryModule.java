@@ -1450,20 +1450,21 @@ public final class TapestryModule
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
 
+                                                final AjaxUIDManager ajaxUIDManager,
+
                                                 @Path("${tapestry.field-error-marker}")
                                                 final Asset fieldErrorIcon,
 
-                                                final ValidationMessagesSource validationMessagesSource,
-
-                                                final SymbolSource symbolSource,
-
-                                                final AssetSource assetSource)
+                                                final ValidationMessagesSource validationMessagesSource)
     {
         PartialMarkupRendererFilter pageRenderSupport = new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                PartialRenderPageRenderSupport support = new PartialRenderPageRenderSupport();
+                String namespace = ":" + ajaxUIDManager.getAjaxUID();
+
+                PartialRenderPageRenderSupport support = new PartialRenderPageRenderSupport(
+                        namespace);
 
                 _environment.push(PageRenderSupport.class, support);
 
@@ -2117,5 +2118,14 @@ public final class TapestryModule
     {
         configuration.add("default", new DefaultNullFieldStrategy());
         configuration.add("zero", new ZeroNullFieldStrategy());
+    }
+
+    public static AjaxUIDManager buildAjaxUIDManager(LinkFactory linkFactory, ServiceResources resources)
+    {
+        AjaxUIDManagerImpl service = resources.autobuild(AjaxUIDManagerImpl.class);
+
+        linkFactory.addListener(service);
+
+        return service;
     }
 }

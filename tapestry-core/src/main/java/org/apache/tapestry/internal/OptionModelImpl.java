@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,38 +14,26 @@
 
 package org.apache.tapestry.internal;
 
-import org.apache.tapestry.OptionModel;
+import org.apache.tapestry.AbstractOptionModel;
 
-import java.util.Map;
-
-public final class OptionModelImpl implements OptionModel
+public class OptionModelImpl extends AbstractOptionModel
 {
     private final String _label;
 
-    private final boolean _disabled;
-
     private final Object _value;
 
-    private final Map<String, String> _attributes;
-
-    public OptionModelImpl(String label, boolean disabled, Object value, String... keysAndValues)
+    /**
+     * Constructor for when the value and the label are the same.
+     */
+    public OptionModelImpl(String value)
     {
-        this(label, disabled, value, keysAndValues.length > 0 ? TapestryInternalUtils
-                .mapFromKeysAndValues(keysAndValues) : null);
+        this(value, value);
     }
 
-    public OptionModelImpl(String label, boolean disabled, Object value,
-                           Map<String, String> attributes)
+    public OptionModelImpl(String label, Object value)
     {
         _label = label;
-        _disabled = disabled;
         _value = value;
-        _attributes = attributes;
-    }
-
-    public Map<String, String> getAttributes()
-    {
-        return _attributes;
     }
 
     public String getLabel()
@@ -56,11 +44,6 @@ public final class OptionModelImpl implements OptionModel
     public Object getValue()
     {
         return _value;
-    }
-
-    public boolean isDisabled()
-    {
-        return _disabled;
     }
 
     @Override
