@@ -161,7 +161,14 @@ public class SelectTest extends InternalBaseTestCase
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
         List<OptionModel> options = Arrays.asList(
-                (OptionModel) new OptionModelImpl("Fred", false, "fred", "class", "pixie"));
+                (OptionModel) new OptionModelImpl("Fred", "fred")
+                {
+                    @Override
+                    public Map<String, String> getAttributes()
+                    {
+                        return Collections.singletonMap("class", "pixie");
+                    }
+                });
 
         Select select = new Select();
 
@@ -194,8 +201,21 @@ public class SelectTest extends InternalBaseTestCase
 
         // Extra cast needed for Sun compiler, not Eclipse compiler.
 
-        List<OptionModel> options = CollectionFactory.newList(
-                (OptionModel) new OptionModelImpl("Fred", true, "fred", "class", "pixie"));
+        List<OptionModel> options = Arrays.asList(
+                (OptionModel) new OptionModelImpl("Fred", "fred")
+                {
+                    @Override
+                    public boolean isDisabled()
+                    {
+                        return true;
+                    }
+
+                    @Override
+                    public Map<String, String> getAttributes()
+                    {
+                        return Collections.singletonMap("class", "pixie");
+                    }
+                });
 
         Select select = new Select();
 

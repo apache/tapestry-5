@@ -155,12 +155,12 @@ public class TapestryInternalUtils
 
         int equalsx = input.indexOf('=');
 
-        if (equalsx < 0) return new OptionModelImpl(input, false, input);
+        if (equalsx < 0) return new OptionModelImpl(input);
 
         String value = input.substring(0, equalsx);
         String label = input.substring(equalsx + 1);
 
-        return new OptionModelImpl(label, false, value);
+        return new OptionModelImpl(label, value);
     }
 
     /**
@@ -207,7 +207,7 @@ public class TapestryInternalUtils
 
         String label = input.getValue() != null ? String.valueOf(input.getValue()) : "";
 
-        return new OptionModelImpl(label, false, input.getKey());
+        return new OptionModelImpl(label, input.getKey());
     }
 
     /**
@@ -251,7 +251,7 @@ public class TapestryInternalUtils
     {
         String label = (input != null ? String.valueOf(input) : "");
 
-        return new OptionModelImpl(label, false, input);
+        return new OptionModelImpl(label, input);
     }
 
     /**

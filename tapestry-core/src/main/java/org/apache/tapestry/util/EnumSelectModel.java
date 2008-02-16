@@ -53,7 +53,7 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
         {
             String label = TapestryInternalUtils.getLabelForEnum(messages, prefix, value);
 
-            _options.add(new OptionModelImpl(label, false, value));
+            _options.add(new OptionModelImpl(label, value));
         }
     }
 

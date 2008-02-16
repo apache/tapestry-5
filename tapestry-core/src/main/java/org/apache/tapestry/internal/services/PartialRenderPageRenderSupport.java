@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,12 +27,17 @@ import java.util.Formatter;
 public class PartialRenderPageRenderSupport implements PageRenderSupport
 {
     private final StringBuilder _builder = new StringBuilder();
+
     private final Formatter _formatter = new Formatter(_builder);
+
     private boolean _dirty;
 
-    // TODO: A namespace for the id allocator to ensure uniquely allocated ids on the client.
+    private final IdAllocator _idAllocator;
 
-    private final IdAllocator _idAllocator = new IdAllocator();
+    public PartialRenderPageRenderSupport(String namespace)
+    {
+        _idAllocator = new IdAllocator(namespace);
+    }
 
     public String allocateClientId(String id)
     {

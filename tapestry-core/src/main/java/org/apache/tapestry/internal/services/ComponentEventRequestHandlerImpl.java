@@ -31,14 +31,17 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
     private final ActionRenderResponseGenerator _generator;
 
+    private final Environment _environment;
+
     public ComponentEventRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
                                             RequestPageCache cache, Response response,
-                                            ActionRenderResponseGenerator generator)
+                                            ActionRenderResponseGenerator generator, Environment environment)
     {
         _resultProcessor = resultProcessor;
         _cache = cache;
         _response = response;
         _generator = generator;
+        _environment = environment;
     }
 
     public void handle(ComponentEventRequestParameters parameters) throws IOException
@@ -59,7 +62,11 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
+        _environment.push(ComponentEventResultProcessor.class, _resultProcessor);
+
         element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
+
+        _environment.pop(ComponentEventResultProcessor.class);
 
         if (callback.isAborted()) return;
 

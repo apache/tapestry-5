@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,20 +15,36 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Block;
+import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.corelib.components.Form;
+import org.apache.tapestry.integration.app1.data.RegistrationData;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.slf4j.Logger;
 
 public class ZoneDemo
 {
+    @Component
+    private Form _form;
+
     @Inject
     private Logger _logger;
 
     private String _name;
 
-    private static final String[] NAMES = {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango"};
+    @ApplicationState
+    private RegistrationData _registration;
+
+    private static final String[] NAMES = {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration"};
 
     @Inject
     private Block _showName;
+
+    @Inject
+    private Block _registrationForm;
+
+    @Inject
+    private Block _registrationOutput;
 
     public String[] getNames()
     {
@@ -52,6 +68,27 @@ public class ZoneDemo
 
         _logger.info("Selected: '" + _name + "'");
 
+
+        if (name.equals("Registration")) return _registrationForm;
+
         return _showName;
+    }
+
+    Object onSuccess()
+    {
+        return _registrationOutput;
+    }
+
+    Object onActionFromClear()
+    {
+        _form.clearErrors();
+        _registration = null;
+
+        return _registrationForm;
+    }
+
+    public RegistrationData getRegistration()
+    {
+        return _registration;
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,16 +25,26 @@ public class PartialRenderPageRenderSupportTest extends TapestryTestCase
     @Test
     public void allocate_ids()
     {
-        PageRenderSupport prs = new PartialRenderPageRenderSupport();
+        PageRenderSupport prs = new PartialRenderPageRenderSupport("");
 
         assertEquals(prs.allocateClientId("foo"), "foo");
         assertEquals(prs.allocateClientId("foo"), "foo_0");
     }
 
     @Test
+    public void allocate_ids_with_uid()
+    {
+        PageRenderSupport prs = new PartialRenderPageRenderSupport(":uid");
+
+        assertEquals(prs.allocateClientId("foo"), "foo:uid");
+        assertEquals(prs.allocateClientId("foo"), "foo:uid_0");
+
+    }
+
+    @Test
     public void add_links_do_nothing()
     {
-        PageRenderSupport prs = new PartialRenderPageRenderSupport();
+        PageRenderSupport prs = new PartialRenderPageRenderSupport("");
 
         Asset asset = mockAsset();
 
@@ -50,7 +60,7 @@ public class PartialRenderPageRenderSupportTest extends TapestryTestCase
     @Test
     public void add_script_and_update()
     {
-        PartialRenderPageRenderSupport prs = new PartialRenderPageRenderSupport();
+        PartialRenderPageRenderSupport prs = new PartialRenderPageRenderSupport("");
 
         JSONObject reply = new JSONObject();
 

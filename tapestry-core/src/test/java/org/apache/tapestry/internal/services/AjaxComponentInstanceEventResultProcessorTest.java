@@ -33,12 +33,11 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         String pageName = "Biff";
 
         RequestPageCache cache = mockRequestPageCache();
-        AjaxPartialResponseRenderer renderer = newMock(AjaxPartialResponseRenderer.class);
         Page page = mockPage();
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();
         ComponentPageElement element = mockComponentPageElement();
-
+        PageRenderQueue queue = mockPageRenderQueue();
 
         train_getComponentResources(component, resources);
         train_getPageName(resources, pageName);
@@ -46,12 +45,12 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         train_getNestedId(resources, nestedId);
         train_getComponentElementByNestedId(page, nestedId, element);
 
-        renderer.renderPartialPageMarkup(element);
+        queue.initializeForPartialPageRender(element);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(renderer,
-                                                                                                           cache);
+        ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(
+                cache, queue);
 
         processor.processResultValue(component);
 
@@ -64,12 +63,11 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         String pageName = "Biff";
 
         RequestPageCache cache = mockRequestPageCache();
-        AjaxPartialResponseRenderer renderer = newMock(AjaxPartialResponseRenderer.class);
         Page page = mockPage();
         ComponentResources resources = mockComponentResources();
         Component component = mockComponent();
         ComponentPageElement element = mockComponentPageElement();
-
+        PageRenderQueue queue = mockPageRenderQueue();
 
         train_getComponentResources(component, resources);
         train_getPageName(resources, pageName);
@@ -77,12 +75,13 @@ public class AjaxComponentInstanceEventResultProcessorTest extends InternalBaseT
         train_getNestedId(resources, null);
         train_getRootElement(page, element);
 
-        renderer.renderPartialPageMarkup(element);
+        queue.initializeForPartialPageRender(element);
 
         replay();
 
-        ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(renderer,
-                                                                                                           cache);
+        ComponentEventResultProcessor<Component> processor = new AjaxComponentInstanceEventResultProcessor(
+                cache,
+                queue);
 
         processor.processResultValue(component);
 

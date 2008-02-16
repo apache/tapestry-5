@@ -19,6 +19,7 @@ import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
 
@@ -40,8 +41,23 @@ public class PageRenderQueueImpl implements PageRenderQueue
         _rootCommand = page.getRootElement();
     }
 
+
+    public void setRenderingPage(Page page)
+    {
+        Defense.notNull(page, "page");
+
+        _page = page;
+    }
+
+    public boolean isPartialRenderInitialized()
+    {
+        return _rootCommand != null;
+    }
+
     public void initializeForPartialPageRender(RenderCommand rootCommand)
     {
+        Defense.notNull(rootCommand, "rootCommand");
+
         if (_page == null) throw new IllegalStateException("Page must be specified before root render command.");
 
         _rootCommand = rootCommand;

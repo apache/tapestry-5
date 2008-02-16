@@ -35,19 +35,57 @@ var Tapestry = {
         document.observe("dom:loaded", callback);
     },
 
+    // Find all elements marked with the "t-invisible" CSS class and hide() them, so that
+    // Prototype's visible() method operates correctly. This is invoked when the
+    // DOM is first loaded, and AGAIN whenever dynamic content is loaded via the Zone
+    // mechanism.
+
+    onDomLoadedCallback : function()
+    {
+        $$(".t-invisible").each(function(element)
+        {
+            element.hide();
+            element.removeClassName("t-invisible");
+        });
+
+        // Adds a focus observer that fades all error popups except for the
+        // field in question.
+
+        $$("INPUT", "SELECT", "TEXTAREA").each(function(element)
+        {
+            if (element.isObservingFocusChange == undefined)
+            {
+
+
+                element.observe("focus", function()
+                {
+                    Tapestry.focusedElement = element;
+
+                    $(Tapestry.errorPopups).each(function(popup)
+                    {
+                        popup.handleFocusChange(element);
+                    });
+                });
+
+                element.isObservingFocusChange = true;
+            }
+        });
+    },
+
     registerForm : function(form, clientValidations)
     {
         form = $(form);
-    
-    // This can probably be cleaned up with bind() ...
 
-        form.onsubmit = function()
+        // Because order is important, we don't observe
+        // the event, we take it over.
+
+        form.onsubmit = function(domevent)
         {
             var event = new Tapestry.FormEvent(form);
 
             form.firstError = true;
 
-	  // Locate elements that have an event manager (and therefore, validations)
+	        // Locate elements that have an event manager (and therefore, validations)
             // and let those validations execute, which may result in calls to recordError().
 
             form.getElements().each(function(element)
@@ -61,12 +99,13 @@ var Tapestry = {
                 }
             });
 
+            if (! event.result) domevent.stop();
+
             return event.result;
         };
 
         form.recordError = function(field, event, message)
         {
-
             if (form.firstError)
             {
                 $(field).activate();
@@ -74,8 +113,7 @@ var Tapestry = {
                 form.firstError = false;
             }
 
-            field.decorateForValidationError(event, message);
-
+            field.decorateForValidationError(message);
         };
 
         // And handle the validations
@@ -113,30 +151,67 @@ var Tapestry = {
         });
     },
 
-    // Convert a link into a trigger of an Ajax update that
+    // Convert a form or link into a trigger of an Ajax update that
     // updates the indicated Zone.
 
-    linkZone : function(link, zoneDiv)
+    linkZone : function(element, zoneDiv)
     {
-        link = $(link);
+        element = $(element);
         var zone = $(zoneDiv).zone;
 
-        var clickHandler = function(event)
+        var successHandler = function(transport)
         {
-            var successHandler = function(transport)
-            {
-                var response = transport.responseText;
-                var reply = eval("(" + response + ")");
+            var response = transport.responseText;
+            var reply = eval("(" + response + ")");
 
-                zone.show(reply.content);
+            zone.show(reply.content);
+
+            var newScript = reply.script;
+
+            if (newScript != undefined)
+                eval(newScript);
+
+            Tapestry.onDomLoadedCallback();
+        };
+
+
+        if (element.tagName == "FORM")
+        {
+            // The existing handler, if present, will be responsible for form validations, which must
+            // come before submitting the form via XHR.
+
+            var existingHandler = element.onsubmit;
+
+            var handler = function(event)
+            {
+                if (existingHandler != undefined)
+                {
+                    var existingResult = existingHandler.call(element, event);
+                    if (! existingResult) return false;
+                }
+
+                element.request({ onSuccess : successHandler });
+
+                event.stop();
+
+                return false;
             };
 
-            var request = new Ajax.Request(link.href, { onSuccess : successHandler });
+            element.onsubmit = handler;
+
+            return;
+        }
+
+        // Otherwise, assume it's just an ordinary link.
+
+        var handler = function(event)
+        {
+            new Ajax.Request(element.href, { onSuccess : successHandler });
 
             return false;
         };
 
-        link.onclick = clickHandler;
+        element.onclick = handler;
     },
 
     initializeZones : function (zoneSpecs, linkSpecs)
@@ -181,7 +256,7 @@ Tapestry.ElementAdditions = {
     // This is added to all Elements, but really only applys to form control elements. This method is invoked
     // when a validation error is associated with a field. This gives the field a chance to decorate itself, its label
     // and its icon.
-    decorateForValidationError : function (element, event, message)
+    decorateForValidationError : function (element, message)
     {
         $(element).fieldEventManager.addDecorations(message);
     }
@@ -295,6 +370,8 @@ Tapestry.ErrorPopup.prototype = {
             this.stopAnimation();
 
             this.outerDiv.hide();
+
+            this.field.focus();
 
             event.stop();
         }.bindAsEventListener(this));
@@ -572,31 +649,5 @@ Tapestry.Zone.prototype = {
     }
 };
 
-// Find all elements marked with the "t-invisible" CSS class and hide() them, so that
-// Prototype's visible() method operates correctly.
-
-Tapestry.onDOMLoaded(function()
-{
-    $$(".t-invisible").each(function(element)
-    {
-        element.hide();
-        element.removeClassName("t-invisible");
-    });
-
-    // Adds a focus observer that fades all error popups except for the
-    // field in question.
-
-    $$("INPUT", "SELECT", "TEXTAREA").each(function(element)
-    {
-        element.observe("focus", function()
-        {
-            Tapestry.focusedElement = element;
-
-            $(Tapestry.errorPopups).each(function(popup)
-            {
-                popup.handleFocusChange(element);
-            });
-        });
-    });
-});
+Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);
 
