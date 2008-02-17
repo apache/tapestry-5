@@ -176,4 +176,37 @@ public class BindingSourceImplTest extends InternalBaseTestCase
 
         verify();
     }
+
+    @Test
+    public void empty_parameter_binding()
+    {
+        BindingFactory factory = mockBindingFactory();
+        ComponentResources container = mockComponentResources();
+        ComponentResources component = mockComponentResources();
+        Location l = mockLocation();
+
+        String defaultPrefix = "def";
+        String description = "wilma";
+        String expression = "";
+
+        replay();
+
+        Map<String, BindingFactory> map = newMap();
+
+        map.put(defaultPrefix, factory);
+
+        BindingSource source = new BindingSourceImpl(map);
+
+        try
+        {
+            source.newBinding(description, container, component, defaultPrefix, expression, l);
+        }
+        catch (TapestryException ex)
+        {
+            assertEquals(ex.getMessage(), "Parameter 'wilma' must have a non-empty binding.");
+            assertSame(ex.getLocation(), l);
+        }
+
+        verify();
+    }
 }
