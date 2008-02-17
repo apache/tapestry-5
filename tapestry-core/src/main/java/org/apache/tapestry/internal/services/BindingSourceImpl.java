@@ -47,7 +47,16 @@ public class BindingSourceImpl implements BindingSource
         notNull(container, "container");
         notNull(component, "component");
         notBlank(defaultPrefix, "defaultPrefix");
-        notBlank(expression, "expression");
+
+        try
+        {
+            notBlank(expression, "expression");
+        }
+        catch (final Exception ex)
+        {
+            throw new TapestryException(ServicesMessages.emptyBinding(description), location, ex);
+        }
+
         // Location might be null
 
         String subexpression = expression;

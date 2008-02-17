@@ -404,4 +404,9 @@ class ServicesMessages
         return MESSAGES.format("no-translator-for-type", ClassFabUtils.toJavaClassName(valueType),
                                InternalUtils.joinSorted(typeNames));
     }
+
+    static String emptyBinding(String parameterName)
+    {
+        return MESSAGES.format("parameter-binding-must-not-be-empty", parameterName);
+    }
 }

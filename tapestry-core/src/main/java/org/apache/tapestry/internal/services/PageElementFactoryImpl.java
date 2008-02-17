@@ -302,7 +302,7 @@ public class PageElementFactoryImpl implements PageElementFactory
             return new AttributeExpansionBinding(provider, location);
         }
 
-        return _bindingSource.newBinding("parameter " + parameterName, loadingComponentResources,
+        return _bindingSource.newBinding(parameterName, loadingComponentResources,
                                          embeddedComponentResources, defaultBindingPrefix, expression, location);
     }
 }
