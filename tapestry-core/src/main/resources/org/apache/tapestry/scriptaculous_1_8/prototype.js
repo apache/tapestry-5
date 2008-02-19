@@ -4851,7 +4851,8 @@ Matthias Miller, Dean Edwards and John Resig. */
 
     if (document.addEventListener)
     {
-        if (Prototype.Browser.WebKit)
+        // Note: patch from http://dev.rubyonrails.org/ticket/10532 
+        if (Prototype.Browser.WebKit || navigator.userAgent.include('KHTML'))
         {
             timer = window.setInterval(function()
             {
