@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import java.lang.annotation.Target;
  * <p/>
  * Client events include a <em>context</em> of one or more values. These context values are
  * included in the action URI. The values are optionally supplied to the handler method as
- * parameters. Automatic type coercions from string to the type of the actual parameter occur.
+ * parameters. Automatic {@linkplain org.apache.tapestry.ValueEncoder conversion} from string to the type of the actual parameter occur.
  * <p/>
  * Handlers may return a value. Returning a non-null value will abort the handling of the event, and
  * will usually control the response sent to the client web browser. The details are somewhat
