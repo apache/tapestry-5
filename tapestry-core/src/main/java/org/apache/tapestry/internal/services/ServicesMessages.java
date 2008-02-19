@@ -409,4 +409,9 @@ class ServicesMessages
     {
         return MESSAGES.format("parameter-binding-must-not-be-empty", parameterName);
     }
+
+    static String noSuchMethod(Class clazz, String methodName)
+    {
+        return MESSAGES.format("no-such-method", ClassFabUtils.toJavaClassName(clazz), methodName);
+    }
 }
