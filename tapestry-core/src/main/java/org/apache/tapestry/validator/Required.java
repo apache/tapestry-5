@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.apache.tapestry.validator;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.services.FormSupport;
 
@@ -25,11 +24,11 @@ import org.apache.tapestry.services.FormSupport;
  * A validator that enforces that the value is not null and not the empty string. This validator is
  * not configurable.
  */
-public final class Required implements Validator<Void, Object>
+public final class Required extends AbstractValidator<Void, Object>
 {
-    public String getMessageKey()
+    public Required()
     {
-        return "required";
+        super(null, Object.class, "required");
     }
 
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, Object value)
@@ -43,19 +42,12 @@ public final class Required implements Validator<Void, Object>
         return formatter.format(field.getLabel());
     }
 
-    public Class<Void> getConstraintType()
-    {
-        return null;
-    }
-
-    public boolean invokeIfBlank()
+    /**
+     * The exception to the rule.
+     */
+    public boolean isRequired()
     {
         return true;
-    }
-
-    public Class<Object> getValueType()
-    {
-        return Object.class;
     }
 
     public void render(Field field, Void constraintValue, MessageFormatter formatter, MarkupWriter writer,

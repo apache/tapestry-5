@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class FieldValidatorImpl implements FieldValidator
     @SuppressWarnings("unchecked")
     public void validate(Object value) throws ValidationException
     {
-        if (!_validator.invokeIfBlank() && isBlank(value)) return;
+        if (!_validator.isRequired() && isBlank(value)) return;
 
         if (value != null && !_validator.getValueType().isInstance(value)) return;
 
@@ -54,6 +54,11 @@ public class FieldValidatorImpl implements FieldValidator
     public void render(MarkupWriter writer)
     {
         _validator.render(_field, _constraintValue, _messageFormatter, writer, _formSupport);
+    }
+
+    public boolean isRequired()
+    {
+        return _validator.isRequired();
     }
 
     private boolean isBlank(Object value)

@@ -136,4 +136,12 @@ public class Radio implements Field
     {
         writer.end();
     }
+
+    /**
+     * Returns false; the RadioComponent component does not support declarative field validation.
+     */
+    public boolean isRequired()
+    {
+        return false;
+    }
 }

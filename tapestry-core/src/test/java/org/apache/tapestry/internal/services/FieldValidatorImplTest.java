@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ public class FieldValidatorImplTest extends InternalBaseTestCase
         MessageFormatter formatter = mockMessageFormatter();
         Validator validator = mockValidator();
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
 
         replay();
 
@@ -53,7 +53,7 @@ public class FieldValidatorImplTest extends InternalBaseTestCase
         MessageFormatter formatter = mockMessageFormatter();
         Validator validator = mockValidator();
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
 
         replay();
 
@@ -73,7 +73,7 @@ public class FieldValidatorImplTest extends InternalBaseTestCase
         Validator validator = mockValidator();
         Integer value = 15;
 
-        train_invokeIfBlank(validator, true);
+        train_isRequired(validator, true);
         train_getValueType(validator, String.class);
 
         replay();
@@ -93,7 +93,7 @@ public class FieldValidatorImplTest extends InternalBaseTestCase
         MessageFormatter formatter = mockMessageFormatter();
         Validator validator = mockValidator();
 
-        train_invokeIfBlank(validator, true);
+        train_isRequired(validator, true);
 
         validator.validate(field, null, formatter, null);
 

@@ -20,10 +20,15 @@ Release 5.0.11
 
   This affects a number of existing components that implement the interface.
 
-  Method <<<allocateElementName()>>> on interface {{{../apidocs/org/apache/tapestry/services/FieldSupport.html}FieldSupport}}
+  Method <<<allocateElementName()>>> on interface {{{../apidocs/org/apache/tapestry/services/FormSupport.html}FormSupport}}
   was likewise renamed to <<<allocateControlName()>>>.
 
 * Zone
 
   The show and hide parameters of the {{{ref/org/apache/tapestry/corelib/components/Zone.html}Zone}}
   component now have a default binding prefix of "literal".
+
+* Validator.invokeIfBlank()
+
+  The method <<<invokeIfBlank()>>> on interface {{{../apidocs/org/apache/tapestry/Validator.html}Validator}}
+  was renamed to <<<isRequired()>>>.

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,4 +42,12 @@ public interface FieldValidator<T>
      * @see org.apache.tapestry.MarkupWriter#attributes(Object[])
      */
     void render(MarkupWriter writer);
+
+    /**
+     * Returns true if any underlying {@link org.apache.tapestry.Validator} returns true
+     * from {@link org.apache.tapestry.Validator#isRequired()}.
+     *
+     * @return true if the field is required   (a non-blank value is expected)
+     */
+    boolean isRequired();
 }

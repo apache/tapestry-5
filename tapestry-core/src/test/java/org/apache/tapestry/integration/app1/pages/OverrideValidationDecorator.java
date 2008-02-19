@@ -25,6 +25,8 @@ public class OverrideValidationDecorator
 {
     private String _value;
 
+    private long _requiredValue;
+
     @Inject
     private Environment _environment;
 
@@ -48,5 +50,15 @@ public class OverrideValidationDecorator
     public void setValue(String value)
     {
         _value = value;
+    }
+
+    public long getRequiredValue()
+    {
+        return _requiredValue;
+    }
+
+    public void setRequiredValue(long requiredValue)
+    {
+        _requiredValue = requiredValue;
     }
 }

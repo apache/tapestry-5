@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -108,7 +108,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getMessageKey(validator, "key");
         train_getMessageFormatter(messages, "key", formatter);
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
         train_getValueType(validator, Object.class);
         validator.validate(field, null, formatter, inputValue);
 
@@ -148,7 +148,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         train_getMessageFormatter(containerMessages, "fred-required-message", formatter);
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
         train_getValueType(validator, Object.class);
         validator.validate(field, null, formatter, inputValue);
 
@@ -199,7 +199,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getMessageKey(validator, "key");
         train_getMessageFormatter(messages, "key", formatter);
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
         train_getValueType(validator, Object.class);
         validator.validate(field, 5, formatter, inputValue);
 
@@ -285,7 +285,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getMessageKey(validator, "key");
         train_getMessageFormatter(messages, "key", formatter);
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
         train_getValueType(validator, Object.class);
         validator.validate(field, null, formatter, inputValue);
 
@@ -344,11 +344,11 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
 
         train_coerce(coercer, "15", Integer.class, fifteen);
 
-        train_invokeIfBlank(required, true);
+        train_isRequired(required, true);
         train_getValueType(required, Object.class);
         required.validate(field, null, requiredFormatter, inputValue);
 
-        train_invokeIfBlank(minLength, false);
+        train_isRequired(minLength, false);
         train_getValueType(minLength, String.class);
         minLength.validate(field, fifteen, minLengthFormatter, inputValue);
 
@@ -396,7 +396,7 @@ public class FieldValidatorSourceImplTest extends InternalBaseTestCase
         train_getMessageKey(validator, "key");
         train_getMessageFormatter(messages, "key", formatter);
 
-        train_invokeIfBlank(validator, false);
+        train_isRequired(validator, false);
         train_getValueType(validator, Object.class);
         validator.validate(field, five, formatter, inputValue);
 

@@ -57,7 +57,9 @@ public class ChattyValidationDecorator implements ValidationDecorator
     {
         _delegate.afterField(field);
 
-        _writer.writef("[After field %s]", field.getLabel());
+        _writer.writef("[After field %s (%s)]", field.getLabel(),
+                       field.isRequired() ? "required" : "optional"
+        );
     }
 
     public void insideLabel(Field field, Element labelElement)

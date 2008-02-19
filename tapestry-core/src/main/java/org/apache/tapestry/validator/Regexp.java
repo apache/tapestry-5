@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,33 +17,17 @@ package org.apache.tapestry.validator;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.services.FormSupport;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Regexp implements Validator<Pattern, String>
+public class Regexp extends AbstractValidator<Pattern, String>
 {
-    public Class<Pattern> getConstraintType()
+    public Regexp()
     {
-        return Pattern.class;
-    }
-
-    public String getMessageKey()
-    {
-        return "regexp";
-    }
-
-    public Class<String> getValueType()
-    {
-        return String.class;
-    }
-
-    public boolean invokeIfBlank()
-    {
-        return false;
+        super(Pattern.class, String.class, "regexp");
     }
 
     private String buildMessage(MessageFormatter formatter, Field field, Pattern constraintValue)

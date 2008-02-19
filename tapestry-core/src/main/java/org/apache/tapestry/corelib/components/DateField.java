@@ -224,4 +224,10 @@ public class DateField extends AbstractField
     {
         _messages = messages;
     }
+
+    @Override
+    public boolean isRequired()
+    {
+        return _validate.isRequired();
+    }
 }

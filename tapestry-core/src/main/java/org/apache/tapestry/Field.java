@@ -52,4 +52,11 @@ public interface Field extends ClientElement
      * time the field is rendered and the time the enclosing form is submitted.
      */
     boolean isDisabled();
+
+    /**
+     * Returns true if this field required (as per {@link org.apache.tapestry.FieldValidator#isRequired()}).
+     *
+     * @return true if a non-blank value is required for the field
+     */
+    boolean isRequired();
 }

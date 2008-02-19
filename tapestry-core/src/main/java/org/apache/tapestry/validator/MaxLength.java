@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,30 +17,14 @@ package org.apache.tapestry.validator;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationException;
-import org.apache.tapestry.Validator;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.services.FormSupport;
 
-public final class MaxLength implements Validator<Integer, String>
+public final class MaxLength extends AbstractValidator<Integer, String>
 {
-    public Class<Integer> getConstraintType()
+    public MaxLength()
     {
-        return Integer.class;
-    }
-
-    public String getMessageKey()
-    {
-        return "maximum-string-length";
-    }
-
-    public Class<String> getValueType()
-    {
-        return String.class;
-    }
-
-    public boolean invokeIfBlank()
-    {
-        return false;
+        super(Integer.class, String.class, "maximum-string-length");
     }
 
     public void validate(Field field, Integer constraintValue, MessageFormatter formatter, String value)
