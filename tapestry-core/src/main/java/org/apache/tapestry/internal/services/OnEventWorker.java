@@ -14,21 +14,23 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.EventContext;
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.*;
 
 import java.util.List;
 
 /**
- * Provides implementations of the {@link Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}
- * method, based on {@link OnEvent} annotations.
+ * Provides implementations of the {@link org.apache.tapestry.runtime.Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}
+ * method, based on {@link org.apache.tapestry.annotations.OnEvent} annotations.
  */
 public class OnEventWorker implements ComponentClassTransformWorker
 {
     static final String OBJECT_ARRAY_TYPE = "java.lang.Object[]";
+
+    static final String EVENT_CONTEXT_TYPE = EventContext.class.getName();
 
     private final static int ANY_NUMBER_OF_PARAMETERS = -1;
 
@@ -149,10 +151,13 @@ public class OnEventWorker implements ComponentClassTransformWorker
 
         if (types.length == 0) return 0;
 
-        if (types[0].equals(OBJECT_ARRAY_TYPE)) return ANY_NUMBER_OF_PARAMETERS;
+        if (types.length == 1)
+        {
+            String soloType = types[0];
 
-        // TODO: If the first parameter is Object[], that should be the only parameter.
-        // Otherwise, Object[] should not be allowed.
+            if (soloType.equals(OBJECT_ARRAY_TYPE) || soloType.equals(EVENT_CONTEXT_TYPE))
+                return ANY_NUMBER_OF_PARAMETERS;
+        }
 
         return types.length;
     }
@@ -172,6 +177,14 @@ public class OnEventWorker implements ComponentClassTransformWorker
             if (type.equals(OBJECT_ARRAY_TYPE))
             {
                 builder.add("$1.getContext()");
+                continue;
+            }
+
+            // Added for TAPESTRY-2177
+
+            if (type.equals(EVENT_CONTEXT_TYPE))
+            {
+                builder.add("$1.getEventContext()");
                 continue;
             }
 

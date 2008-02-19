@@ -301,7 +301,7 @@ public class Form implements ClientElement, FormValidationControl
     }
 
     @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
-    Object onAction(Object[] context) throws IOException
+    Object onAction(EventContext context) throws IOException
     {
         _tracker.clear();
 
@@ -321,11 +321,11 @@ public class Form implements ClientElement, FormValidationControl
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                     _componentEventResultProcessor);
 
-            _resources.triggerEvent(PREPARE_FOR_SUBMIT, context, callback);
+            _resources.triggerContextEvent(PREPARE_FOR_SUBMIT, context, callback);
 
             if (callback.isAborted()) return true;
 
-            _resources.triggerEvent(PREPARE, context, callback);
+            _resources.triggerContextEvent(PREPARE, context, callback);
 
             if (callback.isAborted()) return true;
 
@@ -380,7 +380,7 @@ public class Form implements ClientElement, FormValidationControl
 
             _tracker = tracker;
 
-            _resources.triggerEvent(VALIDATE_FORM, context, callback);
+            _resources.triggerContextEvent(VALIDATE_FORM, context, callback);
 
             if (callback.isAborted()) return true;
 
@@ -395,13 +395,13 @@ public class Form implements ClientElement, FormValidationControl
 
             if (!_tracker.getHasErrors()) _tracker.clear();
 
-            _resources.triggerEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, callback);
+            _resources.triggerContextEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, callback);
 
             // Lastly, tell anyone whose interested that the form is completely submitted.
 
             if (callback.isAborted()) return true;
 
-            _resources.triggerEvent(SUBMIT, context, callback);
+            _resources.triggerContextEvent(SUBMIT, context, callback);
 
             return callback.isAborted();
         }

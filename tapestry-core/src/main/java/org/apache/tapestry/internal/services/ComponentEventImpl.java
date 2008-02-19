@@ -85,4 +85,9 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
         return result;
     }
+
+    public EventContext getEventContext()
+    {
+        return _context;
+    }
 }

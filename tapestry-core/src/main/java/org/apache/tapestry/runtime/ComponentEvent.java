@@ -15,6 +15,7 @@
 package org.apache.tapestry.runtime;
 
 import org.apache.tapestry.ComponentResourcesCommon;
+import org.apache.tapestry.EventContext;
 
 /**
  * An event that may originate in application logic, or as a result of a client interaction (a GET or POST from the
@@ -46,7 +47,12 @@ public interface ComponentEvent extends Event
     Object coerceContext(int index, String desiredTypeName);
 
     /**
-     * Returns the raw context as a (possibly empty) array.
+     * Returns the underlying {@link org.apache.tapestry.EventContext} as a (possibly empty) array.
      */
     Object[] getContext();
+
+    /**
+     * Returns the underlying event context.
+     */
+    EventContext getEventContext();
 }
