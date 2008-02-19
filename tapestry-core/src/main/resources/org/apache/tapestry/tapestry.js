@@ -16,9 +16,13 @@ var Tapestry = {
 
     FormEvent : Class.create(),
 
+    FormEventManager : Class.create(),
+
     FieldEventManager : Class.create(),
 
     Zone : Class.create(),
+
+    FormFragment : Class.create(),
 
     ErrorPopup : Class.create(),
 
@@ -53,10 +57,12 @@ var Tapestry = {
 
         $$("INPUT", "SELECT", "TEXTAREA").each(function(element)
         {
-            if (element.isObservingFocusChange == undefined)
+            // Due to Ajax, we may execute the callback multiple times,
+            // and we don't want to add multiple listeners to the same
+            // element.
+
+            if (! element.isObservingFocusChange)
             {
-
-
                 element.observe("focus", function()
                 {
                     Tapestry.focusedElement = element;
@@ -74,49 +80,7 @@ var Tapestry = {
 
     registerForm : function(form, clientValidations)
     {
-        form = $(form);
-
-        // Because order is important, we don't observe
-        // the event, we take it over.
-
-        form.onsubmit = function(domevent)
-        {
-            var event = new Tapestry.FormEvent(form);
-
-            form.firstError = true;
-
-	        // Locate elements that have an event manager (and therefore, validations)
-            // and let those validations execute, which may result in calls to recordError().
-
-            form.getElements().each(function(element)
-            {
-                if (element.fieldEventManager != undefined)
-                {
-                    event.field = element;
-                    element.fieldEventManager.validateInput(event);
-
-                    if (event.abort) throw $break;
-                }
-            });
-
-            if (! event.result) domevent.stop();
-
-            return event.result;
-        };
-
-        form.recordError = function(field, event, message)
-        {
-            if (form.firstError)
-            {
-                $(field).activate();
-
-                form.firstError = false;
-            }
-
-            field.decorateForValidationError(message);
-        };
-
-        // And handle the validations
+        new Tapestry.FormEventManager(form);
 
         this.registerValidations(form, clientValidations);
     },
@@ -214,6 +178,10 @@ var Tapestry = {
         element.onclick = handler;
     },
 
+    // Allows many Tapestry.Zone instances, and calls to Tapestry.linkZone(), to be
+    // combined efficiently (i.e., to minimize the amount of generated JavaScript
+    // for the page).
+
     initializeZones : function (zoneSpecs, linkSpecs)
     {
         // Each spec is a hash ready to pass to Tapestry.Zone
@@ -231,6 +199,28 @@ var Tapestry = {
         });
     },
 
+    initializeFormFragments : function(specs)
+    {
+        $A(specs).each(function(spec)
+        {
+            new Tapestry.FormFragment(spec)
+        });
+    },
+
+
+    // Links a FormFragment to a checkbox, such that changing the checkbox will hide
+    // or show the FormFragment. Care should be taken to render the page with the
+    // checkbox and the FormFragment('s visibility) in agreement.
+
+    linkCheckboxToFormFragment : function(checkbox, element)
+    {
+        checkbox = $(checkbox);
+
+        checkbox.observe("change", function()
+        {
+            $(element).formFragment.setVisible(checkbox.checked);
+        });
+    },
 
     // Adds a validator for a field.  A FieldEventManager is added, if necessary.
     // The validator will be called only for non-blank values, unless acceptBlank is
@@ -247,8 +237,8 @@ var Tapestry = {
 
         field.fieldEventManager.addValidator(acceptBlank, validator);
     }
+}
 
-};
 
 // New methods added to Element.
 
@@ -259,6 +249,20 @@ Tapestry.ElementAdditions = {
     decorateForValidationError : function (element, message)
     {
         $(element).fieldEventManager.addDecorations(message);
+    },
+
+    // Checks to see if an element is truly visible, meaning the receiver and all
+    // its anscestors (up to the containing form), are visible.
+
+    isDeepVisible : function(element)
+    {
+        if (! element.visible()) return false;
+
+        // Stop at a form, which is sufficient for validation purposes.
+
+        if (element.tagName == "FORM") return true;
+
+        return $(element.parentNode).isDeepVisible();
     }
 };
 
@@ -337,6 +341,7 @@ Tapestry.FormEvent.prototype = {
     {
         this.form = $(form);
         this.result = true;
+        this.firstError = true;
     },
 
     // Invoked by a validator function (which is passed the event) to record an error
@@ -347,7 +352,14 @@ Tapestry.FormEvent.prototype = {
 
     recordError : function(message)
     {
-        this.form.recordError(this.field, this, message);
+        if (this.firstError)
+        {
+            this.field.activate();
+            this.firstError = false;
+        }
+
+        this.field.decorateForValidationError(message);
+
         this.result = false;
         this.error = true;
     }
@@ -383,7 +395,6 @@ Tapestry.ErrorPopup.prototype = {
         this.queue = { position: 'end', scope: this.field.id };
 
         Event.observe(window, "resize", this.repositionBubble.bind(this));
-
     },
 
     showMessage : function(message)
@@ -474,6 +485,50 @@ Tapestry.ErrorPopup.prototype = {
     }
 };
 
+Tapestry.FormEventManager.prototype = {
+
+    initialize : function(form)
+    {
+        this.form = $(form);
+        this.form.eventManager = this;
+
+        this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
+    },
+
+    handleSubmit : function(domevent)
+    {
+        // Locate elements that have an event manager (and therefore, validations)
+        // and let those validations execute, which may result in calls to recordError().
+
+        var event = new Tapestry.FormEvent(this.form);
+
+        this.form.getElements().each(function(element)
+        {
+            if (element.fieldEventManager != undefined)
+            {
+                event.field = element;
+                element.fieldEventManager.validateInput(event);
+
+                if (event.abort) throw $break;
+            }
+        });
+
+        if (! event.result)
+        {
+            domevent.stop();
+        }
+        else
+        {
+            this.form.fire("form:prepareforsubmit");
+        }
+
+
+        return event.result;
+    }
+
+
+};
+
 Tapestry.FieldEventManager.prototype = {
 
     initialize : function(field)
@@ -491,6 +546,9 @@ Tapestry.FieldEventManager.prototype = {
         this.field.observe("blur", function()
         {
             var event = new Tapestry.FormEvent(this.field.form);
+
+     // This prevents the field from taking focus if there is an error.
+            event.firstError = false;
 
             event.field = this.field;
 
@@ -557,8 +615,10 @@ Tapestry.FieldEventManager.prototype = {
     validateInput : function(event)
     {
         if (this.field.disabled) return;
-        
-        // Clear out old decorations.  It's easier to remove the decorations
+
+        if (! this.field.isDeepVisible()) return;
+
+     // Clear out old decorations.  It's easier to remove the decorations
         // and then re-add them if the field is in error than it is to
         // toggle them on or off at the end.
 
@@ -581,8 +641,8 @@ Tapestry.FieldEventManager.prototype = {
             {
 
                 validator(value, event);
-  	    
-  	    // event.error is set by Tapestry.FormEvent.recordError(). 
+
+     // event.error is set by Tapestry.FormEvent.recordError().
 
                 if (event.error) throw $break;
             }
@@ -594,6 +654,7 @@ Tapestry.FieldEventManager.prototype = {
 };
 
 // Wrappers around Prototype and Scriptaculous effects, invoked from Tapestry.Zone.show().
+// All the functions of this object should have all-lowercase names. 
 
 Tapestry.ZoneEffect = {
 
@@ -605,6 +666,22 @@ Tapestry.ZoneEffect = {
     highlight : function(element)
     {
         new Effect.Highlight(element);
+    },
+
+    slidedown : function (element)
+    {
+        new Effect.SlideDown(element);
+    },
+
+    slideup : function(element)
+    {
+        new Effect.SlideUp(element);
+    },
+
+
+    fade : function(element)
+    {
+        new Effect.Fade(element);
     }
 };
 
@@ -621,11 +698,11 @@ Tapestry.Zone.prototype = {
         this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.show;
         this.updateFunc = Tapestry.ZoneEffect[spec.update] || Tapestry.ZoneEffect.highlight;
 
-        // Link the div back to this zone.
+     // Link the div back to this zone.
 
         this.div.zone = this;
 
-        // Look inside the Zone div for the another div with the CSS class "t-zone-update".
+     // Look inside the Zone div for the another div with the CSS class "t-zone-update".
         // If present, then this is the elements whose content will be changed, rather
         // then the entire Zone div.  This allows a Zone div to contain "wrapper" markup
         // (borders and such).  Typically, such a Zone div will initially be invisible.
@@ -646,6 +723,55 @@ Tapestry.Zone.prototype = {
         var func = this.div.visible() ? this.updateFunc : this.showFunc;
 
         func.call(this, this.div);
+    }
+};
+
+// A class that managed an element (usually a <div>) that is conditionally visible and
+// part of the form when visible.
+
+Tapestry.FormFragment.prototype = {
+
+    initialize: function(spec)
+    {
+        this.element = $(spec.element);
+
+        this.element.formFragment = this;
+
+        this.hidden = $(spec.element + ":hidden");
+
+        this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.slidedown;
+        this.hideFunc = Tapestry.ZoneEffect[spec.hide] || Tapestry.ZoneEffect.slideup;
+
+        $(this.hidden.form).observe("form:prepareforsubmit", function()
+        {
+            this.hidden.value = this.element.isDeepVisible();
+        }.bind(this));
+    },
+
+    hide : function()
+    {
+        this.hideFunc(this.element);
+    },
+
+    show : function()
+    {
+        this.showFunc(this.element);
+    },
+
+    toggle : function()
+    {
+        this.setVisible(! this.element.visible());
+    },
+
+    setVisible : function(visible)
+    {
+        if (visible)
+        {
+            this.show();
+            return;
+        }
+
+        this.hide();
     }
 };
 

@@ -140,11 +140,11 @@ DIV.t-beaneditor-row {
     padding: 4px 0px 2px 0px;
 }
 
-DIV.t-beaneditor LABEL:after {
+DIV.t-beaneditor-row LABEL:after {
     content: ":";
 }
 
-DIV.t-beaneditor LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
+DIV.t-beaneditor-row LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
     width: 250px;
     display: block;
     float: left;

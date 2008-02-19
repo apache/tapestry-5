@@ -128,7 +128,7 @@ public class DateField extends AbstractField
 
                        "type", "text",
 
-                       "name", getElementName(),
+                       "name", getControlName(),
 
                        "id", clientId,
 

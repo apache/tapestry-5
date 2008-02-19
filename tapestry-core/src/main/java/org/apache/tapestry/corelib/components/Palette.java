@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ import java.util.Set;
  * DIV.t-palette SELECT { width: 300px; }
  * &lt;/style&gt;
  * </pre>
- * <p>
+ * <p/>
  * You'll want to ensure that both &lt;select&gt; in each column is the same width, otherwise the display will update poorly
  * as options are moved from one column to the other.
  * <p/>
@@ -75,7 +75,7 @@ public class Palette extends AbstractField
         public void render(MarkupWriter writer)
         {
             writer.element("select", "id", getClientId() + ":avail", "multiple", "multiple", "size", getSize(), "name",
-                           getElementName() + ":avail");
+                           getControlName() + ":avail");
 
             writeDisabled(writer, isDisabled());
 
@@ -136,7 +136,7 @@ public class Palette extends AbstractField
         public void render(MarkupWriter writer)
         {
             writer.element("select", "id", getClientId(), "multiple", "multiple", "size", getSize(), "name",
-                           getElementName());
+                           getControlName());
 
             writeDisabled(writer, isDisabled());
 
@@ -333,7 +333,7 @@ public class Palette extends AbstractField
 
         _renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, _reorder, naturalOrder);
 
-        writer.element("input", "type", "hidden", "id", clientId + ":values", "name", getElementName() + ":values",
+        writer.element("input", "type", "hidden", "id", clientId + ":values", "name", getControlName() + ":values",
                        "value", selectedValues);
         writer.end();
     }

@@ -74,7 +74,7 @@ public class Radio implements Field
 
     private String _clientId;
 
-    private String _elementName;
+    private String _controlName;
 
     /**
      * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
@@ -94,11 +94,11 @@ public class Radio implements Field
     }
 
     /**
-     * Returns the element name provided by the containing {@link org.apache.tapestry.RadioContainer}.
+     * Returns the control name provided by the containing {@link org.apache.tapestry.RadioContainer}.
      */
-    public String getElementName()
+    public String getControlName()
     {
-        return _elementName;
+        return _controlName;
     }
 
     public String getLabel()
@@ -125,9 +125,9 @@ public class Radio implements Field
         String value = _container.toClient(_value);
 
         _clientId = _pageRenderSupport.allocateClientId(_resources.getId());
-        _elementName = _container.getElementName();
+        _controlName = _container.getElementName();
 
-        writer.element("input", "type", "radio", "id", _clientId, "name", _elementName, "value", value);
+        writer.element("input", "type", "radio", "id", _clientId, "name", _controlName, "value", value);
 
         if (_container.isSelected(_value)) writer.attributes("checked", "checked");
     }

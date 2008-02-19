@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * Collects details about zone usage for effecient initialization on the client side.
+ * Collects details about zone usage for efficient initialization of the client side objects.  This has grown
+ * to include the client-side behavior associated with {@link org.apache.tapestry.corelib.components.FormFragment}s.
+ *
+ * @see org.apache.tapestry.corelib.components.Zone
  */
 public interface ZoneSetup
 {
@@ -40,5 +43,17 @@ public interface ZoneSetup
      * @param elementId id of an element that has been previously registered as a Zone
      */
     void linkZone(String linkId, String elementId);
+
+    /**
+     * Adds a new client-side Tapestry.FormFragment object.  FormFragment's are used to make parts of a
+     * client-side form visible or invisible, which involves interactions with both the server-side and client-side
+     * validation.
+     *
+     * @param clientId         client-side id of the element that will be made visible or invisible
+     * @param showFunctionName name of function (of the Tapestry.ZoneEffect object) used to make the SubForm visible, or
+     *                         null for the default
+     * @param hideFunctionName name of the function used to make the SubForm invisible, or null for the default
+     */
+    void addFormFragment(String clientId, String showFunctionName, String hideFunctionName);
 }
 

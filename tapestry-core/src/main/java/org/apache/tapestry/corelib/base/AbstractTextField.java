@@ -160,7 +160,7 @@ public abstract class AbstractTextField extends AbstractField
 
     /**
      * Invoked from {@link #begin(MarkupWriter)} to write out the element and attributes (typically, &lt;input&gt;). The
-     * {@link AbstractField#getElementName() elementName} and {@link AbstractField#getClientId() clientId} properties
+     * {@linkplain AbstractField#getControlName() controlName} and {@linkplain AbstractField#getClientId() clientId} properties
      * will already have been set or updated.
      * <p/>
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
