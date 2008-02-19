@@ -60,8 +60,11 @@ JIRA Procedures
 
 * Closing bugs  
 
-  Is it a bug fix without tests?  <<No.>>  In some cases, I write bugs to provide an issue is not valid and leave
-  the tests in place.  A good plan is to write a test that fails then work the code until the test passes.
+  Is it a bug fix without tests?  <<No.>>  In some cases, I write new tests to prove that an issue is not valid and
+  then leave
+  the tests in place -- the close the bug as invalid.
+
+  A good plan is to write a test that fails then work the code until the test passes.
   I'm also surprised by how often code works in a unit test but fails unexpectedly in an integration test.
   As the G-Man says, <"Expect unforseen consequences">.
 
@@ -81,7 +84,19 @@ JIRA Procedures
 
   Close the issue but <<make sure the fix release is blank>>.  Otherwise, the issue <<will be listed
   in the release notes>>, which we don't want.
-  
+
+Copyrights
+
+  The ASF copyright must appear on all Java source files.  Technically it should appear on all non-binary
+  files in the repository.
+
+  As you make changes to files, update the copyright to add the current year to the list.  The goal is that the copyright
+  notice includes the year in which files change.  When creating a new file, don't back date the copyright year ... start
+  with the current year.  Try not to change the copyright year on files that haven't actually changed.
+
+  IntelliJ has a great comparison view: Cmd-9 to see the local changes, the Cmd-D to see the differences.
+  I whip through the changes (using Cmd-forward arrow) and make sure copyrights are up to date as I review the changes
+  prior to a commit.
 
 Public vs. Private/Internal
 
