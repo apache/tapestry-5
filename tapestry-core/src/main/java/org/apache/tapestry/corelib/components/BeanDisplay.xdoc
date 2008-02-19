@@ -111,8 +111,7 @@ public class ViewUser
 
                 <p>
                     Here we are leveraging the ability to invoke methods as part of a property expression.
-                    We are also highlighting Tapestry's case insensitivity ("lastname" vs. "lastName"), though
-                    that does not yet apply to method names of beans.
+                    We are also highlighting Tapestry's case insensitivity ("lastname" vs. "lastName").
                 </p>
 
             </subsection>

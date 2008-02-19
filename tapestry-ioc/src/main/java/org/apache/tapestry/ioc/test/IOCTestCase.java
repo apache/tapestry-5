@@ -388,4 +388,9 @@ public class IOCTestCase extends TestBase
     {
         return newMock(PropertyAccess.class);
     }
+
+    protected final <T> void train_autobuild(ObjectLocator locator, Class<T> beanClass, T instance)
+    {
+        expect(locator.autobuild(beanClass)).andReturn(instance);
+    }
 }

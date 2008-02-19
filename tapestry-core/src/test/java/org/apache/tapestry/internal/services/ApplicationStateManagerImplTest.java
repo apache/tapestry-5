@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.transform.ReadOnlyBean;
 import org.apache.tapestry.internal.util.Holder;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.services.*;
 import org.easymock.EasyMock;
 import static org.easymock.EasyMock.eq;
@@ -51,7 +52,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
 
         assertSame(manager.get(asoClass), aso);
 
@@ -78,7 +79,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
 
         assertFalse(manager.exists(asoClass));
 
@@ -105,7 +106,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
 
         assertTrue(manager.exists(asoClass));
 
@@ -132,7 +133,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
 
         manager.set(asoClass, aso);
 
@@ -147,8 +148,10 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
         ApplicationStatePersistenceStrategySource source = mockApplicationStatePersistenceStrategySource();
         Class asoClass = ReadOnlyBean.class;
         final Holder holder = new Holder();
+        ObjectLocator locator = mockObjectLocator();
 
         train_get(source, ApplicationStateManagerImpl.DEFAULT_STRATEGY, strategy);
+
 
         IAnswer answer = new IAnswer()
         {
@@ -167,11 +170,13 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         expect(strategy.get(eq(asoClass), isA(ApplicationStateCreator.class))).andAnswer(answer);
 
+        train_autobuild(locator, asoClass, new ReadOnlyBean());
+
         replay();
 
         Map<Class, ApplicationStateContribution> configuration = Collections.emptyMap();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, locator);
 
         Object actual = manager.get(asoClass);
 
@@ -199,7 +204,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
 
         assertNull(manager.getIfExists(asoClass));
 
@@ -227,7 +232,7 @@ public class ApplicationStateManagerImplTest extends InternalBaseTestCase
 
         replay();
 
-        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source);
+        ApplicationStateManager manager = new ApplicationStateManagerImpl(configuration, source, null);
 
         assertSame(manager.getIfExists(asoClass), aso);
 

@@ -35,7 +35,8 @@ public class MyPage
   do you provide a logical name.
   Tapestry 5 uses the class name to identify the ASO, so there's no need for a logical name.
   
-  The first time you access an ASO, it is created automatically, using the ASO class's default constructor (public, no arguments).
+  The first time you access an ASO, it is created automatically.  Typically, the ASO will have a public no-args constructor ... but you may
+  inject dependencies into the ASO via its constructor, as you can with a Tapestry IoC service implementation.
   
   Assigning a value to an ASO field will store that value.  Assigning null to an ASO field will remove the ASO (reading the field subsequently
   will force a new ASO instance to be created).
@@ -82,7 +83,7 @@ Configuring ASOs
   as necessary.  This is also the technique to use when you want your ASO to be represented by an <interface> rather than a <class>: you need to provide
   a creator that knows about the class that implements the interface.
   
-  Contributions to the tapestry.ApplicationStateManager are used to configure an ASO.  From you application's module:
+  Contributions to the tapestry.ApplicationStateManager are used to configure an ASO.  From your application's module:
   
 +----+
   public void contributeApplicationStateManager(MappedConfiguration<Class, ApplicationStateContribution> configuration)

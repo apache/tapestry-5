@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.ioc.ObjectLocator;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.services.*;
 
@@ -63,11 +64,14 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     private final ApplicationStatePersistenceStrategySource _source;
 
+    private final ObjectLocator _locator;
+
     @SuppressWarnings("unchecked")
     public ApplicationStateManagerImpl(Map<Class, ApplicationStateContribution> configuration,
-                                       ApplicationStatePersistenceStrategySource source)
+                                       ApplicationStatePersistenceStrategySource source, ObjectLocator locator)
     {
         _source = source;
+        _locator = locator;
 
         for (Class asoClass : configuration.keySet())
         {
@@ -85,21 +89,16 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
     private <T> ApplicationStateAdapter<T> newAdapter(final Class<T> asoClass, String strategyName,
                                                       ApplicationStateCreator<T> creator)
     {
-        if (creator == null) creator = new ApplicationStateCreator<T>()
+        if (creator == null)
         {
-            public T create()
+            creator = new ApplicationStateCreator<T>()
             {
-                try
+                public T create()
                 {
-                    return asoClass.newInstance();
+                    return _locator.autobuild(asoClass);
                 }
-                catch (Exception ex)
-                {
-                    throw new RuntimeException(ex);
-                }
-            }
-
-        };
+            };
+        }
 
         ApplicationStatePersistenceStrategy strategy = _source.get(strategyName);
 
