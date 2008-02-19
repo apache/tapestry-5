@@ -407,7 +407,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
             try
             {
-                final Method method = activeType.getMethod(methodName);
+                final Method method = findMethod(activeType, methodName);
 
                 if (method.getReturnType().equals(void.class))
                     throw new RuntimeException(ServicesMessages.methodIsVoid(term, activeType, expression));
@@ -483,5 +483,17 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 return adapter.getAnnotation(annotationClass);
             }
         };
+    }
+
+    private Method findMethod(Class activeType, String methodName) throws NoSuchMethodException
+    {
+        for (Method method : activeType.getMethods())
+        {
+
+            if (method.getParameterTypes().length == 0 && method.getName().equalsIgnoreCase(methodName)) return method;
+
+        }
+
+        throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
     }
 }

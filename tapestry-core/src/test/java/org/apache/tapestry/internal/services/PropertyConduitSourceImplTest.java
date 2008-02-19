@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -80,6 +80,20 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         // This will be a no-op due to the null property in the expression
 
         smart.set(bean, "Howard");
+    }
+
+    @Test
+    public void method_names_are_matched_caselessly()
+    {
+        PropertyConduit conduit = _source.create(CompositeBean.class, "GETSIMPLE().firstName");
+
+        CompositeBean bean = new CompositeBean();
+        SimpleBean inner = new SimpleBean();
+        bean.setSimple(inner);
+
+        conduit.set(bean, "Howard");
+
+        assertEquals(inner.getFirstName(), "Howard");
     }
 
     /**
