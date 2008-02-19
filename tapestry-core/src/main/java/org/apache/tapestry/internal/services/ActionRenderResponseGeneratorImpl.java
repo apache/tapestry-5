@@ -30,9 +30,7 @@ public class ActionRenderResponseGeneratorImpl implements ActionRenderResponseGe
 
     private final Response _response;
 
-    public ActionRenderResponseGeneratorImpl(LinkFactory linkFactory, Response response
-
-    )
+    public ActionRenderResponseGeneratorImpl(LinkFactory linkFactory, Response response)
     {
         _linkFactory = linkFactory;
         _response = response;

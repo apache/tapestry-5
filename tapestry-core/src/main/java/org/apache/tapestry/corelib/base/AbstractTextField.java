@@ -192,4 +192,10 @@ public abstract class AbstractTextField extends AbstractField
             _tracker.recordError(this, ex.getMessage());
         }
     }
+
+    @Override
+    public boolean isRequired()
+    {
+        return _validate.isRequired();
+    }
 }

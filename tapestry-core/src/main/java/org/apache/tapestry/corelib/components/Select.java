@@ -232,4 +232,10 @@ public final class Select extends AbstractField
     {
         _tracker = tracker;
     }
+
+    @Override
+    public boolean isRequired()
+    {
+        return _validate.isRequired();
+    }
 }

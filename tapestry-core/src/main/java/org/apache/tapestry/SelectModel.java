@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,16 +14,16 @@
 
 package org.apache.tapestry;
 
-import org.apache.tapestry.corelib.components.Select;
-
 import java.util.List;
 
 /**
  * Defines the possible options and option groups for a &lt;select&gt; [X]HTML element.
  * <p/>
- * Primarily used by the {@link Select} component, but potentially used by anything similar, that
- * needs to present a list of options to the user. Generally paired with a {@link ValueEncoder} to
+ * Primarily used by the {@link org.apache.tapestry.corelib.components.Select} component, but potentially used by anything similar, that
+ * needs to present a list of options to the user. Generally paired with a {@link org.apache.tapestry.ValueEncoder} to
  * create client-side representations of server-side values.
+ *
+ * @see org.apache.tapestry.corelib.components.Palette
  */
 public interface SelectModel
 {
@@ -36,7 +36,7 @@ public interface SelectModel
 
     /**
      * The list of ungrouped options, which appear after any grouped options. Generally, a model
-     * will either provide option groups or ungroup options, but not both.
+     * will either provide option groups or ungrouped options, but not both.
      *
      * @return the ungrouped options, or null
      */

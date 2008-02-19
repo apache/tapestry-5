@@ -209,4 +209,12 @@ public class RadioGroup implements Field
     {
         return null;
     }
+
+    /**
+     * Returns false; RadioGroup does not support declarative validation.
+     */
+    public boolean isRequired()
+    {
+        return false;
+    }
 }

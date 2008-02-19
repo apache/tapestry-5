@@ -1468,9 +1468,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // This is sub-optimal, as it doesn't esnure that the before/after field values really do wrap around
         // the field (they do, but that's hard to prove!).
 
+        // Along the way we are also testing:
+        // - primitive types are automatically required
+        // - AbstractTextField.isRequired() and the logic inside ComponentFieldValidator.isRequired()
+
         assertSourcePresent(
                 "[Before label for Value]<label for=\"value\" id=\"value:label\">Value</label>[After label for Value]",
-                "[Before field Value]", "[After field Value]");
+                "[Before field Value]", "[After field Value (optional)]",
+                "[Before label for Required Value]<label for=\"requiredValue\" id=\"requiredValue:label\">Required Value</label>[After label for Required Value]",
+                "[Before field Required Value]", "[After field Required Value (required)]");
     }
 
     /**

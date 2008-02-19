@@ -718,9 +718,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         expect(tracker.inError(field)).andReturn(inError);
     }
 
-    protected final void train_invokeIfBlank(Validator validator, boolean invokeIfBlank)
+    protected final void train_isRequired(Validator validator, boolean isRequired)
     {
-        expect(validator.invokeIfBlank()).andReturn(invokeIfBlank).atLeastOnce();
+        expect(validator.isRequired()).andReturn(isRequired).atLeastOnce();
     }
 
     protected final void train_isInvariant(Binding binding, boolean isInvariant)

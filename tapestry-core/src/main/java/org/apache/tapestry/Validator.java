@@ -67,9 +67,10 @@ public interface Validator<C, T>
 
     /**
      * Returns true if the validator should be invoked for null or blank (empty string) values. This is generally
-     * false.
+     * false, but is true for validators that enforce that a non-blank value is required.  This is the basis
+     * of the {@link org.apache.tapestry.Field#isRequired()} property.
      */
-    boolean invokeIfBlank();
+    boolean isRequired();
 
     /**
      * Hook used by components to allow the validator to contribute additional attribute or (more often) client-side

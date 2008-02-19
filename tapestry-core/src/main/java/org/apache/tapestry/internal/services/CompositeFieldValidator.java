@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,6 +43,16 @@ public final class CompositeFieldValidator implements FieldValidator
     {
         for (FieldValidator fv : _validators)
             fv.render(writer);
+    }
+
+    public boolean isRequired()
+    {
+        for (FieldValidator fv : _validators)
+        {
+            if (fv.isRequired()) return true;
+        }
+
+        return false;
     }
 
 }

@@ -64,6 +64,11 @@ public abstract class AbstractField implements Field
         public void render(MarkupWriter writer)
         {
         }
+
+        public boolean isRequired()
+        {
+            return false;
+        }
     };
 
     static class SetupAction implements ComponentAction<AbstractField>, Serializable
@@ -233,5 +238,13 @@ public abstract class AbstractField implements Field
     protected final void setFormSupport(FormSupport formSupport)
     {
         _formSupport = formSupport;
+    }
+
+    /**
+     * Returns false; most components do not support declarative validation.
+     */
+    public boolean isRequired()
+    {
+        return false;
     }
 }
