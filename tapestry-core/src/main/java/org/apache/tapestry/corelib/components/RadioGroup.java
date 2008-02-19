@@ -71,7 +71,7 @@ public class RadioGroup implements Field
     @Environmental
     private ValidationTracker _tracker;
 
-    private String _elementName;
+    private String _controlName;
 
     final Binding defaultValue()
     {
@@ -92,16 +92,16 @@ public class RadioGroup implements Field
     {
         private static final long serialVersionUID = -7984673040135949374L;
 
-        private final String _elementName;
+        private final String _controlName;
 
-        Setup(String elementName)
+        Setup(String controlName)
         {
-            _elementName = elementName;
+            _controlName = controlName;
         }
 
         public void execute(RadioGroup component)
         {
-            component.setup(_elementName);
+            component.setup(_controlName);
         }
     }
 
@@ -117,12 +117,12 @@ public class RadioGroup implements Field
 
     private void setup(String elementName)
     {
-        _elementName = elementName;
+        _controlName = elementName;
     }
 
     private void processSubmission()
     {
-        String clientValue = _request.getParameter(_elementName);
+        String clientValue = _request.getParameter(_controlName);
 
         _tracker.recordInput(this, clientValue);
 
@@ -135,7 +135,7 @@ public class RadioGroup implements Field
      */
     final void setupRender()
     {
-        String name = _formSupport.allocateElementName(_resources.getId());
+        String name = _formSupport.allocateControlName(_resources.getId());
 
         ComponentAction<RadioGroup> action = new Setup(name);
 
@@ -150,7 +150,7 @@ public class RadioGroup implements Field
         {
             public String getElementName()
             {
-                return _elementName;
+                return _controlName;
             }
 
             public boolean isDisabled()
@@ -184,9 +184,9 @@ public class RadioGroup implements Field
         _environment.pop(RadioContainer.class);
     }
 
-    public String getElementName()
+    public String getControlName()
     {
-        return _elementName;
+        return _controlName;
     }
 
     public String getLabel()

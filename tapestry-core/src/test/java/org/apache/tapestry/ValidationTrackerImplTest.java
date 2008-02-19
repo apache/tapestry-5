@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ public class ValidationTrackerImplTest extends TapestryTestCase
     @Test
     public void order_added_is_maintained()
     {
-        Field fielda = newFieldWithElementName("fieldA");
-        Field fieldb = newFieldWithElementName("fieldB");
+        Field fielda = newFieldWithControlName("fieldA");
+        Field fieldb = newFieldWithControlName("fieldB");
 
         replay();
 
@@ -61,7 +61,7 @@ public class ValidationTrackerImplTest extends TapestryTestCase
     @Test
     public void record_input()
     {
-        Field field = newFieldWithElementName("field");
+        Field field = newFieldWithControlName("field");
 
         replay();
 
@@ -83,7 +83,7 @@ public class ValidationTrackerImplTest extends TapestryTestCase
     @Test
     public void record_error_for_field()
     {
-        Field field = newFieldWithElementName("field");
+        Field field = newFieldWithControlName("field");
 
         replay();
 
@@ -126,9 +126,9 @@ public class ValidationTrackerImplTest extends TapestryTestCase
     @Test
     public void data_survives_serialization() throws Exception
     {
-        Field fielda = newFieldWithElementName("fieldA");
-        Field fieldb = newFieldWithElementName("fieldB");
-        Field fieldc = newFieldWithElementName("fieldC");
+        Field fielda = newFieldWithControlName("fieldA");
+        Field fieldb = newFieldWithControlName("fieldB");
+        Field fieldc = newFieldWithControlName("fieldC");
 
         replay();
 
@@ -156,8 +156,8 @@ public class ValidationTrackerImplTest extends TapestryTestCase
     @Test
     public void clear_removes_all()
     {
-        Field fielda = newFieldWithElementName("fieldA");
-        Field fieldb = newFieldWithElementName("fieldB");
+        Field fielda = newFieldWithControlName("fieldA");
+        Field fieldb = newFieldWithControlName("fieldB");
 
         replay();
 
@@ -180,14 +180,14 @@ public class ValidationTrackerImplTest extends TapestryTestCase
         verify();
     }
 
-    private final Field newFieldWithElementName(String elementName)
+    private final Field newFieldWithControlName(String controlName)
     {
         Field field = mockField();
 
         // Fields generated this way, for the purposes of this test, do not
-        // ever change their elementName. In real life, elementNames can change.
+        // ever change their controlName. In real life, elementNames can change.
 
-        expect(field.getElementName()).andReturn(elementName).atLeastOnce();
+        expect(field.getControlName()).andReturn(controlName).atLeastOnce();
 
         return field;
     }

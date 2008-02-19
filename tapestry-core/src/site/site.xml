@@ -49,8 +49,12 @@
         <menu name="Tapestry Core">
             <item name="Introduction" href="/index.html"/>
             <item name="Component Reference" href="ref/index.html"/>
-            <item name="Upgrade from Tapestry 4" href="/upgrade.html"/>
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
+        </menu>
+
+        <menu name="Upgrade Notes">
+            <item name="From Tapestry 5" href="upgrade.html"/>
+            <item name="From Tapestry 4" href="upgrade4.html"/>
         </menu>
 
         <menu name="User Guide">

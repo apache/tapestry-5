@@ -70,16 +70,16 @@ public abstract class AbstractField implements Field
     {
         private static final long serialVersionUID = 2690270808212097020L;
 
-        private final String _elementName;
+        private final String _controlName;
 
-        public SetupAction(final String elementName)
+        public SetupAction(String controlName)
         {
-            _elementName = elementName;
+            _controlName = controlName;
         }
 
         public void execute(AbstractField component)
         {
-            component.setupElementName(_elementName);
+            component.setupControlName(_controlName);
         }
     }
 
@@ -108,7 +108,7 @@ public abstract class AbstractField implements Field
 
     private String _assignedClientId;
 
-    private String _elementName;
+    private String _controlName;
 
     @Environmental
     private FormSupport _formSupport;
@@ -140,14 +140,14 @@ public abstract class AbstractField implements Field
 
         String id = _clientId;
 
-        // Often, these elementName and _clientId will end up as the same value. There are many
+        // Often, these controlName and _clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
 
         _assignedClientId = _pageRenderSupport.allocateClientId(id);
-        String elementName = _formSupport.allocateElementName(id);
+        String controlName = _formSupport.allocateControlName(id);
 
-        _formSupport.storeAndExecute(this, new SetupAction(elementName));
+        _formSupport.storeAndExecute(this, new SetupAction(controlName));
         _formSupport.store(this, PROCESS_SUBMISSION_ACTION);
     }
 
@@ -156,9 +156,9 @@ public abstract class AbstractField implements Field
         return _assignedClientId;
     }
 
-    public final String getElementName()
+    public final String getControlName()
     {
-        return _elementName;
+        return _controlName;
     }
 
     public final boolean isDisabled()
@@ -169,14 +169,14 @@ public abstract class AbstractField implements Field
     /**
      * Invoked from within a ComponentCommand callback, to restore the component's elementName.
      */
-    private void setupElementName(String elementName)
+    private void setupControlName(String controlName)
     {
-        _elementName = elementName;
+        _controlName = controlName;
     }
 
     private void processSubmission()
     {
-        if (!_disabled) processSubmission(_elementName);
+        if (!_disabled) processSubmission(_controlName);
     }
 
     /**

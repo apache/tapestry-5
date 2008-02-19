@@ -1,16 +1,29 @@
-  ----
-  Upgrading from Tapestry 4 to Tapestry 5
-  ----
-  
-Upgrading from Tapestry 4 to Tapestry 5
-  
- There is no simple, direct upgrade path from Tapestry 4 to Tapestry 5.
+ ----
+ Upgrade Notes
+ ----
 
- Tapestry 5 represents a completely new code base. Although it maintains the <spirit> of
- Tapestry 4, it is also a quantum leap ahead of Tapestry 4.
+Upgrade Notes
 
- A lot of the familiar aspects of Tapestry are completely different between the two releases.
- In other cases, core concepts remain, but the details, names, and implementations
- have changed.
+  This is a quick guide to changes between releases of Tapestry.  This is meant to provide information
+  on any additions or changes that developers will face after upgrading to the latest version of Tapestry.
 
- More to come ...
+  It is always advised to perform a full and complete build after upgrading.
+
+Release 5.0.11
+
+* Field.getElementName()
+
+  The method <<<getElementName()>>> on interface {{{../apidocs/org/apache/tapestry/Field.html}Field}}
+  was renamed to <<<getControlName()>>>.  This brings the property in alignment with W3C documentation
+  and terminology, and helps differentiate from the element name (i.e., the tag name used to represent
+  the element in a component template).
+
+  This affects a number of existing components that implement the interface.
+
+  Method <<<allocateElementName()>>> on interface {{{../apidocs/org/apache/tapestry/services/FieldSupport.html}FieldSupport}}
+  was likewise renamed to <<<allocateControlName()>>>.
+
+* Zone
+
+  The show and hide parameters of the {{{ref/org/apache/tapestry/corelib/components/Zone.html}Zone}}
+  component now have a default binding prefix of "literal".

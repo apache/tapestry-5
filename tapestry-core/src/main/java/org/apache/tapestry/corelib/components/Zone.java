@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
@@ -50,7 +47,7 @@ public class Zone implements ClientElement
      * make the Zone's &lt;div&gt; visible before being updated.  If not specified, then
      * the basic "show" method is used.
      */
-    @Parameter
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _show;
 
     /**
@@ -59,7 +56,7 @@ public class Zone implements ClientElement
      * method is used, which performs a classic "yellow fade" to indicate to the user
      * that and update has taken place.
      */
-    @Parameter
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _update;
 
     private String _clientId;

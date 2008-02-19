@@ -147,7 +147,7 @@ public final class Select extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("select", "name", getElementName(), "id", getClientId());
+        writer.element("select", "name", getControlName(), "id", getClientId());
 
         _resources.renderInformalParameters(writer);
 

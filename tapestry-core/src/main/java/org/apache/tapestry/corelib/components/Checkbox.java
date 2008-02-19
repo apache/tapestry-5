@@ -63,7 +63,7 @@ public class Checkbox extends AbstractField
 
         writer.element("input", "type", "checkbox",
 
-                       "name", getElementName(),
+                       "name", getControlName(),
 
                        "id", getClientId(),
 

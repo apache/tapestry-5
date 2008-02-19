@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.PageRenderSupport;
-import static org.apache.tapestry.internal.services.ZoneSetupImpl.INITIALIZER_STRING;
+import static org.apache.tapestry.internal.services.ZoneSetupImpl.ZONE_INITIALIZER_STRING;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
@@ -43,7 +43,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         JSONObject template = new JSONObject("{ zones: [], links: [['client1', 'zone1'], ['client2', 'zone2']] }");
 
-        support.addScript(INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
 
         replay();
 
@@ -64,7 +64,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         JSONObject template = new JSONObject("{ zones: [ {div:'client1'}, {div:'client2'} ], links:[] }");
 
-        support.addScript(INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
 
         replay();
 
@@ -87,7 +87,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
         JSONObject template = new JSONObject(
                 "{ zones: [ {div:'client1', show:'showme'}, {div:'client2', update:'updateme'} ], links:[] }");
 
-        support.addScript(INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
 
         replay();
 
@@ -109,7 +109,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
         JSONObject template = new JSONObject(
                 "{ zones: [ {div:'client1', show:'showme'}, {div:'client2', update:'updateme'} ], links:[] }");
 
-        support.addScript(INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
 
         replay();
 

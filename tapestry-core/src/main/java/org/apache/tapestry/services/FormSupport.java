@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,21 +21,25 @@ import org.apache.tapestry.Field;
 /**
  * Services provided by an enclosing Form control component to the various form element components
  * it encloses. Implements {@link ClientElement}, to share the id of the enclosing form.
+ *
+ * @see org.apache.tapestry.Field
  */
 public interface FormSupport extends ClientElement
 {
     /**
-     * Allocates a unique (within the form) element name for some component enclosed component,
+     * Allocates a unique (within the form) control name for some enclosed component,
      * based on the component's id.
      *
      * @param id the component's id
      * @return a unique string, usually the component's id, but sometime extended with a unique
      *         number or string
      */
-    String allocateElementName(String id);
+    String allocateControlName(String id);
 
     /**
-     * Stores an action for execution during a later request.
+     * Stores an action for execution during a later request.  If the action contains any mutable
+     * state, it should be in its final state before invoking this method and its internal
+     * state should not be changed subsequently.
      */
     <T> void store(T component, ComponentAction<T> action);
 
@@ -76,5 +80,4 @@ public interface FormSupport extends ClientElement
      * @param constraint     additional constraint value, or null for validations that don't require a constraint
      */
     void addValidation(Field field, String validationName, String message, Object constraint);
-
 }

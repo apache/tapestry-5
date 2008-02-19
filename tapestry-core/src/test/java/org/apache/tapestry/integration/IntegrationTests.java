@@ -1639,4 +1639,32 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("usingGet", "true");
         assertText("usingIs", "true");
     }
+
+    @Test
+    public void form_fragment()
+    {
+        start("Form Fragment Demo", "Clear");
+
+        type("name", "Fred");
+        // Really, you can't type in the field because it is not visible, but
+        // this checks that invisible fields are not processed.
+        type("email", "this field is ignored");
+
+        clickAndWait(SUBMIT);
+
+        assertText("name", "Fred");
+        assertText("email", "");
+
+        clickAndWait("link=Back");
+        clickAndWait("link=Clear");
+
+        click("subscribeToEmail");
+        type("name", "Barney");
+        type("email", "rubble@bedrock.gov");
+
+        clickAndWait(SUBMIT);
+
+        assertText("name", "Barney");
+        assertText("email", "rubble@bedrock.gov");
+    }
 }

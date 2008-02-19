@@ -69,7 +69,7 @@ public final class Submit extends AbstractField
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element("input", "type", "submit", "name", getElementName(), "id", getClientId());
+        writer.element("input", "type", "submit", "name", getControlName(), "id", getClientId());
 
         _resources.renderInformalParameters(writer);
     }

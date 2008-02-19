@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.tapestry.json.JSONObject;
 
 public class ZoneSetupImpl implements ZoneSetup
 {
-    static final String INITIALIZER_STRING = "Tapestry.initializeZones(%s, %s);";
+    static final String ZONE_INITIALIZER_STRING = "Tapestry.initializeZones(%s, %s);";
 
     private final PageRenderSupport _pageRenderSupport;
 
@@ -28,7 +28,11 @@ public class ZoneSetupImpl implements ZoneSetup
 
     private final JSONArray _links = new JSONArray();
 
-    private boolean _dirty;
+    private final JSONArray _subForms = new JSONArray();
+
+    private boolean _zonesDirty;
+
+    private boolean _subformsDirty;
 
     public ZoneSetupImpl(PageRenderSupport pageRenderSupport)
     {
@@ -40,13 +44,17 @@ public class ZoneSetupImpl implements ZoneSetup
         JSONObject spec = new JSONObject();
         spec.put("div", clientId);
 
-        if (showFunctionName != null) spec.put("show", showFunctionName.toLowerCase());
-
-        if (updateFunctionName != null) spec.put("update", updateFunctionName.toLowerCase());
+        addFunction(spec, "show", showFunctionName);
+        addFunction(spec, "update", updateFunctionName);
 
         _zones.put(spec);
 
-        _dirty = true;
+        _zonesDirty = true;
+    }
+
+    private void addFunction(JSONObject spec, String key, String showFunctionName)
+    {
+        if (showFunctionName != null) spec.put(key, showFunctionName.toLowerCase());
     }
 
     public void linkZone(String linkId, String elementId)
@@ -57,14 +65,29 @@ public class ZoneSetupImpl implements ZoneSetup
 
         _links.put(spec);
 
-        _dirty = true;
+        _zonesDirty = true;
+
+    }
+
+    public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
+    {
+        JSONObject spec = new JSONObject();
+        spec.put("element", clientId);
+
+        addFunction(spec, "show", showFunctionName);
+        addFunction(spec, "hide", hideFunctionName);
+
+        _subForms.put(spec);
+
+        _subformsDirty = true;
 
     }
 
     public void writeInitializationScript()
     {
-        if (!_dirty) return;
+        if (_zonesDirty) _pageRenderSupport.addScript(ZONE_INITIALIZER_STRING, _zones, _links);
 
-        _pageRenderSupport.addScript(INITIALIZER_STRING, _zones, _links);
+        if (_subformsDirty)
+            _pageRenderSupport.addScript("Tapestry.initializeFormFragments(%s);", _subForms);
     }
 }

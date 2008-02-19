@@ -26,7 +26,7 @@ import org.apache.tapestry.runtime.Component;
 public interface ComponentSource
 {
     /**
-     * Gets a component by its id.
+     * Gets a component by its complete id.
      *
      * @param componentId complete component id
      * @return the component

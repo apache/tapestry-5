@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import java.util.List;
  * to render itself multiple times within a request, because of {@link Loop} or other similar
  * components.
  * <p/>
- * Internally, the tracker indexes its information in terms of the {@link Field#getElementName()}
+ * Internally, the tracker indexes its information in terms of the {@linkplain Field#getControlName() control name}
  * for each rendering of the component (the mechanics of Tapestry ensures that this is unique within
  * the form).
  * <p/>
