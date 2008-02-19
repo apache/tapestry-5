@@ -248,7 +248,8 @@ public final class TapestryModule
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
         configuration.add("InjectPage", new InjectPageWorker(requestPageCache, resolver));
-        configuration.add("InjectComponent", new InjectContainerWorker());
+        configuration.add("InjectContainer", new InjectContainerWorker());
+        configuration.add("InjectComponent", new InjectComponentWorker());
         configuration.add("RenderCommand", new RenderCommandWorker());
 
         // Default values for parameters are often some form of injection, so make sure

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.integration;
 
+import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.integration.app1.pages.RenderErrorDemo;
 import org.apache.tapestry.internal.services.InjectContainerWorker;
@@ -1667,4 +1668,13 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("name", "Barney");
         assertText("email", "rubble@bedrock.gov");
     }
+
+    @Test
+    public void zone_inject_component_from_template()
+    {
+        start("Inject Component Demo");
+
+        assertTextPresent(Form.class.getName() + "[form--form]");
+    }
+
 }

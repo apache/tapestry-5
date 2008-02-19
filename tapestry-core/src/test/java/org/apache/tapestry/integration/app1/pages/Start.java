@@ -229,7 +229,10 @@ public class Start
                      "render phase methods may throw checked exceptions"),
 
             new Item("TrackEditor", "Generic Page Class Demo",
-                     "demo use of generics with component classes and, particularily, with property types"));
+                     "demo use of generics with component classes and, particularily, with property types"),
+
+            new Item("injectcomponentdemo", "Inject Component Demo",
+                     "inject component defined in template"));
 
     static
     {
