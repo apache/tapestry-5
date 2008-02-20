@@ -20,6 +20,7 @@ import org.apache.tapestry.ioc.Location;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.BindingSource;
 
@@ -48,14 +49,8 @@ public class BindingSourceImpl implements BindingSource
         notNull(component, "component");
         notBlank(defaultPrefix, "defaultPrefix");
 
-        try
-        {
-            notBlank(expression, "expression");
-        }
-        catch (final Exception ex)
-        {
-            throw new TapestryException(ServicesMessages.emptyBinding(description), location, ex);
-        }
+        if (InternalUtils.isBlank(expression))
+            throw new TapestryException(ServicesMessages.emptyBinding(description), location, null);
 
         // Location might be null
 
