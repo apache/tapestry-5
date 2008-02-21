@@ -1,0 +1,46 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Secure Page Access</h1>
+
+
+    <t:if test="message">
+        <p>
+            Message:
+            <span id="message">${message}</span>
+        </p>
+    </t:if>
+
+    <p>
+        <t:actionlink t:id="secureLink">click</t:actionlink>
+    </p>
+
+    <p>
+        <t:form>
+            <input type="submit" value="Secure Submit"/>
+        </t:form>
+    </p>
+
+    <p>
+        We're also demonstrating the ability to send assets via insecure access.
+    </p>
+
+    <p>
+        The Tapestry banner:
+    </p>
+
+    <img id="icon" src="${icon}"/>
+
+    <p>
+        A classpath asset:
+    </p>
+
+    <img id="button" src="${button}"/>
+
+
+    <p>
+        Relative asset via asset: binding
+    </p>
+
+    <img src="${asset:smiley.png}"/>
+
+</html>

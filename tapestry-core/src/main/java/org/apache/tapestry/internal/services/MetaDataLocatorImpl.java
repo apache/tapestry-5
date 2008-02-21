@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,18 +19,27 @@ import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.services.SymbolSource;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.MetaDataLocator;
 
 import java.util.Map;
 
 public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListener
 {
+    private final SymbolSource _symbolSource;
+
+    private final TypeCoercer _typeCoercer;
+
     private final Map<String, Map<String, String>> _defaultsByFolder = newCaseInsensitiveMap();
 
     private final Map<String, String> _cache = newConcurrentMap();
 
-    public MetaDataLocatorImpl(Map<String, String> configuration)
+    public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer, Map<String, String> configuration)
     {
+        _symbolSource = symbolSource;
+        _typeCoercer = typeCoercer;
+
         loadDefaults(configuration);
     }
 
@@ -63,20 +72,34 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
         }
     }
 
-    public String findMeta(String key, ComponentResources resources)
+    public <T> T findMeta(String key, ComponentResources resources, Class<T> expectedType)
     {
-        // The component's complete id should be sufficient as locale-specific
-        // values don't enter into this.
+        String value = getSymbolExpandedValueFromCache(key, resources);
 
+        return _typeCoercer.coerce(value, expectedType);
+    }
+
+    private String getSymbolExpandedValueFromCache(String key, ComponentResources resources)
+    {
         String cacheKey = resources.getCompleteId() + "/" + key;
 
         if (_cache.containsKey(cacheKey)) return _cache.get(cacheKey);
 
-        String result = locate(key, resources);
+        String value = locate(key, resources);
 
-        _cache.put(cacheKey, result);
+        if (value == null)
+        {
+            value = _symbolSource.valueForSymbol(key);
+        }
+        else
+        {
+            value = _symbolSource.expandSymbols(value);
 
-        return result;
+        }
+
+        _cache.put(cacheKey, value);
+
+        return value;
     }
 
     private String locate(String key, ComponentResources resources)

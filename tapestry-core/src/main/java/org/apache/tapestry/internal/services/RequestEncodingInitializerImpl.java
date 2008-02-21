@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -41,12 +41,14 @@ public class RequestEncodingInitializerImpl implements RequestEncodingInitialize
         Page page = _cache.get(pageName);
         ComponentResources pageResources = page.getRootElement().getComponentResources();
 
-        String contentTypeString = _locator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources);
+        String contentTypeString = _locator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
+                                                     String.class);
         ContentType contentType = new ContentType(contentTypeString);
 
         String encoding = contentType.getParameter("charset");
 
-        if (encoding == null) encoding = _locator.findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
+        if (encoding == null)
+            encoding = _locator.findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources, String.class);
 
         _request.setEncoding(encoding);
     }

@@ -32,3 +32,8 @@ Release 5.0.11
 
   The method <<<invokeIfBlank()>>> on interface {{{../apidocs/org/apache/tapestry/Validator.html}Validator}}
   was renamed to <<<isRequired()>>>.
+
+* MetaDataLocator
+
+  The <<findMeta()>> method on interface {{{../apidocs/org/apache/tapestry/services/MetaDataLocator.html}MetaDataLocator}}
+  has changed significantly; it now expands symbols and performs type coercion.

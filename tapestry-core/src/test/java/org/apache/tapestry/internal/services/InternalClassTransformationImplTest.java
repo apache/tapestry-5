@@ -21,7 +21,9 @@ import org.apache.tapestry.annotations.Retain;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.*;
+import org.apache.tapestry.internal.transform.FieldRemoval;
+import org.apache.tapestry.internal.transform.InheritedAnnotation;
+import org.apache.tapestry.internal.transform.TestPackageAwareLoader;
 import org.apache.tapestry.internal.transform.pages.*;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
@@ -570,7 +572,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         Class[] interfaces = transformed.getInterfaces();
 
-        assertEquals(interfaces, new Class[]{Component.class, FooInterface.class, GetterMethodsInterface.class});
+        assertEquals(interfaces, new Class[] { Component.class, FooInterface.class, GetterMethodsInterface.class });
 
         Object target = ct.createInstantiator().newInstance(resources);
 
@@ -624,7 +626,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             // The PropertyAccess layer adds a wrapper exception around the real one.
 
             assertEquals(ex.getCause().getMessage(),
-                         "Field org.apache.tapestry.internal.transform.ReadOnlyBean._value is read-only.");
+                         "Field org.apache.tapestry.internal.transform.pages.ReadOnlyBean._value is read-only.");
         }
 
         verify();
@@ -705,7 +707,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
             // The PropertyAccess layer adds a wrapper exception around the real one.
 
             assertEquals(ex.getCause().getMessage(),
-                         "Field org.apache.tapestry.internal.transform.ReadOnlyBean._value is read-only.");
+                         "Field org.apache.tapestry.internal.transform.pages.ReadOnlyBean._value is read-only.");
         }
 
         verify();
@@ -789,7 +791,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         TransformMethodSignature writeMethodSignature = new TransformMethodSignature(Modifier.PRIVATE, "void",
                                                                                      writeMethodName,
-                                                                                     new String[]{STRING_CLASS_NAME},
+                                                                                     new String[] { STRING_CLASS_NAME },
                                                                                      null);
         ct.addMethod(writeMethodSignature, String.format("throw new RuntimeException(\"write %s\");", baseName));
 

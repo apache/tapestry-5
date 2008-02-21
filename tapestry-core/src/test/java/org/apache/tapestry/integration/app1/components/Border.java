@@ -19,6 +19,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.services.ComponentLayer;
+import org.apache.tapestry.services.Request;
 
 /**
  * Here's a component with a template, including a t:body element.
@@ -34,6 +35,9 @@ public class Border
     @ComponentLayer
     private ClassFactory _componentClassFactory;
 
+    @Inject
+    private Request _request;
+
     public ClassFactory getComponentClassFactory()
     {
         return _componentClassFactory;
@@ -42,6 +46,16 @@ public class Border
     public ClassFactory getIocClassFactory()
     {
         return _iocClassFactory;
+    }
+
+    public Request getRequest()
+    {
+        return _request;
+    }
+
+    public String getSecure()
+    {
+        return _request.isSecure() ? "secure" : "insecure";
     }
 
 }

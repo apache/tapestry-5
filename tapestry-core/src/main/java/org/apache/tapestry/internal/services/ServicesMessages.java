@@ -228,11 +228,6 @@ class ServicesMessages
         return MESSAGES.format("wrong-asset-digest", resource.getPath());
     }
 
-    static String componentNotAssignableToField(Component component, String fieldName, String fieldType)
-    {
-        return MESSAGES.format("component-not-assignable-to-field", component
-                .getComponentResources().getCompleteId(), fieldName, fieldType);
-    }
 
     static String unknownValidatorType(String validatorType, List<String> knownValidatorTypes)
     {
@@ -329,10 +324,6 @@ class ServicesMessages
         return MESSAGES.format("component-recursion", componentClassName);
     }
 
-    static String fieldInjectionError(String className, String fieldName, Throwable cause)
-    {
-        return MESSAGES.format("field-injection-error", className, fieldName, cause);
-    }
 
     static String clientStateMustBeSerializable(Object newValue)
     {

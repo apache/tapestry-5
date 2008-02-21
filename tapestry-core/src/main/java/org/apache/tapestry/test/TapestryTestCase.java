@@ -1033,4 +1033,30 @@ public abstract class TapestryTestCase extends IOCTestCase
     {
         expect(valueEncoder.toValue(clientValue)).andReturn(value);
     }
+
+    protected <T> void train_findMeta(MetaDataLocator locator, String key,
+                                      ComponentResources resources, Class<T> expectedType, T value)
+    {
+        expect(locator.findMeta(key, resources, expectedType)).andReturn(value).atLeastOnce();
+    }
+
+    protected MetaDataLocator mockMetaDataLocator()
+    {
+        return newMock(MetaDataLocator.class);
+    }
+
+    protected final void train_isSecure(Request request, boolean isSecure)
+    {
+        expect(request.isSecure()).andReturn(isSecure).atLeastOnce();
+    }
+
+    protected final void train_getBaseURL(BaseURLSource baseURLSource, boolean secure, String baseURL)
+    {
+        expect(baseURLSource.getBaseURL(secure)).andReturn(baseURL);
+    }
+
+    protected final BaseURLSource mockBaseURLSource()
+    {
+        return newMock(BaseURLSource.class);
+    }
 }

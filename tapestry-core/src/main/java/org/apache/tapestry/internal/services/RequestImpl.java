@@ -25,8 +25,8 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Basic implementation of {@link org.apache.tapestry.services.Request} that wraps around an
- * {@link javax.servlet.http.HttpServletRequest}.
+ * Basic implementation of {@link org.apache.tapestry.services.Request} that wraps around an {@link
+ * javax.servlet.http.HttpServletRequest}.
  */
 public class RequestImpl implements Request
 {
@@ -117,6 +117,11 @@ public class RequestImpl implements Request
         return XML_HTTP_REQUEST.equals(_request.getHeader(REQUESTED_WITH_HEADER));
     }
 
+    public boolean isSecure()
+    {
+        return _request.isSecure();
+    }
+
     public boolean isRequestedSessionIdValid()
     {
         return _request.isRequestedSessionIdValid();
@@ -130,5 +135,10 @@ public class RequestImpl implements Request
     public void setAttribute(String name, Object value)
     {
         _request.setAttribute(name, value);
+    }
+
+    public String getServerName()
+    {
+        return _request.getServerName();
     }
 }

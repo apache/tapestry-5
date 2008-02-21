@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,7 +34,8 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
     {
         ComponentResources pageResources = page.getRootComponent().getComponentResources();
 
-        String contentTypeString = _metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources);
+        String contentTypeString = _metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
+                                                             String.class);
         ContentType contentType = new ContentType(contentTypeString);
 
         // Make sure thre's always a charset specified.
@@ -44,7 +45,7 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
         if (encoding == null)
         {
             encoding = _metaDataLocator
-                    .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources);
+                    .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources, String.class);
             contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, encoding);
         }
 

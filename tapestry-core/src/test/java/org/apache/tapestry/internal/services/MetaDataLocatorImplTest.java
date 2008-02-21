@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.services.SymbolSource;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.services.MetaDataLocator;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
@@ -26,11 +29,20 @@ import java.util.Map;
 
 public class MetaDataLocatorImplTest extends InternalBaseTestCase
 {
+    private TypeCoercer _typeCoercer;
+
+    @BeforeClass
+    public void setup()
+    {
+        _typeCoercer = getService(TypeCoercer.class);
+    }
+
     @Test
     public void found_in_component()
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -39,14 +51,15 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         train_getCompleteId(resources, completeId);
         train_getComponentModel(resources, model);
         train_getMeta(model, key, value);
+        train_expandSymbols(symbolSource, value, value);
 
         replay();
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
 
@@ -56,7 +69,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
     }
@@ -68,6 +81,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         ComponentResources containerResources = mockComponentResources();
         ComponentModel model = mockComponentModel();
         ComponentModel containerModel = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -79,14 +93,15 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         train_getContainerResources(resources, containerResources);
         train_getComponentModel(containerResources, containerModel);
         train_getMeta(containerModel, key, value);
+        train_expandSymbols(symbolSource, value, value);
 
         replay();
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
     }
@@ -96,6 +111,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -109,14 +125,16 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         train_getPageName(resources, logicalPageName);
 
+        train_expandSymbols(symbolSource, value, value);
+
         replay();
 
         Map<String, String> configuration = newMap();
         configuration.put(key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
 
@@ -126,7 +144,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
     }
@@ -136,6 +154,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -148,14 +167,16 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         train_getPageName(resources, "foo/Bar");
 
+        train_expandSymbols(symbolSource, value, value);
+
         replay();
 
         Map<String, String> configuration = newMap();
         configuration.put(key.toUpperCase(), value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
 
@@ -165,7 +186,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
     }
@@ -175,6 +196,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -187,15 +209,17 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         train_getPageName(resources, "foo/Bar");
 
+        train_expandSymbols(symbolSource, value, value);
+
         replay();
 
         Map<String, String> configuration = newMap();
         configuration.put(key, "xxx");
         configuration.put("foo:" + key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
 
@@ -205,7 +229,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
     }
@@ -215,6 +239,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
     {
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
 
         String key = "foo.bar";
         String value = "zaphod";
@@ -224,13 +249,15 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         train_getComponentModel(resources, model);
         train_getMeta(model, key, value);
 
+        train_expandSymbols(symbolSource, value, value);
+
         replay();
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(configuration);
+        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
 
         verify();
 
@@ -240,11 +267,44 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         train_getComponentModel(resources, model);
         train_getMeta(model, key, value);
 
+        train_expandSymbols(symbolSource, value, value);
+
         replay();
 
         locator.objectWasInvalidated();
 
-        assertSame(locator.findMeta(key, resources), value);
+        assertSame(locator.findMeta(key, resources, String.class), value);
+
+        verify();
+    }
+
+    /**
+     * Makes sense to test together to ensure that the expanded value is what's fed to the type coercer.
+     */
+    @Test
+    public void train_symbols_expanded_and_types_coerced()
+    {
+        ComponentResources resources = mockComponentResources();
+        ComponentModel model = mockComponentModel();
+        SymbolSource symbolSource = mockSymbolSource();
+
+        String key = "foo.bar";
+        String value = "${zaphod}";
+        String expandedValue = "99";
+        String completeId = "foo.Bar:baz";
+
+        train_getCompleteId(resources, completeId);
+        train_getComponentModel(resources, model);
+        train_getMeta(model, key, value);
+        train_expandSymbols(symbolSource, value, expandedValue);
+
+        replay();
+
+        Map<String, String> configuration = Collections.emptyMap();
+
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+
+        assertEquals(locator.findMeta(key, resources, Integer.class), new Integer(99));
 
         verify();
     }

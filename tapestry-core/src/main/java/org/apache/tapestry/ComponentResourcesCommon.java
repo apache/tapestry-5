@@ -14,19 +14,14 @@
 
 package org.apache.tapestry;
 
-import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.internal.services.OnEventWorker;
-import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.ioc.Locatable;
-import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.ComponentSource;
 import org.slf4j.Logger;
 
 import java.util.Locale;
 
 /**
- * Operations shared by the public {@link ComponentResources} interface and {@link ComponentPageElement} interface (on
- * the internal side).
+ * Operations shared by the public {@link org.apache.tapestry.ComponentResources} interface and {@link
+ * org.apache.tapestry.internal.structure.ComponentPageElement} interface (on the internal side).
  */
 public interface ComponentResourcesCommon extends Locatable
 {
@@ -50,14 +45,14 @@ public interface ComponentResourcesCommon extends Locatable
      * <p/>
      * This value is often used to obtain an equivalent component instance in a later request.
      *
-     * @see org.apache.tapestry.services.ComponentSource#getComponent(String) 
+     * @see org.apache.tapestry.services.ComponentSource#getComponent(String)
      */
 
     String getCompleteId();
 
     /**
-     * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}.
-     * Wraps the context values into an {@link EventContext}.
+     * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}. Wraps
+     * the context values into an {@link org.apache.tapestry.EventContext}.
      */
     boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback);
 
@@ -78,8 +73,8 @@ public interface ComponentResourcesCommon extends Locatable
      * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
      * @throws org.apache.tapestry.runtime.ComponentEventException
      *          if an event handler method throws a checked or unchecked exception
-     * @see OnEventWorker
-     * @see OnEvent
+     * @see org.apache.tapestry.internal.transform.OnEventWorker
+     * @see org.apache.tapestry.annotations.OnEvent
      */
     boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback);
 
@@ -92,7 +87,7 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * Returns the log instance associated with the component (which is based on the component or mixin's class name).
      *
-     * @see ComponentModel#getLogger()
+     * @see org.apache.tapestry.model.ComponentModel#getLogger()
      */
     Logger getLogger();
 

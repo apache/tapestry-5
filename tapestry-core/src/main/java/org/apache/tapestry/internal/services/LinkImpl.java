@@ -27,6 +27,8 @@ public class LinkImpl implements Link
 {
     private static final int BUFFER_SIZE = 100;
 
+    private final String _baseURL;
+
     private final String _contextPath;
 
     private final Response _response;
@@ -46,7 +48,7 @@ public class LinkImpl implements Link
 
     LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath, String targetPath, boolean forForm)
     {
-        this(response, optimizer, contextPath,
+        this(response, optimizer, null, contextPath,
              new ComponentInvocationImpl(new OpaqueConstantTarget(targetPath), new String[0], null), forForm);
     }
 
@@ -56,16 +58,17 @@ public class LinkImpl implements Link
      *
      * @param response    used to encode the response when necessary
      * @param optimizer   optimizes complete URLs to appropriate relative URLs
+     * @param baseURL     base URL prefix (before the context path), used when switching between secure and non-secure
      * @param contextPath path for the context {@link org.apache.tapestry.services.Request#getContextPath()}
      * @param invocation  abstraction around the type of link (needed by {@link org.apache.tapestry.test.PageTester})
      * @param forForm     if true, then a Form has requested the Link, in which case, the link should not generated
-     *                    query parameters directly (they will
      */
-    public LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath,
+    public LinkImpl(Response response, RequestPathOptimizer optimizer, String baseURL, String contextPath,
                     ComponentInvocation invocation, boolean forForm)
     {
         _response = response;
         _optimizer = optimizer;
+        _baseURL = baseURL;
         _contextPath = contextPath;
         _invocation = invocation;
         _forForm = forForm;
@@ -96,10 +99,14 @@ public class LinkImpl implements Link
         return _response.encodeURL(buildURI(true));
     }
 
-
     private String buildURI(boolean full)
     {
+        boolean absolute = full | _baseURL != null;
+
         StringBuilder builder = new StringBuilder(BUFFER_SIZE);
+
+        if (_baseURL != null) builder.append(_baseURL);
+
         builder.append(_contextPath);
         builder.append("/");
         builder.append(_invocation.buildURI(_forForm));
@@ -112,7 +119,7 @@ public class LinkImpl implements Link
 
         String fullURI = builder.toString();
 
-        return full ? fullURI : _optimizer.optimizePath(fullURI);
+        return absolute ? fullURI : _optimizer.optimizePath(fullURI);
     }
 
     public String toRedirectURI()

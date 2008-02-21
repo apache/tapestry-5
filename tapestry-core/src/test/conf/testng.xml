@@ -52,6 +52,7 @@
             <package name="org.apache.tapestry.internal.bindings"/>
             <package name="org.apache.tapestry.internal.model"/>
             <package name="org.apache.tapestry.internal.test"/>
+            <package name="org.apache.tapestry.internal.transform"/>
             <package name="org.apache.tapestry.internal.translator"/>
         </packages>
     </test>

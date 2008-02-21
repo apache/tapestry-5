@@ -41,6 +41,11 @@
             -- check for handling of recursive components
         </li>
 
+        <li>
+            <t:actionlink t:id="securepage">Secure Page Demo</t:actionlink>
+            -- transition to HTTPS
+        </li>
+
     </ul>
 
 </html>                      

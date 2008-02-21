@@ -17,7 +17,6 @@ package org.apache.tapestry.integration;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.integration.app1.pages.RenderErrorDemo;
-import org.apache.tapestry.internal.services.InjectContainerWorker;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
@@ -32,7 +31,7 @@ import java.net.URL;
  * Note: If these tests fail with BindException when starting Jetty, it could be Skype. At least on my system, Skype is
  * listening on localhost:80.
  */
-@Test(timeOut = 50000, sequential = true, groups = {"integration"})
+@Test(timeOut = 50000, sequential = true, groups = { "integration" })
 public class IntegrationTests extends AbstractIntegrationTestSuite
 {
     public IntegrationTests()
@@ -149,8 +148,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
-     * {@link InjectContainerWorker} is largely tested by the forms tests ({@link RenderDisabled} is built on it). test
-     * is for the failure case, where a mixin class is used with the wrong type of component.
+     * {@link org.apache.tapestry.internal.transform.InjectContainerWorker} is largely tested by the forms tests ({@link
+     * RenderDisabled} is built on it). test is for the failure case, where a mixin class is used with the wrong type of
+     * component.
      */
     @Test
     public void inject_container_failure() throws Exception
@@ -187,7 +187,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("InstanceMixin");
 
-        final String[] dates = {"Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005"};
+        final String[] dates = { "Jun 13, 1999", "Jul 15, 2001", "Dec 4, 2005" };
 
         for (String date : dates)
         {
@@ -1304,7 +1304,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Disabled Fields");
 
-        String[] paths = new String[]{"//input[@id='textfield']",
+        String[] paths = new String[] { "//input[@id='textfield']",
 
                 "//input[@id='passwordfield']",
 
@@ -1328,7 +1328,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
                 "//select[@id='palette']",
 
-                "//input[@id='submit']"};
+                "//input[@id='submit']" };
 
         for (String path : paths)
         {
@@ -1683,4 +1683,39 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent(Form.class.getName() + "[form--form]");
     }
 
+
+    /**
+     * This may need to be disabled or dropped from the test suite, I don't know that Selenium, especially Selenium
+     * running headless on the CI server, can handle the transition to HTTPS: there's warnings that pop up about
+     * certificates.
+     * <p/>
+     * <p/>
+     * Verified: Selenium can't handle this, even with a user manually OK-ing the certificate warning dialogs.
+     */
+    @Test(enabled = false)
+    public void secure_page_access()
+    {
+        start("Secure Page Demo");
+
+        assertText("secure", "secure");
+
+        assertText("message", "Triggered from Start");
+
+        clickAndWait("link=click");
+
+        assertText("secure", "secure");
+
+        assertText("message", "Link clicked");
+
+        clickAndWait(SUBMIT);
+
+        assertText("secure", "secure");
+        assertText("message", "Form submitted");
+
+        clickAndWait("link=Back to index");
+
+        // Back to the insecure home page.
+
+        assertText("//h1", "Tapestry 5 Integration Application 1");
+    }
 }
