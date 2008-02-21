@@ -70,6 +70,56 @@ public void contributeMetaDataLocator(MappedConfiguration<String,String> configu
  With no colon, the meta data applies to the entire application (including any component libraries
  used in the application).
 
+Base URL Support
+
+  When Tapestry switches back and forth between secure and unsecure mode, it must
+  create a full URL (rather than a relative URL) that identifies the protocol, server host name
+  and perhaps even a port number.
+
+  That can be a stumbling point, especially the server host name.  In a cluster, behind a fire wall,
+  the server host name available to Tapestry, via the <<<HttpServletRequest.getServerName()>>> method,
+  is often <not> the server name the client web browser sees ... instead it is the
+  name of the internal server behind the firewall.  The firewall server has the correct name
+  from the web browser's point of view.
+
+  Because of this, Tapestry includes a hook to allow you to override how these default
+  URLs are created: the
+  {{{../../apidocs/org/apache/tapestry/services/BaseURLSource.html}BaseURLSource}} service.
+
+  The default implementation is based on just the getServerName() method; it's often not the
+  correct choice even for development.
+
+  Fortunately, it is very easy to override this implementation.  Here's an example of an override
+  that uses the default port numbers that
+  the {{{http://jetty.mortbay.com}Jetty servlet container}} uses for normal HTTP (port 8080) and for
+  secure HTTPS (port 8443):
+
+----
+    public void contributeAlias(Configuration<AliasContribution> configuration)
+    {
+        BaseURLSource source = new BaseURLSource()
+        {
+            public String getBaseURL(boolean secure)
+            {
+                String protocol = secure ? "https" : "http";
+
+                int port = secure ? 8080 : 8443;
+
+                return String.format("%s://localhost:%d", protocol, port);
+            }
+        };
+
+        configuration.add(AliasContribution.create(BaseURLSource.class, source));
+    }
+----
+
+  This override is hardcoded to generate URLs for localhost; as such you might use it for development
+  but certainly not in production.
+
+  The Alias service exists just for these kinds of overrides; it allows a late-binding
+  to a customized implementation of the BaseURLSource service that hides the built-in
+  Tapestry implementation.
+
 
 Application Server Configuration
 
