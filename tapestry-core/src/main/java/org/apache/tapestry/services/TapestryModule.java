@@ -30,6 +30,7 @@ import org.apache.tapestry.internal.renderers.*;
 import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.structure.PageResourcesSource;
 import org.apache.tapestry.internal.structure.PageResourcesSourceImpl;
+import org.apache.tapestry.internal.transform.*;
 import org.apache.tapestry.internal.translator.*;
 import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.*;
@@ -116,6 +117,8 @@ public final class TapestryModule
         binder.bind(HttpServletRequestFilter.class, IgnoredPathsFilter.class).withId("IgnoredPathsFilter");
         binder.bind(PageResourcesSource.class, PageResourcesSourceImpl.class);
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
+        binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
+        binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -194,27 +197,29 @@ public final class TapestryModule
     }
 
     /**
-     * Adds a number of standard component class transform workers: <dl> <dt>Retain </dt> <dd> allows fields to retain
-     * their values between requests</dd> <dt>Persist </dt> <dd> allows fields to store their their value persistently
-     * between requests</dd> <dt>Parameter </dt> <dd> identifies parameters based on the {@link
-     * org.apache.tapestry.annotations.Parameter} annotation</dd> <dt>Component </dt> <dd> identifies embedded
-     * components based on the {@link org.apache.tapestry.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>
-     * adds a mixin as part of a component's implementation</dd> <dt>Environment </dt> <dd> allows fields to contain
-     * values extracted from the {@link Environment} service</dd> <dt>Inject </dt> <dd> used with the {@link Inject}
-     * annotation, when a value is supplied</dd> <dt>InjectPage </dt> <dd> adds code to allow access to other pages via
-     * the {@link InjectPage} field annotation</dd> <dt>InjectBlock </dt> <dd> allows a block from the template to be
-     * injected into a field</dd> <dt>IncludeStylesheet </dt> <dd> supports the {@link
-     * org.apache.tapestry.annotations.IncludeStylesheet} annotation</dd> <dt>IncludeJavaScriptLibrary </dt> <dd>
-     * supports the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation</dd>
-     * <dt>SupportsInformalParameters </dt> <dd> checks for the annotation</dd> <dt>Meta </dt> <dd> checks for meta data
-     * and adds it to the component model <dt>ApplicationState </dt> <dd> converts fields that reference application
-     * state objects <dt>UnclaimedField </dt> <dd> identifies unclaimed fields and resets them to null/0/false at the
-     * end of the request</dd> <dt>RenderCommand </dt> <dd> ensures all components also implement {@link
-     * RenderCommand}</dd> <dt>SetupRender, BeginRender, etc. </dt> <dd> correspond to component render phases and
-     * annotations</dd> <dt>InvokePostRenderCleanupOnResources </dt> <dd> makes sure {@link
+     * Adds a number of standard component class transform workers: <dl> <dt>Retain </dt> <dd>Allows fields to retain
+     * their values between requests</dd> <dt>Persist </dt> <dd>Allows fields to store their their value persistently
+     * between requests</dd> <dt>Parameter </dt> <dd>Identifies parameters based on the {@link
+     * org.apache.tapestry.annotations.Parameter} annotation</dd> <dt>Component </dt> <dd>Defines embedded components
+     * based on the {@link org.apache.tapestry.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>Adds a mixin
+     * as part of a component's implementation</dd> <dt>Environment </dt> <dd>Allows fields to contain values extracted
+     * from the {@link org.apache.tapestry.services.Environment} service</dd> <dt>Inject </dt> <dd>Used with the {@link
+     * org.apache.tapestry.ioc.annotations.Inject} annotation, when a value is supplied</dd> <dt>InjectPage</dt>
+     * <dd>Adds code to allow access to other pages via the {@link org.apache.tapestry.annotations.InjectPage} field
+     * annotation</dd> <dt>InjectBlock </dt> <dd>Allows a block from the template to be injected into a field</dd>
+     * <dt>IncludeStylesheet </dt> <dd>Supports the {@link org.apache.tapestry.annotations.IncludeStylesheet}
+     * annotation</dd> <dt>IncludeJavaScriptLibrary </dt> <dd>Supports the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary}
+     * annotation</dd> <dt>SupportsInformalParameters </dt> <dd>Checks for the annotation</dd> <dt>Meta </dt> <dd>Checks
+     * for meta data and adds it to the component model</dd> <dt>ApplicationState </dt> <dd>Converts fields that
+     * reference application state objects <dt>UnclaimedField </dt> <dd>Identifies unclaimed fields and resets them to
+     * null/0/false at the end of the request</dd> <dt>RenderCommand </dt> <dd>Ensures all components also implement
+     * {@link org.apache.tapestry.runtime.RenderCommand}</dd> <dt>SetupRender, BeginRender, etc. </dt> <dd>Correspond to
+     * component render phases and annotations</dd> <dt>InvokePostRenderCleanupOnResources </dt> <dd>Makes sure {@link
      * org.apache.tapestry.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
-     * finishes rendering</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
-     * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link ResponseEncoding} annotation</dd> </dl>
+     * finishes rendering</dd> <dt>Secure</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.Secure}
+     * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
+     * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
+     * annotation</dd> </dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -240,6 +245,7 @@ public final class TapestryModule
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
 
+        configuration.add("Secure", new SecureWorker());
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
@@ -474,8 +480,7 @@ public final class TapestryModule
      * cached data has changed (see {@link org.apache.tapestry.internal.services.CheckForUpdatesFilter}).
      * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler}
      * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
-     * cookies in the request</dd>
-     * <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
+     * cookies in the request</dd> <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
      * org.apache.tapestry.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
      * filter substitutes the request or response). </dl>
      */
@@ -942,7 +947,7 @@ public final class TapestryModule
     /**
      * The component event result processor used for normal component requests.
      */
-    @Marker({Primary.class, Traditional.class})
+    @Marker({ Primary.class, Traditional.class })
     public ComponentEventResultProcessor buildComponentEventResultProcessor(
             Map<Class, ComponentEventResultProcessor> configuration)
     {
@@ -1212,23 +1217,9 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes meta data defaults: <dl> <dt>{@link PersistentFieldManagerImpl#META_KEY} <dd>{@link
-     * PersistentFieldManagerImpl#DEFAULT_STRATEGY} <dt>{@link TapestryConstants#RESPONSE_CONTENT_TYPE} <dd>text/html
-     * <dt>{@link TapestryConstants#RESPONSE_ENCODING} <dd>UTF-8 </dl>
-     *
-     * @param configuration
-     */
-    public void contributeMetaDataLocator(MappedConfiguration<String, String> configuration)
-    {
-        configuration.add(PersistentFieldManagerImpl.META_KEY, PersistentFieldManagerImpl.DEFAULT_STRATEGY);
-
-        configuration.add(TapestryConstants.RESPONSE_CONTENT_TYPE, "text/html");
-        configuration.add(TapestryConstants.RESPONSE_ENCODING, "UTF-8");
-    }
-
-    /**
-     * Contributes a default object renderer for type Object, plus specialized renderers for {@link org.apache.tapestry.services.Request}, {@link
-     * org.apache.tapestry.ioc.Location}, {@link org.apache.tapestry.ComponentResources}, {@link org.apache.tapestry.EventContext}, List, and Object[].
+     * Contributes a default object renderer for type Object, plus specialized renderers for {@link
+     * org.apache.tapestry.services.Request}, {@link org.apache.tapestry.ioc.Location}, {@link
+     * org.apache.tapestry.ComponentResources}, {@link org.apache.tapestry.EventContext}, List, and Object[].
      */
     public void contributeObjectRenderer(MappedConfiguration<Class, ObjectRenderer> configuration,
 
@@ -1419,8 +1410,8 @@ public final class TapestryModule
      * @param configuration filters for the service
      * @param renderQueue   does most of the work
      * @return the service
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
-     *      ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)
+     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration,
+     *      org.apache.tapestry.internal.services.AjaxUIDManager, org.apache.tapestry.Asset, ValidationMessagesSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration,
@@ -1588,6 +1579,27 @@ public final class TapestryModule
     }
 
     /**
+     * Contributes a single filter, "Secure", which checks for non-secure requests that access secure pages.
+     */
+    public void contributePageRenderRequestHandler(OrderedConfiguration<PageRenderRequestFilter> configuration,
+                                                   final RequestSecurityManager securityManager)
+    {
+        PageRenderRequestFilter secureFilter = new PageRenderRequestFilter()
+        {
+            public void handle(PageRenderRequestParameters parameters, PageRenderRequestHandler handler) throws
+                    IOException
+            {
+
+                if (securityManager.checkForInsecureRequest(parameters.getLogicalPageName())) return;
+
+                handler.handle(parameters);
+            }
+        };
+
+        configuration.add("Secure", secureFilter);
+    }
+
+    /**
      * Builds the component action request handler for traditional (non-Ajax) requests. These typically result in a
      * redirect to a Tapestry render URL.
      *
@@ -1688,6 +1700,8 @@ public final class TapestryModule
 
         configuration.add(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL, "true");
 
+        configuration.add(TapestryConstants.SECURE_PAGE, "false");
+
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
         // delete the old version folder (or keep it around). This should be more manageable than
@@ -1702,6 +1716,11 @@ public final class TapestryModule
 
         configuration.add("tapestry.datepicker.path", "org/apache/tapestry/datepicker_106");
         configuration.add("tapestry.datepicker", "classpath:${tapestry.datepicker.path}");
+
+        configuration.add(PersistentFieldManagerImpl.META_KEY, PersistentFieldManagerImpl.DEFAULT_STRATEGY);
+
+        configuration.add(TapestryConstants.RESPONSE_CONTENT_TYPE, "text/html");
+        configuration.add(TapestryConstants.RESPONSE_ENCODING, "UTF-8");
     }
 
     public PageTemplateLocator build(@ContextProvider AssetFactory contextAssetFactory,
@@ -1863,7 +1882,7 @@ public final class TapestryModule
      * Adds content types for "css" and "js" file extensions. <dl> <dt>css</dt> <dd>test/css</dd> <dt>js</dt>
      * <dd>text/javascript</dd> </dl>
      */
-    @SuppressWarnings({"JavaDoc"})
+    @SuppressWarnings({ "JavaDoc" })
     public void contributeResourceStreamer(MappedConfiguration<String, String> configuration)
     {
         configuration.add("css", "text/css");
@@ -2060,10 +2079,12 @@ public final class TapestryModule
      * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so</dd>
      * <dt>ImmediateRender</dt> <dd>When {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
      * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
-     * response, which is the normal behavior) </dd> </dl>
+     * response, which is the normal behavior) </dd> <dt>Secure</dt> <dd>Sends a redirect if an non-secure request
+     * accesses a secure page</dd></dl>
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
                                                        final RequestEncodingInitializer encodingInitializer,
+                                                       final RequestSecurityManager requestSecurityManager,
                                                        @Ajax ComponentEventRequestHandler ajaxHandler,
                                                        ObjectLocator locator)
     {
@@ -2078,11 +2099,24 @@ public final class TapestryModule
             }
         };
 
+        ComponentEventRequestFilter secureFilter = new ComponentEventRequestFilter()
+        {
+            public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
+                    throws IOException
+            {
+                if (requestSecurityManager.checkForInsecureRequest(parameters.getActivePageName())) return;
+
+                handler.handle(parameters);
+            }
+        };
+
         configuration.add("SetRequestEncoding", requestEncodingFilter, "before:*");
 
         configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
 
         configuration.add("ImmediateRender", locator.autobuild(ImmediateActionRenderResponseFilter.class));
+
+        configuration.add("Secure", secureFilter, "before:Ajax");
     }
 
     public ComponentClassCache buildComponentClassCache(@ComponentLayer ClassFactory classFactory)

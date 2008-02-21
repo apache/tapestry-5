@@ -10,8 +10,12 @@ Tapestry Core
 
 New And Of Note
 
-  Progress on Tapestry 5 is really taking off. This space lists some cool new features that have been added
-  recently.
+  * Tapestry pages may now be {{{guide/secure.html}secured for access only via HTTPS}}.
+
+  * Added the {{{ref/org/apache/tapestry/corelib/components/FormFragment.html}FormFragment}} component
+    to allow for forms that are mutable on the client-side. In addition, the
+    {{{ref/org/apache/tapestry/corelib/components/Form.html}Form}} component may
+    now update a Zone.
 
   * Form components now trigger a "validateForm" event, not a "validate" event (so as to avoid conflict
     with the "validate" event triggered by TextFields).
@@ -37,24 +41,6 @@ New And Of Note
 
   * The new "var:" binding prefix allows for temporary, untyped storage
     of render-time values without having to define a new component property.
-
-  * Event handler methods may now return a URL, to send a client redirect to that URL.
-
-  * Localizations for Italian (it) and Simplified Chinese (zh_CN) have been added.
-
-  * We're finally starting to see some Ajax support, beginning with the
-  {{{../apidocs/org/apache/tapestry/corelib/mixins/Autocomplete.html}Autocomplete mixin}}.
-
-  * You may now customize how the TextField, PasswordField and TextArea component converts between server side values
-    and client side strings, using specialized events.
-
-  * We finally have a DateField component, built on top of the {{{http://www.dynarch.com/projects/calendar/}dynarch.com DHTML/JavaScript Calendar}}.
-  
-  * The Grid component may now be used inside a Form.
-  
-  * Tapestry templates now use the extension .tml (not .html). Page templates in the context are now stored at the root, not under WEB-INF.
-  
-  * The core of BeanEditForm has been factored out as a new component, BeanEditor (this allows you to edit multiple beans within the same form).
 
  
 Changes from Tapestry 4 to Tapestry 5

@@ -20,7 +20,7 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.ReadOnlyBean;
+import org.apache.tapestry.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.BeanModelSource;
 import org.easymock.EasyMock;
@@ -380,7 +380,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         assertSame(propertyModel.getPropertyType(), String[].class);
 
-        String[] value = {"foo", "bar"};
+        String[] value = { "foo", "bar" };
 
         StringArrayBean bean = new StringArrayBean();
 

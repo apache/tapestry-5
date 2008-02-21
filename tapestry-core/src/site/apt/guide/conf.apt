@@ -163,6 +163,10 @@ Configuring Tapestry
     The time interval that Tapestry will wait for a page instance to become available before deciding whether to create
     an entirely new page instance.  The default is "10 ms".
 
+  [tapestry.secure-page]
+    If true, then the page may only be accessed via HTTPS.  The {{{../../apidocs/org/apache/tapestry/annotations/Secure.html}@Secure}}
+    annotation will set this value to true.
+
   [tapestry.scriptaculous]
     The path to the embedded copy of {{{http://script.aculo.us/}script.aculo.us}} packaged with Tapestry. This value may be overridden
     to use a different version of the script.aculo.us library. Tapestry's default version is 1.8.0

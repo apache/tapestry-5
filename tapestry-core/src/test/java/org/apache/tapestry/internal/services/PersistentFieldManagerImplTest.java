@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -140,7 +140,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
         PersistentFieldStrategy strat = newPersistentFieldStrategy();
-        MetaDataLocator locator = newMetaDataLocator();
+        MetaDataLocator locator = mockMetaDataLocator();
 
         Object value = new Object();
 
@@ -151,7 +151,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         train_getFieldPersistenceStrategy(model, fieldName, "");
 
-        train_findMeta(locator, PersistentFieldManagerImpl.META_KEY, resources, strategyName);
+        train_findMeta(locator, PersistentFieldManagerImpl.META_KEY, resources, String.class, strategyName);
 
         train_getNestedId(resources, nestedId);
 
@@ -175,7 +175,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
 
         ComponentResources resources = mockComponentResources();
         ComponentModel model = mockComponentModel();
-        MetaDataLocator locator = newMetaDataLocator();
+        MetaDataLocator locator = mockMetaDataLocator();
 
         PersistentFieldStrategy strat = newPersistentFieldStrategy();
         Object value = new Object();
@@ -190,7 +190,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
         train_findMeta(
                 locator,
                 PersistentFieldManagerImpl.META_KEY,
-                resources,
+                resources, String.class,
                 PersistentFieldManagerImpl.DEFAULT_STRATEGY);
 
         train_getNestedId(resources, nestedId);
@@ -206,18 +206,7 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
         verify();
     }
 
-    protected void train_findMeta(MetaDataLocator locator, String key,
-                                  ComponentResources resources, String value)
-    {
-        expect(locator.findMeta(key, resources)).andReturn(value).atLeastOnce();
-    }
-
-    protected MetaDataLocator newMetaDataLocator()
-    {
-        return newMock(MetaDataLocator.class);
-    }
-
-    private PersistentFieldStrategy newPersistentFieldStrategy()
+    protected final PersistentFieldStrategy newPersistentFieldStrategy()
     {
         return newMock(PersistentFieldStrategy.class);
     }

@@ -19,9 +19,17 @@
         </p>
 
         <p>
-            Currently on page: ${componentResources.pageName}
+            Currently on page: ${componentResources.pageName} (via
+            <span id="secure">${secure}</span>
+            access)
         </p>
 
+
+        <h3>
+            Request info:
+        </h3>
+
+        <t:renderobject object="request"/>
 
         <h3>Fabricated classes:</h3>
 

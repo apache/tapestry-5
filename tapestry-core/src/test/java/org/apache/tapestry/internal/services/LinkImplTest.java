@@ -229,7 +229,7 @@ public class LinkImplTest extends InternalBaseTestCase
         replay();
 
 
-        Link link = new LinkImpl(response, optimizer, "/ctx",
+        Link link = new LinkImpl(response, optimizer, null, "/ctx",
                                  new ComponentInvocationImpl(new OpaqueConstantTarget("foo"), new String[0], null),
                                  false);
 

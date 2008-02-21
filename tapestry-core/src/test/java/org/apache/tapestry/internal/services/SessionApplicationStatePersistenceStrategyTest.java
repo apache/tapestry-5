@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.internal.transform.ReadOnlyBean;
+import org.apache.tapestry.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry.services.ApplicationStateCreator;
 import org.apache.tapestry.services.ApplicationStatePersistenceStrategy;
 import org.apache.tapestry.services.Request;

@@ -50,6 +50,8 @@ public class LinkFactoryImpl implements LinkFactory
 
     private final PageRenderQueue _pageRenderQueue;
 
+    private final RequestSecurityManager _requestSecurityManager;
+
     private final List<LinkFactoryListener> _listeners = newThreadSafeList();
 
     private final StrategyRegistry<PassivateContextHandler> _registry;
@@ -61,19 +63,22 @@ public class LinkFactoryImpl implements LinkFactory
     }
 
     public LinkFactoryImpl(Request request,
-                           Response encoder,
+                           Response response,
                            ComponentInvocationMap componentInvocationMap,
                            RequestPageCache pageCache,
                            RequestPathOptimizer optimizer,
-                           PageRenderQueue pageRenderQueue, ContextValueEncoder contextValueEncoder)
+                           PageRenderQueue pageRenderQueue,
+                           ContextValueEncoder contextValueEncoder,
+                           RequestSecurityManager requestSecurityManager)
     {
         _request = request;
-        _response = encoder;
+        _response = response;
         _componentInvocationMap = componentInvocationMap;
         _pageCache = pageCache;
         _optimizer = optimizer;
         _pageRenderQueue = pageRenderQueue;
         _contextValueEncoder = contextValueEncoder;
+        _requestSecurityManager = requestSecurityManager;
 
         Map<Class, PassivateContextHandler> registrations = newMap();
 
@@ -130,7 +135,9 @@ public class LinkFactoryImpl implements LinkFactory
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
 
-        Link link = new LinkImpl(_response, _optimizer, _request.getContextPath(), invocation, forForm);
+        String baseURL = _requestSecurityManager.getBaseURL(activePage);
+
+        Link link = new LinkImpl(_response, _optimizer, baseURL, _request.getContextPath(), invocation, forForm);
 
         // TAPESTRY-2044: Sometimes the active page drags in components from another page and we
         // need to differentiate that.
@@ -166,7 +173,6 @@ public class LinkFactoryImpl implements LinkFactory
         }
 
         link.addParameter(InternalConstants.PAGE_CONTEXT_NAME, builder.toString());
-
     }
 
     public Link createPageLink(Page page, boolean override, Object... activationContext)
@@ -183,7 +189,9 @@ public class LinkFactoryImpl implements LinkFactory
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
         ComponentInvocation invocation = new ComponentInvocationImpl(target, context, null);
 
-        Link link = new LinkImpl(_response, _optimizer, _request.getContextPath(), invocation, false);
+        String baseURL = _requestSecurityManager.getBaseURL(page);
+
+        Link link = new LinkImpl(_response, _optimizer, baseURL, _request.getContextPath(), invocation, false);
 
         _componentInvocationMap.store(link, invocation);
 

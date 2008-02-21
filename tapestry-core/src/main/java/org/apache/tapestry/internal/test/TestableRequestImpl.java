@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class TestableRequestImpl implements TestableRequest
         _contextPath = contextPath;
     }
 
-    private void nyi(String methodName)
+    private <T> T nyi(String methodName)
     {
         throw new RuntimeException(
                 String.format("Request: method %s() not yet implemented by TestableRequestImpl.", methodName));
@@ -66,29 +66,22 @@ public class TestableRequestImpl implements TestableRequest
     public long getDateHeader(String name)
     {
         nyi("getDateHeader");
-
         return 0;
     }
 
     public String getHeader(String name)
     {
-        nyi("getHeader");
-
-        return null;
+        return nyi("getHeader");
     }
 
     public List<String> getHeaderNames()
     {
-        nyi("getHeaderNames");
-
-        return null;
+        return nyi("getHeaderNames");
     }
 
     public Locale getLocale()
     {
-        nyi("getLocale");
-
-        return null;
+        return nyi("getLocale");
     }
 
     public List<String> getParameterNames()
@@ -98,16 +91,12 @@ public class TestableRequestImpl implements TestableRequest
 
     public String[] getParameters(String name)
     {
-        nyi("getParameters");
-
-        return null;
+        return nyi("getParameters");
     }
 
     public String getPath()
     {
-        nyi("getPath");
-
-        return null;
+        return nyi("getPath");
     }
 
     public String getContextPath()
@@ -141,6 +130,11 @@ public class TestableRequestImpl implements TestableRequest
         return false;
     }
 
+    public boolean isSecure()
+    {
+        return false;
+    }
+
     /**
      * Always returns true.
      */
@@ -157,5 +151,10 @@ public class TestableRequestImpl implements TestableRequest
     public void setAttribute(String name, Object value)
     {
         _attributes.put(name, value);
+    }
+
+    public String getServerName()
+    {
+        return nyi("getServerName");
     }
 }

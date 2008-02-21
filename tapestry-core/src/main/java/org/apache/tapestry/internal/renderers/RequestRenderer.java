@@ -51,6 +51,12 @@ public class RequestRenderer implements ObjectRenderer<Request>
         dt(writer, "Locale");
         dd(writer, request.getLocale().toString());
 
+        dt(writer, "Secure");
+        dd(writer, Boolean.toString(request.isSecure()));
+
+        dt(writer, "Server Name");
+        dd(writer, request.getServerName());
+
         writer.end();
 
         parameters(request, writer);

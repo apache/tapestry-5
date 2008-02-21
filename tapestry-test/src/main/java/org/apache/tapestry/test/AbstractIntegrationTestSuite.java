@@ -24,25 +24,24 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 
 /**
- * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of
- * Jetty, and in-process copy of {@link SeleniumServer}, and a Selenium client.
+ * A base class for creating integration tests. Ths encapsulates starting up an in-process copy of Jetty, and in-process
+ * copy of {@link SeleniumServer}, and a Selenium client.
  * <p/>
- * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG
- * tends to run them in an arbitrary order unless you explicitly set the order. If you have managed
- * to get TestNG to run tests in parallel, you may see further problems caused by a single client
- * jumping all over your web application in an unpredictable order.
+ * Unless you are <em>very, very clever</em>, you will want to run the tests sequentially. TestNG tends to run them in
+ * an arbitrary order unless you explicitly set the order. If you have managed to get TestNG to run tests in parallel,
+ * you may see further problems caused by a single client jumping all over your web application in an unpredictable
+ * order.
  * <p/>
- * This class implements the {@link Selenium} interface, and delegates all those methods to the
- * {@link DefaultSelenium} instance it creates. It also extends the normal exception reporting for
- * any failed command or query to produce a more detailed report to the main console.
+ * This class implements the {@link Selenium} interface, and delegates all those methods to the {@link DefaultSelenium}
+ * instance it creates. It also extends the normal exception reporting for any failed command or query to produce a more
+ * detailed report to the main console.
  *
- * @see JettyRunner
+ * @see org.apache.tapestry.test.JettyRunner
  */
 public abstract class AbstractIntegrationTestSuite extends Assert implements Selenium
 {
     /**
-     * Default directory containing the web application to be tested (this conforms to Maven's
-     * default folder).
+     * Default directory containing the web application to be tested (this conforms to Maven's default folder).
      */
     public static final String DEFAULT_WEB_APP_ROOT = "src/main/webapp";
 
@@ -95,8 +94,8 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
 
     /**
      * @param webAppRoot     web application root (default src/main/webapp)
-     * @param browserCommand browser command to pass to selenium. Default is *firefox, syntax for custom
-     *                       browsers is *custom &lt;path_to_browser&gt;, e.g. *custom /usr/lib/mozilla-firefox/firefox
+     * @param browserCommand browser command to pass to selenium. Default is *firefox, syntax for custom browsers is
+     *                       *custom &lt;path_to_browser&gt;, e.g. *custom /usr/lib/mozilla-firefox/firefox
      */
     protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand)
     {
@@ -547,8 +546,7 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     }
 
     /**
-     * Used to start a typical test, by opening to the base URL and clicking through a series of
-     * links.
+     * Used to start a typical test, by opening to the base URL and clicking through a series of links.
      */
     protected final void start(String... linkText)
     {

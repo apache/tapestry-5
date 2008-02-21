@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -44,6 +44,7 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
                 locator,
                 TapestryConstants.RESPONSE_CONTENT_TYPE,
                 resources,
+                String.class,
                 "text/html;charset=zebra");
 
         request.setEncoding("zebra");
@@ -74,9 +75,9 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
         train_getRootElement(page, element);
         train_getComponentResources(element, resources);
 
-        train_findMeta(locator, TapestryConstants.RESPONSE_CONTENT_TYPE, resources, "text/html");
+        train_findMeta(locator, TapestryConstants.RESPONSE_CONTENT_TYPE, resources, String.class, "text/html");
 
-        train_findMeta(locator, TapestryConstants.RESPONSE_ENCODING, resources, encoding);
+        train_findMeta(locator, TapestryConstants.RESPONSE_ENCODING, resources, String.class, encoding);
 
         request.setEncoding(encoding);
 
@@ -90,15 +91,5 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
         verify();
     }
 
-    protected final void train_findMeta(MetaDataLocator locator, String metaDataKey,
-                                        InternalComponentResources resources, String metaDataValue)
-    {
-        expect(locator.findMeta(metaDataKey, resources)).andReturn(metaDataValue);
-    }
-
-    protected final MetaDataLocator mockMetaDataLocator()
-    {
-        return newMock(MetaDataLocator.class);
-    }
 
 }

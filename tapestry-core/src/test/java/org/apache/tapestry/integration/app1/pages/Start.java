@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
+import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.Collections;
@@ -254,5 +255,13 @@ public class Start
     public void setItem(Item item)
     {
         _item = item;
+    }
+
+    @InjectPage
+    private SecurePage _securePage;
+
+    Object onActionFromSecurePage()
+    {
+        return _securePage.initialize("Triggered from Start");
     }
 }

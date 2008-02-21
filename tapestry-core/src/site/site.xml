@@ -86,6 +86,7 @@
             <item name="Unit testing pages/components" href="guide/unit-testing-pages.html"/>
             <item name="Logging" href="guide/logging.html"/>
             <item name="Service Status" href="guide/servicestatus.html"/>
+            <item name="HTTPS" href="guide/secure.html"/>
         </menu>
 
         <menu ref="reports"/>

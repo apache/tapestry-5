@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.transform.components;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.internal.services.ParameterWorkerTest;
+import org.apache.tapestry.internal.transform.ParameterWorkerTest;
 
 public class DefaultParameterBindingMethodComponent
 {

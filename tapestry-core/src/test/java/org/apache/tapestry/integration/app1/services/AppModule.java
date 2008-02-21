@@ -16,15 +16,13 @@ package org.apache.tapestry.integration.app1.services;
 
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.integration.app1.data.Track;
+import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestFilter;
-import org.apache.tapestry.services.RequestHandler;
-import org.apache.tapestry.services.Response;
+import org.apache.tapestry.services.*;
+import org.apache.tapestry.test.JettyRunner;
 import org.slf4j.Logger;
 
 import java.io.IOException;
@@ -47,12 +45,31 @@ public class AppModule
      * interface.
      */
     @Target(
-            {PARAMETER, FIELD})
+            { PARAMETER, FIELD })
     @Retention(RUNTIME)
     @Documented
     public @interface Local
     {
 
+    }
+
+    public void contributeAlias(Configuration<AliasContribution> configuration)
+    {
+        BaseURLSource source = new BaseURLSource()
+        {
+            public String getBaseURL(boolean secure)
+            {
+                String protocol = secure ? "https" : "http";
+
+                // This is all a bit jury-rigged together.  This is for running the app
+                // interactively; Selenium doesn't seem to handle the transition to https.
+                int port = secure ? JettyRunner.DEFAULT_SECURE_PORT : JettyRunner.DEFAULT_PORT;
+
+                return String.format("%s://localhost:%d", protocol, port);
+            }
+        };
+
+        configuration.add(AliasContribution.create(BaseURLSource.class, source));
     }
 
     @Marker(Local.class)

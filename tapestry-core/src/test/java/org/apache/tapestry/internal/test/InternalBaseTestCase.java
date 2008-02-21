@@ -629,4 +629,14 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         expect(access.getAdapter(object)).andReturn(classPropertyAdapter);
     }
+
+    protected final RequestSecurityManager mockRequestSecurityManager()
+    {
+        return newMock(RequestSecurityManager.class);
+    }
+
+    protected final void train_getBaseURL(RequestSecurityManager securityManager, Page page, String baseURL)
+    {
+        expect(securityManager.getBaseURL(page)).andReturn(baseURL).atLeastOnce();
+    }
 }

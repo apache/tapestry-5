@@ -96,6 +96,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
 
         train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
@@ -106,7 +107,62 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_triggerPassivateEventForPageLink(rootElement, listener, holder);
 
+        train_getBaseURL(securityManager, page, null);
+
+
         train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar", ENCODED);
+
+        // This needs to be refactored a bit to be more testable.
+
+        map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
+
+
+        replay();
+
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder,
+                                                  securityManager);
+
+        factory.addListener(listener);
+
+        Link link = factory.createPageLink(page, false);
+
+        assertEquals(link.toRedirectURI(), ENCODED);
+
+        // Make sure the link was passed to the LinkFactoryListener
+
+        assertSame(link, holder.get());
+
+        verify();
+    }
+
+    @Test
+    public void secure_page_link()
+    {
+        Request request = mockRequest();
+        Response response = mockResponse();
+        Page page = mockPage();
+        ComponentPageElement rootElement = mockComponentPageElement();
+        LinkFactoryListener listener = mockLinkFactoryListener();
+        ComponentInvocationMap map = mockComponentInvocationMap();
+        RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
+
+        train_getLogicalName(page, PAGE_LOGICAL_NAME);
+        train_getContextPath(request, "/barney");
+
+        train_getRootElement(page, rootElement);
+
+        final Holder<Link> holder = new Holder<Link>();
+
+        train_triggerPassivateEventForPageLink(rootElement, listener, holder);
+
+
+        train_getBaseURL(securityManager, page, "https://example.org");
+
+
+        train_encodeRedirectURL(response,
+                                "https://example.org/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar",
+                                ENCODED);
 
         // This needs to be refactored a bit to be more testable.
 
@@ -114,7 +170,9 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null,
+                                                  _contextValueEncoder,
+                                                  securityManager);
 
         factory.addListener(listener);
 
@@ -139,6 +197,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
 
         train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
@@ -150,6 +209,9 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         listener.createdPageLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
 
+        train_getBaseURL(securityManager, page, null);
+
+
         train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/biff/bazz", ENCODED);
 
         // This needs to be refactored a bit to be more testable.
@@ -158,7 +220,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder,
+                                                  securityManager);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, false, "biff", "bazz");
@@ -182,6 +245,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         LinkFactoryListener listener = mockLinkFactoryListener();
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
 
         train_getLogicalName(page, PAGE_LOGICAL_NAME);
         train_getContextPath(request, "/barney");
@@ -193,6 +257,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         listener.createdPageLink(isA(Link.class));
         getMocksControl().andAnswer(createdPageLinkAnswer);
 
+        train_getBaseURL(securityManager, page, null);
+
         train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase(), ENCODED);
 
         // This needs to be refactored a bit to be more testable.
@@ -201,7 +267,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder,
+                                                  securityManager);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(page, true);
@@ -226,6 +293,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         ComponentInvocationMap map = mockComponentInvocationMap();
         RequestPageCache cache = mockRequestPageCache();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
 
         train_get(cache, PAGE_LOGICAL_NAME, page);
 
@@ -239,6 +307,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_triggerPassivateEventForPageLink(rootElement, listener, holder);
 
+        train_getBaseURL(securityManager, page, null);
+
         train_encodeRedirectURL(response, "/barney/" + PAGE_LOGICAL_NAME.toLowerCase() + "/foo/bar", ENCODED);
 
         // This needs to be refactored a bit to be more testable.
@@ -247,7 +317,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, _contextValueEncoder);
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, _contextValueEncoder,
+                                                  securityManager);
         factory.addListener(listener);
 
         Link link = factory.createPageLink(PAGE_LOGICAL_NAME, false);
@@ -322,7 +393,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
                 ComponentEventCallback handler = (ComponentEventCallback) EasyMock
                         .getCurrentArguments()[2];
 
-                handler.handleResult(new Object[]{"foo", "bar"});
+                handler.handleResult(new Object[] { "foo", "bar" });
 
                 return true;
             }
@@ -341,6 +412,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         PageRenderQueue queue = mockPageRenderQueue();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
 
         String optimizedPath = "/optimized/path";
 
@@ -348,6 +420,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_getLogicalName(page, "mypage");
         train_getContextPath(request, "");
+
+        train_getBaseURL(securityManager, page, null);
 
         train_optimizePath(optimizer, "/mypage:myaction/1.2.3/4.5.6?t:ac=foo/bar", optimizedPath);
 
@@ -365,7 +439,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  _contextValueEncoder);
+                                                  _contextValueEncoder, securityManager);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
@@ -376,6 +450,9 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         verify();
     }
 
+    /**
+     * For good measure, we're going to also test a security change.
+     */
     @Test
     public void action_for_non_active_page()
     {
@@ -389,15 +466,13 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         PageRenderQueue queue = mockPageRenderQueue();
-
-        String optimizedPath = "/optimized/path";
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
 
         final Holder<Link> holder = new Holder<Link>();
 
         train_getLogicalName(containingPage, "MyPage");
         train_getContextPath(request, "");
 
-        train_optimizePath(optimizer, "/mypage:myaction?t:ac=foo/bar&t:ap=activepage", optimizedPath);
 
         train_getRootElement(activePage, rootElement);
         train_triggerPassivateEventForActionLink(rootElement, listener, holder);
@@ -410,12 +485,14 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         map.store(isA(Link.class), isA(ComponentInvocation.class));
 
-        train_encodeURL(response, "/optimized/path", ENCODED);
+        train_getBaseURL(securityManager, activePage, "http://example.org");
+
+        train_encodeURL(response, "http://example.org/mypage:myaction?t:ac=foo/bar&t:ap=activepage", ENCODED);
 
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  _contextValueEncoder);
+                                                  _contextValueEncoder, securityManager);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(containingPage, null, "myaction", false);
@@ -440,6 +517,8 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         RequestPageCache cache = mockRequestPageCache();
         RequestPathOptimizer optimizer = mockRequestPathOptimizer();
         PageRenderQueue queue = mockPageRenderQueue();
+        RequestSecurityManager securityManager = mockRequestSecurityManager();
+
 
         String optimizedPath = "/optimized/path";
 
@@ -461,12 +540,14 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         map.store(isA(Link.class), isA(ComponentInvocationImpl.class));
 
+        train_getBaseURL(securityManager, page, null);
+
         train_encodeURL(response, optimizedPath, ENCODED);
 
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  _contextValueEncoder);
+                                                  _contextValueEncoder, securityManager);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, nestedId, eventName, false, context);

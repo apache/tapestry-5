@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@ package org.apache.tapestry.test;
 
 import org.mortbay.http.NCSARequestLog;
 import org.mortbay.http.SocketListener;
+import org.mortbay.http.SunJsseListener;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.servlet.WebApplicationContext;
 
@@ -23,8 +24,8 @@ import java.io.File;
 import static java.lang.String.format;
 
 /**
- * Used to start up an instance of the Jetty servlet container in-process, as part of an integration
- * test suite. The started Jetty is reliant on the file <code>src/test/conf/webdefault.xml</code>.
+ * Used to start up an instance of the Jetty servlet container in-process, as part of an integration test suite. The
+ * started Jetty is reliant on the file <code>src/test/conf/webdefault.xml</code>.
  *
  * @see AbstractIntegrationTestSuite
  */
@@ -32,7 +33,9 @@ public class JettyRunner
 {
     public static final String DEFAULT_CONTEXT_PATH = "/";
 
-    public static final int DEFAULT_PORT = 80;
+    public static final int DEFAULT_PORT = 8080;
+
+    public static final int DEFAULT_SECURE_PORT = 8443;
 
     private final File _workingDir;
 
@@ -45,8 +48,7 @@ public class JettyRunner
     private final Server _jetty;
 
     /**
-     * Creates and starts a new instance of Jetty. This should be done from a test case setup
-     * method.
+     * Creates and starts a new instance of Jetty. This should be done from a test case setup method.
      *
      * @param workingDir  current directory (used for any relative files)
      * @param contextPath the context path for the deployed application
@@ -94,6 +96,7 @@ public class JettyRunner
         return format("<JettyRunner %s:%d (%s)>", _contextPath, _port, _warPath);
     }
 
+
     private Server createAndStart()
     {
         try
@@ -102,13 +105,28 @@ public class JettyRunner
             String warPath = new File(_workingDir, _warPath).getPath();
             String webDefaults = new File(_workingDir, "src/test/conf/webdefault.xml").getPath();
 
+            File keystoreFile = new File(_workingDir, "src/test/conf/keystore");
+            String keystore = keystoreFile.getPath();
+
             System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", _port, _contextPath, warPath);
 
             Server server = new Server();
 
+
             SocketListener socketListener = new SocketListener();
             socketListener.setPort(_port);
             server.addListener(socketListener);
+
+            if (keystoreFile.exists())
+            {
+                SunJsseListener secureListener = new SunJsseListener();
+                secureListener.setPort(DEFAULT_SECURE_PORT);
+                secureListener.setKeystore(keystore);
+                secureListener.setPassword("tapestry");
+                secureListener.setKeyPassword("tapestry");
+
+                server.addListener(secureListener);
+            }
 
             NCSARequestLog log = new NCSARequestLog();
             server.setRequestLog(log);
