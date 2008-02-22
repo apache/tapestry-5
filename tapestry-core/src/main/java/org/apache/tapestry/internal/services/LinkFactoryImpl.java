@@ -131,6 +131,9 @@ public class LinkFactoryImpl implements LinkFactory
 
         Page activePage = _pageRenderQueue.getRenderingPage();
 
+        // See TAPESTRY-2184
+        if (activePage == null) activePage = page;
+
         String[] activationContext = collectActivationContextForPage(activePage);
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);

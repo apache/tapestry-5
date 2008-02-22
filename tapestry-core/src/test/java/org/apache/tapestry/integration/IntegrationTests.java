@@ -1718,4 +1718,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("//h1", "Tapestry 5 Integration Application 1");
     }
+
+    /**
+     * TAPESTRY-2184
+     */
+    @Test
+    public void create_action_link_while_not_rendering()
+    {
+        start("Action via Link Demo", "via explicit Link creation");
+
+        assertText("message", "from getActionURL()");
+    }
 }
