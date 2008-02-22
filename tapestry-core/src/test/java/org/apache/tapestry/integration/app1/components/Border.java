@@ -22,9 +22,10 @@ import org.apache.tapestry.services.ComponentLayer;
 import org.apache.tapestry.services.Request;
 
 /**
- * Here's a component with a template, including a t:body element.
+ * Here's a component with a template, including a t:body element.   Really should rename this to "Layout" as that's the
+ * T5 naming.
  */
-@IncludeStylesheet("context:css/app.css")
+@IncludeStylesheet({ "context:layout/style.css", "context:css/app.css" })
 public class Border
 {
     @Inject

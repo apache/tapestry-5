@@ -705,7 +705,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Protected Page");
 
-        assertText("//h1", "Security Alert");
+        assertText("pagetitle", "Security Alert");
 
         // The message is set by Protected, but is rendered by SecurityAlert.
 
@@ -1015,11 +1015,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         open(BASE_URL);
 
-        assertTextPresent("Currently on page: Start");
+        assertText("activePageName", "Start");
 
         clickAndWait("link=Grid Demo");
 
-        assertTextPresent("Currently on page: GridDemo");
+        assertText("activePageName", "GridDemo");
     }
 
     @Test

@@ -34,12 +34,12 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * A component used to collect a provided date from the user. This is a wrapper around the LGPL <a
- * href="http://www.dynarch.com/projects/calendar/">dynarch.com DHTML/JavaScript Calendar</a>.
+ * A component used to collect a provided date from the user using a client-side JavaScript calendar. Non-JavaScript
+ * clients can simply type into a text field..
  */
 // TODO: More testing; see https://issues.apache.org/jira/browse/TAPESTRY-1844
 @IncludeStylesheet("${tapestry.datepicker}/css/datepicker.css")
-@IncludeJavaScriptLibrary({"${tapestry.datepicker}/js/datepicker.js", "datefield.js"})
+@IncludeJavaScriptLibrary({ "${tapestry.datepicker}/js/datepicker.js", "datefield.js" })
 public class DateField extends AbstractField
 {
     /**
@@ -89,8 +89,8 @@ public class DateField extends AbstractField
     private final DateFormat _outputFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     /**
-     * When the user types a value, they may only type two digits for the year; SimpleDateFormat
-     * will do something reasonable.  If they use the popup, it will be unambiguously 4 digits.
+     * When the user types a value, they may only type two digits for the year; SimpleDateFormat will do something
+     * reasonable.  If they use the popup, it will be unambiguously 4 digits.
      */
     private final DateFormat _inputFormat = new SimpleDateFormat("MM/dd/yy");
 

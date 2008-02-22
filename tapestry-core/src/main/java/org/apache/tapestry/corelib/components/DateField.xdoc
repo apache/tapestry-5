@@ -1,5 +1,6 @@
 <document>
     <body>
+
         <section name="Related Components">
             <ul>
                 <li>
@@ -53,6 +54,14 @@
                 <code><![CDATA[<t:datefield>]]></code>
                 element is all that's really necessary.
             </p>
+        </section>
+
+        <section name="Notes">
+
+            <p>The DateField component is based on the open source
+            <a href="http://webfx.eae.net/dhtml/datepicker/usage.html">WebFX DatePicker</a>
+            widget.
+
         </section>
     </body>
 </document>

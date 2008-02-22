@@ -202,9 +202,13 @@
    limitations under the License.
 
    
+-------------------------------------------------------------------------------
+
 JAVASSIST
 
-Javassist is not bundled with tapestry-core, but is bound to it.
+Javassist is not bundled with tapestry-ioc, but tapestry-ioc is not functional without Javassist.
+Javassist is distributed under a dual license: Mozilla Public License or LGPL (Lesser Gnu Public License). Tapestry
+invokes the MPL for compatibility with the Apache Software License.
 
 MOZILLA PUBLIC LICENSE
 Version 1.1
@@ -235,7 +239,7 @@ Version 1.1
             A. Any addition to or deletion from the contents of a file containing Original Code or previous Modifications.
 
             B. Any new file that contains any part of the Original Code or previous Modifications.
-             
+
       1.10. ''Original Code'' means Source Code of computer software code which is described in the Source Code notice required by Exhibit A as Original Code, and which, at the time of its release under this License is not already Covered Code governed by this License.
 
       1.10.1. "Patent Claims" means any patent claim(s), now owned or hereafter acquired, including without limitation,  method, process, and apparatus claims, in any patent Licensable by grantor.
@@ -254,7 +258,7 @@ Version 1.1
             (c) the licenses granted in this Section 2.1(a) and (b) are effective on the date Initial Developer first distributes Original Code under the terms of this License.
 
             (d) Notwithstanding Section 2.1(b) above, no patent license is granted: 1) for code that You delete from the Original Code; 2) separate from the Original Code;  or 3) for infringements caused by: i) the modification of the Original Code or ii) the combination of the Original Code with other software or devices.
-             
+
       2.2. Contributor Grant.
       Subject to third party intellectual property claims, each Contributor hereby grants You a world-wide, royalty-free, non-exclusive license
 
@@ -284,7 +288,7 @@ Version 1.1
 
             (b) Contributor APIs.
             If Contributor's Modifications include an application programming interface and Contributor has knowledge of patent licenses which are reasonably necessary to implement that API, Contributor must also include this information in the LEGAL file.
-             
+
                 (c)    Representations.
             Contributor represents that, except as disclosed pursuant to Section 3.4(a) above, Contributor believes that Contributor's Modifications are Contributor's original creation(s) and/or Contributor has sufficient rights to grant the rights conveyed by this License.
 
@@ -374,4 +378,3 @@ EXHIBIT A -Mozilla Public License.
 
       Alternatively, the contents of this file may be used under the terms of the GNU Lesser General Public License Version 2.1 or later (the "LGPL"), in which case the provisions of the LGPL are applicable instead of those above. If you wish to allow use of your version of this file only under the terms of the LGPL, and not to allow others to use your version of this file under the terms of the MPL, indicate your decision by deleting the provisions above and replace them with the notice and other provisions required by the LGPL. If you do not delete the provisions above, a recipient may use your version of this file under the terms of either the MPL or the LGPL.
 
-   

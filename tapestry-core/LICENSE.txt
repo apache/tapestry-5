@@ -210,8 +210,8 @@ This module, tapestry-core, includes a number of resources with seperate copyrig
 JAVASSIST
 
 Javassist is not bundled with tapestry-core, but tapestry-core is not functional without Javassist.
-Javassist is bundled under a dual license: Mozilla Public License when distributed outside of JBoss,
-LGPL when distributed as part of JBoss.
+Javassist is distributed under a dual license: Mozilla Public License or LGPL (Lesser Gnu Public License). Tapestry
+invokes the MPL for compatibility with the Apache Software License.
 
 MOZILLA PUBLIC LICENSE
 Version 1.1
