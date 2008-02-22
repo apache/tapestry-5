@@ -16,6 +16,13 @@ Tapestry Ajax Support
   Ajax support takes the form of new components and, occasionally,
   {{{mixins.html}component mixins}}.  
 
+Changes to Prototype
+
+  Tapestry currently uses a slightly patched version of
+  {{{http://www.thebungeebook.net/wp-content/uploads/2008/01/prototype-1601.js}Prototype 1.6.0.1}}.  Version 1.6.0.2
+  appears to have some issues supporting Internet Explorer.  Tapestry's version is slightly patch
+  for {{{https://issues.apache.org/jira/browse/TAPESTRY-2108}TAPESTRY-2108}}.
+
 Changes to Scriptaculous
 
   Scriptaculous normally has a special {{{http://wiki.script.aculo.us/scriptaculous/show/Usage}script loading option}}.

@@ -84,9 +84,11 @@ Tapestry.DateField.prototype = {
     {
         this.datePicker = new DatePicker();
 
-        this.popup = this.datePicker.create().hide().absolutize();
+        this.popup = $(this.datePicker.create());
 
         this.field.insert({ after : this.popup });
+
+        this.popup.absolutize().hide();
 
         this.datePicker.onselect = function()
         {
@@ -109,17 +111,17 @@ Tapestry.DateField.prototype = {
 
     positionPopup : function()
     {
-        var fieldPos = this.field.positionedOffset();
-
-        var height = this.field.getHeight();
-
-        this.popup.setStyle({ top: fieldPos.top + height + 2 + "px", left: fieldPos.left, width: "", height: "" });
+        this.popup.clonePosition(this.field, { offsetTop: this.field.getHeight() + 2 }).setStyle({ width: "", height: "" });
     },
+
+    /** Duration used when fading the popup in or out. */
+
+    FADE_DURATION : .20,
 
     hidePopup : function()
     {
 
-        new Effect.Fade(this.popup, { duration: .20 });
+        new Effect.Fade(this.popup, { duration: this.FADE_DURATION });
     },
 
     revealPopup : function()
@@ -133,7 +135,7 @@ Tapestry.DateField.prototype = {
             Tapestry.DateField.activeDateField.hidePopup();
         }
 
-        new Effect.Appear(this.popup, { duration: .20 });
+        new Effect.Appear(this.popup, { duration: this.FADE_DURATION });
 
         Tapestry.DateField.activeDateField = this;
     }
