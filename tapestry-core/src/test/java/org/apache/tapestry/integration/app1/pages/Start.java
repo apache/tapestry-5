@@ -62,6 +62,8 @@ public class Start
     private static final List<Item> ITEMS = CollectionFactory.newList(
             new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
+            new Item("ActionViaLinkDemo", "Action via Link Demo", "tests creating an action link explicitly"),
+
             new Item("FormFragmentDemo", "Form Fragment Demo", "page with dynamic form sections"),
 
             new Item("BooleanDemo", "Boolean Property Demo", "demo boolean properties using both is and get prefixes"),
