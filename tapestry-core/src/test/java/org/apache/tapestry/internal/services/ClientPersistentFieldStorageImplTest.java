@@ -175,6 +175,35 @@ public class ClientPersistentFieldStorageImplTest extends TapestryTestCase
         verify();
     }
 
+    /**
+     * TAPESTRY-1475
+     */
+    @Test
+    public void discard_changes()
+    {
+        Request request = mockRequest(null);
+        Link link = mockLink();
+
+        String pageName = "Foo";
+        String componentId = "bar.baz";
+        String fieldName = "woops";
+
+        replay();
+
+        ClientPersistentFieldStorage storage = new ClientPersistentFieldStorageImpl(request);
+
+        storage.postChange(pageName, componentId, fieldName, 99);
+
+        storage.discardChanges(pageName);
+
+        storage.updateLink(link);
+
+        assertTrue(storage.gatherFieldChanges(pageName).isEmpty());
+
+        verify();
+    }
+
+
     @Test
     public void value_not_serializable()
     {

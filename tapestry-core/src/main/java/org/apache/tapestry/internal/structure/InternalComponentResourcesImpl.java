@@ -128,6 +128,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _page.createPageLink(pageName, override, context);
     }
 
+    public void discardPersistentFieldChanges()
+    {
+        _page.discardPersistentFieldChanges();
+    }
+
 
     public String getCompleteId()
     {

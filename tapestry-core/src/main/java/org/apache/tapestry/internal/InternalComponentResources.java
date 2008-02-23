@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.internal.services.PersistentFieldManager;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.runtime.RenderQueue;
-import org.apache.tapestry.services.PersistentFieldManager;
 
 /**
- * An extension of {@link org.apache.tapestry.ComponentResources} that represents additional methods
- * that are private to the framework and not exposed in any public APIs.
+ * An extension of {@link org.apache.tapestry.ComponentResources} that represents additional methods that are private to
+ * the framework and not exposed in any public APIs.
  */
 public interface InternalComponentResources extends ComponentResources, InternalComponentResourcesCommon
 {
@@ -39,10 +39,9 @@ public interface InternalComponentResources extends ComponentResources, Internal
     boolean hasFieldChange(String fieldName);
 
     /**
-     * Posts a change to a persistent field. If the component is still loading, then this change is
-     * ignored. Otherwise, it is propagated, via the
-     * {@link Page#persistFieldChange(org.apache.tapestry.ComponentResources, String, Object) page}
-     * to the {@link PersistentFieldManager}.
+     * Posts a change to a persistent field. If the component is still loading, then this change is ignored. Otherwise,
+     * it is propagated, via the {@link Page#persistFieldChange(org.apache.tapestry.ComponentResources, String, Object)
+     * page} to the {@link PersistentFieldManager}.
      */
     void persistFieldChange(String fieldName, Object newValue);
 
@@ -60,15 +59,15 @@ public interface InternalComponentResources extends ComponentResources, Internal
      * Used by generated component code to read a parameter value.
      *
      * @param parameterName   the name of the parameter to read
-     * @param desiredTypeName the class name of the desired value (classes will be resolved in the
-     *                        component class loader)
+     * @param desiredTypeName the class name of the desired value (classes will be resolved in the component class
+     *                        loader)
      * @return the value coerced to the correct type
      */
     Object readParameter(String parameterName, String desiredTypeName);
 
     /**
-     * Updates a parameter. It is an error to update a parameter which is not bound. The parameter
-     * {@link org.apache.tapestry.Binding binding} may also not support updates.
+     * Updates a parameter. It is an error to update a parameter which is not bound. The parameter {@link
+     * org.apache.tapestry.Binding binding} may also not support updates.
      *
      * @param <T>
      * @param parameterName  of parameter to update
@@ -77,9 +76,8 @@ public interface InternalComponentResources extends ComponentResources, Internal
     <T> void writeParameter(String parameterName, T parameterValue);
 
     /**
-     * Returns true if the named parameter's {@link org.apache.tapestry.Binding} is invariant, false
-     * if otherwise, or if the parameter is not bound. Invariant bindings are cached more
-     * aggressively than variant bindings.
+     * Returns true if the named parameter's {@link org.apache.tapestry.Binding} is invariant, false if otherwise, or if
+     * the parameter is not bound. Invariant bindings are cached more aggressively than variant bindings.
      *
      * @param parameterName the name of parameter to check for invariance
      * @return true if the binding is an invariant, false if the binding has no fixed value

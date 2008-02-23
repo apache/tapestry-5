@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,10 +21,9 @@ import org.apache.tapestry.services.PersistentFieldStrategy;
 import java.util.Collection;
 
 /**
- * Implements simple client-persistent properties. Most of the logic is delegated to an instance of
- * {@link ClientPersistentFieldStorage}. This division of layer allows this service to be a true
- * singleton, and a listener to the {@link LinkFactory}, and allow per-request state to be isolated
- * inside the other service.
+ * Implements simple client-persistent properties. Most of the logic is delegated to an instance of {@link
+ * ClientPersistentFieldStorage}. This division of layer allows this service to be a true singleton, and a listener to
+ * the {@link LinkFactory}, and allow per-request state to be isolated inside the other service.
  */
 public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, LinkFactoryListener
 {
@@ -53,5 +52,10 @@ public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, L
     public void createdPageLink(Link link)
     {
         _storage.updateLink(link);
+    }
+
+    public void discardChanges(String pageName)
+    {
+        _storage.discardChanges(pageName);
     }
 }

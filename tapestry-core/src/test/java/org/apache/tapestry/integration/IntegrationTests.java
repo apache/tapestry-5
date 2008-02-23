@@ -1729,4 +1729,27 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("message", "from getActionURL()");
     }
+
+    /**
+     * TAPESTRY-1475
+     */
+    @Test
+    public void discard_persistent_field_changes()
+    {
+        start("Persistent Demo");
+
+        assertText("message", "");
+
+        clickAndWait("link=Update the message field");
+
+        assertText("message", "updated");
+
+        clickAndWait("link=Refresh page");
+
+        assertText("message", "updated");
+
+        clickAndWait("link=Discard persistent field changes");
+
+        assertText("message", "");
+    }
 }
