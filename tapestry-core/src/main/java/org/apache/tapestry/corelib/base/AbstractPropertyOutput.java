@@ -37,7 +37,7 @@ import org.apache.tapestry.services.PropertyOutputContext;
  *
  * @see BeanBlockSource
  */
-public class AbstractPropertyOutput
+public abstract class AbstractPropertyOutput
 {
     /**
      * Model for property displayed by the cell.
@@ -130,11 +130,18 @@ public class AbstractPropertyOutput
         return false;
     }
 
-    private Object readPropertyForObject()
+    Object readPropertyForObject()
     {
         PropertyConduit conduit = _model.getConduit();
 
-        return conduit == null ? null : conduit.get(_object);
+        try
+        {
+            return conduit == null ? null : conduit.get(_object);
+        }
+        catch (final NullPointerException ex)
+        {
+            throw new NullPointerException(BaseMessages.nullValueInPath(_model.getPropertyName()));
+        }
     }
 
     private Messages getOverrideMessages()
@@ -159,4 +166,10 @@ public class AbstractPropertyOutput
         }
     }
 
+    // Used for testing.
+    void inject(final PropertyModel model, final Object object)
+    {
+        _model = model;
+        _object = object;
+    }
 }
