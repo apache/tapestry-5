@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ import java.sql.PreparedStatement;
 import java.util.*;
 
 /**
- * A few tests that are easiest (or even just possible) by building a Registry and trying out a few
- * things.
+ * A few tests that are easiest (or even just possible) by building a Registry and trying out a few things.
  */
 public class IntegrationTest extends IOCInternalTestCase
 {
@@ -134,8 +133,7 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * Along the way, we also test a few other things, such as decorator matching and automatic
-     * dependency resolution.
+     * Along the way, we also test a few other things, such as decorator matching and automatic dependency resolution.
      */
     @Test
     public void public_service_decorator_order()
@@ -168,8 +166,8 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * We don't have to do as many public/private etc. tests for the other types of configuration,
-     * because the code paths are so similar.
+     * We don't have to do as many public/private etc. tests for the other types of configuration, because the code
+     * paths are so similar.
      */
 
     @Test
@@ -280,8 +278,8 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * This test fails at times and I'm not sure why. It's some kind of interaction with other tests
-     * but hard to figure out. Damn ThreadLocals!
+     * This test fails at times and I'm not sure why. It's some kind of interaction with other tests but hard to figure
+     * out. Damn ThreadLocals!
      */
     @Test
     public void registry_thread_cleanup()
@@ -700,8 +698,7 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
     /**
-     * A cursory test for {@link ServiceActivityScoreboard}, just to see if any data has been
-     * collected.
+     * A cursory test for {@link ServiceActivityScoreboard}, just to see if any data has been collected.
      */
     @Test
     public void service_activity_scoreboard()
@@ -769,4 +766,19 @@ public class IntegrationTest extends IOCInternalTestCase
     }
 
 
+    /**
+     * TAPESTRY-2117
+     */
+    @Test
+    public void circular_module_references_are_ignored()
+    {
+        Registry r = buildRegistry(HelterModule.class);
+
+        Runnable helter = r.getService("Helter", Runnable.class);
+        Runnable skelter = r.getService("Skelter", Runnable.class);
+
+        assertNotSame(helter, skelter);
+
+        r.shutdown();
+    }
 }
