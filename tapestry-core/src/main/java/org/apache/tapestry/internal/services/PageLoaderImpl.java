@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,12 +18,11 @@ import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.PersistentFieldManager;
 
 import java.util.Locale;
 
 public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoader,
-                                                                        InvalidationListener
+        InvalidationListener
 {
     private final ComponentTemplateSource _templateSource;
 
@@ -61,8 +60,8 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
     }
 
     /**
-     * When the page loader receives an invalidation event, it respawns the event for its listeners.
-     * Those listeners will include page caches and the like.
+     * When the page loader receives an invalidation event, it respawns the event for its listeners. Those listeners
+     * will include page caches and the like.
      */
     public void objectWasInvalidated()
     {

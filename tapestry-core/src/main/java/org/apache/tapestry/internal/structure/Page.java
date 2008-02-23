@@ -154,4 +154,11 @@ public interface Page
      * Called as a component finishes rendering itself.
      */
     void decrementDirtyCount();
+
+    /**
+     * Discards all persistent field changes for the page containing the component.  Changes are eliminated from
+     * persistent storage (such as the {@link org.apache.tapestry.services.Session}) which will take effect in the
+     * <em>next</em> request (the attached page instance is not affected).
+     */
+    void discardPersistentFieldChanges();
 }

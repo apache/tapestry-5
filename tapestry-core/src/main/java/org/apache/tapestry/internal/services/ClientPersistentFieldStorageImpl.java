@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,9 +32,9 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Manages client-persistent values on behalf of a {@link ClientPersistentFieldStorageImpl}. Some
- * effort is made to ensure that we don't uncessarily convert between objects and Base64 (the
- * encoding used to record the value on the client).
+ * Manages client-persistent values on behalf of a {@link ClientPersistentFieldStorageImpl}. Some effort is made to
+ * ensure that we don't uncessarily convert between objects and Base64 (the encoding used to record the value on the
+ * client).
  */
 @Scope(PERTHREAD_SCOPE)
 public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldStorage
@@ -150,6 +150,24 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         return result;
     }
 
+    public void discardChanges(String pageName)
+    {
+        refreshMap();
+
+        Collection<Key> removedKeys = CollectionFactory.newList();
+
+        for (Key key : _persistedValues.keySet())
+        {
+            if (key._pageName.equals(pageName)) removedKeys.add(key);
+        }
+
+        for (Key key : removedKeys)
+        {
+            _persistedValues.remove(key);
+            _clientData = null;
+        }
+    }
+
     public void postChange(String pageName, String componentId, String fieldName, Object newValue)
     {
         refreshMap();
@@ -170,6 +188,9 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         _clientData = null;
     }
 
+    /**
+     * Refreshes the _persistedValues map if it is not up to date.
+     */
     @SuppressWarnings("unchecked")
     private void refreshMap()
     {
@@ -182,6 +203,9 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         _mapUptoDate = true;
     }
 
+    /**
+     * Restores the _persistedValues map from the client data provided in the incoming Request.
+     */
     private void restoreMapFromClientData()
     {
         _persistedValues.clear();

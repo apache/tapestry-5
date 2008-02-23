@@ -19,7 +19,10 @@ import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.MetaDataLocator;
+import org.apache.tapestry.services.PersistentFieldBundle;
+import org.apache.tapestry.services.PersistentFieldChange;
+import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
@@ -60,6 +63,33 @@ public class PersistentFieldManagerImplTest extends InternalBaseTestCase
                     ex.getMessage(),
                     "\'braveheart\' is not a defined persistent strategy.  Defined strategies: bar, foo.");
         }
+
+        verify();
+    }
+
+    /**
+     * TAPESTRY-1475
+     */
+    @Test
+    public void discard_changes()
+    {
+        PersistentFieldStrategy strat1 = newPersistentFieldStrategy();
+        PersistentFieldStrategy strat2 = newPersistentFieldStrategy();
+
+        Map<String, PersistentFieldStrategy> strategies = newMap();
+        strategies.put("foo", strat1);
+        strategies.put("bar", strat2);
+
+        String pageName = "gnip.gnop";
+
+        strat1.discardChanges(pageName);
+        strat2.discardChanges(pageName);
+
+        replay();
+
+        PersistentFieldManager manager = new PersistentFieldManagerImpl(null, strategies);
+
+        manager.discardChanges(pageName);
 
         verify();
     }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Base class for strategies that store their values as keys in the session. Implements a uniform
- * format for the keys, based on a prefix to identify the particular strategy.
+ * Base class for strategies that store their values as keys in the session. Implements a uniform format for the keys,
+ * based on a prefix to identify the particular strategy.
  */
 public abstract class AbstractSessionPersistentFieldStrategy implements PersistentFieldStrategy
 {
@@ -63,9 +63,23 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
         return result;
     }
 
+    public void discardChanges(String pageName)
+    {
+        Session session = _request.getSession(false);
+
+        if (session == null) return;
+
+        String fullPrefix = _prefix + pageName + ":";
+
+        for (String name : session.getAttributeNames(fullPrefix))
+        {
+            session.setAttribute(name, null);
+        }
+    }
+
     /**
-     * Called after each key is read by {@link #gatherFieldChanges(String)}. This implementation
-     * does nothing, subclasses may override.
+     * Called after each key is read by {@link #gatherFieldChanges(String)}. This implementation does nothing,
+     * subclasses may override.
      *
      * @param session       the session from which a value was just read
      * @param attributeName the name of the attribute used to read a value

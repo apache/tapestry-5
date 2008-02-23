@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -61,6 +61,49 @@ public class SessionPersistentFieldStrategyTest extends InternalBaseTestCase
         SessionPersistentFieldStrategy strategy = new SessionPersistentFieldStrategy(request);
 
         strategy.postChange("foo.Bar", "fee.fum", "field", value);
+
+        verify();
+    }
+
+    /**
+     * TAPESTRY-1475
+     */
+    @Test
+    public void discard_changes_with_no_session()
+    {
+        Request request = mockRequest();
+
+        train_getSession(request, false, null);
+
+        replay();
+
+        SessionPersistentFieldStrategy strategy = new SessionPersistentFieldStrategy(request);
+
+        strategy.discardChanges("foo.Bar");
+
+        verify();
+    }
+
+    /**
+     * TAPESTRY-1475
+     */
+    @Test
+    public void discard_changes()
+    {
+        Session session = mockSession();
+        Request request = mockRequest();
+
+        train_getSession(request, false, session);
+
+        train_getAttributeNames(session, "state:foo.Bar:", "state:foo.Bar:baz:field");
+
+        session.setAttribute("state:foo.Bar:baz:field", null);
+
+        replay();
+
+        SessionPersistentFieldStrategy strategy = new SessionPersistentFieldStrategy(request);
+
+        strategy.discardChanges("foo.Bar");
 
         verify();
     }

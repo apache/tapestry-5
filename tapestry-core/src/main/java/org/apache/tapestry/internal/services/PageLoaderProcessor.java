@@ -34,7 +34,6 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.BindingSource;
-import org.apache.tapestry.services.PersistentFieldManager;
 import org.slf4j.Logger;
 
 import java.util.List;

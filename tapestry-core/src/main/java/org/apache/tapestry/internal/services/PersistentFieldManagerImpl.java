@@ -18,7 +18,10 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.*;
+import org.apache.tapestry.services.MetaDataLocator;
+import org.apache.tapestry.services.PersistentFieldBundle;
+import org.apache.tapestry.services.PersistentFieldChange;
+import org.apache.tapestry.services.PersistentFieldStrategy;
 
 import java.util.Collection;
 import java.util.Map;
@@ -63,6 +66,14 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
         }
 
         return new PersistentFieldBundleImpl(allChanges);
+    }
+
+    public void discardChanges(String pageName)
+    {
+        for (PersistentFieldStrategy strategy : _strategies.values())
+        {
+            strategy.discardChanges(pageName);
+        }
     }
 
     public void postChange(String pageName, ComponentResources resources, String fieldName,
