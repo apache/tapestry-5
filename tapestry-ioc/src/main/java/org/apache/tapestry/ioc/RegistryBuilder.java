@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry.ioc.internal.LoggerSourceImpl;
 import org.apache.tapestry.ioc.internal.RegistryImpl;
 import org.apache.tapestry.ioc.internal.RegistryWrapper;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -30,10 +31,11 @@ import org.slf4j.Logger;
 import java.lang.reflect.AnnotatedElement;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 /**
- * Used to construct the IoC {@link org.apache.tapestry.ioc.Registry}. This class is <em>not</em>
- * thread-safe. The Registry, once created, <em>is</em> thread-safe.
+ * Used to construct the IoC {@link org.apache.tapestry.ioc.Registry}. This class is <em>not</em> thread-safe. The
+ * Registry, once created, <em>is</em> thread-safe.
  */
 public final class RegistryBuilder
 {
@@ -51,6 +53,8 @@ public final class RegistryBuilder
     private final LoggerSource _loggerSource;
 
     private final ClassFactory _classFactory;
+
+    private final Set<Class> _addedModuleClasses = CollectionFactory.newSet();
 
     public RegistryBuilder()
     {
@@ -83,6 +87,8 @@ public final class RegistryBuilder
         _lock.check();
 
         // TODO: Some way to ensure that duplicate modules are not being added.
+        // Part of TAPESTRY-2117 is in add(Class...) and that may be as much as we can
+        // do as there is no concept of ModuleDef identity.
 
         _modules.add(moduleDef);
     }
@@ -96,6 +102,12 @@ public final class RegistryBuilder
         while (!queue.isEmpty())
         {
             Class c = queue.remove(0);
+
+            // Quietly ignore previously added classes.
+
+            if (_addedModuleClasses.contains(c)) continue;
+
+            _addedModuleClasses.add(c);
 
             ModuleDef def = new DefaultModuleDefImpl(c, _logger, _classFactory);
             add(def);
