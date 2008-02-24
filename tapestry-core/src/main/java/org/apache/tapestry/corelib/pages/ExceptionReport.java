@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,35 +15,24 @@
 package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.annotations.Meta;
+import org.apache.tapestry.annotations.ContentType;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
-import org.apache.tapestry.ioc.services.ExceptionAnalysis;
-import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
-import org.apache.tapestry.ioc.services.ExceptionInfo;
 import org.apache.tapestry.services.ExceptionReporter;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
-import java.util.List;
-
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
- * application. When {@link org.apache.tapestry.TapestryConstants#PRODUCTION_MODE_SYMBOL} is "true", it is very abbreviated.
+ * application. When {@link org.apache.tapestry.TapestryConstants#PRODUCTION_MODE_SYMBOL} is "true", it is very
+ * abbreviated.
+ *
+ * @see org.apache.tapestry.corelib.components.ExceptionDisplay
  */
-@Meta("tapestry.response-content-type=text/html")
+@ContentType("text/html")
 public class ExceptionReport implements ExceptionReporter
 {
-    private List<ExceptionInfo> _stack;
-
-    private ExceptionInfo _info;
-
-    private String _propertyName;
-
     private String _attributeName;
-
-    @Inject
-    private ExceptionAnalyzer _analyzer;
 
     @Inject
     private Request _request;
@@ -57,47 +46,6 @@ public class ExceptionReport implements ExceptionReporter
     public void reportException(Throwable exception)
     {
         _rootException = exception;
-
-        ExceptionAnalysis analysis = _analyzer.analyze(exception);
-
-        _stack = analysis.getExceptionInfos();
-    }
-
-    public List<ExceptionInfo> getStack()
-    {
-        return _stack;
-    }
-
-    public ExceptionInfo getInfo()
-    {
-        return _info;
-    }
-
-    public void setInfo(ExceptionInfo info)
-    {
-        _info = info;
-    }
-
-    public String getPropertyName()
-    {
-        return _propertyName;
-    }
-
-    public void setPropertyName(String propertyName)
-    {
-        _propertyName = propertyName;
-    }
-
-    public boolean getShowPropertyList()
-    {
-        // True if either is non-empty
-
-        return !(_info.getPropertyNames().isEmpty() && _info.getStackTrace().isEmpty());
-    }
-
-    public Object getPropertyValue()
-    {
-        return _info.getProperty(_propertyName);
     }
 
     public boolean getHasSession()
