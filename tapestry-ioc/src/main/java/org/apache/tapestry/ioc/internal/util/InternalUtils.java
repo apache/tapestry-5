@@ -24,6 +24,8 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -520,5 +522,17 @@ public class InternalUtils
     public static void validateMarkerAnnotations(Class[] markerClasses)
     {
         for (Class markerClass : markerClasses) validateMarkerAnnotation(markerClass);
+    }
+
+    public static void close(Closeable stream)
+    {
+        if (stream != null) try
+        {
+            stream.close();
+        }
+        catch (IOException ex)
+        {
+            // Ignore.
+        }
     }
 }

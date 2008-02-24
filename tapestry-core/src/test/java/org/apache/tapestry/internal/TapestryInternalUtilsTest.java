@@ -30,8 +30,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -55,40 +53,6 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
         _classFactory = null;
     }
 
-    @Test
-    public void close_null_is_noop()
-    {
-        TapestryInternalUtils.close(null);
-    }
-
-    @Test
-    public void close_success() throws Exception
-    {
-        Closeable c = newMock(Closeable.class);
-
-        c.close();
-
-        replay();
-
-        TapestryInternalUtils.close(c);
-
-        verify();
-    }
-
-    @Test
-    public void close_ignores_exceptions() throws Exception
-    {
-        Closeable c = newMock(Closeable.class);
-
-        c.close();
-        setThrowable(new IOException());
-
-        replay();
-
-        TapestryInternalUtils.close(c);
-
-        verify();
-    }
 
     @Test(dataProvider = "to_user_presentable")
     public void to_user_presentable(String input, String expected)
@@ -99,8 +63,8 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @DataProvider(name = "to_user_presentable")
     public Object[][] to_user_presentable_data()
     {
-        return new Object[][]{{"hello", "Hello"}, {"userId", "User Id"}, {"useHTML", "Use HTML"},
-                              {"underscored_name", "Underscored Name"},};
+        return new Object[][] { { "hello", "Hello" }, { "userId", "User Id" }, { "useHTML", "Use HTML" },
+                { "underscored_name", "Underscored Name" }, };
     }
 
     @Test

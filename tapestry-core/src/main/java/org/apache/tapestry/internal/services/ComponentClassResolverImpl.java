@@ -23,6 +23,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.ConcurrentBarrier;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.Invokable;
+import org.apache.tapestry.ioc.services.ClassNameLocator;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.LibraryMapping;
 import org.slf4j.Logger;

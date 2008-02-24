@@ -16,12 +16,12 @@ package org.apache.tapestry.internal.renderers;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.TapestryInternalUtils;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Scope;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ObjectRenderer;
 
 import java.io.*;
@@ -29,10 +29,9 @@ import java.net.URL;
 import java.util.Set;
 
 /**
- * Responsible for rendering a {@link Location}. It is designed to only perform the full output
- * (which includes a snippet of the source file) once per render. This requires the use of the
- * "perthread" scope (since the service tracks, internally, which locations have already been
- * rendered, to avoid repetition).
+ * Responsible for rendering a {@link Location}. It is designed to only perform the full output (which includes a
+ * snippet of the source file) once per render. This requires the use of the "perthread" scope (since the service
+ * tracks, internally, which locations have already been rendered, to avoid repetition).
  */
 @Scope(PERTHREAD_SCOPE)
 public class LocationRenderer implements ObjectRenderer<Location>
@@ -116,7 +115,7 @@ public class LocationRenderer implements ObjectRenderer<Location>
         }
         finally
         {
-            TapestryInternalUtils.close(reader);
+            InternalUtils.close(reader);
         }
 
         writer.end(); // div

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,31 +14,28 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.internal.services.ClassNameLocator;
+import org.apache.tapestry.ioc.services.ClassNameLocator;
 
 /**
- * Resolves page names and component types to fully qualified class names. Pages and components may
- * be provided by the application or inside a <em>mapped package</em>. Page names often appear
- * inside URLs, and component types often appear in component template (when specifying the type of
- * an embedded component).
+ * Resolves page names and component types to fully qualified class names. Pages and components may be provided by the
+ * application or inside a <em>mapped package</em>. Page names often appear inside URLs, and component types often
+ * appear in component template (when specifying the type of an embedded component).
  * <p/>
- * The service is configured using a collection of {@link LibraryMapping}s. Each mapping maps a
- * prefix, such as "core" to a root package name, such as "org.apache.tapestry.corelib". The root
- * package is expected to have sub-packages: "pages", "components", "mixins" and "base" ("base" is
- * for base classes).
+ * The service is configured using a collection of {@link LibraryMapping}s. Each mapping maps a prefix, such as "core"
+ * to a root package name, such as "org.apache.tapestry.corelib". The root package is expected to have sub-packages:
+ * "pages", "components", "mixins" and "base" ("base" is for base classes).
  * <p/>
- * The resolver performs a search of the classpath (via {@link ClassNameLocator}), to build up a set
- * of case-insensitive maps from logical page name, component type, or mixin type to fully qualified
- * class name.
+ * The resolver performs a search of the classpath (via {@link ClassNameLocator}), to build up a set of case-insensitive
+ * maps from logical page name, component type, or mixin type to fully qualified class name.
  * <p/>
- * Certain ambiguities occur if mapped packages overlap, either in terms of the the prefixes or the
- * package names. Keep things clearly seperate to avoid lookup problems.
+ * Certain ambiguities occur if mapped packages overlap, either in terms of the the prefixes or the package names. Keep
+ * things clearly seperate to avoid lookup problems.
  */
 public interface ComponentClassResolver
 {
     /**
-     * Converts a logical page name (such as might be encoded into a URL) into a fully qualified
-     * class name. The case of the page name is irrelevant.
+     * Converts a logical page name (such as might be encoded into a URL) into a fully qualified class name. The case of
+     * the page name is irrelevant.
      *
      * @param logicalPageName logical page name
      * @return fully qualified class name for the page
@@ -47,8 +44,7 @@ public interface ComponentClassResolver
     String resolvePageNameToClassName(String logicalPageName);
 
     /**
-     * For a particular path, determines if the path is a logical page name. The check is case
-     * insensitive.
+     * For a particular path, determines if the path is a logical page name. The check is case insensitive.
      *
      * @param pageName potential logical page name
      * @return true if the page name is valid
@@ -56,9 +52,8 @@ public interface ComponentClassResolver
     boolean isPageName(String pageName);
 
     /**
-     * Converts a fully qualified page class name into a logical class name (often, for inclusion as
-     * part of the URI). This value may later be passed to
-     * {@link #resolvePageNameToClassName(String)}.
+     * Converts a fully qualified page class name into a logical class name (often, for inclusion as part of the URI).
+     * This value may later be passed to {@link #resolvePageNameToClassName(String)}.
      *
      * @param pageClassName fully qualified name of a page class
      * @return equivalent logical page name
@@ -67,16 +62,16 @@ public interface ComponentClassResolver
     String resolvePageClassNameToPageName(String pageClassName);
 
     /**
-     * Returns the canonical form of a logical page name. The canonical form uses character case
-     * matching the underlying class name.
+     * Returns the canonical form of a logical page name. The canonical form uses character case matching the underlying
+     * class name.
      *
      * @throws IllegalArgumentException if the page name does not match a logical page name
      */
     String canonicalizePageName(String pageName);
 
     /**
-     * Converts a component type (a logical component name such as might be used inside a template
-     * or annotation) into a fully qualified class name. Case is ignored in resolving the name.
+     * Converts a component type (a logical component name such as might be used inside a template or annotation) into a
+     * fully qualified class name. Case is ignored in resolving the name.
      *
      * @param componentType a logical component type
      * @return fully qualified class name
@@ -85,8 +80,8 @@ public interface ComponentClassResolver
     String resolveComponentTypeToClassName(String componentType);
 
     /**
-     * Converts a logical mixin type (as with component types) into a fully qualified class name.
-     * Case is ignored when resolving the name.
+     * Converts a logical mixin type (as with component types) into a fully qualified class name. Case is ignored when
+     * resolving the name.
      *
      * @param mixinType a logical mixin type
      * @return fully qualified class name

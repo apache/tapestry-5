@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Link;
-import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.Request;
 
@@ -234,7 +234,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         }
         finally
         {
-            TapestryInternalUtils.close(in);
+            InternalUtils.close(in);
         }
     }
 
@@ -278,7 +278,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         }
         finally
         {
-            TapestryInternalUtils.close(os);
+            InternalUtils.close(os);
         }
 
         _clientData = os.toBase64();
