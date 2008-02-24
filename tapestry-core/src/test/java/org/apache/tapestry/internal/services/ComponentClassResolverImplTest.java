@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
+import org.apache.tapestry.ioc.services.ClassNameLocator;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.LibraryMapping;
 import org.easymock.EasyMock;

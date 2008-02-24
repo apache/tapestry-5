@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.commons.codec.binary.Hex;
-import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 
 import java.io.BufferedInputStream;
@@ -67,7 +67,7 @@ public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
         }
         finally
         {
-            TapestryInternalUtils.close(stream);
+            InternalUtils.close(stream);
         }
     }
 

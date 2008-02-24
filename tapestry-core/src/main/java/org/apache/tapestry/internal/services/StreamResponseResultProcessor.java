@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.StreamResponse;
-import org.apache.tapestry.internal.TapestryInternalUtils;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
 
@@ -67,8 +67,8 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
         }
         finally
         {
-            TapestryInternalUtils.close(is);
-            TapestryInternalUtils.close(os);
+            InternalUtils.close(is);
+            InternalUtils.close(os);
         }
 
     }

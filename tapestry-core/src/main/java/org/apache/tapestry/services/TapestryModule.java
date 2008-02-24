@@ -101,7 +101,6 @@ public final class TapestryModule
         binder.bind(LinkFactory.class, LinkFactoryImpl.class);
         binder.bind(LocalizationSetter.class, LocalizationSetterImpl.class);
         binder.bind(PageElementFactory.class, PageElementFactoryImpl.class);
-        binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
         binder.bind(RequestExceptionHandler.class, DefaultRequestExceptionHandler.class);
         binder.bind(ResourceStreamer.class, ResourceStreamerImpl.class);
         binder.bind(ClientPersistentFieldStorage.class, ClientPersistentFieldStorageImpl.class);

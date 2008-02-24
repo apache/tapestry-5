@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.LocalizedNameGenerator;
 
 import java.io.BufferedInputStream;
@@ -29,10 +29,10 @@ import java.net.URL;
 import java.util.*;
 
 /**
- * A utility class that encapsulates all the logic for reading properties files and assembling
- * {@link Messages} from them, in accordance with extension rules and locale. This represents code
- * that was refactored out of {@link ComponentMessagesSourceImpl}. This class can be used as a base
- * class, though the existing code base uses it as a utility. Composition trumps inheritance!
+ * A utility class that encapsulates all the logic for reading properties files and assembling {@link Messages} from
+ * them, in accordance with extension rules and locale. This represents code that was refactored out of {@link
+ * ComponentMessagesSourceImpl}. This class can be used as a base class, though the existing code base uses it as a
+ * utility. Composition trumps inheritance!
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
 {
@@ -44,14 +44,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     private final Map<MultiKey, Messages> _messagesByBundleIdAndLocale = newConcurrentMap();
 
     /**
-     * Keyed on bundle id and locale, the coooked properties include properties inherited from less
-     * locale-specific properties files, or inherited from parent bundles.
+     * Keyed on bundle id and locale, the coooked properties include properties inherited from less locale-specific
+     * properties files, or inherited from parent bundles.
      */
     private final Map<MultiKey, Map<String, String>> _cookedProperties = newConcurrentMap();
 
     /**
-     * Raw properties represent just the properties read from a specific properties file, in
-     * isolation.
+     * Raw properties represent just the properties read from a specific properties file, in isolation.
      */
     private final Map<Resource, Map<String, String>> _rawProperties = newConcurrentMap();
 
@@ -99,9 +98,9 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     }
 
     /**
-     * Assembles a set of properties appropriate for the bundle in question, and the desired locale.
-     * The properties reflect the properties of the bundles' parent (if any) for the locale,
-     * overalyed with any properties defined for this bundle and its locale.
+     * Assembles a set of properties appropriate for the bundle in question, and the desired locale. The properties
+     * reflect the properties of the bundles' parent (if any) for the locale, overalyed with any properties defined for
+     * this bundle and its locale.
      */
     private Map<String, String> findBundleProperties(MessagesBundle bundle, Locale locale)
     {
@@ -153,8 +152,8 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     }
 
     /**
-     * Returns a new map consisting of all the properties in previous overlayed with all the
-     * properties in rawProperties. If rawProperties is empty, returns just the base map.
+     * Returns a new map consisting of all the properties in previous overlayed with all the properties in
+     * rawProperties. If rawProperties is empty, returns just the base map.
      */
     private Map<String, String> extend(Map<String, String> base, Map<String, String> rawProperties)
     {
@@ -217,7 +216,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         }
         finally
         {
-            TapestryInternalUtils.close(is);
+            InternalUtils.close(is);
         }
 
         for (Map.Entry e : p.entrySet())

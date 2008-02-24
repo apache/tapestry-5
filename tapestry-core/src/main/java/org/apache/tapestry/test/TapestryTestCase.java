@@ -20,7 +20,6 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.services.MapMessages;
 import org.apache.tapestry.internal.services.MarkupWriterImpl;
 import static org.apache.tapestry.internal.test.CodeEq.codeEq;
@@ -28,6 +27,7 @@ import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
@@ -932,7 +932,7 @@ public abstract class TapestryTestCase extends IOCTestCase
         }
         finally
         {
-            TapestryInternalUtils.close(is);
+            InternalUtils.close(is);
         }
 
         Map<String, String> map = CollectionFactory.newCaseInsensitiveMap();

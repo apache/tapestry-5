@@ -22,7 +22,6 @@ import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
@@ -31,6 +30,7 @@ import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.*;
@@ -49,10 +49,10 @@ import java.util.List;
  * <p/>
  * When the form is submitted, the component emits several notifications: first a {@link #PREPARE_FOR_SUBMIT}, then a
  * {@link #PREPARE}: these allow the page to update its state as necessary to prepare for the form submission, then
- * (after components enclosed by the form have operated), a {@link #VALIDATE_FORM}event is emitted, to allow for cross-form
- * validation. After that, either a {@link #SUCCESS} OR {@link #FAILURE} event (depending on whether the {@link
- * ValidationTracker} has recorded any errors). Lastly, a {@link #SUBMIT} event, for any listeners that care only about
- * form submission, regardless of success or failure.
+ * (after components enclosed by the form have operated), a {@link #VALIDATE_FORM}event is emitted, to allow for
+ * cross-form validation. After that, either a {@link #SUCCESS} OR {@link #FAILURE} event (depending on whether the
+ * {@link ValidationTracker} has recorded any errors). Lastly, a {@link #SUBMIT} event, for any listeners that care only
+ * about form submission, regardless of success or failure.
  * <p/>
  * For all of these notifications, the event context is derived from the <strong>context</strong> parameter. This
  * context is encoded into the form's action URI (the parameter is not read when the form is submitted, instead the
@@ -131,8 +131,8 @@ public class Form implements ClientElement, FormValidationControl
     private boolean _clientValidation;
 
     /**
-     * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates
-     * the indicated zone.  Often a Form will update the same zone that contains it.
+     * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
+     * indicated zone.  Often a Form will update the same zone that contains it.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _zone;
@@ -300,7 +300,7 @@ public class Form implements ClientElement, FormValidationControl
         _tracker = _environment.pop(ValidationTracker.class);
     }
 
-    @SuppressWarnings({"unchecked", "InfiniteLoopStatement"})
+    @SuppressWarnings({ "unchecked", "InfiniteLoopStatement" })
     Object onAction(EventContext context) throws IOException
     {
         _tracker.clear();
@@ -366,7 +366,7 @@ public class Form implements ClientElement, FormValidationControl
             }
             finally
             {
-                TapestryInternalUtils.close(ois);
+                InternalUtils.close(ois);
             }
 
             heartbeat.end();

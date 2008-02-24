@@ -53,6 +53,7 @@ public final class TapestryIOCModule
                 .withMarker(FactoryDefaults.class);
         binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
         binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
+        binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
     }
 
     /**
@@ -100,10 +101,10 @@ public final class TapestryIOCModule
      * Byte</li> <li>Long to Short</li> <li>Long to Integer</li> <li>Double to Long</li> <li>Double to Float</li>
      * <li>Float to Double</li> <li>Long to Double</li> <li>String to Boolean ("false" is always false, other non-blank
      * strings are true)</li> <li>Long to Boolean (true if long value is non zero)</li> <li>Null to Boolean (always
-     * false)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to
-     * List</li> <li>primitive[] to List</li> <li>Object to List (by wrapping as a singleton list)</li>  <li>String to File</li>
-     * <li>String to {@link org.apache.tapestry.ioc.util.TimeInterval}</li>
-     * <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to Long</li> </ul>
+     * false)</li> <li>Collection to Boolean (false if empty)</li> <li>Object[] to List</li> <li>primitive[] to
+     * List</li> <li>Object to List (by wrapping as a singleton list)</li>  <li>String to File</li> <li>String to {@link
+     * org.apache.tapestry.ioc.util.TimeInterval}</li> <li>{@link org.apache.tapestry.ioc.util.TimeInterval} to
+     * Long</li> </ul>
      */
     @SuppressWarnings("unchecked")
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)

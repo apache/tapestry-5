@@ -33,8 +33,6 @@ import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.slf4j.Logger;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.BitSet;
 import java.util.Collections;
@@ -70,18 +68,6 @@ public class TapestryInternalUtils
     private TapestryInternalUtils()
     {
         // Prevent instantiation.
-    }
-
-    public static void close(Closeable stream)
-    {
-        if (stream != null) try
-        {
-            stream.close();
-        }
-        catch (IOException ex)
-        {
-            // Ignore.
-        }
     }
 
     /**
@@ -508,8 +494,8 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Encodes a string for inclusion in a URL.  Slashes and percents are converted
-     * to "%25" and "%2F" respectively, then the entire string is  URL encoded.
+     * Encodes a string for inclusion in a URL.  Slashes and percents are converted to "%25" and "%2F" respectively,
+     * then the entire string is  URL encoded.
      *
      * @param input string to include, may not be blank
      * @return encoded input
@@ -539,8 +525,8 @@ public class TapestryInternalUtils
     private static final Pattern ENCODED_SLASH_PATTERN = Pattern.compile(ENCODED_SLASH, Pattern.CASE_INSENSITIVE);
 
     /**
-     * Encodes percent and slash characters in the string for later decoding via
-     * {@link #unescapePercentAndSlash(String)}.
+     * Encodes percent and slash characters in the string for later decoding via {@link
+     * #unescapePercentAndSlash(String)}.
      *
      * @param input string to encode
      * @return modified string
@@ -551,8 +537,7 @@ public class TapestryInternalUtils
     }
 
     /**
-     * Used to decode certain escaped characters that are replaced
-     * when using {@link #encodeContext(String)}}.
+     * Used to decode certain escaped characters that are replaced when using {@link #encodeContext(String)}}.
      *
      * @param input a previously encoded string
      * @return the string with slash and percent characters restored

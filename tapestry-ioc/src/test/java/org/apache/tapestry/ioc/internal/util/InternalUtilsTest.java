@@ -23,6 +23,8 @@ import org.apache.tapestry.ioc.test.IOCTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -78,7 +80,7 @@ public class InternalUtilsTest extends IOCTestCase
     @Test
     public void array_size_when_non_null()
     {
-        Object[] array = {1, 2, 3};
+        Object[] array = { 1, 2, 3 };
 
         assertEquals(InternalUtils.size(array), 3);
     }
@@ -92,8 +94,8 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "memberPrefixData")
     public Object[][] memberPrefixData()
     {
-        return new Object[][]{{"simple", "simple"}, {"_name", "name"}, {"$name", "name"},
-                              {"$_$__$__$_$___$_$_$_$$name$", "name$"}};
+        return new Object[][] { { "simple", "simple" }, { "_name", "name" }, { "$name", "name" },
+                { "$_$__$__$_$___$_$_$_$$name$", "name$" } };
     }
 
     @Test
@@ -152,7 +154,8 @@ public class InternalUtilsTest extends IOCTestCase
     @DataProvider(name = "capitalize_inputs")
     public Object[][] capitalize_inputs()
     {
-        return new Object[][]{{"hello", "Hello"}, {"Goodbye", "Goodbye"}, {"", ""}, {"a", "A"}, {"A", "A"}};
+        return new Object[][] { { "hello", "Hello" }, { "Goodbye", "Goodbye" }, { "", "" }, { "a", "A" },
+                { "A", "A" } };
     }
 
     @Test
@@ -297,7 +300,7 @@ public class InternalUtilsTest extends IOCTestCase
 
         try
         {
-            InternalUtils.validateMarkerAnnotations(new Class[]{Inject.class, NotRetainedRuntime.class});
+            InternalUtils.validateMarkerAnnotations(new Class[] { Inject.class, NotRetainedRuntime.class });
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -318,4 +321,40 @@ public class InternalUtilsTest extends IOCTestCase
     {
         assertEquals(InternalUtils.joinSorted(Collections.emptyList()), "(none)");
     }
+
+    @Test
+    public void close_null_is_noop()
+    {
+        InternalUtils.close(null);
+    }
+
+    @Test
+    public void close_success() throws Exception
+    {
+        Closeable c = newMock(Closeable.class);
+
+        c.close();
+
+        replay();
+
+        InternalUtils.close(c);
+
+        verify();
+    }
+
+    @Test
+    public void close_ignores_exceptions() throws Exception
+    {
+        Closeable c = newMock(Closeable.class);
+
+        c.close();
+        setThrowable(new IOException());
+
+        replay();
+
+        InternalUtils.close(c);
+
+        verify();
+    }
+
 }
