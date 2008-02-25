@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,15 @@
 
 package org.apache.tapestry.integration.app1.data;
 
+import org.apache.tapestry.beaneditor.NonVisual;
+
 /**
  * One track from a music library.
  */
 public class Track implements SimpleTrack
 {
+    private Long _id;
+
     private String _album;
 
     private String _artist;
@@ -30,6 +34,17 @@ public class Track implements SimpleTrack
     private String _title;
 
     private int _rating;
+
+    @NonVisual
+    public Long getId()
+    {
+        return _id;
+    }
+
+    public void setId(Long id)
+    {
+        _id = id;
+    }
 
     public String getTitle()
     {

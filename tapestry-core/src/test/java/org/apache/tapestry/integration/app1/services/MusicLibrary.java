@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,13 +21,21 @@ import java.util.List;
 public interface MusicLibrary
 {
     /**
+     * Gets a track by its unique id.
+     *
+     * @param id of track to retrieve
+     * @return the Track
+     * @throws IllegalArgumentException if no such track exists
+     */
+    Track getById(long id);
+
+    /**
      * Provides a list of all tracks in an indeterminate order.
      */
     List<Track> getTracks();
 
     /**
-     * Performs a case-insensitive search, finding all tracks whose title
-     * contains the input string (ignoring case).
+     * Performs a case-insensitive search, finding all tracks whose title contains the input string (ignoring case).
      *
      * @param title a partial title
      * @return a list of all matches

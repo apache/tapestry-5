@@ -22,10 +22,9 @@ import org.apache.tapestry.services.*;
 import java.io.IOException;
 
 /**
- * Dispatches incoming requests for render requests. Render requests consist of either just a
- * logical page name (case insensitive) or a logical page name plus additional context. Because of
- * this structure, it take a little bit of work to identify the split point between the page name
- * and the context.
+ * Dispatches incoming requests for render requests. Render requests consist of either just a logical page name (case
+ * insensitive) or a logical page name plus additional context. Because of this structure, it take a little bit of work
+ * to identify the split point between the page name and the context.
  */
 public class PageRenderDispatcher implements Dispatcher
 {
@@ -54,43 +53,44 @@ public class PageRenderDispatcher implements Dispatcher
         // http://.../context (with no trailing slash).
         if (path.equals("")) return false;
 
-        int searchStart = 1;
+        int nextslashx = path.length();
+        String pageName;
+        boolean atEnd = true;
 
         while (true)
         {
-            int nextslashx = path.indexOf('/', searchStart);
+            // TAPESTRY-2150: Look for the longest match, for situations where
+            // you have some overlap between a class name and a package name.
 
-            boolean atEnd = nextslashx < 0;
+            pageName = path.substring(1, nextslashx);
 
-            String pageName = atEnd ? path.substring(1) : path.substring(1, nextslashx);
+            if (_componentClassResolver.isPageName(pageName)) break;
 
-            if (_componentClassResolver.isPageName(pageName))
-            {
-                String[] context = atEnd ? new String[0] : convertActivationContext(path
-                        .substring(nextslashx + 1));
+            nextslashx = path.lastIndexOf('/', nextslashx - 1);
 
-                EventContext activationContext
-                        = new URLEventContext(_contextValueEncoder, context);
+            atEnd = false;
 
-                PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
-
-                _handler.handle(parameters);
-
-                return true;
-            }
-
-            if (atEnd) return false;
-
-            // Advance to the next slash within the path.
-
-            searchStart = nextslashx + 1;
+            if (nextslashx <= 1) return false;
         }
+
+
+        String[] context = atEnd ? new String[0] : convertActivationContext(path
+                .substring(nextslashx + 1));
+
+        EventContext activationContext
+                = new URLEventContext(_contextValueEncoder, context);
+
+        PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
+
+        _handler.handle(parameters);
+
+        return true;
     }
 
     /**
-     * Converts the "extra path", the portion after the page name (and after the slash seperating
-     * the page name from the activation context) into an array of strings. LinkFactory and friends
-     * URL encode each value, so we URL decode the value (we assume that page names are "URL safe").
+     * Converts the "extra path", the portion after the page name (and after the slash seperating the page name from the
+     * activation context) into an array of strings. LinkFactory and friends URL encode each value, so we URL decode the
+     * value (we assume that page names are "URL safe").
      *
      * @param extraPath
      * @return
