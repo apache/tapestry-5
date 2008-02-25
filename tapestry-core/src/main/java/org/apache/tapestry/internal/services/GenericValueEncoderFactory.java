@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,8 +18,9 @@ import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.services.ValueEncoderFactory;
 
 /**
- * An implementation of {@link ValueEncoderFactory} that returns a pre-wired instance of
- * {@link ValueEncoder}.
+ * An implementation of {@link ValueEncoderFactory} that returns a pre-wired instance of {@link ValueEncoder}. This is
+ * odd for a factory, because it doesn't actually create the returned instance, just stores it until the encoder is
+ * needed.
  *
  * @param <V>
  */
@@ -35,5 +36,10 @@ public class GenericValueEncoderFactory<V> implements ValueEncoderFactory<V>
     public ValueEncoder<V> create(Class<V> type)
     {
         return _encoder;
+    }
+
+    public static <V> GenericValueEncoderFactory<V> create(ValueEncoder<V> encoder)
+    {
+        return new GenericValueEncoderFactory<V>(encoder);
     }
 }

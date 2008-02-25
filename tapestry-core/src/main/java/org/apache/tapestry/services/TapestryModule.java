@@ -1566,7 +1566,7 @@ public final class TapestryModule
                                                     ObjectLocator locator)
     {
         configuration.add(Object.class, locator.autobuild(TypeCoercedValueEncoderFactory.class));
-        configuration.add(String.class, new GenericValueEncoderFactory(new StringValueEncoder()));
+        configuration.add(String.class, GenericValueEncoderFactory.create(new StringValueEncoder()));
         configuration.add(Enum.class, new EnumValueEncoderFactory());
     }
 

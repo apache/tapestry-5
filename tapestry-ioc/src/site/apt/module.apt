@@ -156,7 +156,7 @@ public class MyModule
   For modules, there are two additional parameter types that are used to refer to <resources> that
   can be provided to the module instance (rather than <services> which may be injected).    
       
-  * {{{http://www.slf4j.org/api/org/slf4j/Logger.html}org.slf5j.Logger}}: logger for the module (derived from the module's class name)
+  * {{{http://www.slf4j.org/api/org/slf4j/Logger.html}org.slf4j.Logger}}: logger for the module (derived from the module's class name)
    
   * {{{../apidocs/org/apache/tapestry/ioc/ObjectLocator.html}ObjectLocator}}:  access to other services
   

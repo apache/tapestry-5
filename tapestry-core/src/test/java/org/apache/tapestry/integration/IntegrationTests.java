@@ -1752,4 +1752,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("message", "");
     }
+
+    /**
+     * TAPESTRY-2150.  Also demonstrates how to add a ValueEncoder for an entity object, to allow seamless encoding of
+     * the entity's id into the URL.
+     */
+    public void nested_page_names()
+    {
+        start("Music Page", "2");
+
+        assertText("activePageName", "Music");
+
+        clickAndWait("link=The Gift");
+
+        assertText("activePageName", "music/Details");
+    }
 }

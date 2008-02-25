@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ import java.net.URL;
 import java.util.List;
 
 /**
- * Reads an iTunes music library file into a list of
- * {@link org.apache.tapestry.integration.app1.data.Track} elements.
+ * Reads an iTunes music library file into a list of {@link org.apache.tapestry.integration.app1.data.Track} elements.
  */
 public class MusicLibraryParser
 {
@@ -293,6 +292,11 @@ public class MusicLibraryParser
             String value = peek().getContent();
 
             pop();
+
+            if (_key.equals("Track ID"))
+            {
+                _track.setId(Long.parseLong(value));
+            }
 
             if (_key.equals("Name"))
             {

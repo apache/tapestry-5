@@ -15,7 +15,9 @@
 package org.apache.tapestry.integration.app1.services;
 
 import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.integration.app1.data.Track;
+import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
@@ -34,6 +36,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * I was just dying to see how fast requests are!
@@ -143,8 +146,24 @@ public class AppModule
 
         final List<Track> tracks = new MusicLibraryParser(log).parseTracks(library);
 
+        final Map<Long, Track> idToTrack = CollectionFactory.newMap();
+
+        for (Track t : tracks)
+        {
+            idToTrack.put(t.getId(), t);
+        }
+
         return new MusicLibrary()
         {
+            public Track getById(long id)
+            {
+                Track result = idToTrack.get(id);
+
+                if (result != null) return result;
+
+                throw new IllegalArgumentException(String.format("No track with id #%d.", id));
+            }
+
             public List<Track> getTracks()
             {
                 return tracks;
@@ -190,4 +209,27 @@ public class AppModule
             }
         };
     }
+
+    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
+                                                    final MusicLibrary library)
+    {
+        ValueEncoder<Track> encoder = new ValueEncoder<Track>()
+        {
+            public String toClient(Track value)
+            {
+                return Long.toString(value.getId());
+            }
+
+            public Track toValue(String clientValue)
+            {
+                long id = Long.parseLong(clientValue);
+
+                return library.getById(id);
+            }
+        };
+
+
+        configuration.add(Track.class, GenericValueEncoderFactory.create(encoder));
+    }
+
 }

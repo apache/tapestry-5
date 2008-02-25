@@ -106,7 +106,9 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         String path = "/foo/Bar" + (finalSlash ? "/" : "");
         train_getPath(request, path);
 
-        train_isPageName(resolver, "foo", false);
+        if (finalSlash)
+            train_isPageName(resolver, path.substring(1), false);
+
         train_isPageName(resolver, "foo/Bar", true);
 
         train_get(cache, "foo/Bar", page);
@@ -153,13 +155,19 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         String path = "/foo/Bar/zip/zoom" + (finalSlash ? "/" : "");
         train_getPath(request, path);
 
-        train_isPageName(resolver, "foo", false);
+        train_isPageName(resolver, path.substring(1), false);
+
+        if (finalSlash)
+            train_isPageName(resolver, "foo/Bar/zip/zoom", false);
+
+        train_isPageName(resolver, "foo/Bar/zip", false);
+
         train_isPageName(resolver, "foo/Bar", true);
 
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[]{"zip", "zoom"}, false);
+        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[] { "zip", "zoom" }, false);
 
         renderer.renderPageResponse(page);
 
