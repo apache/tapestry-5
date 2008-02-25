@@ -59,8 +59,9 @@
         <section name="Notes">
 
             <p>The DateField component is based on the open source
-            <a href="http://webfx.eae.net/dhtml/datepicker/usage.html">WebFX DatePicker</a>
-            widget.
+                <a href="http://webfx.eae.net/dhtml/datepicker/usage.html">WebFX DatePicker</a>
+                widget.
+            </p>
 
         </section>
     </body>
