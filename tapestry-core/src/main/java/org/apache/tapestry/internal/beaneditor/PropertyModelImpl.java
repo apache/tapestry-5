@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,11 +17,12 @@ package org.apache.tapestry.internal.beaneditor;
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
-import org.apache.tapestry.beaneditor.Width;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
+
+import java.lang.annotation.Annotation;
 
 public class PropertyModelImpl implements PropertyModel
 {
@@ -39,8 +40,6 @@ public class PropertyModelImpl implements PropertyModel
 
     private boolean _sortable;
 
-    private int _width;
-
     public PropertyModelImpl(BeanModel model, String name, PropertyConduit conduit, Messages messages)
     {
         _model = model;
@@ -57,14 +56,6 @@ public class PropertyModelImpl implements PropertyModel
         Class wrapperType = ClassFabUtils.getWrapperType(getPropertyType());
 
         _sortable = Comparable.class.isAssignableFrom(wrapperType);
-
-        // Extract a default width from the @Width annotation, if present
-        if (conduit != null)
-        {
-            Width width = conduit.getAnnotation(Width.class);
-
-            if (width != null) _width = width.value();
-        }
     }
 
     public String getId()
@@ -130,15 +121,8 @@ public class PropertyModelImpl implements PropertyModel
         return this;
     }
 
-    public int getWidth()
+    public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        return _width;
-    }
-
-    public PropertyModel width(int width)
-    {
-        _width = width;
-
-        return this;
+        return _conduit == null ? null : _conduit.getAnnotation(annotationClass);
     }
 }

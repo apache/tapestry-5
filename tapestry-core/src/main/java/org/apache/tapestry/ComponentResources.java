@@ -21,6 +21,8 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.PageLifecycleListener;
 
+import java.lang.annotation.Annotation;
+
 /**
  * Provides a component instance with the resources provided by the framework. In many circumstances, the resources
  * object can be considered the component itself; in others, it is the {@link #getComponent() component property}, and
@@ -83,6 +85,15 @@ public interface ComponentResources extends ComponentResourcesCommon
      * Returns true if the named parameter is bound, false if not.
      */
     boolean isBound(String parameterName);
+
+    /**
+     * Obtains an annotation provided by a parameter.
+     *
+     * @param parameterName  name of parameter to search for the annotation
+     * @param annotationType the type of annotation
+     * @return the annotation if found or null otherwise
+     */
+    <T extends Annotation> T getParameterAnnotation(String parameterName, Class<T> annotationType);
 
     /**
      * Indentifies all parameters that are not formal parameters and writes each as a attribute/value pair into the

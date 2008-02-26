@@ -18,10 +18,13 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.corelib.base.AbstractTextField;
 
 /**
- * TextArea component corresponds to a &lt;textarea&gt; element. The value parameter is almost
- * always bound to a string, but this is not an absolute requirement.
+ * TextArea component corresponds to a &lt;textarea&gt; element. The value parameter is almost always bound to a string,
+ * but this is not an absolute requirement.
+ * <p/>
+ * Includes the <code>cols</code> attribute, if a {@link org.apache.tapestry.beaneditor.Width} annotation is present on
+ * the property bound to the value parameter.
  *
- * @see TextOutput
+ * @see org.apache.tapestry.corelib.components.TextOutput
  */
 public final class TextArea extends AbstractTextField
 {
@@ -34,7 +37,9 @@ public final class TextArea extends AbstractTextField
 
                        "name", getControlName(),
 
-                       "id", getClientId());
+                       "id", getClientId(),
+
+                       "cols", getWidth());
 
         // Save until needed in after()
 

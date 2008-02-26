@@ -80,14 +80,12 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertEquals(age.getLabel(), "Age");
         assertSame(age.getPropertyType(), int.class);
         assertEquals(age.getDataType(), "text");
-        assertEquals(age.getWidth(), 2);
 
         PropertyModel firstName = model.get("firstName");
 
         assertEquals(firstName.getLabel(), "First Name");
         assertEquals(firstName.getPropertyType(), String.class);
         assertEquals(firstName.getDataType(), "text");
-        assertEquals(firstName.getWidth(), 0);
 
         assertEquals(model.get("lastName").getLabel(), "Last Name");
 

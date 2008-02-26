@@ -15,11 +15,18 @@
 package org.apache.tapestry.beaneditor;
 
 import org.apache.tapestry.PropertyConduit;
+import org.apache.tapestry.ioc.AnnotationProvider;
 
 /**
- * Part of a {@link org.apache.tapestry.beaneditor.BeanModel} that defines the attributes of a single property of a bean.
+ * Part of a {@link org.apache.tapestry.beaneditor.BeanModel} that defines the attributes of a single property of a
+ * bean.
+ * <p/>
+ * <p/>
+ * A PropertyModel is also an {@link AnnotationProvider}, as long as the {@link org.apache.tapestry.PropertyConduit} is
+ * non-null.  When there is no property conduit, then {@link org.apache.tapestry.ioc.AnnotationProvider#getAnnotation(Class)}
+ * will return null.
  */
-public interface PropertyModel
+public interface PropertyModel extends AnnotationProvider
 {
     /**
      * Returns the name of the property (which may, in fact, be a property expression).
@@ -27,8 +34,8 @@ public interface PropertyModel
     String getPropertyName();
 
     /**
-     * Returns the id used to access other resources (this is based on the property name, but with
-     * any excess punctuation stripped out).
+     * Returns the id used to access other resources (this is based on the property name, but with any excess
+     * punctuation stripped out).
      */
     String getId();
 
@@ -43,8 +50,8 @@ public interface PropertyModel
     Class getPropertyType();
 
     /**
-     * Returns a logical name for the type of UI needed to view or edit the property. This is
-     * initially determined from the property type.
+     * Returns a logical name for the type of UI needed to view or edit the property. This is initially determined from
+     * the property type.
      */
     String getDataType();
 
@@ -57,25 +64,10 @@ public interface PropertyModel
     PropertyModel dataType(String dataType);
 
     /**
-     * Returns an object used to read or update the property. For virtual properties (properties
-     * that do not actually exist on the bean), the conduit may be null.
+     * Returns an object used to read or update the property. For virtual properties (properties that do not actually
+     * exist on the bean), the conduit may be null.
      */
     PropertyConduit getConduit();
-
-    /**
-     * Returns the desired field width for the field used to edit the property.  A value of 0 or less means unspecified.
-     *
-     * @return the width of the field used to edit the property
-     */
-    int getWidth();
-
-    /**
-     * Sets the width of the field used to edit the property.
-     *
-     * @param width the desired width (0 or less indicates an unspecified width)
-     * @return the property model, for further changes
-     */
-    PropertyModel width(int width);
 
     /**
      * Changes the label for the property to the provided value.
@@ -91,8 +83,8 @@ public interface PropertyModel
     BeanModel model();
 
     /**
-     * Returns true if the property can be used for sorting. By default, this is true only if the
-     * property type implements Comparable.
+     * Returns true if the property can be used for sorting. By default, this is true only if the property type
+     * implements Comparable.
      */
     boolean isSortable();
 

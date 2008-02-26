@@ -27,8 +27,8 @@ import org.apache.tapestry.util.EnumSelectModel;
 import org.apache.tapestry.util.EnumValueEncoder;
 
 /**
- * A page that exists to contain blocks used to edit different types of properties. The blocks on
- * this page are contributed into the {@link BeanBlockSource} service configuration.
+ * A page that exists to contain blocks used to edit different types of properties. The blocks on this page are
+ * contributed into the {@link BeanBlockSource} service configuration.
  *
  * @see BeanBlockContribution
  * @see BeanEditForm
@@ -39,29 +39,29 @@ public class PropertyEditBlocks
     private PropertyEditContext _context;
 
     @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "size=prop:widthOrNull"})
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
     private TextField _textField;
 
     @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId"})
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId" })
     private Select _select;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId"})
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId" })
     private Checkbox _checkboxField;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator"})
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator" })
     private DateField _dateField;
 
     @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:passwordFieldValidator", "clientId=prop:context.propertyId", "size=prop:widthOrNull"})
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:passwordFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
     private PasswordField _passwordField;
 
     @Component(
-            parameters = {"value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId", "cols=prop:widthOrNull"})
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
     private TextArea _textArea;
 
 
@@ -114,12 +114,5 @@ public class PropertyEditBlocks
     public SelectModel getSelectModelForProperty()
     {
         return new EnumSelectModel(_context.getPropertyType(), _context.getContainerMessages());
-    }
-
-    public Integer getWidthOrNull()
-    {
-        int width = _context.getWidth();
-
-        return width < 1 ? null : width;
     }
 }

@@ -18,8 +18,11 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.corelib.base.AbstractTextField;
 
 /**
- * A version of {@link TextField}, but rendered out as an &lt;input type="password"&gt; element.
- * Further, the output value for a PasswordField is always blank.
+ * A version of {@link TextField}, but rendered out as an &lt;input type="password"&gt; element. Further, the output
+ * value for a PasswordField is always blank.
+ * <p/>
+ * Includes the <code>size</code> attribute, if a {@link org.apache.tapestry.beaneditor.Width} annotation is present on
+ * the property bound to the value parameter.
  */
 public class PasswordField extends AbstractTextField
 {
@@ -35,7 +38,9 @@ public class PasswordField extends AbstractTextField
 
                        "id", getClientId(),
 
-                       "value", "");
+                       "value", "",
+
+                       "size", getWidth());
     }
 
     final void afterRender(MarkupWriter writer)

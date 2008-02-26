@@ -16,12 +16,15 @@ package org.apache.tapestry.corelib.base;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.beaneditor.Width;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
+import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.Request;
 
+import java.lang.annotation.Annotation;
 import java.util.Locale;
 
 /**
@@ -67,6 +70,15 @@ public abstract class AbstractTextField extends AbstractField
     private FieldValidator<Object> _validate;
 
     /**
+     * Provider of annotations used for some defaults.  Annotation are usually provided in terms of the value parameter
+     * (i.e., from the getter and/or setter bound to the value parameter).
+     *
+     * @see org.apache.tapestry.beaneditor.Width
+     */
+    @Parameter
+    private AnnotationProvider _annotationProvider;
+
+    /**
      * Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may
      * replace the nulls with some other value. The default strategy leaves nulls alone.  Another built-in strategy,
      * zero, replaces nulls with the value 0.
@@ -100,12 +112,23 @@ public abstract class AbstractTextField extends AbstractField
     private ComponentDefaultProvider _defaultProvider;
 
     /**
-     * Computes a default value for the "translate" parameter using
-     * {@link org.apache.tapestry.services.ComponentDefaultProvider#defaultTranslator(String, org.apache.tapestry.ComponentResources)}.
+     * Computes a default value for the "translate" parameter using {@link org.apache.tapestry.services.ComponentDefaultProvider#defaultTranslator(String,
+     * org.apache.tapestry.ComponentResources)}.
      */
     final Translator defaultTranslate()
     {
         return _defaultProvider.defaultTranslator("value", _resources);
+    }
+
+    final AnnotationProvider defaultAnnotationProvider()
+    {
+        return new AnnotationProvider()
+        {
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
+            {
+                return _resources.getParameterAnnotation("value", annotationClass);
+            }
+        };
     }
 
     /**
@@ -131,7 +154,7 @@ public abstract class AbstractTextField extends AbstractField
         return createDefaultParameterBinding("value");
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @BeginRender
     final void begin(MarkupWriter writer)
     {
@@ -160,8 +183,8 @@ public abstract class AbstractTextField extends AbstractField
 
     /**
      * Invoked from {@link #begin(MarkupWriter)} to write out the element and attributes (typically, &lt;input&gt;). The
-     * {@linkplain AbstractField#getControlName() controlName} and {@linkplain AbstractField#getClientId() clientId} properties
-     * will already have been set or updated.
+     * {@linkplain AbstractField#getControlName() controlName} and {@linkplain AbstractField#getClientId() clientId}
+     * properties will already have been set or updated.
      * <p/>
      * Generally, the subclass will invoke {@link MarkupWriter#element(String, Object[])}, and will be responsible for
      * including an {@link AfterRender} phase method to invoke {@link MarkupWriter#end()}.
@@ -171,7 +194,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     protected abstract void writeFieldTag(MarkupWriter writer, String value);
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
     protected final void processSubmission(String elementName)
     {
@@ -197,5 +220,20 @@ public abstract class AbstractTextField extends AbstractField
     public boolean isRequired()
     {
         return _validate.isRequired();
+    }
+
+    /**
+     * Looks for a {@link org.apache.tapestry.beaneditor.Width} annotation and, if present, returns its value as a
+     * string.
+     *
+     * @return the indicated width, or null if the annotation is not present
+     */
+    protected final String getWidth()
+    {
+        Width width = _annotationProvider.getAnnotation(Width.class);
+
+        if (width == null) return null;
+
+        return Integer.toString(width.value());
     }
 }
