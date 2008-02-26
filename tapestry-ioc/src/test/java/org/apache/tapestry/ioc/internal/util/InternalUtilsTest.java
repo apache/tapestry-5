@@ -133,6 +133,14 @@ public class InternalUtilsTest extends IOCTestCase
     }
 
     @Test
+    public void join_with_blank()
+    {
+        List<String> many = Arrays.asList("fred", "barney", "", "wilma");
+        assertEquals(InternalUtils.join(many), "fred, barney, (blank), wilma");
+
+    }
+
+    @Test
     public void join_sorted()
     {
         List<String> unsorted = Arrays.asList("betty", "fred", "barney", "wilma");
@@ -143,6 +151,15 @@ public class InternalUtilsTest extends IOCTestCase
         // Make sure that joinSorted() doesn't change the input list
 
         assertEquals(copy, unsorted);
+    }
+
+    @Test
+    public void join_sorted_with_blank()
+    {
+        List<String> unsorted = Arrays.asList("betty", "fred", "barney", "", "wilma");
+
+        assertEquals(InternalUtils.joinSorted(unsorted), "(blank), barney, betty, fred, wilma");
+
     }
 
     @Test(dataProvider = "capitalize_inputs")

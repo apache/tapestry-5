@@ -6,7 +6,7 @@
         <h1>Login Page</h1>
 
         <p>
-            You have reached this page via a redirect from the Start page's onActivate() event handler method.
+            You have reached this page via a redirect from the Index page's onActivate() event handler method.
         </p>
     </body>
 </html>

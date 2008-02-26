@@ -766,7 +766,7 @@ class PageLoaderProcessor
         // Controls how attributes are interpretted.
         _addAttributesAsComponentBindings = false;
 
-        // Start will be matched by end:
+        // Index will be matched by end:
 
         // Do NOT discard the end tag; add it to the body.
 

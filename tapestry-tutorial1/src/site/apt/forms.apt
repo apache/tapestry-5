@@ -162,9 +162,9 @@ public enum Honorific
   We'll create a sub-folder, address, to hold them.  Let's get started on the first of these pages, "address/Create"  (that's the real name, including
   the slash --- we'll see in a minute how that maps to classes and templates).
   
-  First, we'll update the Start.tml template, to create a link for creating a new page:
+  First, we'll update the Index.tml template, to create a link for creating a new page:
   
-  <<src/main/webapp/Start.tml:>>
+  <<src/main/webapp/Index.tml:>>
 
 ----
     <h1>Address Book</h1>
@@ -208,7 +208,7 @@ public class CreateAddress
    
    So ... why is the class named "CreateAddress" and not simply "Create"?  Actually, we could have named it "Create", and 
    the application would still work, but the longer <class> name is equally valid.  Tapestry noticed the redundancy in the
-   class name:  <<<org.apache.tapestry.tutorial1.pages.>>><address><<<.Create>>><Address> and just stripped it out.
+   class name:  <<<org.apache.tapestry.tutorial.pages.>>><address><<<.Create>>><Address> and just stripped it out.
    
    Eventually, your application will probably have more entities:  perhaps you'll have a "user/Create" page and a "payment/Create" page and an "account/Create" page.
    Now, you <could> have a bunch of different classes named <<<Create>>> spread across a number of different packages.  That's legal Java, but it isn't ideal.  You may find yourself
@@ -216,6 +216,13 @@ public class CreateAddress
    
    Tapestry is encouraging you to use a more descriptive name: <<<Create>>><Address> not just <<<Create>>>, but it isn't making you pay the cost (in terms of longer,
    uglier URLs).  The URL to access the page will still be http://localhost:8080/tutorial1/address/create.
+
+   Another note:  Index pages work in folders as well.  A class named org.apache.tapestry.tutorial.pages.address.AddressIndex would be given the name
+   "address/Index".  However, Tapestry has special rules for pages named "Index" and the render URL would be
+   <<<http://localhost:8080/tutorial1/address"/>>>.  In other words, you can place Index pages in any folder and Tapestry will
+   build a short URL for that page ... and you <don't> have to keep naming the classes Index (it's confusing to have many classes with the same
+   name, even across multiple packages); instead, you can name each index page after the package
+   that contains it.  Tapestry users a smart <convention> to keep it all straight and generate short, to the point URLs.
    
 * Using the BeanEditForm component
 
@@ -417,6 +424,8 @@ submit-label=Create Address
   Restart the application, and refresh your browser, then hit the submit button.
     
 [address-v6.png] Form with client side validations visible
+
+  <<TODO: Update this with a more recent image showing the new pop-up bubbles style of displaying client-side error messages.>>
 
   What this picture doesn't show is that the validation occurred entirely <on the client side>, using JavaScript. Look what's happened: a summary of <all> the
   errors in the form has scrolled down at the top of the form, and each form in error has been highlighted (it's a bit subtle) and marked with a red "X".  Further, the label

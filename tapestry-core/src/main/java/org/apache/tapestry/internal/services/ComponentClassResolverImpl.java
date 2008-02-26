@@ -115,7 +115,15 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             String prefix = mapping.getPathPrefix();
 
-            // TODO: Check that prefix is well formed (no leading or trailing slash)
+            while (prefix.startsWith("/"))
+            {
+                prefix = prefix.substring(1);
+            }
+
+            while (prefix.endsWith("/"))
+            {
+                prefix = prefix.substring(0, prefix.length() - 1);
+            }
 
             String rootPackage = mapping.getRootPackage();
 
@@ -261,6 +269,8 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
         {
             String className = core.get(name);
 
+            if (name.equals("")) name = "(blank)";
+
             f.format(formatString, name, className);
         }
 
@@ -292,6 +302,20 @@ public class ComponentClassResolverImpl implements ComponentClassResolver, Inval
 
             if (isPage)
             {
+                int lastSlashx = logicalName.lastIndexOf("/");
+
+                String lastTerm = lastSlashx < 0 ? logicalName : logicalName.substring(lastSlashx + 1);
+
+                if (lastTerm.equalsIgnoreCase("index"))
+                {
+                    String reducedName = lastSlashx < 0 ? "" : logicalName.substring(0, lastSlashx);
+
+                    // Make the super-stripped name another alias to the class.
+
+                    logicalNameToClassName.put(reducedName, name);
+                    _pageNameToCanonicalPageName.put(reducedName, logicalName);
+                }
+
                 _pageClassNameToLogicalName.put(name, logicalName);
                 _pageNameToCanonicalPageName.put(logicalName, logicalName);
                 _pageNameToCanonicalPageName.put(unstrippedName, logicalName);

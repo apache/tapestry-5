@@ -18,9 +18,9 @@ import org.apache.tapestry.EventContext;
 import org.apache.tapestry.ioc.internal.util.Defense;
 
 /**
- * Used with {@link org.apache.tapestry.services.PageRenderRequestHandler} and
- * {@link org.apache.tapestry.services.PageRenderRequestFilter} to define
- * the logical page name and activation context for the request.
+ * Used with {@link org.apache.tapestry.services.PageRenderRequestHandler} and {@link
+ * org.apache.tapestry.services.PageRenderRequestFilter} to define the logical page name and activation context for the
+ * request.
  */
 public class PageRenderRequestParameters
 {
@@ -30,7 +30,7 @@ public class PageRenderRequestParameters
 
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext)
     {
-        Defense.notBlank(logicalPageName, "logicalPageName");
+        Defense.notNull(logicalPageName, "logicalPageName");
         Defense.notNull(activationContext, "activationContext");
 
         _logicalPageName = logicalPageName;

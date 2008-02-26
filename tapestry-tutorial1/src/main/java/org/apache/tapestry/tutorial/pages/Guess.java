@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,11 +42,7 @@ public class Guess
     {
         _count++;
 
-        if (guess == _target)
-        {
-            _gameOver.setup(_count);
-            return _gameOver;
-        }
+        if (guess == _target) return _gameOver.initialize(_count);
 
         if (guess < _target)
             _message = String.format("%d is too low.", guess);
@@ -66,10 +62,12 @@ public class Guess
         _guess = guess;
     }
 
-    void setup(int target)
+    Object initialize(int target)
     {
         _target = target;
         _count = 0;
+
+        return this;
     }
 
     public int getTarget()

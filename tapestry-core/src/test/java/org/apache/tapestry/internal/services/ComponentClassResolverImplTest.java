@@ -278,6 +278,29 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void index_page_name_at_root()
+    {
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_app_packages(source);
+
+        String className = APP_ROOT_PACKAGE + ".pages.Index";
+
+        train_locateComponentClassNames(locator, APP_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator);
+
+        assertTrue(resolver.isPageName("Index"));
+        assertTrue(resolver.isPageName(""));
+
+        verify();
+    }
+
+    @Test
     public void is_page_name_for_core_page()
     {
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
@@ -466,6 +489,32 @@ public class ComponentClassResolverImplTest extends InternalBaseTestCase
 
         ComponentClassResolver resolver = create(logger, source, locator,
                                                  new LibraryMapping(LIB_PREFIX, LIB_ROOT_PACKAGE),
+                                                 new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
+
+        assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);
+
+        verify();
+    }
+
+    @Test
+    public void slashes_trimmed_from_library_prefix()
+    {
+        String className = LIB_ROOT_PACKAGE + ".pages.MyLibPage";
+
+        ComponentInstantiatorSource source = mockComponentInstantiatorSource();
+        ClassNameLocator locator = newClassNameLocator();
+        Logger logger = compliantLogger();
+
+        train_for_packages(source, LIB_ROOT_PACKAGE);
+        train_for_packages(source, CORE_ROOT_PACKAGE);
+        train_for_app_packages(source);
+
+        train_locateComponentClassNames(locator, LIB_ROOT_PACKAGE + ".pages", className);
+
+        replay();
+
+        ComponentClassResolver resolver = create(logger, source, locator,
+                                                 new LibraryMapping("/" + LIB_PREFIX + "/", LIB_ROOT_PACKAGE),
                                                  new LibraryMapping(CORE_PREFIX, CORE_ROOT_PACKAGE));
 
         assertEquals(resolver.resolvePageNameToClassName("lib/MyLibPage"), className);

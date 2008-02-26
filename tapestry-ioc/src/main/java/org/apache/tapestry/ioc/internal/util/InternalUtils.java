@@ -252,7 +252,8 @@ public class InternalUtils
     }
 
     /**
-     * Joins together some number of elements.
+     * Joins together some number of elements. If a value in the list is the empty string, it is replaced with the
+     * string "(blank)".
      *
      * @param elements  objects to be joined together
      * @param separator used between elements when joining
@@ -276,7 +277,11 @@ public class InternalUtils
                 {
                     if (!first) buffer.append(separator);
 
-                    buffer.append(String.valueOf(o));
+                    String string = String.valueOf(o);
+
+                    if (string.equals("")) string = "(blank)";
+
+                    buffer.append(string);
 
                     first = false;
                 }

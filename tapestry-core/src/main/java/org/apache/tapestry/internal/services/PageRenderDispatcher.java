@@ -64,7 +64,7 @@ public class PageRenderDispatcher implements Dispatcher
 
             pageName = path.substring(1, nextslashx);
 
-            if (_componentClassResolver.isPageName(pageName)) break;
+            if (!pageName.endsWith("/") && _componentClassResolver.isPageName(pageName)) break;
 
             nextslashx = path.lastIndexOf('/', nextslashx - 1);
 
