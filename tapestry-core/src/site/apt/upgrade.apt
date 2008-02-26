@@ -44,3 +44,9 @@ Release 5.0.11
   the <<<prepare()>>> method of 
   {{{../apidocs/org/apache/tapestry/grid/GridDataSource.html}GridDataSource}} have changed to accomidate
   the ability to sort using multiple columns.
+
+* PropertyModel
+
+  The <<<getWidth()>>> method was removed from the
+  {{{../apidocs/org/apache/tapestry/beaneditor/PropertyModel.java}PropertyModel}} interface; the logic
+  for deducing the desired field size from the @Width annotation has been moved into AbstractTextField.

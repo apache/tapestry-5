@@ -24,6 +24,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.*;
 
+import java.lang.annotation.Annotation;
 import java.util.Locale;
 
 /**
@@ -71,10 +72,9 @@ public class PropertyEditor
     private Object _object;
 
     /**
-     * Where to search for local overrides of property editing blocks as block parameters.
-     * This is normally the containing component of the PropertyEditor, but
-     * when the component is used within a BeanEditor, it will be the BeanEditForm's block parameters that will be
-     * searched.
+     * Where to search for local overrides of property editing blocks as block parameters. This is normally the
+     * containing component of the PropertyEditor, but when the component is used within a BeanEditor, it will be the
+     * BeanEditForm's block parameters that will be searched.
      */
     @Parameter(value = "componentResources.containerResources")
     private ComponentResources _overrides;
@@ -118,7 +118,8 @@ public class PropertyEditor
     private TranslatorSource _translatorSource;
 
     /**
-     * Creates a {@link PropertyEditContext} and pushes it onto the {@link Environment} stack.
+     * Creates a {@link org.apache.tapestry.services.PropertyEditContext} and pushes it onto the {@link
+     * org.apache.tapestry.services.Environment} stack.
      */
     void setupEnvironment(final String propertyName)
     {
@@ -169,9 +170,9 @@ public class PropertyEditor
                 _propertyModel.getConduit().set(_object, value);
             }
 
-            public int getWidth()
+            public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
-                return _propertyModel.getWidth();
+                return _propertyModel.getAnnotation(annotationClass);
             }
         };
 

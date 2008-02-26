@@ -32,6 +32,7 @@ import org.apache.tapestry.runtime.PageLifecycleListener;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.slf4j.Logger;
 
+import java.lang.annotation.Annotation;
 import java.util.Locale;
 import java.util.Map;
 
@@ -147,6 +148,15 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     public boolean isBound(String parameterName)
     {
         return getBinding(parameterName) != null;
+    }
+
+    public <T extends Annotation> T getParameterAnnotation(String parameterName, Class<T> annotationType)
+    {
+        Binding b = getBinding(parameterName);
+
+        if (b == null) return null;
+
+        return b.getAnnotation(annotationType);
     }
 
     public boolean isRendering()

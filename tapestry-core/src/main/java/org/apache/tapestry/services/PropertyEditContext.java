@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,37 +17,33 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.FieldValidator;
 import org.apache.tapestry.Translator;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.beaneditor.Validate;
-import org.apache.tapestry.corelib.components.BeanEditForm;
-import org.apache.tapestry.corelib.components.Label;
+import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Messages;
 
 /**
- * Defines a context for editing a property of a bean via {@link org.apache.tapestry.corelib.components.BeanEditor}. This value is made
- * available to blocks via the {@link Environmental} annotation.
+ * Defines a context for editing a property of a bean via {@link org.apache.tapestry.corelib.components.BeanEditor}.
+ * This value is made available to blocks via the {@link org.apache.tapestry.annotations.Environmental} annotation.
  *
- * @see BeanBlockSource
+ * @see org.apache.tapestry.services.BeanBlockSource
  */
-public interface PropertyEditContext
+public interface PropertyEditContext extends AnnotationProvider
 {
     /**
-     * Returns the current value of the property being edited (the context encapsulates the object
-     * containing the property).
+     * Returns the current value of the property being edited (the context encapsulates the object containing the
+     * property).
      */
     Object getPropertyValue();
 
     /**
-     * Updates the value of the property being edited (the context encapsulates the object
-     * containing the property).
+     * Updates the value of the property being edited (the context encapsulates the object containing the property).
      *
      * @param value new value for the property
      */
     void setPropertyValue(Object value);
 
     /**
-     * Returns the user-presentable label, for use with the {@link Label} component, or to be
-     * integrated into any validation error messages.
+     * Returns the user-presentable label, for use with the {@link org.apache.tapestry.corelib.components.Label}
+     * component, or to be integrated into any validation error messages.
      */
     String getLabel();
 
@@ -61,14 +57,14 @@ public interface PropertyEditContext
     /**
      * Returns the FieldValidator for the field.
      *
-     * @see Validate
-     * @see FieldValidatorDefaultSource
+     * @see org.apache.tapestry.beaneditor.Validate
+     * @see org.apache.tapestry.services.FieldValidatorDefaultSource
      */
     FieldValidator getValidator(Field field);
 
     /**
-     * Returns a string that identifies the property, usually the property name. This is used as the
-     * basis for the client-side client id.
+     * Returns a string that identifies the property, usually the property name. This is used as the basis for the
+     * client-side client id.
      */
     String getPropertyId();
 
@@ -78,13 +74,8 @@ public interface PropertyEditContext
     Class getPropertyType();
 
     /**
-     * Returns the message catalog for the container of the {@link BeanEditForm}, which is the
-     * correct place to look for strings used for labels, etc.
+     * Returns the message catalog for the container of the {@link org.apache.tapestry.corelib.components.BeanEditForm},
+     * which is the correct place to look for strings used for labels, etc.
      */
     Messages getContainerMessages();
-
-    /**
-     * Returns the desired width of the input field used to edit the property. A value less than 1 is an unspecified width.
-     */
-    int getWidth();
 }
