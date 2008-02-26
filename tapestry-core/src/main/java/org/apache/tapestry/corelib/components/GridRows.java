@@ -138,19 +138,26 @@ public class GridRows
     {
         List<String> classes = CollectionFactory.newList();
 
+        String id = _gridModel.getDataModel().get(_propertyName).getId();
+
         if (!_lean)
         {
-            String id = _gridModel.getDataModel().get(_propertyName).getId();
-
             classes.add(id);
+
+            switch (_gridModel.getSortModel().getColumnSort(id))
+            {
+                case ASCENDING:
+                    classes.add(GridConstants.SORT_ASCENDING_CLASS);
+                    break;
+
+                case DESCENDING:
+                    classes.add(GridConstants.SORT_DESCENDING_CLASS);
+                    break;
+                
+                default:
+            }
         }
 
-        if (_columnModel.getId().equals(_gridModel.getSortColumnId()))
-        {
-            String sortClassName = _gridModel.isSortAscending() ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
-
-            classes.add(sortClassName);
-        }
 
         return TapestryInternalUtils.toClassAttributeValue(classes);
     }

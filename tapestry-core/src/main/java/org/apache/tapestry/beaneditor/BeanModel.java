@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,17 +15,20 @@
 package org.apache.tapestry.beaneditor;
 
 import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.services.BeanModelSource;
 
 import java.util.List;
 
 /**
- * Provides the information necessary to build a user interface to view, create or edit an instance
- * of a particular type.
+ * Provides the information necessary to build a user interface to view, create or edit an instance of a particular
+ * type.
  * <p/>
  * BeanModels are not thread-safe, they are also not serializable.
+ * <p>
+ * Here, and in {@link org.apache.tapestry.beaneditor.PropertyModel}, the term "propertyName" is used for simplicitly.
+ * However, a full {@linkplain org.apache.tapestry.services.PropertyConduitSource#create(Class, String) property expression}
+ * may be utilized when {@linkplain #add(String) adding new properties to an existing BeanModel}. 
  *
- * @see BeanModelSource
+ * @see org.apache.tapestry.services.BeanModelSource
  */
 public interface BeanModel
 {
@@ -49,8 +52,16 @@ public interface BeanModel
     PropertyModel get(String propertyName);
 
     /**
-     * Adds a new property to the model, returning its mutable model for further refinement. The
-     * property is added to the <em>end</em> of the list of properties.
+     * Returns the identified model.  Property ids are a stripped version of the property name. Case is ignored.
+     *
+     * @param propertyId matched caselessly against {@link org.apache.tapestry.beaneditor.PropertyModel#getId()}
+     * @throws RuntimeException if the bean editor model does not have a property model with the indicated id
+     */
+    PropertyModel getById(String propertyId);
+
+    /**
+     * Adds a new property to the model, returning its mutable model for further refinement. The property is added to
+     * the <em>end</em> of the list of properties.
      *
      * @param propertyName name of property to add
      * @return the new property model (for further configuration)
@@ -65,8 +76,7 @@ public interface BeanModel
      * @param existingPropertyName the name of an existing property (this must exist)
      * @param propertyName         the new property to add
      * @return the new property model (for further configuration)
-     * @throws RuntimeException if the existing property does not exist, or if the new property already does
-     *                          exist
+     * @throws RuntimeException if the existing property does not exist, or if the new property already does exist
      */
     PropertyModel add(RelativePosition position, String existingPropertyName, String propertyName);
 
@@ -79,8 +89,7 @@ public interface BeanModel
      * @param conduit              conduit used to read or update the property; this may be null for a synthetic or
      *                             placeholder property
      * @return the new property model (for further configuration)
-     * @throws RuntimeException if the existing property does not exist, or if the new property already does
-     *                          exist
+     * @throws RuntimeException if the existing property does not exist, or if the new property already does exist
      */
     PropertyModel add(RelativePosition position, String existingPropertyName, String propertyName,
                       PropertyConduit conduit);
@@ -89,16 +98,16 @@ public interface BeanModel
      * Adds a new property to the model, returning its mutable model for further refinement.
      *
      * @param propertyName name of property to add
-     * @param conduit      the conduit used to read or update the property; this may be null for a synthetic
-     *                     or placeholder property
+     * @param conduit      the conduit used to read or update the property; this may be null for a synthetic or
+     *                     placeholder property
      * @return the model for the property
      * @throws RuntimeException if the property already exists
      */
     PropertyModel add(String propertyName, PropertyConduit conduit);
 
     /**
-     * Removes the named properties from the model, if present. It is not considered an error to
-     * remove a property that does not exist.
+     * Removes the named properties from the model, if present. It is not considered an error to remove a property that
+     * does not exist.
      *
      * @param propertyName the names of properties to be removed (case insensitive)
      * @return the model for further modifications
@@ -106,8 +115,8 @@ public interface BeanModel
     BeanModel remove(String... propertyName);
 
     /**
-     * Re-orders the properties of the model into the specified order. Existing properties that are
-     * not indicated are retained, but ordered to the end of the list.
+     * Re-orders the properties of the model into the specified order. Existing properties that are not indicated are
+     * retained, but ordered to the end of the list.
      *
      * @param propertyName property names in order they should be displayed (case insensitive)
      * @return the model for further modifications

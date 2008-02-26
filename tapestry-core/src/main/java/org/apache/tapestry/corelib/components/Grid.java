@@ -22,23 +22,27 @@ import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
-import org.apache.tapestry.grid.GridDataSource;
-import org.apache.tapestry.grid.GridModel;
+import org.apache.tapestry.grid.*;
+import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.internal.bindings.AbstractBinding;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.FormSupport;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A grid presents tabular data. It is a composite component, created in terms of several sub-components. The
  * sub-components are statically wired to the Grid, as it provides access to the data and other models that they need.
  * <p/>
  * A Grid may operate inside a {@link org.apache.tapestry.corelib.components.Form}. By overriding the cell renderers of
- * properties, the default output-only
- * behavior can be changed to produce a complex form with individual control for editing properties of each row. This is
- * currently workable but less than ideal -- if the order of rows provided by the {@link GridDataSource} changes between
- * render and form submission, then there's the possibility that data will be applied to the wrong server-side objects.
+ * properties, the default output-only behavior can be changed to produce a complex form with individual control for
+ * editing properties of each row. This is currently workable but less than ideal -- if the order of rows provided by
+ * the {@link GridDataSource} changes between render and form submission, then there's the possibility that data will be
+ * applied to the wrong server-side objects.
  *
  * @see org.apache.tapestry.beaneditor.BeanModel
  * @see org.apache.tapestry.services.BeanModelSource
@@ -86,6 +90,15 @@ public class Grid implements GridModel
      */
     @Parameter
     private BeanModel _model;
+
+    /**
+     * The model used to handle sorting of the Grid. This is generally not specified, and the built-in
+     * model supports only single column sorting. The sort constraints (the column that is sorted,
+     * and ascending vs. descending) is stored as persistent fields of the Grid component.
+     */
+    @Parameter
+    private GridSortModel _sortModel;
+
 
     /**
      * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
@@ -153,15 +166,15 @@ public class Grid implements GridModel
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"lean=inherit:lean", "overrides=componentResources"})
+            parameters = { "lean=inherit:lean", "overrides=componentResources" })
     private GridColumns _columns;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = {"rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean"})
+            parameters = { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean" })
     private GridRows _rows;
 
-    @Component(parameters = {"source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage"})
+    @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage" })
     private GridPager _pager;
 
     @SuppressWarnings("unused")
@@ -175,6 +188,63 @@ public class Grid implements GridModel
 
     @Environmental(false)
     private FormSupport _formSupport;
+
+    /**
+     * Default implementation only allows a single column to be the sort column, and stores the sort information as
+     * persistent fields of the Grid component.
+     */
+    class DefaultGridSortModel implements GridSortModel
+    {
+        public ColumnSort getColumnSort(String columnId)
+        {
+            if (!TapestryInternalUtils.isEqual(columnId, _sortColumnId))
+                return ColumnSort.UNSORTED;
+
+            return getColumnSort();
+        }
+
+        private ColumnSort getColumnSort()
+        {
+            return _sortAscending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING;
+        }
+
+
+        public void updateSort(String columnId)
+        {
+            Defense.notBlank(columnId, "columnId");
+
+            if (columnId.equals(_sortColumnId))
+            {
+                _sortAscending = !_sortAscending;
+                return;
+            }
+
+            _sortColumnId = columnId;
+            _sortAscending = true;
+        }
+
+        public List<SortConstraint> getSortContraints()
+        {
+            if (_sortColumnId == null)
+                return Collections.emptyList();
+
+            PropertyModel sortModel = _model.getById(_sortColumnId);
+
+            SortConstraint constraint = new SortConstraint(sortModel, getColumnSort());
+
+            return Collections.singletonList(constraint);
+        }
+
+        public void clear()
+        {
+            _sortColumnId = null;
+        }
+    }
+
+    GridSortModel defaultSortModel()
+    {
+        return new DefaultGridSortModel();
+    }
 
     Binding defaultModel()
     {
@@ -242,23 +312,6 @@ public class Grid implements GridModel
 
         if (availableRows == 0) return;
 
-        PropertyModel sortModel = null;
-
-        if (_sortColumnId != null)
-        {
-            for (String name : _model.getPropertyNames())
-            {
-                PropertyModel propertyModel = _model.get(name);
-
-                if (propertyModel.getId().equals(_sortColumnId))
-                {
-                    sortModel = propertyModel;
-                    break;
-                }
-            }
-        }
-
-
         int maxPage = ((availableRows - 1) / _rowsPerPage) + 1;
 
         // This captures when the number of rows has decreased, typically due to deletions.
@@ -270,7 +323,7 @@ public class Grid implements GridModel
 
         int endIndex = Math.min(startIndex + _rowsPerPage - 1, availableRows - 1);
 
-        _source.prepare(startIndex, endIndex, sortModel, _sortAscending);
+        _source.prepare(startIndex, endIndex, _sortModel.getSortContraints());
 
     }
 
@@ -294,6 +347,11 @@ public class Grid implements GridModel
         return _source;
     }
 
+    public GridSortModel getSortModel()
+    {
+        return _sortModel;
+    }
+
     public String getRowClass()
     {
         return _rowClass;
@@ -310,8 +368,8 @@ public class Grid implements GridModel
     }
 
     /**
-     * Returns the current row being rendered by the Grid. This property can be accessed
-     * as an alternative to binding the row parameter.
+     * Returns the current row being rendered by the Grid. This property can be accessed as an alternative to binding
+     * the row parameter.
      */
     public Object getRow()
     {
@@ -363,16 +421,5 @@ public class Grid implements GridModel
         return _pagerPosition.isMatchBottom() ? _pager : null;
     }
 
-    public void updateSort(String columnId)
-    {
-        if (columnId.equals(_sortColumnId))
-        {
-            _sortAscending = !_sortAscending;
-            return;
-        }
 
-        _sortColumnId = columnId;
-        _sortAscending = true;
-
-    }
 }

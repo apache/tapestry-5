@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.apache.tapestry.internal.grid;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.grid.ColumnSort;
+import org.apache.tapestry.grid.SortConstraint;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.BeanModelSource;
@@ -25,6 +27,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CollectionGridDataSourceTest extends InternalBaseTestCase
@@ -107,7 +110,10 @@ public class CollectionGridDataSourceTest extends InternalBaseTestCase
 
         int availableRows = _source.getAvailableRows();
 
-        _source.prepare(0, availableRows - 1, propertyModel, ascending);
+        SortConstraint constraint = new SortConstraint(propertyModel, ascending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING);
+        List<SortConstraint> constraints = Collections.singletonList(constraint);
+
+        _source.prepare(0, availableRows - 1, constraints);
 
         for (int i = 0; i < ids.length; i++)
         {

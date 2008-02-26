@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -130,9 +130,8 @@ public class BeanModelImpl implements BeanModel
 
     private CoercingPropertyConduitWrapper createConduit(String propertyName)
     {
-        return new CoercingPropertyConduitWrapper(_propertyConduitSource.create(
-                _beanType,
-                propertyName), _typeCoercer);
+        return new CoercingPropertyConduitWrapper(_propertyConduitSource.create(_beanType,
+                                                                                propertyName), _typeCoercer);
     }
 
     public PropertyModel get(String propertyName)
@@ -140,12 +139,33 @@ public class BeanModelImpl implements BeanModel
         PropertyModel propertyModel = _properties.get(propertyName);
 
         if (propertyModel == null)
-            throw new RuntimeException(BeanEditorMessages.unknownProperty(
-                    _beanType,
-                    propertyName,
-                    _properties.keySet()));
+            throw new RuntimeException(BeanEditorMessages.unknownProperty(_beanType,
+                                                                          propertyName,
+                                                                          _properties.keySet()));
 
         return propertyModel;
+    }
+
+    public PropertyModel getById(String propertyId)
+    {
+        for (PropertyModel model : _properties.values())
+        {
+            if (model.getId().equalsIgnoreCase(propertyId)) return model;
+        }
+
+        // Not found, so we throw an exception. A bit of work to set
+        // up the exception however.
+
+        List<String> ids = CollectionFactory.newList();
+
+        for (PropertyModel model : _properties.values())
+        {
+            ids.add(model.getId());
+        }
+
+        throw new RuntimeException(BeanEditorMessages.unknownPropertyId(_beanType,
+                                                                        propertyId, ids));
+
     }
 
     public List<String> getPropertyNames()
