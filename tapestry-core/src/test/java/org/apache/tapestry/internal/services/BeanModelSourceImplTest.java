@@ -305,6 +305,77 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void unknown_property_id()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        model.add("shrub.foo()", null);
+
+        try
+        {
+            model.getById("frobozz");
+            unreachable();
+        }
+        catch (RuntimeException ex)
+        {
+            assertEquals(ex.getMessage(),
+                         "Bean editor model for org.apache.tapestry.internal.services.SimpleBean does not contain a property with id \'frobozz\'.  "
+                                 + "Available property ids: age, firstName, lastName, shrubfoo.");
+        }
+
+        verify();
+    }
+
+    @Test
+    public void get_added_property_by_name()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        PropertyModel pm = model.add("shrub.foo()", null);
+
+        assertSame(model.get("Shrub.Foo()"), pm);
+
+        verify();
+    }
+
+    @Test
+    public void get_added_property_by_id()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        PropertyModel pm = model.add("shrub.foo()", null);
+
+        assertSame(model.getById("ShrubFoo"), pm);
+
+        verify();
+
+    }
+
+    @Test
     public void order_via_annotation()
     {
         ComponentResources resources = mockComponentResources();

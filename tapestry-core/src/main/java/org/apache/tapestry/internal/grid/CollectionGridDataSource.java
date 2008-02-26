@@ -15,8 +15,9 @@
 package org.apache.tapestry.internal.grid;
 
 import org.apache.tapestry.PropertyConduit;
-import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.grid.ColumnSort;
 import org.apache.tapestry.grid.GridDataSource;
+import org.apache.tapestry.grid.SortConstraint;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
@@ -44,53 +45,57 @@ public class CollectionGridDataSource implements GridDataSource
         return _list.size();
     }
 
-    @SuppressWarnings("unchecked")
-    public void prepare(int startIndex, int endIndex, PropertyModel sortModel, final boolean ascending)
+    public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
     {
-        if (sortModel == null) return;
-
-        final PropertyConduit conduit = sortModel.getConduit();
-
-        final Comparator valueComparator = new Comparator<Comparable>()
+        for (SortConstraint constraint : sortConstraints)
         {
-            public int compare(Comparable o1, Comparable o2)
+            final ColumnSort sort = constraint.getColumnSort();
+
+            if (sort == ColumnSort.UNSORTED) continue;
+
+            final PropertyConduit conduit = constraint.getPropertyModel().getConduit();
+
+            final Comparator valueComparator = new Comparator<Comparable>()
             {
-                // Simplify comparison, and handle case where both are nulls.
+                public int compare(Comparable o1, Comparable o2)
+                {
+                    // Simplify comparison, and handle case where both are nulls.
 
-                if (o1 == o2) return 0;
+                    if (o1 == o2) return 0;
 
-                if (o2 == null) return 1;
+                    if (o2 == null) return 1;
 
-                if (o1 == null) return -1;
+                    if (o1 == null) return -1;
 
-                return o1.compareTo(o2);
-            }
-        };
+                    return o1.compareTo(o2);
+                }
+            };
 
-        final Comparator rowComparator = new Comparator()
-        {
-            public int compare(Object row1, Object row2)
+            final Comparator rowComparator = new Comparator()
             {
-                Comparable value1 = (Comparable) conduit.get(row1);
-                Comparable value2 = (Comparable) conduit.get(row2);
+                public int compare(Object row1, Object row2)
+                {
+                    Comparable value1 = (Comparable) conduit.get(row1);
+                    Comparable value2 = (Comparable) conduit.get(row2);
 
-                return valueComparator.compare(value1, value2);
-            }
-        };
+                    return valueComparator.compare(value1, value2);
+                }
+            };
 
-        final Comparator reverseComparator = new Comparator()
-        {
-            public int compare(Object o1, Object o2)
+            final Comparator reverseComparator = new Comparator()
             {
-                int modifier = ascending ? 1 : -1;
+                public int compare(Object o1, Object o2)
+                {
+                    int modifier = sort == ColumnSort.ASCENDING ? 1 : -1;
 
-                return modifier * rowComparator.compare(o1, o2);
-            }
-        };
+                    return modifier * rowComparator.compare(o1, o2);
+                }
+            };
 
-        // We can freely sort this list because its just a copy.
+            // We can freely sort this list because its just a copy.
 
-        Collections.sort(_list, reverseComparator);
+            Collections.sort(_list, reverseComparator);
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public interface PropertyConduitSource
      * Creates a new property conduit instance for the given expression.
      *
      * @param rootClass  the class of the root object to which the expression is applied
-     * @param expression
+     * @param expression expression to be evaluated on instances of the root class
      * @return RuntimeException if the expression is invalid (poorly formed, references non-existent properties, etc.)
      */
     PropertyConduit create(Class rootClass, String expression);

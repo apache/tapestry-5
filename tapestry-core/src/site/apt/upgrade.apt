@@ -37,3 +37,10 @@ Release 5.0.11
 
   The <<findMeta()>> method on interface {{{../apidocs/org/apache/tapestry/services/MetaDataLocator.html}MetaDataLocator}}
   has changed significantly; it now expands symbols and performs type coercion.
+
+* Grid Interfaces
+
+  The {{{../apidocs/org/apache/tapestry/grid/GridModel.html}GridModel}} and
+  the <<<prepare()>>> method of 
+  {{{../apidocs/org/apache/tapestry/grid/GridDataSource.html}GridDataSource}} have changed to accomidate
+  the ability to sort using multiple columns.

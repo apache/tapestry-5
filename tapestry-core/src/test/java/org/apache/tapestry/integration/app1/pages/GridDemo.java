@@ -47,6 +47,9 @@ public class GridDemo
         return _library.getTracks();
     }
 
-    void onActionFromSortRating() { _grid.updateSort("rating"); }
+    void onActionFromSortRating()
+    {
+        _grid.getSortModel().updateSort("rating");
+    }
 
 }

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,14 @@
 
 package org.apache.tapestry.internal.grid;
 
-import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridDataSource;
+import org.apache.tapestry.grid.SortConstraint;
+
+import java.util.List;
 
 /**
- * An implementation of {@link GridDataSource} used when the value null is provided as the source.
+ * An implementation of {@link org.apache.tapestry.grid.GridDataSource} used when the value null is provided as the
+ * source.
  */
 public class NullDataSource implements GridDataSource
 {
@@ -32,7 +35,7 @@ public class NullDataSource implements GridDataSource
         return null;
     }
 
-    public void prepare(int startIndex, int endIndex, PropertyModel sortModel, boolean ascending)
+    public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
     {
     }
 

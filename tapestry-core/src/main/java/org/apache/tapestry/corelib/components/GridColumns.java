@@ -22,8 +22,10 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Path;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.PropertyModel;
+import org.apache.tapestry.grid.ColumnSort;
 import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridModel;
+import org.apache.tapestry.grid.GridSortModel;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -52,15 +54,15 @@ public class GridColumns
     private boolean _lean;
 
     /**
-     * Where to look for informal parameter Blocks used to override column headers.  The default is to look for such overrides
-     * in the GridColumns component itself, but this is usually overridden.
+     * Where to look for informal parameter Blocks used to override column headers.  The default is to look for such
+     * overrides in the GridColumns component itself, but this is usually overridden.
      */
     @Parameter("componentResources")
     private ComponentResources _overrides;
 
 
     @SuppressWarnings("unused")
-    @Component(parameters = {"event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass"})
+    @Component(parameters = { "event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass" })
     private EventLink _sort, _sort2;
 
     @Inject
@@ -99,10 +101,26 @@ public class GridColumns
 
     public String getSortLinkClass()
     {
-        if (isActiveSortColumn())
-            return _gridModel.isSortAscending() ? GridConstants.SORT_ASCENDING_CLASS : GridConstants.SORT_DESCENDING_CLASS;
+        switch (getSortForColumn())
+        {
+            case ASCENDING:
+                return GridConstants.SORT_ASCENDING_CLASS;
 
-        return null;
+            case DESCENDING:
+                return GridConstants.SORT_DESCENDING_CLASS;
+
+            default:
+                return null;
+        }
+    }
+
+    private ColumnSort getSortForColumn()
+    {
+        GridSortModel sortModel = _gridModel.getSortModel();
+
+        String columnId = _columnModel.getId();
+
+        return sortModel.getColumnSort(columnId);
     }
 
     public String getHeaderClass()
@@ -124,26 +142,40 @@ public class GridColumns
 
     public boolean isActiveSortColumn()
     {
-        return _columnModel.getId().equals(_gridModel.getSortColumnId());
+        return getSortForColumn() != ColumnSort.UNSORTED;
     }
 
     void onSort(String columnId)
     {
-        _gridModel.updateSort(columnId);
+        _gridModel.getSortModel().updateSort(columnId);
     }
 
     public Asset getIcon()
     {
-        if (isActiveSortColumn()) return _gridModel.isSortAscending() ? _ascendingAsset : _descendingAsset;
+        switch (getSortForColumn())
+        {
+            case ASCENDING:
+                return _ascendingAsset;
 
-        return _sortableAsset;
+            case DESCENDING:
+                return _descendingAsset;
+
+            default:
+                return _sortableAsset;
+        }
     }
 
     public String getIconLabel()
     {
-        String key = isActiveSortColumn() ? (_gridModel.isSortAscending() ? "ascending" : "descending") : "sortable";
-
-        return _messages.get(key);
+        switch (getSortForColumn())
+        {
+            case ASCENDING:
+                return _messages.get("ascending");
+            case DESCENDING:
+                return _messages.get("descending");
+            default:
+                return _messages.get("sortable");
+        }
     }
 
     public List<String> getColumnNames()
