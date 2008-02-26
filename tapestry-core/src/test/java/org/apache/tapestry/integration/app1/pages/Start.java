@@ -62,6 +62,8 @@ public class Start
     private static final List<Item> ITEMS = CollectionFactory.newList(
             new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
+            new Item("numberbeaneditordemo", "Number BeanEditor Demo", "use of nulls and wrapper types with BeanEditor"),
+
             new Item("music", "Music Page", "demo handling of edge cases of page naming"),
 
             new Item("PersistentDemo", "Persistent Demo", "storing and clearing persistent properties"),

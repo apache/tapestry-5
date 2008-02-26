@@ -1767,4 +1767,22 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("activePageName", "music/Details");
     }
+
+    /** TAPESTRY-1869 */
+    public void null_fields_and_bean_editor()
+    {
+        start("Number BeanEditor Demo");
+
+        clickAndWait(SUBMIT);
+
+        // Hard to check for anything here.
+
+        clickAndWait("link=Back to form");
+
+        type("value", "237");
+
+        clickAndWait(SUBMIT);
+
+        assertSourcePresent("<div class=\"t-beandisplay-value\">237</div>");
+    }
 }
