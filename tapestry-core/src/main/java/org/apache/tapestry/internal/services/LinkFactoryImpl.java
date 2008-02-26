@@ -189,7 +189,21 @@ public class LinkFactoryImpl implements LinkFactory
         String[] context = (override || activationContext.length != 0) ? toContextStrings(
                 activationContext) : collectActivationContextForPage(page);
 
+        // Strip a trailing "/index" from the path.
+
+        int lastSlashx = logicalPageName.lastIndexOf("/");
+
+        String lastTerm = lastSlashx < 0 ? logicalPageName : logicalPageName.substring(lastSlashx + 1);
+
+        // This, alas, duplicates some logic inside ComponentClassResolverImpl ...
+
+        if (lastTerm.equalsIgnoreCase("index"))
+        {
+            logicalPageName = lastSlashx < 0 ? "" : logicalPageName.substring(0, lastSlashx);
+        }
+
         PageLinkTarget target = new PageLinkTarget(logicalPageName);
+
         ComponentInvocation invocation = new ComponentInvocationImpl(target, context, null);
 
         String baseURL = _requestSecurityManager.getBaseURL(page);

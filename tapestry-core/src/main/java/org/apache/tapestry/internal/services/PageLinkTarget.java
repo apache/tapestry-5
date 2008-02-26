@@ -22,7 +22,6 @@ package org.apache.tapestry.internal.services;
  */
 public class PageLinkTarget implements InvocationTarget
 {
-
     private final String _pageName;
 
     public PageLinkTarget(String pageName)

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ import org.apache.tapestry.annotations.InjectPage;
 
 import java.util.Random;
 
-public class Start
+public class Index
 {
     private final Random _random = new Random();
 
@@ -29,8 +29,6 @@ public class Start
     {
         int target = _random.nextInt(10) + 1;
 
-        _guess.setup(target);
-
-        return _guess;
+        return _guess.initialize(target);
     }
 }

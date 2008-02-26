@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Represents an invocation for a page or a component in the current application. This information
- * is extracted from incoming URLs for a running application (or created by the {@link PageTester}.
- * Each invocation may provide a context (Object[]) and parameters to the invocation target.
+ * Represents an invocation for a page or a component in the current application. This information is extracted from
+ * incoming URLs for a running application (or created by the {@link PageTester}. Each invocation may provide a context
+ * (Object[]) and parameters to the invocation target.
  */
 public class ComponentInvocationImpl implements ComponentInvocation
 {
@@ -40,12 +40,12 @@ public class ComponentInvocationImpl implements ComponentInvocation
 
     /**
      * @param target            identifies the target of the event: a component with a page
-     * @param context           context information supplied by the component to be provided back when the event
-     *                          on the component is triggered, or contains the activation context when the
-     *                          invocation is for a page render request
-     * @param activationContext page activation context for the page containing the component, supplied via a
-     *                          passivate event to the page's root component (used when an action component
-     *                          invocation is for a page with an activation context)
+     * @param context           context information supplied by the component to be provided back when the event on the
+     *                          component is triggered, or contains the activation context when the invocation is for a
+     *                          page render request
+     * @param activationContext page activation context for the page containing the component, supplied via a passivate
+     *                          event to the page's root component (used when an action component invocation is for a
+     *                          page with an activation context)
      */
     public ComponentInvocationImpl(InvocationTarget target, String[] context, String[] activationContext)
     {
@@ -86,8 +86,7 @@ public class ComponentInvocationImpl implements ComponentInvocation
     }
 
     /**
-     * @return Just like the return value of {@link #buildURI(boolean)} except that parameters are
-     *         not included.
+     * @return Just like the return value of {@link #buildURI(boolean)} except that parameters are not included.
      */
     private String getPath()
     {
@@ -96,7 +95,7 @@ public class ComponentInvocationImpl implements ComponentInvocation
 
         for (String id : _context)
         {
-            builder.append("/");
+            if (builder.length() > 0) builder.append("/");
 
             builder.append(TapestryInternalUtils.encodeContext(id));
         }
