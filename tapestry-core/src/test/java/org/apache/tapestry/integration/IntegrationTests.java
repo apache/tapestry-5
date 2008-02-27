@@ -1768,7 +1768,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("activePageName", "music/Details");
     }
 
-    /** TAPESTRY-1869 */
+    /**
+     * TAPESTRY-1869
+     */
     public void null_fields_and_bean_editor()
     {
         start("Number BeanEditor Demo");
@@ -1784,5 +1786,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertSourcePresent("<div class=\"t-beandisplay-value\">237</div>");
+    }
+
+    /**
+     * TAPESTRY-1999
+     */
+    public void list_as_event_context()
+    {
+        start("List Event Context Demo");
+
+        assertTextSeries("//ul[@id='eventcontext']/li[%d]", 1, "1", "2", "3");
     }
 }

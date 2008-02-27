@@ -163,16 +163,24 @@ Event Context
   If you have multiple context values (by binding a list or array of objects to the ActionLink's
   context parameter), then each one, in order, will be added to the URL.
   
-  When an event handler method is invoked, a
-  {{{coercion.html}coercion}} from string to the actual type occurs. An event handler method will only be invoked
-  <if the context contains at least as many values as the method has parameters>.  Methods with too many parameters
-  will be silently skipped.
-  
-  Alternately, an event handler method may take a parameter of type java.lang.Object[].  This parameter
-  will receive the entire context array. This is useful when, for example, the context
-  is of different lengths at different times. You should use either explicit, typed parameters or
-  a single parameter of type Object[].
-  
+  When an event handler method is invoked, the strings are converted back into
+  values, or even objects. A
+  {{{../../apidocs/org/apache/tapestry/ValueEncoder.html}ValueEncoder}} is used to convert between client-side strings
+  and server-side objects.  The {{{../../apidocs/org/apache/tapestry/services/ValueEncoderSource.html}ValueEncoderSource}} service
+  provides the necessary value encoders.
+
+* Method Matching
+
+  An event handler method will only be invoked
+    <if the context contains at least as many values as the method has parameters>.  Methods with too many parameters
+    will be silently skipped.
+
+* Collections
+
+  To designate that an event handler method should be invoked regardless of how many context parameters are available,
+  change the method to accept a <single> parameter of type Object[], type List, or
+  {{{../../apidocs/org/apache/tapestry/EventContext.html}EventContext}}.  
+
 Event Bubbling
 
   The event will bubble up the hierarchy, until it is aborted. The event is aborted
