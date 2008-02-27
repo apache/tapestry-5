@@ -20,6 +20,7 @@ import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,6 +32,8 @@ public class OnEventWorker implements ComponentClassTransformWorker
     static final String OBJECT_ARRAY_TYPE = "java.lang.Object[]";
 
     static final String EVENT_CONTEXT_TYPE = EventContext.class.getName();
+
+    static final String LIST_TYPE = List.class.getName();
 
     private final static int ANY_NUMBER_OF_PARAMETERS = -1;
 
@@ -155,7 +158,7 @@ public class OnEventWorker implements ComponentClassTransformWorker
         {
             String soloType = types[0];
 
-            if (soloType.equals(OBJECT_ARRAY_TYPE) || soloType.equals(EVENT_CONTEXT_TYPE))
+            if (soloType.equals(OBJECT_ARRAY_TYPE) || soloType.equals(EVENT_CONTEXT_TYPE) || soloType.equals(LIST_TYPE))
                 return ANY_NUMBER_OF_PARAMETERS;
         }
 
@@ -185,6 +188,14 @@ public class OnEventWorker implements ComponentClassTransformWorker
             if (type.equals(EVENT_CONTEXT_TYPE))
             {
                 builder.add("$1.getEventContext()");
+                continue;
+            }
+
+            // Added for TAPESTRY-1999
+
+            if (type.equals(LIST_TYPE))
+            {
+                builder.add("%s.asList($1.getContext())", Arrays.class.getName());
                 continue;
             }
 

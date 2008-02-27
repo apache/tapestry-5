@@ -17,6 +17,7 @@ package org.apache.tapestry.integration.app1.pages;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -62,7 +63,8 @@ public class Start
     private static final List<Item> ITEMS = CollectionFactory.newList(
             new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
-            new Item("numberbeaneditordemo", "Number BeanEditor Demo", "use of nulls and wrapper types with BeanEditor"),
+            new Item("numberbeaneditordemo", "Number BeanEditor Demo",
+                     "use of nulls and wrapper types with BeanEditor"),
 
             new Item("music", "Music Page", "demo handling of edge cases of page naming"),
 
@@ -271,5 +273,10 @@ public class Start
     Object onActionFromSecurePage()
     {
         return _securePage.initialize("Triggered from Start");
+    }
+
+    public List getDemoContext()
+    {
+        return Arrays.asList(1, 2, 3);
     }
 }
