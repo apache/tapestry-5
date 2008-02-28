@@ -43,6 +43,7 @@
             <item name="Release Notes" href="release-notes.html"/>
             <item name="Nightly Docs" href="http://tapestry.formos.com/nightly/tapestry5/"/>
             <item name="Issues" href="https://issues.apache.org/jira/browse/TAPESTRY"/>
+            <item name="FAQ" href="faq/general.html"/>
         </menu>
 
         <menu name="Tapestry 5 Modules">
