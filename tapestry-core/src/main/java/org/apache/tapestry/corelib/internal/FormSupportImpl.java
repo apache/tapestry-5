@@ -16,11 +16,10 @@ package org.apache.tapestry.corelib.internal;
 
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.Field;
+import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.*;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
-import org.apache.tapestry.json.JSONArray;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FormSupport;
 
@@ -29,22 +28,22 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 /**
- * Provides support to components enclosed by a form when the form is rendering (allowing the
- * components to registry form submit callback commands), and also during form submission time.
+ * Provides support to components enclosed by a form when the form is rendering (allowing the components to registry
+ * form submit callback commands), and also during form submission time.
  * <p/>
- * TODO: Most methods should only be invokable depending on whether the form is rendering or
- * processing a submission.
+ * TODO: Most methods should only be invokable depending on whether the form is rendering or processing a submission.
  */
 public class FormSupportImpl implements FormSupport
 {
-    private final IdAllocator _idAllocator = new IdAllocator();
+    private final ClientBehaviorSupport _clientBehaviorSupport;
+
+    private final boolean _clientValidationEnabled;
+
+    private final IdAllocator _idAllocator;
 
     private final String _clientId;
 
     private final ObjectOutputStream _actions;
-
-    private final JSONObject _validations = new JSONObject();
-
 
     private List<Runnable> _commands;
 
@@ -55,16 +54,34 @@ public class FormSupportImpl implements FormSupport
      */
     public FormSupportImpl()
     {
-        this(null, null);
+        this(null, null, null, false, null);
     }
 
     /**
      * Constructor used when rendering.
      */
-    public FormSupportImpl(String clientId, ObjectOutputStream actions)
+    public FormSupportImpl(String clientId, ObjectOutputStream actions, ClientBehaviorSupport clientBehaviorSupport,
+                           boolean clientValidationEnabled)
+    {
+        this(clientId, actions, clientBehaviorSupport, clientValidationEnabled, new IdAllocator());
+    }
+
+    /**
+     * Full constructor.
+     */
+    public FormSupportImpl(String clientId, ObjectOutputStream actions, ClientBehaviorSupport clientBehaviorSupport,
+                           boolean clientValidationEnabled, IdAllocator idAllocator)
     {
         _clientId = clientId;
         _actions = actions;
+        _clientBehaviorSupport = clientBehaviorSupport;
+        _clientValidationEnabled = clientValidationEnabled;
+        _idAllocator = idAllocator;
+    }
+
+    public String getFormId()
+    {
+        return _clientId;
     }
 
     public String allocateControlName(String id)
@@ -138,39 +155,9 @@ public class FormSupportImpl implements FormSupport
 
     public void addValidation(Field field, String validationName, String message, Object constraint)
     {
-        String fieldId = field.getClientId();
-
-        JSONArray specs;
-
-        if (_validations.has(fieldId)) specs = _validations.getJSONArray(fieldId);
-        else
-        {
-            specs = new JSONArray();
-            _validations.put(fieldId, specs);
-        }
-
-        JSONArray thisSpec = new JSONArray();
-
-        thisSpec.put(validationName);
-        thisSpec.put(message);
-
-        if (constraint != null) thisSpec.put(constraint);
-
-        specs.put(thisSpec);
+        if (_clientValidationEnabled)
+            _clientBehaviorSupport.addValidation(field, validationName, message, constraint);
     }
 
-    /**
-     * Returns the combined validation data collected via {@link #addValidation(org.apache.tapestry.Field, String, String, Object)}.
-     * The keys of this object are the client ids of the {@link org.apache.tapestry.Field}s, the values
-     * are an array of validation specifications for that field. Each validation specification is itself
-     * an array of two or three values: the validation name (i.e., a method of the client-side Tapestry.Validation
-     * object), the message if the field is invalid and, optionally, the constraint value.
-     *
-     * @return the validation object
-     */
-    public JSONObject getValidations()
-    {
-        return _validations;
-    }
 
 }

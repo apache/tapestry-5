@@ -53,6 +53,18 @@ public interface ComponentResourcesCommon extends Locatable
     /**
      * A convienience for invoking {@link #triggerContextEvent(String, EventContext , ComponentEventCallback)}. Wraps
      * the context values into an {@link org.apache.tapestry.EventContext}.
+     *
+     * @param eventType event type (as determined from the request, or otherwise by design)
+     * @param context   Values that may be provided to the event handler method as method parameters, or null if no
+     *                  context values are available
+     * @param callback  the handler to be informed of the result, or null if the event is a notification that does not
+     *                  support return values from event handler methods (the value true is allowed even if the handler
+     *                  is null).
+     * @return true if any event handler was invoked (even if no event handler method returns a non-null value)
+     * @throws org.apache.tapestry.runtime.ComponentEventException
+     *          if an event handler method throws a checked or unchecked exception
+     * @see org.apache.tapestry.internal.transform.OnEventWorker
+     * @see org.apache.tapestry.annotations.OnEvent
      */
     boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback);
 
@@ -97,12 +109,13 @@ public interface ComponentResourcesCommon extends Locatable
     Locale getLocale();
 
     /**
-     * Returns the name of element that represents the component in its template, or null if the element was a component
-     * type (in the Tapestry namespace).
+     * Returns the name of element that represents the component in its template, or the provided default element name
+     * if the element was a component type (in the Tapestry namespace).
      *
+     * @param defaultElementName element name to return if the element name is not known (may be null)
      * @return the element name
      */
-    String getElementName();
+    String getElementName(String defaultElementName);
 
     /**
      * Returns a block from the component's template, referenced by its id.

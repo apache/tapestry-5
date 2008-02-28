@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 package org.apache.tapestry;
 
-import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.services.AssetSource;
 
@@ -30,10 +29,18 @@ public interface PageRenderSupport
      * precisely match the input value (an underscore and a unique index value may be appended).
      *
      * @param id the component id from which a unique id will be generated
-     * @return a unqiue id for this rendering of the page
-     * @see IdAllocator
+     * @return a unique id for this rendering of the page
+     * @see org.apache.tapestry.ioc.internal.util.IdAllocator
      */
     String allocateClientId(String id);
+
+    /**
+     * As with {@link #allocateClientId(String)} but uses the id of the component extracted
+     * from the resources.
+     * @param resources of the component which requires an id
+     * @return a unique id for this rendering of the page
+     */
+    String allocateClientId(ComponentResources resources);
 
     /**
      * Adds one or more new script assets to the page. Assets are added uniquely, and appear as

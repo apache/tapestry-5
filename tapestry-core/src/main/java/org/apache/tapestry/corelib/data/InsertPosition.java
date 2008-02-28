@@ -12,16 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.corelib.data;
 
-/**
- * Manages a UID that is injected into each action request URL.
- */
-public interface AjaxUIDManager
+public enum InsertPosition
 {
     /**
-     * Extracts the UID from the request (parameter "t:uid").  If not present,
-     * returns "1" else returns the value of the requests uid plus 1.
+     * Insert the new content above (i.e., before) the insertion position. 
      */
-    String getAjaxUID();
+    ABOVE,
+
+    /** Insert the new context below (i.e., after) the insertion position. */
+    BELOW;
 }

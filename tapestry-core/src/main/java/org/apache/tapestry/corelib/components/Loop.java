@@ -14,13 +14,11 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PrimaryKeyEncoder;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.ioc.annotations.Inject;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
 
@@ -160,9 +158,10 @@ public class Loop
     }
 
     /**
-     * Defines the collection of values for the loop to iterate over.
+     * Defines the collection of values for the loop to iterate over. If not specified, defaults to a property of the
+     * container whose name
      */
-    @Parameter(required = true)
+    @Parameter(required = true, principal = true)
     private Iterable<?> _source;
 
     /**
@@ -186,7 +185,7 @@ public class Loop
      * The element to render. If not null, then the loop will render the indicated element around its body (on each pass
      * through the loop). The default is derived from the component template.
      */
-    @Parameter(value = "prop:componentResources.elementName", defaultPrefix = "literal")
+    @Parameter(value = "prop:componentResources.elementName", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _elementName;
 
     /**
@@ -210,6 +209,14 @@ public class Loop
 
     @Inject
     private ComponentResources _resources;
+
+    @Inject
+    private ComponentDefaultProvider _componentDefaultProvider;
+
+    Binding defaultSource()
+    {
+        return _componentDefaultProvider.defaultBinding("source", _resources);
+    }
 
     @SetupRender
     boolean setup()

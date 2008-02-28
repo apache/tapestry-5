@@ -66,7 +66,7 @@ public class PageLink extends AbstractLink implements ClientElement
     {
         if (_disabled) return;
 
-        _clientId = _support.allocateClientId(_resources.getId());
+        _clientId = _support.allocateClientId(_resources);
 
         Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
 

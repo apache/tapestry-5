@@ -48,7 +48,16 @@ public interface PageRenderQueue
     void initializeForPartialPageRender(RenderCommand rootCommand);
 
     /**
-     * Returns true if {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)} has been invoked.
+     * Obtains the value previously supplied to {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)}.
+     * This allows the "natural" renderer to be substituted or otherwise manipulated.
+     *
+     * @return the root renderer
+     */
+    RenderCommand getRootRenderCommand();
+
+    /**
+     * Returns true if {@link #initializeForPartialPageRender(org.apache.tapestry.runtime.RenderCommand)} has been
+     * invoked.
      */
     boolean isPartialRenderInitialized();
 

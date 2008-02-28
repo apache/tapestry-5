@@ -19,35 +19,31 @@ import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.Field;
 
 /**
- * Services provided by an enclosing Form control component to the various form element components
- * it encloses. Implements {@link ClientElement}, to share the id of the enclosing form.
+ * Services provided by an enclosing Form control component to the various form element components it encloses.
+ * Implements {@link org.apache.tapestry.ClientElement}, to share the id of the enclosing form.
  *
  * @see org.apache.tapestry.Field
  */
 public interface FormSupport extends ClientElement
 {
     /**
-     * Allocates a unique (within the form) control name for some enclosed component,
-     * based on the component's id.
+     * Allocates a unique (within the form) control name for some enclosed component, based on the component's id.
      *
      * @param id the component's id
-     * @return a unique string, usually the component's id, but sometime extended with a unique
-     *         number or string
+     * @return a unique string, usually the component's id, but sometime extended with a unique number or string
      */
     String allocateControlName(String id);
 
     /**
-     * Stores an action for execution during a later request.  If the action contains any mutable
-     * state, it should be in its final state before invoking this method and its internal
-     * state should not be changed subsequently.
+     * Stores an action for execution during a later request.  If the action contains any mutable state, it should be in
+     * its final state before invoking this method and its internal state should not be changed subsequently.
      */
     <T> void store(T component, ComponentAction<T> action);
 
     /**
-     * As with {@link #store(Object, org.apache.tapestry.ComponentAction)}}, but the
-     * action is also invoked immediately. This is useful for defining an action that
-     * should occur symmetrically in both the render request and the form submission's
-     * action request.
+     * As with {@link #store(Object, org.apache.tapestry.ComponentAction)}}, but the action is also invoked immediately.
+     * This is useful for defining an action that should occur symmetrically in both the render request and the form
+     * submission's action request.
      *
      * @param component component against which to trigger the action
      * @param action    the action that will be triggered (and passed the component)
@@ -55,11 +51,11 @@ public interface FormSupport extends ClientElement
     <T> void storeAndExecute(T component, ComponentAction<T> action);
 
     /**
-     * Defers a command until the end of the form submission. The command will be executed after the
-     * Form's validate notification, but before the Form's submit, success or failure notifications.
-     * During a form render, runnables are executed after the body of the form has rendered.
+     * Defers a command until the end of the form submission. The command will be executed after the Form's validate
+     * notification, but before the Form's submit, success or failure notifications. During a form render, runnables are
+     * executed after the body of the form has rendered.
      *
-     * @param command
+     * @param command to be executed
      */
     void defer(Runnable command);
 
@@ -72,7 +68,8 @@ public interface FormSupport extends ClientElement
     void setEncodingType(String encodingType);
 
     /**
-     * Collects field validation information.
+     * Collects field validation information. A Form may turn off client-side validation, in which case these calls will
+     * be ignored.
      *
      * @param field          for which validation is being generated
      * @param validationName name of validation method (see Tapestry.Validation in tapestry.js)

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,12 +21,11 @@ import org.apache.tapestry.ioc.services.Coercion;
 import java.util.Map;
 
 /**
- * A {@link Coercion} for converting strings into an instance of a particular enumerated type. The
- * {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
+ * A {@link org.apache.tapestry.ioc.services.Coercion} for converting strings into an instance of a particular
+ * enumerated type. The {@link Enum#name() name} is used as the key to identify the enum instance, in a case-insensitive
  * fashion.
  *
- * @param <T>
- * the type of enumeration
+ * @param <T> the type of enumeration
  */
 public final class StringToEnumCoercion<T extends Enum> implements Coercion<String, T>
 {
@@ -61,6 +60,12 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
                     _stringToEnum.keySet()));
 
         return result;
+    }
+
+
+    public static <T extends Enum> StringToEnumCoercion<T> create(Class<T> enumClass)
+    {
+        return new StringToEnumCoercion<T>(enumClass);
     }
 
 }

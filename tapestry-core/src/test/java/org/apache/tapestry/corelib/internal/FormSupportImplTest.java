@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,9 +15,8 @@
 package org.apache.tapestry.corelib.internal;
 
 import org.apache.tapestry.Field;
+import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
-import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import org.apache.tapestry.json.JSONObject;
 import org.testng.annotations.Test;
 
 public class FormSupportImplTest extends InternalBaseTestCase
@@ -135,40 +134,33 @@ public class FormSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_validations()
     {
-        Field barney = newField("barney");
-        Field fred = newField("fred");
+        Field barney = mockField();
+        ClientBehaviorSupport clientBehaviorSupport = mockClientBehaviorSupport();
+
+        clientBehaviorSupport.addValidation(barney, "required", "Who can live without Barney?", null);
 
         replay();
 
-        FormSupportImpl support = new FormSupportImpl();
+        FormSupportImpl support = new FormSupportImpl(null, null, clientBehaviorSupport, true);
 
         support.addValidation(barney, "required", "Who can live without Barney?", null);
-        support.addValidation(barney, "email", "You know, an e-mail address.", null);
-        support.addValidation(fred, "maxlength", "Up to 10 characters", 10);
 
         verify();
-
-
-        JSONObject validations = support.getValidations();
-
-        // Tip-toe around the fact that the order of the keys is JDK specific.
-
-        assertEquals(CollectionFactory.newSet(validations.keys()), CollectionFactory.newSet("fred", "barney"));
-
-        assertEquals(validations.get("fred").toString(), "[[\"maxlength\",\"Up to 10 characters\",10]]");
-        assertEquals(validations.get("barney").toString(),
-                     "[[\"required\",\"Who can live without Barney?\"],[\"email\",\"You know, an e-mail address.\"]]");
-
-
     }
 
-    private Field newField(String clientId)
+    @Test
+    public void add_validation_when_client_validation_is_disabled()
     {
-        Field field = newMock(Field.class);
+        Field barney = mockField();
+        ClientBehaviorSupport clientBehaviorSupport = mockClientBehaviorSupport();
 
-        expect(field.getClientId()).andReturn(clientId).atLeastOnce();
+        replay();
 
-        return field;
+        FormSupportImpl support = new FormSupportImpl(null, null, clientBehaviorSupport, false);
+
+        support.addValidation(barney, "required", "Who can live without Barney?", null);
+
+        verify();
     }
 
 

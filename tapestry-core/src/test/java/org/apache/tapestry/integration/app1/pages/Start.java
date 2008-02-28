@@ -66,6 +66,8 @@ public class Start
             new Item("numberbeaneditordemo", "Number BeanEditor Demo",
                      "use of nulls and wrapper types with BeanEditor"),
 
+            new Item("forminjectordemo", "FormInjector Demo", "extending a form dynamically via Ajax"),
+
             new Item("music", "Music Page", "demo handling of edge cases of page naming"),
 
             new Item("PersistentDemo", "Persistent Demo", "storing and clearing persistent properties"),

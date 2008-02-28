@@ -124,7 +124,7 @@ public class Radio implements Field
     {
         String value = _container.toClient(_value);
 
-        _clientId = _pageRenderSupport.allocateClientId(_resources.getId());
+        _clientId = _pageRenderSupport.allocateClientId(_resources);
         _controlName = _container.getElementName();
 
         writer.element("input", "type", "radio", "id", _clientId, "name", _controlName, "value", value);

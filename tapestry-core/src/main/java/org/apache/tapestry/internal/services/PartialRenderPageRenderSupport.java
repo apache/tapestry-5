@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Asset;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.json.JSONObject;
@@ -42,6 +43,11 @@ public class PartialRenderPageRenderSupport implements PageRenderSupport
     public String allocateClientId(String id)
     {
         return _idAllocator.allocateId(id);
+    }
+
+    public String allocateClientId(ComponentResources resources)
+    {
+        return allocateClientId(resources.getId());
     }
 
     /**
@@ -73,7 +79,8 @@ public class PartialRenderPageRenderSupport implements PageRenderSupport
     }
 
     /**
-     * Updates the reply with a "script" key, if any scripting has been collected via {@link #addScript(String, Object[])} }.
+     * Updates the reply with a "script" key, if any scripting has been collected via {@link #addScript(String,
+     * Object[])} }.
      *
      * @param reply
      */

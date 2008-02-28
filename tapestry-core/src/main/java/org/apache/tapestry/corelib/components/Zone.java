@@ -19,7 +19,7 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.ZoneSetup;
+import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.json.JSONObject;
 
@@ -65,7 +65,7 @@ public class Zone implements ClientElement
     private PageRenderSupport _pageRenderSupport;
 
     @Environmental
-    private ZoneSetup _zoneSetup;
+    private ClientBehaviorSupport _clientBehaviorSupport;
 
     /**
      * If true (the default) then the zone will render normally.  If false, then the "t-invisible"
@@ -79,7 +79,7 @@ public class Zone implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        _clientId = _pageRenderSupport.allocateClientId(_resources.getId());
+        _clientId = _pageRenderSupport.allocateClientId(_resources);
 
         Element e = writer.element("div", "id", _clientId);
 
@@ -94,7 +94,7 @@ public class Zone implements ClientElement
         JSONObject spec = new JSONObject();
         spec.put("div", _clientId);
 
-        _zoneSetup.addZone(_clientId, _show, _update);
+        _clientBehaviorSupport.addZone(_clientId, _show, _update);
     }
 
     void afterRender(MarkupWriter writer)

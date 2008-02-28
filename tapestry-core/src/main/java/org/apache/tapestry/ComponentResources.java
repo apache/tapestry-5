@@ -192,4 +192,11 @@ public interface ComponentResources extends ComponentResourcesCommon
      * <em>next</em> request (the attached page instance is not affected).
      */
     void discardPersistentFieldChanges();
+
+    /**
+     * Returns the name of element that represents the component in its template, or null if not known.
+     *
+     * @return the element name or null
+     */
+    String getElementName();
 }

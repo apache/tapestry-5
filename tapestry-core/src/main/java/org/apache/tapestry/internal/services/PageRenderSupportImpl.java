@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Asset;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.PageRenderSupport;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
@@ -41,11 +42,11 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     /**
      * @param builder      Used to assemble JavaScript includes and snippets
-     * @param symbolSource Used to example symbols (in
-     *                     {@linkplain #addClasspathScriptLink(String...) in classpath scripts)
+     * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
+     *                     scripts)
      * @param assetSource  Used to convert classpath scripts to {@link Asset}s
-     * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that
-     *                     includes a script link or script block
+     * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
+     *                     script link or script block
      */
     public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
                                  AssetSource assetSource, String... coreScripts)
@@ -60,6 +61,11 @@ public class PageRenderSupportImpl implements PageRenderSupport
     public String allocateClientId(String id)
     {
         return _idAllocator.allocateId(id);
+    }
+
+    public String allocateClientId(ComponentResources resources)
+    {
+        return allocateClientId(resources.getId());
     }
 
     public void addScriptLink(Asset... scriptAssets)
