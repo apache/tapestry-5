@@ -48,14 +48,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertSourcePresent("<link href=\"/css/app.css\" rel=\"stylesheet\" type=\"text/css\">");
 
-        assertText("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
+        assertAttribute("//img[@id='icon']/@src", "/images/tapestry_banner.gif");
 
         // doesn't prove that the image shows up in the client browser (it does, but
         // it could just as easily be a broken image). Haven't figured out how Selenium
         // allows to be verified. Note that the path below represents some aliasing
         // of the raw classpath resource path.
 
-        assertText("//img[@id='button']/@src", "/assets/app1/pages/nested/tapestry-button.png");
+        assertAttribute("//img[@id='button']/@src", "/assets/app1/pages/nested/tapestry-button.png");
 
         // Read the byte stream for the asset and compare to the real copy.
 
@@ -317,10 +317,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Check on decorations via the default validation decorator:
 
-        assertText("//label[1]/@class", "t-error");
-        assertText("//label[2]/@class", "t-error");
-        assertText("//input[@id='email']/@class", "t-error");
-        assertText("//textarea[@id='message']/@class", "t-error");
+        assertAttribute("//label[1]/@class", "t-error");
+        assertAttribute("//label[2]/@class", "t-error");
+        assertAttribute("//input[@id='email']/@class", "t-error");
+        assertAttribute("//textarea[@id='message']/@class", "t-error");
 
         type("email", "foo@bar.baz");
         type("message", "Show me the money!");
@@ -331,7 +331,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextPresent("[false]");
         assertTextPresent("The input value 'foo' is not parseable as an integer value.");
 
-        assertText("//input[@id='hours']/@value", "foo");
+        assertAttribute("//input[@id='hours']/@value", "foo");
 
         type("hours", " 19 ");
         click("//input[@id='urgent']");
@@ -521,15 +521,15 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // Part of the override for the firstName property
 
-        assertText("//input[@id='firstName']/@size", "40");
+        assertAttribute("//input[@id='firstName']/@size", "40");
 
         // Check that the @Width annotation works
 
-        assertText("//input[@id='birthYear']/@size", "4");
+        assertAttribute("//input[@id='birthYear']/@size", "4");
 
         // Check override of the submit label
 
-        assertText("//input[@type='submit']/@value", "Register");
+        assertAttribute("//input[@type='submit']/@value", "Register");
 
 
         type("firstName", "a");
@@ -643,8 +643,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertText("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
-        assertText("//img[@id='title:sort']/@alt", "[Asc]");
+        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
+        assertAttribute("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
 
@@ -652,8 +652,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Title");
 
-        assertText("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
-        assertText("//img[@id='title:sort']/@alt", "[Desc]");
+        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
+        assertAttribute("//img[@id='title:sort']/@alt", "[Desc]");
     }
 
     @Test
@@ -795,7 +795,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertTextSeries("//script[%d]/@src", 1, "assets/scriptaculous/prototype.js",
+        assertAttributeSeries("//script[%d]/@src", 1, "assets/scriptaculous/prototype.js",
                          "assets/scriptaculous/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
@@ -899,11 +899,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Attribute Expansions Demo");
 
-        assertText("//div[@id='mixed-expansion']/@style", "color: blue;");
-        assertText("//div[@id='single']/@class", "red");
-        assertText("//div[@id='consecutive']/@class", "goober-red");
-        assertText("//div[@id='trailer']/@class", "goober-green");
-        assertText("//div[@id='formal']/text()", "ALERT-expansions work inside formal component parameters as well");
+        assertAttribute("//div[@id='mixed-expansion']/@style", "color: blue;");
+        assertAttribute("//div[@id='single']/@class", "red");
+        assertAttribute("//div[@id='consecutive']/@class", "goober-red");
+        assertAttribute("//div[@id='trailer']/@class", "goober-green");
+        assertText("//div[@id='formal']", "ALERT-expansions work inside formal component parameters as well");
 
         // An unrelated test, but fills in a bunch of minor gaps.
 
@@ -1027,7 +1027,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Form Encoding Type");
 
-        assertText("//form/@enctype", "x-override");
+        assertAttribute("//form/@enctype", "x-override");
     }
 
     @Test
@@ -1296,7 +1296,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Inherit Informal Parameters Demo");
 
-        assertText("//span[@id='target']/@class", "inherit");
+        assertAttribute("//span[@id='target']/@class", "inherit");
     }
 
     @Test
@@ -1334,7 +1334,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         {
             String locator = String.format("%s/@disabled", path);
 
-            assertText(locator, "disabled");
+            assertAttribute(locator, "disabled");
         }
     }
 
@@ -1448,7 +1448,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText(locator, "");
 
-        assertText("//input[@id='number']/@value", "0");
+        assertAttribute("//input[@id='number']/@value", "0");
 
         type("number", "");
 

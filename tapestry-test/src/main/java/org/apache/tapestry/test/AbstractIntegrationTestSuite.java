@@ -38,7 +38,7 @@ import org.testng.annotations.BeforeClass;
  *
  * @see org.apache.tapestry.test.JettyRunner
  */
-public abstract class AbstractIntegrationTestSuite extends Assert implements Selenium
+public class AbstractIntegrationTestSuite extends Assert implements Selenium
 {
     /**
      * Default directory containing the web application to be tested (this conforms to Maven's default folder).
@@ -117,6 +117,42 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         }
     }
 
+    /**
+     * Used when the locator identifies an attribute, not an element.
+     *
+     * @param locator  identifies the attribute whose value is to be asserted
+     * @param expected expected value for the attribute
+     */
+    protected final void assertAttribute(String locator, String expected)
+    {
+        String actual = null;
+
+        try
+        {
+            actual = getAttribute(locator);
+        }
+        catch (RuntimeException ex)
+        {
+            System.err.printf("Error accessing %s: %s, in:\n\n%s\n\n", locator, ex.getMessage(),
+                              _selenium.getHtmlSource());
+
+            throw ex;
+        }
+
+        if (actual.equals(expected)) return;
+
+        System.err.printf("Text for attribute %s should be '%s' but is '%s', in:\n\n%s\n\n", locator, expected, actual,
+                          getHtmlSource());
+
+        throw new AssertionError(String.format("%s was '%s' not '%s'", locator, actual, expected));
+    }
+
+    /**
+     * Asserts the text of an element, identified by the locator.
+     *
+     * @param locator  identifies the element whose text value is to be asserted
+     * @param expected expected value for the element's text
+     */
     protected final void assertText(String locator, String expected)
     {
         String actual = null;
@@ -174,6 +210,17 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
             assertText(id, values[i]);
         }
     }
+
+    protected final void assertAttributeSeries(String idFormat, int startIndex, String... values)
+      {
+          for (int i = 0; i < values.length; i++)
+          {
+              String id = String.format(idFormat, startIndex + i);
+
+              assertAttribute(id, values[i]);
+          }
+      }
+
 
     protected final void assertFieldValueSeries(String idFormat, int startIndex, String... values)
     {
@@ -235,9 +282,29 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.chooseCancelOnNextConfirmation();
     }
 
+    public void chooseOkOnNextConfirmation()
+    {
+        _selenium.chooseOkOnNextConfirmation();
+    }
+
     public void click(String locator)
     {
         _selenium.click(locator);
+    }
+
+    public void doubleClick(String locator)
+    {
+        _selenium.doubleClick(locator);
+    }
+
+    public void clickAt(String locator, String coordString)
+    {
+        _selenium.clickAt(locator, coordString);
+    }
+
+    public void doubleClickAt(String locator, String coordString)
+    {
+        _selenium.doubleClickAt(locator, coordString);
     }
 
     public void close()
@@ -263,6 +330,61 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     public String[] getAllFields()
     {
         return _selenium.getAllFields();
+    }
+
+    public String[] getAttributeFromAllWindows(String attributeName)
+    {
+        return _selenium.getAttributeFromAllWindows(attributeName);
+    }
+
+    public void dragdrop(String locator, String movementsString)
+    {
+        _selenium.dragdrop(locator, movementsString);
+    }
+
+    public void setMouseSpeed(String pixels)
+    {
+        _selenium.setMouseSpeed(pixels);
+    }
+
+    public Number getMouseSpeed()
+    {
+        return _selenium.getMouseSpeed();
+    }
+
+    public void dragAndDrop(String locator, String movementsString)
+    {
+        _selenium.dragAndDrop(locator, movementsString);
+    }
+
+    public void dragAndDropToObject(String locatorOfObjectToBeDragged, String locatorOfDragDestinationObject)
+    {
+        _selenium.dragAndDropToObject(locatorOfObjectToBeDragged, locatorOfDragDestinationObject);
+    }
+
+    public void windowFocus()
+    {
+        _selenium.windowFocus();
+    }
+
+    public void windowMaximize()
+    {
+        _selenium.windowMaximize();
+    }
+
+    public String[] getAllWindowIds()
+    {
+        return _selenium.getAllWindowIds();
+    }
+
+    public String[] getAllWindowNames()
+    {
+        return _selenium.getAllWindowNames();
+    }
+
+    public String[] getAllWindowTitles()
+    {
+        return _selenium.getAllWindowTitles();
     }
 
     public String[] getAllLinks()
@@ -298,6 +420,21 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     public String getExpression(String expression)
     {
         return _selenium.getExpression(expression);
+    }
+
+    public Number getXpathCount(String xpath)
+    {
+        return _selenium.getXpathCount(xpath);
+    }
+
+    public void assignId(String locator, String identifier)
+    {
+        _selenium.assignId(locator, identifier);
+    }
+
+    public void allowNativeXpath(String allow)
+    {
+        _selenium.allowNativeXpath(allow);
     }
 
     public String getHtmlSource()
@@ -370,6 +507,11 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         return _selenium.getText(locator);
     }
 
+    public void highlight(String locator)
+    {
+        _selenium.highlight(locator);
+    }
+
     public String getTitle()
     {
         return _selenium.getTitle();
@@ -440,6 +582,46 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.keyPress(locator, keycode);
     }
 
+    public void shiftKeyDown()
+    {
+        _selenium.shiftKeyDown();
+    }
+
+    public void shiftKeyUp()
+    {
+        _selenium.shiftKeyUp();
+    }
+
+    public void metaKeyDown()
+    {
+        _selenium.metaKeyDown();
+    }
+
+    public void metaKeyUp()
+    {
+        _selenium.metaKeyUp();
+    }
+
+    public void altKeyDown()
+    {
+        _selenium.altKeyDown();
+    }
+
+    public void altKeyUp()
+    {
+        _selenium.altKeyUp();
+    }
+
+    public void controlKeyDown()
+    {
+        _selenium.controlKeyDown();
+    }
+
+    public void controlKeyUp()
+    {
+        _selenium.controlKeyUp();
+    }
+
     public void keyUp(String locator, String keycode)
     {
         _selenium.keyUp(locator, keycode);
@@ -450,9 +632,39 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.mouseDown(locator);
     }
 
+    public void mouseDownAt(String locator, String coordString)
+    {
+        _selenium.mouseDownAt(locator, coordString);
+    }
+
+    public void mouseUp(String locator)
+    {
+        _selenium.mouseUp(locator);
+    }
+
+    public void mouseUpAt(String locator, String coordString)
+    {
+        _selenium.mouseUpAt(locator, coordString);
+    }
+
+    public void mouseMove(String locator)
+    {
+        _selenium.mouseMove(locator);
+    }
+
+    public void mouseMoveAt(String locator, String coordString)
+    {
+        _selenium.mouseMoveAt(locator, coordString);
+    }
+
     public void mouseOver(String locator)
     {
         _selenium.mouseOver(locator);
+    }
+
+    public void mouseOut(String locator)
+    {
+        _selenium.mouseOut(locator);
     }
 
     public void open(String url)
@@ -460,6 +672,11 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.open(url);
 
         waitForPageToLoad(PAGE_LOAD_TIMEOUT);
+    }
+
+    public void openWindow(String url, String windowID)
+    {
+        _selenium.openWindow(url, windowID);
     }
 
     public void refresh()
@@ -472,6 +689,11 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.removeSelection(locator, optionLocator);
     }
 
+    public void removeAllSelections(String locator)
+    {
+        _selenium.removeAllSelections(locator);
+    }
+
     public void select(String selectLocator, String optionLocator)
     {
         _selenium.select(selectLocator, optionLocator);
@@ -482,14 +704,54 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.selectWindow(windowID);
     }
 
-    public void setContext(String context, String logLevelThreshold)
+    public void selectFrame(String locator)
     {
-        _selenium.setContext(context, logLevelThreshold);
+        _selenium.selectFrame(locator);
+    }
+
+    public boolean getWhetherThisFrameMatchFrameExpression(String currentFrameString, String target)
+    {
+        return _selenium.getWhetherThisFrameMatchFrameExpression(currentFrameString, target);
+    }
+
+    public boolean getWhetherThisWindowMatchWindowExpression(String currentWindowString, String target)
+    {
+        return _selenium.getWhetherThisWindowMatchWindowExpression(currentWindowString, target);
     }
 
     public void setCursorPosition(String locator, String position)
     {
         _selenium.setCursorPosition(locator, position);
+    }
+
+    public Number getElementIndex(String locator)
+    {
+        return _selenium.getElementIndex(locator);
+    }
+
+    public boolean isOrdered(String locator1, String locator2)
+    {
+        return _selenium.isOrdered(locator1, locator2);
+    }
+
+    public Number getElementPositionLeft(String locator)
+    {
+        return _selenium.getElementPositionLeft(locator);
+    }
+
+    public Number getElementPositionTop(String locator)
+    {
+        return _selenium.getElementPositionTop(locator);
+    }
+
+    public Number getElementWidth(String locator)
+    {
+        return _selenium.getElementWidth(locator);
+    }
+
+    public Number getElementHeight(String locator)
+    {
+        return _selenium.getElementHeight(locator);
     }
 
     public void setTimeout(String timeout)
@@ -517,6 +779,21 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
         _selenium.type(locator, value);
     }
 
+    public void typeKeys(String locator, String value)
+    {
+        _selenium.typeKeys(locator, value);
+    }
+
+    public void setSpeed(String value)
+    {
+        _selenium.setSpeed(value);
+    }
+
+    public void getSpeed()
+    {
+        _selenium.getSpeed();
+    }
+
     public void uncheck(String locator)
     {
         _selenium.uncheck(locator);
@@ -531,6 +808,52 @@ public abstract class AbstractIntegrationTestSuite extends Assert implements Sel
     {
         _selenium.waitForPageToLoad(timeout);
     }
+
+    public void waitForFrameToLoad(String frameAddress, String timeout)
+    {
+        _selenium.waitForFrameToLoad(frameAddress, timeout);
+    }
+
+    public String getCookie()
+    {
+        return _selenium.getCookie();
+    }
+
+    public void createCookie(String nameValuePair, String optionsString)
+    {
+        _selenium.createCookie(nameValuePair, optionsString);
+    }
+
+    public void deleteCookie(String name, String path)
+    {
+        _selenium.deleteCookie(name, path);
+    }
+
+    public void setBrowserLogLevel(String logLevel)
+    {
+        _selenium.setBrowserLogLevel(logLevel);
+    }
+
+    public void runScript(String script)
+    {
+        _selenium.runScript(script);
+    }
+
+    public void addLocationStrategy(String strategyName, String functionDefinition)
+    {
+        _selenium.addLocationStrategy(strategyName, functionDefinition);
+    }
+
+    public void setContext(String context)
+    {
+        _selenium.setContext(context);
+    }
+
+    public void captureScreenshot(String filename)
+    {
+        _selenium.captureScreenshot(filename);
+    }
+
 
     /**
      * Waits the default time for the page to load.
