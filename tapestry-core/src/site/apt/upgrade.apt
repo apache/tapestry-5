@@ -9,6 +9,9 @@ Upgrade Notes
 
   It is always advised to perform a full and complete build after upgrading.
 
+  You should also check the {{{../release-notes.html}project-wide release notes}} for information
+  about bugs fixes and other improvements.
+
 Release 5.0.11
 
 * Field.getElementName()
@@ -40,9 +43,9 @@ Release 5.0.11
 
 * Grid Interfaces
 
-  The {{{../apidocs/org/apache/tapestry/grid/GridModel.html}GridModel}} and
+  The {{{../apidocs/org/apache/tapestry/grid/GridModel.html}GridModel}} interface and
   the <<<prepare()>>> method of 
-  {{{../apidocs/org/apache/tapestry/grid/GridDataSource.html}GridDataSource}} have changed to accomidate
+  {{{../apidocs/org/apache/tapestry/grid/GridDataSource.html}GridDataSource}} have changed to accommodate
   the ability to sort using multiple columns.
 
 * PropertyModel
