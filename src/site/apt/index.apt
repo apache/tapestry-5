@@ -58,18 +58,15 @@ Roadmap
 
   Tapestry is, of course, an open-source project, with all the work coming from unpaid volunteers.  That being said, our rough timeline is as follows:
   
-  * Basic components and features by early Spring 2007. This includes all the form components, plus BeanEditForm and Grid, as well as client-side field
-    persistence and other important features.
-  
-  * Ajax features in place by Summer 2007. We're looking for features comprable to, and easier to use than, Tapestry 4.1.
-  
-  * Hibernate and Spring integration in parallel.
-  
-  * Final release, Fall 2007.
-  
-  
-   * ... and if you've been paying attention, you might notice that things have slipped a bit due to the realities of working on a client project
-     that doesn't use Tapestry (it isn't a web application).
+  * 5.0 Release Candidate in Q1 2008
+
+  * 5.0 Final Release shortly thereafter
+
+  * 5.1 development to follow, on a much shorter release schedule
+
+  * ... but we are all open source developers working on our own time and schedules are hard to pin down.  Please be patient.  Tapestry 5
+    is increasingly stable.  Further "stable" with Tapestry usually refers to names of interfaces and methods, not to code quality,
+    which is always very, very high.
      
   []
 
@@ -126,6 +123,8 @@ What's changed since Tapestry 4?
   []
   
 New and Noteworthy
+
+  * A {{{faq/general.html}FAQ (Frequently Asked Questions) page}} has been added.
 
   * An {{{tapestry-ioc/overview.html}overview}} and {{{tapestry-ioc/cookbook/}cookbook}} for Tapestry IoC has been written.
 
