@@ -639,4 +639,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     {
         expect(securityManager.getBaseURL(page)).andReturn(baseURL).atLeastOnce();
     }
+
+    protected final ClientBehaviorSupport mockClientBehaviorSupport()
+    {
+        return newMock(ClientBehaviorSupport.class);
+    }
 }

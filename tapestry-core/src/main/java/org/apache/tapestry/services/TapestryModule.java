@@ -18,6 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
+import org.apache.tapestry.corelib.data.InsertPosition;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.internal.*;
 import org.apache.tapestry.internal.beaneditor.PrimitiveFieldConstraintGenerator;
@@ -563,9 +564,12 @@ public final class TapestryModule
     }
 
     /**
-     * Adds coercions: <ul> <li>String to {@link SelectModel} <li>Map to {@link SelectModel} <li>Collection to {@link
-     * GridDataSource} <li>null to {@link GridDataSource} <li>String to {@link GridPagerPosition} <li>List to {@link
-     * SelectModel} <li>{@link ComponentResourcesAware} (typically, a component) to {@link ComponentResources} </ul>
+     * Adds coercions: <ul> <li>String to {@link org.apache.tapestry.SelectModel} <li>String to {@link
+     * org.apache.tapestry.corelib.data.InsertPosition} <li>Map to {@link org.apache.tapestry.SelectModel}
+     * <li>Collection to {@link GridDataSource} <li>null to {@link org.apache.tapestry.grid.GridDataSource} <li>String
+     * to {@link org.apache.tapestry.corelib.data.GridPagerPosition} <li>List to {@link SelectModel} <li>{@link
+     * org.apache.tapestry.runtime.ComponentResourcesAware} (typically, a component) to {@link
+     * org.apache.tapestry.ComponentResources} </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
@@ -605,7 +609,9 @@ public final class TapestryModule
         });
 
         add(configuration, String.class, GridPagerPosition.class,
-            new StringToEnumCoercion<GridPagerPosition>(GridPagerPosition.class));
+            StringToEnumCoercion.create(GridPagerPosition.class));
+
+        add(configuration, String.class, InsertPosition.class, StringToEnumCoercion.create(InsertPosition.class));
 
         add(configuration, List.class, SelectModel.class, new Coercion<List, SelectModel>()
         {
@@ -1291,10 +1297,11 @@ public final class TapestryModule
     /**
      * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental}
      * service.  Filters often provide {@link Environmental} services needed by components as they render. <dl>
-     * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd> <dt>ZoneSetup</dt> <dd>Provides {@link
-     * ZoneSetup}</dd> <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance
-     * of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd> </dl>
+     * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd> <dt>ClientBehaviorSupport</dt>
+     * <dd>Provides {@link org.apache.tapestry.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt>
+     * <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides
+     * {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
+     * </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
@@ -1340,21 +1347,21 @@ public final class TapestryModule
             }
         };
 
-        MarkupRendererFilter zoneSetup = new MarkupRendererFilter()
+        MarkupRendererFilter clientBehaviorSupport = new MarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
                 PageRenderSupport pageRenderSupport = _environment.peekRequired(PageRenderSupport.class);
 
-                ZoneSetupImpl setup = new ZoneSetupImpl(pageRenderSupport);
+                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(pageRenderSupport);
 
-                _environment.push(ZoneSetup.class, setup);
+                _environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
 
                 renderer.renderMarkup(writer);
 
-                _environment.pop(ZoneSetup.class);
+                _environment.pop(ClientBehaviorSupport.class);
 
-                setup.writeInitializationScript();
+                clientBehaviorSupport.writeInitializationScript();
             }
         };
 
@@ -1395,7 +1402,7 @@ public final class TapestryModule
 
 
         configuration.add("PageRenderSupport", pageRenderSupport);
-        configuration.add("ZoneSetup", zoneSetup, "after:PageRenderSupport");
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:PageRenderSupport");
         configuration.add("Heartbeat", heartbeat, "after:PageRenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
@@ -1409,8 +1416,8 @@ public final class TapestryModule
      * @param configuration filters for the service
      * @param renderQueue   does most of the work
      * @return the service
-     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration,
-     *      org.apache.tapestry.internal.services.AjaxUIDManager, org.apache.tapestry.Asset, ValidationMessagesSource)
+     * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
+     *      ValidationMessagesSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration,
@@ -1434,14 +1441,13 @@ public final class TapestryModule
      * to {@link #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
      * org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)}
      * } and overlaps it to some degree. <dl> <dt>   PageRenderSupport     </dt> <dd>Provides {@link
-     * org.apache.tapestry.PageRenderSupport}</dd> <dt>ZoneSetup</dt> <dd>Provides {@link ZoneSetup}</dd>
-     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
-     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance
-     * of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd> </dl>
+     * org.apache.tapestry.PageRenderSupport}</dd> <dt>ClientBehaviorSupport</dt> <dd>Provides {@link
+     * org.apache.tapestry.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt> <dd>Provides {@link
+     * org.apache.tapestry.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides {@link
+     * org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
+     * </dl>
      */
     public void contributePartialMarkupRenderer(OrderedConfiguration<PartialMarkupRendererFilter> configuration,
-
-                                                final AjaxUIDManager ajaxUIDManager,
 
                                                 @Path("${tapestry.field-error-marker}")
                                                 final Asset fieldErrorIcon,
@@ -1452,7 +1458,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                String namespace = ":" + ajaxUIDManager.getAjaxUID();
+                String uid = Long.toHexString(System.currentTimeMillis());
+
+                String namespace = ":" + uid;
 
                 PartialRenderPageRenderSupport support = new PartialRenderPageRenderSupport(
                         namespace);
@@ -1467,21 +1475,21 @@ public final class TapestryModule
             }
         };
 
-        PartialMarkupRendererFilter zoneSupport = new PartialMarkupRendererFilter()
+        PartialMarkupRendererFilter clientBehaviorSupport = new PartialMarkupRendererFilter()
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
                 PageRenderSupport pageRenderSupport = _environment.peekRequired(PageRenderSupport.class);
 
-                ZoneSetupImpl setup = new ZoneSetupImpl(pageRenderSupport);
+                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(pageRenderSupport);
 
-                _environment.push(ZoneSetup.class, setup);
+                _environment.push(ClientBehaviorSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
 
-                _environment.pop(ZoneSetup.class);
+                _environment.pop(ClientBehaviorSupport.class);
 
-                setup.writeInitializationScript();
+                support.writeInitializationScript();
             }
         };
 
@@ -1522,7 +1530,7 @@ public final class TapestryModule
 
 
         configuration.add("PageRenderSupport", pageRenderSupport);
-        configuration.add("ZoneSupport", zoneSupport, "after:PageRenderSupport");
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:PageRenderSupport");
         configuration.add("Heartbeat", heartbeat, "after:PageRenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
@@ -2152,14 +2160,5 @@ public final class TapestryModule
     {
         configuration.add("default", new DefaultNullFieldStrategy());
         configuration.add("zero", new ZeroNullFieldStrategy());
-    }
-
-    public static AjaxUIDManager buildAjaxUIDManager(LinkFactory linkFactory, ServiceResources resources)
-    {
-        AjaxUIDManagerImpl service = resources.autobuild(AjaxUIDManagerImpl.class);
-
-        linkFactory.addListener(service);
-
-        return service;
     }
 }

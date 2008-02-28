@@ -21,7 +21,7 @@ import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry.corelib.internal.WrappedComponentAction;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.internal.services.ZoneSetup;
+import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
@@ -84,7 +84,7 @@ public class FormFragment implements ClientElement
     private ComponentResources _resources;
 
     @Environmental
-    private ZoneSetup _zoneSetup;
+    private ClientBehaviorSupport _clientBehaviorSupport;
 
     private String _clientId;
 
@@ -162,7 +162,7 @@ public class FormFragment implements ClientElement
         writer.end();
 
 
-        _zoneSetup.addFormFragment(_clientId, _show, _hide);
+        _clientBehaviorSupport.addFormFragment(_clientId, _show, _hide);
 
         _componentActions = CollectionFactory.newList();
 

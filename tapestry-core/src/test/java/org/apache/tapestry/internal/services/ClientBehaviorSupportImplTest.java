@@ -15,12 +15,12 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.PageRenderSupport;
-import static org.apache.tapestry.internal.services.ZoneSetupImpl.ZONE_INITIALIZER_STRING;
+import static org.apache.tapestry.internal.services.ClientBehaviorSupportImpl.ZONE_INITIALIZER_STRING;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
 
-public class ZoneSetupImplTest extends TapestryTestCase
+public class ClientBehaviorSupportImplTest extends TapestryTestCase
 {
     @Test
     public void no_changes()
@@ -29,7 +29,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         replay();
 
-        ZoneSetupImpl setup = new ZoneSetupImpl(support);
+        ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
         setup.writeInitializationScript();
 
@@ -47,7 +47,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         replay();
 
-        ZoneSetupImpl setup = new ZoneSetupImpl(support);
+        ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
         setup.linkZone("client1", "zone1");
         setup.linkZone("client2", "zone2");
@@ -68,7 +68,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         replay();
 
-        ZoneSetupImpl setup = new ZoneSetupImpl(support);
+        ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
         setup.addZone("client1", null, null);
         setup.addZone("client2", null, null);
@@ -91,7 +91,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         replay();
 
-        ZoneSetupImpl setup = new ZoneSetupImpl(support);
+        ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
         setup.addZone("client1", "showme", null);
         setup.addZone("client2", null, "updateme");
@@ -113,7 +113,7 @@ public class ZoneSetupImplTest extends TapestryTestCase
 
         replay();
 
-        ZoneSetupImpl setup = new ZoneSetupImpl(support);
+        ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
         setup.addZone("client1", "ShowMe", null);
         setup.addZone("client2", null, "UpdateMe");

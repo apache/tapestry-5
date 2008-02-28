@@ -134,6 +134,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         _page.discardPersistentFieldChanges();
     }
 
+    public String getElementName()
+    {
+        return getElementName(null);
+    }
 
     public String getCompleteId()
     {
@@ -347,9 +351,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         return _messages;
     }
 
-    public String getElementName()
+    public String getElementName(String defaultElementName)
     {
-        return _element.getElementName();
+        return _element.getElementName(defaultElementName);
     }
 
     public void queueRender(RenderQueue queue)

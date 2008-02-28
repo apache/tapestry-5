@@ -63,6 +63,11 @@ public class PageRenderQueueImpl implements PageRenderQueue
         _rootCommand = rootCommand;
     }
 
+    public RenderCommand getRootRenderCommand()
+    {
+        return _rootCommand;
+    }
+
     public Page getRenderingPage()
     {
         return _page;

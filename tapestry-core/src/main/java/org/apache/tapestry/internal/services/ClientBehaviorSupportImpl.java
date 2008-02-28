@@ -14,11 +14,14 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.Field;
+import org.apache.tapestry.Link;
 import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.corelib.data.InsertPosition;
 import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.json.JSONObject;
 
-public class ZoneSetupImpl implements ZoneSetup
+public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
     static final String ZONE_INITIALIZER_STRING = "Tapestry.initializeZones(%s, %s);";
 
@@ -30,11 +33,13 @@ public class ZoneSetupImpl implements ZoneSetup
 
     private final JSONArray _subForms = new JSONArray();
 
+    private final JSONArray _injectors = new JSONArray();
+
+    private final JSONObject _validations = new JSONObject();
+
     private boolean _zonesDirty;
 
-    private boolean _subformsDirty;
-
-    public ZoneSetupImpl(PageRenderSupport pageRenderSupport)
+    public ClientBehaviorSupportImpl(PageRenderSupport pageRenderSupport)
     {
         _pageRenderSupport = pageRenderSupport;
     }
@@ -78,16 +83,57 @@ public class ZoneSetupImpl implements ZoneSetup
         addFunction(spec, "hide", hideFunctionName);
 
         _subForms.put(spec);
+    }
 
-        _subformsDirty = true;
+    public void addFormInjector(String clientId, Link link, InsertPosition insertPosition, String showFunctionName)
+    {
+        JSONObject spec = new JSONObject();
+        spec.put("element", clientId);
 
+        spec.put("url", link.toAbsoluteURI());
+
+        if (insertPosition == InsertPosition.BELOW)
+            spec.put("below", true);
+
+        addFunction(spec, "show", showFunctionName);
+
+        _injectors.put(spec);
+    }
+
+    public void addValidation(Field field, String validationName, String message, Object constraint)
+    {
+        String fieldId = field.getClientId();
+
+        JSONArray specs;
+
+        if (_validations.has(fieldId)) specs = _validations.getJSONArray(fieldId);
+        else
+        {
+            specs = new JSONArray();
+            _validations.put(fieldId, specs);
+        }
+
+        JSONArray thisSpec = new JSONArray();
+
+        thisSpec.put(validationName);
+        thisSpec.put(message);
+
+        if (constraint != null) thisSpec.put(constraint);
+
+        specs.put(thisSpec);
     }
 
     public void writeInitializationScript()
     {
         if (_zonesDirty) _pageRenderSupport.addScript(ZONE_INITIALIZER_STRING, _zones, _links);
 
-        if (_subformsDirty)
+        if (_subForms.length() > 0)
             _pageRenderSupport.addScript("Tapestry.initializeFormFragments(%s);", _subForms);
+
+        if (_injectors.length() > 0)
+            _pageRenderSupport.addScript("Tapestry.initializeFormInjectors(%s);", _injectors);
+
+        if (_validations.length() > 0)
+            _pageRenderSupport.addScript("Tapestry.registerValidation(%s);", _validations);
     }
 }

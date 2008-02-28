@@ -91,7 +91,9 @@ public class TestableRequestImpl implements TestableRequest
 
     public String[] getParameters(String name)
     {
-        return nyi("getParameters");
+        String value = getParameter(name);
+
+        return value == null ? null : new String[] { value };
     }
 
     public String getPath()

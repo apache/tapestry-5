@@ -1065,9 +1065,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return _page.getLocale();
     }
 
-    public String getElementName()
+    public String getElementName(String defaultElementName)
     {
-        return _elementName;
+        return _elementName != null ? _elementName : defaultElementName;
     }
 
     public Block getBlock(String id)

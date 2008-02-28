@@ -24,6 +24,8 @@ var Tapestry = {
 
     FormFragment : Class.create(),
 
+    FormInjector : Class.create(),
+
     ErrorPopup : Class.create(),
 
     // An array of ErrorPopup that have been created for fields within the page
@@ -39,11 +41,11 @@ var Tapestry = {
         document.observe("dom:loaded", callback);
     },
 
-    // Find all elements marked with the "t-invisible" CSS class and hide() them, so that
-    // Prototype's visible() method operates correctly. This is invoked when the
-    // DOM is first loaded, and AGAIN whenever dynamic content is loaded via the Zone
-    // mechanism.
-
+    /** Find all elements marked with the "t-invisible" CSS class and hide()s them, so that
+     * Prototype's visible() method operates correctly. This is invoked when the
+     * DOM is first loaded, and AGAIN whenever dynamic content is loaded via the Zone
+     * mechanism.     In addition, adds a focus listener for each form element.
+     */
     onDomLoadedCallback : function()
     {
         $$(".t-invisible").each(function(element)
@@ -78,18 +80,17 @@ var Tapestry = {
         });
     },
 
-    registerForm : function(form, clientValidations)
-    {
-        new Tapestry.FormEventManager(form);
-
-        this.registerValidations(form, clientValidations);
-    },
-
-    registerValidations : function(form, clientValidations)
+    registerValidation : function(clientValidations)
     {
         $H(clientValidations).each(function(pair)
         {
             var field = $(pair.key);
+
+            var form = $(field.form);
+
+            if (! form.eventManager)
+                form.eventManager = new Tapestry.FormEventManager(form);
+
             var specs = pair.value;
 
             specs.each(function(spec)
@@ -115,9 +116,22 @@ var Tapestry = {
         });
     },
 
-    // Convert a form or link into a trigger of an Ajax update that
-    // updates the indicated Zone.
+    /**
+     * Passed the JSON content of a Tapestry partial markup response, extracts
+     * the script key (if present) and evals it, then uses the DOM loaded callback
+     * to hide invisible fields and add notifications for any form elements.
+     */
+    processScriptInReply : function(reply)
+    {
+        if (reply.script != undefined)
+            eval(reply.script);
 
+        Tapestry.onDomLoadedCallback();
+    },
+
+    /** Convert a form or link into a trigger of an Ajax update that
+     * updates the indicated Zone.
+     */
     linkZone : function(element, zoneDiv)
     {
         element = $(element);
@@ -125,19 +139,12 @@ var Tapestry = {
 
         var successHandler = function(transport)
         {
-            var response = transport.responseText;
-            var reply = eval("(" + response + ")");
+            var reply = transport.responseJSON;
 
             zone.show(reply.content);
 
-            var newScript = reply.script;
-
-            if (newScript != undefined)
-                eval(newScript);
-
-            Tapestry.onDomLoadedCallback();
+            Tapestry.processScriptInReply(reply);
         };
-
 
         if (element.tagName == "FORM")
         {
@@ -204,6 +211,14 @@ var Tapestry = {
         $A(specs).each(function(spec)
         {
             new Tapestry.FormFragment(spec)
+        });
+    },
+
+    initializeFormInjectors : function(specs)
+    {
+        $A(specs).each(function(spec)
+        {
+            new Tapestry.FormInjector(spec);
         });
     },
 
@@ -490,7 +505,6 @@ Tapestry.FormEventManager.prototype = {
     initialize : function(form)
     {
         this.form = $(form);
-        this.form.eventManager = this;
 
         this.form.onsubmit = this.handleSubmit.bindAsEventListener(this);
     },
@@ -521,7 +535,6 @@ Tapestry.FormEventManager.prototype = {
         {
             this.form.fire("form:prepareforsubmit");
         }
-
 
         return event.result;
     }
@@ -775,5 +788,55 @@ Tapestry.FormFragment.prototype = {
     }
 };
 
-Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);
 
+Tapestry.FormInjector.prototype = {
+
+    initialize: function(spec)
+    {
+        this.element = $(spec.element);
+        this.url = spec.url;
+        this.below = spec.below;
+
+        this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.highlight;
+
+        this.element.trigger = function()
+        {
+            var successHandler = function(transport)
+            {
+                var reply = transport.responseJSON;
+
+                // Clone the FormInjector element (usually a div)
+                // to create the new element, that gets inserted
+                // before or after the FormInjector element.
+
+                var newElement = new Element(this.element.tagName);
+
+                newElement.innerHTML = reply.content;
+
+                // Insert the new content before or after the existing element.
+
+                var param = { };
+                var key = this.below ? "after" : "before";
+                param[key] = newElement;
+
+                // Add the new element with the downloaded content.
+
+                this.element.insert(param);
+
+                // Add some animation
+
+                this.showFunc(newElement);
+
+                // Handle any scripting issues.
+
+                Tapestry.processScriptInReply(reply);
+            }.bind(this);
+
+            new Ajax.Request(this.url, { onSuccess : successHandler });
+
+            return false;
+        }.bind(this);
+    }
+};
+
+Tapestry.onDOMLoaded(Tapestry.onDomLoadedCallback);

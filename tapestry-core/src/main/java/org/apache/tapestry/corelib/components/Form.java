@@ -22,10 +22,10 @@ import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
+import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry.internal.services.HeartbeatImpl;
-import org.apache.tapestry.internal.services.ZoneSetup;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry.ioc.Location;
@@ -38,7 +38,6 @@ import org.apache.tapestry.services.*;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import static java.lang.String.format;
 import java.util.List;
 
 /**
@@ -180,7 +179,7 @@ public class Form implements ClientElement, FormValidationControl
     private ComponentEventResultProcessor _componentEventResultProcessor;
 
     @Environmental
-    private ZoneSetup _zoneSetup;
+    private ClientBehaviorSupport _clientBehaviorSupport;
 
     private String _name;
 
@@ -208,17 +207,18 @@ public class Form implements ClientElement, FormValidationControl
             throw new RuntimeException(ex);
         }
 
-        _name = _pageRenderSupport.allocateClientId(_resources.getId());
+        _name = _pageRenderSupport.allocateClientId(_resources);
 
-        _formSupport = new FormSupportImpl(_name, _actions);
+        _formSupport = new FormSupportImpl(_name, _actions, _clientBehaviorSupport, _clientValidation);
 
-        if (_zone != null) _zoneSetup.linkZone(_name, _zone);
+        if (_zone != null) _clientBehaviorSupport.linkZone(_name, _zone);
 
         // TODO: Forms should not allow to nest. Perhaps a set() method instead of a push() method
         // for this kind of check?  
 
         _environment.push(FormSupport.class, _formSupport);
         _environment.push(ValidationTracker.class, _tracker);
+
         // Now that the environment is setup, inform the component or other listeners that the form
         // is about to render.  
 
@@ -261,14 +261,6 @@ public class Form implements ClientElement, FormValidationControl
 
         _formSupport.executeDeferred();
 
-        if (_clientValidation)
-        {
-            // The validations are a JSON object that doesn't need to be enclosed in quotes.
-            // Invoking addScript() will add in the default JavaScript (prototype, scriptaculous, tapestry.js).
-            _pageRenderSupport.addScript(
-                    format("Tapestry.registerForm('%s', %s);", _name, _formSupport.getValidations()));
-        }
-
         String encodingType = _formSupport.getEncodingType();
 
         if (encodingType != null) _form.forceAttributes("enctype", encodingType);
@@ -286,7 +278,13 @@ public class Form implements ClientElement, FormValidationControl
             throw new RuntimeException(ex);
         }
 
-        _div.element("input", "type", "hidden", "name", FORM_DATA, "value", _actions.toBase64());
+        _div.element("input",
+
+                     "type", "hidden",
+
+                     "name", FORM_DATA,
+
+                     "value", _actions.toBase64());
     }
 
     void cleanupRender()
@@ -318,6 +316,7 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
+
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                     _componentEventResultProcessor);
 
@@ -329,45 +328,7 @@ public class Form implements ClientElement, FormValidationControl
 
             if (callback.isAborted()) return true;
 
-            // TODO: Ajax stuff will eventually mean there are multiple values for this parameter
-            // name
-
-            String actionsBase64 = _request.getParameter(FORM_DATA);
-
-            ObjectInputStream ois = null;
-
-            Component component = null;
-
-            try
-            {
-                ois = new Base64ObjectInputStream(actionsBase64);
-
-                while (true)
-                {
-                    String componentId = ois.readUTF();
-                    ComponentAction action = (ComponentAction) ois.readObject();
-
-                    component = _source.getComponent(componentId);
-
-                    action.execute(component);
-
-                    component = null;
-                }
-            }
-            catch (EOFException ex)
-            {
-                // Expected
-            }
-            catch (Exception ex)
-            {
-                Location location = component == null ? null : component.getComponentResources().getLocation();
-
-                throw new TapestryException(ex.getMessage(), location, ex);
-            }
-            finally
-            {
-                InternalUtils.close(ois);
-            }
+            executeStoredActions();
 
             heartbeat.end();
 
@@ -409,6 +370,59 @@ public class Form implements ClientElement, FormValidationControl
         {
             _environment.pop(Heartbeat.class);
             _environment.pop(FormSupport.class);
+        }
+    }
+
+    /**
+     * Pulls the stored actions out of the request, converts them from MIME stream back to object stream and then
+     * objects, and executes them.
+     */
+    private void executeStoredActions()
+    {
+        String[] values = _request.getParameters(FORM_DATA);
+
+        System.out.println("values = " + values);
+
+        if (values == null) return;
+
+        // Due to Ajax (FormInjector) there may be multiple values here, so handle each one individually.
+
+        for (String actionsBase64 : values)
+        {
+            ObjectInputStream ois = null;
+
+            Component component = null;
+
+            try
+            {
+                ois = new Base64ObjectInputStream(actionsBase64);
+
+                while (true)
+                {
+                    String componentId = ois.readUTF();
+                    ComponentAction action = (ComponentAction) ois.readObject();
+
+                    component = _source.getComponent(componentId);
+
+                    action.execute(component);
+
+                    component = null;
+                }
+            }
+            catch (EOFException ex)
+            {
+                // Expected
+            }
+            catch (Exception ex)
+            {
+                Location location = component == null ? null : component.getComponentResources().getLocation();
+
+                throw new TapestryException(ex.getMessage(), location, ex);
+            }
+            finally
+            {
+                InternalUtils.close(ois);
+            }
         }
     }
 
