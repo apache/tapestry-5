@@ -163,6 +163,7 @@ public class FormInjector implements ClientElement
                 }
 
                 _environment.pop(ValidationTracker.class);
+                
                 FormSupportImpl formSupport = (FormSupportImpl) _environment.pop(FormSupport.class);
 
                 formSupport.executeDeferred();
