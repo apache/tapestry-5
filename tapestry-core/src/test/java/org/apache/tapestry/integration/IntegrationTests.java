@@ -796,7 +796,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
         assertAttributeSeries("//script[%d]/@src", 1, "assets/scriptaculous/prototype.js",
-                         "assets/scriptaculous/scriptaculous.js");
+                              "assets/scriptaculous/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 
@@ -1796,5 +1796,35 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("List Event Context Demo");
 
         assertTextSeries("//ul[@id='eventcontext']/li[%d]", 1, "1", "2", "3");
+    }
+
+    public void form_injector()
+    {
+        start("FormInjector Demo");
+
+        assertText("sum", "0.0");
+
+        click("link=Add a row");
+
+        sleep(500);
+
+        type("//input[@type='text'][1]", "5.1");
+
+        // I wanted to add two rows, but Selenium didn't want to play.
+
+        clickAndWait(SUBMIT);
+
+        assertText("sum", "5.1");
+    }
+
+    private void sleep(long timeout)
+    {
+        try
+        {
+            Thread.sleep(timeout);
+        }
+        catch (InterruptedException ex)
+        {
+        }
     }
 }
