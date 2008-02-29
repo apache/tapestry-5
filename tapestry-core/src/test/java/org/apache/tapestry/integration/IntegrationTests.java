@@ -1244,10 +1244,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // HTML entities.
         click("select_0");
 
-        // And that's as far as we can go currently, because
+          // And that's as far as we can go currently, because
         // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
 
-        // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
+       // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
+
+        click("link=Direct JSON response");
     }
 
     /**

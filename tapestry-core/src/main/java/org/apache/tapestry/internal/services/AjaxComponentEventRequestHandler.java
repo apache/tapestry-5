@@ -93,11 +93,20 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         _environment.pop(ComponentEventResultProcessor.class);
 
-        if (_queue.isPartialRenderInitialized())
+        // isAborted() will be true when a non-null value was returned from the event handler method.
+        // Some return types will initialize the PageRenderQueue, others will stream a response directly.
+
+        if (callback.isAborted())
         {
-            _partialRenderer.renderPartialPageMarkup();
+            if (_queue.isPartialRenderInitialized())
+            {
+                _partialRenderer.renderPartialPageMarkup();
+            }
+
             return;
         }
+
+        // Send an empty JSON reply if no value was returned from the component event handler method.
 
         JSONObject reply = new JSONObject();
 
