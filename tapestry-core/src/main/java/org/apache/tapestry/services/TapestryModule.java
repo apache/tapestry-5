@@ -319,7 +319,7 @@ public final class TapestryModule
 
     /**
      * Maps property types to data type names: <ul> <li>String --&gt; text <li>Number --&gt; text <li>Enum --&gt; enum
-     * <li>Boolean --&gt; checkbox <li>Date --&gt; date </ul>
+     * <li>Boolean --&gt; boolean <li>Date --&gt; date </ul>
      */
     public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, String> configuration)
     {
@@ -335,7 +335,7 @@ public final class TapestryModule
 
         configuration.add(Number.class, "text");
         configuration.add(Enum.class, "enum");
-        configuration.add(Boolean.class, "checkbox");
+        configuration.add(Boolean.class, "boolean");
         configuration.add(Date.class, "date");
     }
 
@@ -343,7 +343,7 @@ public final class TapestryModule
     {
         addEditBlock(configuration, "text");
         addEditBlock(configuration, "enum");
-        addEditBlock(configuration, "checkbox");
+        addEditBlock(configuration, "boolean");
         addEditBlock(configuration, "date");
         addEditBlock(configuration, "password");
 

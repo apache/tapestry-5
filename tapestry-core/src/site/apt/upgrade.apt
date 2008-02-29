@@ -53,3 +53,9 @@ Release 5.0.11
   The <<<getWidth()>>> method was removed from the
   {{{../apidocs/org/apache/tapestry/beaneditor/PropertyModel.java}PropertyModel}} interface; the logic
   for deducing the desired field size from the @Width annotation has been moved into AbstractTextField.
+
+* Grid, BeanEditForm, BeanEditor, BeanDisplay
+
+  The data type for boolean values has changed from "checkbox" (reflecting how it is rendered in an edit form) to "boolean"
+  (reflecting what it is). This will only affect your application if you provided an overriding contribution
+  to the {{{../apidocs/org/apache/tapestry/services/BeanBlockSource.html}BeanBlockSource}} service.

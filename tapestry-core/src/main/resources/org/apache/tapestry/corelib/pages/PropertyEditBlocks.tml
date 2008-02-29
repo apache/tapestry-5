@@ -10,7 +10,7 @@
         <input t:id="select"/>
     </t:block>
 
-    <t:block id="checkbox">
+    <t:block id="boolean">
         <t:label for="checkboxField"/>
         <input t:id="checkboxField"/>
     </t:block>
