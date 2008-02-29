@@ -45,6 +45,13 @@ public class BeanDisplay
     private Object _object;
 
     /**
+     * If true, then &lt;span&gt; tags around each output property will be omitted. If false, then a span tag (to
+     * identify the id of each property as the CSS class attribute) will be included.
+     */
+    @Parameter(value = "false")
+    private boolean _lean;
+
+    /**
      * The model that identifies the parameters to be displayed, their order, and every other aspect. If not specified,
      * a default bean model will be created from the type of the object bound to the object parameter.
      */
@@ -135,6 +142,23 @@ public class BeanDisplay
     public ComponentResources getOverrides()
     {
         return _overrides;
+    }
+
+    public String getLabelClass()
+    {
+        return generateClassValue("t-beandisplay-label");
+    }
+
+    private String generateClassValue(String className)
+    {
+        if (_lean) return className;
+
+        return className + " " + getPropertyModel().getId();
+    }
+
+    public String getValueClass()
+    {
+        return generateClassValue("t-beandisplay-value");
     }
 
 }

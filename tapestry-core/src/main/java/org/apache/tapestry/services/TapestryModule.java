@@ -119,6 +119,7 @@ public final class TapestryModule
         binder.bind(ContextValueEncoder.class, ContextValueEncoderImpl.class);
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
+        binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
     }
 
     public static Alias build(Logger logger,

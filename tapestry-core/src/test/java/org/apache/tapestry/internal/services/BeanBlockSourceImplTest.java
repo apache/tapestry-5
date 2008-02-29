@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,13 +20,17 @@ import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.services.BeanBlockContribution;
+import org.apache.tapestry.services.BeanBlockOverrideSource;
 import org.apache.tapestry.services.BeanBlockSource;
 import org.testng.annotations.Test;
 
 import java.util.Collection;
+import java.util.Collections;
 
 public class BeanBlockSourceImplTest extends InternalBaseTestCase
 {
+    private static final Collection<BeanBlockContribution> EMPTY_CONFIGURATION = Collections.emptyList();
+
     @Test
     public void found_display_block()
     {
@@ -42,7 +46,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanBlockSource source = new BeanBlockSourceImpl(cache, configuration);
+        BeanBlockSource source = new BeanBlockSourceImpl(cache, createBeanBlockOverrideSource(cache), configuration);
 
         // Check case insensitivity while we are at it.
         assertTrue(source.hasDisplayBlock("MyData"));
@@ -54,6 +58,40 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void found_display_block_in_override()
+    {
+        Block block = mockBlock();
+        RequestPageCache cache = mockRequestPageCache();
+        BeanBlockOverrideSource overrideSource = mockBeanBlockOverrideSource();
+        String datatype = "MyData";
+
+        expect(overrideSource.hasDisplayBlock(datatype)).andReturn(true);
+        expect(overrideSource.getDisplayBlock(datatype)).andReturn(block);
+
+        replay();
+
+        BeanBlockSource source = new BeanBlockSourceImpl(cache, overrideSource, EMPTY_CONFIGURATION);
+
+        // Check case insensitivity while we are at it.
+        assertTrue(source.hasDisplayBlock(datatype));
+        Block actual = source.getDisplayBlock(datatype);
+
+        assertSame(actual, block);
+
+        verify();
+    }
+
+    protected final BeanBlockOverrideSource mockBeanBlockOverrideSource()
+    {
+        return newMock(BeanBlockOverrideSource.class);
+    }
+
+    private BeanBlockOverrideSource createBeanBlockOverrideSource(RequestPageCache cache)
+    {
+        return new BeanBlockOverrideSourceImpl(cache, EMPTY_CONFIGURATION);
+    }
+
+    @Test
     public void display_block_not_found()
     {
         RequestPageCache cache = mockRequestPageCache();
@@ -61,7 +99,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanBlockSource source = new BeanBlockSourceImpl(cache, configuration);
+        BeanBlockSource source = new BeanBlockSourceImpl(cache, createBeanBlockOverrideSource(cache), configuration);
 
         try
         {
@@ -87,7 +125,7 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanBlockSource source = new BeanBlockSourceImpl(cache, configuration);
+        BeanBlockSource source = new BeanBlockSourceImpl(cache, createBeanBlockOverrideSource(cache), configuration);
 
         try
         {
@@ -119,10 +157,31 @@ public class BeanBlockSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanBlockSource source = new BeanBlockSourceImpl(cache, configuration);
+        BeanBlockSource source = new BeanBlockSourceImpl(cache, createBeanBlockOverrideSource(cache), configuration);
 
         // Check case insensitivity while we are at it.
         Block actual = source.getEditBlock("MyData");
+
+        assertSame(actual, block);
+
+        verify();
+    }
+
+    @Test
+    public void found_edit_block_in_override()
+    {
+        Block block = mockBlock();
+        RequestPageCache cache = mockRequestPageCache();
+        BeanBlockOverrideSource overrideSource = mockBeanBlockOverrideSource();
+        String datatype = "MyData";
+
+        expect(overrideSource.getEditBlock(datatype)).andReturn(block);
+
+        replay();
+
+        BeanBlockSource source = new BeanBlockSourceImpl(cache, overrideSource, EMPTY_CONFIGURATION);
+
+        Block actual = source.getEditBlock(datatype);
 
         assertSame(actual, block);
 

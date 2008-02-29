@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,67 +15,57 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.internal.structure.Page;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.services.BeanBlockContribution;
+import org.apache.tapestry.services.BeanBlockOverrideSource;
 import org.apache.tapestry.services.BeanBlockSource;
 
 import java.util.Collection;
-import java.util.Map;
 
 public class BeanBlockSourceImpl implements BeanBlockSource
 {
-    private final RequestPageCache _pageCache;
+    // This is checked before _masterSource
 
-    private final Map<String, BeanBlockContribution> _display = newCaseInsensitiveMap();
+    private final BeanBlockOverrideSource _overrideSource;
 
-    private final Map<String, BeanBlockContribution> _edit = newCaseInsensitiveMap();
+    private final BeanBlockOverrideSource _masterSource;
+
 
     public BeanBlockSourceImpl(RequestPageCache pageCache,
-                               Collection<BeanBlockContribution> configuration)
+                               BeanBlockOverrideSource overrideSource, Collection<BeanBlockContribution> configuration)
     {
-        _pageCache = pageCache;
-
-        for (BeanBlockContribution contribution : configuration)
-        {
-            Map<String, BeanBlockContribution> map = contribution.isEdit() ? _edit : _display;
-
-            // TODO: Check for conflicts?
-
-            map.put(contribution.getDataType(), contribution);
-        }
+        _overrideSource = overrideSource;
+        _masterSource = new BeanBlockOverrideSourceImpl(pageCache, configuration);
     }
 
     public boolean hasDisplayBlock(String datatype)
     {
-        return _display.containsKey(datatype);
+        return _overrideSource.hasDisplayBlock(datatype) || _masterSource.hasDisplayBlock(datatype);
     }
 
     public Block getDisplayBlock(String datatype)
     {
-        BeanBlockContribution contribution = _display.get(datatype);
+        Block result = _overrideSource.getDisplayBlock(datatype);
 
-        if (contribution == null)
+        if (result == null)
+            result = _masterSource.getDisplayBlock(datatype);
+
+        if (result == null)
             throw new RuntimeException(ServicesMessages.noDisplayForDataType(datatype));
 
-        return toBlock(contribution);
-    }
-
-    private Block toBlock(BeanBlockContribution contribution)
-    {
-        Page page = _pageCache.get(contribution.getPageName());
-
-        return page.getRootElement().getBlock(contribution.getBlockId());
+        return result;
     }
 
     public Block getEditBlock(String datatype)
     {
-        BeanBlockContribution contribution = _edit.get(datatype);
+        Block result = _overrideSource.getEditBlock(datatype);
 
-        if (contribution == null)
+        if (result == null)
+            result = _masterSource.getEditBlock(datatype);
+
+        if (result == null)
             throw new RuntimeException(ServicesMessages.noEditForDataType(datatype));
 
-        return toBlock(contribution);
+        return result;
     }
 
 }
