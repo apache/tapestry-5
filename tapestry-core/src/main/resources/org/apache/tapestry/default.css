@@ -154,6 +154,10 @@ DIV.t-beaneditor-row LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
     vertical-align: middle;
 }
 
+INPUT.t-number {
+    text-align: right;
+}
+
 DIV.t-beandisplay DIV.t-beandisplay-label {
     padding-right: 5px;
 }
