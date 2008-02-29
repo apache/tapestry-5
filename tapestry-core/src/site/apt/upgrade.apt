@@ -31,6 +31,9 @@ Release 5.0.11
   The show and hide parameters of the {{{ref/org/apache/tapestry/corelib/components/Zone.html}Zone}}
   component now have a default binding prefix of "literal".
 
+  In addition, the client-side Tapestry.ZoneEffect object was renamed to Tapestry.ElementEffect to reflect
+  that it can be used with elements that are not explicitly Zones.
+
 * Validator.invokeIfBlank()
 
   The method <<<invokeIfBlank()>>> on interface {{{../apidocs/org/apache/tapestry/Validator.html}Validator}}

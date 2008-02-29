@@ -56,7 +56,7 @@ public class FormFragment implements ClientElement
 
 
     /**
-     * Name of a function on the client-side Tapestry.ZoneEffect object that is invoked to
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to
      * make the fragment  visible.  If not specified, then
      * the default "slidedown" function is used.
      */
@@ -64,7 +64,7 @@ public class FormFragment implements ClientElement
     private String _show;
 
     /**
-     * Name of a function on the client-side Tapestry.ZoneEffect object that is invoked
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked
      * when the fragment is to be hidden. If not specified, the default "slideup" function is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)

@@ -669,7 +669,7 @@ Tapestry.FieldEventManager.prototype = {
 // Wrappers around Prototype and Scriptaculous effects, invoked from Tapestry.Zone.show().
 // All the functions of this object should have all-lowercase names. 
 
-Tapestry.ZoneEffect = {
+Tapestry.ElementEffect = {
 
     show : function(element)
     {
@@ -703,13 +703,13 @@ Tapestry.Zone.prototype = {
     // spec are the parameters for the Zone:
     // trigger: required -- name or instance of link.
     // div: required -- name or instance of div element to be shown, hidden and updated
-    // show: name of Tapestry.ZoneEffect function used to reveal the zone if hidden
-    // update: name of Tapestry.ZoneEffect function used to highlight the zone after it is updated
+    // show: name of Tapestry.ElementEffect function used to reveal the zone if hidden
+    // update: name of Tapestry.ElementEffect function used to highlight the zone after it is updated
     initialize: function(spec)
     {
         this.div = $(spec.div);
-        this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.show;
-        this.updateFunc = Tapestry.ZoneEffect[spec.update] || Tapestry.ZoneEffect.highlight;
+        this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.show;
+        this.updateFunc = Tapestry.ElementEffect[spec.update] || Tapestry.ElementEffect.highlight;
 
      // Link the div back to this zone.
 
@@ -752,8 +752,8 @@ Tapestry.FormFragment.prototype = {
 
         this.hidden = $(spec.element + ":hidden");
 
-        this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.slidedown;
-        this.hideFunc = Tapestry.ZoneEffect[spec.hide] || Tapestry.ZoneEffect.slideup;
+        this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.slidedown;
+        this.hideFunc = Tapestry.ElementEffect[spec.hide] || Tapestry.ElementEffect.slideup;
 
         $(this.hidden.form).observe("form:prepareforsubmit", function()
         {
@@ -797,7 +797,7 @@ Tapestry.FormInjector.prototype = {
         this.url = spec.url;
         this.below = spec.below;
 
-        this.showFunc = Tapestry.ZoneEffect[spec.show] || Tapestry.ZoneEffect.highlight;
+        this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.highlight;
 
         this.element.trigger = function()
         {
