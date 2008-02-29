@@ -34,9 +34,8 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * A way to add new content to an existing Form. The FormInjector emulates its tag from
- * the template (or uses a &lt;div&gt;).
- * When triggered, new content is obtained from the application and is injected before or after the
+ * A way to add new content to an existing Form. The FormInjector emulates its tag from the template (or uses a
+ * &lt;div&gt;). When triggered, new content is obtained from the application and is injected before or after the
  * element.
  */
 @SupportsInformalParameters
@@ -132,14 +131,14 @@ public class FormInjector implements ClientElement
      * event notification is what will ultimately render (typically, its a Block).  However, we do a <em>lot</em> of
      * tricks to provide the desired FormSupport around the what renders.
      */
-    void onInject(EventContext context) throws IOException
+    Object onInject(EventContext context) throws IOException
     {
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                 _componentEventResultProcessor);
 
         _resources.triggerContextEvent(TapestryConstants.ACTION_EVENT, context, callback);
 
-        if (!callback.isAborted()) return;
+        if (!callback.isAborted()) return null;
 
         // Here's where it gets very, very tricky.
 
@@ -163,7 +162,7 @@ public class FormInjector implements ClientElement
                 }
 
                 _environment.pop(ValidationTracker.class);
-                
+
                 FormSupportImpl formSupport = (FormSupportImpl) _environment.pop(FormSupport.class);
 
                 formSupport.executeDeferred();
@@ -206,8 +205,6 @@ public class FormInjector implements ClientElement
             }
         };
 
-        // Replace rootRenderCommand with our more complicated setup.
-
-        _pageRenderQueue.initializeForPartialPageRender(setup);
+        return setup;
     }
 }
