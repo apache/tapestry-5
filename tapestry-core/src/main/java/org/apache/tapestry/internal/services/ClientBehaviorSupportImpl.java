@@ -125,7 +125,8 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
     public void writeInitializationScript()
     {
-        if (_zonesDirty) _pageRenderSupport.addScript(ZONE_INITIALIZER_STRING, _zones, _links);
+        if (_validations.length() > 0)
+            _pageRenderSupport.addScript("Tapestry.registerValidation(%s);", _validations);
 
         if (_subForms.length() > 0)
             _pageRenderSupport.addScript("Tapestry.initializeFormFragments(%s);", _subForms);
@@ -133,7 +134,6 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         if (_injectors.length() > 0)
             _pageRenderSupport.addScript("Tapestry.initializeFormInjectors(%s);", _injectors);
 
-        if (_validations.length() > 0)
-            _pageRenderSupport.addScript("Tapestry.registerValidation(%s);", _validations);
+        if (_zonesDirty) _pageRenderSupport.addScript(ZONE_INITIALIZER_STRING, _zones, _links);
     }
 }
