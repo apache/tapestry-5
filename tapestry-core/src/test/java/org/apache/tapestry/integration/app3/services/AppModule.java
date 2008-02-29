@@ -21,6 +21,6 @@ public class AppModule
 {
     public void contributeBeanBlockOverrideSource(Configuration<BeanBlockContribution> configuration)
     {
-        configuration.add(new BeanBlockContribution("checkbox", "PropertyDisplayBlockOverrides", "boolean", false));
+        configuration.add(new BeanBlockContribution("boolean", "PropertyDisplayBlockOverrides", "boolean", false));
     }
 }

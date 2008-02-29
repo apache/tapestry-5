@@ -1785,7 +1785,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(SUBMIT);
 
-        assertSourcePresent("<div class=\"t-beandisplay-value\">237</div>");
+        assertText("//div[@class['t-beandisplay-value value']", "237");
     }
 
     /**
