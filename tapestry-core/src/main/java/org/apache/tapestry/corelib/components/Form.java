@@ -381,8 +381,6 @@ public class Form implements ClientElement, FormValidationControl
     {
         String[] values = _request.getParameters(FORM_DATA);
 
-        System.out.println("values = " + values);
-
         if (values == null) return;
 
         // Due to Ajax (FormInjector) there may be multiple values here, so handle each one individually.
