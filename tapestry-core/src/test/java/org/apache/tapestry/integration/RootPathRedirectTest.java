@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package org.apache.tapestry.integration;
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
-@Test(timeOut = 50000, sequential = true, groups = {"integration"})
+@Test(timeOut = 50000, sequential = true, groups = { "integration" })
 public class RootPathRedirectTest extends AbstractIntegrationTestSuite
 {
 
@@ -38,5 +38,14 @@ public class RootPathRedirectTest extends AbstractIntegrationTestSuite
         open(BASE_URL);
 
         assertText("//h1", "Login Page");
+    }
+
+    @Test
+    public void bean_block_overrides()
+    {
+        start("BeanDisplay Override Demo");
+
+        assertText("//div[@class='t-beandisplay-value no']", "Nay");
+        assertText("//div[@class='t-beandisplay-value yes']", "Yea");
     }
 }
