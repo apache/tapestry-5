@@ -40,7 +40,12 @@ public class PropertyEditBlocks
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextField _textField, _numberField;
+    private TextField _textField;
+
+    @Component(
+            parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:numberFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
+    private TextField _numberField;
+
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId" })
@@ -74,6 +79,11 @@ public class PropertyEditBlocks
     public FieldValidator getTextFieldValidator()
     {
         return _context.getValidator(_textField);
+    }
+
+    public FieldValidator getNumberFieldValidator()
+    {
+        return _context.getValidator(_numberField);
     }
 
     public FieldValidator getPasswordFieldValidator()
