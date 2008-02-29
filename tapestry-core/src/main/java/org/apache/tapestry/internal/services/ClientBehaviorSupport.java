@@ -29,7 +29,7 @@ public interface ClientBehaviorSupport
     /**
      * Adds a new client-side Tapestry.Zone object. Zones are linked to a an element (typically, a &lt;div&gt;).  A Zone
      * may have handlers used to initially show it, or to highlight it when its content changes. Such handlers are
-     * referenced by name, as functions of the Tapestry.ZoneEffect object.
+     * referenced by name, as functions of the Tapestry.ElementEffect object.
      *
      * @param clientId           client-side id of the element that will be updated by the zone
      * @param showFunctionName   name of the function used to initially show the zone (if not visible), or null for
@@ -51,7 +51,7 @@ public interface ClientBehaviorSupport
      * visible or invisible, which involves interactions with both the server-side and client-side validation.
      *
      * @param clientId         client-side id of the element that will be made visible or invisible
-     * @param showFunctionName name of function (of the Tapestry.ZoneEffect object) used to make the SubForm visible, or
+     * @param showFunctionName name of function (of the Tapestry.ElementEffect object) used to make the SubForm visible, or
      *                         null for the default
      * @param hideFunctionName name of the function used to make the SubForm invisible, or null for the default
      */
@@ -64,7 +64,7 @@ public interface ClientBehaviorSupport
      * @param clientId         client-side id of the element that identifiess where the new content will be placed
      * @param link             action request link used to trigger the server-side object, to render the new content
      * @param insertPosition   where the new content should go (above or below the element)
-     * @param showFunctionName name of function (of the Tapestry.ZoneEffect object) used to make the new element
+     * @param showFunctionName name of function (of the Tapestry.ElementEffect object) used to make the new element
      *                         visible, or null for the default
      */
     void addFormInjector(String clientId, Link link, InsertPosition insertPosition, String showFunctionName);

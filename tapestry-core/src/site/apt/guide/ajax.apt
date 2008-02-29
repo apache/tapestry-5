@@ -267,8 +267,8 @@ Ajax Components and Mixins
 ** Zone Functions
 
   A Zone may be initially visible or invisible.  When a Zone is updated, it is made visible if not currently so.
-  This is accomplished via a function on the Tapestry.ZoneEffect client-side object.  By default, the show()
-  function is used for this purpose.  The Zone's show parameter is the <name> of a Tapestry.ZoneEffect function.
+  This is accomplished via a function on the Tapestry.ElementEffect client-side object.  By default, the show()
+  function is used for this purpose.  The Zone's show parameter is the <name> of a Tapestry.ElementEffect function.
 
   If a Zone is already visible, then a different function is used to highlight the change. Here it is
   the Zone's update parameter, and a default highlight() function, which perfroms a yellow fade to highlight
@@ -281,7 +281,7 @@ Ajax Components and Mixins
    then reference those ids inside ActionLink components. Using Zone components inside any kind of loop
    may cause additional problems, as Tapestry will <uniqueify> the client id you specify (appending an index number).
 
-   The show and update function names are converted to lower case; all the methods of Tapestry.ZoneEffect should have
+   The show and update function names are converted to lower case; all the methods of Tapestry.ElementEffect should have
    all lower-case names.  Because client-side JavaScript is so fluid (new methods may be added to
    existing objects), Tapestry makes no attempt to validate the function names ... however, if the names
    are not valid, then the default show and highlight methods will be used.
@@ -295,7 +295,7 @@ Ajax Components and Mixins
 
   * Extending a Form with a Zone
 
-  * Additional Tapestry.ZoneEffect functions, plus documentation
+  * Additional Tapestry.ElementEffect functions, plus documentation
 
   * Real examples ...
 
