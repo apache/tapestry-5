@@ -57,5 +57,6 @@ Release 5.0.11
 * Grid, BeanEditForm, BeanEditor, BeanDisplay
 
   The data type for boolean values has changed from "checkbox" (reflecting how it is rendered in an edit form) to "boolean"
-  (reflecting what it is). This will only affect your application if you provided an overriding contribution
+  (reflecting what it is). In addition, all numeric types are given the data type "number".
+  This will only affect your application if you provided an overriding contribution
   to the {{{../apidocs/org/apache/tapestry/services/BeanBlockSource.html}BeanBlockSource}} service.

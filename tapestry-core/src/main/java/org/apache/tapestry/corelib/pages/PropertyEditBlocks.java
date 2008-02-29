@@ -40,7 +40,7 @@ public class PropertyEditBlocks
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextField _textField;
+    private TextField _textField, _numberField;
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId" })
