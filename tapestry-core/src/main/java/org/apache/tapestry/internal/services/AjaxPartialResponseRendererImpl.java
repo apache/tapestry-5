@@ -55,7 +55,7 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
                 InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
         String charset = pageContentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER);
 
-        ContentType contentType = new ContentType("application/json");
+        ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
         contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
 
         MarkupWriter writer = _factory.newMarkupWriter(pageContentType);

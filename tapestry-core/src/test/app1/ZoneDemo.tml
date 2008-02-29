@@ -39,6 +39,9 @@
         <li t:type="loop" source="names" value="name">
             <t:actionlink t:id="select" context="name" zone="output">Select "${name}"</t:actionlink>
         </li>
+        <li>
+            <t:actionlink t:id="JSON" zone="output">Direct JSON response</t:actionlink>
+        </li>
     </ul>
 
 

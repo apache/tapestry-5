@@ -20,6 +20,7 @@ import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.integration.app1.data.RegistrationData;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.json.JSONObject;
 import org.slf4j.Logger;
 
 public class ZoneDemo
@@ -35,7 +36,7 @@ public class ZoneDemo
     @ApplicationState
     private RegistrationData _registration;
 
-    private static final String[] NAMES = {"Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration"};
+    private static final String[] NAMES = { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration" };
 
     @Inject
     private Block _showName;
@@ -90,5 +91,14 @@ public class ZoneDemo
     public RegistrationData getRegistration()
     {
         return _registration;
+    }
+
+    Object onActionFromJSON()
+    {
+        JSONObject response = new JSONObject();
+
+        response.put("content", "Directly coded JSON content");
+
+        return response;
     }
 }
