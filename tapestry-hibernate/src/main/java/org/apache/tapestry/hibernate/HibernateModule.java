@@ -1,4 +1,4 @@
-// Copyright 2007, 2008 The Apache Software Foundation
+// Copyright 2007 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.ClassNameLocator;
 import org.apache.tapestry.ioc.services.PerthreadManager;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
+import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.services.AliasContribution;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 
 import java.util.Collection;
@@ -52,8 +52,8 @@ public class HibernateModule
     }
 
     /**
-     * Contributes the package "<em>root-package</em>.entities" to the configuration, so that it will be scanned for
-     * annotated entity classes.
+     * Contributes the package "&lt;root&gt;.entities" to the configuration, so that it will be scanned for annotated
+     * entity classes.
      */
     public static void contributeHibernateEntityPackageManager(Configuration<String> configuration,
 
@@ -65,8 +65,8 @@ public class HibernateModule
     }
 
     /**
-     * The session manager manages sessions on a per-thread/per-request basis. A {@link Transaction} is created
-     * initially, and is committed at the end of the request.
+     * The session manager manages sessions on a per-thread/per-request basis. A {@link org.hibernate.Transaction} is
+     * created initially, and is committed at the end of the request.
      */
     @Scope(PERTHREAD_SCOPE)
     public static HibernateSessionManager build(HibernateSessionSource sessionSource, PerthreadManager perthreadManager)
@@ -78,15 +78,20 @@ public class HibernateModule
         return service;
     }
 
-    public static Session build(HibernateSessionManager sessionManager, PropertyShadowBuilder propertyShadowBuilder)
+    public static Session build(HibernateSessionManager sessionManager,
+                                PropertyShadowBuilder propertyShadowBuilder)
     {
         // Here's the thing: the tapestry.hibernate.Session class doesn't have to be per-thread,
-        // since it will invoke getSession() on the HibernateSessionManager service (which is per-thread).
-        // On first invocation per request,
+        // since
+        // it will invoke getSession() on the HibernateSessionManager service (which is per-thread).
+        // On
+        // first invocation per request,
         // this forces the HSM into existence (which creates the session and begins the
-        // transaction). Thus we don't actually create
+        // transaction).
+        // Thus we don't actually create
         // a session until we first try to access it, then the session continues to exist for the
-        // rest of the request.
+        // rest
+        // of the request.
 
         return propertyShadowBuilder.build(sessionManager, "session", Session.class);
     }
@@ -102,14 +107,19 @@ public class HibernateModule
         configuration.add(AliasContribution.create(Session.class, session));
     }
 
-    public static HibernateSessionSource build(Logger log, List<HibernateConfigurer> config)
+    public static HibernateSessionSource build(Logger logger, List<HibernateConfigurer> config,
+                                               RegistryShutdownHub hub)
     {
-        return new HibernateSessionSourceImpl(log, config);
+        HibernateSessionSourceImpl hss = new HibernateSessionSourceImpl(logger, config);
+
+        hub.addRegistryShutdownListener(hss);
+
+        return hss;
     }
 
     /**
-     * Adds the following configurers: <dl> <dt>Default</dt> <dd>Performs default hibernate configuration</dd>
-     * <dt>PackageName</dt> <dd>Loads entities by package name</dd> </ul>
+     * Adds the following configurers: <ul> <li>Default - performs default hibernate configuration</li> <li>PackageName
+     * - loads entities by package name</li> </ul>
      */
     public static void contributeHibernateSessionSource(OrderedConfiguration<HibernateConfigurer> config,
                                                         final ClassNameLocator classNameLocator,

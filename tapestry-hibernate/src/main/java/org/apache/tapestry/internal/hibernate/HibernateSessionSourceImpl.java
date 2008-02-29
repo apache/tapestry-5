@@ -14,17 +14,18 @@
 
 package org.apache.tapestry.internal.hibernate;
 
-import java.util.List;
-
 import org.apache.tapestry.hibernate.HibernateConfigurer;
 import org.apache.tapestry.hibernate.HibernateSessionSource;
+import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 
-public class HibernateSessionSourceImpl implements HibernateSessionSource
+import java.util.List;
+
+public class HibernateSessionSourceImpl implements HibernateSessionSource, RegistryShutdownListener
 {
     private final SessionFactory _sessionFactory;
     private final Configuration _configuration;
@@ -35,8 +36,8 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
 
         Configuration configuration = new AnnotationConfiguration();
 
-        for(HibernateConfigurer configurer : hibernateConfigurers)
-        	configurer.configure(configuration);
+        for (HibernateConfigurer configurer : hibernateConfigurers)
+            configurer.configure(configuration);
 
         long configurationComplete = System.currentTimeMillis();
 
@@ -65,9 +66,14 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource
         return _sessionFactory;
     }
 
-	public Configuration getConfiguration() {
-		return _configuration;
-	}
-    
-    
+    public Configuration getConfiguration()
+    {
+        return _configuration;
+    }
+
+    public void registryDidShutdown()
+    {
+        _sessionFactory.close();
+    }
+
 }
