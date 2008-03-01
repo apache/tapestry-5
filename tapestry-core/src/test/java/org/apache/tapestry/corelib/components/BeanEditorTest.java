@@ -33,12 +33,15 @@ public class BeanEditorTest extends TapestryTestCase
         ComponentResources containerResources = mockComponentResources();
         BeanModelSource source = mockBeanModelSource();
         BeanModel model = mockBeanModel();
+        RegistrationData data = new RegistrationData();
 
         train_getBoundType(resources, "object", RegistrationData.class);
 
         train_getContainerResources(overrides, containerResources);
 
         train_create(source, RegistrationData.class, true, containerResources, model);
+
+        expect(model.newInstance()).andReturn(data);
 
         replay();
 
@@ -48,31 +51,42 @@ public class BeanEditorTest extends TapestryTestCase
 
         component.doPrepare();
 
-        Object object = component.getObject();
-
-        assertNotNull(object);
-        assertSame(object.getClass(), RegistrationData.class);
+        assertSame(component.getObject(), data);
 
         verify();
     }
+
 
     @Test
     public void object_can_not_be_instantiated()
     {
         ComponentResources resources = mockComponentResources();
+        ComponentResources overrides = mockComponentResources();
+        ComponentResources containerResources = mockComponentResources();
+        BeanModelSource source = mockBeanModelSource();
+        BeanModel model = mockBeanModel();
         Location l = mockLocation();
+        Throwable exception = new RuntimeException("Fall down go boom.");
 
         train_getBoundType(resources, "object", Runnable.class);
+
+        train_getContainerResources(overrides, containerResources);
+
+        train_create(source, Runnable.class, true, containerResources, model);
+
+        expect(model.newInstance()).andThrow(exception);
 
         train_getCompleteId(resources, "Foo.bar");
 
         train_getLocation(resources, l);
 
+        expect(model.getBeanType()).andReturn(Runnable.class);
+
         replay();
 
         BeanEditor component = new BeanEditor();
 
-        component.inject(resources, null, null);
+        component.inject(resources, overrides, source);
 
         try
         {
@@ -84,6 +98,7 @@ public class BeanEditorTest extends TapestryTestCase
             assertMessageContains(
                     ex,
                     "Exception instantiating instance of java.lang.Runnable (for component \'Foo.bar\'):");
+
             assertSame(ex.getLocation(), l);
         }
 

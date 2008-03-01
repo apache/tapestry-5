@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.annotations.Primary;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
@@ -48,9 +49,11 @@ public class BeanModelSourceImpl implements BeanModelSource
 
     private final DataTypeAnalyzer _dataTypeAnalyzer;
 
+    private final ObjectLocator _locator;
+
     public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer, PropertyAccess propertyAccess,
                                PropertyConduitSource propertyConduitSource, @ComponentLayer ClassFactory classFactory,
-                               @Primary DataTypeAnalyzer dataTypeAnalyzer)
+                               @Primary DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
     {
         _loggerSource = loggerSource;
         _typeCoercer = typeCoercer;
@@ -58,9 +61,10 @@ public class BeanModelSourceImpl implements BeanModelSource
         _propertyConduitSource = propertyConduitSource;
         _classFactory = classFactory;
         _dataTypeAnalyzer = dataTypeAnalyzer;
+        _locator = locator;
     }
 
-    public BeanModel create(Class beanClass, boolean filterReadOnlyProperties, ComponentResources resources)
+    public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, ComponentResources resources)
     {
         notNull(beanClass, "beanClass");
         notNull(resources, "resources");
@@ -69,7 +73,8 @@ public class BeanModelSourceImpl implements BeanModelSource
 
         ClassPropertyAdapter adapter = _propertyAccess.getAdapter(beanClass);
 
-        final BeanModel model = new BeanModelImpl(beanClass, _propertyConduitSource, _typeCoercer, messages);
+        final BeanModel<T> model = new BeanModelImpl<T>(beanClass, _propertyConduitSource, _typeCoercer, messages,
+                                                        _locator);
 
         List<String> propertyNames = newList();
 

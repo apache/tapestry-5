@@ -45,5 +45,5 @@ public interface BeanModelSource
      *                                 labels)
      * @return a model
      */
-    BeanModel create(Class beanClass, boolean filterReadOnlyProperties, ComponentResources resources);
+    <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, ComponentResources resources);
 }

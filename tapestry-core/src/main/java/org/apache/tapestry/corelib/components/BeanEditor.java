@@ -30,9 +30,8 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
 
 /**
- * A component that generates a user interface for editing the properties of a bean. This is the
- * central component of the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of
- * its functionality.
+ * A component that generates a user interface for editing the properties of a bean. This is the central component of
+ * the {@link BeanEditForm}, and utilizes a {@link PropertyEditor} for much of its functionality.
  */
 @SupportsInformalParameters
 public class BeanEditor
@@ -48,42 +47,40 @@ public class BeanEditor
     }
 
     /**
-     * The object to be edited by the BeanEditor. This will be read when the component renders and
-     * updated when the form for the component is submitted. Typically, the container will listen
-     * for a "prepare" event, in order to ensure that a non-null value is ready to be read or
-     * updated.
+     * The object to be edited by the BeanEditor. This will be read when the component renders and updated when the form
+     * for the component is submitted. Typically, the container will listen for a "prepare" event, in order to ensure
+     * that a non-null value is ready to be read or updated.
      */
     @Parameter
     private Object _object;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names
-     * are case-insensitive.
+     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
+     * case-insensitive.
      */
     @Parameter(defaultPrefix = "literal")
     private String _remove;
 
     /**
-     * A comma-separated list of property names indicating the order in which the properties should
-     * be presented. The names are case insensitive. Any properties not indicated in the list will
-     * be appended to the end of the display order.
+     * A comma-separated list of property names indicating the order in which the properties should be presented. The
+     * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
+     * order.
      */
     @Parameter(defaultPrefix = "literal")
     private String _reorder;
 
     /**
-     * The model that identifies the parameters to be edited, their order, and every other aspect.
-     * If not specified, a default bean model will be created from the type of the object bound to
-     * the object parameter.
+     * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
+     * default bean model will be created from the type of the object bound to the object parameter.
      */
     @Parameter
     private BeanModel _model;
 
     /**
-     * Where to search for local overrides of property editing blocks as block parameters. Further,
-     * the container of the overrides is used as the source for overridden validation messages. This
-     * is normally the BeanEditor component itself, but when the component is used within a BeanEditForm, it
-     * will be the BeanEditForm's resources that will be searched.
+     * Where to search for local overrides of property editing blocks as block parameters. Further, the container of the
+     * overrides is used as the source for overridden validation messages. This is normally the BeanEditor component
+     * itself, but when the component is used within a BeanEditForm, it will be the BeanEditForm's resources that will
+     * be searched.
      */
     @Parameter(value = "componentResources")
     private ComponentResources _overrides;
@@ -147,40 +144,34 @@ public class BeanEditor
 
     void doPrepare()
     {
+        if (_model == null)
+        {
+            Class type = _resources.getBoundType("object");
+            _model = _modelSource.create(type, true, _overrides.getContainerResources());
+        }
+
         // The only problem here is that if the bound property is backed by a persistent field, it
         // is assigned (and stored to the session, and propagated around the cluster) first,
         // before values are assigned.
 
-        if (_object == null) _object = createDefaultObject();
-
-        assert _object != null;
-
-        if (_model == null)
+        if (_object == null)
         {
-            Class<?> beanType = _object.getClass();
-
-            _model = _modelSource.create(beanType, true, _overrides.getContainerResources());
+            try
+            {
+                _object = _model.newInstance();
+            }
+            catch (Exception ex)
+            {
+                String message = InternalMessages.failureInstantiatingObject(_model.getBeanType(),
+                                                                             _resources.getCompleteId(),
+                                                                             ex);
+                throw new TapestryException(message, _resources.getLocation(), ex);
+            }
         }
 
         if (_remove != null) BeanModelUtils.remove(_model, _remove);
 
         if (_reorder != null) BeanModelUtils.reorder(_model, _reorder);
-    }
-
-    private Object createDefaultObject()
-    {
-        Class type = _resources.getBoundType("object");
-
-        try
-        {
-            return type.newInstance();
-        }
-        catch (Exception ex)
-        {
-            throw new TapestryException(
-                    InternalMessages.failureInstantiatingObject(type, _resources.getCompleteId(), ex),
-                    _resources.getLocation(), ex);
-        }
     }
 
     // For testing

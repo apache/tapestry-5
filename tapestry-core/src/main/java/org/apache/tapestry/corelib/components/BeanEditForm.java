@@ -16,12 +16,11 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.InjectComponent;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
-import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 
@@ -51,11 +50,10 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private String _submitLabel;
 
     /**
-     * The object to be edited. This will be read when the component renders and updated when the form
-     * for the component is submitted. Typically, the container will listen for a "prepare" event, in order to ensure
-     * that a non-null value is ready to be read or updated. Often, the BeanEditForm can create the object as needed
-     * (assuming a public, no arguments constructor).  The object property defaults to a property with the same name as
-     * the component id.
+     * The object to be edited. This will be read when the component renders and updated when the form for the component
+     * is submitted. Typically, the container will listen for a "prepare" event, in order to ensure that a non-null
+     * value is ready to be read or updated. Often, the BeanEditForm can create the object as needed (assuming a public,
+     * no arguments constructor).  The object property defaults to a property with the same name as the component id.
      */
     @SuppressWarnings("unused")
     @Parameter(required = true)
@@ -88,6 +86,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Component(parameters = "clientValidation=inherit:clientValidation")
     private Form _form;
 
+    @InjectComponent
+    private BeanEditor _editor;
+
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
      * default bean model will be created from the type of the object bound to the object parameter.
@@ -102,6 +103,9 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Inject
     private ComponentResources _resources;
 
+    @Inject
+    private BeanModelSource _beanModelSource;
+
     /**
      * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
      */
@@ -110,38 +114,38 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         return _defaultProvider.defaultBinding("object", _resources);
     }
 
-    void onPrepareFromForm()
+    public void setObject(Object object)
     {
-        // Fire a new prepare event to be consumed by the container. This is the container's
-        // chance to ensure that there's an object to edit.
-
-        _resources.triggerEvent(Form.PREPARE, null, null);
-
-        if (_object == null) _object = createDefaultObject();
-
-        assert _object != null;
-    }
-
-    private Object createDefaultObject()
-    {
-        Class type = _resources.getBoundType("object");
-
-        try
-        {
-            return type.newInstance();
-        }
-        catch (Exception ex)
-        {
-            throw new TapestryException(
-                    InternalMessages.failureInstantiatingObject(type, _resources.getCompleteId(), ex),
-                    _resources.getLocation(), ex);
-        }
+        _object = object;
     }
 
     public Object getObject()
     {
         return _object;
     }
+
+    public BeanModel getModel()
+    {
+        return _model;
+    }
+
+    public void setModel(BeanModel model)
+    {
+        _model = model;
+    }
+
+    void onPrepareFromForm()
+    {
+        _resources.triggerEvent(Form.PREPARE, null, null);
+
+        if (_model == null)
+        {
+            Class beanType = _resources.getBoundType("object");
+
+            _model = _beanModelSource.create(beanType, false, _resources.getContainerResources());
+        }
+    }
+
 
     /**
      * Returns the client id of the embedded form.
@@ -180,10 +184,4 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     {
         _form.recordError(errorMessage);
     }
-
-    void inject(ComponentResources resources)
-    {
-        _resources = resources;
-    }
-
 }
