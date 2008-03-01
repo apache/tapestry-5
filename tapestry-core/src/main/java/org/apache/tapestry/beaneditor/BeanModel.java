@@ -23,19 +23,28 @@ import java.util.List;
  * type.
  * <p/>
  * BeanModels are not thread-safe, they are also not serializable.
- * <p>
+ * <p/>
  * Here, and in {@link org.apache.tapestry.beaneditor.PropertyModel}, the term "propertyName" is used for simplicitly.
- * However, a full {@linkplain org.apache.tapestry.services.PropertyConduitSource#create(Class, String) property expression}
- * may be utilized when {@linkplain #add(String) adding new properties to an existing BeanModel}. 
+ * However, a full {@linkplain org.apache.tapestry.services.PropertyConduitSource#create(Class, String) property
+ * expression} may be utilized when {@linkplain #add(String) adding new properties to an existing BeanModel}.
  *
  * @see org.apache.tapestry.services.BeanModelSource
  */
-public interface BeanModel
+public interface BeanModel<T>
 {
     /**
      * Returns the type of bean for which this model was initially created.
      */
-    Class getBeanType();
+    Class<T> getBeanType();
+
+
+    /**
+     * Creates a new bean instance.  This is based on {@link org.apache.tapestry.ioc.ObjectLocator#autobuild(Class)}, so
+     * a public constructor will be used, and dependencies injected.
+     *
+     * @return new instance of the bean
+     */
+    T newInstance();
 
     /**
      * Returns a list of the editable properties of the bean, in <em>presentation</em> order.

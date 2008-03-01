@@ -20,6 +20,7 @@ import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.beaneditor.RelativePosition;
 import org.apache.tapestry.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry.ioc.Messages;
+import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
@@ -32,9 +33,9 @@ import org.apache.tapestry.services.PropertyConduitSource;
 import java.util.List;
 import java.util.Map;
 
-public class BeanModelImpl implements BeanModel
+public class BeanModelImpl<T> implements BeanModel<T>
 {
-    private final Class _beanType;
+    private final Class<T> _beanType;
 
     private final PropertyConduitSource _propertyConduitSource;
 
@@ -42,24 +43,36 @@ public class BeanModelImpl implements BeanModel
 
     private final Messages _messages;
 
+    private final ObjectLocator _locator;
+
     private final Map<String, PropertyModel> _properties = newCaseInsensitiveMap();
 
     // The list of property names, in desired order (generally not alphabetical order).
 
     private final List<String> _propertyNames = CollectionFactory.newList();
 
-    public BeanModelImpl(Class beanType, PropertyConduitSource propertyConduitSource,
-                         TypeCoercer typeCoercer, Messages messages)
+    public BeanModelImpl(
+            Class<T> beanType, PropertyConduitSource
+            propertyConduitSource,
+            TypeCoercer typeCoercer, Messages
+            messages, ObjectLocator locator)
+
     {
         _beanType = beanType;
         _propertyConduitSource = propertyConduitSource;
         _typeCoercer = typeCoercer;
         _messages = messages;
+        _locator = locator;
     }
 
-    public Class getBeanType()
+    public Class<T> getBeanType()
     {
         return _beanType;
+    }
+
+    public T newInstance()
+    {
+        return _locator.autobuild(_beanType);
     }
 
     public PropertyModel add(String propertyName)

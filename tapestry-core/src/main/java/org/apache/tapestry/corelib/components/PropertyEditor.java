@@ -76,7 +76,7 @@ public class PropertyEditor
      * containing component of the PropertyEditor, but when the component is used within a BeanEditor, it will be the
      * BeanEditForm's block parameters that will be searched.
      */
-    @Parameter(value = "componentResources.containerResources")
+    @Parameter(value = "componentResources")
     private ComponentResources _overrides;
 
     /**

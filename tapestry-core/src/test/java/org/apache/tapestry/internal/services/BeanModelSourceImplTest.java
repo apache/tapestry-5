@@ -24,7 +24,6 @@ import org.apache.tapestry.internal.transform.pages.ReadOnlyBean;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.services.BeanModelSource;
 import org.easymock.EasyMock;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -42,12 +41,6 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     public void setup()
     {
         _source = getObject(BeanModelSource.class, null);
-    }
-
-    @AfterClass
-    public void cleanup()
-    {
-        _source = null;
     }
 
     /**
@@ -140,6 +133,32 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         assertEquals(property.getPropertyName(), "middleInitial");
         assertSame(property.getConduit(), conduit);
         assertSame(property.getPropertyType(), propertyType);
+
+        verify();
+    }
+
+    /** TAPESTRY-2202 */
+    @Test
+    public void new_instance()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel<SimpleBean> model = _source.create(SimpleBean.class, true, resources);
+
+        SimpleBean s1 = model.newInstance();
+
+        assertNotNull(s1);
+
+        SimpleBean s2 = model.newInstance();
+
+        assertNotNull(s2);
+        assertNotSame(s1, s2);        
 
         verify();
     }
