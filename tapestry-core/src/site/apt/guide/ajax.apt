@@ -18,9 +18,9 @@ Tapestry Ajax Support
 
 Changes to Prototype
 
-  Tapestry currently uses a slightly patched version of
+  Tapestry currently uses
   {{{http://www.thebungeebook.net/wp-content/uploads/2008/01/prototype-1601.js}Prototype 1.6.0.1}}.  Version 1.6.0.2
-  appears to have some issues supporting Internet Explorer.  Tapestry's version is slightly patch
+  appears to have some issues supporting Internet Explorer.  Tapestry's version is slightly patched
   for {{{https://issues.apache.org/jira/browse/TAPESTRY-2108}TAPESTRY-2108}}.
 
 Changes to Scriptaculous
@@ -318,7 +318,7 @@ Your own Ajax Components
 
   The possible return values are:
 
-  * A Block or Component to render as the response.  The response will be a JSON hash, will a "content" key
+  * A Block or Component to render as the response.  The response will be a JSON hash, with a "content" key
     whose value is the rendered markup.  This is the basis for updates with the Zone component.
 
   * A {{{../../apidocs/org/apache/tapestry/json/JSONObject.html}JSONObject}}, which will be sent as the response.
@@ -326,9 +326,5 @@ Your own Ajax Components
   * A {{{../../apidocs/org/apache/tapestry/StreamResponse.html}StreamResponse}}, which will be sent as the response.
 
   []
-
-  In the case of a  Block or Component, the rendering occurs but is packaged up as a JSON response.
-  The JSON response contains a single map containing a single key: "content" whose value is the markup
-  generated from the component or block.
 
 

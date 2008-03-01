@@ -1244,10 +1244,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // HTML entities.
         click("select_0");
 
-          // And that's as far as we can go currently, because
+        // And that's as far as we can go currently, because
         // of limitations in Selenium 0.8.3 and bugs in Selenium 0.9.2.
 
-       // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
+        // assertTextPresent("Selected: Mr. &lt;Roboto&gt;");
 
         click("link=Direct JSON response");
     }
@@ -1759,6 +1759,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
      * TAPESTRY-2150.  Also demonstrates how to add a ValueEncoder for an entity object, to allow seamless encoding of
      * the entity's id into the URL.
      */
+    @Test
     public void nested_page_names()
     {
         start("Music Page", "2");
@@ -1773,6 +1774,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     /**
      * TAPESTRY-1869
      */
+    @Test
     public void null_fields_and_bean_editor()
     {
         start("Number BeanEditor Demo");
@@ -1793,6 +1795,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     /**
      * TAPESTRY-1999
      */
+    @Test
     public void list_as_event_context()
     {
         start("List Event Context Demo");
@@ -1800,6 +1803,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertTextSeries("//ul[@id='eventcontext']/li[%d]", 1, "1", "2", "3");
     }
 
+    @Test
     public void form_injector()
     {
         start("FormInjector Demo");
@@ -1817,6 +1821,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait(SUBMIT);
 
         assertText("sum", "5.1");
+    }
+
+    /**
+     * TAPESTRY-2196
+     */
+    @Test
+    public void protected_field_in_page_class()
+    {
+        start("Protected Fields Demo");
+
+        assertTextPresent("An unexpected application exception has occurred.",
+                          "Class org.apache.tapestry.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
     private void sleep(long timeout)
