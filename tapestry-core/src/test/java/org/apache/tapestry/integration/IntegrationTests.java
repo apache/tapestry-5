@@ -1829,7 +1829,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     @Test
     public void protected_field_in_page_class()
     {
-        start("Protected Fields Demo");
+        start("Protected Fields Demo", "Trigger the Exception");
 
         assertTextPresent("An unexpected application exception has occurred.",
                           "Class org.apache.tapestry.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");

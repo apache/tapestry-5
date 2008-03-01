@@ -21,7 +21,7 @@ public class IndirectProtectedFields
     @InjectPage
     private ProtectedFields _protectedFields;
 
-    Object onActivate()
+    Object onActionFromGo()
     {
         return _protectedFields;
     }
