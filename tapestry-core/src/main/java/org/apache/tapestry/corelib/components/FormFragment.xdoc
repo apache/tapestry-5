@@ -6,6 +6,9 @@
                 <li>
                     <a href="Form.html">Form</a>
                 </li>
+                <li>
+                    <a href="../mixins/TriggerFragment.html">TriggerFragment</a>
+                </li>
             </ul>
         </section>
 
@@ -79,7 +82,7 @@
 </html>]]></source>
 
                 <p>
-                    The separateShipTo property is initially null, to the FormFragment is initially invisible. The
+                    The separateShipTo property is initially null, so the FormFragment is initially invisible. The
                     BeanEditor
                     and all of the individual fields are rendered, but the &lt;div&gt; for the FormFragment is simply
                     invisible.
@@ -143,7 +146,7 @@ public class OrderAddress
             <p>
                 The OrderAddress page is largely just a holder of the properties (for simplicity in this example,
                 there is no event handler for the success event, nor are we going into other details that would
-                reflecting in a real application).
+                be reflected in a real application).
             </p>
 
             <p>
