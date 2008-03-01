@@ -51,11 +51,6 @@
             -- using a List for catch-all event context parameters
         </li>
 
-        <li>
-            <a href="indirectprotectedfields">Protected Fields Demo</a>
-            -- page that contains protected fields
-        </li>
-
     </ul>
 
 </html>                      

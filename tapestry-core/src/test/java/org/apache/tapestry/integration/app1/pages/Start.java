@@ -244,6 +244,8 @@ public class Start
             new Item("TrackEditor", "Generic Page Class Demo",
                      "demo use of generics with component classes and, particularily, with property types"),
 
+            new Item("IndirectProtectedFields", "Protected Fields Demo", "demo exception when component class contains protected fields"),
+
             new Item("injectcomponentdemo", "Inject Component Demo",
                      "inject component defined in template"));
 
