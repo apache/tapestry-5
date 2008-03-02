@@ -591,7 +591,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         train_getBaseURL(securityManager, activePage, "http://example.org");
 
-        train_encodeURL(response, "http://example.org/mypage:myaction?t:ac=foo/bar&t:ap=activepage", ENCODED);
+        train_encodeURL(response, "http://example.org/activepage:myaction?t:ac=foo/bar&t:cp=mypage", ENCODED);
 
         replay();
 

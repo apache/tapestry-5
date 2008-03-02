@@ -51,15 +51,19 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private final ContextValueEncoder _contextValueEncoder;
 
+    private final RequestEncodingInitializer _requestEncodingInitializer;
+
     private final EventContext _emptyContext = new EmptyEventContext();
 
-    public ComponentEventDispatcher(ComponentEventRequestHandler componentEventRequestHandler,
+    public ComponentEventDispatcher(@Traditional ComponentEventRequestHandler componentEventRequestHandler,
                                     ComponentClassResolver componentClassResolver,
-                                    ContextValueEncoder contextValueEncoder)
+                                    ContextValueEncoder contextValueEncoder,
+                                    RequestEncodingInitializer requestEncodingInitializer)
     {
         _componentEventRequestHandler = componentEventRequestHandler;
         _componentClassResolver = componentClassResolver;
         _contextValueEncoder = contextValueEncoder;
+        _requestEncodingInitializer = requestEncodingInitializer;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -97,7 +101,7 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (!matcher.matches()) return false;
 
-        String containingPageName = matcher.group(LOGICAL_PAGE_NAME);
+        String activePageName = matcher.group(LOGICAL_PAGE_NAME);
 
         String nestedComponentId = matcher.group(NESTED_ID);
 
@@ -105,10 +109,15 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (nestedComponentId == null && eventType == null) return false;
 
-        if (!_componentClassResolver.isPageName(containingPageName)) return false;
+        if (!_componentClassResolver.isPageName(activePageName)) return false;
 
         EventContext eventContext = decodeContext(matcher.group(CONTEXT));
 
+        // Initialize the request encoding BEFORE accessing any query parameters
+        // (TAPESTRY-1605)
+
+        _requestEncodingInitializer.initializeRequestEncoding(activePageName);
+        
         EventContext activationContext = decodeContext(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
         // The event type is often omitted, and defaults to "action".
@@ -117,10 +126,9 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (nestedComponentId == null) nestedComponentId = "";
 
-        String activePageName = request.getParameter(InternalConstants.ACTIVE_PAGE_NAME);
+        String containingPageName = request.getParameter(InternalConstants.CONTAINER_PAGE_NAME);
 
-        if (activePageName == null) activePageName = containingPageName;
-
+        if (containingPageName == null) containingPageName = activePageName;
 
         ComponentEventRequestParameters parameters = new ComponentEventRequestParameters(activePageName,
                                                                                          containingPageName,

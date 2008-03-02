@@ -48,11 +48,11 @@ public final class InternalConstants
     public static final String PAGE_CONTEXT_NAME = "t:ac";
 
     /**
-     * The name of a query parameter that stores the active page (used in action links when the page containing the
-     * component is not the same as the page that was rendering).
+     * The name of a query parameter that stores the containing page (used in action links when the page containing the
+     * component is not the same as the page that was rendering). The active page (the page which initiated the render)
+     * is encoded into the URL, and the containing page is tacked on as this query parameter.
      */
-    public static final String ACTIVE_PAGE_NAME = "t:ap";
-
+    public static final String CONTAINER_PAGE_NAME = "t:cp";
 
     public static final String OBJECT_RENDER_DIV_SECTION = "t-env-data-section";
 
