@@ -20,8 +20,8 @@
                             <dt>Stack trace</dt>
                             <dd>
                                 <ul class="t-stack-trace">
-                                    <t:loop source="info.stackTrace" value="var:frame">
-                                        <li>${var:frame}</li>
+                                    <t:loop source="info.stackTrace" value="frame">
+                                        <li class="${frameClass}">${frame}</li>
                                     </t:loop>
                                 </ul>
                             </dd>

@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ public class ExceptionInfoImpl implements ExceptionInfo
 
     private final Map<String, Object> _properties;
 
-    private final List<String> _stackTrace;
+    private final List<StackTraceElement> _stackTrace;
 
-    public ExceptionInfoImpl(Throwable t, Map<String, Object> properties, List<String> stackTrace)
+    public ExceptionInfoImpl(Throwable t, Map<String, Object> properties, List<StackTraceElement> stackTrace)
     {
         _className = t.getClass().getName();
         _message = t.getMessage() != null ? t.getMessage() : "";
@@ -60,7 +60,7 @@ public class ExceptionInfoImpl implements ExceptionInfo
         return InternalUtils.sortedKeys(_properties);
     }
 
-    public List<String> getStackTrace()
+    public List<StackTraceElement> getStackTrace()
     {
         return _stackTrace;
     }

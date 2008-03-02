@@ -14,8 +14,11 @@
 
 package org.apache.tapestry.corelib.components;
 
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry.ioc.services.ExceptionInfo;
@@ -39,10 +42,20 @@ public class ExceptionDisplay
     @Inject
     private ExceptionAnalyzer _analyzer;
 
+    @Inject
+    @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
+    private String _appPackage;
+
+    @GenerateAccessors
     private ExceptionInfo _info;
 
+    @GenerateAccessors
     private String _propertyName;
 
+    @GenerateAccessors
+    private StackTraceElement _frame;
+
+    @GenerateAccessors
     private List<ExceptionInfo> _stack;
 
     void setupRender()
@@ -50,31 +63,6 @@ public class ExceptionDisplay
         ExceptionAnalysis analysis = _analyzer.analyze(_exception);
 
         _stack = analysis.getExceptionInfos();
-    }
-
-    public List<ExceptionInfo> getStack()
-    {
-        return _stack;
-    }
-
-    public ExceptionInfo getInfo()
-    {
-        return _info;
-    }
-
-    public void setInfo(ExceptionInfo info)
-    {
-        _info = info;
-    }
-
-    public String getPropertyName()
-    {
-        return _propertyName;
-    }
-
-    public void setPropertyName(String propertyName)
-    {
-        _propertyName = propertyName;
     }
 
     public boolean getShowPropertyList()
@@ -87,5 +75,12 @@ public class ExceptionDisplay
     public Object getPropertyValue()
     {
         return _info.getProperty(_propertyName);
+    }
+
+    public String getFrameClass()
+    {
+        if (_frame.getClassName().startsWith(_appPackage) && _frame.getLineNumber() > 0) return "t-usercode-frame";
+
+        return null;
     }
 }

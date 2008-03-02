@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * Contains information about an analyzed exception.
  *
- * @see {@link ExceptionAnalysis}
+ * @see {@link org.apache.tapestry.ioc.services.ExceptionAnalysis}
  */
 public interface ExceptionInfo
 {
@@ -47,5 +47,5 @@ public interface ExceptionInfo
      * Returns the stack trace elements. Generally this is an empty list except for the deepest
      * exception.
      */
-    List<String> getStackTrace();
+    List<StackTraceElement> getStackTrace();
 }
