@@ -24,6 +24,7 @@ import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.ContextValueEncoder;
 import org.apache.tapestry.services.Request;
@@ -252,8 +253,17 @@ public class LinkFactoryImpl implements LinkFactory
 
         String[] result = new String[context.length];
 
-        for (int i = 0; i < context.length; i++)
-            result[i] = _contextValueEncoder.toClient(context[i]);
+        for (int i = 0; i < context.length; i++)    {
+
+            Object value = context[i];
+
+            String encoded = value == null ? null : _contextValueEncoder.toClient(value);
+
+            if (InternalUtils.isBlank(encoded))
+            throw new RuntimeException(ServicesMessages.contextValueMayNotBeNull());
+
+            result[i]= encoded;
+        }
 
         return result;
     }
