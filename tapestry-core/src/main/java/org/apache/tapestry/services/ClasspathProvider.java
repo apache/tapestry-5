@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * assets located on the classpath.
  */
 @Target(
-        {PARAMETER, FIELD})
+        { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
 public @interface ClasspathProvider

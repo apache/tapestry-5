@@ -25,7 +25,7 @@ import java.lang.annotation.Target;
  * Marker annotation for services that are provided by the Tapestry core module.
  */
 @Target(
-        {PARAMETER, FIELD})
+        { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
 public @interface Core

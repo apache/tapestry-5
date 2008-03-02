@@ -29,9 +29,8 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class GridPager
 {
     /**
-     * The source of the data displayed by the grid (this is used to determine
-     * {@link GridDataSource#getAvailableRows() how many rows are available}, which in turn
-     * determines the page count).
+     * The source of the data displayed by the grid (this is used to determine {@link GridDataSource#getAvailableRows()
+     * how many rows are available}, which in turn determines the page count).
      */
     @Parameter(required = true)
     private GridDataSource _source;
@@ -49,8 +48,8 @@ public class GridPager
     private int _currentPage;
 
     /**
-     * Number of pages before and after the current page in the range. The pager always displays
-     * links for 2 * range + 1 pages, unless that's more than the total number of available pages.
+     * Number of pages before and after the current page in the range. The pager always displays links for 2 * range + 1
+     * pages, unless that's more than the total number of available pages.
      */
     @Parameter("5")
     private int _range;

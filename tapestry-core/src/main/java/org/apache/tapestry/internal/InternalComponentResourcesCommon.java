@@ -21,9 +21,8 @@ import org.apache.tapestry.runtime.Component;
 import java.util.Map;
 
 /**
- * Operations shared by {@link InternalComponentResources} and {@link ComponentPageElement}.
- * Typically, these means methods of InternalComponentResources that are delegated to the component
- * page element.
+ * Operations shared by {@link InternalComponentResources} and {@link ComponentPageElement}. Typically, these means
+ * methods of InternalComponentResources that are delegated to the component page element.
  */
 public interface InternalComponentResourcesCommon
 {

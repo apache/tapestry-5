@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.events;
 
 /**
- * Interface for objects that may cache information that can be invalidated. Invalidation occurs
- * when external files, from which in-memory data is cached, is determined to have changed.
+ * Interface for objects that may cache information that can be invalidated. Invalidation occurs when external files,
+ * from which in-memory data is cached, is determined to have changed.
  */
 public interface InvalidationListener
 {

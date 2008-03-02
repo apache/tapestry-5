@@ -20,8 +20,8 @@ import org.apache.tapestry.ioc.Locatable;
 import java.util.List;
 
 /**
- * The model for a component embedded within another component, as defined by the
- * {@link org.apache.tapestry.annotations.Component} annotation.
+ * The model for a component embedded within another component, as defined by the {@link
+ * org.apache.tapestry.annotations.Component} annotation.
  */
 public interface EmbeddedComponentModel extends Locatable
 {
@@ -36,8 +36,8 @@ public interface EmbeddedComponentModel extends Locatable
     String getComponentType();
 
     /**
-     * The class name of the component, as derived from the field to which the {@link Component}
-     * annotation is applied. This value is only used when the componentType property is blank.
+     * The class name of the component, as derived from the field to which the {@link Component} annotation is applied.
+     * This value is only used when the componentType property is blank.
      */
     String getComponentClassName();
 
@@ -52,8 +52,7 @@ public interface EmbeddedComponentModel extends Locatable
     String getParameterValue(String parameterName);
 
     /**
-     * Returns the fully qualified class names of all mixins added to this component, sorted
-     * alphabetically.
+     * Returns the fully qualified class names of all mixins added to this component, sorted alphabetically.
      */
     List<String> getMixinClassNames();
 

@@ -66,9 +66,9 @@ public interface Validator<C, T>
     void validate(Field field, C constraintValue, MessageFormatter formatter, T value) throws ValidationException;
 
     /**
-     * Returns true if the validator should be invoked for null or blank (empty string) values. This is generally
-     * false, but is true for validators that enforce that a non-blank value is required.  This is the basis
-     * of the {@link org.apache.tapestry.Field#isRequired()} property.
+     * Returns true if the validator should be invoked for null or blank (empty string) values. This is generally false,
+     * but is true for validators that enforce that a non-blank value is required.  This is the basis of the {@link
+     * org.apache.tapestry.Field#isRequired()} property.
      */
     boolean isRequired();
 

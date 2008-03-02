@@ -21,8 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Adds a "required" constraint for any property of whose type is a primitive (not a wrapper or
- * reference) type.
+ * Adds a "required" constraint for any property of whose type is a primitive (not a wrapper or reference) type.
  */
 public class PrimitiveFieldConstraintGenerator implements ValidationConstraintGenerator
 {

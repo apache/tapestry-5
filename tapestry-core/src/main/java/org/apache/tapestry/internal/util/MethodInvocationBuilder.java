@@ -22,8 +22,8 @@ import org.apache.tapestry.services.TransformUtils;
 import java.util.Map;
 
 /**
- * A utility class for building part of a method body to invoke a method. Analyzes the method and
- * matches parameter types to ParameterBuilders.
+ * A utility class for building part of a method body to invoke a method. Analyzes the method and matches parameter
+ * types to ParameterBuilders.
  */
 public final class MethodInvocationBuilder
 {
@@ -50,9 +50,9 @@ public final class MethodInvocationBuilder
     }
 
     /**
-     * Builds the method invocation. Analyzes the type of each parameter to the method, and uses a
-     * {@link ParameterBuilder} to provide the expression. Supplies a default value (usually null)
-     * for any parameters that do not have parameter builders.
+     * Builds the method invocation. Analyzes the type of each parameter to the method, and uses a {@link
+     * ParameterBuilder} to provide the expression. Supplies a default value (usually null) for any parameters that do
+     * not have parameter builders.
      *
      * @param signature      of the method to invoke
      * @param transformation

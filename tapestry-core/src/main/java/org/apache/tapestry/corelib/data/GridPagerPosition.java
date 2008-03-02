@@ -17,8 +17,7 @@ package org.apache.tapestry.corelib.data;
 import org.apache.tapestry.corelib.components.Grid;
 
 /**
- * Used by the {@link Grid} component to control where the pager portion of the Grid should be
- * displayed.
+ * Used by the {@link Grid} component to control where the pager portion of the Grid should be displayed.
  */
 public enum GridPagerPosition
 {

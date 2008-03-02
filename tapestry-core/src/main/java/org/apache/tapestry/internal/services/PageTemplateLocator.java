@@ -25,8 +25,8 @@ import java.util.Locale;
 public interface PageTemplateLocator
 {
     /**
-     * Given model, determines if the model is for a page (rather than a component) and if so, sees
-     * if there is a localized template for the page in the web application context.
+     * Given model, determines if the model is for a page (rather than a component) and if so, sees if there is a
+     * localized template for the page in the web application context.
      *
      * @param model  the component model defining the page to search for
      * @param locale the desired localization of the template

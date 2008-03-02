@@ -23,9 +23,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Allows for the specification of per-component meta-data. Meta data can later be accessed via
- * {@link ComponentModel#getMeta(String)}. Meta data keys are case insensitive. Meta data defined
- * by a subclass overrides meta data for the super class (where the keys conflict).
+ * Allows for the specification of per-component meta-data. Meta data can later be accessed via {@link
+ * ComponentModel#getMeta(String)}. Meta data keys are case insensitive. Meta data defined by a subclass overrides meta
+ * data for the super class (where the keys conflict).
  */
 @Target(TYPE)
 @Retention(RUNTIME)

@@ -18,8 +18,8 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.corelib.base.AbstractPropertyOutput;
 
 /**
- * Part of {@link Grid} that renders the markup inside a single data cell. GridCell is used inside a
- * pair of loops; the outer loop for each row, the inner loop for each property of the row.
+ * Part of {@link Grid} that renders the markup inside a single data cell. GridCell is used inside a pair of loops; the
+ * outer loop for each row, the inner loop for each property of the row.
  */
 public class GridCell extends AbstractPropertyOutput
 {

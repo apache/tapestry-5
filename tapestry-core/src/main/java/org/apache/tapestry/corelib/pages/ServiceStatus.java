@@ -15,6 +15,7 @@
 package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.annotations.Meta;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.ioc.Registry;
@@ -38,13 +39,16 @@ public class ServiceStatus
     @Inject
     private ServiceActivityScoreboard _scoreboard;
 
+    @GenerateAccessors
     private List<ServiceActivity> _activity;
 
+    @GenerateAccessors
     private ServiceActivity _row;
 
     @Inject
     private BeanModelSource _source;
 
+    @GenerateAccessors
     private final BeanModel _model;
 
     @Inject
@@ -62,29 +66,8 @@ public class ServiceStatus
         _model.reorder("serviceId", "serviceInterface", "scope", "status");
     }
 
-    public ServiceActivity getRow()
-    {
-        return _row;
-    }
-
-    public void setRow(ServiceActivity row)
-    {
-        _row = row;
-    }
-
     void setupRender()
     {
         _activity = _scoreboard.getServiceActivity();
     }
-
-    public List<ServiceActivity> getActivity()
-    {
-        return _activity;
-    }
-
-    public BeanModel getModel()
-    {
-        return _model;
-    }
-
 }

@@ -77,9 +77,8 @@ public final class InternalConstants
     public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";
 
     /**
-     * Required MIME type for JSON responses. If this MIME type is not used, the client-side
-     * Prototype code will not recognize the response as JSON, and the Ajax.Response.responseJSON property
-     * will be null.
+     * Required MIME type for JSON responses. If this MIME type is not used, the client-side Prototype code will not
+     * recognize the response as JSON, and the Ajax.Response.responseJSON property will be null.
      */
     public static final String JSON_MIME_TYPE = "application/json";
 

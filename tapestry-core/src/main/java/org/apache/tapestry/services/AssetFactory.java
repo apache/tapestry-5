@@ -25,8 +25,7 @@ import org.apache.tapestry.ioc.Resource;
 public interface AssetFactory
 {
     /**
-     * Returns the Resource representing the root folder of the domain this factory is responsible
-     * for.
+     * Returns the Resource representing the root folder of the domain this factory is responsible for.
      */
     Resource getRootResource();
 

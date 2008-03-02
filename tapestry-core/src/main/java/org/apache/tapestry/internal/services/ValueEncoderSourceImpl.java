@@ -35,7 +35,7 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
         _registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public <T> ValueEncoder<T> getValueEncoder(Class<T> type)
     {
         Defense.notNull(type, "type");

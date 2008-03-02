@@ -19,8 +19,8 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
-import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.BindingSource;
 

@@ -17,14 +17,14 @@ package org.apache.tapestry.services;
 import java.io.IOException;
 
 /**
- * Filter interface for {@link PageRenderRequestHandler}, which allows extra behaviors to be
- * injected into the processing of a page render request.
+ * Filter interface for {@link PageRenderRequestHandler}, which allows extra behaviors to be injected into the
+ * processing of a page render request.
  */
 public interface PageRenderRequestFilter
 {
     /**
-     * Invoked to activate and render a page. The return value of the event handler method(s) for
-     * the activate event may result in an action response generator being returned.
+     * Invoked to activate and render a page. The return value of the event handler method(s) for the activate event may
+     * result in an action response generator being returned.
      *
      * @param parameters defines the page name and activation context
      * @param handler    to delegate the invocation to

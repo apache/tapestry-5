@@ -22,8 +22,8 @@ import org.apache.tapestry.SelectModelVisitor;
 import java.util.List;
 
 /**
- * Base class for {@link SelectModel} implementations, whose primary job is to provide the
- * {@link #visit(SelectModelVisitor)} method.
+ * Base class for {@link SelectModel} implementations, whose primary job is to provide the {@link
+ * #visit(SelectModelVisitor)} method.
  */
 public abstract class AbstractSelectModel implements SelectModel
 {

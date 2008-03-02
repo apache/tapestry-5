@@ -17,9 +17,8 @@ package org.apache.tapestry;
 import java.util.Map;
 
 /**
- * Base class for implementing {@link OptionModel}.  Subclasses must implement
- * {@link org.apache.tapestry.OptionModel#getLabel()} and
- * {@link org.apache.tapestry.OptionModel#getValue()} }.
+ * Base class for implementing {@link OptionModel}.  Subclasses must implement {@link
+ * org.apache.tapestry.OptionModel#getLabel()} and {@link org.apache.tapestry.OptionModel#getValue()} }.
  */
 public abstract class AbstractOptionModel implements OptionModel
 {

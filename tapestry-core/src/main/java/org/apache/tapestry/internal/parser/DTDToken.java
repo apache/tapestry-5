@@ -17,10 +17,9 @@ package org.apache.tapestry.internal.parser;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Represents the presence of a Document Type declaration within a template. The Document type
- * declaration will be output to the client. In the event that multiple declarations are encountered
- * (a page and one or more nested components all declare a document type), the first document type
- * declared will be used.
+ * Represents the presence of a Document Type declaration within a template. The Document type declaration will be
+ * output to the client. In the event that multiple declarations are encountered (a page and one or more nested
+ * components all declare a document type), the first document type declared will be used.
  */
 public class DTDToken extends TemplateToken
 {

@@ -31,8 +31,8 @@ public interface NullFieldStrategy
 
     /**
      * Provides a replacement value for a null or blank string passed from the client to the server as part of a form
-     * submission. This replacement value will be passed to
-     * {@link org.apache.tapestry.Translator#parseClient(String, org.apache.tapestry.ioc.Messages)}  as if it were the value supplied by the user.
+     * submission. This replacement value will be passed to {@link org.apache.tapestry.Translator#parseClient(String,
+     * org.apache.tapestry.ioc.Messages)}  as if it were the value supplied by the user.
      *
      * @return replacement value (this must not be null)
      */

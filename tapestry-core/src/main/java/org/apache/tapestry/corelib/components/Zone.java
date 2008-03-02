@@ -25,17 +25,18 @@ import org.apache.tapestry.json.JSONObject;
 
 
 /**
- * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other
- * client-side effects.  A Zone renders out as a &lt;div&gt; element and may have content initially,
- * or may only get its content as a result of client side activity.
+ * A Zone is portion of the output page designed for easy dynamic updating via Ajax or other client-side effects.  A
+ * Zone renders out as a &lt;div&gt; element and may have content initially, or may only get its content as a result of
+ * client side activity.
  * <p/>
- * Often, Zone's are initially invisible, in which case the visible parameter may be set to false (it defaults to false).
+ * Often, Zone's are initially invisible, in which case the visible parameter may be set to false (it defaults to
+ * false).
  * <p/>
  * <p/>
- * When a user clicks an {@link org.apache.tapestry.corelib.components.ActionLink} whose zone parameter is set,
- * the corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
- * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show and update
- * parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect object.
+ * When a user clicks an {@link org.apache.tapestry.corelib.components.ActionLink} whose zone parameter is set, the
+ * corresponding client-side Tapestry.Zone object is located. It will update the content of the Zone's &lt;div&gt; and
+ * then invoke either a show method (if the div is not visible) or an update method (if the div is visible).  The show
+ * and update parameters are the <em>names</em> of functions attached to the Tapestry.ElementEffect object.
  * <p/>
  * Renders informal parameters, adding CSS class "t-zone" and possibly, "t-invisible".
  */
@@ -43,18 +44,16 @@ import org.apache.tapestry.json.JSONObject;
 public class Zone implements ClientElement
 {
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to
-     * make the Zone's &lt;div&gt; visible before being updated.  If not specified, then
-     * the basic "show" method is used.
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the Zone's
+     * &lt;div&gt; visible before being updated.  If not specified, then the basic "show" method is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _show;
 
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked
-     * after the Zone's content has been updated. If not specified, then the basic "highlight"
-     * method is used, which performs a classic "yellow fade" to indicate to the user
-     * that and update has taken place.
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked after the Zone's content has
+     * been updated. If not specified, then the basic "highlight" method is used, which performs a classic "yellow fade"
+     * to indicate to the user that and update has taken place.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _update;
@@ -68,8 +67,8 @@ public class Zone implements ClientElement
     private ClientBehaviorSupport _clientBehaviorSupport;
 
     /**
-     * If true (the default) then the zone will render normally.  If false, then the "t-invisible"
-     * CSS class is added, which will make the zone initially invisible.
+     * If true (the default) then the zone will render normally.  If false, then the "t-invisible" CSS class is added,
+     * which will make the zone initially invisible.
      */
     @Parameter
     private boolean _visible = true;

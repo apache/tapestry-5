@@ -27,8 +27,8 @@ public final class TransformConstants
 {
     // Shared parameters of a whole bunch of lifecycle methods, representing the different
     // component render states.
-    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = {MarkupWriter.class.getName(),
-                                                                    Event.class.getName()};
+    private static final String[] RENDER_PHASE_METHOD_PARAMETERS = { MarkupWriter.class.getName(),
+            Event.class.getName() };
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}.
@@ -36,7 +36,8 @@ public final class TransformConstants
      * @see org.apache.tapestry.annotations.OnEvent
      */
     public static final TransformMethodSignature DISPATCH_COMPONENT_EVENT = new TransformMethodSignature(
-            Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[]{ComponentEvent.class.getName()}, null);
+            Modifier.PUBLIC, "boolean", "dispatchComponentEvent", new String[] { ComponentEvent.class.getName() },
+            null);
 
     /**
      * Signature for {@link org.apache.tapestry.runtime.PageLifecycleListener#containingPageDidLoad()}.

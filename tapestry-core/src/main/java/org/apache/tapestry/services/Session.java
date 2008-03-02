@@ -18,20 +18,19 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
- * Generic version of {@link HttpSession}, used to bridge the gaps between the Servlet API and the
- * Portlet API.
+ * Generic version of {@link HttpSession}, used to bridge the gaps between the Servlet API and the Portlet API.
  */
 public interface Session
 {
     /**
-     * Returns a list of the names of all attributes stored in the session. The names are returned
-     * sorted alphabetically.
+     * Returns a list of the names of all attributes stored in the session. The names are returned sorted
+     * alphabetically.
      */
     List<String> getAttributeNames();
 
     /**
-     * Returns a list of the names of all attributes stored in the session whose name has the
-     * provided prefix. The names are returned in alphabetical order.
+     * Returns a list of the names of all attributes stored in the session whose name has the provided prefix. The names
+     * are returned in alphabetical order.
      */
     List<String> getAttributeNames(String prefix);
 
@@ -46,16 +45,16 @@ public interface Session
     void setAttribute(String name, Object value);
 
     /**
-     * Returns the maximum time interval, in seconds, that the servlet container will keep this
-     * session open between client accesses. After this interval, the servlet container will
-     * invalidate the session. The maximum time interval can be set with the setMaxInactiveInterval
-     * method. A negative time indicates the session should never timeout.
+     * Returns the maximum time interval, in seconds, that the servlet container will keep this session open between
+     * client accesses. After this interval, the servlet container will invalidate the session. The maximum time
+     * interval can be set with the setMaxInactiveInterval method. A negative time indicates the session should never
+     * timeout.
      */
     int getMaxInactiveInterval();
 
     /**
-     * Specifies the time, in seconds, between client requests before the servlet container will
-     * invalidate this session. A negative time indicates the session should never timeout.
+     * Specifies the time, in seconds, between client requests before the servlet container will invalidate this
+     * session. A negative time indicates the session should never timeout.
      */
     void setMaxInactiveInterval(int seconds);
 

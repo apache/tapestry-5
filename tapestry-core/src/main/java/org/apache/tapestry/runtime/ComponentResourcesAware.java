@@ -17,8 +17,8 @@ package org.apache.tapestry.runtime;
 import org.apache.tapestry.ComponentResources;
 
 /**
- * Interface implemented by components (after they have been transformed at load time). Component
- * classes should not implement this interface directly.
+ * Interface implemented by components (after they have been transformed at load time). Component classes should not
+ * implement this interface directly.
  */
 public interface ComponentResourcesAware
 {

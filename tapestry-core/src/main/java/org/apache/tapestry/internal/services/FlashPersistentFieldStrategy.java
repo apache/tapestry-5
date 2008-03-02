@@ -18,10 +18,9 @@ import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
 /**
- * The "flash" strategy stores data inside the {@link Session session}, just like
- * {@link SessionPersistentFieldStrategy}, but also removes the values from the session on first
- * use. In this way, a short-term value (such as an error message) will "survive" from an action
- * request to a render request and then disappear.
+ * The "flash" strategy stores data inside the {@link Session session}, just like {@link
+ * SessionPersistentFieldStrategy}, but also removes the values from the session on first use. In this way, a short-term
+ * value (such as an error message) will "survive" from an action request to a render request and then disappear.
  */
 public class FlashPersistentFieldStrategy extends AbstractSessionPersistentFieldStrategy
 {

@@ -21,8 +21,8 @@ import org.apache.tapestry.services.*;
 import java.io.IOException;
 
 /**
- * Recognizes a request for the application root (i.e., "/") and handles this the same as a render
- * request for the "Start" page.
+ * Recognizes a request for the application root (i.e., "/") and handles this the same as a render request for the
+ * "Start" page.
  */
 public class RootPathDispatcher implements Dispatcher
 {

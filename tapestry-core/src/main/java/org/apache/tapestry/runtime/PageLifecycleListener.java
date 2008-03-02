@@ -20,20 +20,20 @@ package org.apache.tapestry.runtime;
 public interface PageLifecycleListener
 {
     /**
-     * Invoked when the page finishes loading. This occurs once all components are loaded and all
-     * parameters have been set.
+     * Invoked when the page finishes loading. This occurs once all components are loaded and all parameters have been
+     * set.
      */
     void containingPageDidLoad();
 
     /**
-     * Invoked when the page is detached, allowing components a chance to clear out any temporary or
-     * client specific state.
+     * Invoked when the page is detached, allowing components a chance to clear out any temporary or client specific
+     * state.
      */
     void containingPageDidDetach();
 
     /**
-     * Invoked when a page is first attached to the current request, giving components a chance to
-     * initialize for the current request.
+     * Invoked when a page is first attached to the current request, giving components a chance to initialize for the
+     * current request.
      */
 
     void containingPageDidAttach();

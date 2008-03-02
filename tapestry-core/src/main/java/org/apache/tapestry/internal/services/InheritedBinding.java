@@ -22,8 +22,8 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 import java.lang.annotation.Annotation;
 
 /**
- * Wraps another binding, adjusting the description of the binding and the location of the binding
- * (as reported in any thrown exceptions).
+ * Wraps another binding, adjusting the description of the binding and the location of the binding (as reported in any
+ * thrown exceptions).
  */
 public class InheritedBinding extends BaseLocatable implements Binding
 {

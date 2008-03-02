@@ -20,8 +20,8 @@ package org.apache.tapestry.internal.services;
 public interface StringProvider
 {
     /**
-     * Ask the object to provide the desired string. Often this involves computing the string value
-     * dynamically, or aggregating together multiple StringProviders.
+     * Ask the object to provide the desired string. Often this involves computing the string value dynamically, or
+     * aggregating together multiple StringProviders.
      */
     String provideString();
 }

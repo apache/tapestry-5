@@ -38,8 +38,8 @@ public interface FieldValidationSupport
 
     /**
      * A wrapper around {@link org.apache.tapestry.Translator#parseClient(String, org.apache.tapestry.ioc.Messages)}.
-     * First a "parseclient" event is fired; the translator is only invoked if that returns null (typically
-     * because there is not handler for the event).
+     * First a "parseclient" event is fired; the translator is only invoked if that returns null (typically because
+     * there is not handler for the event).
      *
      * @param clientValue        the value provided by the client (not null)
      * @param componentResources used to trigger events

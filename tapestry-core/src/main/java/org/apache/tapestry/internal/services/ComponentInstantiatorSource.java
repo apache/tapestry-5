@@ -18,25 +18,24 @@ import org.apache.tapestry.internal.event.InvalidationEventHub;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
 /**
- * Creates {@link org.apache.tapestry.internal.services.Instantiator}s for components, based on
- * component class name. This will involve transforming the component's class before it is loaded.
+ * Creates {@link org.apache.tapestry.internal.services.Instantiator}s for components, based on component class name.
+ * This will involve transforming the component's class before it is loaded.
  * <p/>
- * In addition, a source acts as an event hub for
- * {@link org.apache.tapestry.internal.events.InvalidationListener}s, so that any information derived from
- * loaded classes can be discarded and rebuilt when classes change.
+ * In addition, a source acts as an event hub for {@link org.apache.tapestry.internal.events.InvalidationListener}s, so
+ * that any information derived from loaded classes can be discarded and rebuilt when classes change.
  * <p/>
- * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire
- * class loader is discarded, along with any instances derived from those classes. A new class
- * loader is created, and then invalidation events are fired to listeners.
+ * The strategy used is that when <em>any</em> class (in a controlled package) changes, the entire class loader is
+ * discarded, along with any instances derived from those classes. A new class loader is created, and then invalidation
+ * events are fired to listeners.
  */
 public interface ComponentInstantiatorSource extends InvalidationEventHub
 {
 
     /**
-     * Given the name of a component class, provides an instantiator for that component.
-     * Instantiators are cached, so repeated calls to this method with the same class name will
-     * return the same instance; however, callers should also be aware that the instantiators may
-     * lose validity after an invalidation (caused by changes to external Java class files).
+     * Given the name of a component class, provides an instantiator for that component. Instantiators are cached, so
+     * repeated calls to this method with the same class name will return the same instance; however, callers should
+     * also be aware that the instantiators may lose validity after an invalidation (caused by changes to external Java
+     * class files).
      *
      * @param classname FQCN to find (and perhaps transform and load)
      * @return an object which can instantiate an instance of the component
@@ -44,8 +43,7 @@ public interface ComponentInstantiatorSource extends InvalidationEventHub
     Instantiator findInstantiator(String classname);
 
     /**
-     * Adds a controlled package. Only classes within controlled packages are subject to
-     * transformation.
+     * Adds a controlled package. Only classes within controlled packages are subject to transformation.
      *
      * @param packageName the package name to add (must not be blank)
      */
@@ -60,8 +58,8 @@ public interface ComponentInstantiatorSource extends InvalidationEventHub
     boolean exists(String className);
 
     /**
-     * Returns a class factory that can be used to generate additional classes around enhanced
-     * classes, or create subclasses of enhanced classes.
+     * Returns a class factory that can be used to generate additional classes around enhanced classes, or create
+     * subclasses of enhanced classes.
      */
     ClassFactory getClassFactory();
 

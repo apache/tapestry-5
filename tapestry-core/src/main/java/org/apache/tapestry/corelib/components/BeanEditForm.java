@@ -15,10 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.InjectComponent;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.BeanModelSource;
@@ -47,6 +44,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * The text label for the submit button of the form, by default "Create/Update".
      */
     @Parameter(value = "message:submit-label", defaultPrefix = "literal")
+    @GenerateAccessors
     private String _submitLabel;
 
     /**
@@ -57,6 +55,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter(required = true)
+    @GenerateAccessors
     private Object _object;
 
     /**
@@ -95,6 +94,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter
+    @GenerateAccessors
     private BeanModel _model;
 
     @Inject
@@ -114,25 +114,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         return _defaultProvider.defaultBinding("object", _resources);
     }
 
-    public void setObject(Object object)
-    {
-        _object = object;
-    }
-
-    public Object getObject()
-    {
-        return _object;
-    }
-
-    public BeanModel getModel()
-    {
-        return _model;
-    }
-
-    public void setModel(BeanModel model)
-    {
-        _model = model;
-    }
 
     void onPrepareFromForm()
     {
@@ -153,11 +134,6 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     public String getClientId()
     {
         return _form.getClientId();
-    }
-
-    public String getSubmitLabel()
-    {
-        return _submitLabel;
     }
 
     public void clearErrors()

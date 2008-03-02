@@ -18,27 +18,25 @@ import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 
 /**
- * Provides some form of injection when the value for an
- * {@link org.apache.tapestry.ioc.annotations.Inject} annotation is present. In this case, the provider
- * is responsible for determining the value to be injected from the field name and field type.
+ * Provides some form of injection when the value for an {@link org.apache.tapestry.ioc.annotations.Inject} annotation
+ * is present. In this case, the provider is responsible for determining the value to be injected from the field name
+ * and field type.
  * <p/>
- * This interface will be used as part of a
- * {@link org.apache.tapestry.ioc.services.ChainBuilder chain of command}.
+ * This interface will be used as part of a {@link org.apache.tapestry.ioc.services.ChainBuilder chain of command}.
  */
 public interface InjectionProvider
 {
     /**
-     * Peform the injection, if possible. Most often, this will result in a call to
-     * {@link ClassTransformation#injectField(String, Object)}. The caller is responsible for
-     * invoking {@link ClassTransformation#claimField(String, Object)}.
+     * Peform the injection, if possible. Most often, this will result in a call to {@link
+     * ClassTransformation#injectField(String, Object)}. The caller is responsible for invoking {@link
+     * ClassTransformation#claimField(String, Object)}.
      *
      * @param fieldName      the name of the field requesting injection
      * @param fieldType      the type of the field
      * @param locator        allows services to be located
      * @param transformation allows the code for the class to be transformed
      * @param componentModel defines the relevant aspects of the component
-     * @return true if an injection has been made (terminates the command chain), false to continue
-     *         down the chain
+     * @return true if an injection has been made (terminates the command chain), false to continue down the chain
      */
     boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
                              ClassTransformation transformation, MutableComponentModel componentModel);

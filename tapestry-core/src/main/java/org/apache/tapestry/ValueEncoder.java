@@ -15,12 +15,12 @@
 package org.apache.tapestry;
 
 /**
- * Used to convert server side values to client-side strings.  This is used when generating
- * a {@link org.apache.tapestry.EventContext} as part of a URL, or when components (such as {@link org.apache.tapestry.corelib.components.Select})
- * generated other client-side strings.
+ * Used to convert server side values to client-side strings.  This is used when generating a {@link
+ * org.apache.tapestry.EventContext} as part of a URL, or when components (such as {@link
+ * org.apache.tapestry.corelib.components.Select}) generated other client-side strings.
  * <p/>
- * Often a custom implementation is needed for entity type objects, where the {@link #toClient(Object)} method
- * extracts a primary key, and the {@link #toValue(String)} re-acquires the corresponding entity object.
+ * Often a custom implementation is needed for entity type objects, where the {@link #toClient(Object)} method extracts
+ * a primary key, and the {@link #toValue(String)} re-acquires the corresponding entity object.
  *
  * @see SelectModel
  * @see org.apache.tapestry.services.ValueEncoderSource

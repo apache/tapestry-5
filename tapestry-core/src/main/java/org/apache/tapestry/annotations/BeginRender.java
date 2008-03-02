@@ -21,22 +21,20 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation for methods that should be executed at the start of rendering the component.
- * This usually includes rendering of the component's start tag.
+ * Marker annotation for methods that should be executed at the start of rendering the component. This usually includes
+ * rendering of the component's start tag.
  * <p/>
- * Such methods may optionally take a {@link org.apache.tapestry.MarkupWriter} parameter, and may
- * return void or boolean. Returning true or void will allow the component to advance into the
- * render template / render body phase. If a body is present, the
- * {@link org.apache.tapestry.annotations.BeforeRenderBody} phase will execute. If a component has a
- * template, the {@link BeforeRenderTemplate} phase will execute (and the render body will only
- * occur if the template directs so).
+ * Such methods may optionally take a {@link org.apache.tapestry.MarkupWriter} parameter, and may return void or
+ * boolean. Returning true or void will allow the component to advance into the render template / render body phase. If
+ * a body is present, the {@link org.apache.tapestry.annotations.BeforeRenderBody} phase will execute. If a component
+ * has a template, the {@link BeforeRenderTemplate} phase will execute (and the render body will only occur if the
+ * template directs so).
  * <p/>
- * Either way, the {@link org.apache.tapestry.annotations.AfterRender} phase will execute after the
- * template and/or body have rendered. A component with a body but without a template will still see
- * the {@link org.apache.tapestry.annotations.BeforeRenderBody} phase execute.
+ * Either way, the {@link org.apache.tapestry.annotations.AfterRender} phase will execute after the template and/or body
+ * have rendered. A component with a body but without a template will still see the {@link
+ * org.apache.tapestry.annotations.BeforeRenderBody} phase execute.
  * <p/>
- * Returning false will skip rendering of the template and/or body, and jump directly to the
- * {@link AfterRender} phase.
+ * Returning false will skip rendering of the template and/or body, and jump directly to the {@link AfterRender} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

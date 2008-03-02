@@ -69,7 +69,7 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
         classFab.addField("_environment", Environment.class);
         classFab.addField("_serviceType", Class.class);
 
-        classFab.addConstructor(new Class[]{Environment.class, Class.class}, null,
+        classFab.addConstructor(new Class[] { Environment.class, Class.class }, null,
                                 "{ _environment = $1; _serviceType = $2; }");
 
         classFab.addMethod(Modifier.PRIVATE, new MethodSignature(serviceType, "_delegate", null, null),

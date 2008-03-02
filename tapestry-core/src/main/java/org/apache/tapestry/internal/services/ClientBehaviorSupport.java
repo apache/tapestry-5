@@ -51,8 +51,8 @@ public interface ClientBehaviorSupport
      * visible or invisible, which involves interactions with both the server-side and client-side validation.
      *
      * @param clientId         client-side id of the element that will be made visible or invisible
-     * @param showFunctionName name of function (of the Tapestry.ElementEffect object) used to make the SubForm visible, or
-     *                         null for the default
+     * @param showFunctionName name of function (of the Tapestry.ElementEffect object) used to make the SubForm visible,
+     *                         or null for the default
      * @param hideFunctionName name of the function used to make the SubForm invisible, or null for the default
      */
     void addFormFragment(String clientId, String showFunctionName, String hideFunctionName);

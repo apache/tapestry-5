@@ -20,8 +20,8 @@ import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.services.BindingFactory;
 
 /**
- * Implementation of the message: binding prefix -- we simply get the message key and store it
- * inside at {@link LiteralBinding}.
+ * Implementation of the message: binding prefix -- we simply get the message key and store it inside at {@link
+ * LiteralBinding}.
  */
 public class MessageBindingFactory implements BindingFactory
 {

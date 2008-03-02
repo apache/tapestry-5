@@ -20,22 +20,18 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Used by {@link Loop} and similar components to extract out an identifier, here termed a "primary
- * key", that can be stored on the client and later used to recover the same, or equivalent, server
- * side object.
+ * Used by {@link Loop} and similar components to extract out an identifier, here termed a "primary key", that can be
+ * stored on the client and later used to recover the same, or equivalent, server side object.
  *
- * @param <K>
- * the type of the primary key, used to identify the value (which must be serializable)
- * @param <V>
- * the type of value identified by the key
+ * @param <K> the type of the primary key, used to identify the value (which must be serializable)
+ * @param <V> the type of value identified by the key
  * @see ValueEncoder
  */
 public interface PrimaryKeyEncoder<K extends Serializable, V>
 {
     /**
-     * Given a particular value, this method extracts and returns the primary key that identifies
-     * the value. The key will later be converted back into a value using
-     * {@link #toValue(Serializable)}.
+     * Given a particular value, this method extracts and returns the primary key that identifies the value. The key
+     * will later be converted back into a value using {@link #toValue(Serializable)}.
      *
      * @param value whose primary key is needed
      * @return the key for the value
@@ -43,18 +39,16 @@ public interface PrimaryKeyEncoder<K extends Serializable, V>
     K toKey(V value);
 
     /**
-     * Invoked as part of a form submission to alert the encoder that a series of keys may be
-     * converted back to values. This is advisory only, and the keys passed to
-     * {@link #toValue(Serializable)} may not include all keys in the list, or may include keys not
-     * in the list. In general, though, the keys passed in will match the actual keys to be
-     * converted, giving the encoder a chance to efficiently fetch the necessary value objects as a
-     * group.
+     * Invoked as part of a form submission to alert the encoder that a series of keys may be converted back to values.
+     * This is advisory only, and the keys passed to {@link #toValue(Serializable)} may not include all keys in the
+     * list, or may include keys not in the list. In general, though, the keys passed in will match the actual keys to
+     * be converted, giving the encoder a chance to efficiently fetch the necessary value objects as a group.
      */
     void prepareForKeys(List<K> keys);
 
     /**
-     * For a particular primary key, previously obtained via {@link #toKey(Object)}, this method
-     * returns the same or equivalent object.
+     * For a particular primary key, previously obtained via {@link #toKey(Object)}, this method returns the same or
+     * equivalent object.
      *
      * @param key used to identify the object
      * @return the value object for the key

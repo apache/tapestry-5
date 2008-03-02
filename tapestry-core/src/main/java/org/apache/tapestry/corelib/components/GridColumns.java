@@ -17,10 +17,7 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Path;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.ColumnSort;
 import org.apache.tapestry.grid.GridConstants;
@@ -83,10 +80,12 @@ public class GridColumns
     @Inject
     private Block _standardHeader;
 
+    @GenerateAccessors
     private int _columnIndex;
 
     private int _lastColumnIndex;
 
+    @GenerateAccessors(write = false)
     private PropertyModel _columnModel;
 
     void setupRender()
@@ -183,28 +182,12 @@ public class GridColumns
         return _gridModel.getDataModel().getPropertyNames();
     }
 
-    public PropertyModel getColumnModel()
-    {
-        return _columnModel;
-    }
 
     public void setColumnName(String columnName)
     {
         _columnModel = _gridModel.getDataModel().get(columnName);
     }
 
-    /**
-     * Set by the Loop component.
-     */
-    public void setColumnIndex(int columnIndex)
-    {
-        _columnIndex = columnIndex;
-    }
-
-    public int getColumnIndex()
-    {
-        return _columnIndex;
-    }
 
     public Block getBlockForColumn()
     {

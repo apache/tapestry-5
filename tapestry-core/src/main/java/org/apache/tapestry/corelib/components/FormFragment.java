@@ -34,11 +34,10 @@ import org.apache.tapestry.services.Request;
 import java.util.List;
 
 /**
- * A SubForm is a portion of a Form that may be selectively displayed.  Form elements inside a FormFragment
- * will automatically bypass validation when the fragment is invisible.  The trick is to also bypass server-side
- * form processing for such fields when the form is submitted; the fragment uses a hidden field
- * to track its client-side visibility and will bypass field component submission logic for
- * the components it encloses.
+ * A SubForm is a portion of a Form that may be selectively displayed.  Form elements inside a FormFragment will
+ * automatically bypass validation when the fragment is invisible.  The trick is to also bypass server-side form
+ * processing for such fields when the form is submitted; the fragment uses a hidden field to track its client-side
+ * visibility and will bypass field component submission logic for the components it encloses.
  *
  * @see org.apache.tapestry.corelib.mixins.TriggerFragment
  */
@@ -46,26 +45,24 @@ import java.util.List;
 public class FormFragment implements ClientElement
 {
     /**
-     * Determines if the fragment is intially visible or initially invisible (the default). This is
-     * only used when rendering; when the form is submitted, the hidden field value
-     * is used to determine whether the elements within the fragment should be processed (or ignored
-     * if still invisible).
+     * Determines if the fragment is intially visible or initially invisible (the default). This is only used when
+     * rendering; when the form is submitted, the hidden field value is used to determine whether the elements within
+     * the fragment should be processed (or ignored if still invisible).
      */
     @Parameter
     private boolean _visible;
 
 
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to
-     * make the fragment  visible.  If not specified, then
-     * the default "slidedown" function is used.
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the fragment
+     * visible.  If not specified, then the default "slidedown" function is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _show;
 
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked
-     * when the fragment is to be hidden. If not specified, the default "slideup" function is used.
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked when the fragment is to be
+     * hidden. If not specified, the default "slideup" function is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _hide;
@@ -131,7 +128,8 @@ public class FormFragment implements ClientElement
     }
 
     /**
-     * Renders a &lt;div&gt; tag and provides an override of the {@link org.apache.tapestry.services.FormSupport} environmental.
+     * Renders a &lt;div&gt; tag and provides an override of the {@link org.apache.tapestry.services.FormSupport}
+     * environmental.
      */
     void beginRender(MarkupWriter writer)
     {
@@ -198,7 +196,8 @@ public class FormFragment implements ClientElement
     }
 
     /**
-     * Closes the &lt;div&gt; tag and pops off the {@link org.apache.tapestry.services.FormSupport} environmental override.
+     * Closes the &lt;div&gt; tag and pops off the {@link org.apache.tapestry.services.FormSupport} environmental
+     * override.
      *
      * @param writer
      */

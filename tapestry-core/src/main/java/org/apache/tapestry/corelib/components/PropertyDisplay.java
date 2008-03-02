@@ -19,9 +19,9 @@ import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.corelib.base.AbstractPropertyOutput;
 
 /**
- * Outputs a single property value. Overrides for individual properties come from block parameters
- * whose name matches the {@linkplain PropertyModel#getId() property id}. This component is rarely
- * used on its own, but is a critical piece of the {@link BeanDisplay} component.
+ * Outputs a single property value. Overrides for individual properties come from block parameters whose name matches
+ * the {@linkplain PropertyModel#getId() property id}. This component is rarely used on its own, but is a critical piece
+ * of the {@link BeanDisplay} component.
  */
 public class PropertyDisplay extends AbstractPropertyOutput
 {

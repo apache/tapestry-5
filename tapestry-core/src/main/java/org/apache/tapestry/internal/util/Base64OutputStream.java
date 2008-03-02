@@ -19,8 +19,7 @@ import org.apache.commons.codec.binary.Base64;
 import java.io.ByteArrayOutputStream;
 
 /**
- * An extension of {@link ByteArrayOutputStream} that allows the final byte array to be converted to
- * a Base64 string.
+ * An extension of {@link ByteArrayOutputStream} that allows the final byte array to be converted to a Base64 string.
  */
 public final class Base64OutputStream extends ByteArrayOutputStream
 {

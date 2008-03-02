@@ -22,8 +22,8 @@ var Builder = {
         THEAD: 'table',
         TR: 'table'
     },
-// note: For Firefox < 1.5, OPTION and OPTGROUP tags are currently broken,
-//       due to a Firefox bug
+    // note: For Firefox < 1.5, OPTION and OPTGROUP tags are currently broken,
+    //       due to a Firefox bug
     node: function(elementName)
     {
         elementName = elementName.toUpperCase();

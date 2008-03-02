@@ -218,10 +218,10 @@ Test.Unit.Runner.prototype = {
         }
         ;
     },
-// Returns:
-//  "ERROR" if there was an error,
-//  "FAILURE" if there was a failure, or
-//  "SUCCESS" if there was neither
+    // Returns:
+    //  "ERROR" if there was an error,
+    //  "FAILURE" if there was a failure, or
+    //  "SUCCESS" if there was neither
     getResult: function()
     {
         var hasFailure = false;

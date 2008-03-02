@@ -17,11 +17,10 @@ package org.apache.tapestry.internal.parser;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * A token from a template that defines a namespace prefix. This will always follow
- * a {@link org.apache.tapestry.internal.parser.StartComponentToken} or
- * {@link org.apache.tapestry.internal.parser.StartElementToken} (and come before
- * {@link org.apache.tapestry.internal.parser.AttributeToken}) and applies to the
- * component or element.
+ * A token from a template that defines a namespace prefix. This will always follow a {@link
+ * org.apache.tapestry.internal.parser.StartComponentToken} or {@link org.apache.tapestry.internal.parser.StartElementToken}
+ * (and come before {@link org.apache.tapestry.internal.parser.AttributeToken}) and applies to the component or
+ * element.
  *
  * @see org.apache.tapestry.dom.Element#defineNamespace(String, String)
  */

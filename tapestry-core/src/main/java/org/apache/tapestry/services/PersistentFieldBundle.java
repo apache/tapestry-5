@@ -20,20 +20,19 @@ package org.apache.tapestry.services;
 public interface PersistentFieldBundle
 {
     /**
-     * Checks to see if a persistent value has been stored for the indicated component and field.
-     * TODO: This method can probably be removed; it doesn't look like its used (instead, we if
-     * check getValue() returns null).
+     * Checks to see if a persistent value has been stored for the indicated component and field. TODO: This method can
+     * probably be removed; it doesn't look like its used (instead, we if check getValue() returns null).
      *
-     * @param componentId the nested id of the component (within the page), may be null or blank for the
-     *                    root component of the page
+     * @param componentId the nested id of the component (within the page), may be null or blank for the root component
+     *                    of the page
      * @param fieldName   the name of the field whose value was persisted
      * @return true if a change has been stored
      */
     boolean containsValue(String componentId, String fieldName);
 
     /**
-     * @param componentId the nested if of the component (within the page), may be null or blank for the
-     *                    root component of the page
+     * @param componentId the nested if of the component (within the page), may be null or blank for the root component
+     *                    of the page
      * @param fieldName   the name of the field whose value was persisted
      * @return the persisted value, possibly null
      */

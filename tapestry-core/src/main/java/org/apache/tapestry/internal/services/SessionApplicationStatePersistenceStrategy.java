@@ -22,11 +22,11 @@ import org.apache.tapestry.services.Session;
 /**
  * Stores ASOs in the {@link Session}, which will be created as necessary.
  * <p/>
- * TODO: Re-storing the object back into the session at the end of the request. That's going to
- * require some kind of end-of-request notification.
+ * TODO: Re-storing the object back into the session at the end of the request. That's going to require some kind of
+ * end-of-request notification.
  */
 public class SessionApplicationStatePersistenceStrategy implements
-                                                        ApplicationStatePersistenceStrategy
+        ApplicationStatePersistenceStrategy
 {
     static final String PREFIX = "aso:";
 

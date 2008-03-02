@@ -22,8 +22,7 @@ import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.TranslatorSource;
 
 /**
- * Interprets the binding expression as the name of a {@link Translator} provided by the
- * {@link TranslatorSource}.
+ * Interprets the binding expression as the name of a {@link Translator} provided by the {@link TranslatorSource}.
  */
 public class TranslateBindingFactory implements BindingFactory
 {

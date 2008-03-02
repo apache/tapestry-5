@@ -25,16 +25,13 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A default, extensible version of {@link PrimaryKeyEncoder} that is based on loading known values
- * into an internal map. When there's a reasonable number (hundreds, perhaps thousands) of items to
- * choose from, and those items are fast and cheap to read and instantiate, this implementation is a
- * good bet. For very large result sets, you'll need to create your own implementation of
- * {@link PrimaryKeyEncoder}.
+ * A default, extensible version of {@link PrimaryKeyEncoder} that is based on loading known values into an internal
+ * map. When there's a reasonable number (hundreds, perhaps thousands) of items to choose from, and those items are fast
+ * and cheap to read and instantiate, this implementation is a good bet. For very large result sets, you'll need to
+ * create your own implementation of {@link PrimaryKeyEncoder}.
  *
- * @param <K>
- * the key type (which must be serializable)
- * @param <V>
- * the value type
+ * @param <K> the key type (which must be serializable)
+ * @param <V> the value type
  */
 public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements PrimaryKeyEncoder<K, V>
 {
@@ -65,8 +62,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     }
 
     /**
-     * Returns the values previously {@link #add(Serializable, Object) added to the encoder},
-     * <em>in the order in which they were added</em>. Values that are deleted are not returned.
+     * Returns the values previously {@link #add(Serializable, Object) added to the encoder}, <em>in the order in which
+     * they were added</em>. Values that are deleted are not returned.
      *
      * @return ordered list of values
      */
@@ -76,8 +73,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     }
 
     /**
-     * Returns a list of all the values <em>except</em> those values whose keys are in the
-     * provided set. The set may be null, in which case all values are returned.
+     * Returns a list of all the values <em>except</em> those values whose keys are in the provided set. The set may be
+     * null, in which case all values are returned.
      *
      * @param keySet set of keys identifying values to exclude, or null to exclude no values
      * @return values (not in the set) in order origionally added
@@ -112,8 +109,8 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     }
 
     /**
-     * For a previously {@link #add(Serializable, Object) added key/value pair}, returns the key
-     * corresponding to the given value.
+     * For a previously {@link #add(Serializable, Object) added key/value pair}, returns the key corresponding to the
+     * given value.
      */
     public final K toKey(V value)
     {
@@ -146,11 +143,10 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     }
 
     /**
-     * Invoked by {@link #toValue(Serializable)} whenever a key can not be converted to a value
-     * using the internal cache. This is an opportunity to record the fact that an error occured
-     * (they key was not valuable, possibly because it points to a deleted entity object) and
-     * provide a temporary object. This method may return null, but in a typical application, that
-     * will likely case NullPointerExceptions further down the processing chain.
+     * Invoked by {@link #toValue(Serializable)} whenever a key can not be converted to a value using the internal
+     * cache. This is an opportunity to record the fact that an error occured (they key was not valuable, possibly
+     * because it points to a deleted entity object) and provide a temporary object. This method may return null, but in
+     * a typical application, that will likely case NullPointerExceptions further down the processing chain.
      * <p/>
      * This implementation returns null, and is intended to be overriden in subclasses.
      *
@@ -186,14 +182,9 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     /**
      * Modifies a keySet to add or remove the current key. If necessary, a new Set is created.
      * <p/>
-     * Useage: <code>
-     * private Set<K> _myFlagKeys;
+     * Useage: <code> private Set<K> _myFlagKeys;
      * <p/>
-     * public boolean void setMyFlag(boolean value)
-     * {
-     * _myFlagKeys = modifySet(_myFlagKeys, value);
-     * }
-     * </code>
+     * public boolean void setMyFlag(boolean value) { _myFlagKeys = modifySet(_myFlagKeys, value); } </code>
      *
      * @param keySet the set of keys, or null
      * @param value  true to add the current key, false to remove

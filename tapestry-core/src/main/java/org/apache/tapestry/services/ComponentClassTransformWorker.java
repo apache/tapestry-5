@@ -17,17 +17,16 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.model.MutableComponentModel;
 
 /**
- * Interface for a set of objects that can perform component class transformations. Implementations
- * should be multithreaded, ideally they should be stateless (all necessary state can be stored in
- * the {@link org.apache.tapestry.services.ClassTransformation}).
+ * Interface for a set of objects that can perform component class transformations. Implementations should be
+ * multithreaded, ideally they should be stateless (all necessary state can be stored in the {@link
+ * org.apache.tapestry.services.ClassTransformation}).
  */
 public interface ComponentClassTransformWorker
 {
     /**
-     * Invoked to perform a transformation on an as-yet unloaded component class, represented by the
-     * {@link ClassTransformation} instance. In some cases, the worker may make changes to the
-     * component model -- for example, a worker that deals with parameters may update the model to
-     * reflect those parameters.
+     * Invoked to perform a transformation on an as-yet unloaded component class, represented by the {@link
+     * ClassTransformation} instance. In some cases, the worker may make changes to the component model -- for example,
+     * a worker that deals with parameters may update the model to reflect those parameters.
      */
     void transform(ClassTransformation transformation, MutableComponentModel model);
 }

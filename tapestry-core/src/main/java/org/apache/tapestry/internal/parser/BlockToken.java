@@ -17,8 +17,7 @@ package org.apache.tapestry.internal.parser;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * A block, used to enclose a chunk of template (including components) and control when or if the
- * content is rendered.
+ * A block, used to enclose a chunk of template (including components) and control when or if the content is rendered.
  */
 public class BlockToken extends TemplateToken
 {

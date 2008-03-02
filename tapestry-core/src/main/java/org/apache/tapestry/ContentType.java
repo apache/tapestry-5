@@ -23,10 +23,9 @@ import java.util.Map;
 import java.util.StringTokenizer;
 
 /**
- * Represents an HTTP content type. Allows to set various elements like the mime type, the character
- * set, and other parameters. This is similar to a number of other implementations of the same
- * concept in JAF, etc. We have created this simple implementation to avoid including the whole
- * libraries.
+ * Represents an HTTP content type. Allows to set various elements like the mime type, the character set, and other
+ * parameters. This is similar to a number of other implementations of the same concept in JAF, etc. We have created
+ * this simple implementation to avoid including the whole libraries.
  */
 public final class ContentType
 {
@@ -44,8 +43,7 @@ public final class ContentType
     }
 
     /**
-     * Creates a new content type from the argument. The format of the argument has to be
-     * basetype/subtype(;key=value)*
+     * Creates a new content type from the argument. The format of the argument has to be basetype/subtype(;key=value)*
      *
      * @param contentType the content type that needs to be represented
      */
@@ -56,8 +54,8 @@ public final class ContentType
     }
 
     /**
-     * Returns true only if the other object is another instance of ContentType, and has the ssame
-     * baseType, subType and set of parameters.
+     * Returns true only if the other object is another instance of ContentType, and has the ssame baseType, subType and
+     * set of parameters.
      */
     @Override
     public boolean equals(Object o)
@@ -147,8 +145,8 @@ public final class ContentType
     }
 
     /**
-     * Parses the argument and configures the content type accordingly. The format of the argument
-     * has to be type/subtype(;key=value)*
+     * Parses the argument and configures the content type accordingly. The format of the argument has to be
+     * type/subtype(;key=value)*
      *
      * @param contentType the content type that needs to be represented
      */

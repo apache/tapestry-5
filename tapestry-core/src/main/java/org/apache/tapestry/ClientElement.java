@@ -16,22 +16,21 @@ package org.apache.tapestry;
 
 
 /**
- * Interface for any kind of object (typically, a component) that can provide a
- * {@linkplain #getClientId() client-side id}, typically used in the generation of client-side
- * (JavaScript) logic. For components, the client id will be null or innaccurate until after the
- * component has rendered itself. Inside of any kind of loop, the clientId property is only accurate
- * just after the component has rendered, and before it renders again.
+ * Interface for any kind of object (typically, a component) that can provide a {@linkplain #getClientId() client-side
+ * id}, typically used in the generation of client-side (JavaScript) logic. For components, the client id will be null
+ * or innaccurate until after the component has rendered itself. Inside of any kind of loop, the clientId property is
+ * only accurate just after the component has rendered, and before it renders again.
  * <p/>
- * Some components must be configured to provide a client id. In many cases, the client id matches
- * the component's {@linkplain ComponentResourcesCommon#getId() component id}, typically passed through
- * {@link PageRenderSupport#allocateClientId(String)} to ensure uniqueness.
+ * Some components must be configured to provide a client id. In many cases, the client id matches the component's
+ * {@linkplain ComponentResourcesCommon#getId() component id}, typically passed through {@link
+ * PageRenderSupport#allocateClientId(String)} to ensure uniqueness.
  */
 public interface ClientElement
 {
     /**
-     * Returns a unique id for the element. This value will be unique for any given rendering of a
-     * page. This value is intended for use as the id attribute of the client-side element, and will
-     * be used with any DHTML/Ajax related JavaScript.
+     * Returns a unique id for the element. This value will be unique for any given rendering of a page. This value is
+     * intended for use as the id attribute of the client-side element, and will be used with any DHTML/Ajax related
+     * JavaScript.
      */
     String getClientId();
 }

@@ -19,8 +19,10 @@ import org.apache.tapestry.ComponentResources;
 /**
  * A kind of callback that can easily be injected into a transformed class to perform complex work.
  * <p/>
- * These callbacks are often injected into a transformed component class via {@link org.apache.tapestry.services.ClassTransformation#addInjectedField(Class, String, Object)}. Bear in mind
- * that such callbacks must be <em>threadsafe</em>, since every instance of such a class will share a single instance of the operation.
+ * These callbacks are often injected into a transformed component class via {@link
+ * org.apache.tapestry.services.ClassTransformation#addInjectedField(Class, String, Object)}. Bear in mind that such
+ * callbacks must be <em>threadsafe</em>, since every instance of such a class will share a single instance of the
+ * operation.
  */
 public interface ComponentResourcesOperation
 {

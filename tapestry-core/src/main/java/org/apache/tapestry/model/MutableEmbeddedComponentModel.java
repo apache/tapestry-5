@@ -15,8 +15,8 @@
 package org.apache.tapestry.model;
 
 /**
- * A mutable version of {@link org.apache.tapestry.model.EmbeddedComponentModel} that allows the
- * parameters to be incrementally stored.
+ * A mutable version of {@link org.apache.tapestry.model.EmbeddedComponentModel} that allows the parameters to be
+ * incrementally stored.
  */
 public interface MutableEmbeddedComponentModel extends EmbeddedComponentModel
 {

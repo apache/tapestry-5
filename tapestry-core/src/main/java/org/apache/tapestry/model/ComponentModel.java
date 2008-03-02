@@ -23,17 +23,17 @@ import org.slf4j.Logger;
 import java.util.List;
 
 /**
- * Defines a component in terms of its capabilities, parameters, sub-components, etc. During
- * <em>runtime</em>, the component model is immutable. During <em>construction</em> time, when
- * the class is being transformed and loaded, the model is mutable.
+ * Defines a component in terms of its capabilities, parameters, sub-components, etc. During <em>runtime</em>, the
+ * component model is immutable. During <em>construction</em> time, when the class is being transformed and loaded, the
+ * model is mutable.
  *
  * @see MutableComponentModel
  */
 public interface ComponentModel
 {
     /**
-     * Returns the resource corresponding to the class file for this component. This is used to find
-     * related resources, such as the component's template and message catalog.
+     * Returns the resource corresponding to the class file for this component. This is used to find related resources,
+     * such as the component's template and message catalog.
      */
     Resource getBaseResource();
 
@@ -43,8 +43,8 @@ public interface ComponentModel
     String getComponentClassName();
 
     /**
-     * Returns the ids of all embedded components defined within the component class (via the
-     * {@link org.apache.tapestry.annotations.Component} annotation).
+     * Returns the ids of all embedded components defined within the component class (via the {@link
+     * org.apache.tapestry.annotations.Component} annotation).
      */
     List<String> getEmbeddedComponentIds();
 
@@ -83,67 +83,62 @@ public interface ComponentModel
     ParameterModel getParameterModel(String parameterName);
 
     /**
-     * Returns an alphabetically sorted list of the names of all formal parameters. This includes
-     * parameters defined by a base class.
+     * Returns an alphabetically sorted list of the names of all formal parameters. This includes parameters defined by
+     * a base class.
      */
 
     List<String> getParameterNames();
 
     /**
-     * Returns an alphabetically sorted list of the names of all formal parameters defined by this
-     * specific class (parameters inherited from base classes are not identified).
+     * Returns an alphabetically sorted list of the names of all formal parameters defined by this specific class
+     * (parameters inherited from base classes are not identified).
      */
     List<String> getDeclaredParameterNames();
 
     /**
-     * Returns a list of the names of all persistent fields (within this class, or any super-class).
-     * The names are sorted alphabetically.
+     * Returns a list of the names of all persistent fields (within this class, or any super-class). The names are
+     * sorted alphabetically.
      *
      * @see Persist
      */
     List<String> getPersistentFieldNames();
 
     /**
-     * Returns true if the modeled component is a root class, a component class whose parent
-     * class is not a component class.  We may in the future require that components only extend
-     * from Object.
+     * Returns true if the modeled component is a root class, a component class whose parent class is not a component
+     * class.  We may in the future require that components only extend from Object.
      *
      * @return true if a root class, false if a subclass
      */
     boolean isRootClass();
 
     /**
-     * Returns true if the model indicates that informal parameters, additional parameters beyond
-     * the formal parameter defined for the component, are supported. This is false in most cases,
-     * but may be set to true for specific classes (when the {@link SupportsInformalParameters}
-     * annotation is present, or inherited from a super-class).
+     * Returns true if the model indicates that informal parameters, additional parameters beyond the formal parameter
+     * defined for the component, are supported. This is false in most cases, but may be set to true for specific
+     * classes (when the {@link SupportsInformalParameters} annotation is present, or inherited from a super-class).
      *
      * @return true if this component model supports informal parameters
      */
     boolean getSupportsInformalParameters();
 
     /**
-     * Returns the component model for this component's super-class, if it exists. Remember that
-     * only classes in the correct packages, are
-     * considered component classes.
+     * Returns the component model for this component's super-class, if it exists. Remember that only classes in the
+     * correct packages, are considered component classes.
      *
-     * @return the parent class model, or null if this component's super class is not itself a
-     *         component class
+     * @return the parent class model, or null if this component's super class is not itself a component class
      */
     ComponentModel getParentModel();
 
     /**
-     * Relevant for component mixins only. Indicates that the mixin behavior should occur
-     * <em>after</em> (not before) the component. Normally, this flag is set by the presence of
-     * the {@link MixinAfter} annotation.
+     * Relevant for component mixins only. Indicates that the mixin behavior should occur <em>after</em> (not before)
+     * the component. Normally, this flag is set by the presence of the {@link MixinAfter} annotation.
      *
      * @return true if the mixin should operate after, not before, the component
      */
     boolean isMixinAfter();
 
     /**
-     * Gets a meta value identified by the given key. If the current model does not provide a value
-     * for the key, then the parent component model (if any) is searched.
+     * Gets a meta value identified by the given key. If the current model does not provide a value for the key, then
+     * the parent component model (if any) is searched.
      *
      * @param key identifies the value to be accessed
      * @return the value for the key (possibly inherited from a parent model), or null

@@ -19,32 +19,25 @@ import org.apache.tapestry.corelib.components.Loop;
 import java.util.List;
 
 /**
- * Tracks information related to user input validations. This information is:
- * <ul>
- * <li>The input values provided by the user.
- * <li>Any validation exceptions associated with input fields.
- * </ul>
+ * Tracks information related to user input validations. This information is: <ul> <li>The input values provided by the
+ * user. <li>Any validation exceptions associated with input fields. </ul>
  * <p/>
- * The tracker must differentiate between components (which will implement the {@link Field}
- * interfaces) and fields. It is a one to many relationship, because each field may be called upon
- * to render itself multiple times within a request, because of {@link Loop} or other similar
- * components.
+ * The tracker must differentiate between components (which will implement the {@link Field} interfaces) and fields. It
+ * is a one to many relationship, because each field may be called upon to render itself multiple times within a
+ * request, because of {@link Loop} or other similar components.
  * <p/>
- * Internally, the tracker indexes its information in terms of the {@linkplain Field#getControlName() control name}
- * for each rendering of the component (the mechanics of Tapestry ensures that this is unique within
- * the form).
+ * Internally, the tracker indexes its information in terms of the {@linkplain Field#getControlName() control name} for
+ * each rendering of the component (the mechanics of Tapestry ensures that this is unique within the form).
  * <p/>
- * Validation trackers must be serializable, as they will almost always be stored into the
- * HttpSession.
+ * Validation trackers must be serializable, as they will almost always be stored into the HttpSession.
  * <p/>
  * Trackers are used by only a single form within a single page; they are not threadsafe.
  */
 public interface ValidationTracker
 {
     /**
-     * Called by a field to record the exact input from the user, prior to any validation. If the
-     * form is redisplayed (to present errors), the input value will be sent back to the user for
-     * correction.
+     * Called by a field to record the exact input from the user, prior to any validation. If the form is redisplayed
+     * (to present errors), the input value will be sent back to the user for correction.
      *
      * @param field the field recording the input
      * @param input the value obtained from the forms submission
@@ -57,8 +50,8 @@ public interface ValidationTracker
     String getInput(Field field);
 
     /**
-     * Records an error message for a field. The error message is primarily derived from a
-     * {@link ValidationException} thrown by a {@link Validator} or {@link Translator}.
+     * Records an error message for a field. The error message is primarily derived from a {@link ValidationException}
+     * thrown by a {@link Validator} or {@link Translator}.
      *
      * @param field
      * @param errorMessage
@@ -66,16 +59,16 @@ public interface ValidationTracker
     void recordError(Field field, String errorMessage);
 
     /**
-     * Records an error message that is not associated with any specific field. This often reflects
-     * some amount of cross-form validation.
+     * Records an error message that is not associated with any specific field. This often reflects some amount of
+     * cross-form validation.
      *
      * @param errorMessage
      */
     void recordError(String errorMessage);
 
     /**
-     * For a given field, determines if the field is "in error", meaning that an error message has
-     * been previously recorded for the field.
+     * For a given field, determines if the field is "in error", meaning that an error message has been previously
+     * recorded for the field.
      *
      * @param field
      * @return true if an error message is present
@@ -93,9 +86,8 @@ public interface ValidationTracker
     boolean getHasErrors();
 
     /**
-     * Returns a list of all error messages. The messages are stored in the order that they were
-     * added to the tracker, except that unassociated errors (unassociated with any field) are
-     * listed first.
+     * Returns a list of all error messages. The messages are stored in the order that they were added to the tracker,
+     * except that unassociated errors (unassociated with any field) are listed first.
      */
     List<String> getErrors();
 

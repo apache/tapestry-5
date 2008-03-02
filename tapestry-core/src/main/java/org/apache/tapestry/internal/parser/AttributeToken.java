@@ -53,8 +53,7 @@ public class AttributeToken extends TemplateToken
     }
 
     /**
-     * Returns the namespace URI containing the attribute, or the empty string
-     * for the default namespace.
+     * Returns the namespace URI containing the attribute, or the empty string for the default namespace.
      */
     public String getNamespaceURI()
     {

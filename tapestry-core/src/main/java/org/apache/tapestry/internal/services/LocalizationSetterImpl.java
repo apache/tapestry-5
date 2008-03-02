@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Given a set of supported locales, for a specified desired locale, sets the current thread's
- * locale to a supported locale that is closest to the desired.
+ * Given a set of supported locales, for a specified desired locale, sets the current thread's locale to a supported
+ * locale that is closest to the desired.
  */
 public class LocalizationSetterImpl implements LocalizationSetter
 {

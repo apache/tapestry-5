@@ -118,7 +118,7 @@ public final class Select extends AbstractField
         return TapestryInternalUtils.isEqual(clientValue, _selectedClientValue);
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {

@@ -35,9 +35,9 @@ import java.util.Formatter;
 import java.util.List;
 
 /**
- * The TapestryFilter is responsible for intercepting all requests into the web application. It
- * identifies the requests that are relevant to Tapestry, and lets the servlet container handle the
- * rest. It is also responsible for initializing Tapestry.
+ * The TapestryFilter is responsible for intercepting all requests into the web application. It identifies the requests
+ * that are relevant to Tapestry, and lets the servlet container handle the rest. It is also responsible for
+ * initializing Tapestry.
  */
 public class TapestryFilter implements Filter
 {
@@ -50,9 +50,9 @@ public class TapestryFilter implements Filter
     private HttpServletRequestHandler _handler;
 
     /**
-     * Initializes the filter using the {@link TapestryAppInitializer}. The application package is
-     * defined by the <code>tapestry.app-package</code> context init parameter and the application
-     * name is the capitalization of the filter name (as specified in web.xml).
+     * Initializes the filter using the {@link TapestryAppInitializer}. The application package is defined by the
+     * <code>tapestry.app-package</code> context init parameter and the application name is the capitalization of the
+     * filter name (as specified in web.xml).
      */
     public final void init(FilterConfig filterConfig) throws ServletException
     {
@@ -135,9 +135,8 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any
-     * additional initialization to occur. This implementation does nothing, and my be overriden in
-     * subclasses.
+     * Invoked from {@link #init(FilterConfig)} after the Registry has been created, to allow any additional
+     * initialization to occur. This implementation does nothing, and my be overriden in subclasses.
      *
      * @param registry from which services may be extracted
      * @throws ServletException
@@ -148,8 +147,8 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Overridden in subclasses to provide additional module definitions beyond those normally
-     * located. This implementation returns an empty array.
+     * Overridden in subclasses to provide additional module definitions beyond those normally located. This
+     * implementation returns an empty array.
      */
     protected ModuleDef[] provideExtraModuleDefs(ServletContext context)
     {
@@ -186,9 +185,8 @@ public class TapestryFilter implements Filter
     }
 
     /**
-     * Invoked from {@link #destroy()} to allow subclasses to add additional shutdown logic to the
-     * filter. The Registry will be shutdown after this call. This implementation does nothing, and
-     * may be overridden in subclasses.
+     * Invoked from {@link #destroy()} to allow subclasses to add additional shutdown logic to the filter. The Registry
+     * will be shutdown after this call. This implementation does nothing, and may be overridden in subclasses.
      *
      * @param registry
      */

@@ -21,8 +21,7 @@ import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.services.FormSupport;
 
 /**
- * A validator that enforces that the value is not null and not the empty string. This validator is
- * not configurable.
+ * A validator that enforces that the value is not null and not the empty string. This validator is not configurable.
  */
 public final class Required extends AbstractValidator<Void, Object>
 {

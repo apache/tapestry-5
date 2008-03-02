@@ -31,8 +31,7 @@ public final class AliasContribution<T>
     private final T _object;
 
     /**
-     * Simplifies the creation of an AliasContribution around a known type and instance of that
-     * type.
+     * Simplifies the creation of an AliasContribution around a known type and instance of that type.
      */
     public static <X> AliasContribution<X> create(Class<X> contributionType, X object)
     {
@@ -40,8 +39,7 @@ public final class AliasContribution<T>
     }
 
     /**
-     * Simplifies the creation of an AliasContribution around a known type, mode, and an instance of
-     * that type.
+     * Simplifies the creation of an AliasContribution around a known type, mode, and an instance of that type.
      */
     public static <X> AliasContribution<X> create(Class<X> contributionType, String mode, X object)
     {
@@ -64,10 +62,9 @@ public final class AliasContribution<T>
     }
 
     /**
-     * Returns the mode of operation for this instance of Tapestry. Most of the time, this will be
-     * the empty string, meaning that the contribution applies to Tapestry is any mode. In other
-     * cases, the mode will be "servlet" but may be other modes via add on modules, such as
-     * "portlet" or "offline".
+     * Returns the mode of operation for this instance of Tapestry. Most of the time, this will be the empty string,
+     * meaning that the contribution applies to Tapestry is any mode. In other cases, the mode will be "servlet" but may
+     * be other modes via add on modules, such as "portlet" or "offline".
      */
     public String getMode()
     {

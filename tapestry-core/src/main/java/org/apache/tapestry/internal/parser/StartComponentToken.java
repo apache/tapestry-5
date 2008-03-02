@@ -17,10 +17,9 @@ package org.apache.tapestry.internal.parser;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * The start element of a component within the template. Will be followed by a series of
- * {@link org.apache.tapestry.internal.parser.AttributeToken}s for any attributes (outside of id
- * and type), and eventually will be balanced by an
- * {@link org.apache.tapestry.internal.parser.EndElementToken}.
+ * The start element of a component within the template. Will be followed by a series of {@link
+ * org.apache.tapestry.internal.parser.AttributeToken}s for any attributes (outside of id and type), and eventually will
+ * be balanced by an {@link org.apache.tapestry.internal.parser.EndElementToken}.
  */
 public class StartComponentToken extends TemplateToken
 {
@@ -33,11 +32,10 @@ public class StartComponentToken extends TemplateToken
     private final String _mixins;
 
     /**
-     * @param elementName the name of the element from which this component was parsed, or null if the
-     *                    element was the t:comp placeholder
+     * @param elementName the name of the element from which this component was parsed, or null if the element was the
+     *                    t:comp placeholder
      * @param id          the id of the component (may be null for anonymous components)
-     * @param type        the type of component (may be null if the component type is specified outside the
-     *                    template)
+     * @param type        the type of component (may be null if the component type is specified outside the template)
      * @param mixins      a comma-separated list of mixins (possibly null)
      * @param location    the location within the template at which the element was parsed
      */
@@ -55,9 +53,9 @@ public class StartComponentToken extends TemplateToken
     }
 
     /**
-     * Returns the element for this component. When using the &lt;t:comp&gt; placeholder, this value
-     * will be null. When using "invisible instrumentation", where t:id or t:type attributes are
-     * added to existing elements, this is the local name of the element so attached.
+     * Returns the element for this component. When using the &lt;t:comp&gt; placeholder, this value will be null. When
+     * using "invisible instrumentation", where t:id or t:type attributes are added to existing elements, this is the
+     * local name of the element so attached.
      *
      * @return the element name or null
      */
@@ -67,8 +65,8 @@ public class StartComponentToken extends TemplateToken
     }
 
     /**
-     * Returns a non-blank id if one was provided in the template. If the id attribute was missing
-     * (or the value was blank), returns null.
+     * Returns a non-blank id if one was provided in the template. If the id attribute was missing (or the value was
+     * blank), returns null.
      */
     public String getId()
     {
@@ -76,8 +74,8 @@ public class StartComponentToken extends TemplateToken
     }
 
     /**
-     * Returns a non-blank component type if one was provided in the template. If the type attribute
-     * was missing (or the value was blank), returns null.
+     * Returns a non-blank component type if one was provided in the template. If the type attribute was missing (or the
+     * value was blank), returns null.
      */
     public String getComponentType()
     {

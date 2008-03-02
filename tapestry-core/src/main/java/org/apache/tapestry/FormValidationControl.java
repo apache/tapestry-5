@@ -30,14 +30,14 @@ public interface FormValidationControl
     public abstract void recordError(Field field, String errorMessage);
 
     /**
-     * Returns true if the form's {@link ValidationTracker} contains any
-     * {@link ValidationTracker#getHasErrors() errors}.
+     * Returns true if the form's {@link ValidationTracker} contains any {@link ValidationTracker#getHasErrors()
+     * errors}.
      */
     public abstract boolean getHasErrors();
 
     /**
-     * Returns true if the form's {@link ValidationTracker} does not contain any
-     * {@link ValidationTracker#getHasErrors() errors}.
+     * Returns true if the form's {@link ValidationTracker} does not contain any {@link ValidationTracker#getHasErrors()
+     * errors}.
      */
     public abstract boolean isValid();
 

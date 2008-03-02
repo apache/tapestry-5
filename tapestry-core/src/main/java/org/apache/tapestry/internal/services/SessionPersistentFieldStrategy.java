@@ -20,15 +20,13 @@ import org.apache.tapestry.services.Session;
 /**
  * A strategy for storing persistent page properties into the {@link Session session}.
  * <p/>
- * Builds attribute names as:
- * <code>state:<em>page-name</em>:<em>component-id</em>:<em>field-name</em></code>
+ * Builds attribute names as: <code>state:<em>page-name</em>:<em>component-id</em>:<em>field-name</em></code>
  */
 
 public class SessionPersistentFieldStrategy extends AbstractSessionPersistentFieldStrategy
 {
     /**
-     * Prefix used to identify keys stored in the session that are being used to store persistent
-     * field data.
+     * Prefix used to identify keys stored in the session that are being used to store persistent field data.
      */
     static final String PREFIX = "state:";
 

@@ -21,15 +21,13 @@ import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.test.PageTester;
 
 /**
- * Used by the {@link PageTester} to map {@link Element}s (pulled from the rendered
- * {@link Document}) into {@link ComponentInvocation}s, that can be used to to trigger further
- * (simulated) requests. In this way, a unit test can have the
- * {@link PageTester#clickLink(Element) click a link} or
- * {@link PageTester#submitForm(Element, java.util.Map) submit a form}.
+ * Used by the {@link PageTester} to map {@link Element}s (pulled from the rendered {@link Document}) into {@link
+ * ComponentInvocation}s, that can be used to to trigger further (simulated) requests. In this way, a unit test can have
+ * the {@link PageTester#clickLink(Element) click a link} or {@link PageTester#submitForm(Element, java.util.Map) submit
+ * a form}.
  * <p/>
- * The information needed is generated in slightly disparate places, so the {@link LinkFactory}
- * tells the map about Links and ComponentInvocations, and the {@link MarkupWriter} will link
- * Elements to Link instance.
+ * The information needed is generated in slightly disparate places, so the {@link LinkFactory} tells the map about
+ * Links and ComponentInvocations, and the {@link MarkupWriter} will link Elements to Link instance.
  */
 public interface ComponentInvocationMap
 {

@@ -22,8 +22,8 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 import java.lang.annotation.Annotation;
 
 /**
- * Abstract base class for bindings. Assumes that the binding is read only and invariant. Subclasses
- * must provide an implementation of {@link Binding#get()}.
+ * Abstract base class for bindings. Assumes that the binding is read only and invariant. Subclasses must provide an
+ * implementation of {@link Binding#get()}.
  */
 public abstract class AbstractBinding extends BaseLocatable implements Binding
 {
@@ -46,8 +46,8 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding
     }
 
     /**
-     * Returns true. Subclasses that do not supply a fixed, read-only value should override this
-     * method to return false.
+     * Returns true. Subclasses that do not supply a fixed, read-only value should override this method to return
+     * false.
      */
     public boolean isInvariant()
     {
@@ -55,8 +55,8 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding
     }
 
     /**
-     * Returns the actual class, by invoking {@link Binding#get()}. Subclasses may override this
-     * method to work more efficiently (say, when the binding type is known statically).
+     * Returns the actual class, by invoking {@link Binding#get()}. Subclasses may override this method to work more
+     * efficiently (say, when the binding type is known statically).
      */
     public Class getBindingType()
     {
@@ -64,8 +64,8 @@ public abstract class AbstractBinding extends BaseLocatable implements Binding
     }
 
     /**
-     * Always returns null. Bindings that provide access to a method or field will override this
-     * method to return the appropriate annotation.
+     * Always returns null. Bindings that provide access to a method or field will override this method to return the
+     * appropriate annotation.
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {

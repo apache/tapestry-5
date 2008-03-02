@@ -14,10 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
-import org.apache.tapestry.internal.InternalConstants;
 
 import java.io.IOException;
 import java.io.PrintWriter;

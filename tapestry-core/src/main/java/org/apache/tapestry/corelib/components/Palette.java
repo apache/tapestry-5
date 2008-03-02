@@ -18,6 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -31,26 +32,23 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured
- * for multiple selection; the one on the left is the list of "available" elements, the one on the
- * right is "selected". Elements can be moved between the lists by clicking a button, or double
- * clicking an option (and eventually, via drag and drop).
+ * Multiple selection component. Generates a UI consisting of two &lt;select&gt; elements configured for multiple
+ * selection; the one on the left is the list of "available" elements, the one on the right is "selected". Elements can
+ * be moved between the lists by clicking a button, or double clicking an option (and eventually, via drag and drop).
  * <p/>
- * The items in the available list are kept ordered as per {@link SelectModel} order. When items are
- * moved from the selected list to the available list, they items are inserted back into their
- * proper positions.
+ * The items in the available list are kept ordered as per {@link SelectModel} order. When items are moved from the
+ * selected list to the available list, they items are inserted back into their proper positions.
  * <p/>
  * The Palette may operate in normal or re-orderable mode, controlled by the reorder parameter.
  * <p/>
- * In normal mode, the items in the selected list are kept in the same "natural" order as the items
- * in the available list.
+ * In normal mode, the items in the selected list are kept in the same "natural" order as the items in the available
+ * list.
  * <p/>
- * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In
- * addition, two extra buttons appear to move items up and down within the selected list.
+ * In re-order mode, items moved to the selected list are simply added to the bottom of the list. In addition, two extra
+ * buttons appear to move items up and down within the selected list.
  * <p/>
- * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the
- * columns, etc. By default, the &lt;select&gt; element's widths are 200px, and  it is common to override this to a specific
- * value:
+ * Much of the look and feel is driven by CSS, the default Tapestry CSS is used to set up the columns, etc. By default,
+ * the &lt;select&gt; element's widths are 200px, and  it is common to override this to a specific value:
  * <p/>
  * <pre>
  * &lt;style&gt;
@@ -58,11 +56,11 @@ import java.util.Set;
  * &lt;/style&gt;
  * </pre>
  * <p/>
- * You'll want to ensure that both &lt;select&gt; in each column is the same width, otherwise the display will update poorly
- * as options are moved from one column to the other.
+ * You'll want to ensure that both &lt;select&gt; in each column is the same width, otherwise the display will update
+ * poorly as options are moved from one column to the other.
  * <p/>
- * Option groups within the {@link SelectModel} will be rendered, but are not supported by many
- * browsers, and are not fully handled on the client side.
+ * Option groups within the {@link SelectModel} will be rendered, but are not supported by many browsers, and are not
+ * fully handled on the client side.
  */
 @IncludeJavaScriptLibrary("palette.js")
 public class Palette extends AbstractField
@@ -160,6 +158,7 @@ public class Palette extends AbstractField
      * The image to use for the deselect button (the default is a left pointing arrow).
      */
     @Parameter(value = "asset:deselect.png")
+    @GenerateAccessors(write=false)
     private Asset _deselect;
 
     /**
@@ -178,12 +177,14 @@ public class Palette extends AbstractField
      * The image to use for the move down button (the default is a downward pointing arrow).
      */
     @Parameter(value = "asset:move_down.png")
+    @GenerateAccessors(write=false)    
     private Asset _moveDown;
 
     /**
      * The image to use for the move up button (the default is an upward pointing arrow).
      */
     @Parameter(value = "asset:move_up.png")
+    @GenerateAccessors(write=false)
     private Asset _moveUp;
 
     /**
@@ -204,27 +205,27 @@ public class Palette extends AbstractField
      * The image to use for the select button (the default is a right pointing arrow).
      */
     @Parameter(value = "asset:select.png")
+    @GenerateAccessors(write=false)
     private Asset _select;
 
     /**
-     * The list of selected values from the {@link SelectModel}. This will be updated when the form
-     * is submitted. If the value for the parameter is null, a new list will be created, otherwise
-     * the existing list will be cleared. If unbound, defaults to a property of the container
-     * matching this component's id.
+     * The list of selected values from the {@link SelectModel}. This will be updated when the form is submitted. If the
+     * value for the parameter is null, a new list will be created, otherwise the existing list will be cleared. If
+     * unbound, defaults to a property of the container matching this component's id.
      */
     @Parameter(required = true)
     private List<Object> _selected;
 
     /**
-     * If true, then additional buttons are provided on the client-side to allow for re-ordering of
-     * the values.
+     * If true, then additional buttons are provided on the client-side to allow for re-ordering of the values.
      */
     @Parameter("false")
+    @GenerateAccessors(write=false)    
     private boolean _reorder;
 
     /**
-     * Used during rendering to identify the options corresponding to selected values (from the
-     * selected parameter), in the order they should be displayed on the page.
+     * Used during rendering to identify the options corresponding to selected values (from the selected parameter), in
+     * the order they should be displayed on the page.
      */
     private List<OptionModel> _selectedOptions;
 
@@ -237,8 +238,7 @@ public class Palette extends AbstractField
     private int _size;
 
     /**
-     * Defaults the selected parameter to a container property whose name matches this component's
-     * id.
+     * Defaults the selected parameter to a container property whose name matches this component's id.
      */
     final Binding defaultSelected()
     {
@@ -249,27 +249,7 @@ public class Palette extends AbstractField
     {
         return new AvailableRenderer();
     }
-
-    public Asset getDeselect()
-    {
-        return _deselect;
-    }
-
-    public Asset getMoveDown()
-    {
-        return _moveDown;
-    }
-
-    public Asset getMoveUp()
-    {
-        return _moveUp;
-    }
-
-    public Asset getSelect()
-    {
-        return _select;
-    }
-
+ 
     public Renderable getSelectedRenderer()
     {
         return new SelectedRenderer();
@@ -415,10 +395,5 @@ public class Palette extends AbstractField
         if (_selected == null) return Collections.emptyList();
 
         return _selected;
-    }
-
-    public boolean getReorder()
-    {
-        return _reorder;
     }
 }

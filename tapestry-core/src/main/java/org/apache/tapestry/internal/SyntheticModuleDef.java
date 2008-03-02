@@ -24,8 +24,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * A synthetic module definition, used to mix in some additional "pre-built" service configuration
- * contributions.
+ * A synthetic module definition, used to mix in some additional "pre-built" service configuration contributions.
  */
 public class SyntheticModuleDef implements ModuleDef
 {

@@ -24,8 +24,8 @@ import org.apache.tapestry.services.BindingFactory;
 import org.apache.tapestry.services.FieldValidatorSource;
 
 /**
- * Factory for bindings that provide a {@link FieldValidator} based on a validator specification.
- * This binding factory is only useable with components that implement the {@link Field} interface.
+ * Factory for bindings that provide a {@link FieldValidator} based on a validator specification. This binding factory
+ * is only useable with components that implement the {@link Field} interface.
  */
 public class ValidateBindingFactory implements BindingFactory
 {

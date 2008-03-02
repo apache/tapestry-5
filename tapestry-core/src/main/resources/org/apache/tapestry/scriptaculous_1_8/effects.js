@@ -522,7 +522,7 @@ Effect.Scale = Class.create(Effect.Base, {
             this.dims = [this.element.scrollHeight, this.element.scrollWidth];
         if (!this.dims)
             this.dims = [this.options.scaleMode.originalHeight,
-                    this.options.scaleMode.originalWidth];
+                this.options.scaleMode.originalWidth];
     },
     update: function(position)
     {
@@ -655,7 +655,7 @@ Effect.Appear = function(element)
     var options = Object.extend({
         from: (element.getStyle('display') == 'none' ? 0.0 : element.getOpacity() || 0.0),
         to:   1.0,
-    // force Safari to render floated elements properly
+        // force Safari to render floated elements properly
         afterFinishInternal: function(effect)
         {
             effect.element.forceRerendering();
@@ -681,7 +681,7 @@ Effect.Puff = function(element)
     return new Effect.Parallel(
             [ new Effect.Scale(element, 200,
             { sync: true, scaleFromCenter: true, scaleContent: true, restoreAfterFinish: true }),
-                    new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
+                new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
             Object.extend({ duration: 1.0,
                 beforeSetupInternal: function(effect)
                 {
@@ -767,7 +767,7 @@ Effect.DropOut = function(element)
         opacity: element.getInlineOpacity() };
     return new Effect.Parallel(
             [ new Effect.Move(element, {x: 0, y: 100, sync: true }),
-                    new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
+                new Effect.Opacity(element, { sync: true, to: 0.0 }) ],
             Object.extend(
             { duration: 0.5,
                 beforeSetup: function(effect)
@@ -963,11 +963,11 @@ Effect.Grow = function(element)
         {
             new Effect.Parallel(
                     [ new Effect.Opacity(effect.element, { sync: true, to: 1.0, from: 0.0, transition: options.opacityTransition }),
-                            new Effect.Move(effect.element, { x: moveX, y: moveY, sync: true, transition: options.moveTransition }),
-                            new Effect.Scale(effect.element, 100, {
-                                scaleMode: { originalHeight: dims.height, originalWidth: dims.width },
-                                sync: true, scaleFrom: window.opera ? 1 : 0, transition: options.scaleTransition, restoreAfterFinish: true})
-                            ], Object.extend({
+                        new Effect.Move(effect.element, { x: moveX, y: moveY, sync: true, transition: options.moveTransition }),
+                        new Effect.Scale(effect.element, 100, {
+                            scaleMode: { originalHeight: dims.height, originalWidth: dims.width },
+                            sync: true, scaleFrom: window.opera ? 1 : 0, transition: options.scaleTransition, restoreAfterFinish: true})
+                    ], Object.extend({
                 beforeSetup: function(effect)
                 {
                     effect.effects[0].element.setStyle({height: '0px'}).show();
@@ -1026,9 +1026,9 @@ Effect.Shrink = function(element)
 
     return new Effect.Parallel(
             [ new Effect.Opacity(element, { sync: true, to: 0.0, from: 1.0, transition: options.opacityTransition }),
-                    new Effect.Scale(element, window.opera ? 1 : 0, { sync: true, transition: options.scaleTransition, restoreAfterFinish: true}),
-                    new Effect.Move(element, { x: moveX, y: moveY, sync: true, transition: options.moveTransition })
-                    ], Object.extend({
+                new Effect.Scale(element, window.opera ? 1 : 0, { sync: true, transition: options.scaleTransition, restoreAfterFinish: true}),
+                new Effect.Move(element, { x: moveX, y: moveY, sync: true, transition: options.moveTransition })
+            ], Object.extend({
         beforeStartInternal: function(effect)
         {
             effect.effects[0].element.makePositioned().makeClipping();

@@ -20,8 +20,8 @@ import java.io.ObjectInputStream;
 import java.util.zip.GZIPInputStream;
 
 /**
- * A convienience for building a {@link ObjectInputStream} around a Base64 encoding (that originated
- * in {@link Base64ObjectOutputStream}).
+ * A convienience for building a {@link ObjectInputStream} around a Base64 encoding (that originated in {@link
+ * Base64ObjectOutputStream}).
  */
 public class Base64ObjectInputStream extends ObjectInputStream
 {

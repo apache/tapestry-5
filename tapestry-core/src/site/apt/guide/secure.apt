@@ -41,7 +41,7 @@ Securing Multiple Pages
   enable security for folders of pages.  All pages in or beneath the folder will be secured.
 
   This is accomplished by making a contribution to the
-  {{{../../apidocs/org/apache/tapestry/service/MetaDataLocator.html}MetaDataLocator}}
+  {{{../../apidocs/org/apache/tapestry/services/MetaDataLocator.html}MetaDataLocator}}
   service configuration.  For example, to secure all pages in the "admin" folder:
 
 ----
@@ -125,13 +125,15 @@ Application Server Configuration
 
    Setting up HTTPS support varies from application server to application server.
 
-   {{{http://docs.codehaus.org/display/JETTY/How+to+configure+SSL}This guide covers Jetty 6}}.
+   * Jetty:
 
-   Tomcat:
+     * {{{http://docs.codehaus.org/display/JETTY/How+to+configure+SSL}Jetty 6}}
 
-   * {{{http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html}Version 6.0}}
+   * Tomcat:
 
-   * {{{http://tomcat.apache.org/tomcat-5.5-doc/ssl-howto.html}Version 5.5}}
+        * {{{http://tomcat.apache.org/tomcat-6.0-doc/ssl-howto.html}Version 6.0}}
+
+        * {{{http://tomcat.apache.org/tomcat-5.5-doc/ssl-howto.html}Version 5.5}}
 
    
 

@@ -17,8 +17,8 @@ package org.apache.tapestry.dom;
 import java.io.PrintWriter;
 
 /**
- * Representation of a document type. Note that technically, a Doctype isn't a node in an xml
- * document; hence this doesn't extend node.
+ * Representation of a document type. Note that technically, a Doctype isn't a node in an xml document; hence this
+ * doesn't extend node.
  */
 public class DTD
 {

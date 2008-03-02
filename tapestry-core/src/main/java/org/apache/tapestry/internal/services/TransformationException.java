@@ -18,9 +18,8 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.ClassTransformation;
 
 /**
- * Exception thrown when there is a failure transforming a class, or instantiating a transformed
- * class. The cause may be an Error. The goal is to get the {@link ClassTransformation} into the
- * exception report page, properly formatted.
+ * Exception thrown when there is a failure transforming a class, or instantiating a transformed class. The cause may be
+ * an Error. The goal is to get the {@link ClassTransformation} into the exception report page, properly formatted.
  */
 public class TransformationException extends TapestryException
 {

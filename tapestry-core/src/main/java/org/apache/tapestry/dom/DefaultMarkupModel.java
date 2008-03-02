@@ -19,9 +19,9 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import java.util.Set;
 
 /**
- * Default implementation of {@link org.apache.tapestry.dom.MarkupModel} that is appropriate for
- * traditional HTML markup. This conforms to the SGML HTML definition, including some things that
- * are not well formed XML-style markup. Assumes that all tags are lower-case.
+ * Default implementation of {@link org.apache.tapestry.dom.MarkupModel} that is appropriate for traditional HTML
+ * markup. This conforms to the SGML HTML definition, including some things that are not well formed XML-style markup.
+ * Assumes that all tags are lower-case.
  */
 public class DefaultMarkupModel implements MarkupModel
 {

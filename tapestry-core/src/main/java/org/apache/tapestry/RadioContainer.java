@@ -17,14 +17,14 @@ package org.apache.tapestry;
 import org.apache.tapestry.corelib.components.Radio;
 
 /**
- * A container of {@link Radio} components, used to identify the element name used when rendering
- * the individual radio buttons (all buttons in a group share the same element name) and to
+ * A container of {@link Radio} components, used to identify the element name used when rendering the individual radio
+ * buttons (all buttons in a group share the same element name) and to
  */
 public interface RadioContainer
 {
     /**
-     * Returns the value used as the name attribute of the rendered element. This value will be
-     * unique within an enclosing form, even if the same component renders multiple times.
+     * Returns the value used as the name attribute of the rendered element. This value will be unique within an
+     * enclosing form, even if the same component renders multiple times.
      */
     String getElementName();
 

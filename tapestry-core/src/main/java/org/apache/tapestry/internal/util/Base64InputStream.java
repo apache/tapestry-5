@@ -19,8 +19,8 @@ import org.apache.commons.codec.binary.Base64;
 import java.io.ByteArrayInputStream;
 
 /**
- * An extension of {@link ByteArrayInputStream} that is initialized from a Base64 input stream
- * (rather than from a byte array).
+ * An extension of {@link ByteArrayInputStream} that is initialized from a Base64 input stream (rather than from a byte
+ * array).
  */
 public class Base64InputStream extends ByteArrayInputStream
 {

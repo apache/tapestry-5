@@ -17,8 +17,8 @@ package org.apache.tapestry.internal.services;
 import java.util.Locale;
 
 /**
- * Sets the thread's locale given a desired locale. Note that the desired locale is just a hint. It
- * wil try to honor it but there is no guarantee that it will be used as is.
+ * Sets the thread's locale given a desired locale. Note that the desired locale is just a hint. It wil try to honor it
+ * but there is no guarantee that it will be used as is.
  */
 public interface LocalizationSetter
 {

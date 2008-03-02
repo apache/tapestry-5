@@ -20,8 +20,8 @@ import org.apache.tapestry.internal.structure.Page;
 public interface PageContentTypeAnalyzer
 {
     /**
-     * Analyzes the meta-data for the page and identifies the correct
-     * {@link org.apache.tapestry.ContentType} (including encoding).
+     * Analyzes the meta-data for the page and identifies the correct {@link org.apache.tapestry.ContentType} (including
+     * encoding).
      *
      * @param page to be rendered
      * @return the content type

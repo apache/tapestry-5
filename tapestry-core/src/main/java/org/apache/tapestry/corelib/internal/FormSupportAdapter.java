@@ -19,8 +19,8 @@ import org.apache.tapestry.Field;
 import org.apache.tapestry.services.FormSupport;
 
 /**
- * An implementation of {@link org.apache.tapestry.services.FormSupport} that delegates all behavior
- * to another instance of FormSupport. This allows some of the behavior to be overridden easily.
+ * An implementation of {@link org.apache.tapestry.services.FormSupport} that delegates all behavior to another instance
+ * of FormSupport. This allows some of the behavior to be overridden easily.
  */
 public class FormSupportAdapter implements FormSupport
 {

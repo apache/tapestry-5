@@ -51,8 +51,8 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
     }
 
     /**
-     * At the end of the request, when the thread cleanup event occurs, release any pages attached
-     * to the request back to the page pool.
+     * At the end of the request, when the thread cleanup event occurs, release any pages attached to the request back
+     * to the page pool.
      */
     public void threadDidCleanup()
     {

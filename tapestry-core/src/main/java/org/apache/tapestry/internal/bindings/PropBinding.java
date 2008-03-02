@@ -21,9 +21,8 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
 import java.lang.annotation.Annotation;
 
 /**
- * Base class for bindings created by the
- * {@link org.apache.tapestry.internal.bindings.PropBindingFactory}. A subclass of this is created
- * at runtime.
+ * Base class for bindings created by the {@link org.apache.tapestry.internal.bindings.PropBindingFactory}. A subclass
+ * of this is created at runtime.
  */
 public class PropBinding extends AbstractBinding
 {
@@ -44,8 +43,8 @@ public class PropBinding extends AbstractBinding
     }
 
     /**
-     * The default implementation of get() will throw a TapestryException (binding is write only).
-     * The fabricated subclass <em>may</em> override this method (as well as set()).
+     * The default implementation of get() will throw a TapestryException (binding is write only). The fabricated
+     * subclass <em>may</em> override this method (as well as set()).
      */
     public Object get()
     {

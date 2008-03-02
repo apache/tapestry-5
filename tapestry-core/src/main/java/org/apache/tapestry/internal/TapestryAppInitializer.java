@@ -25,14 +25,13 @@ import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.TapestryModule;
 
 /**
- * This class is used to build the {@link Registry}. The Registry contains
- * {@link org.apache.tapestry.ioc.services.TapestryIOCModule} and {@link TapestryModule}, any
- * modules identified by {@link #addModules(Class[])} )}, plus the application module.
+ * This class is used to build the {@link Registry}. The Registry contains {@link org.apache.tapestry.ioc.services.TapestryIOCModule}
+ * and {@link TapestryModule}, any modules identified by {@link #addModules(Class[])} )}, plus the application module.
  * <p/>
  * The application module is optional.
  * <p/>
- * The application module is identified as <em>package</em>.services.<em>appName</em>Module,
- * where <em>package</em> and the <em>appName</em> are specified by the caller.
+ * The application module is identified as <em>package</em>.services.<em>appName</em>Module, where <em>package</em> and
+ * the <em>appName</em> are specified by the caller.
  */
 public class TapestryAppInitializer
 {
@@ -54,8 +53,7 @@ public class TapestryAppInitializer
     }
 
     /**
-     * @param appProvider provides symbols for the application (normally, from the ServletContext init
-     *                    parameters)
+     * @param appProvider provides symbols for the application (normally, from the ServletContext init parameters)
      * @param appName     the name of the application (i.e., the name of the application servlet)
      * @param aliasMode   the mode, used by the {@link Alias} service, normally "servlet"
      */

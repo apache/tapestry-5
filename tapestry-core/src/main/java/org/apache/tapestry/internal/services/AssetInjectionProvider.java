@@ -26,8 +26,8 @@ import org.apache.tapestry.services.InjectionProvider;
 import static java.lang.String.format;
 
 /**
- * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more
- * useful than the general {@link AssetObjectProvider}, becase relative assets are supported.
+ * Performs injection of assets, based on the presence of the {@link Path} annotation. This is more useful than the
+ * general {@link AssetObjectProvider}, becase relative assets are supported.
  */
 public class AssetInjectionProvider implements InjectionProvider
 {

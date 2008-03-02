@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ValueEncoder;
 
 /**

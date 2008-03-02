@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Defines a group of related options. Options may be enabled or disabled as a group. Corresponds to
- * the [X]HTML element &lt;optgroup&gt;.
+ * Defines a group of related options. Options may be enabled or disabled as a group. Corresponds to the [X]HTML element
+ * &lt;optgroup&gt;.
  */
 public interface OptionGroupModel
 {
@@ -29,16 +29,16 @@ public interface OptionGroupModel
     String getLabel();
 
     /**
-     * If true, the group (and all options within it) will be disabled. Note that some browsers do
-     * not honor the disabled attribute property.
+     * If true, the group (and all options within it) will be disabled. Note that some browsers do not honor the
+     * disabled attribute property.
      *
      * @return true if a disabled attribute should be rendered.
      */
     boolean isDisabled();
 
     /**
-     * Additional attributes to render with the &lt;optgroup&gt;. This is often used to render the
-     * CSS class attribute. May return null.
+     * Additional attributes to render with the &lt;optgroup&gt;. This is often used to render the CSS class attribute.
+     * May return null.
      */
     Map<String, String> getAttributes();
 

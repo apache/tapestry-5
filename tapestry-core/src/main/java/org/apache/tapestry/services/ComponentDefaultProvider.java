@@ -17,8 +17,7 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.*;
 
 /**
- * A service that can be injected into a component to provide common defaults for various
- * types of parameters.
+ * A service that can be injected into a component to provide common defaults for various types of parameters.
  */
 public interface ComponentDefaultProvider
 {
@@ -26,15 +25,15 @@ public interface ComponentDefaultProvider
      * Computes the default label for the component (which will generally be a {@link Field}).
      *
      * @param resources
-     * @return the label, either extracted from the component's container's message catalog, or
-     *         derived from the component's {@link ComponentResourcesCommon#getId()}.
+     * @return the label, either extracted from the component's container's message catalog, or derived from the
+     *         component's {@link ComponentResourcesCommon#getId()}.
      */
     String defaultLabel(ComponentResources resources);
 
     /**
-     * Checks to see if the container of the component (identified by its resources) contains a
-     * property matching the component's id. If so, a binding for that property is returned. This is
-     * usually the default for a {@link Field}'s value parameter (or equivalent).
+     * Checks to see if the container of the component (identified by its resources) contains a property matching the
+     * component's id. If so, a binding for that property is returned. This is usually the default for a {@link Field}'s
+     * value parameter (or equivalent).
      *
      * @param parameterName the name of the parameter
      * @param resources     the resources of the component for which a binding is needed
@@ -43,9 +42,11 @@ public interface ComponentDefaultProvider
     Binding defaultBinding(String parameterName, ComponentResources resources);
 
     /**
-     * Gets or creates a value encoder based on the <em>type</em> of the named parameter.  ValueEncoders are cached based on type.
+     * Gets or creates a value encoder based on the <em>type</em> of the named parameter.  ValueEncoders are cached
+     * based on type.
      *
-     * @param parameterName the name of the parameter whose type is used to locate a {@link org.apache.tapestry.services.ValueEncoderFactory}
+     * @param parameterName the name of the parameter whose type is used to locate a {@link
+     *                      org.apache.tapestry.services.ValueEncoderFactory}
      * @param resources     the resources of the component, from which parameter and its type are extracted
      * @return the value encoder, or null if the type of the parameter is not known
      */

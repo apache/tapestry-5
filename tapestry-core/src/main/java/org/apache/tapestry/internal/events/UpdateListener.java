@@ -20,8 +20,7 @@ package org.apache.tapestry.internal.events;
 public interface UpdateListener
 {
     /**
-     * Invoked to force the receiver to check for updates to whatever underlying resources it makes
-     * use of.
+     * Invoked to force the receiver to check for updates to whatever underlying resources it makes use of.
      */
     void checkForUpdates();
 }

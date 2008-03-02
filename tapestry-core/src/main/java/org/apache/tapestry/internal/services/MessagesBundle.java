@@ -18,15 +18,15 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 
 /**
- * Represents a bundle of properties files that can be used to collect properties that are
- * eventually used to form a {@link Messages}.
+ * Represents a bundle of properties files that can be used to collect properties that are eventually used to form a
+ * {@link Messages}.
  */
 public interface MessagesBundle
 {
 
     /**
-     * Returns an object used to identify this particular bundle; this should be a simple immutable
-     * value such as a String.
+     * Returns an object used to identify this particular bundle; this should be a simple immutable value such as a
+     * String.
      */
     Object getId();
 
@@ -36,8 +36,8 @@ public interface MessagesBundle
     Resource getBaseResource();
 
     /**
-     * Returns a parent bundle for this bundle, or null if this bundle has no parent. Parent bundle
-     * provide properties that are overridden by child bundles.
+     * Returns a parent bundle for this bundle, or null if this bundle has no parent. Parent bundle provide properties
+     * that are overridden by child bundles.
      */
     MessagesBundle getParent();
 }

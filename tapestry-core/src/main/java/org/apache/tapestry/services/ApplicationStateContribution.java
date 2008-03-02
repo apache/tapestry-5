@@ -17,8 +17,8 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.ioc.internal.util.Defense;
 
 /**
- * A contribution to the configuration of the {@link ApplicationStateManager}, identifying the
- * strategy and creator for a particular ASO (identified by the ASO's class).
+ * A contribution to the configuration of the {@link ApplicationStateManager}, identifying the strategy and creator for
+ * a particular ASO (identified by the ASO's class).
  */
 public final class ApplicationStateContribution
 {
@@ -40,8 +40,8 @@ public final class ApplicationStateContribution
     }
 
     /**
-     * The creator for the ASO. If null, the the ASO is created directly from the ASO class, via its
-     * public no-arguments constructor.
+     * The creator for the ASO. If null, the the ASO is created directly from the ASO class, via its public no-arguments
+     * constructor.
      */
     public ApplicationStateCreator getCreator()
     {

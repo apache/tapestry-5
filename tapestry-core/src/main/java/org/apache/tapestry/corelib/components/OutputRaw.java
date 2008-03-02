@@ -22,17 +22,17 @@ import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 
 /**
- * Used to output raw markup to the client. Unlike, say, an expansion, the output from OutputRaw is
- * unfiltered, with any special characters or entities left exactly as is. This is used in
- * situations where the markup is provided externally, rather than constructed within Tapestry.
+ * Used to output raw markup to the client. Unlike, say, an expansion, the output from OutputRaw is unfiltered, with any
+ * special characters or entities left exactly as is. This is used in situations where the markup is provided
+ * externally, rather than constructed within Tapestry.
  *
  * @see MarkupWriter#writeRaw(String)
  */
 public class OutputRaw
 {
     /**
-     * The value to to render. If unbound, and a property of the container matches the component's
-     * id, then that property will be the source of the value.
+     * The value to to render. If unbound, and a property of the container matches the component's id, then that
+     * property will be the source of the value.
      */
     @Parameter(required = true)
     private String _value;

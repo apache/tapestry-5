@@ -22,9 +22,8 @@ import org.apache.tapestry.services.Response;
 import java.io.IOException;
 
 /**
- * Responsible for determining the locale for the current request. Currently, this is based on the
- * client's web browser. Later extensions will store the current locale as a cookie, or as a session
- * attribute.
+ * Responsible for determining the locale for the current request. Currently, this is based on the client's web browser.
+ * Later extensions will store the current locale as a cookie, or as a session attribute.
  */
 public class LocalizationFilter implements RequestFilter
 {

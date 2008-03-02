@@ -25,12 +25,12 @@ import org.apache.tapestry.services.InjectionProvider;
 import org.apache.tapestry.services.TransformConstants;
 
 /**
- * Identifies fields of type {@link Block} that have the {@link Inject} annotation and converts them
- * into read-only fields containing the injected Block from the template. The annotation's value is
- * the id of the block to inject; if omitted, the block id is deduced from the field id.
+ * Identifies fields of type {@link Block} that have the {@link Inject} annotation and converts them into read-only
+ * fields containing the injected Block from the template. The annotation's value is the id of the block to inject; if
+ * omitted, the block id is deduced from the field id.
  * <p/>
- * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation,
- * Inject, with a different interpretation.
+ * Must be scheduled before {@link DefaultInjectionProvider} because it uses the same annotation, Inject, with a
+ * different interpretation.
  */
 public class BlockInjectionProvider implements InjectionProvider
 {

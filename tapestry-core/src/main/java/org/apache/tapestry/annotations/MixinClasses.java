@@ -21,9 +21,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used to attach one or more instance mixins to an embedded component. Each mixin is specified as a
- * specific class. This annotation is only recognized when used in conjuction with the
- * {@link Component} annotation.
+ * Used to attach one or more instance mixins to an embedded component. Each mixin is specified as a specific class.
+ * This annotation is only recognized when used in conjuction with the {@link Component} annotation.
  *
  * @see Mixins
  */

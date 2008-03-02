@@ -31,9 +31,8 @@ public class TapestryUtils
     private static final char SLASH = '\\';
 
     /**
-     * Quotes the provided value as a JavaScript string literal. The input value is surrounded by
-     * single quotes and any interior backslash, single or double quotes are escaped (a preceding
-     * backslash is added).
+     * Quotes the provided value as a JavaScript string literal. The input value is surrounded by single quotes and any
+     * interior backslash, single or double quotes are escaped (a preceding backslash is added).
      *
      * @param text
      * @return quoted text
@@ -66,8 +65,8 @@ public class TapestryUtils
     }
 
     /**
-     * Joins together several strings, sorting them alphabetically and separating them with spaces.
-     * This is often used when setting the CSS class attribute of an element.
+     * Joins together several strings, sorting them alphabetically and separating them with spaces. This is often used
+     * when setting the CSS class attribute of an element.
      */
     public static String join(String... values)
     {
@@ -77,8 +76,8 @@ public class TapestryUtils
     }
 
     /**
-     * Joins together several strings, sorting them alphabetically and separating them with spaces.
-     * This is often used when setting the CSS class attribute of an element.
+     * Joins together several strings, sorting them alphabetically and separating them with spaces. This is often used
+     * when setting the CSS class attribute of an element.
      */
     public static String join(List<String> values)
     {

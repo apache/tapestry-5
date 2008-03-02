@@ -24,9 +24,9 @@ package org.apache.tapestry;
 public interface FieldValidator<T>
 {
     /**
-     * Invoked after the client-submitted value has been {@link Translator translated} to check that
-     * the value conforms to expectations (often, in terms of minimum or maximum value). If and only
-     * if the value is approved by all Validators is the value applied by the field.
+     * Invoked after the client-submitted value has been {@link Translator translated} to check that the value conforms
+     * to expectations (often, in terms of minimum or maximum value). If and only if the value is approved by all
+     * Validators is the value applied by the field.
      *
      * @param value the translated value supplied by the user
      * @throws ValidationException if the value violates the constraint
@@ -34,9 +34,9 @@ public interface FieldValidator<T>
     void validate(T value) throws ValidationException;
 
     /**
-     * Invokes
-     * {@link Validator#render(Field, Object, org.apache.tapestry.ioc.MessageFormatter, MarkupWriter, org.apache.tapestry.services.FormSupport)}.
-     * This is called at a point "inside" the tag, so that additional attributes may be added.
+     * Invokes {@link Validator#render(Field, Object, org.apache.tapestry.ioc.MessageFormatter, MarkupWriter,
+     * org.apache.tapestry.services.FormSupport)}. This is called at a point "inside" the tag, so that additional
+     * attributes may be added.
      *
      * @param writer markup writer to direct output to.
      * @see org.apache.tapestry.MarkupWriter#attributes(Object[])
@@ -44,8 +44,8 @@ public interface FieldValidator<T>
     void render(MarkupWriter writer);
 
     /**
-     * Returns true if any underlying {@link org.apache.tapestry.Validator} returns true
-     * from {@link org.apache.tapestry.Validator#isRequired()}.
+     * Returns true if any underlying {@link org.apache.tapestry.Validator} returns true from {@link
+     * org.apache.tapestry.Validator#isRequired()}.
      *
      * @return true if the field is required   (a non-blank value is expected)
      */

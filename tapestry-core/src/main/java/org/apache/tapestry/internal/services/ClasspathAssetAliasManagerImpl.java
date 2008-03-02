@@ -46,8 +46,8 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     private final List<String> _sortedPathPrefixes;
 
     /**
-     * Configuration is a map of aliases (short names) to complete names. Keys and values should end
-     * with a slash, but one will be provided as necessary, so don't both.
+     * Configuration is a map of aliases (short names) to complete names. Keys and values should end with a slash, but
+     * one will be provided as necessary, so don't both.
      */
     public ClasspathAssetAliasManagerImpl(Request request,
 

@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as
- * a factory for enclosed Element, Text and Comment nodes.
+ * An element that will render with a begin tag and attributes, a body, and an end tag. Also acts as a factory for
+ * enclosed Element, Text and Comment nodes.
  * <p/>
  * TODO: Support for CDATA nodes. Do we need Entity nodes?
  */
@@ -73,9 +73,9 @@ public final class Element extends Node
     private static final String CLASS_ATTRIBUTE = "class";
 
     /**
-     * URI of the namespace which contains the element.  A quirk in XML is that the element may be in a namespace
-     * it defines itself, so resolving the namespace to a prefix must wait until render time (since the Element is
-     * created before the namespaces for it are defined).
+     * URI of the namespace which contains the element.  A quirk in XML is that the element may be in a namespace it
+     * defines itself, so resolving the namespace to a prefix must wait until render time (since the Element is created
+     * before the namespaces for it are defined).
      */
     private final String _namespace;
 
@@ -113,8 +113,7 @@ public final class Element extends Node
     }
 
     /**
-     * Returns the containing element for this element. This will be null for the root element of a
-     * document.
+     * Returns the containing element for this element. This will be null for the root element of a document.
      */
     public Element getParent()
     {
@@ -125,8 +124,8 @@ public final class Element extends Node
      * Adds an attribute to the element, but only if the attribute name does not already exist.
      *
      * @param name  the name of the attribute to add
-     * @param value the value for the attribute. A value of null is allowed, and no attribute will be
-     *              added to the element.
+     * @param value the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *              element.
      */
     public void attribute(String name, String value)
     {
@@ -138,8 +137,8 @@ public final class Element extends Node
      *
      * @param namespace the namespace to contain the attribute, or null
      * @param name      the name of the attribute to add
-     * @param value     the value for the attribute. A value of null is allowed, and no attribute will be
-     *                  added to the element.
+     * @param value     the value for the attribute. A value of null is allowed, and no attribute will be added to the
+     *                  element.
      */
     public void attribute(String namespace, String name, String value)
     {
@@ -171,8 +170,7 @@ public final class Element extends Node
     }
 
     /**
-     * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous
-     * values.
+     * Forces changes to a number of attributes. The new attributes <em>overwrite</em> previous values.
      */
     public void forceAttributes(String... namesAndValues)
     {
@@ -259,8 +257,8 @@ public final class Element extends Node
     }
 
     /**
-     * Adds and returns a new text node (the text node is returned so that
-     * {@link Text#write(String)} or [@link {@link Text#writef(String, Object[])} may be invoked .
+     * Adds and returns a new text node (the text node is returned so that {@link Text#write(String)} or [@link {@link
+     * Text#writef(String, Object[])} may be invoked .
      *
      * @param text initial text for the node
      * @return the new Text node
@@ -371,8 +369,8 @@ public final class Element extends Node
     }
 
     /**
-     * Tries to find an element under this element (including itself) whose id is specified.
-     * Performs a width-first search of the document tree.
+     * Tries to find an element under this element (including itself) whose id is specified. Performs a width-first
+     * search of the document tree.
      *
      * @param id the value of the id attribute of the element being looked for
      * @return the element if found. null if not found.
@@ -407,8 +405,8 @@ public final class Element extends Node
     }
 
     /**
-     * Searchs for a child element with a particular name below this element. The path parameter is
-     * a slash separated series of element names.
+     * Searchs for a child element with a particular name below this element. The path parameter is a slash separated
+     * series of element names.
      *
      * @param path
      * @return
@@ -465,9 +463,8 @@ public final class Element extends Node
     }
 
     /**
-     * Adds one or more CSS class names to the "class" attribute. No check
-     * for duplicates is made. Note that CSS class names are case insensitive
-     * on the client.
+     * Adds one or more CSS class names to the "class" attribute. No check for duplicates is made. Note that CSS class
+     * names are case insensitive on the client.
      *
      * @param className one or more CSS class names
      * @return the element for further configuration
@@ -504,10 +501,9 @@ public final class Element extends Node
     }
 
     /**
-     * Defines a namespace for this element, mapping a URI to a prefix.   This will affect
-     * how namespaced elements and attributes nested within the element are rendered, and will
-     * also cause <code>xmlns:</code> attributes (to define the namespace and prefix) to
-     * be rendered.
+     * Defines a namespace for this element, mapping a URI to a prefix.   This will affect how namespaced elements and
+     * attributes nested within the element are rendered, and will also cause <code>xmlns:</code> attributes (to define
+     * the namespace and prefix) to be rendered.
      *
      * @param namespace       URI of the namespace
      * @param namespacePrefix prefix

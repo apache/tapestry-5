@@ -19,17 +19,15 @@ import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.runtime.Component;
 
 /**
- * An object that can instantiate a component. This is used with transformed classes, in which the
- * normal no-arguments constructor has been replaced with a constructor with arguments; the
- * instantiator will retain the necessary arguments and pass them to the enhanced class'
- * constructor.
+ * An object that can instantiate a component. This is used with transformed classes, in which the normal no-arguments
+ * constructor has been replaced with a constructor with arguments; the instantiator will retain the necessary arguments
+ * and pass them to the enhanced class' constructor.
  */
 public interface Instantiator
 {
     /**
-     * Instantiates and returns a new instance of the desired class. Component classes are always
-     * modified so that they implement {@link Component} (and often, other interfaces as
-     * well).
+     * Instantiates and returns a new instance of the desired class. Component classes are always modified so that they
+     * implement {@link Component} (and often, other interfaces as well).
      */
     Component newInstance(InternalComponentResources resources);
 

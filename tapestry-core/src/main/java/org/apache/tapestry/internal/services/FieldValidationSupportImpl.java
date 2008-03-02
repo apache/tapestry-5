@@ -40,7 +40,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         _typeCoercer = typeCoercer;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public String toClient(Object value, ComponentResources componentResources, Translator translator,
                            NullFieldStrategy nullFieldStrategy)
     {
@@ -66,7 +66,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
             }
         };
 
-        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[]{value}, callback);
+        componentResources.triggerEvent(TO_CLIENT_EVENT, new Object[] { value }, callback);
 
         if (resultHolder.hasValue()) return resultHolder.get();
 
@@ -120,7 +120,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[]{effectiveValue}, callback);
+            componentResources.triggerEvent(PARSE_CLIENT_EVENT, new Object[] { effectiveValue }, callback);
         }
         catch (RuntimeException ex)
         {
@@ -137,8 +137,8 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     }
 
     /**
-     * Checks for a {@link org.apache.tapestry.ValidationException} inside the outer exception and
-     * throws that, otherwise rethrows the runtime exception.
+     * Checks for a {@link org.apache.tapestry.ValidationException} inside the outer exception and throws that,
+     * otherwise rethrows the runtime exception.
      *
      * @param outerException initially caught exception
      * @throws ValidationException if found
@@ -152,7 +152,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         throw outerException;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     public void validate(Object value, ComponentResources componentResources, FieldValidator validator)
             throws ValidationException
     {
@@ -163,7 +163,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         try
         {
-            componentResources.triggerEvent(VALIDATE_EVENT, new Object[]{value}, null);
+            componentResources.triggerEvent(VALIDATE_EVENT, new Object[] { value }, null);
         }
         catch (RuntimeException ex)
         {

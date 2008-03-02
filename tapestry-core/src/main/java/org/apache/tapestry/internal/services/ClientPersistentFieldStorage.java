@@ -19,8 +19,8 @@ import org.apache.tapestry.services.PersistentFieldChange;
 import org.apache.tapestry.services.PersistentFieldStrategy;
 
 /**
- * Describes an object that can store {@link PersistentFieldChange}s, and manage a query parameter
- * stored into a {@link Link} to maining this data across requests.
+ * Describes an object that can store {@link PersistentFieldChange}s, and manage a query parameter stored into a {@link
+ * Link} to maining this data across requests.
  */
 public interface ClientPersistentFieldStorage extends PersistentFieldStrategy
 {

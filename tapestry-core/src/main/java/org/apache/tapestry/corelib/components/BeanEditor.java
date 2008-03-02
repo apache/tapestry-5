@@ -18,6 +18,7 @@ import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
@@ -74,6 +75,7 @@ public class BeanEditor
      * default bean model will be created from the type of the object bound to the object parameter.
      */
     @Parameter
+    @GenerateAccessors(write = false)
     private BeanModel _model;
 
     /**
@@ -83,6 +85,7 @@ public class BeanEditor
      * be searched.
      */
     @Parameter(value = "componentResources")
+    @GenerateAccessors(write = false)
     private ComponentResources _overrides;
 
     @Inject
@@ -99,6 +102,7 @@ public class BeanEditor
 
     // Value that change with each change to the current property:
 
+    @GenerateAccessors
     private String _propertyName;
 
     /**
@@ -109,32 +113,11 @@ public class BeanEditor
         return _defaultProvider.defaultBinding("object", _resources);
     }
 
-    public String getPropertyName()
-    {
-        return _propertyName;
-    }
+    // Needed for testing as well
 
-    public void setPropertyName(String propertyName)
-    {
-        _propertyName = propertyName;
-    }
-
-    /**
-     * Returns the object being edited.
-     */
     public Object getObject()
     {
         return _object;
-    }
-
-    public ComponentResources getOverrides()
-    {
-        return _overrides;
-    }
-
-    public BeanModel getModel()
-    {
-        return _model;
     }
 
     void setupRender()

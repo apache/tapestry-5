@@ -24,12 +24,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used in conjunction with the {@link Inject} annotation to identify a service <em>by name</em>
- * and not by type. This is most useful when there are multiple services with the same service
- * interface and a particular one needs to be selected.
+ * Used in conjunction with the {@link Inject} annotation to identify a service <em>by name</em> and not by type. This
+ * is most useful when there are multiple services with the same service interface and a particular one needs to be
+ * selected.
  */
 @Target(
-        {FIELD, PARAMETER})
+        { FIELD, PARAMETER })
 @Documented
 @Retention(RUNTIME)
 public @interface Service

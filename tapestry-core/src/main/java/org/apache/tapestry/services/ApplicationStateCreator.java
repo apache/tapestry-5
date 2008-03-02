@@ -15,8 +15,8 @@
 package org.apache.tapestry.services;
 
 /**
- * Used by {@link ApplicationStateManager} and {@link ApplicationStatePersistenceStrategy} to create
- * an application state object on demand.
+ * Used by {@link ApplicationStateManager} and {@link ApplicationStatePersistenceStrategy} to create an application
+ * state object on demand.
  *
  * @param <T>
  */

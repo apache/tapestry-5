@@ -57,8 +57,8 @@ public class FormInjector implements ClientElement
     private InsertPosition _position;
 
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content visible.
-     * Leaving as null uses the default function, "highlight".
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
+     * visible. Leaving as null uses the default function, "highlight".
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _show;

@@ -20,14 +20,13 @@ import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Mutable version of {@link org.apache.tapestry.model.ComponentModel} used during the
- * transformation phase.
+ * Mutable version of {@link org.apache.tapestry.model.ComponentModel} used during the transformation phase.
  */
 public interface MutableComponentModel extends ComponentModel
 {
     /**
-     * Adds a new formal parameter to the model. Each parameter has a unique name (though access to
-     * parameters is case insensitive).
+     * Adds a new formal parameter to the model. Each parameter has a unique name (though access to parameters is case
+     * insensitive).
      *
      * @param name                 new, unique name for the parameter
      * @param required             if true, the parameter must be bound
@@ -42,26 +41,26 @@ public interface MutableComponentModel extends ComponentModel
      *
      * @param id                        the unique id for the embedded component, which must not already exist.
      * @param type                      the type of the component (posslibly blank)
-     * @param componentClassName        the fully qualified class name (derived from the field), used if the type is blank
-     * @param inheritInformalParameters if true, then the component will inherit informal parameters provided to its container
-     * @param location                  where the component is defined @return a mutable model allowing parameters to be set
+     * @param componentClassName        the fully qualified class name (derived from the field), used if the type is
+     *                                  blank
+     * @param inheritInformalParameters if true, then the component will inherit informal parameters provided to its
+     *                                  container
+     * @param location                  where the component is defined @return a mutable model allowing parameters to be
+     *                                  set
      */
     MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
                                                        boolean inheritInformalParameters, Location location);
 
     /**
-     * Used to define the field persistence strategy for a particular field name. Returns a logical
-     * name for the field, which is guaranteed to be unique (this is necessary for handling the case
-     * where a subclass has a persistent field with the same name as a persistent field from a
-     * super-class).
+     * Used to define the field persistence strategy for a particular field name. Returns a logical name for the field,
+     * which is guaranteed to be unique (this is necessary for handling the case where a subclass has a persistent field
+     * with the same name as a persistent field from a super-class).
      *
      * @param fieldName the name of the field which is to be made persistent
-     * @param strategy  the strategy for persisting the field, from {@link Persist#value()}. This value
-     *                  may be blank, in which case the stategy is inherited from the component, or the
-     *                  component's container.
-     * @return a logical name for the field, to be used with
-     *         {@link ComponentModel#getFieldPersistenceStrategy(String)}, and with
-     *         {@link InternalComponentResources#persistFieldChange(String, Object)}, etc.
+     * @param strategy  the strategy for persisting the field, from {@link Persist#value()}. This value may be blank, in
+     *                  which case the stategy is inherited from the component, or the component's container.
+     * @return a logical name for the field, to be used with {@link ComponentModel#getFieldPersistenceStrategy(String)},
+     *         and with {@link InternalComponentResources#persistFieldChange(String, Object)}, etc.
      */
     String setFieldPersistenceStrategy(String fieldName, String strategy);
 
@@ -71,8 +70,8 @@ public interface MutableComponentModel extends ComponentModel
     void addMixinClassName(String mixinClassName);
 
     /**
-     * Sets the internal flag to indicate that this model (and all models that extend from it)
-     * support informal parameters.
+     * Sets the internal flag to indicate that this model (and all models that extend from it) support informal
+     * parameters.
      */
     void enableSupportsInformalParameters();
 

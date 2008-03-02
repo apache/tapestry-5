@@ -15,17 +15,17 @@
 package org.apache.tapestry.dom;
 
 /**
- * Used by a the DOM to determine how to produce markup. Delegates details about converted entities
- * and some formatting details.  This exists to handle the differences between traditional HTML
- * output (which is SGML based, meaning there can be elements that are valid without a close tag) and
- * "modern" XML, such as XHTML.  Generally speaking, for XHTML it is vital that a !DOCTYPE be included
- * in the rendered response, or the browser will be unable to display the result properly.
+ * Used by a the DOM to determine how to produce markup. Delegates details about converted entities and some formatting
+ * details.  This exists to handle the differences between traditional HTML output (which is SGML based, meaning there
+ * can be elements that are valid without a close tag) and "modern" XML, such as XHTML.  Generally speaking, for XHTML
+ * it is vital that a !DOCTYPE be included in the rendered response, or the browser will be unable to display the result
+ * properly.
  */
 public interface MarkupModel
 {
     /**
-     * Encodes the characters into the buffer, converting control characters (such as '&lt;') into
-     * corresponding entities (such as &amp;lt;).
+     * Encodes the characters into the buffer, converting control characters (such as '&lt;') into corresponding
+     * entities (such as &amp;lt;).
      *
      * @param content to be filtered
      * @param buffer  to receive the filtered content
@@ -33,9 +33,9 @@ public interface MarkupModel
     void encode(String content, StringBuilder buffer);
 
     /**
-     * Encodes the characters into the buffer for use in a quoted value (that is, an attribute
-     * value), converting control characters (such as '&lt;') into corresponding entities (such as
-     * &amp;lt;). In addition, double quotes must be quoted or otherwise escaped.
+     * Encodes the characters into the buffer for use in a quoted value (that is, an attribute value), converting
+     * control characters (such as '&lt;') into corresponding entities (such as &amp;lt;). In addition, double quotes
+     * must be quoted or otherwise escaped.
      *
      * @param content to be filtered
      * @param buffer  to receive the filtered content
@@ -48,9 +48,8 @@ public interface MarkupModel
     EndTagStyle getEndTagStyle(String element);
 
     /**
-     * Returns true if the document markup is XML, which is used to determine
-     * the need for an XML declaration at the start of the document,
-     * and whether CDATA sections are supported.
+     * Returns true if the document markup is XML, which is used to determine the need for an XML declaration at the
+     * start of the document, and whether CDATA sections are supported.
      *
      * @return true for XML output, false for HTML (SGML) output
      */

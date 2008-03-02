@@ -18,13 +18,13 @@ import java.lang.annotation.*;
 
 
 /**
- * Allows for the inclusion of one or more JavaScript libraries.  The libraries are assets, usually
- * (but not always) stored on the classpath with the component.
+ * Allows for the inclusion of one or more JavaScript libraries.  The libraries are assets, usually (but not always)
+ * stored on the classpath with the component.
  *
  * @see org.apache.tapestry.annotations.IncludeStylesheet
  * @see org.apache.tapestry.annotations.Path
  */
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface IncludeJavaScriptLibrary

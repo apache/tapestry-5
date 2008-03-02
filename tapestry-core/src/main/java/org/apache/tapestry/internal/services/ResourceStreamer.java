@@ -20,8 +20,8 @@ import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import java.io.IOException;
 
 /**
- * Responsible for streaming the contents of a resource to the client. The {@link Resource} to
- * stream is almost always a {@link ClasspathResource}.
+ * Responsible for streaming the contents of a resource to the client. The {@link Resource} to stream is almost always a
+ * {@link ClasspathResource}.
  */
 public interface ResourceStreamer
 {

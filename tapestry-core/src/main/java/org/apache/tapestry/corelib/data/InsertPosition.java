@@ -17,10 +17,12 @@ package org.apache.tapestry.corelib.data;
 public enum InsertPosition
 {
     /**
-     * Insert the new content above (i.e., before) the insertion position. 
+     * Insert the new content above (i.e., before) the insertion position.
      */
     ABOVE,
 
-    /** Insert the new context below (i.e., after) the insertion position. */
+    /**
+     * Insert the new context below (i.e., after) the insertion position.
+     */
     BELOW;
 }
