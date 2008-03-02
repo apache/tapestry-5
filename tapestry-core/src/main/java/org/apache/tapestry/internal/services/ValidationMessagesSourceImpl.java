@@ -64,8 +64,8 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
     }
 
     /**
-     * Delegates to a {@link Messages} instance obtained from the {@link MessagesSource}. This
-     * ensures that changes to the underlying properties files will be reflected.
+     * Delegates to a {@link Messages} instance obtained from the {@link MessagesSource}. This ensures that changes to
+     * the underlying properties files will be reflected.
      */
     private class ValidationMessages implements Messages
     {

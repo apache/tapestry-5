@@ -18,17 +18,18 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.json.JSONObject;
 
 /**
- * Defines an Ajax-oriented partial page render, wherein a render of a portion of a page occurs, and the content is stored into a key ("content") of a {@link org.apache.tapestry.json.JSONObject}, which is
- * sent to the client side as the final response.  Client-side JavaScript receives this reply and uses it to update a portion of the page.
+ * Defines an Ajax-oriented partial page render, wherein a render of a portion of a page occurs, and the content is
+ * stored into a key ("content") of a {@link org.apache.tapestry.json.JSONObject}, which is sent to the client side as
+ * the final response.  Client-side JavaScript receives this reply and uses it to update a portion of the page.
  * <p/>
  * <p/>
- * The PartialMarkupRenderer service takes an ordered configuration of {@link PartialMarkupRendererFilter}s.  It can be selected using the {@link org.apache.tapestry.ioc.annotations.Primary} marker annotation.
+ * The PartialMarkupRenderer service takes an ordered configuration of {@link PartialMarkupRendererFilter}s.  It can be
+ * selected using the {@link org.apache.tapestry.ioc.annotations.Primary} marker annotation.
  */
 public interface PartialMarkupRenderer
 {
     /**
-     * Implementations should perform work before or after passing the writer
-     * to the renderer.
+     * Implementations should perform work before or after passing the writer to the renderer.
      *
      * @param writer to which markup should be written
      * @param reply  JSONObject which will contain the partial response

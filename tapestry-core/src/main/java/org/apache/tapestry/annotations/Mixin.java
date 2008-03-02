@@ -30,11 +30,10 @@ public @interface Mixin
 {
 
     /**
-     * Defines the type of mixin, using a logical mixin name. This value takes precedence over the
-     * type of field (to which the annotation is attached). In such cases, it is presumed that the
-     * field's type is an interface implemented by the actual mixin. The default value (the empty
-     * string) directs Tapestry to use the field type as the mixin class to instantiate and attach
-     * to the component.
+     * Defines the type of mixin, using a logical mixin name. This value takes precedence over the type of field (to
+     * which the annotation is attached). In such cases, it is presumed that the field's type is an interface
+     * implemented by the actual mixin. The default value (the empty string) directs Tapestry to use the field type as
+     * the mixin class to instantiate and attach to the component.
      */
     String value() default "";
 }

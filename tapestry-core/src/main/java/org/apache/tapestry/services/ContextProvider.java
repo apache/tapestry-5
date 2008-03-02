@@ -22,11 +22,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation to select the correct {@link AssetFactory} for injection. The marked interface will provide
- * assets located in the web application context.
+ * Marker annotation to select the correct {@link AssetFactory} for injection. The marked interface will provide assets
+ * located in the web application context.
  */
 @Target(
-        {PARAMETER, FIELD})
+        { PARAMETER, FIELD })
 @Retention(RUNTIME)
 @Documented
 public @interface ContextProvider

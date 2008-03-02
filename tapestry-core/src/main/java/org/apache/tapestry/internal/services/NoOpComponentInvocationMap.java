@@ -18,9 +18,8 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.dom.Element;
 
 /**
- * The production implementation for
- * {@link org.apache.tapestry.internal.services.ComponentInvocationMap}. It does absolutely nothing
- * because it is not needed in production.
+ * The production implementation for {@link org.apache.tapestry.internal.services.ComponentInvocationMap}. It does
+ * absolutely nothing because it is not needed in production.
  */
 public class NoOpComponentInvocationMap implements ComponentInvocationMap
 {

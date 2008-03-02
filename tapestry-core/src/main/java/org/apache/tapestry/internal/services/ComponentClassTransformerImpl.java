@@ -52,10 +52,10 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ClassFactory _classFactory;
 
-    private final String[] SUBPACKAGES = {"." + InternalConstants.PAGES_SUBPACKAGE + ".",
-                                          "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
-                                          "." + InternalConstants.MIXINS_SUBPACKAGE + ".",
-                                          "." + InternalConstants.BASE_SUBPACKAGE + "."};
+    private final String[] SUBPACKAGES = { "." + InternalConstants.PAGES_SUBPACKAGE + ".",
+            "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
+            "." + InternalConstants.MIXINS_SUBPACKAGE + ".",
+            "." + InternalConstants.BASE_SUBPACKAGE + "." };
 
     /**
      * @param workerChain the ordered list of class transform works as a chain of command instance

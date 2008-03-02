@@ -22,14 +22,14 @@ import org.apache.tapestry.ioc.Messages;
 import java.util.Locale;
 
 /**
- * For a particular field, generates the default validation for the field, in accordance with a
- * number of factors and contributions.
+ * For a particular field, generates the default validation for the field, in accordance with a number of factors and
+ * contributions.
  */
 public interface FieldValidatorDefaultSource
 {
     /**
-     * Analyzes the property type and property annotations to determine the default set of
-     * validations for the property, which are wrapped to form a {@link FieldValidator} for a field.
+     * Analyzes the property type and property annotations to determine the default set of validations for the property,
+     * which are wrapped to form a {@link FieldValidator} for a field.
      *
      * @param field
      * @param overrideId

@@ -23,9 +23,8 @@ import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.services.Heartbeat;
 
 /**
- * A mixin that can be applied to a Checkbox component that will link
- * the checkbox and a FormFragment, making the Checkbox control the client-side visibility
- * of the FormFragment.
+ * A mixin that can be applied to a Checkbox component that will link the checkbox and a FormFragment, making the
+ * Checkbox control the client-side visibility of the FormFragment.
  *
  * @see org.apache.tapestry.corelib.components.Checkbox
  * @see org.apache.tapestry.corelib.components.FormFragment

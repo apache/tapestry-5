@@ -17,8 +17,8 @@ package org.apache.tapestry;
 import org.apache.tapestry.ioc.AnnotationProvider;
 
 /**
- * Used to read or update the value associated with a property. A PropertyConduit provides access to
- * the annotations on the underlying getter and/or setter methods.
+ * Used to read or update the value associated with a property. A PropertyConduit provides access to the annotations on
+ * the underlying getter and/or setter methods.
  */
 public interface PropertyConduit extends AnnotationProvider
 {

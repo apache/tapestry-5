@@ -33,10 +33,10 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * This class is used to run a Tapestry app in an in-process testing environment. You can ask it to
- * render a certain page and check the DOM object created. You can also ask it to click on a link
- * element in the DOM object to get the next page. Because no servlet container is required, it is
- * very fast and you can directly debug into your code in your IDE.
+ * This class is used to run a Tapestry app in an in-process testing environment. You can ask it to render a certain
+ * page and check the DOM object created. You can also ask it to click on a link element in the DOM object to get the
+ * next page. Because no servlet container is required, it is very fast and you can directly debug into your code in
+ * your IDE.
  */
 public class PageTester implements ComponentInvoker
 {
@@ -57,8 +57,8 @@ public class PageTester implements ComponentInvoker
     private static final String DEFAULT_SUBMIT_VALUE_ATTRIBUTE = "Submit Query";
 
     /**
-     * Initializes a PageTester without overriding any services and assuming that the context root
-     * is in src/main/webapp.
+     * Initializes a PageTester without overriding any services and assuming that the context root is in
+     * src/main/webapp.
      *
      * @see #PageTester(String, String, String, Class[])
      */
@@ -68,16 +68,14 @@ public class PageTester implements ComponentInvoker
     }
 
     /**
-     * Initializes a PageTester that acts as a browser and a servlet container to test drive your
-     * Tapestry pages.
+     * Initializes a PageTester that acts as a browser and a servlet container to test drive your Tapestry pages.
      *
-     * @param appPackage    The same value you would specify using the tapestry.app-package context parameter.
-     *                      As this testing environment is not run in a servlet container, you need to specify
-     *                      it.
-     * @param appName       The same value you would specify as the filter name. It is used to form the name
-     *                      of the module builder for your app. If you don't have one, pass an empty string.
-     * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're
-     *                      put there).
+     * @param appPackage    The same value you would specify using the tapestry.app-package context parameter. As this
+     *                      testing environment is not run in a servlet container, you need to specify it.
+     * @param appName       The same value you would specify as the filter name. It is used to form the name of the
+     *                      module builder for your app. If you don't have one, pass an empty string.
+     * @param contextPath   The path to the context root so that Tapestry can find the templates (if they're put
+     *                      there).
      * @param moduleClasses Classes of additional modules to load
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
@@ -173,8 +171,7 @@ public class PageTester implements ComponentInvoker
     }
 
     /**
-     * Simulates a submission of the form specified. The caller can specify values for the form
-     * fields.
+     * Simulates a submission of the form specified. The caller can specify values for the form fields.
      *
      * @param form       the form to be submitted.
      * @param parameters the query parameter name/value pairs
@@ -196,8 +193,8 @@ public class PageTester implements ComponentInvoker
     }
 
     /**
-     * Simulates a submission of the form by clicking the specified submit button. The caller can
-     * specify values for the form fields.
+     * Simulates a submission of the form by clicking the specified submit button. The caller can specify values for the
+     * form fields.
      *
      * @param submitButton the submit button to be clicked.
      * @param fieldValues  the field values keyed on field names.

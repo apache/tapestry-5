@@ -17,8 +17,7 @@ package org.apache.tapestry.dom;
 import java.io.PrintWriter;
 
 /**
- * A specialized node in the document tree that contains raw markup to be printed to the client
- * exactly as-is.
+ * A specialized node in the document tree that contains raw markup to be printed to the client exactly as-is.
  */
 public final class Raw extends Node
 {

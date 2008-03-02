@@ -16,22 +16,19 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.corelib.components.BeanEditForm;
 import org.apache.tapestry.integration.app1.data.RegistrationData;
 
 public class BeanEditorDemo
 {
     @Component(id = "registrationData", parameters =
-            {"clientValidation=clientValidation"})
+            { "clientValidation=clientValidation" })
     private BeanEditForm _form;
 
     @ApplicationState
-    private RegistrationData _data;
-
-    public RegistrationData getRegistrationData()
-    {
-        return _data;
-    }
+    @GenerateAccessors
+    private RegistrationData _registrationData;
 
     Object onSuccess()
     {
@@ -40,7 +37,7 @@ public class BeanEditorDemo
 
     void onActionFromClear()
     {
-        _data = null;
+        _registrationData = null;
         _form.clearErrors();
     }
 

@@ -18,18 +18,17 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 
 /**
- * Much like {@link PropertyShadowBuilder}, except that instead of accessing a property of some
- * other service, it accesses a value from within the {@link Environment} service. This is useful
- * for defining a new service that can be injected into other services (whereas the
- * {@link Environmental} annotation may only be used within component classes).
+ * Much like {@link PropertyShadowBuilder}, except that instead of accessing a property of some other service, it
+ * accesses a value from within the {@link Environment} service. This is useful for defining a new service that can be
+ * injected into other services (whereas the {@link Environmental} annotation may only be used within component
+ * classes).
  */
 public interface EnvironmentalShadowBuilder
 {
     /**
-     * Returns a proxy that delegates all methods to an object obtained from
-     * {@link Environment#peekRequired(Class)}. Note that at the time this method is invoked, the
-     * Environment service may still be virtual, and will often not yet have been loaded with
-     * values, and that's OK, the resolution is deferred to the instant a method is invoked.
+     * Returns a proxy that delegates all methods to an object obtained from {@link Environment#peekRequired(Class)}.
+     * Note that at the time this method is invoked, the Environment service may still be virtual, and will often not
+     * yet have been loaded with values, and that's OK, the resolution is deferred to the instant a method is invoked.
      *
      * @param <T>
      * @param serviceType the service type, which is used to obtained the delegate instance

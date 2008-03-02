@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,25 +15,24 @@
 package org.apache.tapestry.annotations;
 
 import java.lang.annotation.Documented;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.FIELD;
 import java.lang.annotation.Retention;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Method annotation used for methods that should be invoked when the page is first attached to a request. This is
- * useful for initializations that should occur on each request that involves the page. Often, such initializations will
- * be balanced by cleanups when the page is detached.
- * <p/>
- * PageAttached methods should take no parameters and return void. They must either have this annotation, or be named
- * "pageAttached".
- *
- * @see PageDetached
+ * Annotation for fields for which accessor methods (getters and setters) should be created.  This can help when
+ * defining the kind of placeholder properties often used in components, though the disadvantage is that you can't
+ * access the fields in a unit test, and you may get compiler warnings about unused private variables.
  */
-@Target(METHOD)
-@Retention(RUNTIME)
+@Target(FIELD)
 @Documented
-public @interface PageAttached
+@Retention(RUNTIME)
+public @interface GenerateAccessors
 {
+    /** Whether to create a readable property (i.e., generate a getter method). */
+    boolean read() default true;
 
+    /** Whether to create a writeable property (i.e., generate a setter method). */
+    boolean write() default true;
 }

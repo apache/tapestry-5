@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * Determines the reuest encoding for the given page and applies that to the request, so that
- * parameters may be properly decoded.
+ * Determines the reuest encoding for the given page and applies that to the request, so that parameters may be properly
+ * decoded.
  */
 public interface RequestEncodingInitializer
 {

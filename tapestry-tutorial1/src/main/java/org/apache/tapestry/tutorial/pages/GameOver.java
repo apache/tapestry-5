@@ -15,16 +15,13 @@
 package org.apache.tapestry.tutorial.pages;
 
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotations.GenerateAccessors;
 
 public class GameOver
 {
     @Persist
+    @GenerateAccessors
     private int _count;
-
-    public int getCount()
-    {
-        return _count;
-    }
 
     Object initialize(int count)
     {

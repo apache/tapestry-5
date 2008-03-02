@@ -17,9 +17,9 @@ package org.apache.tapestry.internal.util;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * An object that holds some type of other object. This is useful for communicating information from
- * an inner class (used as a closure) to the containing method. This is similar to
- * {@link AtomicReference}, except that it is simpler but <strong>not</strong> thread safe.
+ * An object that holds some type of other object. This is useful for communicating information from an inner class
+ * (used as a closure) to the containing method. This is similar to {@link AtomicReference}, except that it is simpler
+ * but <strong>not</strong> thread safe.
  *
  * @param <T>
  */

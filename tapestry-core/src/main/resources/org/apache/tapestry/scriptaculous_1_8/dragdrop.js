@@ -364,8 +364,8 @@ var Draggable = Class.create({
     currentDelta: function()
     {
         return([
-                parseInt(Element.getStyle(this.element, 'left') || '0'),
-                parseInt(Element.getStyle(this.element, 'top') || '0')]);
+            parseInt(Element.getStyle(this.element, 'left') || '0'),
+            parseInt(Element.getStyle(this.element, 'top') || '0')]);
     },
 
     initDrag: function(event)
@@ -792,8 +792,8 @@ var Sortable = {
             scrollSpeed: 15,
             format:      this.SERIALIZE_RULE,
 
-        // these take arrays of elements or ids and can be
-        // used for better initialization performance
+            // these take arrays of elements or ids and can be
+            // used for better initialization performance
             elements:    false,
             handles:     false,
 
@@ -892,7 +892,7 @@ var Sortable = {
 
     },
 
-// return all suitable-for-sortable elements in a guaranteed order
+    // return all suitable-for-sortable elements in a guaranteed order
     findElements: function(element, options)
     {
         return Element.findChildren(
@@ -1066,7 +1066,7 @@ var Sortable = {
         return Sortable._tree(element, options, root);
     },
 
-/* Construct a [i] index for a particular node */
+    /* Construct a [i] index for a particular node */
     _constructIndex: function(node)
     {
         var index = '';

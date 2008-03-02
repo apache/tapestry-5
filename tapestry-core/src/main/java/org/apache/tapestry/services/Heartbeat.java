@@ -15,18 +15,17 @@
 package org.apache.tapestry.services;
 
 /**
- * Allows for deferred execution of logic, useful when trying to get multiple components to
- * coordinate behavior. A component may add a command to be executed "{@link #end() at the end of the heartbeat}".
- * The classic example of this is a Label and the field it labels; since we don't know which order
- * the two will render, we can't tell if the field's id is correct until after both have rendered.
+ * Allows for deferred execution of logic, useful when trying to get multiple components to coordinate behavior. A
+ * component may add a command to be executed "{@link #end() at the end of the heartbeat}". The classic example of this
+ * is a Label and the field it labels; since we don't know which order the two will render, we can't tell if the field's
+ * id is correct until after both have rendered.
  * <p/>
  * The Heartbeat is injected into components via the {@link org.apache.tapestry.annotations.Environmental} annotation.
  */
 public interface Heartbeat
 {
     /**
-     * Begins a new Heartbeat. Heartbeats nest. Every call to begin() should be matched by a call to
-     * {@link #end()}.
+     * Begins a new Heartbeat. Heartbeats nest. Every call to begin() should be matched by a call to {@link #end()}.
      */
     void begin();
 

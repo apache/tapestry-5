@@ -18,8 +18,8 @@ import org.apache.tapestry.corelib.components.Label;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 
 /**
- * A contribution to the {@link BeanBlockSource} service, defining a page name and block id (within
- * the page) that can edit or display a particular type of property.
+ * A contribution to the {@link BeanBlockSource} service, defining a page name and block id (within the page) that can
+ * edit or display a particular type of property.
  */
 public final class BeanBlockContribution
 {
@@ -60,9 +60,9 @@ public final class BeanBlockContribution
     }
 
     /**
-     * If true, then the block provides an editor for the property, consisting of a {@link Label}
-     * and some field component (or set of field components). If false, the block is used to display
-     * the value of the property, usually by applying some kind of formatting to the raw value.
+     * If true, then the block provides an editor for the property, consisting of a {@link Label} and some field
+     * component (or set of field components). If false, the block is used to display the value of the property, usually
+     * by applying some kind of formatting to the raw value.
      */
     public boolean isEdit()
     {

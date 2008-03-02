@@ -23,21 +23,22 @@ import java.util.Locale;
 /**
  * Used to find or create an {@link Asset} with a given path.
  * <p/>
- * Assets are defined with a domain, and the domain is indicated by a prefix.  The two builtin domains are "context:" (for files inside
- * the web application context) and "classpath:" for files stored on the classpath (typically, inside a JAR, such as a component library).
+ * Assets are defined with a domain, and the domain is indicated by a prefix.  The two builtin domains are "context:"
+ * (for files inside the web application context) and "classpath:" for files stored on the classpath (typically, inside
+ * a JAR, such as a component library).
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeAssetSource(org.apache.tapestry.ioc.MappedConfiguration, AssetFactory, AssetFactory)
+ * @see org.apache.tapestry.services.TapestryModule#contributeAssetSource(org.apache.tapestry.ioc.MappedConfiguration,
+ *      AssetFactory, AssetFactory)
  */
 public interface AssetSource
 {
     /**
-     * Finds the asset. The path may either be a simple file name or a relative path (relative to
-     * the base resource) <em>or</em> it may have a prefix, such as "context:" or "classpath:", in
-     * which case it is treated as a complete path within the indicated domain. The resulting
-     * Resource is then localized (to the provided Locale) and returned as an Asset.
+     * Finds the asset. The path may either be a simple file name or a relative path (relative to the base resource)
+     * <em>or</em> it may have a prefix, such as "context:" or "classpath:", in which case it is treated as a complete
+     * path within the indicated domain. The resulting Resource is then localized (to the provided Locale) and returned
+     * as an Asset.
      * <p/>
-     * The AssetSource caches its results, so a single Asset instance may be shared among many
-     * different components.
+     * The AssetSource caches its results, so a single Asset instance may be shared among many different components.
      *
      * @param baseResource base resource for computing relative paths, or null to search the classpath
      * @param path         relative to the base resource
@@ -57,8 +58,7 @@ public interface AssetSource
     Asset getClasspathAsset(String path, Locale locale);
 
     /**
-     * Obtains a classpath alias in the current locale (as defined by the {@link ThreadLocale}
-     * service).
+     * Obtains a classpath alias in the current locale (as defined by the {@link ThreadLocale} service).
      *
      * @param path
      * @return the asset

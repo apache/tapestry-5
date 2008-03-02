@@ -24,7 +24,7 @@ import java.lang.annotation.*;
  *
  * @see org.apache.tapestry.annotations.ContentType
  */
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface ResponseEncoding

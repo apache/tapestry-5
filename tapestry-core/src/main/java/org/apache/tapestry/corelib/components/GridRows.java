@@ -17,6 +17,7 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridDataSource;
@@ -86,6 +87,7 @@ public class GridRows
      * container, to know what object is being rendered.
      */
     @Parameter(required = true)
+    @GenerateAccessors(write=false)
     private Object _row;
 
     /**
@@ -115,6 +117,7 @@ public class GridRows
 
     private String _propertyName;
 
+    @GenerateAccessors(write=false)
     private PropertyModel _columnModel;
 
     public String getRowClass()
@@ -153,7 +156,7 @@ public class GridRows
                 case DESCENDING:
                     classes.add(GridConstants.SORT_DESCENDING_CLASS);
                     break;
-                
+
                 default:
             }
         }
@@ -224,15 +227,5 @@ public class GridRows
         _propertyName = propertyName;
 
         _columnModel = _gridModel.getDataModel().get(propertyName);
-    }
-
-    public Object getRow()
-    {
-        return _row;
-    }
-
-    public PropertyModel getColumnModel()
-    {
-        return _columnModel;
     }
 }

@@ -15,16 +15,15 @@
 package org.apache.tapestry.services;
 
 /**
- * Used by {@link ApplicationStateManager} to manage a specific kind of ASO persistence. The stategy
- * is responsible for managing ASO instances within its domain.
+ * Used by {@link ApplicationStateManager} to manage a specific kind of ASO persistence. The stategy is responsible for
+ * managing ASO instances within its domain.
  *
  * @see org.apache.tapestry.services.ApplicationStatePersistenceStrategySource
  */
 public interface ApplicationStatePersistenceStrategy
 {
     /**
-     * Gets the ASO from the domain. If the ASO does not already exist, it is created and stored,
-     * then returned.
+     * Gets the ASO from the domain. If the ASO does not already exist, it is created and stored, then returned.
      */
     <T> T get(Class<T> asoClass, ApplicationStateCreator<T> creator);
 

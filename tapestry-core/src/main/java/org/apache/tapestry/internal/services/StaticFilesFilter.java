@@ -22,8 +22,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Identifies requests that are for actual resource files in the context. For those, Tapestry allows
- * the servlet container to process the request.
+ * Identifies requests that are for actual resource files in the context. For those, Tapestry allows the servlet
+ * container to process the request.
  */
 public class StaticFilesFilter implements RequestFilter
 {

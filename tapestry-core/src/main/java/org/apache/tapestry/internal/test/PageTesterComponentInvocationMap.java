@@ -25,8 +25,8 @@ import org.apache.tapestry.test.PageTester;
 import java.util.Map;
 
 /**
- * This is the real implementation, used by {@link PageTester}. The typical implementation,
- * {@link NoOpComponentInvocationMap}, is used in production as a place holder.
+ * This is the real implementation, used by {@link PageTester}. The typical implementation, {@link
+ * NoOpComponentInvocationMap}, is used in production as a place holder.
  */
 public class PageTesterComponentInvocationMap implements ComponentInvocationMap
 {

@@ -22,18 +22,16 @@ import org.apache.tapestry.Link;
 public interface LinkFactoryListener
 {
     /**
-     * Invoked when a page link (a link that renders a page) is created. The listener may decide to
-     * encode additional query parameters into the link (via
-     * {@link Link#addParameter(String, String)}).
+     * Invoked when a page link (a link that renders a page) is created. The listener may decide to encode additional
+     * query parameters into the link (via {@link Link#addParameter(String, String)}).
      *
      * @param link the newly created link
      */
     void createdPageLink(Link link);
 
     /**
-     * Invoked when an action link (a link that asks a component to perform an action) is created.
-     * The listener may decide to encode additional query parameters into the link (via
-     * {@link Link#addParameter(String, String)}).
+     * Invoked when an action link (a link that asks a component to perform an action) is created. The listener may
+     * decide to encode additional query parameters into the link (via {@link Link#addParameter(String, String)}).
      *
      * @param link the newly created link
      */

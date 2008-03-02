@@ -24,8 +24,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Annotation placed on a field to indicate that it is, in fact, an parameter. Parameters may be
- * optional or required. Required parameters must be bound.
+ * Annotation placed on a field to indicate that it is, in fact, an parameter. Parameters may be optional or required.
+ * Required parameters must be bound.
  */
 @Target(FIELD)
 @Documented
@@ -34,48 +34,46 @@ public @interface Parameter
 {
 
     /**
-     * The name of the parameter. If not specified, the name of the parameter is derived from the
-     * name of the field (after stripping off leading punctuation) from the field name.
+     * The name of the parameter. If not specified, the name of the parameter is derived from the name of the field
+     * (after stripping off leading punctuation) from the field name.
      */
     String name() default "";
 
     /**
-     * If true, the parameter is required and and must be bound. If false (the default), then the
-     * parameter is optional.
+     * If true, the parameter is required and and must be bound. If false (the default), then the parameter is
+     * optional.
      */
     boolean required() default false;
 
     /**
-     * If true (the default), then the value for the parameter is cached while the component is,
-     * itself, rendering. Values from invariant bindings (such as literal strings) are always
-     * cached, regardless of this setting. Set this attribute to false to force the parameter to be
-     * {@link org.apache.tapestry.Binding#get() re-read} every time the field is accessed, even
-     * while the component is rendering.
+     * If true (the default), then the value for the parameter is cached while the component is, itself, rendering.
+     * Values from invariant bindings (such as literal strings) are always cached, regardless of this setting. Set this
+     * attribute to false to force the parameter to be {@link org.apache.tapestry.Binding#get() re-read} every time the
+     * field is accessed, even while the component is rendering.
      */
     boolean cache() default true;
 
     /**
-     * The default value for the parameter if not bound (at not the empty string). This is a binding
-     * expression, typically the name of a property of the component to bind.
+     * The default value for the parameter if not bound (at not the empty string). This is a binding expression,
+     * typically the name of a property of the component to bind.
      */
     String value() default "";
 
     /**
-     * The default binding prefix for the parameter, if no specific binding prefix is provided with
-     * the binding. There is <em>rarely</em> a reason to override this. Typically, non-standard
-     * default binding prefixes are paired with specific {@link BindingFactory} implementations, and
-     * used with parameters whose name reflects the binding prefix.
+     * The default binding prefix for the parameter, if no specific binding prefix is provided with the binding. There
+     * is <em>rarely</em> a reason to override this. Typically, non-standard default binding prefixes are paired with
+     * specific {@link BindingFactory} implementations, and used with parameters whose name reflects the binding
+     * prefix.
      */
     String defaultPrefix() default TapestryConstants.PROP_BINDING_PREFIX;
 
     /**
-     * Used to mark a parameter as requiring earlier initialization than other parameters. This is
-     * used when default bindings for secondary parameters rely on a principal parameter, which
-     * itself may have a default value. This ensures that the binding for the principal parameter(s)
-     * are initialized, possibly involving a defaulter method, before the secondary parameters are
-     * initialized (as they may need to know if the principal parameter is bound, and what type of
-     * value it is bound to). This is rarely used, and it is highly unlikely a single component
-     * would have more than a single principal parameter.
+     * Used to mark a parameter as requiring earlier initialization than other parameters. This is used when default
+     * bindings for secondary parameters rely on a principal parameter, which itself may have a default value. This
+     * ensures that the binding for the principal parameter(s) are initialized, possibly involving a defaulter method,
+     * before the secondary parameters are initialized (as they may need to know if the principal parameter is bound,
+     * and what type of value it is bound to). This is rarely used, and it is highly unlikely a single component would
+     * have more than a single principal parameter.
      */
     boolean principal() default false;
 }

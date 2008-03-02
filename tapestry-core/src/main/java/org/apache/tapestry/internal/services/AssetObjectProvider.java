@@ -26,8 +26,8 @@ import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.Core;
 
 /**
- * Exposes assets (in the current locale). The Inject annotation must be supplemented by a
- * {@link Path} annotation, to identify what asset to be injected.
+ * Exposes assets (in the current locale). The Inject annotation must be supplemented by a {@link Path} annotation, to
+ * identify what asset to be injected.
  */
 public class AssetObjectProvider implements ObjectProvider
 {
@@ -49,8 +49,8 @@ public class AssetObjectProvider implements ObjectProvider
     }
 
     /**
-     * Provides the asset. If the expression does not identify an asset domain, with a prefix, it is
-     * assumed to be a path on the classpath, relative to the root of the classpath.
+     * Provides the asset. If the expression does not identify an asset domain, with a prefix, it is assumed to be a
+     * path on the classpath, relative to the root of the classpath.
      *
      * @param objectType the type of object (which must be Object or Asset)
      * @param locator    not used

@@ -35,14 +35,13 @@ public interface ComponentTemplate
     Resource getResource();
 
     /**
-     * Returns a list of tokens that were parsed from the template. The caller should not modify
-     * this list.
+     * Returns a list of tokens that were parsed from the template. The caller should not modify this list.
      */
     List<TemplateToken> getTokens();
 
     /**
-     * Returns a set of strings corresponding to {@link StartComponentToken}s within the template
-     * that have a non-blank id attribute.
+     * Returns a set of strings corresponding to {@link StartComponentToken}s within the template that have a non-blank
+     * id attribute.
      */
     Set<String> getComponentIds();
 }

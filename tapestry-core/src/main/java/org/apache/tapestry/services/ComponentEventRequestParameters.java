@@ -125,7 +125,8 @@ public final class ComponentEventRequestParameters
     /**
      * The activation context for the <em>active page</em>, possibly empty (but not null).
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext, org.apache.tapestry.ComponentEventCallback)
+     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext,
+     *      org.apache.tapestry.ComponentEventCallback)
      */
     public EventContext getPageActivationContext()
     {
@@ -135,7 +136,8 @@ public final class ComponentEventRequestParameters
     /**
      * The event context information passed in the URL.  Possibly empty (not not null).
      *
-     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext, org.apache.tapestry.ComponentEventCallback)
+     * @see org.apache.tapestry.ComponentResourcesCommon#triggerContextEvent(String, org.apache.tapestry.EventContext,
+     *      org.apache.tapestry.ComponentEventCallback)
      */
     public EventContext getEventContext()
     {

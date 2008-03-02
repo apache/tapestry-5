@@ -24,18 +24,17 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Identifies a field as persistent, meaning its value persists from one request to the next.
- * Different strategies exist for how this is accomplished, the most common being the default,
- * "session", which stores the field's value in the {@link Session}.
+ * Identifies a field as persistent, meaning its value persists from one request to the next. Different strategies exist
+ * for how this is accomplished, the most common being the default, "session", which stores the field's value in the
+ * {@link Session}.
  * <p/>
- * In most cases, the value will be omitted and will default to the empty string. This forces a
- * search for the correct strategy. Starting with the component (or mixin) itself, a check is made
- * for the {@link Meta meta data property} <code>tapestry.persistence-strategy</code>. If a value
- * is found, it is used, otherwise the search continues up the inheritance hierarchy, towards the
- * page. If not found, then the "session" strategy is used.
+ * In most cases, the value will be omitted and will default to the empty string. This forces a search for the correct
+ * strategy. Starting with the component (or mixin) itself, a check is made for the {@link Meta meta data property}
+ * <code>tapestry.persistence-strategy</code>. If a value is found, it is used, otherwise the search continues up the
+ * inheritance hierarchy, towards the page. If not found, then the "session" strategy is used.
  * <p/>
- * In this way, the session persistence strategy for a component and all of its sub-components can
- * be controlled by the containing component.
+ * In this way, the session persistence strategy for a component and all of its sub-components can be controlled by the
+ * containing component.
  *
  * @see MetaDataLocator
  */
@@ -46,8 +45,8 @@ public @interface Persist
 {
 
     /**
-     * The strategy used to persist the value. The default value, the empty string, allows
-     * persistence to be decided by the containing component and component hierarchy.
+     * The strategy used to persist the value. The default value, the empty string, allows persistence to be decided by
+     * the containing component and component hierarchy.
      */
     String value() default "";
 }

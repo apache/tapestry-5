@@ -17,17 +17,17 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.internal.structure.Page;
 
 /**
- * Per-thread service that caches page instances for the duration of the request, and is also
- * responsible for tracking the active page (the page which will ultimately render the response).
+ * Per-thread service that caches page instances for the duration of the request, and is also responsible for tracking
+ * the active page (the page which will ultimately render the response).
  */
 public interface RequestPageCache
 {
     /**
-     * Gets the page via its page name, in the current locale. The page name is resolved to a class
-     * name, which is used to obtain the page (from the page pool).
+     * Gets the page via its page name, in the current locale. The page name is resolved to a class name, which is used
+     * to obtain the page (from the page pool).
      *
-     * @param logicalPageName the name of the page to retrieve (this is the logical page name, not the fully
-     *                        qualified class name)
+     * @param logicalPageName the name of the page to retrieve (this is the logical page name, not the fully qualified
+     *                        class name)
      * @return a page instance reserved for this request
      * @throws IllegalArgumentException if the name can not be resolved to a page instance
      */

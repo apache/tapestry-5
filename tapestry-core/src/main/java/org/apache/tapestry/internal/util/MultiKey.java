@@ -17,8 +17,8 @@ package org.apache.tapestry.internal.util;
 import java.util.Arrays;
 
 /**
- * Combines multiple values to form a single composite key. MultiKey can often be used as an
- * alternative to nested maps.
+ * Combines multiple values to form a single composite key. MultiKey can often be used as an alternative to nested
+ * maps.
  */
 public final class MultiKey
 {
@@ -29,9 +29,8 @@ public final class MultiKey
     private final int _hashCode;
 
     /**
-     * Creates a new instance from the provided values. It is assumed that the values provided are
-     * good map keys themselves -- immutable, with proper implementations of equals() and
-     * hashCode().
+     * Creates a new instance from the provided values. It is assumed that the values provided are good map keys
+     * themselves -- immutable, with proper implementations of equals() and hashCode().
      *
      * @param values
      */

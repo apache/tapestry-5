@@ -120,8 +120,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * Signature for newInstance() method of Instantiator.
      */
     private static final MethodSignature NEW_INSTANCE_SIGNATURE = new MethodSignature(Component.class, "newInstance",
-                                                                                      new Class[]{
-                                                                                              InternalComponentResources.class},
+                                                                                      new Class[] {
+                                                                                              InternalComponentResources.class },
                                                                                       null);
 
     /**
@@ -532,13 +532,20 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void addMethod(TransformMethodSignature signature, String methodBody)
     {
+        addOrReplaceMethod(signature, methodBody, true);
+    }
+
+    private void addOrReplaceMethod(TransformMethodSignature signature, String methodBody, boolean addAsNew)
+    {
         failIfFrozen();
 
         CtClass returnType = findCtClass(signature.getReturnType());
         CtClass[] parameters = buildCtClassList(signature.getParameterTypes());
         CtClass[] exceptions = buildCtClassList(signature.getExceptionTypes());
 
-        String action = "add";
+        String suffix = addAsNew ? "" : " transformed";
+
+        String action = "add" + suffix;
 
         try
         {
@@ -546,7 +553,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             if (existing != null)
             {
-                action = "replace";
+                action = "replace" + suffix;
 
                 _ctClass.removeMethod(existing);
             }
@@ -573,7 +580,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             _ctClass.addMethod(method);
 
-            _addedMethods.add(method);
+            if (addAsNew) _addedMethods.add(method);
         }
         catch (CannotCompileException ex)
         {
@@ -586,6 +593,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
 
         addMethodToDescription(action, signature, methodBody);
+    }
+
+    public void addTransformedMethod(TransformMethodSignature methodSignature, String methodBody)
+    {
+        addOrReplaceMethod(methodSignature, methodBody, false);
     }
 
     private CtClass[] buildCtClassList(String[] typeNames)
@@ -649,6 +661,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addMethodToDescription("extend existing", methodSignature, methodBody);
     }
+
 
     public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
     {
@@ -790,6 +803,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public List<String> findFieldsWithAnnotation(final Class<? extends Annotation> annotationClass)
     {
+        return searchFieldsWithAnnotation(annotationClass, true);
+    }
+
+
+    public List<String> findAllFieldsWithAnnotation(Class<? extends Annotation> annotationClass)
+    {
+        return searchFieldsWithAnnotation(annotationClass, false);
+    }
+
+    private List<String> searchFieldsWithAnnotation(final Class<? extends Annotation> annotationClass,
+                                                    boolean skipClaimedFields)
+    {
         FieldFilter filter = new FieldFilter()
         {
             public boolean accept(String fieldName, String fieldType)
@@ -798,10 +823,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             }
         };
 
-        return findFields(filter);
+        return searchFieldsAndFilter(filter, skipClaimedFields);
     }
 
     public List<String> findFields(FieldFilter filter)
+    {
+        return searchFieldsAndFilter(filter, true);
+    }
+
+    private List<String> searchFieldsAndFilter(FieldFilter filter, boolean skipClaimedFields)
     {
         failIfFrozen();
 
@@ -815,7 +845,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
                 String fieldName = field.getName();
 
-                if (_claimedFields.containsKey(fieldName)) continue;
+                if (skipClaimedFields && _claimedFields.containsKey(fieldName)) continue;
 
                 if (filter.accept(fieldName, field.getType().getName())) result.add(fieldName);
 
@@ -1386,7 +1416,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         String fieldType = getFieldType(fieldName);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
-                                                                    new String[]{fieldType}, null);
+                                                                    new String[] { fieldType }, null);
 
         String message = ServicesMessages.readOnlyField(_ctClass.getName(), fieldName);
 

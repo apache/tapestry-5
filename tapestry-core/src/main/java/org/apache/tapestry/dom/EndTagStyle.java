@@ -15,8 +15,8 @@
 package org.apache.tapestry.dom;
 
 /**
- * Part of a {@link MarkupModel}, used to define how end tags are handled when the {@link Document}
- * in rendered out as a text stream.
+ * Part of a {@link MarkupModel}, used to define how end tags are handled when the {@link Document} in rendered out as a
+ * text stream.
  */
 public enum EndTagStyle
 {
@@ -30,8 +30,8 @@ public enum EndTagStyle
      */
     REQUIRE,
     /**
-     * Require an end tag, but abbreviate it if the element has no children. This is the only value
-     * used in XML documents.
+     * Require an end tag, but abbreviate it if the element has no children. This is the only value used in XML
+     * documents.
      */
     ABBREVIATE
 }

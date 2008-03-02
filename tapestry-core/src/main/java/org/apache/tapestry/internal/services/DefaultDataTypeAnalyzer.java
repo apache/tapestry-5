@@ -22,9 +22,9 @@ import org.apache.tapestry.services.DataTypeAnalyzer;
 import java.util.Map;
 
 /**
- * The default data type analyzer, which is based entirely on the type of the property (and not on
- * annotations or naming conventions). This is based on a configuration of property type class to
- * string provided as an IoC service configuration.
+ * The default data type analyzer, which is based entirely on the type of the property (and not on annotations or naming
+ * conventions). This is based on a configuration of property type class to string provided as an IoC service
+ * configuration.
  */
 public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationListener
 {
@@ -36,9 +36,8 @@ public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationLi
     }
 
     /**
-     * Clears the registry on an invalidation event (this is because the registry caches results,
-     * and the keys are classes that may be component classes from the invalidated component class
-     * loader).
+     * Clears the registry on an invalidation event (this is because the registry caches results, and the keys are
+     * classes that may be component classes from the invalidated component class loader).
      */
     public void objectWasInvalidated()
     {

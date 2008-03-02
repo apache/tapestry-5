@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation for methods associated with the AfterRender phase. This corresponds closely to
- * {@link org.apache.tapestry.annotations.BeginRender}, but occurs after the template and body of
- * the component have been rendered. Often, this is used to render a close tag. Return void or true (the default)
- * to advance to the {@link org.apache.tapestry.annotations.CleanupRender} phase. Return false to
- * return to the {@link org.apache.tapestry.annotations.BeginRender} phase.
+ * Marker annotation for methods associated with the AfterRender phase. This corresponds closely to {@link
+ * org.apache.tapestry.annotations.BeginRender}, but occurs after the template and body of the component have been
+ * rendered. Often, this is used to render a close tag. Return void or true (the default) to advance to the {@link
+ * org.apache.tapestry.annotations.CleanupRender} phase. Return false to return to the {@link
+ * org.apache.tapestry.annotations.BeginRender} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

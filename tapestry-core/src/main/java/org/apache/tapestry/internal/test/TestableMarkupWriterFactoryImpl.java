@@ -29,8 +29,7 @@ public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFact
     private MarkupWriter _lastCreated;
 
     /**
-     * Using Core annotation to reference to framework-provided version, which this implementation wraps
-     * around.
+     * Using Core annotation to reference to framework-provided version, which this implementation wraps around.
      */
     public TestableMarkupWriterFactoryImpl(@Core MarkupWriterFactory delegate)
     {

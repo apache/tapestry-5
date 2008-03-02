@@ -20,15 +20,16 @@ import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.ioc.annotations.Inject;
 
 /**
- * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry.annotations.BeginRender} phase.
+ * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry.annotations.BeginRender}
+ * phase.
  * <p/>
- * This mixin can be used with components that render a single tag inside the {@link BeginRender}
- * phase. RenderInformals will activate during the PostBeginRender phase to write additional
- * attributes, from the informal parameters, into the active element.
+ * This mixin can be used with components that render a single tag inside the {@link BeginRender} phase. RenderInformals
+ * will activate during the PostBeginRender phase to write additional attributes, from the informal parameters, into the
+ * active element.
  * <p/>
- * If you want this behavior, but need to render more than a single tag, then implement render phase
- * methods for the {@link BeforeRenderTemplate} and {@link AfterRenderTemplate} phases. Use those
- * phases to write the additional elements and close them.
+ * If you want this behavior, but need to render more than a single tag, then implement render phase methods for the
+ * {@link BeforeRenderTemplate} and {@link AfterRenderTemplate} phases. Use those phases to write the additional
+ * elements and close them.
  * <p/>
  * This is often used as a base class, for cases where a component doesn't have other mixins.
  */

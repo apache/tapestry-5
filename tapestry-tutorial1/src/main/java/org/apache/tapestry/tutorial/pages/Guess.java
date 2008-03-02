@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.tutorial.pages;
 
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.Persist;
 
@@ -22,18 +23,15 @@ public class Guess
     @Persist
     private int _target;
 
+    @GenerateAccessors
     private int _guess;
 
     @Persist
+    @GenerateAccessors
     private String _message;
 
     @Persist
     private int _count;
-
-    public String getMessage()
-    {
-        return _message;
-    }
 
     @InjectPage
     private GameOver _gameOver;
@@ -50,16 +48,6 @@ public class Guess
             _message = String.format("%d is too high.", guess);
 
         return null;
-    }
-
-    public int getGuess()
-    {
-        return _guess;
-    }
-
-    public void setGuess(int guess)
-    {
-        _guess = guess;
     }
 
     Object initialize(int target)

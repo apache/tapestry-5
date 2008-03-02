@@ -17,16 +17,15 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.ioc.ObjectProvider;
 
 /**
- * The Alias service provides an ObjectProvider that fits into the MasterObjectProvider command chain and
- * disambiguates injections based on type. {@linkplain org.apache.tapestry.services.AliasContribution Contibutions}
- * to the Alias service identify the desired service
- * to inject for a particular service interface; this is only necessary when there is more than one
- * service implementing the same interface.
+ * The Alias service provides an ObjectProvider that fits into the MasterObjectProvider command chain and disambiguates
+ * injections based on type. {@linkplain org.apache.tapestry.services.AliasContribution Contibutions} to the Alias
+ * service identify the desired service to inject for a particular service interface; this is only necessary when there
+ * is more than one service implementing the same interface.
  * <p/>
- * The {@linkplain AliasManager AliasOverrides}
- * service also takes an unordered configuration of {@link org.apache.tapestry.services.AliasContribution}; such
- * contributions override the "factory" contributions to the Alias service itself.  This is often used
- * to replace built-in service implementations with ones that are specific to a particular application.
+ * The {@linkplain AliasManager AliasOverrides} service also takes an unordered configuration of {@link
+ * org.apache.tapestry.services.AliasContribution}; such contributions override the "factory" contributions to the Alias
+ * service itself.  This is often used to replace built-in service implementations with ones that are specific to a
+ * particular application.
  */
 public interface Alias
 {

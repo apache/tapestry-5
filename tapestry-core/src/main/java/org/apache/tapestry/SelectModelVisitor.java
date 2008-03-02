@@ -15,14 +15,14 @@
 package org.apache.tapestry;
 
 /**
- * Callback interface that allows for visiting the option groups and option models of a select model
- * in correct render order.
+ * Callback interface that allows for visiting the option groups and option models of a select model in correct render
+ * order.
  */
 public interface SelectModelVisitor
 {
     /**
-     * Invoked once for each {@link OptionGroupModel}, just before invoking
-     * {@link #option(OptionModel)} for each embedded option within the group.
+     * Invoked once for each {@link OptionGroupModel}, just before invoking {@link #option(OptionModel)} for each
+     * embedded option within the group.
      */
     void beginOptionGroup(OptionGroupModel groupModel);
 

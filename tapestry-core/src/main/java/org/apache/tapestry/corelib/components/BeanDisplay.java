@@ -16,6 +16,7 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.annotations.GenerateAccessors;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
@@ -42,6 +43,7 @@ public class BeanDisplay
      * component's id will be used.
      */
     @Parameter(required = true)
+    @GenerateAccessors(write = false)
     private Object _object;
 
     /**
@@ -56,6 +58,7 @@ public class BeanDisplay
      * a default bean model will be created from the type of the object bound to the object parameter.
      */
     @Parameter
+    @GenerateAccessors(write = false)
     private BeanModel _model;
 
     /**
@@ -80,6 +83,7 @@ public class BeanDisplay
      * searched.
      */
     @Parameter(value = "componentResources")
+    @GenerateAccessors(write = false)
     private ComponentResources _overrides;
 
     @Inject
@@ -91,6 +95,7 @@ public class BeanDisplay
     @Inject
     private BeanModelSource _modelSource;
 
+    @GenerateAccessors
     private String _propertyName;
 
     /**
@@ -100,12 +105,7 @@ public class BeanDisplay
     {
         return _defaultProvider.defaultBinding("object", _resources);
     }
-
-    public Object getObject()
-    {
-        return _object;
-    }
-
+  
     void setupRender()
     {
         if (_model == null) _model = _modelSource.create(_object.getClass(), false, _overrides
@@ -116,32 +116,12 @@ public class BeanDisplay
         if (_reorder != null) BeanModelUtils.reorder(_model, _reorder);
     }
 
-    public BeanModel getModel()
-    {
-        return _model;
-    }
-
-    public String getPropertyName()
-    {
-        return _propertyName;
-    }
-
-    public void setPropertyName(String propertyName)
-    {
-        _propertyName = propertyName;
-    }
-
     /**
      * Returns the property model for the current property.
      */
     public PropertyModel getPropertyModel()
     {
         return _model.get(_propertyName);
-    }
-
-    public ComponentResources getOverrides()
-    {
-        return _overrides;
     }
 
     public String getLabelClass()

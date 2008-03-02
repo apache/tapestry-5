@@ -27,8 +27,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a
- * bytestream. Also handles requests that are simply polling for a change to the file.
+ * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a bytestream. Also
+ * handles requests that are simply polling for a change to the file.
  *
  * @see ResourceStreamer
  * @see ClasspathAssetAliasManager
@@ -110,8 +110,8 @@ public class AssetDispatcher implements Dispatcher
     /**
      * @param response     used to send errors back to the client
      * @param resourcePath the path to the requested resource, from the request
-     * @return the resource for the path, with the digest stripped out of the URL, or null if the
-     *         digest is invalid (and an error has been sent back to the client)
+     * @return the resource for the path, with the digest stripped out of the URL, or null if the digest is invalid (and
+     *         an error has been sent back to the client)
      * @throws IOException
      */
     private Resource findResourceAndValidateDigest(Response response, String resourcePath) throws IOException

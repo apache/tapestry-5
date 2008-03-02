@@ -90,10 +90,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     private final Map<MultiKey, PropertyConduit> _cache = newConcurrentMap();
 
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
-                                                                             new Class[]{Object.class}, null);
+                                                                             new Class[] { Object.class }, null);
 
     private static final MethodSignature SET_SIGNATURE = new MethodSignature(void.class, "set",
-                                                                             new Class[]{Object.class, Object.class},
+                                                                             new Class[] { Object.class, Object.class },
                                                                              null);
 
     private final Pattern SPLIT_AT_DOTS = Pattern.compile("\\.");
@@ -166,7 +166,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         ClassFab classFab = _classFactory.newClass(name, BasePropertyConduit.class);
 
-        classFab.addConstructor(new Class[]{Class.class, AnnotationProvider.class, String.class}, null, "super($$);");
+        classFab.addConstructor(new Class[] { Class.class, AnnotationProvider.class, String.class }, null,
+                                "super($$);");
 
         String[] terms = SPLIT_AT_DOTS.split(expression);
 

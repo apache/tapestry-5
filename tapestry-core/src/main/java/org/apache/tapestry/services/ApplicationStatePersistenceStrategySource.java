@@ -17,7 +17,8 @@ package org.apache.tapestry.services;
 /**
  * Used to provide access to stategies via a logical name for the stategy, such as "session".
  *
- * @see org.apache.tapestry.services.TapestryModule#contributeApplicationStatePersistenceStrategySource(org.apache.tapestry.ioc.MappedConfiguration, Request)
+ * @see org.apache.tapestry.services.TapestryModule#contributeApplicationStatePersistenceStrategySource(org.apache.tapestry.ioc.MappedConfiguration,
+ *      Request)
  */
 public interface ApplicationStatePersistenceStrategySource
 {

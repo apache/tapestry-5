@@ -20,9 +20,8 @@ import org.apache.tapestry.test.PageTester;
 import java.util.Map;
 
 /**
- * An extended version of {@link Request} that allows the {@link PageTester} to control and override
- * behavior, effectively simulating the portions of {@link Request} that are provided normally by a
- * servlet container.
+ * An extended version of {@link Request} that allows the {@link PageTester} to control and override behavior,
+ * effectively simulating the portions of {@link Request} that are provided normally by a servlet container.
  */
 public interface TestableRequest extends Request
 {

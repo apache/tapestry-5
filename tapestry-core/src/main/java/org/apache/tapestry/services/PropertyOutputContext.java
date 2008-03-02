@@ -18,28 +18,27 @@ import org.apache.tapestry.corelib.components.Grid;
 import org.apache.tapestry.ioc.Messages;
 
 /**
- * Provides context information needed when displaying a value. This interface is an integral part
- * of the {@link Grid} and similar output components.    It is made available to
- * components via an {@link org.apache.tapestry.annotations.Environmental} annotation.
+ * Provides context information needed when displaying a value. This interface is an integral part of the {@link Grid}
+ * and similar output components.    It is made available to components via an {@link
+ * org.apache.tapestry.annotations.Environmental} annotation.
  */
 public interface PropertyOutputContext
 {
     /**
-     * Returns the value of the property (the object being displayed is encapsulated by the
-     * context).
+     * Returns the value of the property (the object being displayed is encapsulated by the context).
      */
     Object getPropertyValue();
 
     /**
-     * Returns the message catalog appropriate for use. In practice, this is the message catalog of
-     * the container of the {@link Grid} component. This is used, for example, to locate labels for
-     * fields, or to locate string representations of Enums.
+     * Returns the message catalog appropriate for use. In practice, this is the message catalog of the container of the
+     * {@link Grid} component. This is used, for example, to locate labels for fields, or to locate string
+     * representations of Enums.
      */
     Messages getMessages();
 
     /**
-     * Returns a string that identifies the property, usually the property name. This is used as the
-     * basis for the client-side client id.
+     * Returns a string that identifies the property, usually the property name. This is used as the basis for the
+     * client-side client id.
      */
     String getPropertyId();
 

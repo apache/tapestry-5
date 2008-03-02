@@ -17,11 +17,11 @@ package org.apache.tapestry.services;
 import java.util.NoSuchElementException;
 
 /**
- * Provides access to environment services, which are almost always provided to enclosed components
- * by enclosing components. Environmental services are a form of very late binding.
+ * Provides access to environment services, which are almost always provided to enclosed components by enclosing
+ * components. Environmental services are a form of very late binding.
  * <p/>
- * The Environment acts like a collection of stacks. Each stack contains environmental service instances of a given type.
- * Most often, a stack has zero or one elements, but on occasion, a particular component will push an override
+ * The Environment acts like a collection of stacks. Each stack contains environmental service instances of a given
+ * type. Most often, a stack has zero or one elements, but on occasion, a particular component will push an override
  * onto the stack for the benefit of the components it encloses.
  *
  * @see org.apache.tapestry.annotations.Environmental
@@ -59,8 +59,7 @@ public interface Environment
     <T> T pop(Class<T> type);
 
     /**
-     * Pushes a new service onto the stack. The old service at the top of the stack is returned (it
-     * may be null).
+     * Pushes a new service onto the stack. The old service at the top of the stack is returned (it may be null).
      *
      * @param <T>
      * @param type     the type of service to store

@@ -18,10 +18,9 @@ import static org.easymock.EasyMock.reportMatcher;
 import org.easymock.IArgumentMatcher;
 
 /**
- * Special version of string equality used to compare two snippets of code. This is somewhat
- * simpleminded (it certainly doesn't understand about literal strings in quotes). It works by
- * eliminating unecessary whitespace around curly braces, then reducing all whitespace to a single
- * space.
+ * Special version of string equality used to compare two snippets of code. This is somewhat simpleminded (it certainly
+ * doesn't understand about literal strings in quotes). It works by eliminating unecessary whitespace around curly
+ * braces, then reducing all whitespace to a single space.
  */
 public class CodeEq implements IArgumentMatcher
 {

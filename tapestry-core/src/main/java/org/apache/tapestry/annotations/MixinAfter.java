@@ -22,10 +22,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * A marker annotation applied to a mixin to indicate that the mixin's render state behavior is
- * deferred until after the the behavior of the component to which the mixin is attached. Normally,
- * mixins occur before the component. This divides each phase in the render state machine into three
- * virtual phases: before the component, the component itself, and after the component.
+ * A marker annotation applied to a mixin to indicate that the mixin's render state behavior is deferred until after the
+ * the behavior of the component to which the mixin is attached. Normally, mixins occur before the component. This
+ * divides each phase in the render state machine into three virtual phases: before the component, the component itself,
+ * and after the component.
  */
 @Target(TYPE)
 @Documented

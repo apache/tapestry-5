@@ -18,8 +18,8 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.services.MarkupWriterFactory;
 
 /**
- * Extension of {@link MarkupWriterFactory} that tracks the most recently created markup writer so
- * that it can be accessed after the page has rendered.
+ * Extension of {@link MarkupWriterFactory} that tracks the most recently created markup writer so that it can be
+ * accessed after the page has rendered.
  */
 public interface TestableMarkupWriterFactory extends MarkupWriterFactory
 {

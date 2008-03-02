@@ -21,11 +21,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marker annotation for methods that should be executed during the SetupRender phase. Such methods
- * may optionally take a {@link org.apache.tapestry.MarkupWriter} parameter, and may return void or
- * boolean. Returning true or void will advance to the
- * {@link org.apache.tapestry.annotations.BeginRender} phase. Return false to skip the BeginRender
- * phase and procede directly to the {@link org.apache.tapestry.annotations.CleanupRender} phase.
+ * Marker annotation for methods that should be executed during the SetupRender phase. Such methods may optionally take
+ * a {@link org.apache.tapestry.MarkupWriter} parameter, and may return void or boolean. Returning true or void will
+ * advance to the {@link org.apache.tapestry.annotations.BeginRender} phase. Return false to skip the BeginRender phase
+ * and procede directly to the {@link org.apache.tapestry.annotations.CleanupRender} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

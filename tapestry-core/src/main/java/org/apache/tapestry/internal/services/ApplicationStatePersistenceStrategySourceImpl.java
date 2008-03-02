@@ -20,7 +20,7 @@ import org.apache.tapestry.services.ApplicationStatePersistenceStrategySource;
 import java.util.Map;
 
 public class ApplicationStatePersistenceStrategySourceImpl implements
-                                                           ApplicationStatePersistenceStrategySource
+        ApplicationStatePersistenceStrategySource
 {
     private final Map<String, ApplicationStatePersistenceStrategy> _configuration;
 

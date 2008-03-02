@@ -65,6 +65,7 @@ public class Grid implements GridModel
      * set.
      */
     @Parameter("25")
+    @GenerateAccessors
     private int _rowsPerPage;
 
     /**
@@ -80,6 +81,7 @@ public class Grid implements GridModel
      * use the property bound to the row parameter to know what they should render.
      */
     @Parameter
+    @GenerateAccessors
     private Object _row;
 
     /**
@@ -92,9 +94,9 @@ public class Grid implements GridModel
     private BeanModel _model;
 
     /**
-     * The model used to handle sorting of the Grid. This is generally not specified, and the built-in
-     * model supports only single column sorting. The sort constraints (the column that is sorted,
-     * and ascending vs. descending) is stored as persistent fields of the Grid component.
+     * The model used to handle sorting of the Grid. This is generally not specified, and the built-in model supports
+     * only single column sorting. The sort constraints (the column that is sorted, and ascending vs. descending) is
+     * stored as persistent fields of the Grid component.
      */
     @Parameter
     private GridSortModel _sortModel;
@@ -146,9 +148,11 @@ public class Grid implements GridModel
      * between CSS values (for the "zebra effect"). If null or not bound, then no particular CSS class value is used.
      */
     @Parameter(cache = false)
+    @GenerateAccessors(write = false)
     private String _rowClass;
 
     @Persist
+    @GenerateAccessors
     private int _currentPage = 1;
 
     @Persist
@@ -350,65 +354,6 @@ public class Grid implements GridModel
     public GridSortModel getSortModel()
     {
         return _sortModel;
-    }
-
-    public String getRowClass()
-    {
-        return _rowClass;
-    }
-
-    public int getCurrentPage()
-    {
-        return _currentPage;
-    }
-
-    public void setCurrentPage(int currentPage)
-    {
-        _currentPage = currentPage;
-    }
-
-    /**
-     * Returns the current row being rendered by the Grid. This property can be accessed as an alternative to binding
-     * the row parameter.
-     */
-    public Object getRow()
-    {
-        return _row;
-    }
-
-    public void setRow(Object row)
-    {
-        _row = row;
-    }
-
-    public int getRowsPerPage()
-    {
-        return _rowsPerPage;
-    }
-
-    public void setRowsPerPage(int rowsPerPage)
-    {
-        _rowsPerPage = rowsPerPage;
-    }
-
-    public boolean isSortAscending()
-    {
-        return _sortAscending;
-    }
-
-    public String getSortColumnId()
-    {
-        return _sortColumnId;
-    }
-
-    public void setSortAscending(boolean sortAscending)
-    {
-        _sortAscending = sortAscending;
-    }
-
-    public void setSortColumnId(String sortColumnId)
-    {
-        _sortColumnId = sortColumnId;
     }
 
     public Object getPagerTop()

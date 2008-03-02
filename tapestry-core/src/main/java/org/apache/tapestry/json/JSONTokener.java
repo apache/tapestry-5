@@ -39,8 +39,8 @@ package org.apache.tapestry.json;
  */
 
 /**
- * A JSONTokener takes a source string and extracts characters and tokens from it. It is used by the
- * JSONObject and JSONArray constructors to parse JSON source strings.
+ * A JSONTokener takes a source string and extracts characters and tokens from it. It is used by the JSONObject and
+ * JSONArray constructors to parse JSON source strings.
  *
  * @author JSON.org
  * @version 2
@@ -72,8 +72,8 @@ class JSONTokener
     }
 
     /**
-     * Back up one character. This provides a sort of lookahead capability, so that you can test for
-     * a digit or letter before attempting to parse the next number or identifier.
+     * Back up one character. This provides a sort of lookahead capability, so that you can test for a digit or letter
+     * before attempting to parse the next number or identifier.
      */
     public void back()
     {
@@ -153,8 +153,7 @@ class JSONTokener
      *
      * @param n The number of characters to take.
      * @return A string of n characters.
-     * @throws RuntimeException Substring bounds error if there are not n characters remaining in the source
-     *                          string.
+     * @throws RuntimeException Substring bounds error if there are not n characters remaining in the source string.
      */
     public String next(int n)
     {
@@ -169,8 +168,7 @@ class JSONTokener
     }
 
     /**
-     * Get the next char in the string, skipping whitespace and comments (slashslash, slashstar, and
-     * hash).
+     * Get the next char in the string, skipping whitespace and comments (slashslash, slashstar, and hash).
      *
      * @return A character, or 0 if there are no more characters.
      * @throws RuntimeException
@@ -231,12 +229,11 @@ class JSONTokener
     }
 
     /**
-     * Return the characters up to the next close quote character. Backslash processing is done. The
-     * formal JSON format does not allow strings in single quotes, but an implementation is allowed
-     * to accept them.
+     * Return the characters up to the next close quote character. Backslash processing is done. The formal JSON format
+     * does not allow strings in single quotes, but an implementation is allowed to accept them.
      *
-     * @param quote The quoting character, either <code>"</code>&nbsp;<small>(double quote)</small>
-     *              or <code>'</code>&nbsp;<small>(single quote)</small>.
+     * @param quote The quoting character, either <code>"</code>&nbsp;<small>(double quote)</small> or
+     *              <code>'</code>&nbsp;<small>(single quote)</small>.
      * @return A String.
      * @throws RuntimeException Unterminated string.
      */
@@ -293,8 +290,7 @@ class JSONTokener
     }
 
     /**
-     * Get the text up but not including the specified character or the end of line, whichever comes
-     * first.
+     * Get the text up but not including the specified character or the end of line, whichever comes first.
      *
      * @param d A delimiter character.
      * @return A string.
@@ -318,8 +314,8 @@ class JSONTokener
     }
 
     /**
-     * Get the text up but not including one of the specified delimeter characters or the end of
-     * line, whichever comes first.
+     * Get the text up but not including one of the specified delimeter characters or the end of line, whichever comes
+     * first.
      *
      * @param delimiters A set of delimiter characters.
      * @return A string, trimmed.
@@ -344,8 +340,8 @@ class JSONTokener
     }
 
     /**
-     * Get the next value. The value can be a Boolean, Double, Integer, JSONArray, JSONObject, Long,
-     * or String, or the JSONObject.NULL object.
+     * Get the next value. The value can be a Boolean, Double, Integer, JSONArray, JSONObject, Long, or String, or the
+     * JSONObject.NULL object.
      *
      * @return An object.
      * @throws RuntimeException If syntax error.
@@ -467,8 +463,8 @@ class JSONTokener
     }
 
     /**
-     * Skip characters until the next character is the requested character. If the requested
-     * character is not found, no characters are skipped.
+     * Skip characters until the next character is the requested character. If the requested character is not found, no
+     * characters are skipped.
      *
      * @param to A character to skip to.
      * @return The requested character, or zero if the requested character is not found.
@@ -491,8 +487,7 @@ class JSONTokener
     }
 
     /**
-     * Skip characters until past the requested string. If it is not found, we are left at the end
-     * of the source.
+     * Skip characters until past the requested string. If it is not found, we are left at the end of the source.
      *
      * @param to A string to skip past.
      */

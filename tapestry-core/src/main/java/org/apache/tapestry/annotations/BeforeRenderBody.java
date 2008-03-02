@@ -21,15 +21,14 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Marks methods to be invoked when the component rendering state machine hits the point in the
- * component's template where the body element occurs. Such methods may optionally take a
- * {@link org.apache.tapestry.MarkupWriter} parameter, and may return void or boolean.
+ * Marks methods to be invoked when the component rendering state machine hits the point in the component's template
+ * where the body element occurs. Such methods may optionally take a {@link org.apache.tapestry.MarkupWriter} parameter,
+ * and may return void or boolean.
  * <p/>
  * Returning true (or void) will queue up the component's body for rendering.
  * <p/>
- * Returning false will skip the component's body, but continue rendering the template. The
- * {@link org.apache.tapestry.annotations.AfterRenderBody} phase will still execute after the
- * template finishes rendering.
+ * Returning false will skip the component's body, but continue rendering the template. The {@link
+ * org.apache.tapestry.annotations.AfterRenderBody} phase will still execute after the template finishes rendering.
  * <p/>
  * This phase is skipped for components which do not have a body.
  */

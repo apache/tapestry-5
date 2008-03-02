@@ -23,8 +23,8 @@ public interface ComponentEventCallback<T>
 {
     /**
      * Invoked to handle a non-null event handler method result. The handler should determine whether the value is
-     * acceptible, and throw an exception if not.  Any thrown exception will be wrapped to identify the component
-     * and method from which the value was returned.
+     * acceptible, and throw an exception if not.  Any thrown exception will be wrapped to identify the component and
+     * method from which the value was returned.
      * <p/>
      * Boolean values are <em>not</em> passed to the handler.  Booleans are used to indicate that the event has been
      * handled (true) or that a further search for handlers should continue (true).  If a component event method returns

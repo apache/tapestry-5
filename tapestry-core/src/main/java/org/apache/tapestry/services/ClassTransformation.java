@@ -39,7 +39,7 @@ import java.util.List;
  * <p/>
  * Instances of this class are not designed to be thread safe, access to an instance should be restricted to a single
  * thread. In fact, the design of this type is to allow stateless singletons in multiple threads to work on
- * thread-specific data (within the ClassTransformation). 
+ * thread-specific data (within the ClassTransformation).
  * <p/>
  * The majority of methods concern the <em>declared</em> members (field and methods) of a specific class, rather than
  * any fields or methods inherited from a base class.
@@ -81,6 +81,10 @@ public interface ClassTransformation extends AnnotationProvider
      */
     List<String> findFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
 
+    /**
+     * As with {@link #findFieldsWithAnnotation(Class)}, but finds fields even if they are claimed.
+     */
+    List<String> findAllFieldsWithAnnotation(Class<? extends Annotation> annotationClass);
 
     /**
      * Finds all methods defined in the class that are marked with the provided annotation.
@@ -227,7 +231,7 @@ public interface ClassTransformation extends AnnotationProvider
      * is added that first invokes the super implementation. Use {@link #addMethod(TransformMethodSignature, String)}
      * when it is necessary to control when the super-class method is invoked.
      * <p/>
-     * The extended method is considered <em>new</em>. New methods <em>do not</em> are not scanned for {@linkplain
+     * The extended method is considered <em>new</em>. New methods <em>are not</em>  scanned for {@linkplain
      * #removeField(String)} removed}, {@linkplain #replaceReadAccess(String, String)} read replaced}, or {@linkplain
      * #replaceWriteAccess(String, String) write replaced} fields.  Generally that's what you want!
      *
@@ -284,6 +288,12 @@ public interface ClassTransformation extends AnnotationProvider
      * implementation is invoked.
      */
     void addMethod(TransformMethodSignature signature, String methodBody);
+
+    /**
+     * As with {@link #addMethod(TransformMethodSignature, String)}, but field references inside the method
+     * <em>will</em> be transformed.
+     */
+    void addTransformedMethod(TransformMethodSignature methodSignature, String methodBody);
 
     /**
      * Adds a statement to the constructor. The statement is added as is, though a newline is added.
@@ -350,4 +360,6 @@ public interface ClassTransformation extends AnnotationProvider
      * @return true if root class, false is sub-class
      */
     boolean isRootTransformation();
+
+
 }

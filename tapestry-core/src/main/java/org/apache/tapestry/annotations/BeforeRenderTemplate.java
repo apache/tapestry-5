@@ -21,11 +21,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Associated with components that have a template, this phase is invoked to allow the component to
- * decorate its template with additional markup. Returning true will cause the component's template
- * to render (possibly including additional components, or this component's body), and eventually
- * reach the {@link AfterRenderTemplate} phase. Return false to skip the template and body, and jump
- * directly to the {@link AfterRenderTemplate} phase.
+ * Associated with components that have a template, this phase is invoked to allow the component to decorate its
+ * template with additional markup. Returning true will cause the component's template to render (possibly including
+ * additional components, or this component's body), and eventually reach the {@link AfterRenderTemplate} phase. Return
+ * false to skip the template and body, and jump directly to the {@link AfterRenderTemplate} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

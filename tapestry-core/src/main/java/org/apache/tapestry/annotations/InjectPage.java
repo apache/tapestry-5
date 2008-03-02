@@ -21,8 +21,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Allows a a page (really, the root component of the page) to be injected into another component as
- * a read-only field.
+ * Allows a a page (really, the root component of the page) to be injected into another component as a read-only field.
  */
 @Target(FIELD)
 @Documented
@@ -30,9 +29,9 @@ import java.lang.annotation.Target;
 public @interface InjectPage
 {
     /**
-     * The name of the page to inject, which is used when the field type is not sufficient to
-     * identify the page (for example, when the field type is an interface implemented by the page).
-     * A non-blank value here overrides the lookup by class name (from the field type).
+     * The name of the page to inject, which is used when the field type is not sufficient to identify the page (for
+     * example, when the field type is an interface implemented by the page). A non-blank value here overrides the
+     * lookup by class name (from the field type).
      */
     String value() default "";
 }

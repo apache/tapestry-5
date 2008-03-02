@@ -18,9 +18,8 @@ import org.apache.tapestry.EventContext;
 import org.apache.tapestry.services.ContextValueEncoder;
 
 /**
- * Implementation based on values extracted from the URL (an event context, or a page activation context)
- * that uses a {@link org.apache.tapestry.services.ContextValueEncoder} to convert from string values
- * to the desired values.
+ * Implementation based on values extracted from the URL (an event context, or a page activation context) that uses a
+ * {@link org.apache.tapestry.services.ContextValueEncoder} to convert from string values to the desired values.
  */
 public class URLEventContext implements EventContext
 {

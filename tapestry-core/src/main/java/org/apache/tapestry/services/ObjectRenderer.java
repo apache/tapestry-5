@@ -17,8 +17,8 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.MarkupWriter;
 
 /**
- * A strategy interface used for converting an object into markup that describes that object. This
- * is primarily used in terms of an {@link org.apache.tapestry.services.ExceptionReporter} page.
+ * A strategy interface used for converting an object into markup that describes that object. This is primarily used in
+ * terms of an {@link org.apache.tapestry.services.ExceptionReporter} page.
  */
 public interface ObjectRenderer<T>
 {

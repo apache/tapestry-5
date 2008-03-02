@@ -15,29 +15,27 @@
 package org.apache.tapestry;
 
 /**
- * Defines a field within a form.  Fields have a <a href="http://www.w3.org/TR/html4/interact/forms.html#control-name">control name</a>
- * that is used when rendering and, later, when the form is submitted, to identify the query parameter.
+ * Defines a field within a form.  Fields have a <a href="http://www.w3.org/TR/html4/interact/forms.html#control-name">control
+ * name</a> that is used when rendering and, later, when the form is submitted, to identify the query parameter.
  * <p/>
- * Timing is important, as components may render multiple times, due to looping and other factors. Generally,
- * a component's {@link #getControlName()} will only be accurate after it has rendered.  In some
- * cases, when generating JavaScript for example, it is necessary to
- * {@linkplain org.apache.tapestry.services.Heartbeat#defer(Runnable) wait until the end of the current Heartbeat} to ensure
- * that all components have had thier chance to render.
+ * Timing is important, as components may render multiple times, due to looping and other factors. Generally, a
+ * component's {@link #getControlName()} will only be accurate after it has rendered.  In some cases, when generating
+ * JavaScript for example, it is necessary to {@linkplain org.apache.tapestry.services.Heartbeat#defer(Runnable) wait
+ * until the end of the current Heartbeat} to ensure that all components have had thier chance to render.
  */
 public interface Field extends ClientElement
 {
     /**
-     * Returns the value used as the name attribute of the rendered element. This value will be
-     * unique within an enclosing form, even if the same component renders multiple times.
+     * Returns the value used as the name attribute of the rendered element. This value will be unique within an
+     * enclosing form, even if the same component renders multiple times.
      *
      * @see org.apache.tapestry.services.FormSupport#allocateControlName(String)
      */
     String getControlName();
 
     /**
-     * Returns a user presentable (localized) label for the field, which may be used inside
-     * &lt;label&gt; elements on the client, and inside client or server-side validation error
-     * messages.
+     * Returns a user presentable (localized) label for the field, which may be used inside &lt;label&gt; elements on
+     * the client, and inside client or server-side validation error messages.
      *
      * @return the label
      * @see org.apache.tapestry.corelib.components.Label
@@ -45,11 +43,11 @@ public interface Field extends ClientElement
     String getLabel();
 
     /**
-     * Returns true if the field is disabled; A disabled field will render a disabled attribute so
-     * that it is non-responsive on the client (at least, until its disabled status is changed on
-     * the client using JavaScript). A disabled field will ignore any value passed up in a form
-     * submit request. Care must be taken if the disabled status of a field can change between the
-     * time the field is rendered and the time the enclosing form is submitted.
+     * Returns true if the field is disabled; A disabled field will render a disabled attribute so that it is
+     * non-responsive on the client (at least, until its disabled status is changed on the client using JavaScript). A
+     * disabled field will ignore any value passed up in a form submit request. Care must be taken if the disabled
+     * status of a field can change between the time the field is rendered and the time the enclosing form is
+     * submitted.
      */
     boolean isDisabled();
 

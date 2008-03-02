@@ -24,9 +24,9 @@ import java.io.IOException;
 public interface HttpServletRequestFilter
 {
     /**
-     * Filter interface for the HttpServletRequestHandler pipeline. A filter should
-     * delegate to the handler. It may perform operations before or after invoking the handler, and
-     * may modify the request and response passed in to the handler.
+     * Filter interface for the HttpServletRequestHandler pipeline. A filter should delegate to the handler. It may
+     * perform operations before or after invoking the handler, and may modify the request and response passed in to the
+     * handler.
      *
      * @return true if the request has been handled, false otherwise
      */

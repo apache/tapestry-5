@@ -17,15 +17,15 @@ package org.apache.tapestry.internal.structure;
 import org.apache.tapestry.internal.services.PageLoader;
 
 /**
- * A type of {@link PageElement} that has a body that can be added to. This is part of the
- * constuction phase that is faciliated by the {@link PageLoader}.
+ * A type of {@link PageElement} that has a body that can be added to. This is part of the constuction phase that is
+ * faciliated by the {@link PageLoader}.
  */
 public interface BodyPageElement
 {
     /**
-     * Used during the construction of the page. Adds a page element as part of the body of the
-     * component. The body of a component is defined as the portion of the container's template
-     * directly enclosed by component's start and end elements.
+     * Used during the construction of the page. Adds a page element as part of the body of the component. The body of a
+     * component is defined as the portion of the container's template directly enclosed by component's start and end
+     * elements.
      */
     void addToBody(PageElement element);
 }

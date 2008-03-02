@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Standard implmentation of {@link ValidationTracker}. Works pretty hard to ensure a minimum
- * amount of data is stored in the HttpSession.
+ * Standard implmentation of {@link ValidationTracker}. Works pretty hard to ensure a minimum amount of data is stored
+ * in the HttpSession.
  */
 public final class ValidationTrackerImpl implements ValidationTracker, Serializable
 {

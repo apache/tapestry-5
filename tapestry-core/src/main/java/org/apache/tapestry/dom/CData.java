@@ -17,9 +17,8 @@ package org.apache.tapestry.dom;
 import java.io.PrintWriter;
 
 /**
- * A node that stores parsed character content (CDATA).  For XML documents (as per {@link MarkupModel#isXML()},
- * this will be writtens as a CDATA section.
- * For non-XML documents, the content is filtered as it is written out.
+ * A node that stores parsed character content (CDATA).  For XML documents (as per {@link MarkupModel#isXML()}, this
+ * will be writtens as a CDATA section. For non-XML documents, the content is filtered as it is written out.
  */
 public class CData extends Node
 {

@@ -17,8 +17,8 @@ package org.apache.tapestry.internal.structure;
 import org.apache.tapestry.runtime.RenderCommand;
 
 /**
- * An element within a page. Page elements are placeholders that delegate much of their behavior to
- * application-specific component classes.
+ * An element within a page. Page elements are placeholders that delegate much of their behavior to application-specific
+ * component classes.
  */
 public interface PageElement extends RenderCommand
 {

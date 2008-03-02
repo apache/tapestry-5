@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Corresponds to {@link BeforeRenderTemplate}, allowing additional markup after rendering the
- * component's template. Returning true (the default), will progress to the {@link AfterRender}
- * phase. Return false to return to the {@link BeforeRenderTemplate} phase.
+ * Corresponds to {@link BeforeRenderTemplate}, allowing additional markup after rendering the component's template.
+ * Returning true (the default), will progress to the {@link AfterRender} phase. Return false to return to the {@link
+ * BeforeRenderTemplate} phase.
  */
 @Target(ElementType.METHOD)
 @Retention(RUNTIME)

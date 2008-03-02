@@ -21,9 +21,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * An alternate response from a component event handler method used to directly provide a stream of
- * data to be sent to the client, rather than indicating what page to send a render redirect request
- * to.
+ * An alternate response from a component event handler method used to directly provide a stream of data to be sent to
+ * the client, rather than indicating what page to send a render redirect request to.
  */
 public interface StreamResponse
 {
@@ -33,16 +32,15 @@ public interface StreamResponse
     String getContentType();
 
     /**
-     * Returns the stream of bytes to be sent to the client. The stream will be closed when the end
-     * of the stream is reached. The provided stream will be wrapped in a
-     * {@link BufferedInputStream} for efficiency.
+     * Returns the stream of bytes to be sent to the client. The stream will be closed when the end of the stream is
+     * reached. The provided stream will be wrapped in a {@link BufferedInputStream} for efficiency.
      */
     InputStream getStream() throws IOException;
 
 
     /**
-     * Prepare response before it is sent to the client.
-     * This is the place to set any response headers (e.g. content-disposition)
+     * Prepare response before it is sent to the client. This is the place to set any response headers (e.g.
+     * content-disposition)
      *
      * @param response Response that will be sent.
      */

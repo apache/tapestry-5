@@ -24,9 +24,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Optional annotation, used with {@link Inject}, which exists to provide the id of an object when
- * it can not be determined by other means (such as from the field name). Currently, this is used
- * when injecting a {@link Block}.
+ * Optional annotation, used with {@link Inject}, which exists to provide the id of an object when it can not be
+ * determined by other means (such as from the field name). Currently, this is used when injecting a {@link Block}.
  */
 @Target(FIELD)
 @Documented

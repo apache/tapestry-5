@@ -19,9 +19,9 @@ import java.util.List;
 public interface ComponentInvocation
 {
     /**
-     * @return A path taking the format <em>target-path</em>/e1/e2?&q1=v1&q2=v2. where the
-     *         <em>target-path</em> is the path provided by the invocation target; e1 and e2 are
-     *         elements of the context; q1 and q2 are the parameters.
+     * @return A path taking the format <em>target-path</em>/e1/e2?&q1=v1&q2=v2. where the <em>target-path</em> is the
+     *         path provided by the invocation target; e1 and e2 are elements of the context; q1 and q2 are the
+     *         parameters.
      */
     String buildURI(boolean isForm);
 

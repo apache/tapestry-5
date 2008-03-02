@@ -26,10 +26,9 @@ import java.util.Locale;
 public interface ComponentMessagesSource extends InvalidationEventHub
 {
     /**
-     * Used to obtain a {@link Messages} instance for a particular component, within a particular
-     * locale. If the component extends from another component, then its localized properties will
-     * merge with its parent's properties (with the subclass overriding the super class on any
-     * conflicts).
+     * Used to obtain a {@link Messages} instance for a particular component, within a particular locale. If the
+     * component extends from another component, then its localized properties will merge with its parent's properties
+     * (with the subclass overriding the super class on any conflicts).
      *
      * @param componentModel
      * @param locale

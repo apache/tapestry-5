@@ -19,8 +19,8 @@ import org.apache.tapestry.services.ClassTransformation;
 import static java.lang.String.format;
 
 /**
- * Implementation of {@link org.apache.tapestry.internal.util.ParameterBuilder} that simply provides a static
- * string value for the parameter expression.
+ * Implementation of {@link org.apache.tapestry.internal.util.ParameterBuilder} that simply provides a static string
+ * value for the parameter expression.
  */
 public final class StringParameterBuilder implements ParameterBuilder
 {

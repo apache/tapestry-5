@@ -20,24 +20,23 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import java.util.List;
 
 /**
- * Invoked to generate a list of validation constraint strings for a property. This typically
- * involves scanning the property for annotations or naming conventions that confer the desired
- * validation. The constraint strings are ultimately handed to
- * {@link FieldValidatorSource#createValidator(org.apache.tapestry.Field, String, String, String, org.apache.tapestry.ioc.Messages, java.util.Locale)}.
+ * Invoked to generate a list of validation constraint strings for a property. This typically involves scanning the
+ * property for annotations or naming conventions that confer the desired validation. The constraint strings are
+ * ultimately handed to {@link FieldValidatorSource#createValidator(org.apache.tapestry.Field, String, String, String,
+ * org.apache.tapestry.ioc.Messages, java.util.Locale)}.
  */
 public interface ValidationConstraintGenerator
 {
     /**
-     * For a given property, identify all the approprite validation constraints. Each returned value
-     * is the name of a validator (i.e., "required") or a validator name and configuration (i.e.,
-     * "minlength=5"). These contraints are exactly the individual terms in a
-     * {@link FieldValidatorSource#createValidators(org.apache.tapestry.Field, String) validate specification}.
-     * These will ultimately be used to create {@link FieldValidator}s for the field that edits the
-     * property.
+     * For a given property, identify all the approprite validation constraints. Each returned value is the name of a
+     * validator (i.e., "required") or a validator name and configuration (i.e., "minlength=5"). These contraints are
+     * exactly the individual terms in a {@link FieldValidatorSource#createValidators(org.apache.tapestry.Field, String)
+     * validate specification}. These will ultimately be used to create {@link FieldValidator}s for the field that edits
+     * the property.
      *
      * @param propertyType       the type of the property for which constraints are needed
-     * @param annotationProvider provides access to any annotations concerning the property (for implementations
-     *                           that are based on analysis of property annotations)
+     * @param annotationProvider provides access to any annotations concerning the property (for implementations that
+     *                           are based on analysis of property annotations)
      * @return a list of constraints
      * @see FieldValidatorSource
      */

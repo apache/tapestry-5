@@ -238,17 +238,8 @@ public class CreateAddress
   And match that up with a property in the CreateAddress class:
   
 ----
-  private Address _address;
-
-  public Address getAddress()
-  {
-    return _address;
-  }
-
-  public void setAddress(Address address)
-  {
-    _address = address;
-  }
+  @GenerateAcessors
+  private Address _address
 ----
    
    When you refresh the page, you'll see the following:

@@ -17,13 +17,12 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.internal.events.UpdateListener;
 
 /**
- * Manages a set of {@link org.apache.tapestry.internal.events.UpdateListener}s. Periodically (say, every
- * request during development, or every minute or so during production), request processing is
- * locked down so that only a single thread is active, and the active thread invokes
- * {@link #fireUpdateEvent()}. Various services that are dependent on external resource files (such
- * as classes or template files) can check to see if any file they've used has changed. If so, the
- * service can invalidate its internal cache, or notify other services (typically via
- * {@link org.apache.tapestry.internal.events.InvalidationListener} that they should do the same.
+ * Manages a set of {@link org.apache.tapestry.internal.events.UpdateListener}s. Periodically (say, every request during
+ * development, or every minute or so during production), request processing is locked down so that only a single thread
+ * is active, and the active thread invokes {@link #fireUpdateEvent()}. Various services that are dependent on external
+ * resource files (such as classes or template files) can check to see if any file they've used has changed. If so, the
+ * service can invalidate its internal cache, or notify other services (typically via {@link
+ * org.apache.tapestry.internal.events.InvalidationListener} that they should do the same.
  *
  * @see org.apache.tapestry.internal.util.URLChangeTracker
  */
@@ -32,10 +31,9 @@ public interface UpdateListenerHub
     void addUpdateListener(UpdateListener listener);
 
     /**
-     * Invoked periodically to allow services to check if underlying state has changed. For example,
-     * a template file may have changed. Listeners will typically notify applicable listeners of
-     * their own (they usually implement
-     * {@link org.apache.tapestry.internal.event.InvalidationEventHub}) when such a change occurs.
+     * Invoked periodically to allow services to check if underlying state has changed. For example, a template file may
+     * have changed. Listeners will typically notify applicable listeners of their own (they usually implement {@link
+     * org.apache.tapestry.internal.event.InvalidationEventHub}) when such a change occurs.
      */
     void fireUpdateEvent();
 }

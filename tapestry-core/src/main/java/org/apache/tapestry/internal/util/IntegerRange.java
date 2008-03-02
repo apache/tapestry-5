@@ -17,8 +17,8 @@ package org.apache.tapestry.internal.util;
 import java.util.Iterator;
 
 /**
- * Represents a sequence of integer values, either ascending or descending. The sequence is always
- * inclusive (of the finish value).
+ * Represents a sequence of integer values, either ascending or descending. The sequence is always inclusive (of the
+ * finish value).
  */
 public final class IntegerRange implements Iterable<Integer>
 {
@@ -87,8 +87,8 @@ public final class IntegerRange implements Iterable<Integer>
     }
 
     /**
-     * The main puprose of a range object is to produce an Iterator. Since IntegerRange is iterable,
-     * it is useful with the Tapestry Loop component, but also with the Java for loop!
+     * The main puprose of a range object is to produce an Iterator. Since IntegerRange is iterable, it is useful with
+     * the Tapestry Loop component, but also with the Java for loop!
      */
     public Iterator<Integer> iterator()
     {

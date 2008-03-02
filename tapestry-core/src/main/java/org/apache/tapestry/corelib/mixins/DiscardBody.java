@@ -18,10 +18,9 @@ import org.apache.tapestry.annotations.BeforeRenderBody;
 import org.apache.tapestry.annotations.MixinAfter;
 
 /**
- * Discards a component's body. Returns false from the {@link BeforeRenderBody} phase, which
- * prevents the rendering of the body. Set up as a "MixinAfter" so that components can render their
- * an alternative body if they so desire before this mixin cancels the normal body (from the
- * container's template).
+ * Discards a component's body. Returns false from the {@link BeforeRenderBody} phase, which prevents the rendering of
+ * the body. Set up as a "MixinAfter" so that components can render their an alternative body if they so desire before
+ * this mixin cancels the normal body (from the container's template).
  */
 @MixinAfter
 public class DiscardBody

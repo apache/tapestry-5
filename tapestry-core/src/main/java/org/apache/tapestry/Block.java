@@ -15,10 +15,9 @@
 package org.apache.tapestry;
 
 /**
- * A block is a collection of static text and elements, and components, derived from a component
- * template. In the template, a block is demarcated using the &lt;t:block&gt; or &lt;t:parameter&gt;
- * elements. The interface defines no methods, but the provided implementations of Block are capable
- * of rendering their contents on demand.
+ * A block is a collection of static text and elements, and components, derived from a component template. In the
+ * template, a block is demarcated using the &lt;t:block&gt; or &lt;t:parameter&gt; elements. The interface defines no
+ * methods, but the provided implementations of Block are capable of rendering their contents on demand.
  */
 public interface Block
 {

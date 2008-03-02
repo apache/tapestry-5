@@ -25,7 +25,7 @@ import java.net.URL;
 import java.util.Map;
 
 public class ResourceCacheImpl extends InvalidationEventHubImpl implements ResourceCache,
-                                                                           UpdateListener
+        UpdateListener
 {
     private final URLChangeTracker _tracker;
 

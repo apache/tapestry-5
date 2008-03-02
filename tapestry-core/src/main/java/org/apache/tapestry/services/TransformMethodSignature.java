@@ -19,11 +19,11 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import java.lang.reflect.Modifier;
 
 /**
- * A representation of a method signature, which consists of its name, modifiers (primarily,
- * visibility), return type, parameter types, and declared exception types.
+ * A representation of a method signature, which consists of its name, modifiers (primarily, visibility), return type,
+ * parameter types, and declared exception types.
  * <p/>
- * Types are stored as class names (or primitive names) because the signature is used with
- * {@link ClassTransformation} (which operates on as-yet unloaded classes).
+ * Types are stored as class names (or primitive names) because the signature is used with {@link ClassTransformation}
+ * (which operates on as-yet unloaded classes).
  */
 public class TransformMethodSignature implements Comparable<TransformMethodSignature>
 {
@@ -71,8 +71,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Returns a non-null array of the names of each declared exception type thrown by the method.
-     * Calling code should not modify the array.
+     * Returns a non-null array of the names of each declared exception type thrown by the method. Calling code should
+     * not modify the array.
      */
     public String[] getExceptionTypes()
     {
@@ -98,8 +98,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Returns an array of the type name for each parameter. Calling code should not modify the
-     * array.
+     * Returns an array of the type name for each parameter. Calling code should not modify the array.
      */
     public String[] getParameterTypes()
     {
@@ -163,9 +162,9 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Returns the long form description of the signature. This includes modifiers, return type,
-     * method name, parameters and thrown exceptions, formatter approximately as it would appear in
-     * Java source (except that parameter names, which are not known, do no appear).
+     * Returns the long form description of the signature. This includes modifiers, return type, method name, parameters
+     * and thrown exceptions, formatter approximately as it would appear in Java source (except that parameter names,
+     * which are not known, do no appear).
      */
     @Override
     public String toString()
@@ -214,8 +213,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Sorting is primarily via method name. For methods with the same name, the second level of
-     * sorting is by parameter count (descending).
+     * Sorting is primarily via method name. For methods with the same name, the second level of sorting is by parameter
+     * count (descending).
      */
     public int compareTo(TransformMethodSignature o)
     {
@@ -228,9 +227,8 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     }
 
     /**
-     * Returns a shortened form of the string representation of the method. It lists just the name
-     * of the method and the types of any parameters, omitting return type, exceptions and
-     * modifiers.
+     * Returns a shortened form of the string representation of the method. It lists just the name of the method and the
+     * types of any parameters, omitting return type, exceptions and modifiers.
      *
      * @return
      */

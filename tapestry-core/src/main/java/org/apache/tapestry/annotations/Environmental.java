@@ -23,8 +23,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Defines a field that is replaced at runtime with a read-only value obtained from the
- * {@link Environment} service.
+ * Defines a field that is replaced at runtime with a read-only value obtained from the {@link Environment} service.
  */
 @Target(FIELD)
 @Documented
@@ -32,8 +31,8 @@ import java.lang.annotation.Target;
 public @interface Environmental
 {
     /**
-     * The value determines if the environmental service to be injected is required or not. In most
-     * cases, it is, so the default is true.
+     * The value determines if the environmental service to be injected is required or not. In most cases, it is, so the
+     * default is true.
      */
     boolean value() default true;
 }

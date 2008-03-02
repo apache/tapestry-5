@@ -20,8 +20,8 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadS
 import java.util.List;
 
 /**
- * Base implementation class for classes (especially services) that need to manage a list of
- * {@link org.apache.tapestry.internal.events.InvalidationListener}s.
+ * Base implementation class for classes (especially services) that need to manage a list of {@link
+ * org.apache.tapestry.internal.events.InvalidationListener}s.
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {

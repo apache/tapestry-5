@@ -311,21 +311,17 @@ public class Start
   turns on full whitespace retention for the element.
 
   The value attribute gets assigned the current item from the loop.  We'll use
-  a property of the Guess page as a kind of scratchpad for this purpose:
+  a property of the Guess page as a kind of scratchpad for this purpose.  We could manually
+  write a getter and a setter method as we did before, or we can let Tapestry generate those
+  accessors:
   
 ---
+  @GenerateAccessors
   private int _guess;
+---
 
-  public int getGuess()
-  {
-    return _guess;
-  }
-
-  public void setGuess(int guess)
-  {
-    _guess = guess;
-  }
----  
+  Tapestry will automatically create the methods needed so that the guess property (it's smart
+  about stripping off leading underscores) is accessible in the template.
 
   The context parameter of the ActionLink is how we get extra information into
   the action request URL. The context can be a single value, or an array or
@@ -343,12 +339,8 @@ public class Start
   
 ---
   @Persist
+  @GenerateAccessors
   private String _message;
-
-  public String getMessage()
-  {
-    return _message;
-  }
 
   String onActionFromLink(int guess)
   {
@@ -428,6 +420,7 @@ public class GameOver
  
 ---
   @Persist
+  @GenerateAccessors
   private int _count;
 ---
 
@@ -475,16 +468,13 @@ public class GameOver
 package org.apache.tapestry.tutorial.pages;
 
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotations.GenerateAccessors;
 
 public class GameOver
 {
   @Persist
+  @GenerateAccessors
   private int _count;
-
-  public int getCount()
-  {
-    return _count;
-  }
 
   Object initialize(int count)
   {

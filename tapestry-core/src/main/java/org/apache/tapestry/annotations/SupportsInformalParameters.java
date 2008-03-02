@@ -24,8 +24,8 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 import java.lang.annotation.Target;
 
 /**
- * Used to identify a component that can support informal parameters. By default, components do not
- * support informal parameters.
+ * Used to identify a component that can support informal parameters. By default, components do not support informal
+ * parameters.
  *
  * @see ComponentModel#getSupportsInformalParameters()
  */

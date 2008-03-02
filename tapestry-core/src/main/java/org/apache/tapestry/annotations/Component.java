@@ -30,26 +30,25 @@ public @interface Component
 {
 
     /**
-     * The id of the component. When left blank (the default), the component id is determined from
-     * the field name.
+     * The id of the component. When left blank (the default), the component id is determined from the field name.
      */
     String id() default "";
 
     /**
-     * The component type. When this is left unspecified, then the annotated field's type is used
-     * directly as the component type.
+     * The component type. When this is left unspecified, then the annotated field's type is used directly as the
+     * component type.
      */
     String type() default "";
 
     /**
-     * Parameter bindings for the component. Each value in the array is of the form "name=value".
-     * The value is a binding expression, with a default binding prefix of "prop:".
+     * Parameter bindings for the component. Each value in the array is of the form "name=value". The value is a binding
+     * expression, with a default binding prefix of "prop:".
      */
     String[] parameters() default {};
 
     /**
-     * If true, then the component will inherit all informal parameters from its parent component.
-     * The default is false.
+     * If true, then the component will inherit all informal parameters from its parent component. The default is
+     * false.
      */
     boolean inheritInformalParameters() default false;
 }

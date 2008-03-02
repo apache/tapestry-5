@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Service used to store the current request objects, both the Servlet API versions, and the
- * Tapestry generic versions. The service has a per-thread scope.
+ * Service used to store the current request objects, both the Servlet API versions, and the Tapestry generic versions.
+ * The service has a per-thread scope.
  */
 public interface RequestGlobals
 {

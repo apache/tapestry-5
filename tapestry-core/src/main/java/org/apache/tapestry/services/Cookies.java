@@ -20,17 +20,16 @@ package org.apache.tapestry.services;
 public interface Cookies
 {
     /**
-     * Returns the value of the first cookie whose name matches. Returns null if no such cookie
-     * exists. This method is only aware of cookies that are part of the incoming request; it does
-     * not know about additional cookies added since then (via
-     * {@link #writeCookieValue(String, String)}).
+     * Returns the value of the first cookie whose name matches. Returns null if no such cookie exists. This method is
+     * only aware of cookies that are part of the incoming request; it does not know about additional cookies added
+     * since then (via {@link #writeCookieValue(String, String)}).
      */
     String readCookieValue(String name);
 
     /**
-     * Creates or updates a cookie value. The value is stored using a max age (in seconds) defined
-     * by the symbol <code>org.apache.tapestry.default-cookie-max-age</code>. The factory default
-     * for this value is the equivalent of one week.
+     * Creates or updates a cookie value. The value is stored using a max age (in seconds) defined by the symbol
+     * <code>org.apache.tapestry.default-cookie-max-age</code>. The factory default for this value is the equivalent of
+     * one week.
      */
 
     void writeCookieValue(String name, String value);

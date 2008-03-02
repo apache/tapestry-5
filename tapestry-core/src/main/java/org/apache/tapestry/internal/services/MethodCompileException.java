@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 /**
- * Exception thrown when a method body fails to compile; this will allow the method body to be
- * displayed to the user on the request failure page.
+ * Exception thrown when a method body fails to compile; this will allow the method body to be displayed to the user on
+ * the request failure page.
  */
 public class MethodCompileException extends RuntimeException
 {

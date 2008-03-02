@@ -15,8 +15,8 @@
 package org.apache.tapestry;
 
 /**
- * A collection of parameters that may eventually be passed to an event handler method.  Includes the ability to
- * coerce or encode parameters as needed.
+ * A collection of parameters that may eventually be passed to an event handler method.  Includes the ability to coerce
+ * or encode parameters as needed.
  *
  * @see org.apache.tapestry.ioc.services.TypeCoercer
  * @see org.apache.tapestry.ValueEncoder

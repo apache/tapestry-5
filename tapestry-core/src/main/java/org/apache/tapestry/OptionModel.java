@@ -17,8 +17,7 @@ package org.apache.tapestry;
 import java.util.Map;
 
 /**
- * A single option within a {@link OptionGroupModel}. Corresponds closely to the [X]HTML
- * &lt;option&gt; element.
+ * A single option within a {@link OptionGroupModel}. Corresponds closely to the [X]HTML &lt;option&gt; element.
  */
 public interface OptionModel
 {
@@ -38,9 +37,8 @@ public interface OptionModel
     Map<String, String> getAttributes();
 
     /**
-     * The server-side value represented by this option. This is used to determine which option will
-     * be selected. It is also used, via {@link ValueEncoder#toClient(Object)}, to generate
-     * the client-side value attribute.
+     * The server-side value represented by this option. This is used to determine which option will be selected. It is
+     * also used, via {@link ValueEncoder#toClient(Object)}, to generate the client-side value attribute.
      */
     Object getValue();
 }

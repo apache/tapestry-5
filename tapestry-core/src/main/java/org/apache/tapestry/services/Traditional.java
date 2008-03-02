@@ -23,7 +23,7 @@ import java.lang.annotation.*;
  *
  * @see ComponentEventRequestHandler
  */
-@Target({ElementType.PARAMETER, ElementType.FIELD})
+@Target({ ElementType.PARAMETER, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Traditional

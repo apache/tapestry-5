@@ -17,16 +17,13 @@ package org.apache.tapestry;
 import java.io.Serializable;
 
 /**
- * An action that is associated with a component. This is used in several areas of Tapestry and is
- * primarily an attempt to externalize state for a component so that it can be recorded outside the
- * object.
+ * An action that is associated with a component. This is used in several areas of Tapestry and is primarily an attempt
+ * to externalize state for a component so that it can be recorded outside the object.
  * <p/>
- * ComponentActions should be immutable. They are often created during one request and associated
- * with a particular component instance. They are then used in a later request (with an equivalent
- * component instance).
+ * ComponentActions should be immutable. They are often created during one request and associated with a particular
+ * component instance. They are then used in a later request (with an equivalent component instance).
  * <p/>
- * ComponentActions are serializable (they are often serialized into Base64 strings for storage on
- * the client).
+ * ComponentActions are serializable (they are often serialized into Base64 strings for storage on the client).
  */
 public interface ComponentAction<T> extends Serializable
 {

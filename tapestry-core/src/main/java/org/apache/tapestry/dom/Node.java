@@ -31,8 +31,8 @@ public abstract class Node
     private List<Node> _children;
 
     /**
-     * Creates a new node, setting its container to the provided value. Container may also be null,
-     * but that is only used for Document nodes (the topmost node of a DOM).
+     * Creates a new node, setting its container to the provided value. Container may also be null, but that is only
+     * used for Document nodes (the topmost node of a DOM).
      *
      * @param container
      */

@@ -20,8 +20,8 @@ package org.apache.tapestry.services;
 public interface MethodFilter
 {
     /**
-     * Passed each signature in turn, only signatures for which this method returns true will be
-     * included in the final result.
+     * Passed each signature in turn, only signatures for which this method returns true will be included in the final
+     * result.
      */
     boolean accept(TransformMethodSignature signature);
 }

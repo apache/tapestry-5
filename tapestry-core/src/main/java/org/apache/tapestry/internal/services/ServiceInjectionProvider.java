@@ -21,8 +21,8 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
 
 /**
- * A very late worker related to the {@link Inject} annotation that, when all other forms of
- * injection have failed, matches the field type to a service interface.
+ * A very late worker related to the {@link Inject} annotation that, when all other forms of injection have failed,
+ * matches the field type to a service interface.
  */
 public class ServiceInjectionProvider implements InjectionProvider
 {

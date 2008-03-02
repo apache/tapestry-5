@@ -15,8 +15,8 @@
 package org.apache.tapestry.services;
 
 /**
- * Represents a previously stored change to a persistent field, within the context of a particular
- * page of the application.
+ * Represents a previously stored change to a persistent field, within the context of a particular page of the
+ * application.
  */
 public interface PersistentFieldChange
 {

@@ -22,20 +22,19 @@ import org.apache.tapestry.dom.Raw;
 import java.io.PrintWriter;
 
 /**
- * An interface used by objects, such as Tapestry components, that need to render themselves as some
- * form of XML markup. A markup writer maintains the idea of a current element. Attributes are added
- * to the current element, and new text and elements are placed inside the current element. In this
- * way, the markup writer maintains a facade that XML markup is generated as a stream, even though
- * the implementation builds a kind of DOM tree. The DOM tree can be also be manipulated. This
- * solves a number of problems from Tapestry 4 (and earlier) where random access to the DOM was
+ * An interface used by objects, such as Tapestry components, that need to render themselves as some form of XML markup.
+ * A markup writer maintains the idea of a current element. Attributes are added to the current element, and new text
+ * and elements are placed inside the current element. In this way, the markup writer maintains a facade that XML markup
+ * is generated as a stream, even though the implementation builds a kind of DOM tree. The DOM tree can be also be
+ * manipulated. This solves a number of problems from Tapestry 4 (and earlier) where random access to the DOM was
  * desired and had to be simulated through complex buffering.
  */
 public interface MarkupWriter
 {
     /**
-     * Begins a new element as a child of the current element. The new element becomes the current
-     * element. The new Element is returned and can be directly manipulated (possibly at a later
-     * date). Optionally, attributes for the new element can be specified directly.
+     * Begins a new element as a child of the current element. The new element becomes the current element. The new
+     * Element is returned and can be directly manipulated (possibly at a later date). Optionally, attributes for the
+     * new element can be specified directly.
      * <p/>
      *
      * @param name       the name of the element to create
@@ -46,8 +45,8 @@ public interface MarkupWriter
     Element element(String name, Object... attributes);
 
     /**
-     * Ends the current element. The new current element will be the parent element. Returns the new
-     * current element (which may be null when ending the root element for the document).
+     * Ends the current element. The new current element will be the parent element. Returns the new current element
+     * (which may be null when ending the root element for the document).
      */
 
     Element end();
@@ -64,9 +63,9 @@ public interface MarkupWriter
     void writef(String format, Object... args);
 
     /**
-     * Writes <em>raw</em> text, text with existing markup that should be passed through the
-     * client without change. This can be useful when the markup is read from an external source (a
-     * file or a database) and is simply to be included.
+     * Writes <em>raw</em> text, text with existing markup that should be passed through the client without change. This
+     * can be useful when the markup is read from an external source (a file or a database) and is simply to be
+     * included.
      *
      * @param text
      * @see Raw
@@ -74,29 +73,28 @@ public interface MarkupWriter
     void writeRaw(String text);
 
     /**
-     * Adds an XML comment. The text should be just the comment content, the comment delimiters will
-     * be provided.
+     * Adds an XML comment. The text should be just the comment content, the comment delimiters will be provided.
      */
     void comment(String text);
 
 
     /**
-     * Adds parsed character content. This will be enclosed in a CDATA block if supported.  When not supported,
-     * this is the same as {@link #write(String)}.
+     * Adds parsed character content. This will be enclosed in a CDATA block if supported.  When not supported, this is
+     * the same as {@link #write(String)}.
      *
      * @param content pre-parsed content
      */
     void cdata(String content);
 
     /**
-     * Adds a series of attributes and values. Null values are quietly skipped. If a name already
-     * has a value, then the new value is <em>ignored</em>.
+     * Adds a series of attributes and values. Null values are quietly skipped. If a name already has a value, then the
+     * new value is <em>ignored</em>.
      */
     void attributes(Object... namesAndValues);
 
     /**
-     * Converts the collected markup into an markup stream (according to rules provided by the
-     * {@link Document}'s {@link MarkupModel}). The markup stream is sent to the writer.
+     * Converts the collected markup into an markup stream (according to rules provided by the {@link Document}'s {@link
+     * MarkupModel}). The markup stream is sent to the writer.
      */
     void toMarkup(PrintWriter writer);
 
@@ -111,19 +109,19 @@ public interface MarkupWriter
     Element getElement();
 
     /**
-     * Defines a namespace for the currently active element. The namespace URI will be mapped
-     * to the provided namespace prefix within the Element.
+     * Defines a namespace for the currently active element. The namespace URI will be mapped to the provided namespace
+     * prefix within the Element.
      *
      * @param namespace       the namespace URI
-     * @param namespacePrefix the prefix for elements and attributes associated with the namespace    (may
-     *                        be the empty string for the default namespace)
+     * @param namespacePrefix the prefix for elements and attributes associated with the namespace    (may be the empty
+     *                        string for the default namespace)
      * @return the currently active element
      */
     Element defineNamespace(String namespace, String namespacePrefix);
 
     /**
-     * Starts an element within the given namespace. The correct namespace prefix will be identified and used.
-     * Must be balanced by a call to {@link #end()}.
+     * Starts an element within the given namespace. The correct namespace prefix will be identified and used. Must be
+     * balanced by a call to {@link #end()}.
      *
      * @param namespace   URI containing the element
      * @param elementName name of the element within the namespace

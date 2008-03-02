@@ -44,23 +44,19 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A JSONObject is an unordered collection of name/value pairs. Its external form is a string
- * wrapped in curly braces with colons between the names and values, and commas between the values
- * and names. The internal form is an object having <code>get</code> and <code>opt</code>
- * methods for accessing the values by name, and <code>put</code> methods for adding or replacing
- * values by name. The values can be any of these types: <code>Boolean</code>,
- * <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>,
- * <code>String</code>, or the <code>JSONObject.NULL</code> object. A JSONObject constructor
- * can be used to convert an external form JSON text into an internal form whose values can be
- * retrieved with the <code>get</code> and <code>opt</code> methods, or to convert values into a
- * JSON text using the <code>put</code> and <code>toString</code> methods. A <code>get</code>
- * method returns a value if one can be found, and throws an exception if one cannot be found. An
- * <code>opt</code> method returns a default value instead of throwing an exception, and so is
- * useful for obtaining optional values.
+ * A JSONObject is an unordered collection of name/value pairs. Its external form is a string wrapped in curly braces
+ * with colons between the names and values, and commas between the values and names. The internal form is an object
+ * having <code>get</code> and <code>opt</code> methods for accessing the values by name, and <code>put</code> methods
+ * for adding or replacing values by name. The values can be any of these types: <code>Boolean</code>,
+ * <code>JSONArray</code>, <code>JSONObject</code>, <code>Number</code>, <code>String</code>, or the
+ * <code>JSONObject.NULL</code> object. A JSONObject constructor can be used to convert an external form JSON text into
+ * an internal form whose values can be retrieved with the <code>get</code> and <code>opt</code> methods, or to convert
+ * values into a JSON text using the <code>put</code> and <code>toString</code> methods. A <code>get</code> method
+ * returns a value if one can be found, and throws an exception if one cannot be found. An <code>opt</code> method
+ * returns a default value instead of throwing an exception, and so is useful for obtaining optional values.
  * <p/>
- * The generic <code>get()</code> and <code>opt()</code> methods return an object, which you can
- * cast or query for type. There are also typed <code>get</code> and <code>opt</code> methods
- * that do type checking and type coersion for you.
+ * The generic <code>get()</code> and <code>opt()</code> methods return an object, which you can cast or query for type.
+ * There are also typed <code>get</code> and <code>opt</code> methods that do type checking and type coersion for you.
  * <p/>
  * The <code>put</code> methods adds values to an object. For example,
  * <p/>
@@ -70,47 +66,39 @@ import java.util.Set;
  * <p/>
  * produces the string <code>{"JSON": "Hello, World"}</code>.
  * <p/>
- * The texts produced by the <code>toString</code> methods strictly conform to the JSON sysntax
- * rules. The constructors are more forgiving in the texts they will accept:
- * <ul>
- * <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may appear just before the closing
- * brace.</li>
- * <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single quote)</small>.</li>
- * <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote,
- * and if they do not contain leading or trailing spaces, and if they do not contain any of these
- * characters: <code>{ } [ ] / \ : , = ; #</code> and if they do not look like numbers and if they
- * are not the reserved words <code>true</code>, <code>false</code>, or <code>null</code>.</li>
- * <li>Keys can be followed by <code>=</code> or <code>=></code> as well as by <code>:</code>.</li>
- * <li>Values can be followed by <code>;</code> <small>(semicolon)</small> as well as by
- * <code>,</code> <small>(comma)</small>.</li>
- * <li>Numbers may have the <code>0-</code> <small>(octal)</small> or <code>0x-</code>
- * <small>(hex)</small> prefix.</li>
- * <li>Comments written in the slashshlash, slashstar, and hash conventions will be ignored.</li>
- * </ul>
- * <hr/>
+ * The texts produced by the <code>toString</code> methods strictly conform to the JSON sysntax rules. The constructors
+ * are more forgiving in the texts they will accept: <ul> <li>An extra <code>,</code>&nbsp;<small>(comma)</small> may
+ * appear just before the closing brace.</li> <li>Strings may be quoted with <code>'</code>&nbsp;<small>(single
+ * quote)</small>.</li> <li>Strings do not need to be quoted at all if they do not begin with a quote or single quote,
+ * and if they do not contain leading or trailing spaces, and if they do not contain any of these characters: <code>{ }
+ * [ ] / \ : , = ; #</code> and if they do not look like numbers and if they are not the reserved words
+ * <code>true</code>, <code>false</code>, or <code>null</code>.</li> <li>Keys can be followed by <code>=</code> or
+ * <code>=></code> as well as by <code>:</code>.</li> <li>Values can be followed by <code>;</code>
+ * <small>(semicolon)</small> as well as by <code>,</code> <small>(comma)</small>.</li> <li>Numbers may have the
+ * <code>0-</code> <small>(octal)</small> or <code>0x-</code> <small>(hex)</small> prefix.</li> <li>Comments written in
+ * the slashshlash, slashstar, and hash conventions will be ignored.</li> </ul> <hr/>
  * <p/>
- * This class, and the other related classes, have been heavily modified from the original source,
- * to fit Tapestry standards and to make use of JDK 1.5 features such as generics. Further, since
- * the interest of Tapestry is primarily constructing JSON (and not parsing it), many of the
- * non-essential methods have been removed (since the original code came with no tests).
+ * This class, and the other related classes, have been heavily modified from the original source, to fit Tapestry
+ * standards and to make use of JDK 1.5 features such as generics. Further, since the interest of Tapestry is primarily
+ * constructing JSON (and not parsing it), many of the non-essential methods have been removed (since the original code
+ * came with no tests).
  *
  * @author JSON.org
  * @version 2
  */
-@SuppressWarnings({"CloneDoesntCallSuperClone"})
+@SuppressWarnings({ "CloneDoesntCallSuperClone" })
 public final class JSONObject
 {
 
     /**
-     * JSONObject.NULL is equivalent to the value that JavaScript calls null, whilst Java's null is
-     * equivalent to the value that JavaScript calls undefined.
+     * JSONObject.NULL is equivalent to the value that JavaScript calls null, whilst Java's null is equivalent to the
+     * value that JavaScript calls undefined.
      */
     private static final class Null
     {
 
         /**
-         * There is only intended to be a single instance of the NULL object, so the clone method
-         * returns itself.
+         * There is only intended to be a single instance of the NULL object, so the clone method returns itself.
          *
          * @return NULL.
          */
@@ -150,9 +138,9 @@ public final class JSONObject
     private final Map<String, Object> _properties = CollectionFactory.newMap();
 
     /**
-     * It is sometimes more convenient and less ambiguous to have a <code>NULL</code> object than
-     * to use Java's <code>null</code> value. <code>JSONObject.NULL.equals(null)</code> returns
-     * <code>true</code>. <code>JSONObject.NULL.toString()</code> returns <code>"null"</code>.
+     * It is sometimes more convenient and less ambiguous to have a <code>NULL</code> object than to use Java's
+     * <code>null</code> value. <code>JSONObject.NULL.equals(null)</code> returns <code>true</code>.
+     * <code>JSONObject.NULL.toString()</code> returns <code>"null"</code>.
      */
     public static final Object NULL = new Null();
 
@@ -164,8 +152,8 @@ public final class JSONObject
     }
 
     /**
-     * Construct a JSONObject from a subset of another JSONObject. An array of strings is used to
-     * identify the keys that should be copied. Missing keys are ignored.
+     * Construct a JSONObject from a subset of another JSONObject. An array of strings is used to identify the keys that
+     * should be copied. Missing keys are ignored.
      *
      * @param source        A JSONObject.
      * @param propertyNames The strings to copy.
@@ -184,8 +172,7 @@ public final class JSONObject
     /**
      * Construct a JSONObject from a JSONTokener.
      *
-     * @param x A JSONTokener object containing the source string. @ If there is a syntax error in the source
-     *          string.
+     * @param x A JSONTokener object containing the source string. @ If there is a syntax error in the source string.
      */
     JSONObject(JSONTokener x)
     {
@@ -253,8 +240,8 @@ public final class JSONObject
     /**
      * Construct a JSONObject from a string. This is the most commonly used JSONObject constructor.
      *
-     * @param string A string beginning with <code>{</code>&nbsp;<small>(left brace)</small> and
-     *               ending with <code>}</code>&nbsp;<small>(right brace)</small>.
+     * @param string A string beginning with <code>{</code>&nbsp;<small>(left brace)</small> and ending with
+     *               <code>}</code>&nbsp;<small>(right brace)</small>.
      * @throws RuntimeException If there is a syntax error in the source string.
      */
     public JSONObject(String string)
@@ -263,16 +250,14 @@ public final class JSONObject
     }
 
     /**
-     * Accumulate values under a key. It is similar to the put method except that if there is
-     * already an object stored under the key then a JSONArray is stored under the key to hold all
-     * of the accumulated values. If there is already a JSONArray, then the new value is appended to
-     * it. In contrast, the put method replaces the previous value.
+     * Accumulate values under a key. It is similar to the put method except that if there is already an object stored
+     * under the key then a JSONArray is stored under the key to hold all of the accumulated values. If there is already
+     * a JSONArray, then the new value is appended to it. In contrast, the put method replaces the previous value.
      *
      * @param key   A key string.
      * @param value An object to be accumulated under the key.
      * @return this.
-     * @throws {@link RuntimeException}
-     *                If the value is an invalid number or if the key is null.
+     * @throws {@link RuntimeException} If the value is an invalid number or if the key is null.
      */
     public JSONObject accumulate(String key, Object value)
     {
@@ -303,15 +288,13 @@ public final class JSONObject
     }
 
     /**
-     * Append values to the array under a key. If the key does not exist in the JSONObject, then the
-     * key is put in the JSONObject with its value being a JSONArray containing the value parameter.
-     * If the key was already associated with a JSONArray, then the value parameter is appended to
-     * it.
+     * Append values to the array under a key. If the key does not exist in the JSONObject, then the key is put in the
+     * JSONObject with its value being a JSONArray containing the value parameter. If the key was already associated
+     * with a JSONArray, then the value parameter is appended to it.
      *
      * @param key   A key string.
      * @param value An object to be accumulated under the key.
-     * @return this. @ If the key is null or if the current value associated with the key is not a
-     *         JSONArray.
+     * @return this. @ If the key is null or if the current value associated with the key is not a JSONArray.
      */
     public JSONObject append(String key, Object value)
     {
@@ -334,8 +317,7 @@ public final class JSONObject
     }
 
     /**
-     * Produce a string from a double. The string "null" will be returned if the number is not
-     * finite.
+     * Produce a string from a double. The string "null" will be returned if the number is not finite.
      *
      * @param d A double.
      * @return A String.
@@ -411,8 +393,8 @@ public final class JSONObject
      * Get the double value associated with a key.
      *
      * @param key A key string.
-     * @return The numeric value. @ if the key is not found or if the value is not a Number object
-     *         and cannot be converted to a number.
+     * @return The numeric value. @ if the key is not found or if the value is not a Number object and cannot be
+     *         converted to a number.
      */
     public double getDouble(String key)
     {
@@ -433,12 +415,10 @@ public final class JSONObject
     }
 
     /**
-     * Get the int value associated with a key. If the number value is too large for an int, it will
-     * be clipped.
+     * Get the int value associated with a key. If the number value is too large for an int, it will be clipped.
      *
      * @param key A key string.
-     * @return The integer value. @ if the key is not found or if the value cannot be converted to
-     *         an integer.
+     * @return The integer value. @ if the key is not found or if the value cannot be converted to an integer.
      */
     public int getInt(String key)
     {
@@ -487,12 +467,10 @@ public final class JSONObject
     }
 
     /**
-     * Get the long value associated with a key. If the number value is too long for a long, it will
-     * be clipped.
+     * Get the long value associated with a key. If the number value is too long for a long, it will be clipped.
      *
      * @param key A key string.
-     * @return The long value. @ if the key is not found or if the value cannot be converted to a
-     *         long.
+     * @return The long value. @ if the key is not found or if the value cannot be converted to a long.
      */
     public long getLong(String key)
     {
@@ -527,8 +505,7 @@ public final class JSONObject
      * Determine if the value associated with the key is null or if there is no value.
      *
      * @param key A key string.
-     * @return true if there is no value associated with the key or if the value is the
-     *         JSONObject.NULL object.
+     * @return true if there is no value associated with the key or if the value is the JSONObject.NULL object.
      */
     public boolean isNull(String key)
     {
@@ -614,12 +591,12 @@ public final class JSONObject
     }
 
     /**
-     * Put a key/value pair in the JSONObject. If the value is null, then the key will be removed
-     * from the JSONObject if it is present.
+     * Put a key/value pair in the JSONObject. If the value is null, then the key will be removed from the JSONObject if
+     * it is present.
      *
      * @param key   A key string.
-     * @param value An object which is the value. It should be of one of these types: Boolean, Double,
-     *              Integer, JSONArray, JSONObject, Long, String, or the JSONObject.NULL object.
+     * @param value An object which is the value. It should be of one of these types: Boolean, Double, Integer,
+     *              JSONArray, JSONObject, Long, String, or the JSONObject.NULL object.
      * @return this.
      * @throws RuntimeException If the value is non-finite number or if the key is null.
      */
@@ -641,9 +618,9 @@ public final class JSONObject
     }
 
     /**
-     * Produce a string in double quotes with backslash sequences in all the right places. A
-     * backslash will be inserted within </, allowing JSON text to be delivered in HTML. In JSON
-     * text, a string cannot contain a control character or an unescaped quote or backslash.
+     * Produce a string in double quotes with backslash sequences in all the right places. A backslash will be inserted
+     * within </, allowing JSON text to be delivered in HTML. In JSON text, a string cannot contain a control character
+     * or an unescaped quote or backslash.
      *
      * @param string A String
      * @return A String correctly formatted for insertion in a JSON text.
@@ -723,12 +700,11 @@ public final class JSONObject
         return _properties.remove(key);
     }
 
-    private static final Class[] ALLOWED = new Class[]{String.class, Boolean.class, Number.class, JSONObject.class,
-                                                       JSONArray.class, Null.class};
+    private static final Class[] ALLOWED = new Class[] { String.class, Boolean.class, Number.class, JSONObject.class,
+            JSONArray.class, Null.class };
 
     /**
-     * Throw an exception if the object is an NaN or infinite number, or not a type which may be
-     * stored.
+     * Throw an exception if the object is an NaN or infinite number, or not a type which may be stored.
      *
      * @param value The object to test. @ If o is a non-finite number.
      */
@@ -780,14 +756,14 @@ public final class JSONObject
     }
 
     /**
-     * Make a JSON text of this JSONObject. For compactness, no whitespace is added. If this would
-     * not result in a syntactically correct JSON text, then null will be returned instead.
+     * Make a JSON text of this JSONObject. For compactness, no whitespace is added. If this would not result in a
+     * syntactically correct JSON text, then null will be returned instead.
      * <p/>
      * Warning: This method assumes that the data structure is acyclical.
      *
-     * @return a printable, displayable, portable, transmittable representation of the object,
-     *         beginning with <code>{</code>&nbsp;<small>(left brace)</small> and ending with
-     *         <code>}</code>&nbsp;<small>(right brace)</small>.
+     * @return a printable, displayable, portable, transmittable representation of the object, beginning with
+     *         <code>{</code>&nbsp;<small>(left brace)</small> and ending with <code>}</code>&nbsp;<small>(right
+     *         brace)</small>.
      */
     @Override
     public String toString()
@@ -813,10 +789,9 @@ public final class JSONObject
     }
 
     /**
-     * Make a JSON text of an Object value. If the object has an value.toJSONString() method, then
-     * that method will be used to produce the JSON text. The method is required to produce a
-     * strictly conforming text. If the object does not contain a toJSONString method (which is the
-     * most common case), then a text will be produced by the rules.
+     * Make a JSON text of an Object value. If the object has an value.toJSONString() method, then that method will be
+     * used to produce the JSON text. The method is required to produce a strictly conforming text. If the object does
+     * not contain a toJSONString method (which is the most common case), then a text will be produced by the rules.
      * <p/>
      * Warning: This method assumes that the data structure is acyclical.
      *
@@ -861,8 +836,7 @@ public final class JSONObject
     }
 
     /**
-     * Returns true if the other object is a JSONObject and its set of properties
-     * matches this object's properties.
+     * Returns true if the other object is a JSONObject and its set of properties matches this object's properties.
      * <p/>
      * '
      */

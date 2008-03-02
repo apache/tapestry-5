@@ -21,8 +21,8 @@ import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import java.net.URL;
 
 /**
- * Responsible for determining which classpath resources require checksums, and for generating
- * checksums for such resources.
+ * Responsible for determining which classpath resources require checksums, and for generating checksums for such
+ * resources.
  *
  * @see ClasspathResource
  * @see ClasspathAssetFactory
@@ -30,17 +30,16 @@ import java.net.URL;
 public interface ResourceDigestGenerator
 {
     /**
-     * Examines the path (typically, the file name extension at the end of the path) to determine if
-     * a checksum is required for the path. The path is {@link Resource} style, without a leading
-     * slash.
+     * Examines the path (typically, the file name extension at the end of the path) to determine if a checksum is
+     * required for the path. The path is {@link Resource} style, without a leading slash.
      */
     boolean requiresDigest(String path);
 
     /**
-     * Reads the content of a URL (presumably, for a resource on the classpath) and generates a
-     * digest of its content. This digest will be incorporated into the URL provided to the
-     * client, to verify that the client has been "granted" access to this resource. This is only
-     * used for resources where {@link #requiresDigest(String)} is true.
+     * Reads the content of a URL (presumably, for a resource on the classpath) and generates a digest of its content.
+     * This digest will be incorporated into the URL provided to the client, to verify that the client has been
+     * "granted" access to this resource. This is only used for resources where {@link #requiresDigest(String)} is
+     * true.
      *
      * @param url
      * @return the digest for the resource

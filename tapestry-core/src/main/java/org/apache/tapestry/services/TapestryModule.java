@@ -220,7 +220,8 @@ public final class TapestryModule
      * finishes rendering</dd> <dt>Secure</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.Secure}
      * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
      * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
-     * annotation</dd> </dl>
+     * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
+     * org.apache.tapestry.annotations.GenerateAccessors} annotation is present </dd> </dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -242,7 +243,6 @@ public final class TapestryModule
         // UnclaimedField is last.
 
         configuration.add("Meta", new MetaWorker());
-        configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class));
 
         configuration.add("Inject", new InjectWorker(locator, injectionProvider));
 
@@ -250,7 +250,6 @@ public final class TapestryModule
 
         configuration.add("MixinAfter", new MixinAfterWorker());
         configuration.add("Component", new ComponentWorker(resolver));
-        configuration.add("Environment", new EnvironmentalWorker(environment));
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
@@ -297,6 +296,13 @@ public final class TapestryModule
 
         configuration.add("ContentType", new ContentTypeWorker());
         configuration.add("ResponseEncoding", new ResponseEncodingWorker());
+
+        configuration.add("GenerateAccessors", new GenerateAccessorsWorker());
+
+        // These must come after GenerateAccessors, since they actually delete fields that may still have the annotation
+        configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class),
+                          "after:GenerateAccessors");
+        configuration.add("Environment", new EnvironmentalWorker(environment), "after:GenerateAccessors");
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.

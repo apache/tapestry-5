@@ -91,8 +91,8 @@ public final class TransformUtils
     }
 
     /**
-     * Returns the name of wrapper type for a given input type. For primitive types, returns the
-     * wrapper type. For other types, returns the input type name.
+     * Returns the name of wrapper type for a given input type. For primitive types, returns the wrapper type. For other
+     * types, returns the input type name.
      *
      * @param type primitive type name, or fully qualified class name
      */
@@ -104,8 +104,7 @@ public final class TransformUtils
     }
 
     /**
-     * For primitive types, returns the method on the <em>wrapper type</em> that converts back to
-     * the primitive.
+     * For primitive types, returns the method on the <em>wrapper type</em> that converts back to the primitive.
      *
      * @param type the primitive type
      * @return the method of the corresponding wrapper type, or null if type is not a primitive type
@@ -118,8 +117,8 @@ public final class TransformUtils
     }
 
     /**
-     * Returns the wrapper type for a given input type. For primitive types, returns the wrapper
-     * type. For other types, returns the type itself.
+     * Returns the wrapper type for a given input type. For primitive types, returns the wrapper type. For other types,
+     * returns the type itself.
      *
      * @param type primitive or object type
      */
@@ -131,8 +130,8 @@ public final class TransformUtils
     }
 
     /**
-     * Returns the default value for a type. This is the string "null" for most types, or a literal
-     * value for primtive types.
+     * Returns the default value for a type. This is the string "null" for most types, or a literal value for primtive
+     * types.
      */
     public static String getDefaultValue(String type)
     {

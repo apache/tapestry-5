@@ -19,15 +19,15 @@ import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 
 /**
- * Caches information about resources on the classpath. In addition, acts as an invalidation hub for
- * any resources for which information is obtained (when any of the resources are changed,
- * invalidation listeners are notified so they can clear their caches).
+ * Caches information about resources on the classpath. In addition, acts as an invalidation hub for any resources for
+ * which information is obtained (when any of the resources are changed, invalidation listeners are notified so they can
+ * clear their caches).
  */
 public interface ResourceCache extends InvalidationEventHub
 {
     /**
-     * Returns true if the path requires that the client URL for the resource include a digest to
-     * validate that the client is authorized to access the resource.
+     * Returns true if the path requires that the client URL for the resource include a digest to validate that the
+     * client is authorized to access the resource.
      *
      * @param resource
      * @return true if digest is required for the resource
@@ -47,8 +47,7 @@ public interface ResourceCache extends InvalidationEventHub
      * Returns the time modified for the resource.
      *
      * @param resource
-     * @return the date time modified for the path, or a negative value if the resource does not
-     *         exist
+     * @return the date time modified for the path, or a negative value if the resource does not exist
      */
     long getTimeModified(Resource resource);
 }
