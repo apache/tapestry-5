@@ -18,7 +18,7 @@
     <br/>
     <a t:type="pagelink" page="target" context="japaneseKanji">japanese kanji</a>
     <br/>
-    <t:actionlink t:id="nullContext">Null in ontext</t:actionlink>
+    <t:actionlink t:id="nullContext">Null in context</t:actionlink>
 
 
 </html>
