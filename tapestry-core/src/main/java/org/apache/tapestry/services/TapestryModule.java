@@ -1222,7 +1222,7 @@ public final class TapestryModule
         configuration.add("ComponentEvent",
                           new ComponentEventDispatcher(componentEventRequestHandler, componentClassResolver,
                                                        contextValueEncoder),
-                          "after:PageRender");
+                          "before:PageRender");
     }
 
     /**
