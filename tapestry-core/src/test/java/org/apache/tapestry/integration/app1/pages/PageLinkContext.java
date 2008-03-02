@@ -14,11 +14,17 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
+import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.ioc.annotations.Inject;
+
 public class PageLinkContext
 {
+    @Inject
+    private ComponentResources _resources;
+
     public Object[] getComputedContext()
     {
-        return new Object[]{"fred", 7, true};
+        return new Object[] { "fred", 7, true };
     }
 
     public String getUnsafeCharacters()
@@ -30,4 +36,10 @@ public class PageLinkContext
     {
         return "japanese kanji: \u65E5\u672C\u8A9E";
     }
+
+    Object onActionFromNullContext()
+    {
+        return _resources.createPageLink("target", true, new Object[] { null });
+    }
+
 }

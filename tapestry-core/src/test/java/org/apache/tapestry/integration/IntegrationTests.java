@@ -772,6 +772,14 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=japanese kanji");
 
         assertText("//li[1]", "japanese kanji: \u65E5\u672C\u8A9E");
+
+        // TAPESTRY-2221
+
+        clickAndWait("link=PageLink Context Demo");
+
+        clickAndWait("link=Null in context");
+
+        assertTextPresent("Context values (which are added to the request URL) may not be null or blank.");
     }
 
     @Test

@@ -17,6 +17,8 @@
     <a t:type="pagelink" page="target" context="unsafeCharacters">unsafe characters</a>
     <br/>
     <a t:type="pagelink" page="target" context="japaneseKanji">japanese kanji</a>
+    <br/>
+    <t:actionlink t:id="nullContext">Null in ontext</t:actionlink>
 
 
 </html>

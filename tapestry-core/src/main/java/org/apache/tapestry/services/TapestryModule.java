@@ -1181,10 +1181,10 @@ public final class TapestryModule
     /**
      * The MasterDispatcher is a chain-of-command of individual Dispatchers, each handling (like a servlet) a particular
      * kind of incoming request. <dl> <dt>RootPath</dt> <dd>Renders the start page for the "/" request</dd>
-     * <dt>Asset</dt> <dd>Provides access to classpath assets</dd> <dt>PageRender</dt> <dd>Identifies the page name and
-     * activation context and forwards onto {@link PageRenderRequestHandler}</dd> <dt>ComponentEvent</dt> <dd>Identifies
-     * the {@link ComponentEventRequestParameters} and forwards onto the {@link ComponentEventRequestHandler}</dd>
-     * </dl>
+     * <dt>Asset</dt> <dd>Provides access to classpath assets</dd> <dt>PageRender</dt> <dd>Identifies the {@link
+     * org.apache.tapestry.services.PageRenderRequestParameters} and forwards onto {@link PageRenderRequestHandler}</dd>
+     * <dt>ComponentEvent</dt> <dd>Identifies the {@link ComponentEventRequestParameters} and forwards onto the {@link
+     * ComponentEventRequestHandler}</dd> </dl>
      */
     public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
 
@@ -1205,7 +1205,8 @@ public final class TapestryModule
                                            @Symbol("tapestry.start-page-name")
                                            String startPageName)
     {
-        // Looks for the root path and renders the start page
+        // Looks for the root path and renders the start page. This is maintained for compatibility
+        // with earlier versions of Tapestry 5, it is recommended that an Index page be used instead.
 
         configuration.add("RootPath",
                           new RootPathDispatcher(componentClassResolver, pageRenderRequestHandler, startPageName),
@@ -1214,15 +1215,16 @@ public final class TapestryModule
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.
 
-        configuration.add("Asset", new AssetDispatcher(streamer, aliasManager, resourceCache), "before:PageRender");
+        configuration.add("Asset", new AssetDispatcher(streamer, aliasManager, resourceCache), "before:ComponentEvent");
 
-        configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler,
-                                                                 contextValueEncoder));
 
         configuration.add("ComponentEvent",
                           new ComponentEventDispatcher(componentEventRequestHandler, componentClassResolver,
                                                        contextValueEncoder),
                           "before:PageRender");
+
+        configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler,
+                                                                 contextValueEncoder));
     }
 
     /**
