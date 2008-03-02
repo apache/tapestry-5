@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -114,6 +114,26 @@ public class PageTester implements ComponentInvoker
     public void shutdown()
     {
         _registry.shutdown();
+    }
+
+
+    /**
+     * Returns the Registry that was created for the application.
+     */
+    public Registry getRegistry()
+    {
+        return _registry;
+    }
+
+    /**
+     * Allows a service to be retrieved via its service interface.  Use {@link #getRegistry()} for more complicated
+     * queries.
+     *
+     * @param serviceInterface used to select the service
+     */
+    public <T> T getService(Class<T> serviceInterface)
+    {
+        return _registry.getService(serviceInterface);
     }
 
     /**
