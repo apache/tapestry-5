@@ -12,7 +12,7 @@
 
 
         <p>
-            [<t:pagelink t:page="Start">refresh</t:pagelink>]
+            [<t:pagelink t:page="Index">refresh</t:pagelink>]
         </p>
     </body>
 </html>
