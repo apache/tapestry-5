@@ -129,7 +129,7 @@ public class PropertyEditor
         {
             public Messages getContainerMessages()
             {
-                return _resources.getContainerMessages();
+                return _overrides.getContainerMessages();
             }
 
             public String getLabel()
