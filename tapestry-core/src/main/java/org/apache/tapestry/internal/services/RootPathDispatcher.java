@@ -16,6 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.EventContext;
 import org.apache.tapestry.internal.EmptyEventContext;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;
@@ -37,7 +39,11 @@ public class RootPathDispatcher implements Dispatcher
     private final PageRenderRequestParameters _parameters;
 
     public RootPathDispatcher(ComponentClassResolver componentClassResolver,
-                              PageRenderRequestHandler handler, String startPageName)
+
+                              PageRenderRequestHandler handler,
+
+                              @Inject @Symbol("tapestry.start-page-name")
+                              String startPageName)
     {
         _componentClassResolver = componentClassResolver;
         _handler = handler;

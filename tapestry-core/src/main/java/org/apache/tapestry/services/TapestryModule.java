@@ -1187,44 +1187,27 @@ public final class TapestryModule
      * ComponentEventRequestHandler}</dd> </dl>
      */
     public void contributeMasterDispatcher(OrderedConfiguration<Dispatcher> configuration,
-
-                                           ClasspathAssetAliasManager aliasManager,
-
-                                           ResourceCache resourceCache,
-
-                                           ResourceStreamer streamer,
-
-                                           PageRenderRequestHandler pageRenderRequestHandler,
-
-                                           @Traditional ComponentEventRequestHandler componentEventRequestHandler,
-
-                                           ComponentClassResolver componentClassResolver,
-
-                                           ContextValueEncoder contextValueEncoder,
-
-                                           @Symbol("tapestry.start-page-name")
-                                           String startPageName)
+                                           ObjectLocator locator)
     {
         // Looks for the root path and renders the start page. This is maintained for compatibility
         // with earlier versions of Tapestry 5, it is recommended that an Index page be used instead.
 
         configuration.add("RootPath",
-                          new RootPathDispatcher(componentClassResolver, pageRenderRequestHandler, startPageName),
+                          locator.autobuild(RootPathDispatcher.class),
                           "before:Asset");
 
         // This goes first because an asset to be streamed may have an file extension, such as
         // ".html", that will confuse the later dispatchers.
 
-        configuration.add("Asset", new AssetDispatcher(streamer, aliasManager, resourceCache), "before:ComponentEvent");
+        configuration.add("Asset",
+                          locator.autobuild(AssetDispatcher.class), "before:ComponentEvent");
 
 
-        configuration.add("ComponentEvent",
-                          new ComponentEventDispatcher(componentEventRequestHandler, componentClassResolver,
-                                                       contextValueEncoder),
+        configuration.add("ComponentEvent", locator.autobuild(ComponentEventDispatcher.class),
                           "before:PageRender");
 
-        configuration.add("PageRender", new PageRenderDispatcher(componentClassResolver, pageRenderRequestHandler,
-                                                                 contextValueEncoder));
+        configuration.add("PageRender",
+                          locator.autobuild(PageRenderDispatcher.class));
     }
 
     /**
@@ -2088,7 +2071,7 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes filters: <dl> <dt>SetRequestEncode</dt> <dd>Sets the request encoding (before:*)</dd> <dt>Ajax</dt>
+     * Contributes filters: <dl> <dt>Ajax</dt>
      * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so</dd>
      * <dt>ImmediateRender</dt> <dd>When {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
      * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
@@ -2096,22 +2079,10 @@ public final class TapestryModule
      * accesses a secure page</dd></dl>
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
-                                                       final RequestEncodingInitializer encodingInitializer,
                                                        final RequestSecurityManager requestSecurityManager,
                                                        @Ajax ComponentEventRequestHandler ajaxHandler,
                                                        ObjectLocator locator)
     {
-        ComponentEventRequestFilter requestEncodingFilter = new ComponentEventRequestFilter()
-        {
-            public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
-                    throws IOException
-            {
-                encodingInitializer.initializeRequestEncoding(parameters.getActivePageName());
-
-                handler.handle(parameters);
-            }
-        };
-
         ComponentEventRequestFilter secureFilter = new ComponentEventRequestFilter()
         {
             public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
@@ -2122,8 +2093,6 @@ public final class TapestryModule
                 handler.handle(parameters);
             }
         };
-
-        configuration.add("SetRequestEncoding", requestEncodingFilter, "before:*");
 
         configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
 

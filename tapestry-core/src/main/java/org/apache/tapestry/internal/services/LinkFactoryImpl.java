@@ -124,16 +124,14 @@ public class LinkFactoryImpl implements LinkFactory
         notNull(page, "page");
         notBlank(eventType, "action");
 
-        String logicalPageName = page.getLogicalName();
-
-        ActionLinkTarget target = new ActionLinkTarget(eventType, logicalPageName, nestedId);
-
-        String[] contextStrings = toContextStrings(context);
-
         Page activePage = _pageRenderQueue.getRenderingPage();
 
         // See TAPESTRY-2184
         if (activePage == null) activePage = page;
+
+        ActionLinkTarget target = new ActionLinkTarget(eventType, activePage.getLogicalName(), nestedId);
+
+        String[] contextStrings = toContextStrings(context);
 
         String[] activationContext = collectActivationContextForPage(activePage);
 
@@ -147,7 +145,7 @@ public class LinkFactoryImpl implements LinkFactory
         // need to differentiate that.
 
         if (activePage != page)
-            link.addParameter(InternalConstants.ACTIVE_PAGE_NAME, activePage.getLogicalName().toLowerCase());
+            link.addParameter(InternalConstants.CONTAINER_PAGE_NAME, page.getLogicalName().toLowerCase());
 
         // Now see if the page has an activation context.
 
@@ -253,16 +251,17 @@ public class LinkFactoryImpl implements LinkFactory
 
         String[] result = new String[context.length];
 
-        for (int i = 0; i < context.length; i++)    {
+        for (int i = 0; i < context.length; i++)
+        {
 
             Object value = context[i];
 
             String encoded = value == null ? null : _contextValueEncoder.toClient(value);
 
             if (InternalUtils.isBlank(encoded))
-            throw new RuntimeException(ServicesMessages.contextValueMayNotBeNull());
+                throw new RuntimeException(ServicesMessages.contextValueMayNotBeNull());
 
-            result[i]= encoded;
+            result[i] = encoded;
         }
 
         return result;
