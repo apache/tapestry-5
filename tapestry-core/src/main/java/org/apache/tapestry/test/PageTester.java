@@ -23,6 +23,7 @@ import org.apache.tapestry.internal.TapestryAppInitializer;
 import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.test.*;
 import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry.ioc.def.ModuleDef;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.SymbolProvider;
@@ -88,6 +89,7 @@ public class PageTester implements ComponentInvoker
 
         initializer.addModules(PageTesterModule.class);
         initializer.addModules(moduleClasses);
+        initializer.addModules(provideExtraModuleDefs());
 
         _registry = initializer.getRegistry();
 
@@ -107,6 +109,16 @@ public class PageTester implements ComponentInvoker
 
         _invokerRegistry = StrategyRegistry.newInstance(ComponentInvoker.class, map);
     }
+
+    /**
+     * Overridden in subclasses to provide additional module definitions beyond those normally located. This
+     * implementation returns an empty array.
+     */
+    protected ModuleDef[] provideExtraModuleDefs()
+    {
+        return new ModuleDef[0];
+    }
+
 
     /**
      * You should call it after use
