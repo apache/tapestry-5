@@ -196,12 +196,13 @@ mvn jetty:run
   
   The other item is the link used to refresh the page. We're specifying a component as an XML <element> within the Tapestry namespace. The element name, "pagelink",
   defines the type of component.  PageLink (Tapestry is case insensitive) is a component built into the framework; it is part of the
-  core component library.  The attribute, page, is a string - the name of the page to link to.  Here, we're linking back to the same page, page "Start".
+  core component library.  The attribute, page, is a string - the name of the page to link to.  Here, we're linking back to the same page, page "Index".
   
-  This is how Tapestry works; the Start page contains an <instance> of the PageLink component. The PageLink component is configured via its parameters, which controls what
+  This is how Tapestry works; the Index page contains an <instance> of the PageLink component. The PageLink component is configured via its parameters, which controls what
   it does and how it behaves.
   
-  The URL that the PageLink component will render out is <<<http://localhost:8080/tapestry-tutorial1/>>>.    In later examples,
+  The URL that the PageLink component will render out is <<<http://localhost:8080/tapestry-tutorial1/>>> ."Index" pages are special and
+  are identified just by the folder name.    In later examples,
   when we link to pages besides "Index", the page name will be part of the URL.
   
   Tapestry ignores case where ever it can. Inside the template, we configured the PageLink component's page parameter with the name of the page, "Index".  Here too we could be
