@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -62,10 +62,9 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
     }
 
     /**
-     * We want to filter out exceptions that do not provide any additional value. Additional value
-     * includes: an exception message not present in the containing exception or a property value
-     * not present in the containing exception. Also the first exception is always valued and the
-     * last exception (with the stack trace) is valued.
+     * We want to filter out exceptions that do not provide any additional value. Additional value includes: an
+     * exception message not present in the containing exception or a property value not present in the containing
+     * exception. Also the first exception is always valued and the last exception (with the stack trace) is valued.
      *
      * @param previousInfo
      * @param info
@@ -112,7 +111,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
             properties.put(name, value);
         }
 
-        List<String> stackTrace = Collections.emptyList();
+        List<StackTraceElement> stackTrace = Collections.emptyList();
 
         // Usually, I'd use a terniary expression here, but Generics gets in
         // the way here.
@@ -122,9 +121,9 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
         return new ExceptionInfoImpl(t, properties, stackTrace);
     }
 
-    private List<String> extractStackTrace(Throwable t)
+    private List<StackTraceElement> extractStackTrace(Throwable t)
     {
-        List<String> trace = newList();
+        List<StackTraceElement> trace = newList();
 
         for (StackTraceElement e : t.getStackTrace())
         {
@@ -133,7 +132,7 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 
             if (e.getClassName().startsWith("$") && e.getLineNumber() < 0) continue;
 
-            trace.add(e.toString());
+            trace.add(e);
         }
 
         return trace;

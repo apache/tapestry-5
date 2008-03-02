@@ -93,6 +93,11 @@ UL.t-stack-trace LI {
     list-style: square;
 }
 
+LI.t-usercode-frame {
+    font-weight: bold;
+    color: blue;
+}
+
 H1.t-exception-report {
     font-family: "Trebuchet MS", Arial, sans-serif;
     color: red;

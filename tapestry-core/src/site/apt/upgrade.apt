@@ -63,3 +63,9 @@ Release 5.0.11
   (reflecting what it is). In addition, all numeric types are given the data type "number".
   This will only affect your application if you provided an overriding contribution
   to the {{{../apidocs/org/apache/tapestry/services/BeanBlockSource.html}BeanBlockSource}} service.
+
+* ExceptionInfo
+
+  The return type for <<<getStackTrace()>>> on
+  {{{../apidocs/org/apache/tapestry/services/ExceptionInfo.html}ExceptionInfo}}
+  changes from List\<String\> to List\<StackTraceElement\>.
