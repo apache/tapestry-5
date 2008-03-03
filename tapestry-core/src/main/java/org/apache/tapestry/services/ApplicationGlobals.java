@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import javax.servlet.ServletContext;
  */
 public interface ApplicationGlobals
 {
-    void store(ServletContext context);
+    void storeServletContext(ServletContext context);
 
     ServletContext getServletContext();
 
-    void store(Context context);
+    void storeContext(Context context);
 
     Context getContext();
 }

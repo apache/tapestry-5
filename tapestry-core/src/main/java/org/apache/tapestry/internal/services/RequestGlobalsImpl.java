@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ public class RequestGlobalsImpl implements RequestGlobals
 
     private Response _response;
 
-    public void store(HttpServletRequest request, HttpServletResponse response)
+    public void storeServletRequestResponse(HttpServletRequest request, HttpServletResponse response)
     {
         _servletRequest = request;
         _servletResponse = response;
@@ -53,7 +53,7 @@ public class RequestGlobalsImpl implements RequestGlobals
         return _servletResponse;
     }
 
-    public void store(Request request, Response response)
+    public void storeRequestResponse(Request request, Response response)
     {
         _request = request;
         _response = response;

@@ -69,3 +69,8 @@ Release 5.0.11
   The return type for <<<getStackTrace()>>> on
   {{{../apidocs/org/apache/tapestry/services/ExceptionInfo.html}ExceptionInfo}}
   changed from List\<String\> to List\<StackTraceElement\>.
+
+* ApplicationGlobals and RequestGlobals
+
+  The <store> methods on these two interfaces were renamed to be more explicit. These are not methods typically
+  invoked from user code.

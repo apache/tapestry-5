@@ -101,7 +101,7 @@ public class PageTester implements ComponentInvoker
 
         ApplicationGlobals globals = _registry.getObject(ApplicationGlobals.class, null);
 
-        globals.store(new PageTesterContext(contextPath));
+        globals.storeContext(new PageTesterContext(contextPath));
 
         Map<Class, ComponentInvoker> map = newMap();
         map.put(PageLinkTarget.class, new PageLinkInvoker(_registry));
