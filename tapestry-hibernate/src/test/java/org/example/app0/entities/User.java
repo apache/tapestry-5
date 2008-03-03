@@ -15,13 +15,14 @@
 package org.example.app0.entities;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Version;
 
 @Entity
 public class User
 {
-    @Id
+    @Id @GeneratedValue
     private Long _id;
 
     private String _firstName;

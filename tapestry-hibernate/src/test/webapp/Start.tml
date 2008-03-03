@@ -1,0 +1,9 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+  <head>
+    <title>Start Page</title>
+  </head>
+  <body>
+    <h2>Test application for tapestry-hibernate integration tests</h2>
+    The Hibernate session: <span id="session">${session}</span>
+  </body>
+</html>
