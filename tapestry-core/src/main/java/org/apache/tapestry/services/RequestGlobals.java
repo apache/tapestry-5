@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,13 +26,16 @@ public interface RequestGlobals
     /**
      * Stores the servlet API request and response objects, for access via the properties.
      */
-    void store(HttpServletRequest request, HttpServletResponse response);
+    void storeServletRequestResponse(HttpServletRequest request, HttpServletResponse response);
 
+    /**
+     * The Servlet API Request. This is exposed as service HTTPServletRequest.
+     */
     HttpServletRequest getHTTPServletRequest();
 
     HttpServletResponse getHTTPServletResponse();
 
-    void store(Request request, Response response);
+    void storeRequestResponse(Request request, Response response);
 
     /**
      * The current request. This is exposed as service Request.

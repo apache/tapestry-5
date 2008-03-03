@@ -545,7 +545,7 @@ public final class TapestryModule
         {
             public boolean service(Request request, Response response, RequestHandler handler) throws IOException
             {
-                _requestGlobals.store(request, response);
+                _requestGlobals.storeRequestResponse(request, response);
 
                 return handler.service(request, response);
             }
@@ -891,7 +891,7 @@ public final class TapestryModule
         {
             public void initializeApplication(Context context)
             {
-                _applicationGlobals.store(context);
+                _applicationGlobals.storeContext(context);
             }
         };
 
@@ -909,7 +909,7 @@ public final class TapestryModule
             public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
                     throws IOException
             {
-                _requestGlobals.store(servletRequest, servletResponse);
+                _requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
                 Request request = new RequestImpl(servletRequest);
                 Response response = new ResponseImpl(servletResponse);
@@ -934,7 +934,7 @@ public final class TapestryModule
         {
             public boolean service(Request request, Response response) throws IOException
             {
-                _requestGlobals.store(request, response);
+                _requestGlobals.storeRequestResponse(request, response);
 
                 return masterDispatcher.dispatch(request, response);
             }
@@ -952,7 +952,7 @@ public final class TapestryModule
         {
             public void initializeApplication(ServletContext context)
             {
-                _applicationGlobals.store(context);
+                _applicationGlobals.storeServletContext(context);
 
                 // And now, down the (Web) ApplicationInitializer pipeline ...
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ public class ApplicationGlobalsImpl implements ApplicationGlobals
 
     private Context _context;
 
-    public void store(ServletContext context)
+    public void storeServletContext(ServletContext context)
     {
         _servletContext = context;
     }
@@ -40,7 +40,7 @@ public class ApplicationGlobalsImpl implements ApplicationGlobals
         return _context;
     }
 
-    public void store(Context context)
+    public void storeContext(Context context)
     {
         _context = context;
     }
