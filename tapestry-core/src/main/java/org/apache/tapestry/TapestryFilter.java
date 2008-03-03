@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@ import java.util.List;
  * The TapestryFilter is responsible for intercepting all requests into the web application. It identifies the requests
  * that are relevant to Tapestry, and lets the servlet container handle the rest. It is also responsible for
  * initializing Tapestry.
+ * <p/>
+ * <p/>
+ * The application is configured via context-level init parameters.
+ * <p/>
+ * <dl> <dt>  tapestry.app-package</dt> <dd> The application package (used to search for pages, components, etc.)</dd>
+ * </dl>
  */
 public class TapestryFilter implements Filter
 {
@@ -50,9 +56,8 @@ public class TapestryFilter implements Filter
     private HttpServletRequestHandler _handler;
 
     /**
-     * Initializes the filter using the {@link TapestryAppInitializer}. The application package is defined by the
-     * <code>tapestry.app-package</code> context init parameter and the application name is the capitalization of the
-     * filter name (as specified in web.xml).
+     * Initializes the filter using the {@link TapestryAppInitializer}. The application name is the capitalization of
+     * the filter name (as specified in web.xml).
      */
     public final void init(FilterConfig filterConfig) throws ServletException
     {

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -63,12 +63,17 @@ public class TapestryAppInitializer
 
         String appPackage = _appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
 
+
         _appName = appName;
         _aliasMode = aliasMode;
 
         _startTime = System.currentTimeMillis();
 
-        IOCUtilities.addDefaultModules(_builder);
+
+        if (!Boolean.parseBoolean(appProvider.valueForSymbol(InternalConstants.DISABLE_DEFAULT_MODULES_PARAM)))
+        {
+            IOCUtilities.addDefaultModules(_builder);
+        }
 
         // This gets added automatically.
 
