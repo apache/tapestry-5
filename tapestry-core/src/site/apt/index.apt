@@ -10,6 +10,10 @@ Tapestry Core
 
 New And Of Note
 
+  * It is now possible to override the built-in display and edit blocks for data types.
+
+  * Tapestry now supports "Index" pages at the root or in sub-folders.
+
   * Tapestry pages may now be {{{guide/secure.html}secured for access only via HTTPS}}.
 
   * Added the {{{ref/org/apache/tapestry/corelib/components/FormFragment.html}FormFragment}} component

@@ -25,6 +25,11 @@ public final class InternalConstants
     public static final String TAPESTRY_APP_PACKAGE_PARAM = "tapestry.app-package";
 
     /**
+     * Turns off loading of default modules (as driven by JAR file Manifest entries).
+     */
+    public static final String DISABLE_DEFAULT_MODULES_PARAM = "tapestry.disable-default-modules";
+
+    /**
      * The application mode, generally "servlet", used to select the correct contributions to the {@link Alias}
      * service.
      */
