@@ -11,4 +11,16 @@
   <t:if test="property2">
     <p id="4">222.</p>
   </t:if>
+  <t:if test="true">
+      <p id="5">blah.</p>
+      <t:parameter name="else">
+          <p id="6">hey.</p>
+      </t:parameter>
+  </t:if>
+  <t:if test="false">
+      <p id="7">blah.</p>
+      <t:parameter name="else">
+          <p id="8">hey.</p>
+      </t:parameter>
+  </t:if>
 </html>
