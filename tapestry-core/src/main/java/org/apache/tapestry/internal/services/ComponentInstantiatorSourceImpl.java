@@ -47,6 +47,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     private final ClassLoader _parent;
 
+    private final InternalRequestGlobals _internalRequestGlobals;
+
     private Loader _loader;
 
     private final ComponentClassTransformer _transformer;
@@ -79,11 +81,13 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     }
 
-    public ComponentInstantiatorSourceImpl(ClassLoader parent, ComponentClassTransformer transformer, Logger logger)
+    public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
+                                           InternalRequestGlobals internalRequestGlobals)
     {
         _parent = parent;
         _transformer = transformer;
         _logger = logger;
+        _internalRequestGlobals = internalRequestGlobals;
 
         initializeService();
     }
@@ -164,6 +168,12 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
 
             diag = "END";
+        }
+        catch (RuntimeException classLoaderException)
+        {
+            _internalRequestGlobals.storeClassLoaderException(classLoaderException);
+
+            throw classLoaderException;
         }
         finally
         {

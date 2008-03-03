@@ -1843,6 +1843,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                           "Class org.apache.tapestry.integration.app1.pages.ProtectedFields contains field(s) (_field) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
+
+    /**
+     * TAPESTRY-2078
+     */
+    @Test
+    public void noclassdeffound_exception_is_linked_to_underlying_cause()
+    {
+        start("Class Transformation Exception Demo");
+
+        assertTextPresent(
+                "Class org.apache.tapestry.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
+    }
+
+
     private void sleep(long timeout)
     {
         try

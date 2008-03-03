@@ -51,6 +51,11 @@
             -- using a List for catch-all event context parameters
         </li>
 
+        <li>
+            <a href="datumeditor">Class Transformation Exception Demo</a>
+            -- demo proper reporting of exceptions during class transformation
+        </li>
+
     </ul>
 
 </html>                      

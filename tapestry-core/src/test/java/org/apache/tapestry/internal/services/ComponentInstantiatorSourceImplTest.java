@@ -70,7 +70,8 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(_contextLoader, transformer, logger);
+        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, _contextLoader, transformer,
+                                                                                null);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
 
@@ -259,7 +260,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         URL url = _extraClasspath.toURL();
 
-        _extraLoader = new URLClassLoader(new URL[]{url}, _contextLoader);
+        _extraLoader = new URLClassLoader(new URL[] { url }, _contextLoader);
         RegistryBuilder builder = new RegistryBuilder(_extraLoader);
 
         builder.add(TapestryModule.class);

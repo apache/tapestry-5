@@ -260,7 +260,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             names.add(name);
         }
 
-        if (!names.isEmpty()) throw new RuntimeException(ServicesMessages.nonPrivateFields(getClassName(), names));
+        if (!names.isEmpty())
+            throw new RuntimeException(ServicesMessages.nonPrivateFields(getClassName(), names));
     }
 
     private void addMemberNames(CtMember[] members)

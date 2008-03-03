@@ -120,6 +120,7 @@ public final class TapestryModule
         binder.bind(BaseURLSource.class, BaseURLSourceImpl.class);
         binder.bind(RequestSecurityManager.class, RequestSecurityManagerImpl.class);
         binder.bind(BeanBlockOverrideSource.class, BeanBlockOverrideSourceImpl.class);
+        binder.bind(InternalRequestGlobals.class, InternalRequestGlobalsImpl.class);
     }
 
     public static Alias build(Logger logger,
@@ -501,6 +502,8 @@ public final class TapestryModule
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
+                                         final InternalRequestGlobals requestGlobals,
+
                                          LocalizationSetter localizationSetter)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
@@ -520,6 +523,14 @@ public final class TapestryModule
                 }
                 catch (Throwable ex)
                 {
+                    // Most of the time, we've got exception linked up the kazoo ... but when ClassLoaders
+                    // get involved, things go screwy.  Exceptions when transforming classes can cause
+                    // a NoClassDefFoundError with no cause; here we're trying to link the cause back in.
+                    // TAPESTRY-2078
+
+                    if (ex.getCause() == null)
+                        ex.initCause(requestGlobals.getClassLoaderException());
+
                     exceptionHandler.handleRequestException(ex);
 
                     // We assume a reponse has been sent and there's no need to handle the request
@@ -1730,10 +1741,12 @@ public final class TapestryModule
 
                                              ComponentClassTransformer transformer,
 
-                                             Logger logger)
+                                             Logger logger,
+
+                                             InternalRequestGlobals internalRequestGlobals)
     {
-        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(classFactory
-                .getClassLoader(), transformer, logger);
+        ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger, classFactory
+                .getClassLoader(), transformer, internalRequestGlobals);
 
         _updateListenerHub.addUpdateListener(source);
 
@@ -2071,12 +2084,11 @@ public final class TapestryModule
     }
 
     /**
-     * Contributes filters: <dl> <dt>Ajax</dt>
-     * <dd>Determines if the request is Ajax oriented, and redirects to an alternative handler if so</dd>
-     * <dt>ImmediateRender</dt> <dd>When {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
-     * immediate action response rendering} is enabled, generates the markup response (instead of a page redirect
-     * response, which is the normal behavior) </dd> <dt>Secure</dt> <dd>Sends a redirect if an non-secure request
-     * accesses a secure page</dd></dl>
+     * Contributes filters: <dl> <dt>Ajax</dt> <dd>Determines if the request is Ajax oriented, and redirects to an
+     * alternative handler if so</dd> <dt>ImmediateRender</dt> <dd>When {@linkplain
+     * org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL immediate action response
+     * rendering} is enabled, generates the markup response (instead of a page redirect response, which is the normal
+     * behavior) </dd> <dt>Secure</dt> <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
                                                        final RequestSecurityManager requestSecurityManager,
