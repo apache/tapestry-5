@@ -1386,7 +1386,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
-    public void unless_compnent()
+    public void unless_component()
     {
         start("Unless Demo");
 

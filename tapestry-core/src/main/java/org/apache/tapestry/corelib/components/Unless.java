@@ -15,6 +15,8 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.Block;
 
 /**
  * A close relative of the {@link org.apache.tapestry.corelib.components.If} component that inverts the meaning of its
@@ -29,11 +31,33 @@ public class Unless
     private boolean _test;
 
     /**
-     * Returns the inversion of it's test parameter. Therefore, when test is true, nothing is rendered. When test is
-     * false, the component (which is to say, the body of the component, as that's the point) is rendered.
+     * An alternate {@link Block} to render if the test parameter is false. The default, null, means render nothing in
+     * that situation.
      */
-    boolean beginRender()
+    @Parameter
+    private Block _else;
+
+    /**
+     * Returns null if the test parameter is true, which allows normal rendering (of the body). If the test parameter is
+     * false, returns the else parameter (this may also be null).
+     */
+    Object beginRender()
+    {
+        return !_test ? null : _else;
+    }
+
+    /**
+     * If the test parameter is true, then the body is rendered, otherwise not. The component does not have a template
+     * or do any other rendering besides its body.
+     */
+    boolean beforeRenderBody()
     {
         return !_test;
+    }
+
+    void setup(boolean test, Block elseBlock)
+    {
+        _test = test;
+        _else = elseBlock;
     }
 }

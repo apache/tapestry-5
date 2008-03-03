@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,8 +33,12 @@ public class IfTest extends Assert
         Document doc = _tester.renderPage("TestPageForIf");
         assertNotNull(doc.getElementById("1"));
         assertNotNull(doc.getElementById("3"));
+        assertNotNull(doc.getElementById("5"));
+        assertNotNull(doc.getElementById("8"));
         assertNull(doc.getElementById("2"));
         assertNull(doc.getElementById("4"));
+        assertNull(doc.getElementById("6"));
+        assertNull(doc.getElementById("7"));
     }
 
     @AfterMethod
