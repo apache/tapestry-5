@@ -260,7 +260,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         catch (TapestryException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Parameter(s) fred, wilma are required for foo.components.MyComponent, but have not been bound.");
+                         "Parameter(s) 'fred, wilma' are required for foo.components.MyComponent, but have not been bound.");
             assertSame(ex.getLocation(), l);
         }
 
