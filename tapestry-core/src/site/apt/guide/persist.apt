@@ -51,7 +51,7 @@ Persistence Strategies
   The flash is typically used to store temporary messages that should only be displayed to the user
   once.
   
-* client stategy
+* client strategy
 
   The field is persisted onto the client; you will see an additional query parameter in each URL
   (or an extra hidden field in each form).
