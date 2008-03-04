@@ -71,6 +71,8 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         train_getPath(request, "");
 
+        train_isPageName(resolver, "", false);
+
         replay();
 
         Dispatcher d = new PageRenderDispatcher(resolver, handler, null);
@@ -79,6 +81,47 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         verify();
     }
+
+    /**
+     * TAPESTRY-2226
+     */
+    @Test
+    public void page_activation_context_for_root_index_page() throws Exception
+    {
+        ComponentClassResolver resolver = mockComponentClassResolver();
+        Request request = mockRequest();
+        Response response = mockResponse();
+        Page page = mockPage();
+        ComponentPageElement rootElement = mockComponentPageElement();
+        PageResponseRenderer renderer = mockPageResponseRenderer();
+        RequestPageCache cache = mockRequestPageCache();
+        ComponentEventResultProcessor processor = newComponentEventResultProcessor();
+
+        train_getPath(request, "/foo/bar");
+
+        train_isPageName(resolver, "foo/bar", false);
+        train_isPageName(resolver, "foo", false);
+        train_isPageName(resolver, "", true);
+
+        train_get(cache, "", page);
+
+        train_getRootElement(page, rootElement);
+
+        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[] { "foo", "bar" }, false);
+
+        renderer.renderPageResponse(page);
+
+        replay();
+
+        PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
+
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, _contextValueEncoder);
+
+        assertTrue(d.dispatch(request, response));
+
+        verify();
+    }
+
 
     @Test
     public void no_extra_context_without_final_slash() throws Exception

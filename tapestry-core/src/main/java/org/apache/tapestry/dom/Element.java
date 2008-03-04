@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.dom;
 
+import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
@@ -417,7 +418,7 @@ public final class Element extends Node
 
         Element search = this;
 
-        for (String name : path.split("/"))
+        for (String name : TapestryInternalUtils.splitPath(path))
         {
             search = search.findChildWithElementName(name);
 

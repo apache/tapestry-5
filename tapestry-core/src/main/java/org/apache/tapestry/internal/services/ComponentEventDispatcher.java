@@ -91,10 +91,6 @@ public class ComponentEventDispatcher implements Dispatcher
     private static final int EVENT_NAME = 9;
     private static final int CONTEXT = 11;
 
-    // Used to split a context into individual chunks.
-
-    private final Pattern SLASH_PATTERN = Pattern.compile("/");
-
     public boolean dispatch(Request request, Response response) throws IOException
     {
         Matcher matcher = PATH_PATTERN.matcher(request.getPath());
@@ -117,7 +113,7 @@ public class ComponentEventDispatcher implements Dispatcher
         // (TAPESTRY-1605)
 
         _requestEncodingInitializer.initializeRequestEncoding(activePageName);
-        
+
         EventContext activationContext = decodeContext(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
         // The event type is often omitted, and defaults to "action".
@@ -146,7 +142,7 @@ public class ComponentEventDispatcher implements Dispatcher
     {
         if (input == null) return _emptyContext;
 
-        String[] values = SLASH_PATTERN.split(input);
+        String[] values = TapestryInternalUtils.splitPath(input);
 
         for (int i = 0; i < values.length; i++)
         {

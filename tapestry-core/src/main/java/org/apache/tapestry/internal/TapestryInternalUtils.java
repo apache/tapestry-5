@@ -570,4 +570,12 @@ public class TapestryInternalUtils
         return left.equals(right);
     }
 
+
+    /**
+     * Splits a path at each slash.
+     */
+    public static String[] splitPath(String path)
+    {
+        return SLASH_PATTERN.split(path);
+    }
 }
