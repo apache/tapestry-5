@@ -17,11 +17,14 @@ package org.apache.tapestry.integration;
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
+/**
+ * Additional integration tests that do not fit with the main group due to the need for special configuration.
+ */
 @Test(timeOut = 50000, sequential = true, groups = { "integration" })
-public class RootPathRedirectTest extends AbstractIntegrationTestSuite
+public class AdditionalIntegrationTests extends AbstractIntegrationTestSuite
 {
 
-    public RootPathRedirectTest()
+    public AdditionalIntegrationTests()
     {
         super("src/test/app3");
     }
@@ -48,4 +51,18 @@ public class RootPathRedirectTest extends AbstractIntegrationTestSuite
         assertText("//div[@class='t-beandisplay-value no']", "Nay");
         assertText("//div[@class='t-beandisplay-value yes']", "Yea");
     }
+
+    /**
+     * TAPESTRY-2226
+     */
+    @Test
+    public void activation_context_for_root_index_page()
+    {
+        open(BASE_URL + "it worked");
+
+        assertText("//h1", "Index");
+
+        assertText("message", "it worked");
+    }
+
 }

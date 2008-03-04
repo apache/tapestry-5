@@ -44,41 +44,53 @@ public class PageRenderDispatcher implements Dispatcher
 
     public boolean dispatch(Request request, final Response response) throws IOException
     {
-        // Rememeber that the path starts with a leading slash that is not part of the logical page
-        // name.
+
+        // The extended name may include a page activation context. The trick is
+        // to figure out where the logical page name stops and where the
+        // activation context begins. Further, strip out the leading slash.
 
         String path = request.getPath();
 
-        // TAPESTRY-1343: This can happen in Tomcat (but not in Jetty) for URL such as
-        // http://.../context (with no trailing slash).
-        if (path.equals("")) return false;
+        // TAPESTRY-1343: Sometimes path is the empty string (it should always be at least a slash,
+        // but Tomcat may return the empty string for a root context request).
 
-        int nextslashx = path.length();
-        String pageName;
+        String extendedName = path.length() == 0 ? path : path.substring(1);
+
+        // Ignore trailing slashes in the path.
+        while (extendedName.endsWith("/"))
+            extendedName = extendedName.substring(0, extendedName.length() - 1);
+
+        int slashx = extendedName.length();
         boolean atEnd = true;
 
-        while (true)
+        while (slashx > 0)
         {
-            // TAPESTRY-2150: Look for the longest match, for situations where
-            // you have some overlap between a class name and a package name.
 
-            pageName = path.substring(1, nextslashx);
+            String pageName = extendedName.substring(0, slashx);
+            String pageActivationContext = atEnd ? "" :
+                                           extendedName.substring(slashx + 1);
 
-            if (!pageName.endsWith("/") && _componentClassResolver.isPageName(pageName)) break;
+            if (process(pageName, pageActivationContext)) return true;
 
-            nextslashx = path.lastIndexOf('/', nextslashx - 1);
+            // Work backwards, splitting at the next slash.
+            slashx = extendedName.lastIndexOf('/', slashx - 1);
 
             atEnd = false;
-
-            if (nextslashx <= 1) return false;
         }
 
+        // OK, maybe its all page activation context for the root Index page.
 
-        String[] context = atEnd ? new String[0] : convertActivationContext(path
-                .substring(nextslashx + 1));
+        return process("", extendedName);
+    }
+
+    private boolean process(String pageName, String pageActivationContext) throws IOException
+    {
+        if (!_componentClassResolver.isPageName(pageName)) return false;
+
+        String[] values = convertActivationContext(pageActivationContext);
 
         EventContext activationContext
-                = new URLEventContext(_contextValueEncoder, context);
+                = new URLEventContext(_contextValueEncoder, values);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
 
@@ -92,14 +104,12 @@ public class PageRenderDispatcher implements Dispatcher
      * activation context) into an array of strings. LinkFactory and friends URL encode each value, so we URL decode the
      * value (we assume that page names are "URL safe").
      *
-     * @param extraPath
-     * @return
      */
     private String[] convertActivationContext(String extraPath)
     {
         if (extraPath.length() == 0) return new String[0];
 
-        String[] context = extraPath.split("/");
+        String[] context = TapestryInternalUtils.splitPath(extraPath);
 
         for (int i = 0; i < context.length; i++)
         {
