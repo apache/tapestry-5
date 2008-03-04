@@ -123,7 +123,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
         {
             Class beanType = _resources.getBoundType("object");
 
-            _model = _beanModelSource.create(beanType, false, _resources.getContainerResources());
+            _model = _beanModelSource.create(beanType, true, _resources.getContainerResources());
         }
     }
 
