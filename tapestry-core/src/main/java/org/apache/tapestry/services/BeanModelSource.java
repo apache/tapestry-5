@@ -39,8 +39,10 @@ public interface BeanModelSource
      *
      * @param beanClass                class of object to be edited
      * @param filterReadOnlyProperties if true, then properties that are read-only will be skipped (leaving only
-     *                                 read-write properties). If false, then both read-only and read-write properties
-     *                                 will be included.
+     *                                 read-write properties, appropriate for {@link org.apache.tapestry.corelib.components.BeanEditForm},
+     *                                 etc.). If false, then both read-only and read-write properties will be included
+     *                                 (appropriate for {@link org.apache.tapestry.corelib.components.Grid} or {@link
+     *                                 org.apache.tapestry.corelib.components.BeanDisplay}).
      * @param resources                used when resolving resources, especially component messages (used to access
      *                                 labels)
      * @return a model
