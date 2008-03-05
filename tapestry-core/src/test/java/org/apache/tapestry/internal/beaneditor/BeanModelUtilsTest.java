@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.beaneditor;
 
 import org.apache.tapestry.beaneditor.BeanModel;
+import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -30,17 +31,17 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
     private Object[] build(String propertyNames, String... expected)
     {
         return new Object[]
-                {propertyNames, expected};
+                { propertyNames, expected };
     }
 
     @DataProvider(name = "split_inputs")
     public Object[][] split_inputs()
     {
         return new Object[][]
-                {build("fred", "fred"), build("fred,barney", "fred", "barney"),
-                 build(" fred, barney, wilma, betty ", "fred", "barney", "wilma", "betty"),
-                 new Object[]
-                         {"   ", new String[0]}};
+                { build("fred", "fred"), build("fred,barney", "fred", "barney"),
+                        build(" fred, barney, wilma, betty ", "fred", "barney", "wilma", "betty"),
+                        new Object[]
+                                { "   ", new String[0] } };
     }
 
     @Test
@@ -53,6 +54,8 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
         replay();
 
         BeanModelUtils.remove(model, "fred,barney");
+
+        verify();
     }
 
     @Test
@@ -65,5 +68,57 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
         replay();
 
         BeanModelUtils.reorder(model, "fred,barney");
+
+        verify();
+    }
+
+    @Test
+    public void add()
+    {
+        BeanModel model = mockBeanModel();
+        PropertyModel fred = mockPropertyModel();
+        PropertyModel barney = mockPropertyModel();
+
+        expect(model.add("fred", null)).andReturn(fred);
+        expect(model.add("barney", null)).andReturn(barney);
+
+        replay();
+
+        BeanModelUtils.add(model, "fred,barney");
+
+        verify();
+    }
+
+    @Test
+    public void modify_no_work()
+    {
+        BeanModel model = mockBeanModel();
+
+        replay();
+
+        BeanModelUtils.modify(model, null, null, null);
+
+        verify();
+    }
+
+    @Test
+    public void modify_full()
+    {
+        BeanModel model = mockBeanModel();
+        PropertyModel fred = mockPropertyModel();
+        PropertyModel barney = mockPropertyModel();
+
+        expect(model.add("fred", null)).andReturn(fred);
+        expect(model.add("barney", null)).andReturn(barney);
+
+        expect(model.remove("pebbles", "bambam")).andReturn(model);
+
+        expect(model.reorder("wilma", "betty")).andReturn(model);
+
+        replay();
+
+        BeanModelUtils.modify(model, "fred,barney", "pebbles,bambam", "wilma,betty");
+
+        verify();
     }
 }

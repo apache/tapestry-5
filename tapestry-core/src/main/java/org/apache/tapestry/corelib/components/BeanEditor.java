@@ -133,6 +133,8 @@ public class BeanEditor
             _model = _modelSource.create(type, true, _overrides.getContainerResources());
         }
 
+        BeanModelUtils.modify(_model, null, _remove, _reorder);
+
         // The only problem here is that if the bound property is backed by a persistent field, it
         // is assigned (and stored to the session, and propagated around the cluster) first,
         // before values are assigned.
@@ -152,9 +154,6 @@ public class BeanEditor
             }
         }
 
-        if (_remove != null) BeanModelUtils.remove(_model, _remove);
-
-        if (_reorder != null) BeanModelUtils.reorder(_model, _reorder);
     }
 
     // For testing

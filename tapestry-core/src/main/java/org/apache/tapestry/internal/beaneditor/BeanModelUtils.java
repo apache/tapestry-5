@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,6 +21,41 @@ import org.apache.tapestry.beaneditor.BeanModel;
  */
 public final class BeanModelUtils
 {
+
+    /**
+     * Performs standard set of modifications to a {@link org.apache.tapestry.beaneditor.BeanModel}. First new
+     * properties may be added, then properties removed, then properties reordered.
+     *
+     * @param model                to modifiy
+     * @param addPropertyNames     comma seperated list of property names to add, or null
+     * @param removePropertyNames  comma seperated list of property names to remove, or null
+     * @param reorderPropertyNames comma seperated list of property names to reorder, or null
+     */
+    public static void modify(BeanModel model, String addPropertyNames, String removePropertyNames,
+                              String reorderPropertyNames)
+    {
+        if (addPropertyNames != null) add(model, addPropertyNames);
+
+        if (removePropertyNames != null) remove(model, removePropertyNames);
+
+        if (reorderPropertyNames != null) reorder(model, reorderPropertyNames);
+    }
+
+    /**
+     * Adds empty properties to the bean model.  New properties are added with a <em>null</em> {@link
+     * org.apache.tapestry.PropertyConduit}.
+     *
+     * @param model         to be modified
+     * @param propertyNames comma-separated list of property names
+     */
+    public static void add(BeanModel model, String propertyNames)
+    {
+        for (String name : split(propertyNames))
+        {
+            model.add(name, null);
+        }
+    }
+
     /**
      * Removes properties from the bean model.
      *
