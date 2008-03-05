@@ -14,10 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.Binding;
-import org.apache.tapestry.Block;
-import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
@@ -101,12 +98,18 @@ public class Grid implements GridModel
     @Parameter
     private GridSortModel _sortModel;
 
+    /**
+     * A comma-seperated list of property names to be added to the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * Cells for added columns will be blank unless a cell override is provided.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _add;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
-     * case-insensitive.
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * The names are case-insensitive.
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _remove;
 
     /**
@@ -114,7 +117,7 @@ public class Grid implements GridModel
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
      * order.
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _reorder;
 
     /**
@@ -306,16 +309,14 @@ public class Grid implements GridModel
 
     void setupDataSource()
     {
-        if (_remove != null) BeanModelUtils.remove(_model, _remove);
-
-        if (_reorder != null) BeanModelUtils.reorder(_model, _reorder);
-
         // If there's no rows, display the empty block placeholder.
 
         int availableRows = _source.getAvailableRows();
 
         if (availableRows == 0) return;
 
+        BeanModelUtils.modify(_model, _add, _remove, _reorder);
+        
         int maxPage = ((availableRows - 1) / _rowsPerPage) + 1;
 
         // This captures when the number of rows has decreased, typically due to deletions.

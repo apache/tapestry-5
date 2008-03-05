@@ -17,6 +17,7 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.BeanModel;
+import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
@@ -125,6 +126,8 @@ public class BeanEditForm implements ClientElement, FormValidationControl
 
             _model = _beanModelSource.create(beanType, true, _resources.getContainerResources());
         }
+
+        BeanModelUtils.modify(_model, null, _remove, _reorder);
     }
 
 
