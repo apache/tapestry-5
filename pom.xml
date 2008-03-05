@@ -60,16 +60,25 @@
             <organization>Interactive Factory</organization>
             <organizationUrl>http://ifactory.com</organizationUrl>
         </developer>
-		<developer>
-			<id>kmenard</id>
-			<name>Kevin Menard</name>
-			<email>kmenard@servprise.com</email>
-			<organization>Servprise International, Inc.</organization>
-			<roles>
-				<role>Developer</role>
-			</roles>
-			<timezone>-5</timezone>
-		</developer>
+        <developer>
+            <id>kmenard</id>
+            <name>Kevin Menard</name>
+            <email>kmenard@servprise.com</email>
+            <organization>Servprise International, Inc.</organization>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+        <developer>
+            <id>tedst</id>
+            <name>Ted Steen</name>
+            <email>ted.steen@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <timezone>+1</timezone>
+        </developer>
     </developers>
 
     <ciManagement>
