@@ -391,8 +391,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertFieldValue("email", "");
         assertFieldValue("message", "");
         assertFieldValue("operatingSystem", "osx");
-        assertFieldValue("department", "ACCOUNTING");
+        assertFieldValue("department", "");
         assertFieldValue("urgent", "on");
+
+        clickAndWait(SUBMIT);
+
+        assertTextPresent("department: []");
 
         type("email", "foo@bar.baz");
         type("message", "Message for you, sir!");
