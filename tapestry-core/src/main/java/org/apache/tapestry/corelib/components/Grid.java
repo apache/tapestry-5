@@ -155,7 +155,6 @@ public class Grid implements GridModel
     private String _rowClass;
 
     @Persist
-    @Property
     private int _currentPage = 1;
 
     @Persist
@@ -316,7 +315,7 @@ public class Grid implements GridModel
         if (availableRows == 0) return;
 
         BeanModelUtils.modify(_model, _add, _remove, _reorder);
-        
+
         int maxPage = ((availableRows - 1) / _rowsPerPage) + 1;
 
         // This captures when the number of rows has decreased, typically due to deletions.
@@ -367,5 +366,13 @@ public class Grid implements GridModel
         return _pagerPosition.isMatchBottom() ? _pager : null;
     }
 
+    public int getCurrentPage()
+    {
+        return _currentPage;
+    }
 
+    public void setCurrentPage(int currentPage)
+    {
+        _currentPage = currentPage;
+    }
 }
