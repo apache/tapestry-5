@@ -45,7 +45,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * The text label for the submit button of the form, by default "Create/Update".
      */
     @Parameter(value = "message:submit-label", defaultPrefix = "literal")
-    @GenerateAccessors
+    @Property
     private String _submitLabel;
 
     /**
@@ -56,7 +56,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter(required = true)
-    @GenerateAccessors
+    @Property
     private Object _object;
 
     /**
@@ -95,7 +95,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter
-    @GenerateAccessors
+    @Property
     private BeanModel _model;
 
     @Inject

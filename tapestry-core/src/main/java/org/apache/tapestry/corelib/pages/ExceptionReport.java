@@ -16,7 +16,7 @@ package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.ContentType;
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.ExceptionReporter;
@@ -33,19 +33,19 @@ import org.apache.tapestry.services.Session;
 @ContentType("text/html")
 public class ExceptionReport implements ExceptionReporter
 {
-    @GenerateAccessors
+    @Property
     private String _attributeName;
 
     @Inject
-    @GenerateAccessors
+    @Property
     private Request _request;
 
     @Inject
     @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
-    @GenerateAccessors
+    @Property
     private boolean _productionMode;
 
-    @GenerateAccessors
+    @Property
     private Throwable _rootException;
 
     public void reportException(Throwable exception)

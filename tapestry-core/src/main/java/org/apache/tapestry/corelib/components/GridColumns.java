@@ -80,12 +80,12 @@ public class GridColumns
     @Inject
     private Block _standardHeader;
 
-    @GenerateAccessors
+    @Property
     private int _columnIndex;
 
     private int _lastColumnIndex;
 
-    @GenerateAccessors(write = false)
+    @Property(write = false)
     private PropertyModel _columnModel;
 
     void setupRender()

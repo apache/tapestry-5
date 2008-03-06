@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app3.pages;
 
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.Persist;
 
@@ -24,7 +24,7 @@ public class Index
     private Login _login;
 
     @Persist
-    @GenerateAccessors
+    @Property
     private String _message;
 
     boolean onActivate(String message)

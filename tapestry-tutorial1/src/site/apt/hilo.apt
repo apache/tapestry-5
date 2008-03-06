@@ -316,7 +316,7 @@ public class Start
   accessors:
   
 ---
-  @GenerateAccessors
+  @Property
   private int _guess;
 ---
 
@@ -339,7 +339,7 @@ public class Start
   
 ---
   @Persist
-  @GenerateAccessors
+  @Property
   private String _message;
 
   String onActionFromLink(int guess)
@@ -420,7 +420,7 @@ public class GameOver
  
 ---
   @Persist
-  @GenerateAccessors
+  @Property
   private int _count;
 ---
 
@@ -468,12 +468,12 @@ public class GameOver
 package org.apache.tapestry.tutorial.pages;
 
 import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 
 public class GameOver
 {
   @Persist
-  @GenerateAccessors
+  @Property
   private int _count;
 
   Object initialize(int count)

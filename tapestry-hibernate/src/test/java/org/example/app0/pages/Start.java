@@ -14,12 +14,12 @@
 
 package org.example.app0.pages;
 
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.hibernate.Session;
 
 public class Start {
-	@GenerateAccessors
+	@Property
 	@Inject
 	private Session _session;
 	

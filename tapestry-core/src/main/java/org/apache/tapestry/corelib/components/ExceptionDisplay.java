@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -46,16 +46,16 @@ public class ExceptionDisplay
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
     private String _appPackage;
 
-    @GenerateAccessors
+    @Property
     private ExceptionInfo _info;
 
-    @GenerateAccessors
+    @Property
     private String _propertyName;
 
-    @GenerateAccessors
+    @Property
     private StackTraceElement _frame;
 
-    @GenerateAccessors
+    @Property
     private List<ExceptionInfo> _stack;
 
     void setupRender()

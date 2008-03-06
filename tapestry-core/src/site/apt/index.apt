@@ -10,6 +10,8 @@ Tapestry Core
 
 New And Of Note
 
+  * Tapestry can now generate accessor methods for fields automatically via the @Property annotation.
+
   * It is now possible to override the built-in display and edit blocks for data types.
 
   * Tapestry now supports "Index" pages at the root or in sub-folders.

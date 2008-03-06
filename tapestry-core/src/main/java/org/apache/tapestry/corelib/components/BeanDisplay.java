@@ -16,7 +16,7 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
@@ -43,7 +43,7 @@ public class BeanDisplay
      * component's id will be used.
      */
     @Parameter(required = true)
-    @GenerateAccessors(write = false)
+    @Property(write = false)
     private Object _object;
 
     /**
@@ -58,7 +58,7 @@ public class BeanDisplay
      * a default bean model will be created from the type of the object bound to the object parameter.
      */
     @Parameter
-    @GenerateAccessors(write = false)
+    @Property(write = false)
     private BeanModel _model;
 
     /**
@@ -83,7 +83,7 @@ public class BeanDisplay
      * searched.
      */
     @Parameter(value = "componentResources")
-    @GenerateAccessors(write = false)
+    @Property(write = false)
     private ComponentResources _overrides;
 
     @Inject
@@ -95,7 +95,7 @@ public class BeanDisplay
     @Inject
     private BeanModelSource _modelSource;
 
-    @GenerateAccessors
+    @Property
     private String _propertyName;
 
     /**
