@@ -20,9 +20,11 @@ import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Mixin;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
+import org.apache.tapestry.corelib.data.BlankOption;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
+import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.services.*;
 import org.apache.tapestry.util.EnumSelectModel;
@@ -81,6 +83,21 @@ public final class Select extends AbstractField
      */
     @Parameter(required = true)
     private SelectModel _model;
+
+    /**
+     * Controls whether an additional blank option is provided. The blank option precedes all other options and is never
+     * selected.  The value for the blank option is always the empty string, the label may be the blank string; the
+     * label is from the blankLabel parameter (and is often also the empty string).
+     */
+    @Parameter(value = "auto", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private BlankOption _blankOption;
+
+    /**
+     * The label to use for the blank option, if rendered.  If not specified, the container's message catalog is
+     * searched for a key, <code><em>id</em>-blanklabel</code>.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _blankLabel;
 
     @Inject
     private Request _request;
@@ -151,10 +168,7 @@ public final class Select extends AbstractField
 
         _resources.renderInformalParameters(writer);
 
-        // Disabled via mixin
-
-        // Figure out
-
+        // Disabled is via a mixin
     }
 
     @SuppressWarnings("unchecked")
@@ -195,6 +209,20 @@ public final class Select extends AbstractField
         return createDefaultParameterBinding("value");
     }
 
+    Object defaultBlankLabel()
+    {
+        Messages containerMessages = _resources.getContainerMessages();
+
+        String key = _resources.getId() + "-blanklabel";
+
+        if (containerMessages.contains(key)) return containerMessages.get(key);
+
+        return null;
+    }
+
+    /**
+     * Renders the options, including the blank option.
+     */
     @BeforeRenderTemplate
     void options(MarkupWriter writer)
     {
@@ -206,9 +234,38 @@ public final class Select extends AbstractField
 
         if (_selectedClientValue == null) _selectedClientValue = _value == null ? null : _encoder.toClient(_value);
 
+        if (showBlankOption())
+        {
+            writer.element("option", "value", "");
+            writer.write(_blankLabel);
+            writer.end();
+        }
+
+
         SelectModelVisitor renderer = new Renderer(writer);
 
         _model.visit(renderer);
+    }
+
+    @Override
+    public boolean isRequired()
+    {
+        return _validate.isRequired();
+    }
+
+    private boolean showBlankOption()
+    {
+        switch (_blankOption)
+        {
+            case ALWAYS:
+                return true;
+            case NEVER:
+                return false;
+
+            default:
+
+                return !isRequired();
+        }
     }
 
     // For testing.
@@ -216,6 +273,7 @@ public final class Select extends AbstractField
     void setModel(SelectModel model)
     {
         _model = model;
+        _blankOption = BlankOption.NEVER;
     }
 
     void setValue(Object value)
@@ -233,9 +291,11 @@ public final class Select extends AbstractField
         _tracker = tracker;
     }
 
-    @Override
-    public boolean isRequired()
+    void setBlankOption(BlankOption option, String label)
     {
-        return _validate.isRequired();
+        _blankOption = option;
+        _blankLabel = label;
     }
+
+
 }

@@ -16,6 +16,7 @@ package org.apache.tapestry.util;
 
 import org.apache.tapestry.ValueEncoder;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
  * A value encoder that can be used for aribrary Enum types. The enum name is stored as the client side value.
@@ -41,7 +42,7 @@ public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
     @SuppressWarnings("unchecked")
     public E toValue(String clientValue)
     {
-        if (clientValue == null) return null;
+        if (InternalUtils.isBlank(clientValue)) return null;
 
         return Enum.valueOf(_enumType, clientValue);
     }

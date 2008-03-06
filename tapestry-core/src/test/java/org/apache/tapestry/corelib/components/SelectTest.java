@@ -15,6 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
+import org.apache.tapestry.corelib.data.BlankOption;
 import org.apache.tapestry.dom.XMLMarkupModel;
 import org.apache.tapestry.internal.OptionGroupModelImpl;
 import org.apache.tapestry.internal.OptionModelImpl;
@@ -113,6 +114,40 @@ public class SelectTest extends InternalBaseTestCase
         writer.end();
 
         assertEquals(writer.toString(), read("just_options.txt"));
+
+        verify();
+    }
+
+    @Test
+    public void just_options_with_blank_label_enabled() throws Exception
+    {
+        ValidationTracker tracker = mockValidationTracker();
+
+        List<OptionModel> options = TapestryInternalUtils
+                .toOptionModels("fred=Fred Flintstone,barney=Barney Rubble");
+
+        Select select = new Select();
+
+        train_getInput(tracker, select, null);
+
+        replay();
+
+
+        select.setModel(new SelectModelImpl(null, options));
+        select.setValueEncoder(new StringValueEncoder());
+        select.setValue("barney");
+        select.setValidationTracker(tracker);
+        select.setBlankOption(BlankOption.ALWAYS, "Make a selection");
+
+        MarkupWriter writer = new MarkupWriterImpl(new XMLMarkupModel());
+
+        writer.element("select");
+
+        select.options(writer);
+
+        writer.end();
+
+        assertEquals(writer.toString(), read("blank_label.txt"));
 
         verify();
     }
@@ -343,4 +378,5 @@ public class SelectTest extends InternalBaseTestCase
 
         verify();
     }
+
 }

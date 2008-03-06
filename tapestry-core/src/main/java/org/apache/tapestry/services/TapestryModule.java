@@ -17,6 +17,7 @@ package org.apache.tapestry.services;
 import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.*;
 import org.apache.tapestry.beaneditor.Validate;
+import org.apache.tapestry.corelib.data.BlankOption;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
 import org.apache.tapestry.corelib.data.InsertPosition;
 import org.apache.tapestry.grid.GridDataSource;
@@ -582,9 +583,9 @@ public final class TapestryModule
      * Adds coercions: <ul> <li>String to {@link org.apache.tapestry.SelectModel} <li>String to {@link
      * org.apache.tapestry.corelib.data.InsertPosition} <li>Map to {@link org.apache.tapestry.SelectModel}
      * <li>Collection to {@link GridDataSource} <li>null to {@link org.apache.tapestry.grid.GridDataSource} <li>String
-     * to {@link org.apache.tapestry.corelib.data.GridPagerPosition} <li>List to {@link SelectModel} <li>{@link
-     * org.apache.tapestry.runtime.ComponentResourcesAware} (typically, a component) to {@link
-     * org.apache.tapestry.ComponentResources} </ul>
+     * to {@link org.apache.tapestry.corelib.data.GridPagerPosition} <li>List to {@link org.apache.tapestry.SelectModel}
+     * <li>{@link org.apache.tapestry.runtime.ComponentResourcesAware} (typically, a component) to {@link
+     * org.apache.tapestry.ComponentResources} <li>String to {@link org.apache.tapestry.corelib.data.BlankOption} </ul>
      */
     public static void contributeTypeCoercer(Configuration<CoercionTuple> configuration)
     {
@@ -627,6 +628,8 @@ public final class TapestryModule
             StringToEnumCoercion.create(GridPagerPosition.class));
 
         add(configuration, String.class, InsertPosition.class, StringToEnumCoercion.create(InsertPosition.class));
+
+        add(configuration, String.class, BlankOption.class, StringToEnumCoercion.create(BlankOption.class));
 
         add(configuration, List.class, SelectModel.class, new Coercion<List, SelectModel>()
         {
