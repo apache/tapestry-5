@@ -16,7 +16,7 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.corelib.components.BeanEditForm;
 import org.apache.tapestry.integration.app1.data.RegistrationData;
 
@@ -27,7 +27,7 @@ public class BeanEditorDemo
     private BeanEditForm _form;
 
     @ApplicationState
-    @GenerateAccessors
+    @Property
     private RegistrationData _registrationData;
 
     Object onSuccess()

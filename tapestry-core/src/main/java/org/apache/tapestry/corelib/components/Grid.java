@@ -62,7 +62,7 @@ public class Grid implements GridModel
      * set.
      */
     @Parameter("25")
-    @GenerateAccessors
+    @Property
     private int _rowsPerPage;
 
     /**
@@ -78,7 +78,7 @@ public class Grid implements GridModel
      * use the property bound to the row parameter to know what they should render.
      */
     @Parameter
-    @GenerateAccessors
+    @Property
     private Object _row;
 
     /**
@@ -151,11 +151,11 @@ public class Grid implements GridModel
      * between CSS values (for the "zebra effect"). If null or not bound, then no particular CSS class value is used.
      */
     @Parameter(cache = false)
-    @GenerateAccessors(write = false)
+    @Property(write = false)
     private String _rowClass;
 
     @Persist
-    @GenerateAccessors
+    @Property
     private int _currentPage = 1;
 
     @Persist

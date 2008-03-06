@@ -18,7 +18,7 @@ import org.apache.tapestry.*;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -158,7 +158,7 @@ public class Palette extends AbstractField
      * The image to use for the deselect button (the default is a left pointing arrow).
      */
     @Parameter(value = "asset:deselect.png")
-    @GenerateAccessors(write=false)
+    @Property(write=false)
     private Asset _deselect;
 
     /**
@@ -177,14 +177,14 @@ public class Palette extends AbstractField
      * The image to use for the move down button (the default is a downward pointing arrow).
      */
     @Parameter(value = "asset:move_down.png")
-    @GenerateAccessors(write=false)    
+    @Property(write=false)
     private Asset _moveDown;
 
     /**
      * The image to use for the move up button (the default is an upward pointing arrow).
      */
     @Parameter(value = "asset:move_up.png")
-    @GenerateAccessors(write=false)
+    @Property(write=false)
     private Asset _moveUp;
 
     /**
@@ -205,7 +205,7 @@ public class Palette extends AbstractField
      * The image to use for the select button (the default is a right pointing arrow).
      */
     @Parameter(value = "asset:select.png")
-    @GenerateAccessors(write=false)
+    @Property(write=false)
     private Asset _select;
 
     /**
@@ -220,7 +220,7 @@ public class Palette extends AbstractField
      * If true, then additional buttons are provided on the client-side to allow for re-ordering of the values.
      */
     @Parameter("false")
-    @GenerateAccessors(write=false)    
+    @Property(write=false)
     private boolean _reorder;
 
     /**

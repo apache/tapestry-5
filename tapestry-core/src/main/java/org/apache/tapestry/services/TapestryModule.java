@@ -223,7 +223,7 @@ public final class TapestryModule
      * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
      * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
      * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
-     * org.apache.tapestry.annotations.GenerateAccessors} annotation is present </dd> </dl>
+     * org.apache.tapestry.annotations.Property} annotation is present </dd> </dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -299,12 +299,12 @@ public final class TapestryModule
         configuration.add("ContentType", new ContentTypeWorker());
         configuration.add("ResponseEncoding", new ResponseEncodingWorker());
 
-        configuration.add("GenerateAccessors", new GenerateAccessorsWorker());
+        configuration.add("Property", new PropertyWorker());
 
-        // These must come after GenerateAccessors, since they actually delete fields that may still have the annotation
+        // These must come after Property, since they actually delete fields that may still have the annotation
         configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class),
-                          "after:GenerateAccessors");
-        configuration.add("Environment", new EnvironmentalWorker(environment), "after:GenerateAccessors");
+                          "after:Property");
+        configuration.add("Environment", new EnvironmentalWorker(environment), "after:Property");
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.

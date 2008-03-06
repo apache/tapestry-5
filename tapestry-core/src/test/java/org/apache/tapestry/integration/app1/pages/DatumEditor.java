@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.Retain;
 
 public class DatumEditor
 {
     @Retain
-    @GenerateAccessors(write = false)
+    @Property(write = false)
     private Datum _datum = new Datum();
 
 

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.tutorial.pages;
 
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.Persist;
 
@@ -23,11 +23,11 @@ public class Guess
     @Persist
     private int _target;
 
-    @GenerateAccessors
+    @Property
     private int _guess;
 
     @Persist
-    @GenerateAccessors
+    @Property
     private String _message;
 
     @Persist

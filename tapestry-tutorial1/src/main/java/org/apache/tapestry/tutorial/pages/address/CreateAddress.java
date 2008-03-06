@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.tutorial.pages.address;
 
-import org.apache.tapestry.annotations.GenerateAccessors;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.tutorial.data.Address;
 
 public class CreateAddress
 {
-    @GenerateAccessors
+    @Property
     private Address _address;
 }
