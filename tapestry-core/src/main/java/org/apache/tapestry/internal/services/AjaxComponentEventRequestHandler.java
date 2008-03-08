@@ -85,7 +85,7 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
         // In many cases, the triggered element is a Form that needs to be able to
-        // pass it's event handler return values to the correct result processor.
+        // pass its event handler return values to the correct result processor.
 
         _environment.push(ComponentEventResultProcessor.class, _resultProcessor);
 
@@ -93,18 +93,13 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         _environment.pop(ComponentEventResultProcessor.class);
 
-        // isAborted() will be true when a non-null value was returned from the event handler method.
-        // Some return types will initialize the PageRenderQueue, others will stream a response directly.
-
-        if (callback.isAborted())
+        if (_queue.isPartialRenderInitialized())
         {
-            if (_queue.isPartialRenderInitialized())
-            {
-                _partialRenderer.renderPartialPageMarkup();
-            }
-
+            _partialRenderer.renderPartialPageMarkup();
             return;
         }
+
+        if (callback.isAborted()) return;
 
         // Send an empty JSON reply if no value was returned from the component event handler method.
 
