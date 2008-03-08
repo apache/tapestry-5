@@ -17,6 +17,7 @@ package org.apache.tapestry.internal.transform;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 import org.apache.tapestry.runtime.Component;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 class TransformMessages
 {
@@ -33,4 +34,11 @@ class TransformMessages
                 .getComponentResources().getCompleteId(), fieldName, fieldType);
     }
 
+    static String onceMethodMustHaveReturnValue(TransformMethodSignature method) {
+        return MESSAGES.format("once-no-return-value", method);
+    }
+    
+    static String onceMethodsHaveNoParameters(TransformMethodSignature method) {
+        return MESSAGES.format("once-no-parameters", method);
+    }
 }

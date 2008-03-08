@@ -10,6 +10,8 @@ Tapestry Core
 
 New And Of Note
 
+  * The @Once annotation has been added to allowing the caching of method results.
+
   * Tapestry can now generate accessor methods for fields automatically via the @Property annotation.
 
   * It is now possible to override the built-in display and edit blocks for data types.

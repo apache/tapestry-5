@@ -247,7 +247,12 @@ public class Start
             new Item("IndirectProtectedFields", "Protected Fields Demo", "demo exception when component class contains protected fields"),
 
             new Item("injectcomponentdemo", "Inject Component Demo",
-                     "inject component defined in template"));
+                     "inject component defined in template"),
+            
+            new Item("oncepage", "Once Annotation", "Caching method return values"),
+            
+            new Item("oncepage2", "Once Annotation2", "Caching method return values w/ inheritence")
+    );
 
     static
     {

@@ -1860,6 +1860,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "Class org.apache.tapestry.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
+    /** TAPESTRY-2244 */
+    @Test
+    public void once()
+    {
+        start("Once Annotation");
+
+        assertText("//span[@id='value']", "000");
+        assertText("//span[@id='value2size']", "111");
+        
+        assertText("//span[@class='watch'][1]", "0");
+        assertText("//span[@class='watch'][2]", "0");
+        assertText("//span[@class='watch'][3]", "1");
+    }
+    
+    /** TAPESTRY-2244 */
+    @Test
+    public void override_method_with_once() {
+        start("Once Annotation2");
+        assertText("//span[@id='value']", "111");
+    }
 
     private void sleep(long timeout)
     {
