@@ -257,6 +257,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             if (Modifier.isStatic(modifiers) || Modifier.isPrivate(modifiers)) continue;
 
+            // Groovy injects a public field named metaClass.  We ignore it, and add it as a claimed
+            // field to prevent any of the workers from seeing it.
+
+            if (name.equals("metaClass") && getFieldType(name).equals("groovy.lang.MetaClass"))
+            {
+                claimField(name, "Ignored");
+
+                continue;
+            }
+
             names.add(name);
         }
 
