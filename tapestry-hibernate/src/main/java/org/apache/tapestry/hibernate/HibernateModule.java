@@ -14,12 +14,17 @@
 
 package org.apache.tapestry.hibernate;
 
+import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.hibernate.DefaultHibernateConfigurer;
+import org.apache.tapestry.internal.hibernate.HibernateEntityValueEncoder;
 import org.apache.tapestry.internal.hibernate.HibernateSessionManagerImpl;
 import org.apache.tapestry.internal.hibernate.HibernateSessionSourceImpl;
 import org.apache.tapestry.internal.hibernate.PackageNameHibernateConfigurer;
 import org.apache.tapestry.ioc.Configuration;
+import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry.ioc.ObjectLocator;
+
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -30,11 +35,15 @@ import org.apache.tapestry.ioc.services.ClassNameLocator;
 import org.apache.tapestry.ioc.services.PerthreadManager;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
+import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.AliasContribution;
+import org.apache.tapestry.services.ValueEncoderFactory;
 import org.hibernate.Session;
+import org.hibernate.mapping.PersistentClass;
 import org.slf4j.Logger;
 
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 public class HibernateModule
@@ -129,4 +138,30 @@ public class HibernateModule
         config.add("PackageName", new PackageNameHibernateConfigurer(packageManager, classNameLocator));
     }
 
+    /**
+     * Contributes {@link ValueEncoderFactory}s for all registered Hibernate entity classes. Encoding and decoding are based
+     * on the id property value of the entity using type coercion. Hence, if the id can be coerced to a String and back then
+     * the entity can be coerced.
+     */
+    @SuppressWarnings("unchecked")
+    public static void contributeValueEncoderSource(MappedConfiguration<Class, ValueEncoderFactory> configuration,
+                                                    final HibernateSessionSource sessionSource,
+                                                    final Session session,
+                                                    final TypeCoercer typeCoercer)
+    {
+    	org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
+    	Iterator<PersistentClass> mappings = config.getClassMappings();
+    	while(mappings.hasNext()) {
+    		final PersistentClass persistentClass = mappings.next();
+    		final Class entityClass = persistentClass.getMappedClass();
+			
+			ValueEncoderFactory factory = new ValueEncoderFactory() {
+				public ValueEncoder create(Class type) {
+					return new HibernateEntityValueEncoder(entityClass, persistentClass, session, typeCoercer);
+				}
+			};
+			
+			configuration.add(entityClass, factory);
+    	}
+    }
 }

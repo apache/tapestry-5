@@ -23,20 +23,19 @@
 
   <session-factory>
     <property name="hibernate.connection.driver_class">org.hsqldb.jdbcDriver</property>
-    <property name="hibernate.connection.url">jdbc:hsqldb:file:target/unit-testdb</property>
+    <property name="hibernate.connection.url">jdbc:hsqldb:mem:test</property>
     <property name="hibernate.connection.username">sa</property>
     <property name="hibernate.dialect">org.hibernate.dialect.HSQLDialect</property>
     
     <property name="show_sql">true</property>
     <property name="format_sql">true</property>
-    <property name="hbm2ddl.auto">create-drop</property>    
-    
+    <property name="hbm2ddl.auto">update</property>
+
     <property name="hibernate.c3p0.min_size">5</property>
     <property name="hibernate.c3p0.max_size">20</property>
     <property name="hibernate.c3p0.timeout">300</property>
     <property name="hibernate.c3p0.max_statements">50</property>
     <property name="hibernate.c3p0.idle_test_period">3000</property>
-    
   </session-factory>
 
 
