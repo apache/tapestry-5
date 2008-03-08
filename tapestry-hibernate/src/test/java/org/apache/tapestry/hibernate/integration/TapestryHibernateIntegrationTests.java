@@ -25,12 +25,18 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
         super("src/test/webapp");
     }
 
-    /** Only needed until actual integration tests are put in. Just proves the integration
-     * tests are set up correctly.
-     */
-    public void test_placeholder() throws Exception {
-		open("/");
-		// just make sure we can get the hibernate Session
-		assertTrue(getText("//span[@id='session']").length() > 0);
+	public void test_valueencode_all_entity_types() throws Exception {
+		open("/encodeentities");
+		
+		assertEquals(0, getText("//span[@id='name']").length());
+
+		// need to create an entity in order to link with one
+		clickAndWait("//a[@id='createentity']");
+		assertEquals("name", getText("//span[@id='name']"));
+		
+		// should return null for missing objects
+		open("/encodeentities/9999");
+		assertEquals(0, getText("//span[@id='name']").length());
 	}
+
 }

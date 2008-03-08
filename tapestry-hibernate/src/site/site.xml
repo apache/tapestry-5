@@ -40,6 +40,7 @@
     <menu name="Quick Links">
       <item name="About" href="index.html"/>
       <item name="Configuration" href="conf.html"/>
+      <item name="User guide" href="userguide.html" />
       <item name="Download" href="http://tapestry.apache.org/download.html"/>
     </menu>
         

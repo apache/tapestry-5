@@ -22,67 +22,68 @@ import javax.persistence.Version;
 @Entity
 public class User
 {
+	// NOTE: Hibernate doesn't understand the '_' syntax. It will end up putting underscores on all the properties
     @Id @GeneratedValue
-    private Long _id;
+    private Long id;
 
-    private String _firstName;
+    private String firstName;
 
-    private String _lastName;
+    private String lastName;
 
-    private String _email;
+    private String email;
 
-    private String _encodedPassword;
+    private String encodedPassword;
 
     @Version
-    private int _version;
+    private int version;
 
     public String getEmail()
     {
-        return _email;
+        return email;
     }
 
     public String getEncodedPassword()
     {
-        return _encodedPassword;
+        return encodedPassword;
     }
 
     public String getFirstName()
     {
-        return _firstName;
+        return firstName;
     }
 
     public Long getId()
     {
-        return _id;
+        return id;
     }
 
     public String getLastName()
     {
-        return _lastName;
+        return lastName;
     }
 
     public int getVersion()
     {
-        return _version;
+        return version;
     }
 
     public void setEmail(String email)
     {
-        _email = email;
+        this.email = email;
     }
 
     public void setEncodedPassword(String encodedPassword)
     {
-        _encodedPassword = encodedPassword;
+        this.encodedPassword = encodedPassword;
     }
 
     public void setFirstName(String firstName)
     {
-        _firstName = firstName;
+        this.firstName = firstName;
     }
 
     public void setLastName(String lastName)
     {
-        _lastName = lastName;
+        this.lastName = lastName;
     }
 }
