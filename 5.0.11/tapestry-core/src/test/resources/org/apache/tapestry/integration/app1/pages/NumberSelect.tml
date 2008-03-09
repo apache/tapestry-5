@@ -1,0 +1,17 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+    <h1>Number Selection</h1>
+    
+    <p>  Demonstration of passivate/activate page logic.</p>
+
+    <p>
+        Select a number from this list:
+        
+        <t:loop  source="1..10" value="index">
+            <t:if  test="notFirst"> - </t:if>
+            <a t:type="ActionLink" t:id="select" context="index">${index}</a>
+        </t:loop> 
+    </p>
+    
+    
+    
+</html>

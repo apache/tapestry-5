@@ -1,0 +1,57 @@
+  ----
+  User Guide
+  ----
+  
+Entity value encoding
+
+  Value encoders are automatically created for all mapped Hibernate entity types. This is done by encoding the entity as it's 
+  id (coerced to a String) and decoding the entity by looking it up in the Hibernate Session using the encoded id. Consider
+  the following example:
+  
++----+
+public class ViewPerson {
+  @Property
+  private Person _person;
+  
+  void onActivate(Person person)
+  {
+    _person = person;
+  }
+  
+  Person onPassivate()
+  {
+    return _person;
+  }
+}
++----+   
+
++----+
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+<body>
+  The person's name is: ${person.name}
+</body>
+</html>
++----+
+
+  Accessing the page as <</viewperson/152>> would load the Person entity with id 152 and use that as the page context.
+
+Using @Persist with entities
+
+  If you wish to persist an entity in the session, you may use the "entity" persistence strategy:
+  
++----+
+public class ViewPerson {
+  @Persist("entity")
+  @Property
+  private Person _person;
+  
+  void onActivate(Person person)
+  {
+    _person = person;
+  }
+  
+}
++----+   
+  
+  This persistence strategy works with any Hibernate entity that is associated with a valid Hibernate Session by persisting only the id
+  of the entity. Notice that no onPassivate() method is needed; when the page renders the entity is loaded by the id stored in the session.

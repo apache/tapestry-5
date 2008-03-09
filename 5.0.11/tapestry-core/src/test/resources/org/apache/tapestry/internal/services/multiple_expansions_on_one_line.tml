@@ -1,0 +1,3 @@
+<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd" xml:space="preserve">
+    <dd>${classLoader} [${classLoader.class.name}]</dd>
+</html>

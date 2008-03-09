@@ -1,0 +1,8 @@
+<html><body><p>Ready to be updated with scripts.</p><script type="text/javascript">
+<!--
+Tapestry.onDOMLoaded(function() {
+doSomething();
+doSomethingElse();
+});
+// -->
+</script></body></html>
