@@ -1,0 +1,13 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Number BeanEditor Demo</h1>
+
+    <p>
+        Demonstrates that BeanEditor can handle null properties.
+    </p>
+
+
+    <t:beaneditform t:id="holder"/>
+
+
+</html>
