@@ -702,6 +702,10 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         start("Grid Set Demo");
 
         assertFalse(isTextPresent("Exception"));
+
+        // Also check for TAPESTRY-2228
+
+        assertAttribute("//table/@informal", "supported");
     }
 
     @Test

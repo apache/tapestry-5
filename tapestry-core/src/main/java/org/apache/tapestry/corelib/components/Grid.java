@@ -154,6 +154,14 @@ public class Grid implements GridModel
     @Property(write = false)
     private String _rowClass;
 
+    /**
+     * CSS class for the &lt;table&gt; element.  In addition, informal parameters to the Grid are rendered in the table
+     * element.
+     */
+    @Parameter(name = "class", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX, value = "t-data-grid")
+    @Property(write = false)
+    private String _tableClass;
+
     @Persist
     private int _currentPage = 1;
 
@@ -191,6 +199,9 @@ public class Grid implements GridModel
     @Component(parameters = "to=pagerBottom")
     private Delegate _pagerBottom;
 
+    @SuppressWarnings("unused")
+    @Component(parameters = "class=tableClass", inheritInformalParameters = true)
+    private Any _table;
 
     @Environmental(false)
     private FormSupport _formSupport;
