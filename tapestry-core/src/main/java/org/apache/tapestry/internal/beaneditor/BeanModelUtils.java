@@ -28,15 +28,19 @@ public final class BeanModelUtils
      *
      * @param model                to modifiy
      * @param addPropertyNames     comma seperated list of property names to add, or null
-     * @param removePropertyNames  comma seperated list of property names to remove, or null
+     * @param includePropertyNames comma seperated list of property names to include
+     * @param excludePropertyNames comma seperated list of property names to exclude, or null
      * @param reorderPropertyNames comma seperated list of property names to reorder, or null
      */
-    public static void modify(BeanModel model, String addPropertyNames, String removePropertyNames,
+    public static void modify(BeanModel model, String addPropertyNames, String includePropertyNames,
+                              String excludePropertyNames,
                               String reorderPropertyNames)
     {
         if (addPropertyNames != null) add(model, addPropertyNames);
 
-        if (removePropertyNames != null) remove(model, removePropertyNames);
+        if (includePropertyNames != null) include(model, includePropertyNames);
+
+        if (excludePropertyNames != null) exclude(model, excludePropertyNames);
 
         if (reorderPropertyNames != null) reorder(model, reorderPropertyNames);
     }
@@ -61,11 +65,19 @@ public final class BeanModelUtils
      *
      * @param model
      * @param propertyNames comma-separated list of property names
-     * @see BeanModel#remove(String...)
+     * @see BeanModel#exclude(String...)
      */
-    public static void remove(BeanModel model, String propertyNames)
+    public static void exclude(BeanModel model, String propertyNames)
     {
-        model.remove(split(propertyNames));
+        model.exclude(split(propertyNames));
+    }
+
+    /**
+     * Selects a subset of the properties to keep, and reorders them.
+     */
+    public static void include(BeanModel model, String propertyNames)
+    {
+        model.include(split(propertyNames));
     }
 
     /**

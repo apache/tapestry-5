@@ -127,12 +127,13 @@ public class ViewUser
 
             <p>
                 You can accomplish the same thing by changing the order of the
-                getter methods in the bean class. The default order in which properties are
-                displayed is not alphabetical, it is the order of the getter methods.
+                getter methods in the bean class.  The default order for properties is not alphabetical,
+                it is the order of the getter methods.
             </p>
 
+
             <p>
-                You can also remove properties with the remove parameter, which is equivalent to the
+                You can also remove properties with the exclude parameter, which is equivalent to the
                 @NonVisual annotation.
             </p>
 

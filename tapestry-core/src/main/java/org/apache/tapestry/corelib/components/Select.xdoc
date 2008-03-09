@@ -50,6 +50,29 @@
 
             </subsection>
 
+<subsection name="SelectColor.java">
+
+<source><![CDATA[
+public class SelectColor
+{
+  private String _color;
+
+  @Validate("required")
+  public String getColor() { return _color; }
+
+  public void setColor(String color) { _color = color; }
+}]]></source>
+
+    <p>
+        Placing the @Validate annotation on the field indicates that it is required.  This prevents the
+        select component from including a blank option for the field (though this can be overridden).
+        Without the @Validate, it would be possible for the user to select a blank value, and null would
+        be assigned to the color property of SelectColor.  This might be appropriate for a search form, but
+        not for an edit form.
+    </p>
+
+</subsection>
+
         </section>
 
         <section name="Enum Example">
@@ -109,6 +132,7 @@ public class Payment
     @Persist
     private CardType _type;
 
+    @Validate("required")
     public CardType getType() { return _type; }
 
     public void setType(CardType type) { _type = type; }

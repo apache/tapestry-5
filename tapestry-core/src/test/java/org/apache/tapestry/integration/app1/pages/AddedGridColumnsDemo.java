@@ -46,7 +46,7 @@ public class AddedGridColumnsDemo
     {
         _model = _source.create(Track.class, true, _resources);
 
-        _model.remove("album", "artist", "genre", "playcount", "rating");
+        _model.exclude("album", "artist", "genre", "playcount", "rating");
 
         _model.add("viewlink", null);
 

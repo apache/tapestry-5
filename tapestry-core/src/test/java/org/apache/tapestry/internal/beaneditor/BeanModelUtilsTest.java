@@ -45,15 +45,15 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
     }
 
     @Test
-    public void remove()
+    public void exclude()
     {
         BeanModel model = mockBeanModel();
 
-        expect(model.remove("fred", "barney")).andReturn(model);
+        expect(model.exclude("fred", "barney")).andReturn(model);
 
         replay();
 
-        BeanModelUtils.remove(model, "fred,barney");
+        BeanModelUtils.exclude(model, "fred,barney");
 
         verify();
     }
@@ -96,7 +96,7 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModelUtils.modify(model, null, null, null);
+        BeanModelUtils.modify(model, null, null, null, null);
 
         verify();
     }
@@ -111,13 +111,27 @@ public class BeanModelUtilsTest extends InternalBaseTestCase
         expect(model.add("fred", null)).andReturn(fred);
         expect(model.add("barney", null)).andReturn(barney);
 
-        expect(model.remove("pebbles", "bambam")).andReturn(model);
+        expect(model.exclude("pebbles", "bambam")).andReturn(model);
 
         expect(model.reorder("wilma", "betty")).andReturn(model);
 
         replay();
 
-        BeanModelUtils.modify(model, "fred,barney", "pebbles,bambam", "wilma,betty");
+        BeanModelUtils.modify(model, "fred,barney", null, "pebbles,bambam", "wilma,betty");
+
+        verify();
+    }
+
+    @Test
+    public void modify_include()
+    {
+        BeanModel model = mockBeanModel();
+
+        expect(model.include("fred", "wilma")).andReturn(model);
+
+        replay();
+
+        BeanModelUtils.modify(model, null, "fred,wilma", null, null);
 
         verify();
     }
