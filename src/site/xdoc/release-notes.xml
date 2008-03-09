@@ -21,6 +21,241 @@
     <body>
 
 
+        <h1>Release Notes - Tapestry - Version 5.0.11</h1>
+
+
+        <h2>Bug
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1475'>TAPESTRY-1475</a>] - Tapestry is missing
+                an API for clearing out persistent properties of a particular page
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1605'>TAPESTRY-1605</a>] - The request encoding
+                (for component action requests) occurs too late; after query parameters of the request have been
+                accessed, which prevents the proper request encoding from being used
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1780'>TAPESTRY-1780</a>] - T5 Form component
+                NPE if no FORM_DATA found
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2103'>TAPESTRY-2103</a>] - When referencing a
+                method as part of a property expression, the method name must be case exact whereas the rest of the
+                property expression is case insensitive
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2108'>TAPESTRY-2108</a>] - Tapestry.onDOMLoaded
+                not working in konqueror
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2117'>TAPESTRY-2117</a>] - Circular @SubModule
+                will crash the IOC container with OutOfMemoryException
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2141'>TAPESTRY-2141</a>] -
+                NullPointerExceptions under JDK 1.5 due to underlying ThreadLocal bug
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2145'>TAPESTRY-2145</a>] - Documentation
+                (including javadoc), refers to &quot;ZoneEffects&quot; instead of &quot;ZoneEffect&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2147'>TAPESTRY-2147</a>] - Typo in Tapestry
+                developer &quot;bible&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2149'>TAPESTRY-2149</a>] - Tapestry should
+                allow the pages and components to be referenced by their &quot;unstripped&quot; names as well
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2150'>TAPESTRY-2150</a>] - Tapestry should
+                recognize pages that are &quot;nested&quot; beneath other pages
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2151'>TAPESTRY-2151</a>] - Date format used by
+                DateField shows the year as two digits, not four
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2172'>TAPESTRY-2172</a>] - DateField component
+                shows up misplaced in major browsers
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2177'>TAPESTRY-2177</a>] - Conversion of
+                context parameters to server-side objects uses the TypeCoercer rather than the correct ValueEncoder
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2184'>TAPESTRY-2184</a>] - Null pointer
+                exception when creating an action link during a component event request
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2188'>TAPESTRY-2188</a>] - GridModel and
+                GridDataSource should be changed to support multiple sort columns
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2190'>TAPESTRY-2190</a>] -
+                JSONObjectEventResultProcessor sends the wrong content type value
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2192'>TAPESTRY-2192</a>] -
+                DateField.xdoc:65:11: The element type &quot;p&quot; must be terminated by the matching end-tag &quot;&lt;/p&gt;&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2206'>TAPESTRY-2206</a>] - Tapestry should have
+                a different data type for numbers than for strings
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2208'>TAPESTRY-2208</a>] - The data type &quot;checkbox&quot;
+                should be renamed to &quot;boolean&quot; to reflect what it is, rather than how it is rendered
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2209'>TAPESTRY-2209</a>] - JSONObject response
+                contains additional {}
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2212'>TAPESTRY-2212</a>] - Index.tml generated
+                by Quickstart Archetype is broken due to recent Index page change.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2219'>TAPESTRY-2219</a>] - Enum label
+                overrides, as outlined in the Tapestry Tutorial, no longer work
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2220'>TAPESTRY-2220</a>] - In some cases,
+                component event requests are incorrectly interpretted as render requests (with a page activation
+                context)
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2221'>TAPESTRY-2221</a>] - Exception message
+                when a context value is null or blank is confusing
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2226'>TAPESTRY-2226</a>] - Requests for the
+                root index page that include a page activation context fail with a 404 error
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2229'>TAPESTRY-2229</a>] - BeanEditForm is
+                including properties that are read only, causing errors when the form is submitted
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2238'>TAPESTRY-2238</a>] - Returning a Block
+                from an Ajax form submission fails with IllegalStateException
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2240'>TAPESTRY-2240</a>] - Groovy classes can
+                no longer be used as component classes because of the public metaClass field
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2245'>TAPESTRY-2245</a>] - GridDataSource
+                getAvailableRows() method called inefficiently
+            </li>
+        </ul>
+
+        <h2>Improvement
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1336'>TAPESTRY-1336</a>] - Refactor
+                ApplicationGlobals's store methods
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1612'>TAPESTRY-1612</a>] - Allow access to the
+                PageTester registry
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1835'>TAPESTRY-1835</a>] - Need an API to see
+                if a field is required or optional
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1890'>TAPESTRY-1890</a>] - Allow Tapestry
+                applications to NOT autoload modules from library
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1930'>TAPESTRY-1930</a>] - Render missing
+                parameter names in different font and/or text style.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1932'>TAPESTRY-1932</a>] - Extend PropertyModel
+                to allow access to annotations associated with the property
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1954'>TAPESTRY-1954</a>] - Move the
+                ClassNameLocator service to the tapestry-ioc module
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1955'>TAPESTRY-1955</a>] - Hibernate
+                SessionFactory close on webapp destroy
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1978'>TAPESTRY-1978</a>] - When supplying an
+                empty parameter binding, indicate problem parameter in error message.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1983'>TAPESTRY-1983</a>] - Add parameter to
+                Grid component that will add additional columns to the BeanModel
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1999'>TAPESTRY-1999</a>] - Allow the context
+                for an event to be specified as a List as well as an Object array
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2078'>TAPESTRY-2078</a>] - More understandable
+                error messages needed when incorrect classes found in component/page packages
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2087'>TAPESTRY-2087</a>] - Add &quot;else&quot;
+                parameter to Unless component.
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2164'>TAPESTRY-2164</a>] - The Tapestry binary
+                distribution should include appropriate third party dependencies
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2173'>TAPESTRY-2173</a>] - When Tapestry must
+                instantiate an Application State Object without an explicit ApplicationStateCreator, it should autobuild
+                the object rather than just use the default constructor
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2180'>TAPESTRY-2180</a>] - Add release notes
+                about API changes
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2182'>TAPESTRY-2182</a>] -
+                NullPointerExceptions, due to reading nested properties that do not suppress null values, do not
+                indicate problematic expression for AbstractPropertyOutput derivatives
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2200'>TAPESTRY-2200</a>] - Need a mechanism via
+                which display and/or edit BeanBlocks may be overridden
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2204'>TAPESTRY-2204</a>] - Upgrade
+                tapestry-test to use Selenium 0.9.2
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2205'>TAPESTRY-2205</a>] - Upgrade to Javassist
+                3.7
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2218'>TAPESTRY-2218</a>] - Grid component
+                should render informal parameters
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2222'>TAPESTRY-2222</a>] - The exception report
+                should highlight the lines related to the application in the stack trace
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2227'>TAPESTRY-2227</a>] - Typo in User Guide -&gt;
+                Persistent Data -&gt; Persistence Strategy
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2237'>TAPESTRY-2237</a>] - Grid should make its
+                &quot;currentPage&quot; value available to containing components
+            </li>
+        </ul>
+
+        <h2>New Feature
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1653'>TAPESTRY-1653</a>] - Provide automatic
+                ValueEncoders for Hibernate entities
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1778'>TAPESTRY-1778</a>] - Allow extending the
+                PageTester with extra modules for better integration with tapestry-spring
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1919'>TAPESTRY-1919</a>] - Let Tapestry control
+                HTTP/HTTPS in links via page configuration
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2169'>TAPESTRY-2169</a>] - Create an
+                ExceptionAnalysisDisplay component
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2170'>TAPESTRY-2170</a>] - Add annotation to
+                inject a component defined in the template
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2197'>TAPESTRY-2197</a>] - Support for &quot;index&quot;
+                pages in packages
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2202'>TAPESTRY-2202</a>] - When the
+                BeanEditForm or BeanEditor components must create the bean to be editted, it should be autobuilt
+                (supporting injection) rather than just instantiated via the default constructor
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2214'>TAPESTRY-2214</a>] - Select component
+                should provide control over a blank option for optional selects
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2216'>TAPESTRY-2216</a>] - Add a @Property
+                annotation for fields to create a getter and setter method
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2241'>TAPESTRY-2241</a>] - Add new parameter
+                &quot;include&quot; to BeanEditor, Grid, etc. to limit properties to a provided list, and rename
+                existing &quot;remove&quot; parameter to &quot;exclude&quot;
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2244'>TAPESTRY-2244</a>] - Add @Cached
+                annotation for caching method values
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2246'>TAPESTRY-2246</a>] - Add @Persist
+                strategy for Hibernate entities
+            </li>
+        </ul>
+
+        <h2>Task
+        </h2>
+        <ul>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-1933'>TAPESTRY-1933</a>] - Setup infrastructure
+                for integration tests in tapestry-hibernate
+            </li>
+            <li>[<a href='https://issues.apache.org/jira/browse/TAPESTRY-2162'>TAPESTRY-2162</a>] - Update roadmap on
+                site
+            </li>
+        </ul>
+
+
         <h1>Release Notes - Tapestry - Version 5.0.10</h1>
 
 
