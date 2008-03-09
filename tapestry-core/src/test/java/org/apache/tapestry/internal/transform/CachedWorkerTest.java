@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.transform;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
-import org.apache.tapestry.annotations.Once;
+import org.apache.tapestry.annotations.Cached;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.test.TapestryTestCase;
@@ -25,17 +25,17 @@ import org.testng.annotations.Test;
 
 /** Mostly just testing error conditions here. Functionality testing in integration tests. */
 @Test
-public class OnceWorkerTest extends TapestryTestCase
+public class CachedWorkerTest extends TapestryTestCase
 {
     public void must_have_return_type() throws Exception {
         ClassTransformation ct = mockClassTransformation();
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "void", "getFoo", new String[0], new String[0]);
         
-        expect(ct.findMethodsWithAnnotation(Once.class)).andReturn(Arrays.asList(sig));
+        expect(ct.findMethodsWithAnnotation(Cached.class)).andReturn(Arrays.asList(sig));
         
         replay();
         try {
-            new OnceWorker(null).transform(ct, null);
+            new CachedWorker(null).transform(ct, null);
             fail("did not throw");
         } catch (IllegalArgumentException e) {}
         verify();
@@ -45,11 +45,11 @@ public class OnceWorkerTest extends TapestryTestCase
         ClassTransformation ct = mockClassTransformation();
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC, "java.lang.Object", "getFoo", new String[] { "boolean" }, new String[0]);
         
-        expect(ct.findMethodsWithAnnotation(Once.class)).andReturn(Arrays.asList(sig));
+        expect(ct.findMethodsWithAnnotation(Cached.class)).andReturn(Arrays.asList(sig));
         
         replay();
         try {
-            new OnceWorker(null).transform(ct, null);
+            new CachedWorker(null).transform(ct, null);
             fail("did not throw");
         } catch (IllegalArgumentException e) {}
         verify();

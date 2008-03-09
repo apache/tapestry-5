@@ -223,7 +223,7 @@ public final class TapestryModule
      * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
      * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
      * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
-     * org.apache.tapestry.annotations.Property} annotation is present </dd> <dt>Once</dt> <dd>Checks for the {@link Once} annotation</dd></dl>
+     * org.apache.tapestry.annotations.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link Cached} annotation</dd></dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -244,7 +244,7 @@ public final class TapestryModule
         // only have a single annotation, the order doesn't matter so much, as long as
         // UnclaimedField is last.
         
-        configuration.add("Once", locator.autobuild(OnceWorker.class));
+        configuration.add("Cached", locator.autobuild(CachedWorker.class));
 
         configuration.add("Meta", new MetaWorker());
 

@@ -34,11 +34,11 @@ class TransformMessages
                 .getComponentResources().getCompleteId(), fieldName, fieldType);
     }
 
-    static String onceMethodMustHaveReturnValue(TransformMethodSignature method) {
-        return MESSAGES.format("once-no-return-value", method);
+    static String cachedMethodMustHaveReturnValue(TransformMethodSignature method) {
+        return MESSAGES.format("cached-no-return-value", method);
     }
     
-    static String onceMethodsHaveNoParameters(TransformMethodSignature method) {
-        return MESSAGES.format("once-no-parameters", method);
+    static String cachedMethodsHaveNoParameters(TransformMethodSignature method) {
+        return MESSAGES.format("cached-no-parameters", method);
     }
 }

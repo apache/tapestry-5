@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.TapestryConstants;
-import org.apache.tapestry.annotations.Once;
+import org.apache.tapestry.annotations.Cached;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.BindingSource;
@@ -30,26 +30,26 @@ import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.services.TransformMethodSignature;
 import org.apache.tapestry.services.TransformUtils;
 
-/** Caches method return values for methods annotated with {@link Once}. */
-public class OnceWorker implements ComponentClassTransformWorker {
+/** Caches method return values for methods annotated with {@link Cached}. */
+public class CachedWorker implements ComponentClassTransformWorker {
 	private final BindingSource _bindingSource;
 	
-	public OnceWorker(BindingSource bindingSource) {
+	public CachedWorker(BindingSource bindingSource) {
 		super();
 		this._bindingSource = bindingSource;
 	}
 
 	public void transform(ClassTransformation transformation, MutableComponentModel model) {
-		List<TransformMethodSignature> methods = transformation.findMethodsWithAnnotation(Once.class);
+		List<TransformMethodSignature> methods = transformation.findMethodsWithAnnotation(Cached.class);
 		if (methods.isEmpty())
 			return;
 		
 		for(TransformMethodSignature method : methods) {
 			if (method.getReturnType().equals("void"))
-				throw new IllegalArgumentException(TransformMessages.onceMethodMustHaveReturnValue(method));
+				throw new IllegalArgumentException(TransformMessages.cachedMethodMustHaveReturnValue(method));
 	
 			if (method.getParameterTypes().length != 0)
-				throw new IllegalArgumentException(TransformMessages.onceMethodsHaveNoParameters(method));
+				throw new IllegalArgumentException(TransformMessages.cachedMethodsHaveNoParameters(method));
 			
 			String propertyName = method.getMethodName();
 						
@@ -57,7 +57,7 @@ public class OnceWorker implements ComponentClassTransformWorker {
 			String fieldName = transformation.addField(PRIVATE, method.getReturnType(), propertyName);
 			String calledField = transformation.addField(PRIVATE, "boolean", fieldName + "$called");
 	
-			Once once = transformation.getMethodAnnotation(method, Once.class);
+			Cached once = transformation.getMethodAnnotation(method, Cached.class);
 			String bindingField = null;
 			String bindingValueField = null;
 			boolean watching = once.watch().length() > 0;

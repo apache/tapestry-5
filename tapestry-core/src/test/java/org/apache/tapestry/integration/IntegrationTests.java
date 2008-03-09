@@ -1862,9 +1862,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
     /** TAPESTRY-2244 */
     @Test
-    public void once()
+    public void cached()
     {
-        start("Once Annotation");
+        start("Cached Annotation");
 
         assertText("//span[@id='value']", "000");
         assertText("//span[@id='value2size']", "111");
@@ -1876,8 +1876,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     
     /** TAPESTRY-2244 */
     @Test
-    public void override_method_with_once() {
-        start("Once Annotation2");
+    public void override_method_with_cached() {
+        start("Cached Annotation2");
         assertText("//span[@id='value']", "111");
     }
 
