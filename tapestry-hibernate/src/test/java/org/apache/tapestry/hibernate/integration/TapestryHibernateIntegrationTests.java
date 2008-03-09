@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -64,4 +64,19 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
 		clickAndWait("link=set to transient");
 		assertTextPresent("Error persisting");
 	}
+	
+    /** TAPESTRY-2244 */
+    public void using_cached_with_form() {
+    	open("/cachedform");
+        assertTextSeries("name_%d", 0);
+        
+        type("name", "name1");
+        clickAndWait(SUBMIT);
+        assertTextSeries("name_%d", 0, "name1");
+
+        type("name", "name2");
+        clickAndWait(SUBMIT);
+        assertTextSeries("name_%d", 0, "name1", "name2");        
+    }
+
 }
