@@ -44,7 +44,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     /**
      * The text label for the submit button of the form, by default "Create/Update".
      */
-    @Parameter(value = "message:submit-label", defaultPrefix = "literal")
+    @Parameter(value = "message:submit-label", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     @Property
     private String _submitLabel;
 
@@ -60,12 +60,21 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     private Object _object;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
+     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = "literal")
-    private String _remove;
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _include;
+
+    /**
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * The names are case-insensitive.
+     */
+    @SuppressWarnings("unused")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
@@ -73,7 +82,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * order.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _reorder;
 
     /**
@@ -127,7 +136,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
             _model = _beanModelSource.create(beanType, true, _resources.getContainerResources());
         }
 
-        BeanModelUtils.modify(_model, null, _remove, _reorder);
+        BeanModelUtils.modify(_model, null, _include, _exclude, _reorder);
     }
 
 

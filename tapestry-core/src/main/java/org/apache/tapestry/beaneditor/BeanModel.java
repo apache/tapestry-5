@@ -118,17 +118,26 @@ public interface BeanModel<T>
      * Removes the named properties from the model, if present. It is not considered an error to remove a property that
      * does not exist.
      *
-     * @param propertyName the names of properties to be removed (case insensitive)
+     * @param propertyNames the names of properties to be removed (case insensitive)
      * @return the model for further modifications
      */
-    BeanModel remove(String... propertyName);
+    BeanModel exclude(String... propertyNames);
 
     /**
      * Re-orders the properties of the model into the specified order. Existing properties that are not indicated are
      * retained, but ordered to the end of the list.
      *
-     * @param propertyName property names in order they should be displayed (case insensitive)
+     * @param propertyNames property names in order they should be displayed (case insensitive)
      * @return the model for further modifications
      */
-    BeanModel reorder(String... propertyName);
+    BeanModel reorder(String... propertyNames);
+
+    /**
+     * Re-orders the properties of the model into the specified order. Existing properties that are not indicated are
+     * <<removed>>.
+     *
+     * @param propertyNames the names of properties to be retained
+     * @return the model for further modifications
+     */
+    BeanModel include(String... propertyNames);
 }

@@ -74,3 +74,10 @@ Release 5.0.11
 
   The <store> methods on these two interfaces were renamed to be more explicit. These are not methods typically
   invoked from user code.
+
+* BeanModel
+
+  The <<<remove()>>> method of {{{../apidocs/org/apache/tapestry/beaneditor/BeanModel.html}BeanModel}} was renamed
+  to <<<exclude()>>>, and a new method, <<<include()>>> was added. The <<remove>> parameter of BeanEditForm,
+  BeanEditor, BeanDisplay and Grid were all renamed to <<exclude>> as well (and a new <<include>> parameter was added
+  to each).

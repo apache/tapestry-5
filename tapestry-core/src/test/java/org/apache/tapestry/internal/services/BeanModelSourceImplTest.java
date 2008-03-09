@@ -104,6 +104,30 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
+    public void include_properties()
+    {
+        ComponentResources resources = mockComponentResources();
+        Messages messages = mockMessages();
+
+        train_getMessages(resources, messages);
+        stub_contains(messages, false);
+
+        replay();
+
+        BeanModel model = _source.create(SimpleBean.class, true, resources);
+
+        assertSame(model.getBeanType(), SimpleBean.class);
+
+        model.include("lastname", "firstname");
+
+        // Based on order of the getter methods (no longer alphabetical)
+
+        assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "firstName"));
+
+        verify();
+    }
+
+    @Test
     public void add_before()
     {
         ComponentResources resources = mockComponentResources();
@@ -137,7 +161,9 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         verify();
     }
 
-    /** TAPESTRY-2202 */
+    /**
+     * TAPESTRY-2202
+     */
     @Test
     public void new_instance()
     {
@@ -158,7 +184,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
         SimpleBean s2 = model.newInstance();
 
         assertNotNull(s2);
-        assertNotSame(s1, s2);        
+        assertNotSame(s1, s2);
 
         verify();
     }
@@ -176,7 +202,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = _source.create(SimpleBean.class, true, resources);
 
-        model.remove("firstname");
+        model.exclude("firstname");
 
         assertEquals(model.getPropertyNames(), Arrays.asList("lastName", "age"));
 
@@ -568,7 +594,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void remove_property()
+    public void exclude_property()
     {
         ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
@@ -580,7 +606,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = _source.create(SimpleBean.class, true, resources);
 
-        assertSame(model.remove("age"), model);
+        assertSame(model.exclude("age"), model);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName"));
 
@@ -588,7 +614,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
     }
 
     @Test
-    public void remove_unknown_property_is_noop()
+    public void exclude_unknown_property_is_noop()
     {
         ComponentResources resources = mockComponentResources();
         Messages messages = mockMessages();
@@ -600,7 +626,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         BeanModel model = _source.create(SimpleBean.class, true, resources);
 
-        assertSame(model.remove("frobozz"), model);
+        assertSame(model.exclude("frobozz"), model);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 

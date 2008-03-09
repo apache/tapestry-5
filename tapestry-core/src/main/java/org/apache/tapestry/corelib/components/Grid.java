@@ -112,11 +112,21 @@ public class Grid implements GridModel
     private String _add;
 
     /**
+     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * Only these properties will be retained, and the properties will also be reordered. The names are
+     * case-insensitive.
+     */
+    @SuppressWarnings("unused")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _include;
+
+
+    /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
      * The names are case-insensitive.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _remove;
+    private String _exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
@@ -369,7 +379,7 @@ public class Grid implements GridModel
 
         if (availableRows == 0) return;
 
-        BeanModelUtils.modify(_model, _add, _remove, _reorder);
+        BeanModelUtils.modify(_model, _add, _include, _exclude, _reorder);
 
         int maxPage = ((availableRows - 1) / _rowsPerPage) + 1;
 

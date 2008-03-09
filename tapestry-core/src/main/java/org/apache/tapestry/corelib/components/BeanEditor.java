@@ -17,9 +17,10 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.corelib.internal.InternalMessages;
@@ -56,18 +57,27 @@ public class BeanEditor
     private Object _object;
 
     /**
-     * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
+     * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * Only these properties will be retained, and the properties will also be reordered. The names are
      * case-insensitive.
      */
-    @Parameter(defaultPrefix = "literal")
-    private String _remove;
+    @SuppressWarnings("unused")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _include;
+
+    /**
+     * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
+     * The names are case-insensitive.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
      * order.
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _reorder;
 
     /**
@@ -133,7 +143,7 @@ public class BeanEditor
             _model = _modelSource.create(type, true, _overrides.getContainerResources());
         }
 
-        BeanModelUtils.modify(_model, null, _remove, _reorder);
+        BeanModelUtils.modify(_model, null, _include, _exclude, _reorder);
 
         // The only problem here is that if the bound property is backed by a persistent field, it
         // is assigned (and stored to the session, and propagated around the cluster) first,

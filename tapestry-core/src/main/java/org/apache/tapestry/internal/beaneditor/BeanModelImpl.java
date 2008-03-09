@@ -186,7 +186,7 @@ public class BeanModelImpl<T> implements BeanModel<T>
         return CollectionFactory.newList(_propertyNames);
     }
 
-    public BeanModel remove(String... propertyNames)
+    public BeanModel exclude(String... propertyNames)
     {
         for (String propertyName : propertyNames)
         {
@@ -206,12 +206,12 @@ public class BeanModelImpl<T> implements BeanModel<T>
         return this;
     }
 
-    public BeanModel reorder(String... propertyName)
+    public BeanModel reorder(String... propertyNames)
     {
         List<String> remainingPropertyNames = newList(_propertyNames);
         List<String> reorderedPropertyNames = newList();
 
-        for (String name : propertyName)
+        for (String name : propertyNames)
         {
             PropertyModel model = get(name);
 
@@ -228,6 +228,33 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
         // Any unspecified names are ordered to the end. Don't want them? Remove them instead.
         _propertyNames.addAll(remainingPropertyNames);
+
+        return this;
+    }
+
+    public BeanModel include(String... propertyNames)
+    {
+        List<String> reorderedPropertyNames = newList();
+        Map<String, PropertyModel> reduced = CollectionFactory.newCaseInsensitiveMap();
+
+
+        for (String name : propertyNames)
+        {
+
+            PropertyModel model = get(name);
+
+            String canonical = model.getPropertyName();
+
+            reorderedPropertyNames.add(canonical);
+            reduced.put(canonical, model);
+
+        }
+
+        _propertyNames.clear();
+        _propertyNames.addAll(reorderedPropertyNames);
+
+        _properties.clear();
+        _properties.putAll(reduced);
 
         return this;
     }
