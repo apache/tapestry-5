@@ -37,4 +37,12 @@ class HibernateMessages
     static String configurationImmutable() {
     	return MESSAGES.get("configuration-immutable");
     }
+    
+    static String badEntityIdType(String entityName, String idClassName, String id) {
+    	return MESSAGES.format("bad-entity-id-type", entityName, idClassName, id);
+    }
+    
+    static String entityNotAttached(Object entity) {
+    	return MESSAGES.format("entity-not-attached", entity);
+    }
 }
