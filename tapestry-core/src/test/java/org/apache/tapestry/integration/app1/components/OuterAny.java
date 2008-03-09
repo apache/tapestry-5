@@ -16,6 +16,7 @@ package org.apache.tapestry.integration.app1.components;
 
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.corelib.components.Any;
 
 @SupportsInformalParameters
 public class OuterAny

@@ -2,7 +2,7 @@
 
     <div t:id="pagerTop"/>
 
-    <table class="t-data-grid">
+    <table t:id="table">
         <thead t:id="columns"/>
         <tbody>
             <tr t:id="rows"/>
