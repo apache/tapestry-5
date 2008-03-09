@@ -17,7 +17,7 @@ package org.apache.tapestry.hibernate.integration;
 import org.apache.tapestry.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
-@Test
+@Test(sequential=true,groups="integration")
 public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSuite
 {
     public TapestryHibernateIntegrationTests()
@@ -25,7 +25,7 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
         super("src/test/webapp");
     }
 
-	public void test_valueencode_all_entity_types() throws Exception {
+	public void valueencode_all_entity_types() throws Exception {
 		open("/encodeentities");
 		
 		assertEquals(0, getText("//span[@id='name']").length());
@@ -39,4 +39,29 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
 		assertEquals(0, getText("//span[@id='name']").length());
 	}
 
+	public void persist_entities() {
+		open("/persistentity");
+		assertEquals(0, getText("//span[@id='name']").length());
+		
+		clickAndWait("link=create entity");
+		assertText("//span[@id='name']", "name");
+		
+		// shouldn't save the change to the name because it's reloaded every time
+		clickAndWait("link=change the name");
+		assertText("//span[@id='name']", "name");
+		
+		// can set back to null
+		clickAndWait("link=set to null");
+		assertEquals(getText("//span[@id='name']").length(), 0);
+		
+		// deleting an entity that is still persisted. just remove the entity from the session if it's not found.
+		clickAndWait("link=create entity");
+		assertText("//span[@id='name']", "name");
+		clickAndWait("link=delete");
+		assertEquals(getText("//span[@id='name']").length(), 0);
+				
+		// transient objects cannot be persisted
+		clickAndWait("link=set to transient");
+		assertTextPresent("Error persisting");
+	}
 }

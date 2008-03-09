@@ -17,6 +17,7 @@ package org.apache.tapestry.hibernate;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.hibernate.DefaultHibernateConfigurer;
+import org.apache.tapestry.internal.hibernate.EntityPersistentFieldStrategy;
 import org.apache.tapestry.internal.hibernate.HibernateEntityValueEncoder;
 import org.apache.tapestry.internal.hibernate.HibernateSessionManagerImpl;
 import org.apache.tapestry.internal.hibernate.HibernateSessionSourceImpl;
@@ -37,6 +38,7 @@ import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry.ioc.services.RegistryShutdownHub;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.AliasContribution;
+import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.apache.tapestry.services.ValueEncoderFactory;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
@@ -164,4 +166,13 @@ public class HibernateModule
 			configuration.add(entityClass, factory);
     	}
     }
+    
+    /**
+     * Contributes the following: <dl> <dt>entity</dt> <dd>Stores the id of the entity and reloads from the {@link Session}</dd> </dl>
+     */
+    public void contributePersistentFieldManager(MappedConfiguration<String, PersistentFieldStrategy> configuration, ObjectLocator locator)
+    {
+    	configuration.add("entity", locator.autobuild(EntityPersistentFieldStrategy.class));
+    }
+    
 }

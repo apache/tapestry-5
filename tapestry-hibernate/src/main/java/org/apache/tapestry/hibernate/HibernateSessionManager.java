@@ -21,10 +21,10 @@ import org.hibernate.Session;
  * needed, allowing the session to checkpoint (commit the current transaction and continue) and
  * commit the transaction automatically at the end of the request.
  * <p>
- * Remember that in Tapestry, action requests and render requests are entirely seperate, and you
- * will see a seperate request and a seperate transaction for each. Care should be taken to ensure
+ * Remember that in Tapestry, action requests and render requests are entirely separate, and you
+ * will see a separate request and a separate transaction for each. Care should be taken to ensure
  * that entity objects that are retained (in the session, as persistent field values) between
- * requests are handled correct (they tend to become detached instances).
+ * requests are handled correctly (they tend to become detached instances).
  * <p>
  * This implementation of this service is per-thread.
  */
@@ -46,7 +46,7 @@ public interface HibernateSessionManager
   void commit();
 
   /**
-   * Aborts the current transaction, and starts a new tranasction to replace it.
+   * Aborts the current transaction, and starts a new transaction to replace it.
    */
   void abort();
 }
