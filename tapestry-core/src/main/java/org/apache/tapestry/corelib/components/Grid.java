@@ -57,6 +57,12 @@ public class Grid implements GridModel
     private GridDataSource _source;
 
     /**
+     * A wrapper around the provided GridDataSource that caches access to the availableRows property. This is the source
+     * provided to sub-components.
+     */
+    private GridDataSource _cachingSource;
+
+    /**
      * The number of rows of data displayed on each page. If there are more rows than will fit, the Grid will divide up
      * the rows into "pages" and (normally) provide a pager to allow the user to navigate within the overall result
      * set.
@@ -207,7 +213,43 @@ public class Grid implements GridModel
     private FormSupport _formSupport;
 
     /**
-     * Default implementation only allows a single column to be the sort column, and stores the sort information as
+     * A version of GridDataSource that caches the availableRows property. This addresses TAPESTRY-2245.
+     */
+    class CachingDataSource implements GridDataSource
+    {
+        private boolean _availableRowsCached;
+
+        private int _availableRows;
+
+        public int getAvailableRows()
+        {
+            if (!_availableRowsCached)
+            {
+                _availableRows = _source.getAvailableRows();
+                _availableRowsCached = true;
+            }
+
+            return _availableRows;
+        }
+
+        public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
+        {
+            _source.prepare(startIndex, endIndex, sortConstraints);
+        }
+
+        public Object getRowValue(int index)
+        {
+            return _source.getRowValue(index);
+        }
+
+        public Class getRowType()
+        {
+            return _source.getRowType();
+        }
+    }
+
+    /**
+     * Default implementation that only allows a single column to be the sort column, and stores the sort information as
      * persistent fields of the Grid component.
      */
     class DefaultGridSortModel implements GridSortModel
@@ -314,14 +356,16 @@ public class Grid implements GridModel
 
         setupDataSource();
 
-        return _source.getAvailableRows() == 0 ? _empty : null;
+        return _cachingSource.getAvailableRows() == 0 ? _empty : null;
     }
 
     void setupDataSource()
     {
         // If there's no rows, display the empty block placeholder.
 
-        int availableRows = _source.getAvailableRows();
+        _cachingSource = new CachingDataSource();
+
+        int availableRows = _cachingSource.getAvailableRows();
 
         if (availableRows == 0) return;
 
@@ -338,7 +382,7 @@ public class Grid implements GridModel
 
         int endIndex = Math.min(startIndex + _rowsPerPage - 1, availableRows - 1);
 
-        _source.prepare(startIndex, endIndex, _sortModel.getSortContraints());
+        _cachingSource.prepare(startIndex, endIndex, _sortModel.getSortContraints());
 
     }
 
@@ -347,7 +391,7 @@ public class Grid implements GridModel
         // Skip rendering of component (template, body, etc.) when there's nothing to display.
         // The empty placeholder will already have rendered.
 
-        if (_source.getAvailableRows() == 0) return false;
+        if (_cachingSource.getAvailableRows() == 0) return false;
 
         return null;
     }
@@ -359,7 +403,7 @@ public class Grid implements GridModel
 
     public GridDataSource getDataSource()
     {
-        return _source;
+        return _cachingSource;
     }
 
     public GridSortModel getSortModel()
