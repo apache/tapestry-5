@@ -249,9 +249,9 @@ public class Start
             new Item("injectcomponentdemo", "Inject Component Demo",
                      "inject component defined in template"),
             
-            new Item("oncepage", "Once Annotation", "Caching method return values"),
+            new Item("cachedpage", "Cached Annotation", "Caching method return values"),
             
-            new Item("oncepage2", "Once Annotation2", "Caching method return values w/ inheritence")
+            new Item("cachedpage2", "Cached Annotation2", "Caching method return values w/ inheritence")
     );
 
     static

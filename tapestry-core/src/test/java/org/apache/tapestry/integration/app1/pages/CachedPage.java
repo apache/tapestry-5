@@ -3,9 +3,9 @@ package org.apache.tapestry.integration.app1.pages;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tapestry.annotations.Once;
+import org.apache.tapestry.annotations.Cached;
 
-public class OncePage {
+public class CachedPage {
 	private int value;
 	private List<String> value2;
 	private int value3;
@@ -19,18 +19,18 @@ public class OncePage {
 		watchValue = 0;
 	}
 
-	@Once
+	@Cached
 	public int getValue() {
 		return value++;
 	}
 	
-	@Once
+	@Cached
 	public List<String> getValue2() {
 		value2.add("a");
 		return value2;
 	}
 	
-	@Once(watch="watchValue")
+	@Cached(watch="watchValue")
 	public int getValue3() {
 		return value3++;
 	}

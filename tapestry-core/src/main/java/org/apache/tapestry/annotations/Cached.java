@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /** Indicates that a method should only be evaluated once and the result cached.
  * All further calls to the method will return the cached result. Note that this
  * annotation is inheritence-safe; if a subclass calls a superclass method that 
- * has @Once then the value the subclass method gets is the cached value. 
+ * has \@Cached then the value the subclass method gets is the cached value. 
  * <p>
  * The watch parameter can be passed a binding expression
  * which will be evaluated each time the method is called. The method will then
@@ -35,7 +35,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Once {
+public @interface Cached {
 	/** The optional binding to watch (default binding prefix is "prop") */
 	String watch() default "";
 }
