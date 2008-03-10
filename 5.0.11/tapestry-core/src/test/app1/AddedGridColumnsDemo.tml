@@ -1,0 +1,12 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Added Columns Grid Demo</h1>
+
+    <table t:id="grid">
+        <t:parameter name="viewlinkcell">
+            <t:actionlink t:id="view" context="track.title">view</t:actionlink>
+        </t:parameter>
+    </table>
+
+
+</html>
