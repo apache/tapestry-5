@@ -1,5 +1,0 @@
-<html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-    <span id="value">${value}</span>
-    <span id="value2">${value2}</span>
-    <span id="value3">${value3}</span>
-</html>
