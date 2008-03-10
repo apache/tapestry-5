@@ -1,0 +1,67 @@
+// Copyright 2008 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package org.apache.tapestry.internal.services;
+
+import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.services.ComponentEventResultProcessor;
+
+import java.io.IOException;
+
+/**
+ * A wrapper around {@link ComponentEventResultProcessor} that encapsulates capturing the exception.
+ */
+public class ComponentResultProcessorWrapper implements ComponentEventCallback
+{
+    private boolean _aborted;
+
+    private IOException _exception;
+
+    private final ComponentEventResultProcessor _processor;
+
+    public ComponentResultProcessorWrapper(ComponentEventResultProcessor processor)
+    {
+        _processor = processor;
+    }
+
+    public boolean handleResult(Object result)
+    {
+        try
+        {
+            _processor.processResultValue(result);
+        }
+        catch (IOException ex)
+        {
+            _exception = ex;
+        }
+
+        _aborted = true;
+
+        return true;
+    }
+
+    /**
+     * Returns true if {@link org.apache.tapestry.ComponentEventCallback#handleResult(Object)} was invoked, false
+     * otherwise.
+     *
+     * @return true if the event was aborted
+     * @throws IOException if {@link ComponentEventResultProcessor#processResultValue(Object)} threw an IOException
+     */
+    public boolean isAborted() throws IOException
+    {
+        if (_exception != null) throw _exception;
+
+        return _aborted;
+    }
+}

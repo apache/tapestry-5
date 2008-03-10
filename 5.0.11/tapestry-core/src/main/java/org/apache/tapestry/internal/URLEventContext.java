@@ -1,0 +1,45 @@
+// Copyright 2008 The Apache Software Foundation
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package org.apache.tapestry.internal;
+
+import org.apache.tapestry.EventContext;
+import org.apache.tapestry.services.ContextValueEncoder;
+
+/**
+ * Implementation based on values extracted from the URL (an event context, or a page activation context) that uses a
+ * {@link org.apache.tapestry.services.ContextValueEncoder} to convert from string values to the desired values.
+ */
+public class URLEventContext implements EventContext
+{
+    private final ContextValueEncoder _valueEncoder;
+
+    private final String[] _values;
+
+    public URLEventContext(ContextValueEncoder valueEncoder, String[] values)
+    {
+        _valueEncoder = valueEncoder;
+        _values = values;
+    }
+
+    public int getCount()
+    {
+        return _values.length;
+    }
+
+    public <T> T get(Class<T> desiredType, int index)
+    {
+        return _valueEncoder.toValue(desiredType, _values[index]);
+    }
+}

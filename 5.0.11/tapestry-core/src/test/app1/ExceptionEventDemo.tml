@@ -1,0 +1,28 @@
+<html t:type="Border" xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Exception Event Demo</h1>
+
+    <t:if test="message">
+        <p id="message">
+            ${message}
+        </p>
+    </t:if>
+
+
+    <t:pagelink page="ExceptionEventDemo" context="invalidContext">force invalid activation context</t:pagelink>
+
+    <br/>
+
+    <t:actionlink t:id="fail" context="invalidContext">force invalid event context</t:actionlink>
+
+
+    <br/>
+
+    <p>
+        Exception interception: ${intercept} --
+        <t:actionlink t:id="enable">enable</t:actionlink>
+        /
+        <t:actionlink t:id="disable">disable</t:actionlink>
+    </p>
+
+</html>
