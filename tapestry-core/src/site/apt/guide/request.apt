@@ -8,7 +8,7 @@ Request Processing
   chief extension points for Tapestry.
   
   Much of the early stages of processing are in the form of extensible 
-  {{{../ioc/pipeline.html}pipelines}}.
+  {{{../../tapestry-ioc/pipeline.html}pipelines}}.
   
 Tapestry Filter
 
