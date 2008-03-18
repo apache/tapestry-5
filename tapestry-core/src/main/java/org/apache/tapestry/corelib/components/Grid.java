@@ -68,14 +68,13 @@ public class Grid implements GridModel
      * set.
      */
     @Parameter("25")
-    @Property
     private int _rowsPerPage;
 
     /**
      * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
      * "both" or "none".
      */
-    @Parameter(value = "top", defaultPrefix = "literal")
+    @Parameter(value = "top", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private GridPagerPosition _pagerPosition;
 
     /**
@@ -84,7 +83,6 @@ public class Grid implements GridModel
      * use the property bound to the row parameter to know what they should render.
      */
     @Parameter
-    @Property
     private Object _row;
 
     /**
@@ -439,5 +437,20 @@ public class Grid implements GridModel
     public void setCurrentPage(int currentPage)
     {
         _currentPage = currentPage;
+    }
+
+    public int getRowsPerPage()
+    {
+        return _rowsPerPage;
+    }
+
+    public Object getRow()
+    {
+        return _row;
+    }
+
+    public void setRow(Object row)
+    {
+        _row = row;
     }
 }
