@@ -52,4 +52,8 @@ public class GridDemo
         _grid.getSortModel().updateSort("rating");
     }
 
+    void onActionFromReset()
+    {
+        _grid.reset();
+    }
 }

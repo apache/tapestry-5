@@ -453,4 +453,15 @@ public class Grid implements GridModel
     {
         _row = row;
     }
+
+
+    /**
+     * Resets the Grid to inital settings; this sets the current page to one, and {@linkplain
+     * org.apache.tapestry.grid.GridSortModel#clear() clears the sort model}.
+     */
+    public void reset()
+    {
+        _currentPage = 1;
+        _sortModel.clear();
+    }
 }
