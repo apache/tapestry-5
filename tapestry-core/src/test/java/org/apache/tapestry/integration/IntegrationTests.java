@@ -658,6 +658,12 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
         assertAttribute("//img[@id='title:sort']/@alt", "[Desc]");
+
+        clickAndWait("link=reset the Grid");
+
+        // Back to where we started.
+
+        assertTextSeries("//tr[1]/td[%d]", 1, "Bug Juice", "Late Lounge (2 of 2)", "45 Dip", "Electronica", "4", "-");
     }
 
     @Test
@@ -1864,7 +1870,9 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                 "Class org.apache.tapestry.integration.app1.pages.Datum contains field(s) (_value) that are not private. You should change these fields to private, and add accessor methods if needed.");
     }
 
-    /** TAPESTRY-2244 */
+    /**
+     * TAPESTRY-2244
+     */
     @Test
     public void cached()
     {
@@ -1872,15 +1880,18 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertText("//span[@id='value']", "000");
         assertText("//span[@id='value2size']", "111");
-        
+
         assertText("//span[@class='watch'][1]", "0");
         assertText("//span[@class='watch'][2]", "0");
         assertText("//span[@class='watch'][3]", "1");
     }
-    
-    /** TAPESTRY-2244 */
+
+    /**
+     * TAPESTRY-2244
+     */
     @Test
-    public void override_method_with_cached() {
+    public void override_method_with_cached()
+    {
         start("Cached Annotation2");
         assertText("//span[@id='value']", "111");
     }
