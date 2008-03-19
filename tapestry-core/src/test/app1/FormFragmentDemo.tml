@@ -24,6 +24,24 @@
             </t:formfragment>
 
 
+            <br/>
+
+            <t:radiogroup value="codeVisible">
+                <t:radio t:id="on" label="On" value="true" t:mixins="triggerfragment" fragment="codeFragment"/>
+                <t:label for="on"/>
+                <t:radio t:id="off" label="Off" value="false"/>
+                <t:label for="off"/>
+            </t:radiogroup>
+
+
+            <t:formfragment t:id="codeFragment" visible="codeVisible">
+                <div class="t-beaneditor-row">
+                    <t:label for="code"/>
+                    <t:textfield t:id="code" value="subscribe.code"/>
+                </div>
+            </t:formfragment>
+
+
             <div class="t-beaneditor-row">
                 <input type="submit" value="Subscribe"/>
             </div>

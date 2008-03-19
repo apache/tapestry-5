@@ -21,6 +21,8 @@ public class SubscribeData
     private String _name;
     private String _email;
 
+    private String _code;
+
     @Validate("required")
     public String getName()
     {
@@ -42,5 +44,16 @@ public class SubscribeData
     public void setEmail(String email)
     {
         _email = email;
+    }
+
+    @Validate("required")
+    public String getCode()
+    {
+        return _code;
+    }
+
+    public void setCode(String code)
+    {
+        _code = code;
     }
 }

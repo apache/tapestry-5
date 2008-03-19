@@ -1690,13 +1690,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         clickAndWait("link=Clear");
 
         click("subscribeToEmail");
+        click("on");
         type("name", "Barney");
         type("email", "rubble@bedrock.gov");
+        type("code", "ABC123");
+
+        click("off");
+        sleep(1000);
 
         clickAndWait(SUBMIT);
 
         assertText("name", "Barney");
         assertText("email", "rubble@bedrock.gov");
+        assertText("code", "");
     }
 
     @Test
