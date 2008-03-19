@@ -55,8 +55,8 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     /**
-     * Used to obtain the {@link org.apache.tapestry.ioc.services.ClassFactory} service, which is
-     * crucial when creating runtime classes for proxies and the like.
+     * Used to obtain the {@link org.apache.tapestry.ioc.services.ClassFactory} service, which is crucial when creating
+     * runtime classes for proxies and the like.
      */
     static final String CLASS_FACTORY_SERVICE_ID = "ClassFactory";
 
@@ -191,17 +191,23 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     }
 
     /**
-     * It's not unreasonable for an eagerly-loaded service to decide to start a thread, at which
-     * point we raise issues about improper publishing of the Registry instance from the
-     * RegistryImpl constructor. Moving eager loading of services out to its own method should
-     * ensure thread safety.
+     * It's not unreasonable for an eagerly-loaded service to decide to start a thread, at which point we raise issues
+     * about improper publishing of the Registry instance from the RegistryImpl constructor. Moving eager loading of
+     * services out to its own method should ensure thread safety.
      */
     public void performRegistryStartup()
     {
         _eagerLoadLock.lock();
 
+        List<EagerLoadServiceProxy> proxies = CollectionFactory.newList();
+
         for (Module m : _modules)
-            m.eagerLoadServices();
+            m.collectEagerLoadServices(proxies);
+
+        // TAPESTRY-2267: Gather up all the proxies before instantiating any of them.
+
+        for (EagerLoadServiceProxy proxy : proxies)
+            proxy.eagerLoadService();
 
         getService("RegistryStartup", Runnable.class).run();
 

@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,9 +25,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * A module within the Tapestry IoC registry. Each Module is constructed around a corresponding
- * module builder instance; the methods and annotations of that instance define the services
- * provided by the module.
+ * A module within the Tapestry IoC registry. Each Module is constructed around a corresponding module builder instance;
+ * the methods and annotations of that instance define the services provided by the module.
  */
 public interface Module extends ModuleBuilderSource
 {
@@ -43,9 +42,8 @@ public interface Module extends ModuleBuilderSource
     <T> T getService(String serviceId, Class<T> serviceInterface);
 
     /**
-     * Locates the ids of all services that implement the provided service interface, or whose
-     * service interface is assignable to the provided service interface (is a super-class or
-     * super-interface).
+     * Locates the ids of all services that implement the provided service interface, or whose service interface is
+     * assignable to the provided service interface (is a super-class or super-interface).
      *
      * @param serviceInterface the interface to search for
      * @return a collection of service ids
@@ -53,11 +51,10 @@ public interface Module extends ModuleBuilderSource
     Collection<String> findServiceIdsForInterface(Class serviceInterface);
 
     /**
-     * Locates all the decorators that should apply the identified service. This includes visibility
-     * rules (private services may only be decorated by decorators in the same module) and other
-     * filtering rules. The resulting list is ordered and from the list of
-     * {@link org.apache.tapestry.ioc.def.DecoratorDef}s, a list of {@link ServiceDecorator}s is
-     * returned.
+     * Locates all the decorators that should apply the identified service. This includes visibility rules (private
+     * services may only be decorated by decorators in the same module) and other filtering rules. The resulting list is
+     * ordered and from the list of {@link org.apache.tapestry.ioc.def.DecoratorDef}s, a list of {@link
+     * ServiceDecorator}s is returned.
      *
      * @param serviceId identifies the service to be decorated
      * @return the ordered list of service decorators
@@ -65,8 +62,8 @@ public interface Module extends ModuleBuilderSource
     List<ServiceDecorator> findDecoratorsForService(String serviceId);
 
     /**
-     * Iterates over any decorator definitions defined by the module and returns those that apply to
-     * the provided service definition.
+     * Iterates over any decorator definitions defined by the module and returns those that apply to the provided
+     * service definition.
      *
      * @param serviceDef for which decorators are being assembled
      * @return set of decorators, possibly empty (but not null)
@@ -79,10 +76,12 @@ public interface Module extends ModuleBuilderSource
     Set<ContributionDef> getContributorDefsForService(String serviceId);
 
     /**
-     * Locates services with the {@link org.apache.tapestry.ioc.annotations.EagerLoad} annotation
-     * and forces them to instantiate fully. This is part of the Registry startup.
+     * Locates services with the {@link org.apache.tapestry.ioc.annotations.EagerLoad} annotation and generates proxies
+     * for them, then adds them to the proxies list for instantiation.
+     *
+     * @param proxies collection of proxies to which any eager load services in the module should be added
      */
-    void eagerLoadServices();
+    void collectEagerLoadServices(Collection<EagerLoadServiceProxy> proxies);
 
     /**
      * Returns the service definition for the given service id.
@@ -93,8 +92,8 @@ public interface Module extends ModuleBuilderSource
     ServiceDef getServiceDef(String serviceId);
 
     /**
-     * Returns the name used to obtain a logger for the module. Services within the module suffix
-     * this with a period and the service id.
+     * Returns the name used to obtain a logger for the module. Services within the module suffix this with a period and
+     * the service id.
      *
      * @return module logger name
      */
