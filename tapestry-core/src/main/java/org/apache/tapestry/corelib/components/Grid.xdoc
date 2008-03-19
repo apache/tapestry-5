@@ -133,13 +133,10 @@ public class UserList
     @Inject
     private UserDAO _userDAO;
 
+    @Property
     private User _user;
 
     public List<User> getUsers() { return _userDAO.findAll(); }
-
-    public void setUser(User user) { _user = user; }
-
-    public User getUser() { return _user; }
 }]]></source>
 
             </subsection>
@@ -159,23 +156,20 @@ public class UserList
                 for an action. We'll do the latter, adding a column for deleting a user.
             </p>
 
+
+            <p>
+                <img src="grid_ref2.png"/>
+            </p>
+
             <subsection name="UserList.tml">
 
-                <p>
-                    We want to make the user's last name a clickable link to delete
-                    the user for that row.
-                </p>
-
-                <p>
-                    <img src="grid_ref2.png"/>
-                </p>
 
                 <source><![CDATA[
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
     <body>
         <h1>List Users</h1>
 
-        <t:grid source="users" row="user" model="model">
+        <t:grid source="users" row="user" add="delete">
             <t:parameter name="lastnamecell">
                 <t:pagelink page="user/view" context="user.id">${user.lastname}</t:pagelink>
             </t:parameter>
@@ -188,7 +182,8 @@ public class UserList
 ]]></source>
 
                 <p>
-                    We now explicitly provide a model parameter. In addition, a block
+                    We now explicitly provide a column for the "delete" property, which doesn't exist. In addition, a
+                    block
                     for the "delete" property has been added that includes an ActionLink
                     used to delete the user for the current row. This property is a
                     <em>virtual</em>
@@ -205,29 +200,10 @@ public class UserList
     @Inject
     private UserDAO _userDAO;
 
-    @Inject
-    private BeanModelSource _beanModelSource;
-
-    @Inject
-    private ComponentResources _resources;
-
-    private final BeanModel _model;
-
-    {
-        _model = _beanModelSource.create(User.class, true, _resources);
-
-        _model.add("delete", null);
-    }
-
+    @Property
     private User _user;
 
     public List<User> getUsers() { return _userDAO.findAll(); }
-
-    public void setUser(User user) { _user = user; }
-
-    public User getUser() { return _user; }
-
-    public BeanModel getModel() { return _model; }
 
     void onActionFromDelete(long userId)
     {
@@ -235,11 +211,11 @@ public class UserList
     }  
 }]]></source>
 
+
                 <p>
-                    Here we create the model using the BeanModelSource service.
-                    We then customize it, adding a new property, "delete". The null
-                    indicates that this is a virtual property, with no real data behind it.
+                    The only addition here is an event handler method for when the delete link is clicked.
                 </p>
+
 
             </subsection>
 
