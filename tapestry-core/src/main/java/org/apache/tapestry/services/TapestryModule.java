@@ -223,7 +223,8 @@ public final class TapestryModule
      * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
      * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
      * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
-     * org.apache.tapestry.annotations.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link Cached} annotation</dd></dl>
+     * org.apache.tapestry.annotations.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link
+     * Cached} annotation</dd></dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -243,7 +244,7 @@ public final class TapestryModule
         // TODO: Proper scheduling of all of this. Since a given field or method should
         // only have a single annotation, the order doesn't matter so much, as long as
         // UnclaimedField is last.
-        
+
         configuration.add("Cached", locator.autobuild(CachedWorker.class));
 
         configuration.add("Meta", new MetaWorker());
@@ -532,7 +533,23 @@ public final class TapestryModule
                     // TAPESTRY-2078
 
                     if (ex.getCause() == null)
-                        ex.initCause(requestGlobals.getClassLoaderException());
+                    {
+                        Throwable cause = requestGlobals.getClassLoaderException();
+
+                        if (cause != null)
+                        {
+
+                            try
+                            {
+                                ex.initCause(cause);
+                            }
+                            catch (IllegalStateException ise)
+                            {
+                                // TAPESTRY-2284: sometimes you just can't init the cause, and there's no way to
+                                // find out without trying.
+                            }
+                        }
+                    }
 
                     exceptionHandler.handleRequestException(ex);
 
