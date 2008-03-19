@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -51,9 +51,9 @@ public class ModuleImpl implements Module
     private Object _moduleBuilder;
 
     /**
-     * A single mutex, shared by all modules, that serializes creation of services across all
-     * threads. This is a bit draconian, but appears to be necessary. Fortunately, service creation
-     * is a very tiny part of any individual service's lifecycle.
+     * A single mutex, shared by all modules, that serializes creation of services across all threads. This is a bit
+     * draconian, but appears to be necessary. Fortunately, service creation is a very tiny part of any individual
+     * service's lifecycle.
      */
     private static final Object MUTEX = new Object();
 
@@ -150,7 +150,7 @@ public class ModuleImpl implements Module
      * @param eagerLoadProxies TODO
      * @return the service proxy
      */
-    private Object findOrCreate(ServiceDef def, List<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object findOrCreate(ServiceDef def, Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         synchronized (MUTEX)
         {
@@ -168,10 +168,8 @@ public class ModuleImpl implements Module
         }
     }
 
-    public void eagerLoadServices()
+    public void collectEagerLoadServices(Collection<EagerLoadServiceProxy> proxies)
     {
-        List<EagerLoadServiceProxy> proxies = newList();
-
         synchronized (MUTEX)
         {
             for (String serviceId : _moduleDef.getServiceIds())
@@ -180,19 +178,15 @@ public class ModuleImpl implements Module
 
                 if (def.isEagerLoad()) findOrCreate(def, proxies);
             }
-
-            for (EagerLoadServiceProxy proxy : proxies)
-                proxy.eagerLoadService();
         }
     }
 
     /**
-     * Creates the service and updates the cache of created services. Access is synchronized via
-     * {@link #MUTEX}.
+     * Creates the service and updates the cache of created services. Access is synchronized via {@link #MUTEX}.
      *
      * @param eagerLoadProxies a list into which any eager loaded proxies should be added
      */
-    private Object create(ServiceDef def, List<EagerLoadServiceProxy> eagerLoadProxies)
+    private Object create(ServiceDef def, Collection<EagerLoadServiceProxy> eagerLoadProxies)
     {
         String serviceId = def.getServiceId();
 
@@ -351,7 +345,7 @@ public class ModuleImpl implements Module
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
         classFab.addField("_token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
 
-        classFab.addConstructor(new Class[]{ObjectCreator.class, ServiceProxyToken.class}, null,
+        classFab.addConstructor(new Class[] { ObjectCreator.class, ServiceProxyToken.class }, null,
                                 "{ _creator = $1; _token = $2; }");
 
         // Make proxies serializable by writing the token to the stream.
@@ -361,7 +355,7 @@ public class ModuleImpl implements Module
         // This is the "magic" signature that allows an object to substitute some other
         // object for itself.
         MethodSignature writeReplaceSig = new MethodSignature(Object.class, "writeReplace", null,
-                                                              new Class[]{ObjectStreamException.class});
+                                                              new Class[] { ObjectStreamException.class });
 
         classFab.addMethod(Modifier.PRIVATE, writeReplaceSig, "return _token;");
 
