@@ -59,11 +59,14 @@ public class URLChangeTracker
      * Stores a new URL into the tracker, or returns the previous time stamp for a previously added URL. Filters out all
      * non-file URLs.
      *
-     * @param url of the resource to add
-     * @return the current timestamp for the URL (possibly rounded off for granularity reasons)
+     * @param url of the resource to add, or null if not known
+     * @return the current timestamp for the URL (possibly rounded off for granularity reasons), or 0 if the URL is
+     *         null
      */
     public long add(URL url)
     {
+        if (url == null) return 0;
+
         if (!url.getProtocol().equals("file")) return timestampForNonFileURL(url);
 
         File resourceFile = toFile(url);

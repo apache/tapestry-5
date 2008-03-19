@@ -31,6 +31,14 @@ public class URLChangeTrackerTest extends TapestryTestCase
     }
 
     @Test
+    public void add_null_returns_zero()
+    {
+        URLChangeTracker t = new URLChangeTracker();
+
+        assertEquals(t.add(null), 0l);
+    }
+
+    @Test
     public void contains_changes() throws Exception
     {
         URLChangeTracker t = new URLChangeTracker();

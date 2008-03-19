@@ -25,7 +25,6 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ObjectRenderer;
 
 import java.io.*;
-import java.net.URL;
 import java.util.Set;
 
 /**
@@ -56,9 +55,8 @@ public class LocationRenderer implements ObjectRenderer<Location>
 
         if (line <= 0) return;
 
-        URL url = r.toURL();
+        if (!r.exists()) return;
 
-        if (url == null) return;
 
         int start = line - RANGE;
         int end = line + RANGE;
@@ -69,7 +67,7 @@ public class LocationRenderer implements ObjectRenderer<Location>
 
         try
         {
-            InputStream is = new BufferedInputStream(url.openStream());
+            InputStream is = r.openStream();
             InputStreamReader isr = new InputStreamReader(is);
             reader = new LineNumberReader(new BufferedReader(isr));
 

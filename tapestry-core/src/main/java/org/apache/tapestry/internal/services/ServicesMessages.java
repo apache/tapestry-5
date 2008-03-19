@@ -26,7 +26,6 @@ import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.services.TransformMethodSignature;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -208,7 +207,7 @@ class ServicesMessages
                 .getCompleteId());
     }
 
-    static String failureReadingMessages(URL url, Throwable cause)
+    static String failureReadingMessages(Resource url, Throwable cause)
     {
         return MESSAGES.format("failure-reading-messages", url, cause);
     }

@@ -24,7 +24,6 @@ import org.apache.tapestry.services.Response;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URL;
 
 /**
  * Recognizes requests where the path begins with "/asset/" and delivers the content therein as a bytestream. Also
@@ -69,9 +68,7 @@ public class AssetDispatcher implements Dispatcher
 
         if (resource == null) return true;
 
-        URL url = resource.toURL();
-
-        if (url == null)
+        if (!resource.exists())
         {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, ServicesMessages
                     .assetDoesNotExist(resource));
