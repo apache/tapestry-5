@@ -223,18 +223,30 @@ var Tapestry = {
     },
 
 
-    // Links a FormFragment to a checkbox, such that changing the checkbox will hide
+    // Links a FormFragment to a trigger (a radio or a checkbox), such that changing the trigger will hide
     // or show the FormFragment. Care should be taken to render the page with the
     // checkbox and the FormFragment('s visibility) in agreement.
 
-    linkCheckboxToFormFragment : function(checkbox, element)
+    linkTriggerToFormFragment : function(trigger, element)
     {
-        checkbox = $(checkbox);
+        trigger = $(trigger);
 
-        checkbox.observe("change", function()
+        trigger.observe("change", function()
         {
-            $(element).formFragment.setVisible(checkbox.checked);
+            $(element).formFragment.setVisible(trigger.checked);
         });
+
+
+        if (trigger.type == "radio")
+        {
+            $(trigger.form).observe("change", function()
+            {
+                if (! trigger.checked)
+                {
+                    $(element).formFragment.hide();
+                }
+            });
+        }
     },
 
     // Adds a validator for a field.  A FieldEventManager is added, if necessary.
@@ -691,7 +703,6 @@ Tapestry.ElementEffect = {
         new Effect.SlideUp(element);
     },
 
-
     fade : function(element)
     {
         new Effect.Fade(element);
@@ -763,12 +774,14 @@ Tapestry.FormFragment.prototype = {
 
     hide : function()
     {
-        this.hideFunc(this.element);
+        if (this.element.visible())
+            this.hideFunc(this.element);
     },
 
     show : function()
     {
-        this.showFunc(this.element);
+        if (! this.element.visible())
+            this.showFunc(this.element);
     },
 
     toggle : function()

@@ -16,14 +16,20 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.integration.app1.data.SubscribeData;
 
 public class FormFragmentDemo
 {
+    @Property
     private SubscribeData _subscribe;
 
+    @Property
     private boolean _subscribeToEmail;
+
+    @Property
+    private boolean _codeVisible;
 
     @Component
     private Form _form;
@@ -34,16 +40,6 @@ public class FormFragmentDemo
     public SubscribeData getSubscribe()
     {
         return _subscribe;
-    }
-
-    public boolean isSubscribeToEmail()
-    {
-        return _subscribeToEmail;
-    }
-
-    public void setSubscribeToEmail(boolean subscribeToEmail)
-    {
-        _subscribeToEmail = subscribeToEmail;
     }
 
     void onPrepare()
@@ -63,8 +59,6 @@ public class FormFragmentDemo
 
     Object onSuccess()
     {
-
-
         return _outputPage.initialize(_subscribe);
     }
 }
