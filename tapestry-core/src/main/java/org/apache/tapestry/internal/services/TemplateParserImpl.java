@@ -207,15 +207,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             }
         }
 
-        URL resourceURL = templateResource.toURL();
-
-        if (resourceURL == null) throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
+        if (!templateResource.exists())
+            throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
 
         _templateResource = templateResource;
 
         try
         {
-            InputSource source = new InputSource(resourceURL.openStream());
+            InputSource source = new InputSource(templateResource.openStream());
 
             _reader.parse(source);
 

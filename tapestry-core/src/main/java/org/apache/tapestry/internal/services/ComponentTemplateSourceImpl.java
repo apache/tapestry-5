@@ -25,7 +25,6 @@ import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.model.ComponentModel;
 
-import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -131,11 +130,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         // In a race condition, we may parse the same template more than once. This will likely add
         // the resource to the tracker multiple times. Not likely this will cause a big issue.
 
-        URL resourceURL = r.toURL();
+        if (!r.exists()) return _missingTemplate;
 
-        if (resourceURL == null) return _missingTemplate;
-
-        _tracker.add(resourceURL);
+        _tracker.add(r.toURL());
 
         return _parser.parseTemplate(r);
     }

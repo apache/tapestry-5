@@ -23,9 +23,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.LocalizedNameGenerator;
 
-import java.io.BufferedInputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -189,11 +187,9 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> readProperties(Resource resource)
     {
-        URL url = resource.toURL();
+        if (!resource.exists()) return _emptyMap;
 
-        if (url == null) return _emptyMap;
-
-        _tracker.add(url);
+        _tracker.add(resource.toURL());
 
         Map<String, String> result = newCaseInsensitiveMap();
 
@@ -202,7 +198,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         try
         {
-            is = new BufferedInputStream(url.openStream());
+            is = resource.openStream();
 
             p.load(is);
 
@@ -212,7 +208,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         }
         catch (Exception ex)
         {
-            throw new RuntimeException(ServicesMessages.failureReadingMessages(url, ex), ex);
+            throw new RuntimeException(ServicesMessages.failureReadingMessages(resource, ex), ex);
         }
         finally
         {

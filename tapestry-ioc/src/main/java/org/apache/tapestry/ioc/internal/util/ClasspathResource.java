@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,14 +20,15 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import java.net.URL;
 
 /**
- * Implementation of {@link Resource} for files on the classpath (as defined by a
- * {@link ClassLoader}).
+ * Implementation of {@link Resource} for files on the classpath (as defined by a {@link ClassLoader}).
  */
 public final class ClasspathResource extends AbstractResource
 {
     private final ClassLoader _classLoader;
 
     private URL _url;
+
+    private boolean _urlResolved;
 
     public ClasspathResource(String path)
     {
@@ -51,7 +52,11 @@ public final class ClasspathResource extends AbstractResource
 
     public synchronized URL toURL()
     {
-        if (_url == null) _url = _classLoader.getResource(getPath());
+        if (!_urlResolved)
+        {
+            _url = _classLoader.getResource(getPath());
+            _urlResolved = true;
+        }
 
         return _url;
     }

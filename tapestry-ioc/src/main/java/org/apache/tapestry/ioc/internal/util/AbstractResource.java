@@ -1,4 +1,4 @@
-// Copyright 2006 The Apache Software Foundation
+// Copyright 2006, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -18,13 +18,15 @@ import org.apache.tapestry.ioc.Resource;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Locale;
 
 /**
- * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods
- * {@link Resource#toURL()} and {@link #newResource(String)} as well as toString(), hashCode() and
- * equals().
+ * Abstract implementation of {@link Resource}. Subclasses must implement the abstract methods {@link Resource#toURL()}
+ * and {@link #newResource(String)} as well as toString(), hashCode() and equals().
  */
 public abstract class AbstractResource implements Resource
 {
@@ -101,9 +103,7 @@ public abstract class AbstractResource implements Resource
         {
             Resource potential = createResource(path);
 
-            URL url = potential.toURL();
-
-            if (url != null) return potential;
+            if (potential.exists()) return potential;
         }
 
         return null;
@@ -121,14 +121,34 @@ public abstract class AbstractResource implements Resource
     }
 
     /**
-     * Creates a new resource, unless the path matches the current Resource's path (in which case,
-     * this resource is returned).
+     * Creates a new resource, unless the path matches the current Resource's path (in which case, this resource is
+     * returned).
      */
     private Resource createResource(String path)
     {
         if (_path.equals(path)) return this;
 
         return newResource(path);
+    }
+
+    /**
+     * Simple check for whether {@link #toURL()} returns null or not.
+     */
+    public boolean exists()
+    {
+        return toURL() != null;
+    }
+
+    /**
+     * Obtains the URL for the Resource and opens the stream, wrapped by a BufferedInputStream.
+     */
+    public InputStream openStream() throws IOException
+    {
+        URL url = toURL();
+
+        if (url == null) return null;
+
+        return new BufferedInputStream(url.openStream());
     }
 
     /**

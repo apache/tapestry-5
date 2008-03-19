@@ -12,6 +12,14 @@ Upgrade Notes
   You should also check the {{{../release-notes.html}project-wide release notes}} for information
   about bugs fixes and other improvements.
 
+Release 5.0.12
+
+* Resource.openStream()
+
+  The methods <<<exists()>>> and <<<openStream()>>> were added to the
+  {{{../apidocs/org/apache/tapestry/ioc/Resource.html}Resource}} interface. The semantics
+  of some of the other methods were slightly alterred.
+
 Release 5.0.11
 
 * Field.getElementName()

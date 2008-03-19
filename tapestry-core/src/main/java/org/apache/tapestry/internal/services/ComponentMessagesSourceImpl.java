@@ -88,7 +88,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
         // If the application catalog exists, set it up as the root, otherwise use null.
 
-        MessagesBundle appCatalogBundle = appCatalogResource.toURL() == null ? null
+        MessagesBundle appCatalogBundle = !appCatalogResource.exists() ? null
                                           : new MessagesBundle()
         {
             public Resource getBaseResource()
