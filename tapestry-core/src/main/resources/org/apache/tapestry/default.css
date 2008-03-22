@@ -149,6 +149,10 @@ DIV.t-beaneditor-row LABEL:after {
     content: ":";
 }
 
+DIV.t-beandisplay-row {
+    clear: both;
+}
+
 DIV.t-beaneditor-row LABEL, DIV.t-beandisplay DIV.t-beandisplay-label {
     width: 250px;
     display: block;
