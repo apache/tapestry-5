@@ -57,7 +57,7 @@ public class InjectContainerWorker implements ComponentClassTransformWorker
 
             builder.addln("try");
             builder.begin();
-            builder.addln("%s = (%s) container;", fieldName, fieldType);
+            builder.addln("this.%s = (%s) container;", fieldName, fieldType);
             builder.end();
             builder.addln("catch (ClassCastException ex)");
             builder.begin();
