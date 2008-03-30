@@ -38,9 +38,10 @@ public class MultipartServletRequestFilter implements HttpServletRequestFilter
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
             throws IOException
     {
-        if (ServletFileUpload.isMultipartContent(request)) request = _decoder.decode(request);
+        HttpServletRequest newRequest = ServletFileUpload.isMultipartContent(request) ? _decoder.decode(
+                request) : request;
 
-        return handler.service(request, response);
+        return handler.service(newRequest, response);
     }
 
 }
