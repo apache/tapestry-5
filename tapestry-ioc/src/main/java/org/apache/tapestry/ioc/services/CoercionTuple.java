@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,16 +17,14 @@ package org.apache.tapestry.ioc.services;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 /**
- * An immutable object that represents a mapping from one type to another. This is also the
- * contribution type when building the {@link org.apache.tapestry.ioc.services.TypeCoercer} service.
- * Wraps a {@link org.apache.tapestry.ioc.services.Coercion} object that
- * performs the work with additional properties that describe the input and output types of the
- * coercion, needed when searching for an appropriate coercion (or sequence of coercions).
+ * An immutable object that represents a mapping from one type to another. This is also the contribution type when
+ * building the {@link org.apache.tapestry.ioc.services.TypeCoercer} service. Wraps a {@link
+ * org.apache.tapestry.ioc.services.Coercion} object that performs the work with additional properties that describe
+ * the input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
+ * coercions).
  *
- * @param <S>
- * source (input) type
- * @param <T>
- * target (output) type
+ * @param <S> source (input) type
+ * @param <T> target (output) type
  */
 public final class CoercionTuple<S, T>
 {
@@ -37,8 +35,7 @@ public final class CoercionTuple<S, T>
     private final Coercion<S, T> _coercion;
 
     /**
-     * Wraps an arbitrary coercion with an implementation of toString() that identifies the source
-     * and target types.
+     * Wraps an arbitrary coercion with an implementation of toString() that identifies the source and target types.
      */
     private class CoercionWrapper<WS, WT> implements Coercion<WS, WT>
     {

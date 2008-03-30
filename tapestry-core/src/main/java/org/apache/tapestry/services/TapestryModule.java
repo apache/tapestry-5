@@ -154,14 +154,8 @@ public final class TapestryModule
      */
     public static void contributeBindingSource(MappedConfiguration<String, BindingFactory> configuration,
 
-                                               AssetSource assetSource,
-
                                                @InjectService("PropBindingFactory")
                                                BindingFactory propBindingFactory,
-
-                                               FieldValidatorSource fieldValidatorSource,
-
-                                               TranslatorSource translatorSource,
 
                                                ObjectLocator locator)
     {
@@ -170,8 +164,8 @@ public final class TapestryModule
 
         configuration.add("component", new ComponentBindingFactory());
         configuration.add("message", new MessageBindingFactory());
-        configuration.add("validate", new ValidateBindingFactory(fieldValidatorSource));
-        configuration.add("translate", new TranslateBindingFactory(translatorSource));
+        configuration.add("validate", locator.autobuild(ValidateBindingFactory.class));
+        configuration.add("translate", locator.autobuild(TranslateBindingFactory.class));
         configuration.add("block", new BlockBindingFactory());
         configuration.add("asset", locator.autobuild(AssetBindingFactory.class));
         configuration.add("var", new RenderVariableBindingFactory());

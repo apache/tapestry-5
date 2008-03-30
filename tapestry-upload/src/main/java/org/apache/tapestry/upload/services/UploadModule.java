@@ -40,11 +40,11 @@ public class UploadModule
     }
 
     @Scope(IOCConstants.PERTHREAD_SCOPE)
-    public synchronized static MultipartDecoder buildMultipartDecoder(PerthreadManager perthreadManager,
+    public static MultipartDecoder buildMultipartDecoder(PerthreadManager perthreadManager,
 
-                                                                      RegistryShutdownHub shutdownHub,
+                                                         RegistryShutdownHub shutdownHub,
 
-                                                                      ObjectLocator locator)
+                                                         ObjectLocator locator)
     {
         MultipartDecoderImpl multipartDecoder = locator.autobuild(MultipartDecoderImpl.class);
 
