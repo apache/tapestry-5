@@ -49,6 +49,9 @@ public class RenderQueueImpl implements RenderQueue
 
         boolean traceEnabled = _logger.isTraceEnabled();
 
+        long startNanos = System.nanoTime();
+        int commandCount = 0;
+
         // Seems to make sense to use one try/finally around the whole process, rather than
         // around each call to render() since the end result (in a failure scenario) is the same.
 
@@ -57,6 +60,8 @@ public class RenderQueueImpl implements RenderQueue
             while (!_queue.isEmpty())
             {
                 command = _queue.pop();
+
+                commandCount++;
 
                 if (traceEnabled) _logger.trace(String.format("Executing: %s", command));
 
@@ -74,6 +79,20 @@ public class RenderQueueImpl implements RenderQueue
 
             throw new RenderQueueException(message, _renderingComponents.getSnapshot(), ex);
         }
+
+        long endNanos = System.nanoTime();
+
+        if (_logger.isDebugEnabled())
+        {
+
+            long elapsedNanos = endNanos - startNanos;
+            double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
+
+            _logger.debug(String.format("Executed %,d rendering commands in %.2f seconds",
+                                        commandCount,
+                                        elapsedSeconds));
+        }
+
     }
 
     public void startComponent(ComponentResources resources)

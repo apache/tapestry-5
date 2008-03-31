@@ -14,6 +14,10 @@
 
 var Tapestry = {
 
+    FORM_VALIDATE_EVENT : "form:validate",
+
+    FORM_PREPARE_FOR_SUBMIT_EVENT : "form:prepareforsubmit",
+
     FormEvent : Class.create(),
 
     FormEventManager : Class.create(),
@@ -258,12 +262,21 @@ var Tapestry = {
 
     addValidator : function(field, acceptBlank, validator)
     {
+        this.getFieldEventManager(field).addValidator(acceptBlank, validator);
+    },
+
+    getFieldEventManager : function(field)
+    {
         field = $(field);
 
-        if (field.fieldEventManager == undefined) new Tapestry.FieldEventManager(field);
+        var manager = field.fieldEventManager;
 
-        field.fieldEventManager.addValidator(acceptBlank, validator);
+        if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
+
+        return manager;
     }
+
+
 }
 
 
@@ -275,7 +288,7 @@ Tapestry.ElementAdditions = {
     // and its icon.
     decorateForValidationError : function (element, message)
     {
-        $(element).fieldEventManager.addDecorations(message);
+        Tapestry.getFieldEventManager(element).addDecorations(message);
     },
 
     // Checks to see if an element is truly visible, meaning the receiver and all
@@ -283,6 +296,8 @@ Tapestry.ElementAdditions = {
 
     isDeepVisible : function(element)
     {
+        element = $(element);
+
         if (! element.visible()) return false;
 
         // Stop at a form, which is sufficient for validation purposes.
@@ -393,6 +408,15 @@ Tapestry.FormEvent.prototype = {
 };
 
 Tapestry.ErrorPopup.prototype = {
+
+    BUBBLE_VERT_OFFSET : -34,
+
+    BUBBLE_HORIZONTAL_OFFSET : -5,
+
+    BUBBLE_WIDTH: "auto",
+
+    BUBBLE_HEIGHT: "39px",
+
     initialize : function(field)
     {
         this.field = $(field);
@@ -440,7 +464,11 @@ Tapestry.ErrorPopup.prototype = {
     {
         var fieldPos = this.field.positionedOffset();
 
-        this.outerDiv.setStyle({ top: fieldPos[1] - 34 + "px", left: fieldPos[0] - 5 + "px", width: "auto", height: "39px" });
+        this.outerDiv.setStyle({
+            top: (fieldPos[1] + this.BUBBLE_VERT_OFFSET) + "px",
+            left: (fieldPos[0] + this.BUBBLE_HORIZONTAL_OFFSET) + "px",
+            width: this.BUBBLE_WIDTH,
+            height: this.BUBBLE_HEIGHT });
     },
 
     fadeIn : function()
@@ -539,13 +567,20 @@ Tapestry.FormEventManager.prototype = {
             }
         });
 
+        // Allow observers to validate the form as a whole.  The FormEvent will be visible
+        // as event.memo.  The Form will not be submitted if event.result is set to false (it defaults
+        // to true).
+
+        this.form.fire(Tapestry.FORM_VALIDATE_EVENT, event);
+
+
         if (! event.result)
         {
             domevent.stop();
         }
         else
         {
-            this.form.fire("form:prepareforsubmit");
+            this.form.fire(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT);
         }
 
         return event.result;
@@ -766,7 +801,7 @@ Tapestry.FormFragment.prototype = {
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.slidedown;
         this.hideFunc = Tapestry.ElementEffect[spec.hide] || Tapestry.ElementEffect.slideup;
 
-        $(this.hidden.form).observe("form:prepareforsubmit", function()
+        $(this.hidden.form).observe(Tapestry.FORM_PREPARE_FOR_SUBMIT_EVENT, function()
         {
             this.hidden.value = this.element.isDeepVisible();
         }.bind(this));

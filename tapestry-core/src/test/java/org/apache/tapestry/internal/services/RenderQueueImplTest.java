@@ -43,6 +43,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         // There's only one check for trace enabled now.
 
         train_isTraceEnabled(logger, false);
+        train_isDebugEnabled(logger, false);
 
         command2.render(writer, queue);
 
@@ -105,7 +106,7 @@ public class RenderQueueImplTest extends InternalBaseTestCase
         {
             assertSame(ex.getCause(), t);
 
-            assertArraysEqual(ex.getActiveComponents(), new Object[]{foo, baz});
+            assertArraysEqual(ex.getActiveComponents(), new Object[] { foo, baz });
         }
 
         verify();
