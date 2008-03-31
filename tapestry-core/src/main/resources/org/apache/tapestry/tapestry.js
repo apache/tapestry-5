@@ -286,9 +286,14 @@ Tapestry.ElementAdditions = {
     // This is added to all Elements, but really only applys to form control elements. This method is invoked
     // when a validation error is associated with a field. This gives the field a chance to decorate itself, its label
     // and its icon.
-    decorateForValidationError : function (element, message)
+    decorateForValidationError : function(element, message)
     {
         Tapestry.getFieldEventManager(element).addDecorations(message);
+    },
+
+    removeDecorations : function(element)
+    {
+        Tapestry.getFieldEventManager(element).removeDecorations();
     },
 
     // Checks to see if an element is truly visible, meaning the receiver and all
