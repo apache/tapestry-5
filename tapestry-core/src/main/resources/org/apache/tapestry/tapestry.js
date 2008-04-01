@@ -84,16 +84,25 @@ var Tapestry = {
         });
     },
 
+    getFormEventManager : function(form)
+    {
+        form = $(form);
+
+        var manager = form.eventManager;
+
+        if (manager == undefined)
+            manager = new Tapestry.FormEventManager(form);
+
+        return manager;
+    },
+
     registerValidation : function(clientValidations)
     {
         $H(clientValidations).each(function(pair)
         {
             var field = $(pair.key);
 
-            var form = $(field.form);
-
-            if (! form.eventManager)
-                form.eventManager = new Tapestry.FormEventManager(form);
+            Tapestry.getFormEventManager(field.form);
 
             var specs = pair.value;
 
@@ -682,15 +691,6 @@ Tapestry.FieldEventManager.prototype = {
         if (this.field.disabled) return;
 
         if (! this.field.isDeepVisible()) return;
-
-     // Clear out old decorations.  It's easier to remove the decorations
-        // and then re-add them if the field is in error than it is to
-        // toggle them on or off at the end.
-
-        event.field.removeClassName("t-error");
-
-        if (this.label)
-            this.label.removeClassName("t-error");
 
         var value = $F(event.field);
         var isBlank = (value == '');
