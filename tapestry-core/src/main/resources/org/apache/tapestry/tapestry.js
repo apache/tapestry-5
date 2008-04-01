@@ -176,7 +176,7 @@ var Tapestry = {
 
                 element.request({ onSuccess : successHandler });
 
-                event.stop();
+                Event.stop(event); // Should be domevent.stop(), but that fails under IE
 
                 return false;
             };
@@ -438,7 +438,9 @@ Tapestry.ErrorPopup.prototype = {
         this.innerSpan = new Element("span");
         this.outerDiv = $(new Element("div", { 'class' : 't-error-popup' })).update(this.innerSpan).hide();
 
-        this.field.insert({ after : this.outerDiv });
+        var body = $$('body')[0];
+
+        body.insert({ bottom: this.outerDiv });
 
         this.outerDiv.absolutize();
 
@@ -450,7 +452,7 @@ Tapestry.ErrorPopup.prototype = {
 
             this.field.focus();
 
-            event.stop();
+            Event.stop(event);  // Should be domevent.stop(), but that fails under IE
         }.bindAsEventListener(this));
 
         Tapestry.errorPopups.push(this);
@@ -590,7 +592,7 @@ Tapestry.FormEventManager.prototype = {
 
         if (! event.result)
         {
-            domevent.stop();
+            Event.stop(domevent); // Should be domevent.stop(), but that fails under IE
         }
         else
         {
