@@ -36,7 +36,8 @@ public interface FieldValidator<T>
     /**
      * Invokes {@link Validator#render(Field, Object, org.apache.tapestry.ioc.MessageFormatter, MarkupWriter,
      * org.apache.tapestry.services.FormSupport)}. This is called at a point "inside" the tag, so that additional
-     * attributes may be added.
+     * attributes may be added.  In many cases, the underlying {@link org.apache.tapestry.Validator} may write
+     * client-side JavaScript to enforce the constraint as well.
      *
      * @param writer markup writer to direct output to.
      * @see org.apache.tapestry.MarkupWriter#attributes(Object[])

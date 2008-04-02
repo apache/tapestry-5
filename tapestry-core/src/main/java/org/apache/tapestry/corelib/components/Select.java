@@ -166,6 +166,8 @@ public final class Select extends AbstractField
     {
         writer.element("select", "name", getControlName(), "id", getClientId());
 
+        _validate.render(writer);
+
         _resources.renderInformalParameters(writer);
 
         // Disabled is via a mixin
