@@ -866,9 +866,7 @@ Tapestry.FormInjector.prototype = {
 
                 var newElement = new Element(this.element.tagName);
 
-                newElement.innerHTML = reply.content;
-
-                // Insert the new content before or after the existing element.
+                // Insert the new element before or after the existing element.
 
                 var param = { };
                 var key = this.below ? "after" : "before";
@@ -878,13 +876,18 @@ Tapestry.FormInjector.prototype = {
 
                 this.element.insert(param);
 
-                // Add some animation
+                // Update the empty element with the content from the server
 
-                this.showFunc(newElement);
+                newElement.update(reply.content);
 
                 // Handle any scripting issues.
 
                 Tapestry.processScriptInReply(reply);
+
+                // Add some animation to reveal it all.
+
+                this.showFunc(newElement);
+
             }.bind(this);
 
             new Ajax.Request(this.url, { onSuccess : successHandler });

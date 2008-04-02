@@ -13,9 +13,11 @@
 
         </t:block>
 
-        <div t:id="forminjector" class="t-beaneditor-row">
-            <a href="#" id="addnewrow">Add a row</a>
-        </div>
+        <ul>
+            <li t:id="forminjector" class="t-beaneditor-row">
+                <a href="#" id="addnewrow">Add a row</a>
+            </li>
+        </ul>
 
         <div class="t-beaneditor-row">
             <input type="submit" value="Sum up the values"/>
