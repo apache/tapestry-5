@@ -1658,7 +1658,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
      * TAPESTRY-2114
      */
     @Test
-    public void boolean_properties_can_user_get_or_is()
+    public void boolean_properties_can_use_get_or_is_as_method_name_prefix()
     {
         start("Boolean Property Demo", "clear");
 

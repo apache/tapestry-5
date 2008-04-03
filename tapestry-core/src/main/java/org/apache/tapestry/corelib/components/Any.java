@@ -16,6 +16,8 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.ioc.annotations.Inject;
 
@@ -25,12 +27,20 @@ import org.apache.tapestry.ioc.annotations.Inject;
 @SupportsInformalParameters
 public class Any
 {
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _element;
+
     @Inject
     private ComponentResources _resources;
 
+    String defaultElement()
+    {
+        return _resources.getElementName("div");
+    }
+
     void beginRender(MarkupWriter writer)
     {
-        writer.element(_resources.getElementName(null));
+        writer.element(_element);
 
         _resources.renderInformalParameters(writer);
     }
