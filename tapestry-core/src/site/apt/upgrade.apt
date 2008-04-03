@@ -20,6 +20,11 @@ Release 5.0.12
   {{{../apidocs/org/apache/tapestry/ioc/Resource.html}Resource}} interface. The semantics
   of some of the other methods were slightly alterred.
 
+* Loop element parameter
+
+  The Loop components' elementName parameter was renamed to simply element (to be consistent
+  with element parameters added to the Any and FormInjector components).
+
 Release 5.0.11
 
 * Field.getElementName()

@@ -186,7 +186,7 @@ public class Loop
      * through the loop). The default is derived from the component template.
      */
     @Parameter(value = "prop:componentResources.elementName", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _elementName;
+    private String _element;
 
     /**
      * The current value, set before the component renders its body.
@@ -306,16 +306,16 @@ public class Loop
 
     void beforeRenderBody(MarkupWriter writer)
     {
-        if (_elementName != null)
+        if (_element != null)
         {
-            writer.element(_elementName);
+            writer.element(_element);
             _resources.renderInformalParameters(writer);
         }
     }
 
     void afterRenderBody(MarkupWriter writer)
     {
-        if (_elementName != null) writer.end();
+        if (_element != null) writer.end();
     }
 
     /**

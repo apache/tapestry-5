@@ -63,6 +63,13 @@ public class FormInjector implements ClientElement
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _show;
 
+    /**
+     * The element name to render, which is normally the element name used to represent the FormInjector component in
+     * the template, or "div".
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _element;
+
 
     @Environmental
     private PageRenderSupport _pageRenderSupport;
@@ -92,11 +99,16 @@ public class FormInjector implements ClientElement
     @Inject
     private Environment _environment;
 
+    String defaultElement()
+    {
+        return _resources.getElementName("div");
+    }
+
     void beginRender(MarkupWriter writer)
     {
         _clientId = _pageRenderSupport.allocateClientId(_resources);
 
-        writer.element(_resources.getElementName("div"),
+        writer.element(_element,
 
                        "id", _clientId);
 
