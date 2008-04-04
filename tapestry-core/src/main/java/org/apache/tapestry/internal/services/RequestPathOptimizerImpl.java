@@ -60,7 +60,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
         // Degenerate case when getting the root application
 
-        if (requestPath.equals("/") || requestPath.equals("")) requestTerms = add(requestTerms, "");
+        if (requestPath.endsWith("/") || requestPath.equals("")) requestTerms = add(requestTerms, "");
 
         String[] pathTerms = SLASH_PATTERN.split(absolutePath);
 
