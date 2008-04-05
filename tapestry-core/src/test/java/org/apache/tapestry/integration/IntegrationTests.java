@@ -449,11 +449,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         assertTextPresent("[]");
 
-        clickAndWait("show");
+        clickAndWait("link=show the message");
 
         assertTextPresent("[You clicked the link!]");
 
-        clickAndWait("refresh");
+        clickAndWait("link=refresh the page");
 
         assertTextPresent("[]");
     }
@@ -485,7 +485,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start(linkLabel);
 
-        clickAndWait("reset");
+        clickAndWait("link=reset the database");
 
         assertFieldValue("title", "End World Hunger");
         assertFieldValue("title_0", "Develop Faster-Than-Light Travel");
@@ -501,7 +501,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertFieldValue("title_0", "Develop Faster-Than-Light Travel - immediately");
         assertFieldValue("title_1", "Cure Common Cold - post haste");
 
-        clickAndWait("addNew");
+        clickAndWait("//input[@value='Add new ToDo']");
 
         type("title_2", "Conquer World");
 
@@ -731,7 +731,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Kicker");
 
-        clickAndWait("actionlink");
+        clickAndWait("link=kick target");
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
         assertTextPresent("No component context.");
@@ -747,11 +747,11 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Kicker");
 
-        clickAndWait("actionlink");
+        clickAndWait("link=kick target");
 
         assertTextSeries("//li[%d]", 1, "betty", "wilma", "betty/wilma", "\u82B1\u5B50");
 
-        clickAndWait("nocontext");
+        clickAndWait("link=Target base, no context");
 
         assertTextPresent("No activation context.");
     }
@@ -874,23 +874,23 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait(clear);
 
-        clickAndWait("wilma");
+        clickAndWait("link=No Context");
         assertTextPresent(
                 "[parent.eventHandlerZero(), parent.onAction(), child.eventHandlerZeroChild(), child.onAction()]");
 
         clickAndWait(clear);
-        clickAndWait("barney");
+        clickAndWait("link=Single context value");
 
         assertTextPresent(
                 "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
-        clickAndWait("betty");
+        clickAndWait("link=Two value context");
         assertTextPresent(
                 "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction()]");
 
         clickAndWait(clear);
-        clickAndWait("fred");
+        clickAndWait("link=Two value context (from fred)");
 
         assertTextPresent(
                 "[parent.eventHandlerOne(String), parent.eventHandlerZero(), parent.onAction(String), parent.onAction(), child.eventHandlerForFred(), child.eventHandlerOneChild(), child.eventHandlerZeroChild(), child.onAction(String), child.onAction(), child.onActionFromFred(String), child.onActionFromFred()]");
@@ -1665,7 +1665,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertText("usingGet", "false");
         assertText("usingIs", "false");
 
-        clickAndWait("set");
+        clickAndWait("link=set");
 
         assertText("usingGet", "true");
         assertText("usingIs", "true");

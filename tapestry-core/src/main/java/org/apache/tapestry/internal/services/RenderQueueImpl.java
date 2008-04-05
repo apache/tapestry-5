@@ -88,7 +88,7 @@ public class RenderQueueImpl implements RenderQueue
             long elapsedNanos = endNanos - startNanos;
             double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
 
-            _logger.debug(String.format("Executed %,d rendering commands in %.2f seconds",
+            _logger.debug(String.format("Executed %,d rendering commands in %.3f seconds",
                                         commandCount,
                                         elapsedSeconds));
         }

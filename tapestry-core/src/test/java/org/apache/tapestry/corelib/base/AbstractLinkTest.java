@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
 
         _linkFixture.inject(null, map, resources);
 
-        _linkFixture.writeLink(writer, "fred", link);
+        _linkFixture.writeLink(writer, link);
 
         verify();
 
@@ -61,7 +61,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
         writer.write("link text");
         writer.end();
 
-        assertEquals(writer.toString(), "<a href=\"/foo/bar.baz\" id=\"fred\">link text</a>");
+        assertEquals(writer.toString(), "<a href=\"/foo/bar.baz\">link text</a>");
         assertSame(map.get(e), invocation);
     }
 
@@ -84,7 +84,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
 
         _linkFixture.inject("wilma", map, resources);
 
-        _linkFixture.writeLink(writer, "barney", link);
+        _linkFixture.writeLink(writer, link);
 
         verify();
 
@@ -93,7 +93,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
         writer.write("link text");
         writer.end();
 
-        assertEquals(writer.toString(), "<a href=\"/foo/bar.baz#wilma\" id=\"barney\">link text</a>");
+        assertEquals(writer.toString(), "<a href=\"/foo/bar.baz#wilma\">link text</a>");
         assertSame(map.get(e), invocation);
     }
 
