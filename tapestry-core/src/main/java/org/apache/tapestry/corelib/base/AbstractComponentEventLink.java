@@ -14,11 +14,12 @@
 
 package org.apache.tapestry.corelib.base;
 
-import org.apache.tapestry.*;
+import org.apache.tapestry.Link;
+import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.annotations.Inject;
 
 import java.util.List;
 
@@ -42,12 +43,6 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _zone;
 
-    @Inject
-    private ComponentResources _resources;
-
-    @Environmental
-    private PageRenderSupport _support;
-
     @Environmental
     private ClientBehaviorSupport _clientBehaviorSupport;
 
@@ -55,15 +50,13 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     {
         if (isDisabled()) return;
 
-        String clientId = _support.allocateClientId(_resources);
-
         Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
 
         Link link = createLink(contextArray);
 
-        writeLink(writer, clientId, link);
+        writeLink(writer, link);
 
-        if (_zone != null) _clientBehaviorSupport.linkZone(clientId, _zone);
+        if (_zone != null) _clientBehaviorSupport.linkZone(getClientId(), _zone);
     }
 
     /**

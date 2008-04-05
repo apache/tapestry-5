@@ -14,12 +14,10 @@
 
 package org.apache.tapestry.corelib.base;
 
-import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.Link;
-import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.*;
 import static org.apache.tapestry.TapestryConstants.LITERAL_BINDING_PREFIX;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
@@ -50,7 +48,12 @@ public abstract class AbstractLink implements ClientElement
     @Inject
     private ComponentResources _resources;
 
+    @Inject
+    private PageRenderSupport _pageRenderSupport;
+
     private Link _link;
+
+    private Element _element;
 
     private String _clientId;
 
@@ -64,28 +67,33 @@ public abstract class AbstractLink implements ClientElement
     }
 
 
+    @SetupRender
+    void resetElementAndClientId()
+    {
+        _element = null;
+        _clientId = null;
+    }
+
     /**
      * Writes an &lt;a&gt; element with the provided link as the href attribute.  A call to {@link
      * org.apache.tapestry.MarkupWriter#end()} is <em>not</em> provided.            Automatically appends an anchor if
      * the component's anchor parameter is non-null.  Informal parameters are rendered as well.
      *
      * @param writer         to write markup to
-     * @param clientId       value written as the id attribute
      * @param link           the link that will form the href
      * @param namesAndValues additional attributes to write
      */
-    protected final void writeLink(MarkupWriter writer, String clientId, Link link, Object... namesAndValues)
+    protected final void writeLink(MarkupWriter writer, Link link, Object... namesAndValues)
     {
-        Element e = writer.element("a", "href", buildHref(link), "id", clientId);
+        _element = writer.element("a", "href", buildHref(link));
 
         writer.attributes(namesAndValues);
 
         _resources.renderInformalParameters(writer);
 
-        _componentInvocationMap.store(e, link);
+        _componentInvocationMap.store(_element, link);
 
         _link = link;
-        _clientId = clientId;
     }
 
     /**
@@ -102,10 +110,22 @@ public abstract class AbstractLink implements ClientElement
 
     /**
      * Returns the unique client id for this element. This is valid only after the component has rendered (its start
-     * tag), and then only if the component is {@linkplain #isDisabled() enabled}.
+     * tag).  A client id is generated the first time this method is invoked, after the link renders its start tag.
      */
-    public String getClientId()
+    public final String getClientId()
     {
+        if (_clientId == null)
+        {
+            if (_element == null)
+                throw new IllegalStateException(
+                        String.format("Client id for %s is not available as it did not render yet (or was disabled).",
+                                      _resources.getCompleteId()));
+
+            _clientId = _pageRenderSupport.allocateClientId(_resources);
+
+            _element.forceAttributes("id", _clientId);
+        }
+
         return _clientId;
     }
 

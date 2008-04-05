@@ -14,8 +14,9 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.Link;
+import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractLink;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -30,7 +31,7 @@ import java.util.List;
  * Pages are not required to have an activation context. When a page does have an activation context, the value
  * typically represents the identity of some object displayed or otherwise manipulated by the page.
  */
-public class PageLink extends AbstractLink implements ClientElement
+public class PageLink extends AbstractLink
 {
     /**
      * The logical name of the page to link to.
@@ -40,18 +41,6 @@ public class PageLink extends AbstractLink implements ClientElement
 
     @Inject
     private ComponentResources _resources;
-
-    @Environmental
-    private PageRenderSupport _support;
-
-    /**
-     * If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still
-     * rendered.
-     */
-    @Parameter("false")
-    private boolean _disabled;
-
-    private String _clientId;
 
     /**
      * If provided, this is the activation context for the target page (the information will be encoded into the URL).
@@ -64,31 +53,19 @@ public class PageLink extends AbstractLink implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        if (_disabled) return;
-
-        _clientId = _support.allocateClientId(_resources);
+        if (isDisabled()) return;
 
         Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
 
         Link link = _resources.createPageLink(_page, _resources.isBound("context"), activationContext);
 
-        writeLink(writer, _clientId, link);
+        writeLink(writer, link);
     }
 
     void afterRender(MarkupWriter writer)
     {
-        if (_disabled) return;
+        if (isDisabled()) return;
 
         writer.end(); // <a>
-    }
-
-    public String getClientId()
-    {
-        return _clientId;
-    }
-
-    void setDisabled(boolean disabled)
-    {
-        _disabled = disabled;
     }
 }
