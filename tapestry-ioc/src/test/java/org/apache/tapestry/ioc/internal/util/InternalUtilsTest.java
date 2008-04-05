@@ -25,6 +25,7 @@ import org.testng.annotations.Test;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -372,6 +373,15 @@ public class InternalUtilsTest extends IOCTestCase
         InternalUtils.close(c);
 
         verify();
+    }
+
+    @Test
+    public void constructor_with_inject_annotation()
+    {
+        Constructor c = InternalUtils.findAutobuildConstructor(InjectoBean.class);
+
+        assertEquals(c.getParameterTypes().length, 1);
+        assertEquals(c.getParameterTypes()[0], String.class);
     }
 
 }

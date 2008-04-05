@@ -449,7 +449,9 @@ public class InternalUtils
     /**
      * Searches a class for the "best" constructor, the public constructor with the most parameters. Returns null if
      * there are no public constructors. If there is more than one constructor with the maximum number of parameters, it
-     * is not determined which will be returned (don't build a class like that!).
+     * is not determined which will be returned (don't build a class like that!). In addition, if a constructor is
+     * annotated with {@link org.apache.tapestry.ioc.annotations.Inject}, it will be used (no check for multiple such
+     * constructors is made, only at most a single constructor should have the annotation).
      *
      * @param clazz to search for a constructor for
      * @return the constructor to be used to instantiate the class, or null if no appropriate constructor was found
@@ -470,6 +472,11 @@ public class InternalUtils
 
             default:
                 break;
+        }
+
+        for (Constructor c : constructors)
+        {
+            if (c.getAnnotation(Inject.class) != null) return c;
         }
 
         // Choose a constructor with the most parameters.
