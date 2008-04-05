@@ -51,12 +51,13 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
     }
 
     /**
-     * Commits the transaction at the end of the request, then closes the session. The transaction commit should largely
-     * be a no-op, since it's expected that {@link #commit()} will have been invoked after any real changes.
+     * Rollsback the transaction at the end of the request, then closes the session. This means that any uncommitted
+     * changes are lost; code should inject the HSM and invoke {@link #commit()} after making any changes, if they
+     * should persist.
      */
     public void threadDidCleanup()
     {
-        _transaction.commit();
+        _transaction.rollback();
 
         _session.close();
     }

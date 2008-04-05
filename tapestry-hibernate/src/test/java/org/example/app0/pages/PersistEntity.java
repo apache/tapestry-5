@@ -14,45 +14,61 @@
 
 package org.example.app0.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.hibernate.HibernateSessionManager;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 
-public class PersistEntity {
-	@Persist("entity")
-	@Property
-	private User _user;
-	
-	@Inject
-	private Session _session;
-		
-	void onCreateEntity() {
-		User user = new User();
-		user.setFirstName("name");
-		_session.save(user);
-		_user = user;
-	}
-	
-	void onChangeName() {
-		_user.setFirstName("name2");
-		// avoid having the changes saved if the request transaction is committed
-		_session.evict(_user);
-	}
-	
-	void onSetToTransient() {
-		_user = new User();
-	}
-	
-	void onSetToNull() {
-		_user = null;
-	}
-	
-	void onDelete() {
-		for(User user : (List<User>)_session.createQuery("from User").list())
-			_session.delete(user);
-	}
+import java.util.List;
+
+public class PersistEntity
+{
+    @Persist("entity")
+    @Property
+    private User _user;
+
+    @Inject
+    private Session _session;
+
+    @Inject
+    private HibernateSessionManager _manager;
+
+    void onCreateEntity()
+    {
+        User user = new User();
+        user.setFirstName("name");
+
+        _session.save(user);
+        _manager.commit();
+
+        _user = user;
+    }
+
+    void onChangeName()
+    {
+        _user.setFirstName("name2");
+        // avoid having the changes saved if the request transaction is committed
+        // This may no longer be necessary due to TAPESTRY-2247
+        _session.evict(_user);
+    }
+
+    void onSetToTransient()
+    {
+        _user = new User();
+    }
+
+    void onSetToNull()
+    {
+        _user = null;
+    }
+
+    void onDelete()
+    {
+        for (User user : (List<User>) _session.createQuery("from User").list())
+            _session.delete(user);
+
+        _manager.commit();
+    }
 }

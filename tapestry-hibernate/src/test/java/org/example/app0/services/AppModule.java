@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,10 +14,17 @@
 
 package org.example.app0.services;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.hibernate.HibernateModule;
+import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.annotations.SubModule;
 
 @SubModule(HibernateModule.class)
-public class AppModule {
+public class AppModule
+{
+    public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
+    {
+        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
+    }
 
 }
