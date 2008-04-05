@@ -9,7 +9,8 @@ Entity value encoding
   the following example:
   
 +----+
-public class ViewPerson {
+public class ViewPerson
+{
   @Property
   private Person _person;
   
@@ -40,7 +41,8 @@ Using @Persist with entities
   If you wish to persist an entity in the session, you may use the "entity" persistence strategy:
   
 +----+
-public class ViewPerson {
+public class ViewPerson
+{
   @Persist("entity")
   @Property
   private Person _person;
@@ -55,3 +57,43 @@ public class ViewPerson {
   
   This persistence strategy works with any Hibernate entity that is associated with a valid Hibernate Session by persisting only the id
   of the entity. Notice that no onPassivate() method is needed; when the page renders the entity is loaded by the id stored in the session.
+
+Committing Changes
+
+  All Hibernate operations occur in a transaction, but that transaction is rolledback at the end of each request; thus
+  any changes you make will be <lost> unless the transaction is committed.
+
+  The correct way to commit the transaction is by injecting the HibernateSessionManager service:
+
++----+
+public class EditPerson
+{
+  @Persist("entity")
+  @Property
+  private Person _person;
+
+  @InjectPage
+  private PersonIndex _personIndex;
+
+  @Inject
+  private HibernateSessionManager _manager;
+
+  void onActivate(Person person)
+  {
+    _person = person;
+  }
+
+  Object onPassivate() { return _person; }
+
+  Object onSuccess()
+  {
+    _manager.commit();
+
+    return _personIndex;
+  }
+}
++----+
+
+  In this example, the Person object may be updated by a form; the form's success event handler method,
+  onSuccess(), asks the HibernateSessionManager to commit the current transaction before returning to
+  the PersonIndex page.

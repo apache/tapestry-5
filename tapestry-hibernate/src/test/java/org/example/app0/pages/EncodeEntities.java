@@ -14,38 +14,48 @@
 
 package org.example.app0.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.hibernate.HibernateSessionManager;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
 
-public class EncodeEntities {
-	@Inject
-	@Property
-	private Session _session;
-	
-	@SuppressWarnings("unused")
-	@Property
-	private User _user;
-	
-	void onCreate() {
-		User user = new User();
-		user.setFirstName("name");
-		_session.save(user);
-	}
+import java.util.List;
 
-	@SuppressWarnings("unchecked")
-	User onPassivate() {
-		List<User> users = _session.createQuery("from User").list();
-		if (users.isEmpty())
-			return null;
-		
-		return users.get(0);
-	}
-	
-	void onActivate(User user) {
-		_user = user;
-	}
+public class EncodeEntities
+{
+    @Inject
+    private Session _session;
+
+    @SuppressWarnings("unused")
+    @Property
+    private User _user;
+
+    @Inject
+    private HibernateSessionManager _manager;
+
+    void onCreate()
+    {
+        User user = new User();
+        user.setFirstName("name");
+
+        _session.save(user);
+
+        _manager.commit();
+    }
+
+    @SuppressWarnings("unchecked")
+    User onPassivate()
+    {
+        List<User> users = _session.createQuery("from User").list();
+        if (users.isEmpty())
+            return null;
+
+        return users.get(0);
+    }
+
+    void onActivate(User user)
+    {
+        _user = user;
+    }
 }

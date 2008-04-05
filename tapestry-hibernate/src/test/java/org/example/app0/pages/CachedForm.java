@@ -14,40 +14,49 @@
 
 package org.example.app0.pages;
 
-import java.util.List;
-
 import org.apache.tapestry.annotations.Cached;
 import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.hibernate.HibernateSessionManager;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
+
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class CachedForm
 {
     @Property
     private String _name;
-    
-	@Property
+
+    @Property
     private User _user;
-    
+
     @Property
     private int _index;
-    
+
     @Inject
     private Session _session;
-    
-    void onSuccess() {
+
+    @Inject
+    private HibernateSessionManager _manager;
+
+    void onSuccess()
+    {
         User user = new User();
         user.setFirstName(_name);
+
         _session.save(user);
+
+        _manager.commit();
     }
 
     @SuppressWarnings("unchecked")
-	@Cached
-    public List<User> getUsers() {
-    	return _session.createQuery("from User").list();
+    @Cached
+    public List<User> getUsers()
+    {
+        return _session.createQuery("from User").list();
     }
-    
-    
+
+
 }
