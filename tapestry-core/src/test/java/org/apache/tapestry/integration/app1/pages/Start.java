@@ -84,6 +84,8 @@ public class Start
 
             new Item("nested/AssetDemo", "AssetDemo", "declaring an image using Assets"),
 
+            new Item("nested/ActionDemo", "Action With Context Demo", "using action links with context on page with activation context"),
+
             new Item("blockdemo", "BlockDemo", "use of blocks to control rendering"),
 
             new Item("countdown", "Countdown Page", "defining component using @Component annotation"),
