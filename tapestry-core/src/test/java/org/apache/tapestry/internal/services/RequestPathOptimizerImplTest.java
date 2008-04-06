@@ -83,6 +83,10 @@ public class RequestPathOptimizerImplTest extends InternalBaseTestCase
                 // TAPESTRY-2095
 
                 {"", "/", "/component:event", "/component:event"},
+                
+                // TAPESTRY-2333
+                
+                {"", "/nested/actiondemo/", "/nested/actiondemo.actionlink/2", "../actiondemo.actionlink/2"},
 
                 // Make sure the ./ prefix is added even when the relative path doesn't contain
                 // a slash ... otherwise, invalid URL component:event (i.e., "component" protocol, not "http").

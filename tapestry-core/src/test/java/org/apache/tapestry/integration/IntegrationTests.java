@@ -1439,6 +1439,19 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     /**
+     * TAPESTRY-2333
+     */
+    @Test
+    public void action_links_on_custom_url()
+    {
+        open(BASE_URL + "nested/actiondemo/");
+        
+        clickAndWait("link=2");
+
+        assertTextPresent("Number: 2");
+    }
+
+    /**
      * TAPESTRY-1598
      */
     @Test
