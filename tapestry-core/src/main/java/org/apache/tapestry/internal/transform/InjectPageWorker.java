@@ -15,14 +15,13 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.internal.services.RequestPageCache;
-import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassResolver;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry.services.ComponentSource;
 import org.apache.tapestry.services.TransformMethodSignature;
 
 import java.lang.reflect.Modifier;
@@ -35,13 +34,13 @@ import java.util.List;
  */
 public class InjectPageWorker implements ComponentClassTransformWorker
 {
-    private final RequestPageCache _requestPageCache;
+    private final ComponentSource _componentSource;
 
     private final ComponentClassResolver _resolver;
 
-    public InjectPageWorker(RequestPageCache requestPageCache, ComponentClassResolver resolver)
+    public InjectPageWorker(ComponentSource componentSource, ComponentClassResolver resolver)
     {
-        _requestPageCache = requestPageCache;
+        _componentSource = componentSource;
         _resolver = resolver;
     }
 
@@ -51,15 +50,16 @@ public class InjectPageWorker implements ComponentClassTransformWorker
 
         if (names.isEmpty()) return;
 
-        String cacheFieldName = transformation.addInjectedField(RequestPageCache.class, "_requestPageCache",
-                                                                _requestPageCache);
-
+        String componentSource = transformation.addInjectedField(ComponentSource.class, "_componentSource",
+                                                                _componentSource);
+        
+        
         for (String name : names)
-            addInjectedPage(transformation, name, cacheFieldName);
+            addInjectedPage(transformation, name, componentSource);
 
     }
 
-    private void addInjectedPage(ClassTransformation transformation, String fieldName, String cacheFieldName)
+    private void addInjectedPage(ClassTransformation transformation, String fieldName, String componentSource)
     {
         InjectPage annotation = transformation.getFieldAnnotation(fieldName, InjectPage.class);
 
@@ -77,9 +77,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         BodyBuilder builder = new BodyBuilder();
         builder.begin();
 
-        builder.addln("%s page = %s.get(\"%s\");", Page.class.getName(), cacheFieldName, injectedPageName);
-
-        builder.addln("return (%s) page.getRootElement().getComponent();", fieldType);
+        builder.addln("return (%s) %s.getPage(\"%s\");", fieldType, componentSource, injectedPageName);
 
         builder.end();
 
