@@ -227,13 +227,7 @@ public final class TapestryModule
 
             InjectionProvider injectionProvider,
 
-            Environment environment,
-
-            ComponentClassResolver resolver,
-
-            ComponentSource componentSource,
-
-            BindingSource bindingsource)
+            ComponentClassResolver resolver)
     {
         // TODO: Proper scheduling of all of this. Since a given field or method should
         // only have a single annotation, the order doesn't matter so much, as long as
@@ -252,7 +246,7 @@ public final class TapestryModule
         configuration.add("Mixin", new MixinWorker(resolver));
         configuration.add("OnEvent", new OnEventWorker());
         configuration.add("SupportsInformalParameters", new SupportsInformalParametersWorker());
-        configuration.add("InjectPage", new InjectPageWorker(componentSource, resolver));
+        configuration.add("InjectPage", locator.autobuild(InjectPageWorker.class));
         configuration.add("InjectContainer", new InjectContainerWorker());
         configuration.add("InjectComponent", new InjectComponentWorker());
         configuration.add("RenderCommand", new RenderCommandWorker());
@@ -260,7 +254,7 @@ public final class TapestryModule
         // Default values for parameters are often some form of injection, so make sure
         // that Parameter fields are processed after injections.
 
-        configuration.add("Parameter", new ParameterWorker(bindingsource), "after:Inject*");
+        configuration.add("Parameter", locator.autobuild(ParameterWorker.class), "after:Inject*");
 
         // Workers for the component rendering state machine methods; this is in typical
         // execution order.
@@ -301,7 +295,7 @@ public final class TapestryModule
         // These must come after Property, since they actually delete fields that may still have the annotation
         configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class),
                           "after:Property");
-        configuration.add("Environment", new EnvironmentalWorker(environment), "after:Property");
+        configuration.add("Environment", locator.autobuild(EnvironmentalWorker.class), "after:Property");
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.

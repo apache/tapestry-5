@@ -103,8 +103,10 @@ Adaptive API
 public class Login
 {
   @Persist
+  @Property
   private String _userId;
   
+  @Property
   private String _password;
   
   @Component
@@ -113,36 +115,32 @@ public class Login
   @Inject
   private LoginAuthenticator _authenticator;
   
-  private Object onSubmit()
+  void onValidateForm()
   {
-    if (_authenticator.isValidLogin(_userId, _password))
-      return Start.class;
-      
-    // Stay on this page:
-  
-   _form.recordError("Invalid user name or password."); 
-    
-    return null;
+    if (! _authenticator.isValidLogin(_userId, _password))
+    {
+      _form.recordError("Invalid user name or password.");
+    }
   }
-  
-  public String getUserId() { return _userId; }
-  
-  public String getPassword() { return _password; }
-  
-  public void setUserId(String userId) { _userId = userId; }
-  
-  public void setPassword(String password) { _password = password; }
+
+  Object onSuccess()
+  {
+    return PostLogin.class;
+  }
+
 }
 +----+
 
   This short snippet demonstrates a bit about how Tapestry operates.  Pages and services
-  within the application are injected with the @Inject annotation. The method name, onSubmit(),
-  informs Tapestry about when the method is to be invoked
-  (when a form component contained by the page emits a "submit" event). The method's 
+  within the application are injected with the @Inject annotation. The method names, onValidateForm()
+  and onSuccess(),
+  inform Tapestry about when the method is to be invoked.  The two events <validateForm> and <success> occur
+  when a form is submitted; "validateForm" is triggered to perform cross-field validations, and "success" is
+  only triggered when there are no validation errors. The onSuccess() method's 
   return value directs Tapestry on what to do next: jump to another page within the application
-  (here identified as the class for the page, but other options exist), or stay on the same page to display the
-  error message.
-  
+  (here identified as the class for the page, but many other options exist).  When there are exceptions,
+  the page will be redisplayed to the user.
+
   This also represents a distinct change from Tapestry 4. In earlier versions of Tapestry, 
   the Form component's listener parameter would be bound to the method to invoke, by name.  Further,
   the listener method had to be public.
@@ -152,7 +150,10 @@ public class Login
   In many cases, additional information about the event is available, and can be passed
   into the method by adding parameters to the method. Again, Tapestry will adapt
   to your parameters, in whatever order you supply them.
-  
+
+  Tapestry also saves you effort:  the @Property annotation marks a field as readable and writable;
+  Tapestry will provide the accessor methods automatically.
+
   Finally, Tapestry 5 explicitly separates actions (requests that change things) and rendering (requests that
   render pages) into two separate requests.  Performing an action, such as clicking a link or submitting a form,
   results in a <client side redirect> to the new page. This is often called "redirect after post". This helps ensure
