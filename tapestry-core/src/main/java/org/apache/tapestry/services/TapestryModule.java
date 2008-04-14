@@ -1558,7 +1558,7 @@ public final class TapestryModule
                                                  PersistentFieldStrategy clientStrategy)
     {
         configuration.add("session", new SessionPersistentFieldStrategy(request));
-        configuration.add("flash", new FlashPersistentFieldStrategy(request));
+        configuration.add(TapestryConstants.FLASH_PERSISTENCE_STRATEGY, new FlashPersistentFieldStrategy(request));
         configuration.add("client", clientStrategy);
     }
 
