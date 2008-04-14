@@ -255,7 +255,11 @@ Informal Parameters
   the component.  Generally speaking, components that have a 1:1 relationship with a particular HTML tag
   (such as {{{../ref/org/apache/tapestry/corelib/components/TextField.html}TextField}} and 
   \<input\> will support informal parameters.
-  
+
+  Only components whose class is annotated with
+  {{{../apidocs/org/apache/tapestry/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+  will support informal parameters.
+
   Informal parameters are often used to set the CSS class of an element, or to specify client-side event handlers.
   
   The default binding prefix for informal parameters depends on <where> the parameter binding is specified.
@@ -264,7 +268,18 @@ Informal Parameters
   prefix is "prop:".  If the parameter is bound inside the component template, then the default binding
   prefix is "literal:".  This reflects the fact that a parameter specified in the Java class, using the annotation, is most likely
   a computed value, whereas a value in the template should simply be copied, as is, into the result HTML stream.
-  
+
+Supporting Informal Parameters
+
+    <<Only>> components which area annotated with
+    {{{../apidocs/org/apache/tapestry/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+    may have informal parameters. Tapestry silently drops informal parameters that are specified for components
+    that do not have this annotation.
+
+    To render informal parameters, inject the
+    {{{../apidocs/org/apache/tapestry/ComponentResources.html}ComponentResources}} for your component
+    and invoke the <<<renderInformalParameters()>>> method.
+
     
 Parameters Are Bi-Directional
 
