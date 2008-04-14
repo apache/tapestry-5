@@ -121,7 +121,8 @@ public final class TapestryConstants
      */
     public static final String FILE_CHECK_UPDATE_TIMEOUT_SYMBOL = "tapestry.file-check-update-timeout";
 
-    private TapestryConstants()
-    {
-    }
+    /**
+     * The page field persistence strategy that stores data in the session until the next request.
+     */
+    public static final String FLASH_PERSISTENCE_STRATEGY = "flash";
 }

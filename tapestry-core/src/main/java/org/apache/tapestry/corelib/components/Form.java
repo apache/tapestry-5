@@ -151,7 +151,7 @@ public class Form implements ClientElement, FormValidationControl
     @Inject
     private ComponentSource _source;
 
-    @Persist
+    @Persist(TapestryConstants.FLASH_PERSISTENCE_STRATEGY)
     private ValidationTracker _defaultTracker;
 
     @Inject

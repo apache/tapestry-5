@@ -14,6 +14,15 @@ Upgrade Notes
 
 Release 5.0.12
 
+* Form component
+
+  The default {{{../apidocs/org/apache/tapestry/ValidationTracker.html}ValidationTracker}}
+  built into the Form component now has a persistence strategy of "flash". This means that
+  if you navigate away from a page with validation errors and return, you will lose the errors
+  To support this style of navigation, you will need to bind the Form's tracker parameter
+  to a field that has the correct persistency (most likely, "session", the previous persistence
+  strategy).
+
 * Resource.openStream()
 
   The methods <<<exists()>>> and <<<openStream()>>> were added to the
