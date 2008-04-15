@@ -248,7 +248,7 @@ public class Start
   The same page instance will be used for request after request. 
   
   So, inside the action request, the code inside the onAction() event handler method <did> call the
-  setup() method, and a value between 1 and 10 was stored in the _target instance variable. But
+  initialize() method, and a value between 1 and 10 was stored in the _target instance variable. But
   at the end of that request, the value was lost, and in the subsequent render request for the Guess page,
   the value was zero.
   
@@ -424,7 +424,7 @@ public class GameOver
   private int _count;
 ---
 
-  Next we modified setup() to ensure that _count is set to 0.  This is a safety
+  Next we modified initialize() to ensure that _count is set to 0.  This is a safety
   precaution in case we add logic to play the game again.
   
 ---
