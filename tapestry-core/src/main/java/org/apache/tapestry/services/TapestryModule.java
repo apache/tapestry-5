@@ -40,6 +40,7 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.*;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.ioc.util.TimeInterval;
@@ -1331,7 +1332,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+                DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
                 PageRenderSupportImpl support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
 
@@ -1350,6 +1351,8 @@ public final class TapestryModule
                 _environment.push(PageRenderSupport.class, support);
 
                 renderer.renderMarkup(writer);
+
+                support.commit();
 
                 builder.updateDocument(writer.getDocument());
 
@@ -1371,7 +1374,7 @@ public final class TapestryModule
 
                 _environment.pop(ClientBehaviorSupport.class);
 
-                clientBehaviorSupport.writeInitializationScript();
+                clientBehaviorSupport.commit();
             }
         };
 
@@ -1462,6 +1465,10 @@ public final class TapestryModule
                                                 @Path("${tapestry.field-error-marker}")
                                                 final Asset fieldErrorIcon,
 
+                                                final SymbolSource symbolSource,
+
+                                                final AssetSource assetSource,
+
                                                 final ValidationMessagesSource validationMessagesSource)
     {
         PartialMarkupRendererFilter pageRenderSupport = new PartialMarkupRendererFilter()
@@ -1472,16 +1479,41 @@ public final class TapestryModule
 
                 String namespace = ":" + uid;
 
-                PartialRenderPageRenderSupport support = new PartialRenderPageRenderSupport(
-                        namespace);
+                final StringBuilder buffer = new StringBuilder(1000);
+
+                IdAllocator idAllocator = new IdAllocator(namespace);
+
+                DocumentHeadBuilder builder = new DocumentHeadBuilder()
+                {
+                    public void addScriptLink(String scriptURL)
+                    {
+                    }
+
+                    public void addStylesheetLink(String styleURL, String media)
+                    {
+                    }
+
+                    public void addScript(String script)
+                    {
+                        buffer.append(script);
+                        buffer.append("\n");
+                    }
+                };
+
+
+                PageRenderSupportImpl support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
+                                                                          idAllocator);
 
                 _environment.push(PageRenderSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
 
-                support.update(reply);
+                support.commit();
 
                 _environment.pop(PageRenderSupport.class);
+
+                if (buffer.length() > 0)
+                    reply.put("script", buffer.toString());
             }
         };
 
@@ -1499,7 +1531,7 @@ public final class TapestryModule
 
                 _environment.pop(ClientBehaviorSupport.class);
 
-                support.writeInitializationScript();
+                support.commit();
             }
         };
 

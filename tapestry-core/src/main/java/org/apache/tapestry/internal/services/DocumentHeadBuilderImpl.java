@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -83,6 +83,12 @@ public class DocumentHeadBuilderImpl implements DocumentHeadBuilder
         _scriptBlock.append("\n");
     }
 
+    /**
+     * Updates the supplied Document, locating the html/body element and adding script links (to the top) and a script
+     * block (to the end).
+     *
+     * @param document to be updated
+     */
     public void updateDocument(Document document)
     {
         Element root = document.getRootElement();

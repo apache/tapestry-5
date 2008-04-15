@@ -17,9 +17,12 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.SymbolSource;
+import org.apache.tapestry.json.JSONArray;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.AssetSource;
 
 import static java.lang.String.format;
@@ -28,7 +31,7 @@ import java.util.List;
 
 public class PageRenderSupportImpl implements PageRenderSupport
 {
-    private final IdAllocator _idAllocator = new IdAllocator();
+    private final IdAllocator _idAllocator;
 
     private final DocumentHeadBuilder _builder;
 
@@ -40,20 +43,40 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     private boolean _coreAssetsAdded;
 
+    private final JSONObject _init = new JSONObject();
+
     /**
      * @param builder      Used to assemble JavaScript includes and snippets
      * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
      *                     scripts)
-     * @param assetSource  Used to convert classpath scripts to {@link Asset}s
+     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry.Asset}s
      * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
      *                     script link or script block
      */
     public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
                                  AssetSource assetSource, String... coreScripts)
     {
+        this(builder, symbolSource, assetSource, new IdAllocator(), coreScripts);
+    }
+
+    /**
+     * @param builder      Used to assemble JavaScript includes and snippets
+     * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
+     *                     scripts)
+     * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry.Asset}s
+     * @param idAllocator  Used to allocate unique client ids during the render
+     * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
+     *                     script link or script block
+     */
+
+    public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
+                                 AssetSource assetSource, IdAllocator idAllocator, String... coreScripts)
+
+    {
         _builder = builder;
         _symbolSource = symbolSource;
         _assetSource = assetSource;
+        _idAllocator = idAllocator;
 
         _coreScripts = Arrays.asList(coreScripts);
     }
@@ -106,6 +129,48 @@ public class PageRenderSupportImpl implements PageRenderSupport
         String script = format(format, arguments);
 
         _builder.addScript(script);
+    }
+
+    public void addInit(String functionName, JSONArray parameterList)
+    {
+        addInitFunctionInvocation(functionName, parameterList);
+    }
+
+    public void addInit(String functionName, JSONObject parameter)
+    {
+        addInitFunctionInvocation(functionName, parameter);
+    }
+
+    public void addInit(String functionName, String parameter)
+    {
+        addInitFunctionInvocation(functionName, parameter);
+    }
+
+    private void addInitFunctionInvocation(String functionName, Object parameters)
+    {
+        Defense.notBlank(functionName, "functionName");
+        Defense.notNull(parameters, "parameters");
+
+        JSONArray invocations = _init.has(functionName) ? _init.getJSONArray(functionName) : null;
+
+        if (invocations == null)
+        {
+            invocations = new JSONArray();
+            _init.put(functionName, invocations);
+        }
+
+        invocations.put(parameters);
+    }
+
+    /**
+     * Commit any outstanding changes.
+     */
+    public void commit()
+    {
+        if (_init.length() > 0)
+        {
+            addScript("Tapestry.init(%s);", _init);
+        }
     }
 
     public void addStylesheetLink(Asset stylesheet, String media)

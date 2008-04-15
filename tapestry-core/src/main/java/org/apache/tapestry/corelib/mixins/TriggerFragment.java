@@ -20,6 +20,7 @@ import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.InjectContainer;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.services.Heartbeat;
 
 /**
@@ -51,9 +52,11 @@ public class TriggerFragment
         {
             public void run()
             {
-                _pageRenderSupport.addScript("Tapestry.linkTriggerToFormFragment('%s', '%s');",
-                                             _container.getClientId(),
-                                             _fragment.getClientId());
+                JSONArray spec = new JSONArray();
+                spec.put(_container.getClientId());
+                spec.put(_fragment.getClientId());
+
+                _pageRenderSupport.addInit("linkTriggerToFormFragment", spec);
             }
         };
 

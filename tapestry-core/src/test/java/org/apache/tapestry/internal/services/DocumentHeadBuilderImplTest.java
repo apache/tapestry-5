@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("not-html").text("not an HTML document");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addScript("foo.js");
         builder.addScript("doSomething();");
@@ -50,7 +50,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addScriptLink("foo.js");
         builder.addScriptLink("bar/baz.js");
@@ -67,7 +67,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addStylesheetLink("foo.css", null);
         builder.addStylesheetLink("bar/baz.css", "print");
@@ -84,7 +84,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with styles.");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addStylesheetLink("foo.css", null);
         builder.addStylesheetLink("bar/baz.css", "print");
@@ -105,7 +105,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
         document.newRootElement("html").element("head").comment("existing head").getParent()
                 .element("body").text("body content");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addStylesheetLink("foo.css", null);
 
@@ -121,7 +121,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         for (int i = 0; i < 3; i++)
         {
@@ -142,7 +142,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("body").element("p").text("Ready to be updated with scripts.");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addScript("doSomething();");
         builder.addScript("doSomethingElse();");
@@ -162,7 +162,7 @@ public class DocumentHeadBuilderImplTest extends InternalBaseTestCase
 
         document.newRootElement("html").element("notbody").element("p").text("Ready to be updated with scripts.");
 
-        DocumentHeadBuilder builder = new DocumentHeadBuilderImpl();
+        DocumentHeadBuilderImpl builder = new DocumentHeadBuilderImpl();
 
         builder.addScriptLink("foo.js");
 

@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,8 +13,6 @@
 // limitations under the License.
 
 package org.apache.tapestry.internal.services;
-
-import org.apache.tapestry.dom.Document;
 
 /**
  * Responsible for injecting script and style links into the &lt;head&gt; element of the rendered HTML document.
@@ -41,12 +39,4 @@ public interface DocumentHeadBuilder
      * @param script statement to add to the block (a newline will be appended as well)
      */
     void addScript(String script);
-
-    /**
-     * Updates the supplied Document, locating the html/body element and adding script links (to the top) and a script
-     * block (to the end).
-     *
-     * @param document to be updated
-     */
-    void updateDocument(Document document);
 }

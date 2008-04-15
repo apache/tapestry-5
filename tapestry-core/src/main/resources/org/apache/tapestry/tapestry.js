@@ -32,7 +32,7 @@ var Tapestry = {
 
     ErrorPopup : Class.create(),
 
-    // An array of ErrorPopup that have been created for fields within the page
+    // An array of Tapestry.ErrorPopup instances that have been created for fields within the page.
 
     errorPopups : [],
 
@@ -84,6 +84,46 @@ var Tapestry = {
         });
     },
 
+    // Generalized initialize function for Tapestry, used to help minimize the amount of JavaScript
+    // for the page by removing redundancies such as repeated Object and method names. The spec
+    // is a hash whose keys are the names of methods of the Tapestry object.
+    // The value is an array of arrays.  The outer arrays represent invocations
+    // of the method.  The inner array are the parameters for each invocation.
+    // As an optimization, the inner value may not be an array but instead
+    // a single value.
+
+    init : function(spec)
+    {
+        $H(spec).each(function(pair)
+        {
+            var functionName = pair.key;
+            var initf = Tapestry.Initializer[functionName];
+
+            if (initf == undefined)
+            {
+                Tapestry.logError("Function Tapestry.Initializer.#{name}() does not exist.", { name:functionName });
+                return;
+            }
+
+            pair.value.each(function(parameterList)
+            {
+                if (! Object.isArray(parameterList))
+                {
+                    parameterList = [parameterList];
+                }
+
+                initf.apply(this, parameterList);
+            });
+        });
+    },
+
+    logError : function (message, substitutions)
+    {
+        var formatted = message.interpolate(substitutions);
+
+        window.alert(formatted);
+    },
+
     getFormEventManager : function(form)
     {
         form = $(form);
@@ -96,7 +136,7 @@ var Tapestry = {
         return manager;
     },
 
-    registerValidation : function(clientValidations)
+    initValidations : function(clientValidations)
     {
         $H(clientValidations).each(function(pair)
         {
@@ -119,9 +159,8 @@ var Tapestry = {
 
                 if (vfunc == undefined)
                 {
-                    var errorMessage = "Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.".interpolate({name:name, fieldName:pair.key});
-
-                    window.alert(errorMessage);
+                    Tapestry.logError("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
+                    return;
                 }
 
                 vfunc.call(this, field, message, constraint);
@@ -142,7 +181,35 @@ var Tapestry = {
         Tapestry.onDomLoadedCallback();
     },
 
-    /** Convert a form or link into a trigger of an Ajax update that
+    // Adds a validator for a field.  A FieldEventManager is added, if necessary.
+    // The validator will be called only for non-blank values, unless acceptBlank is
+    // true (in most cases, acceptBlank is flase). The validator is a function
+    // that accepts the current field value as its first parameter, and a
+    // Tapestry.FormEvent as its second.  It can invoke recordError() on the event
+    // if the input is not valid.
+
+    addValidator : function(field, acceptBlank, validator)
+    {
+        this.getFieldEventManager(field).addValidator(acceptBlank, validator);
+    },
+
+    getFieldEventManager : function(field)
+    {
+        field = $(field);
+
+        var manager = field.fieldEventManager;
+
+        if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
+
+        return manager;
+    }
+};
+
+/** Container of functions that may be invoked by the Tapestry.init() function. */
+Tapestry.Initializer = {
+
+    /**
+     * Convert a form or link into a trigger of an Ajax update that
      * updates the indicated Zone.
      */
     linkZone : function(element, zoneDiv)
@@ -198,43 +265,20 @@ var Tapestry = {
         element.onclick = handler;
     },
 
-    // Allows many Tapestry.Zone instances, and calls to Tapestry.linkZone(), to be
-    // combined efficiently (i.e., to minimize the amount of generated JavaScript
-    // for the page).
-
-    initializeZones : function (zoneSpecs, linkSpecs)
+    zone : function(spec)
     {
-        // Each spec is a hash ready to pass to Tapestry.Zone
-
-        $A(zoneSpecs).each(function (spec)
-        {
-            new Tapestry.Zone(spec);
-        });
-
-        // Each spec is a pair of argument values suitable for the linkZone method
-
-        $A(linkSpecs).each(function (spec)
-        {
-            Tapestry.linkZone.apply(null, spec);
-        });
+        new Tapestry.Zone(spec);
     },
 
-    initializeFormFragments : function(specs)
+    formFragment : function(spec)
     {
-        $A(specs).each(function(spec)
-        {
-            new Tapestry.FormFragment(spec)
-        });
+        new Tapestry.FormFragment(spec)
     },
 
-    initializeFormInjectors : function(specs)
+    formInjector : function(spec)
     {
-        $A(specs).each(function(spec)
-        {
-            new Tapestry.FormInjector(spec);
-        });
+        new Tapestry.FormInjector(spec);
     },
-
 
     // Links a FormFragment to a trigger (a radio or a checkbox), such that changing the trigger will hide
     // or show the FormFragment. Care should be taken to render the page with the
@@ -260,34 +304,8 @@ var Tapestry = {
                 }
             });
         }
-    },
-
-    // Adds a validator for a field.  A FieldEventManager is added, if necessary.
-    // The validator will be called only for non-blank values, unless acceptBlank is
-    // true (in most cases, acceptBlank is flase). The validator is a function
-    // that accepts the current field value as its first parameter, and a
-    // Tapestry.FormEvent as its second.  It can invoke recordError() on the event
-    // if the input is not valid.
-
-    addValidator : function(field, acceptBlank, validator)
-    {
-        this.getFieldEventManager(field).addValidator(acceptBlank, validator);
-    },
-
-    getFieldEventManager : function(field)
-    {
-        field = $(field);
-
-        var manager = field.fieldEventManager;
-
-        if (manager == undefined) manager = new Tapestry.FieldEventManager(field);
-
-        return manager;
     }
-
-
-}
-
+};
 
 // New methods added to Element.
 
@@ -473,7 +491,6 @@ Tapestry.ErrorPopup.prototype = {
         this.hasMessage = true;
 
         this.fadeIn();
-
     },
 
     repositionBubble : function()
@@ -601,8 +618,6 @@ Tapestry.FormEventManager.prototype = {
 
         return event.result;
     }
-
-
 };
 
 Tapestry.FieldEventManager.prototype = {
@@ -755,28 +770,31 @@ Tapestry.ElementEffect = {
 Tapestry.Zone.prototype = {
     // spec are the parameters for the Zone:
     // trigger: required -- name or instance of link.
-    // div: required -- name or instance of div element to be shown, hidden and updated
+    // element: required -- name or instance of div element to be shown, hidden and updated
     // show: name of Tapestry.ElementEffect function used to reveal the zone if hidden
     // update: name of Tapestry.ElementEffect function used to highlight the zone after it is updated
     initialize: function(spec)
     {
-        this.div = $(spec.div);
+        if (Object.isString(spec))
+            spec = { element: spec }
+
+        this.element = $(spec.element);
         this.showFunc = Tapestry.ElementEffect[spec.show] || Tapestry.ElementEffect.show;
         this.updateFunc = Tapestry.ElementEffect[spec.update] || Tapestry.ElementEffect.highlight;
 
-     // Link the div back to this zone.
+        // Link the div back to this zone.
 
-        this.div.zone = this;
+        this.element.zone = this;
 
-     // Look inside the Zone div for the another div with the CSS class "t-zone-update".
+        // Look inside the Zone element for an element with the CSS class "t-zone-update".
         // If present, then this is the elements whose content will be changed, rather
         // then the entire Zone div.  This allows a Zone div to contain "wrapper" markup
-        // (borders and such).  Typically, such a Zone div will initially be invisible.
-        // The show and update functions apply to the Zone div, not the update div.
+        // (borders and such).  Typically, such a Zone element will initially be invisible.
+        // The show and update functions apply to the Zone element, not the update element.
 
-        var updates = this.div.select("DIV.t-zone-update");
+        var updates = this.element.select(".t-zone-update");
 
-        this.updatediv = updates.length == 0 ? this.div : updates[0];
+        this.updateElement = updates.length == 0 ? this.element : updates[0];
     },
 
     // Updates the content of the div controlled by this Zone, then
@@ -784,11 +802,11 @@ Tapestry.Zone.prototype = {
 
     show: function(content)
     {
-        this.updatediv.innerHTML = content;
+        this.updateElement.update(content);
 
-        var func = this.div.visible() ? this.updateFunc : this.showFunc;
+        var func = this.element.visible() ? this.updateFunc : this.showFunc;
 
-        func.call(this, this.div);
+        func.call(this, this.element);
     }
 };
 
@@ -799,6 +817,9 @@ Tapestry.FormFragment.prototype = {
 
     initialize: function(spec)
     {
+        if (Object.isString(spec))
+            spec = { element: spec };
+
         this.element = $(spec.element);
 
         this.element.formFragment = this;
