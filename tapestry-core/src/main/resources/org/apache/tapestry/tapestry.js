@@ -883,9 +883,9 @@ Tapestry.FormInjector.prototype = {
 
                 // Clone the FormInjector element (usually a div)
                 // to create the new element, that gets inserted
-                // before or after the FormInjector element.
+                // before or after the FormInjector's element.
 
-                var newElement = new Element(this.element.tagName);
+                var newElement = new Element(this.element.tagName, { 'class' : this.element.className });
 
                 // Insert the new element before or after the existing element.
 
