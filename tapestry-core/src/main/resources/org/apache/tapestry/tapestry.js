@@ -350,7 +350,7 @@ Tapestry.Validator = {
     {
         Tapestry.addValidator(field, true, function(value, event)
         {
-            if (value == '')
+            if (value.strip() == '')
                 event.recordError(message);
         });
     },
