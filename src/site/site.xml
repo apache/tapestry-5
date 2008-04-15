@@ -73,11 +73,17 @@
             <item name="WebSphere" href="websphere.html"/>
         </menu>
 
+        <menu name="Resources">
+            <item name="Wiki" href="http://wiki.apache.org/tapestry"/>
+            <item name="Wiki HowTos" href="http://wiki.apache.org/tapestry/Tapestry5HowTos"/>
+        </menu>
+
         <menu name="Developer Info">
             <item name="Environment" href="dev/env.html"/>
             <item name="Release Checklist" href="dev/checklist.html"/>
             <item name="Bible" href="dev/bible.html"/>
         </menu>
+
 
         <menu ref="reports"/>
 
