@@ -14,28 +14,25 @@
 
 package org.apache.tapestry.annotations;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
-/** Indicates that a method should only be evaluated once and the result cached.
- * All further calls to the method will return the cached result. Note that this
- * annotation is inheritence-safe; if a subclass calls a superclass method that 
- * has \@Cached then the value the subclass method gets is the cached value. 
- * <p>
- * The watch parameter can be passed a binding expression
- * which will be evaluated each time the method is called. The method will then
- * only be executed the first time it is called and after that only when the
- * value of the binding changes. This can be used, for instance, to have the
- * method only evaluated once per iteration of a loop by setting watch to
- * the value or index of the loop.
+/**
+ * Indicates that a method should only be evaluated once and the result cached. All further calls to the method will
+ * return the cached result. Note that this annotation is inheritence-safe; if a subclass calls a superclass method that
+ * has \@Cached then the value the subclass method gets is the cached value.
+ * <p/>
+ * The watch parameter can be passed a binding expression which will be evaluated each time the method is called. The
+ * method will then only be executed the first time it is called and after that only when the value of the binding
+ * changes. This can be used, for instance, to have the method only evaluated once per iteration of a loop by setting
+ * watch to the value or index of the loop.
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Cached {
-	/** The optional binding to watch (default binding prefix is "prop") */
-	String watch() default "";
+public @interface Cached
+{
+    /**
+     * The optional binding to watch (default binding prefix is "prop").
+     */
+    String watch() default "";
 }

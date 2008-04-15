@@ -63,6 +63,8 @@ public class Start
     private static final List<Item> ITEMS = CollectionFactory.newList(
             new Item("actionpage", "Action Page", "tests fixture for ActionLink component"),
 
+            new Item("cleancachedemo", "Clean Cache Demo", "cache cleared properly during Ajax calls"),
+
             new Item("numberbeaneditordemo", "Number BeanEditor Demo",
                      "use of nulls and wrapper types with BeanEditor"),
 
@@ -84,7 +86,8 @@ public class Start
 
             new Item("nested/AssetDemo", "AssetDemo", "declaring an image using Assets"),
 
-            new Item("nested/ActionDemo", "Action With Context Demo", "using action links with context on page with activation context"),
+            new Item("nested/ActionDemo", "Action With Context Demo",
+                     "using action links with context on page with activation context"),
 
             new Item("blockdemo", "BlockDemo", "use of blocks to control rendering"),
 
@@ -246,13 +249,14 @@ public class Start
             new Item("TrackEditor", "Generic Page Class Demo",
                      "demo use of generics with component classes and, particularily, with property types"),
 
-            new Item("IndirectProtectedFields", "Protected Fields Demo", "demo exception when component class contains protected fields"),
+            new Item("IndirectProtectedFields", "Protected Fields Demo",
+                     "demo exception when component class contains protected fields"),
 
             new Item("injectcomponentdemo", "Inject Component Demo",
                      "inject component defined in template"),
-            
+
             new Item("cachedpage", "Cached Annotation", "Caching method return values"),
-            
+
             new Item("cachedpage2", "Cached Annotation2", "Caching method return values w/ inheritence")
     );
 
@@ -277,7 +281,7 @@ public class Start
     {
         _item = item;
     }
-                                                            
+
     @InjectPage
     private SecurePage _securePage;
 
