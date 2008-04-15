@@ -12,21 +12,11 @@
     </t:zone>
 
     <t:block id="registrationForm">
-        <form t:id="form" zone="output">
 
-            <t:errors/>
 
-            <div class="t-beaneditor">
+        <t:beaneditform t:id="form" object="registration" zone="output"/>
 
-                <t:beaneditor t:id="registration"/>
-
-                <div class="t-beaneditor-row">
-                    <input type="submit" class="t-beaneditor-submit" value="Update"/>
-                    <t:actionlink t:id="clear" zone="output">clear</t:actionlink>
-                </div>
-            </div>
-
-        </form>
+        <t:actionlink t:id="clear" zone="output">clear</t:actionlink>
 
     </t:block>
 
