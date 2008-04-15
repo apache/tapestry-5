@@ -18,26 +18,15 @@ import org.apache.tapestry.Field;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.corelib.data.InsertPosition;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.json.JSONObject;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
-    static final String ZONE_INITIALIZER_STRING = "Tapestry.initializeZones(%s, %s);";
-
     private final PageRenderSupport _pageRenderSupport;
 
-    private final JSONArray _zones = new JSONArray();
-
-    private final JSONArray _links = new JSONArray();
-
-    private final JSONArray _subForms = new JSONArray();
-
-    private final JSONArray _injectors = new JSONArray();
-
     private final JSONObject _validations = new JSONObject();
-
-    private boolean _zonesDirty;
 
     public ClientBehaviorSupportImpl(PageRenderSupport pageRenderSupport)
     {
@@ -47,15 +36,28 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
     public void addZone(String clientId, String showFunctionName, String updateFunctionName)
     {
         JSONObject spec = new JSONObject();
-        spec.put("div", clientId);
 
         addFunction(spec, "show", showFunctionName);
         addFunction(spec, "update", updateFunctionName);
 
-        _zones.put(spec);
-
-        _zonesDirty = true;
+        addElementInit("zone", clientId, spec);
     }
+
+    private void addElementInit(String functionName, String clientId, JSONObject spec)
+    {
+        Defense.notBlank(clientId, "clientId");
+
+        if (spec.length() == 0)
+        {
+            _pageRenderSupport.addInit(functionName, clientId);
+            return;
+        }
+
+        spec.put("element", clientId);
+
+        _pageRenderSupport.addInit(functionName, spec);
+    }
+
 
     private void addFunction(JSONObject spec, String key, String showFunctionName)
     {
@@ -68,21 +70,17 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         spec.put(linkId);
         spec.put(elementId);
 
-        _links.put(spec);
-
-        _zonesDirty = true;
-
+        _pageRenderSupport.addInit("linkZone", spec);
     }
 
     public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
     {
         JSONObject spec = new JSONObject();
-        spec.put("element", clientId);
 
         addFunction(spec, "show", showFunctionName);
         addFunction(spec, "hide", hideFunctionName);
 
-        _subForms.put(spec);
+        addElementInit("formFragment", clientId, spec);
     }
 
     public void addFormInjector(String clientId, Link link, InsertPosition insertPosition, String showFunctionName)
@@ -97,8 +95,11 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         addFunction(spec, "show", showFunctionName);
 
-        _injectors.put(spec);
+        // Always has at least two properties.
+
+        _pageRenderSupport.addInit("formInjector", spec);
     }
+
 
     public void addValidation(Field field, String validationName, String message, Object constraint)
     {
@@ -123,17 +124,13 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         specs.put(thisSpec);
     }
 
-    public void writeInitializationScript()
+    /**
+     * Invoked at the end of rendering to commit (to the {@link org.apache.tapestry.PageRenderSupport}) any accumulated
+     * validations.
+     */
+    public void commit()
     {
         if (_validations.length() > 0)
-            _pageRenderSupport.addScript("Tapestry.registerValidation(%s);", _validations);
-
-        if (_subForms.length() > 0)
-            _pageRenderSupport.addScript("Tapestry.initializeFormFragments(%s);", _subForms);
-
-        if (_injectors.length() > 0)
-            _pageRenderSupport.addScript("Tapestry.initializeFormInjectors(%s);", _injectors);
-
-        if (_zonesDirty) _pageRenderSupport.addScript(ZONE_INITIALIZER_STRING, _zones, _links);
+            _pageRenderSupport.addScript("Tapestry.initValidations(%s);", _validations);
     }
 }

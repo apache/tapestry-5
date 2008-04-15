@@ -15,6 +15,8 @@
 package org.apache.tapestry;
 
 import org.apache.tapestry.ioc.services.SymbolSource;
+import org.apache.tapestry.json.JSONArray;
+import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.AssetSource;
 
 /**
@@ -79,4 +81,31 @@ public interface PageRenderSupport
      * @param arguments additional arguments formatted to form the final script
      */
     void addScript(String format, Object... arguments);
+
+    /**
+     * Add an initialization call.
+     *
+     * @param functionName  the name of the function (on the client-side Tapestry.Initializer object) to invoke.
+     * @param parameterList list of parameters for the method invocation.
+     * @see #addScript(String, Object[])
+     */
+    void addInit(String functionName, JSONArray parameterList);
+
+    /**
+     * Alternate version of {@link #addInit(String, org.apache.tapestry.json.JSONArray)} where just a single object is
+     * passed.
+     *
+     * @param functionName the name of the function (on the client-side Tapestry object) to invoke.
+     * @param parameter    the object to pass to the function
+     */
+    void addInit(String functionName, JSONObject parameter);
+
+    /**
+     * Alternate version of {@link #addInit(String, org.apache.tapestry.json.JSONArray)} where just a single string is
+     * passed.
+     *
+     * @param functionName the name of the function (on the client-side Tapestry object) to invoke.
+     * @param parameter    the single string to pass to the function
+     */
+    void addInit(String functionName, String parameter);
 }

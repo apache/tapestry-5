@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.PageRenderSupport;
-import static org.apache.tapestry.internal.services.ClientBehaviorSupportImpl.ZONE_INITIALIZER_STRING;
+import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.test.TapestryTestCase;
 import org.testng.annotations.Test;
@@ -31,7 +31,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
 
         ClientBehaviorSupportImpl setup = new ClientBehaviorSupportImpl(support);
 
-        setup.writeInitializationScript();
+        setup.commit();
 
         verify();
     }
@@ -41,9 +41,8 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     {
         PageRenderSupport support = mockPageRenderSupport();
 
-        JSONObject template = new JSONObject("{ zones: [], links: [['client1', 'zone1'], ['client2', 'zone2']] }");
-
-        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addInit("linkZone", new JSONArray("['client1', 'zone1']"));
+        support.addInit("linkZone", new JSONArray("['client2', 'zone2']"));
 
         replay();
 
@@ -52,7 +51,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
         setup.linkZone("client1", "zone1");
         setup.linkZone("client2", "zone2");
 
-        setup.writeInitializationScript();
+        setup.commit();
 
         verify();
     }
@@ -62,9 +61,8 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     {
         PageRenderSupport support = mockPageRenderSupport();
 
-        JSONObject template = new JSONObject("{ zones: [ {div:'client1'}, {div:'client2'} ], links:[] }");
-
-        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addInit("zone", "client1");
+        support.addInit("zone", "client2");
 
         replay();
 
@@ -73,7 +71,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
         setup.addZone("client1", null, null);
         setup.addZone("client2", null, null);
 
-        setup.writeInitializationScript();
+        setup.commit();
 
         verify();
     }
@@ -83,11 +81,8 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     {
         PageRenderSupport support = mockPageRenderSupport();
 
-
-        JSONObject template = new JSONObject(
-                "{ zones: [ {div:'client1', show:'showme'}, {div:'client2', update:'updateme'} ], links:[] }");
-
-        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addInit("zone", new JSONObject("{'element':'client1', 'show':'showme' }"));
+        support.addInit("zone", new JSONObject("{'element':'client2', 'update':'updateme' }"));
 
         replay();
 
@@ -96,7 +91,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
         setup.addZone("client1", "showme", null);
         setup.addZone("client2", null, "updateme");
 
-        setup.writeInitializationScript();
+        setup.commit();
 
         verify();
     }
@@ -106,10 +101,8 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     {
         PageRenderSupport support = mockPageRenderSupport();
 
-        JSONObject template = new JSONObject(
-                "{ zones: [ {div:'client1', show:'showme'}, {div:'client2', update:'updateme'} ], links:[] }");
-
-        support.addScript(ZONE_INITIALIZER_STRING, template.getJSONArray("zones"), template.getJSONArray("links"));
+        support.addInit("zone", new JSONObject("{'element':'client1', 'show':'showme' }"));
+        support.addInit("zone", new JSONObject("{'element':'client2', 'update':'updateme' }"));
 
         replay();
 
@@ -118,7 +111,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
         setup.addZone("client1", "ShowMe", null);
         setup.addZone("client2", null, "UpdateMe");
 
-        setup.writeInitializationScript();
+        setup.commit();
 
         verify();
     }
