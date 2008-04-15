@@ -53,6 +53,11 @@ public final class InternalConstants
     public static final String PAGE_CONTEXT_NAME = "t:ac";
 
     /**
+     * Name of event triggered by Grid sub-components when an in-place Grid is updated.
+     */
+    public static final String GRID_INPLACE_UPDATE = "inplaceupdate";
+
+    /**
      * The name of a query parameter that stores the containing page (used in action links when the page containing the
      * component is not the same as the page that was rendering). The active page (the page which initiated the render)
      * is encoded into the URL, and the containing page is tacked on as this query parameter.

@@ -23,11 +23,15 @@ import org.apache.tapestry.grid.*;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.internal.bindings.AbstractBinding;
+import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.services.BeanModelSource;
+import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.FormSupport;
+import org.apache.tapestry.services.Request;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -176,6 +180,21 @@ public class Grid implements GridModel
     @Property(write = false)
     private String _tableClass;
 
+    /**
+     * If true, then the Grid will be wrapped in an element that acts like a {@link
+     * org.apache.tapestry.corelib.components.Zone}; all the paging and sorting links will
+     */
+    @Parameter
+    private boolean _inPlace;
+
+    /**
+     * The name of the psuedo-zone that encloses the Grid.
+     */
+    @Property(write = false)
+    private String _zone;
+
+    private boolean _didRenderZoneDiv;
+
     @Persist
     private int _currentPage = 1;
 
@@ -191,10 +210,12 @@ public class Grid implements GridModel
     @Inject
     private BeanModelSource _modelSource;
 
+    @Environmental
+    private ClientBehaviorSupport _clientBehaviorSupport;
 
     @SuppressWarnings("unused")
     @Component(
-            parameters = { "lean=inherit:lean", "overrides=componentResources" })
+            parameters = { "lean=inherit:lean", "overrides=componentResources", "zone=zone" })
     private GridColumns _columns;
 
     @SuppressWarnings("unused")
@@ -202,7 +223,7 @@ public class Grid implements GridModel
             parameters = { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean" })
     private GridRows _rows;
 
-    @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage" })
+    @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
     private GridPager _pager;
 
     @SuppressWarnings("unused")
@@ -219,6 +240,18 @@ public class Grid implements GridModel
 
     @Environmental(false)
     private FormSupport _formSupport;
+
+    @Inject
+    private Request _request;
+
+    @Environmental
+    private PageRenderSupport _pageRenderSupport;
+
+    /**
+     * Set up via the traditional or Ajax component event request handler
+     */
+    @Environmental
+    private ComponentEventResultProcessor _componentEventResultProcessor;
 
     /**
      * A version of GridDataSource that caches the availableRows property. This addresses TAPESTRY-2245.
@@ -394,14 +427,34 @@ public class Grid implements GridModel
 
     }
 
-    Object beginRender()
+    Object beginRender(MarkupWriter writer)
     {
         // Skip rendering of component (template, body, etc.) when there's nothing to display.
         // The empty placeholder will already have rendered.
 
         if (_cachingSource.getAvailableRows() == 0) return false;
 
+        if (_inPlace && _zone == null)
+        {
+            _zone = _pageRenderSupport.allocateClientId(_resources);
+
+            writer.element("div", "id", _zone);
+
+            _clientBehaviorSupport.addZone(_zone, null, "show");
+
+            _didRenderZoneDiv = true;
+        }
+
         return null;
+    }
+
+    void afterRender(MarkupWriter writer)
+    {
+        if (_didRenderZoneDiv)
+        {
+            writer.end(); // div
+            _didRenderZoneDiv = false;
+        }
     }
 
     public BeanModel getDataModel()
@@ -454,7 +507,6 @@ public class Grid implements GridModel
         _row = row;
     }
 
-
     /**
      * Resets the Grid to inital settings; this sets the current page to one, and {@linkplain
      * org.apache.tapestry.grid.GridSortModel#clear() clears the sort model}.
@@ -463,5 +515,18 @@ public class Grid implements GridModel
     {
         _currentPage = 1;
         _sortModel.clear();
+    }
+
+    /**
+     * Event handler for inplaceupdate event triggered from nested components when an Ajax update occurs. The event
+     * context will carry the zone, which is recorded here, to allow the Grid and its sub-components to properly
+     * re-render themselves.  Invokes {@link org.apache.tapestry.services.ComponentEventResultProcessor#processResultValue(Object)}
+     * passing this (the Grid component) as the content provider for the update.
+     */
+    void onInPlaceUpdate(String zone) throws IOException
+    {
+        _zone = zone;
+
+        _componentEventResultProcessor.processResultValue(this);
     }
 }

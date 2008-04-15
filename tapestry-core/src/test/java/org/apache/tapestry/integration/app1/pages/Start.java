@@ -257,7 +257,9 @@ public class Start
 
             new Item("cachedpage", "Cached Annotation", "Caching method return values"),
 
-            new Item("cachedpage2", "Cached Annotation2", "Caching method return values w/ inheritence")
+            new Item("cachedpage2", "Cached Annotation2", "Caching method return values w/ inheritence"),
+
+            new Item("inplacegriddemo", "In-Place Grid Demo", "Grid that updates in-place using Ajax")
     );
 
     static
