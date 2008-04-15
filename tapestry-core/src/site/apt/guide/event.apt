@@ -186,6 +186,12 @@ Event Bubbling
   The event will bubble up the hierarchy, until it is aborted. The event is aborted
   when an event handler method returns a non-null value.
 
+  Returning a boolean value from an event handler method is special.  Returning true will abort the event
+  with no result; use this when the event is fully handled without a return value and no further event handlers
+  (in the same component, or in containing components) should be invoked.
+
+  Returning false is the same as returning null.
+
 Event Method Exceptions
 
   Event methods are allowed to throw any exception (not just runtime exceptions). If an event method does

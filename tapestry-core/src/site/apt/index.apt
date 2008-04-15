@@ -10,6 +10,12 @@ Tapestry Core
 
 New And Of Note
 
+  * The {{{ref/org/apache/tapestry/corelib/components/Grid.html}Grid}} component can now update itself in place,
+    using Ajax, when paging or sorting links are clicked.
+
+  * Added a zone parameter to the  {{{ref/org/apache/tapestry/corelib/components/BeanEditForm.;html}BeanEditForm}}
+    component, to support Ajax updates.
+
   * The @Cached annotation has been added to allowing the caching of method results.
 
   * Tapestry can now generate accessor methods for fields automatically via the @Property annotation.

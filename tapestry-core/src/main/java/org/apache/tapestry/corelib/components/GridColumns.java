@@ -23,6 +23,7 @@ import org.apache.tapestry.grid.ColumnSort;
 import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridModel;
 import org.apache.tapestry.grid.GridSortModel;
+import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -58,8 +59,15 @@ public class GridColumns
     private ComponentResources _overrides;
 
 
+    /**
+     * If not null, then each link is output as a link to update the specified zone.
+     */
+    @Parameter
+    private String _zone;
+
     @SuppressWarnings("unused")
-    @Component(parameters = { "event=sort", "disabled=sortDisabled", "context=columnModel.id", "class=sortLinkClass" })
+    @Component(
+            parameters = { "event=sort", "disabled=sortDisabled", "context=columnContext", "class=sortLinkClass", "zone=inherit:zone" })
     private EventLink _sort, _sort2;
 
     @Inject
@@ -87,6 +95,9 @@ public class GridColumns
 
     @Property(write = false)
     private PropertyModel _columnModel;
+
+    @Inject
+    private ComponentResources _resources;
 
     void setupRender()
     {
@@ -144,9 +155,27 @@ public class GridColumns
         return getSortForColumn() != ColumnSort.UNSORTED;
     }
 
+    /**
+     * Normal, non-Ajax event handler.
+     */
+
     void onSort(String columnId)
     {
         _gridModel.getSortModel().updateSort(columnId);
+    }
+
+    /**
+     * Ajax event handler, which carries the zone id.
+     */
+    boolean onSort(String columnId, String zone)
+    {
+        onSort(columnId);
+
+        _resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
+
+        // Event is handled, don't trigger further event handler methods.
+
+        return true;
     }
 
     public Asset getIcon()
@@ -162,6 +191,13 @@ public class GridColumns
             default:
                 return _sortableAsset;
         }
+    }
+
+    public Object getColumnContext()
+    {
+        if (_zone == null) return _columnModel.getId();
+
+        return new Object[] { _columnModel.getId(), _zone };
     }
 
     public String getIconLabel()

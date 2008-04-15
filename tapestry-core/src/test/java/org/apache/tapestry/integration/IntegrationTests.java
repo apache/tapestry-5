@@ -1979,4 +1979,20 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
                     "After update the nanoseconds time did not change, meaning @Cache was broken.");
 
     }
+
+    @Test
+    public void inplace_grid()
+    {
+        start("In-Place Grid Demo");
+
+        String timestamp = getText("lastupdate");
+
+        click("link=2");
+        sleep(100);
+        click("link=Album");
+        sleep(100);
+
+        assertEquals(getText("lastupdate"), timestamp,
+                     "Timestamp should not have changed because updates are in-place.");
+    }
 }
