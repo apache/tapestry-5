@@ -18,6 +18,7 @@ import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationException;
 import org.apache.tapestry.ioc.MessageFormatter;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.FormSupport;
 
 /**
@@ -33,7 +34,8 @@ public final class Required extends AbstractValidator<Void, Object>
     public void validate(Field field, Void constraintValue, MessageFormatter formatter, Object value)
             throws ValidationException
     {
-        if (value == null || value.toString().equals("")) throw new ValidationException(buildMessage(formatter, field));
+        if (value == null || InternalUtils.isBlank(value.toString()))
+            throw new ValidationException(buildMessage(formatter, field));
     }
 
     private String buildMessage(MessageFormatter formatter, Field field)
