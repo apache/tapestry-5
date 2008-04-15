@@ -92,7 +92,14 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @Parameter
     private boolean _clientValidation = true;
 
-    @Component(parameters = "clientValidation=inherit:clientValidation")
+    /**
+     * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
+     * indicated zone.  Often a BeanEditForm will update the same zone that contains it.
+     */
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String _zone;
+
+    @Component(parameters = { "clientValidation=inherit:clientValidation", "zone=inherit:zone" })
     private Form _form;
 
     @InjectComponent
@@ -172,4 +179,5 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     {
         _form.recordError(errorMessage);
     }
+
 }
