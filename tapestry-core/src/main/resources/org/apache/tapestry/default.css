@@ -335,10 +335,7 @@ IMG.t-calendar-trigger {
 DIV.t-autocomplete-menu UL {
     border: 2px outset #cc9933;
     background-color: #cc9933;
-    margin-left: 12px;
     padding: 4px 6px;
-    width: 300px;
-    height: 360px;
     overflow: auto;
 }
 
