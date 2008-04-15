@@ -1445,7 +1445,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void action_links_on_custom_url()
     {
         open(BASE_URL + "nested/actiondemo/");
-        
+
         clickAndWait("link=2");
 
         assertTextPresent("Number: 2");
@@ -1897,12 +1897,26 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     {
         start("Cached Annotation");
 
-        assertText("//span[@id='value']", "000");
-        assertText("//span[@id='value2size']", "111");
+        assertText("value", "000");
+        assertText("value2size", "111");
 
         assertText("//span[@class='watch'][1]", "0");
         assertText("//span[@class='watch'][2]", "0");
         assertText("//span[@class='watch'][3]", "1");
+
+        clickAndWait("link=Back to index");
+
+        // TAPESTRY-2338: Make sure the data is cleared.
+
+        clickAndWait("link=Cached Annotation");
+
+        assertText("value", "000");
+        assertText("value2size", "111");
+
+        assertText("//span[@class='watch'][1]", "0");
+        assertText("//span[@class='watch'][2]", "0");
+        assertText("//span[@class='watch'][3]", "1");
+
     }
 
     /**
@@ -1912,7 +1926,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     public void override_method_with_cached()
     {
         start("Cached Annotation2");
-        assertText("//span[@id='value']", "111");
+
+        assertText("value", "111");
+
+        clickAndWait("link=Back to index");
+
+        // TAPESTRY-2338: Make sure the data is cleared.
+
+        clickAndWait("link=Cached Annotation2");
+
+        assertText("value", "111");
     }
 
     private void sleep(long timeout)
@@ -1924,5 +1947,36 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         catch (InterruptedException ex)
         {
         }
+    }
+
+    /**
+     * TAPESTRY-2338
+     */
+    @Test
+    public void cached_properties_cleared_at_end_of_request()
+    {
+        start("Clean Cache Demo");
+
+        String time1_1 = getText("time1");
+        String time1_2 = getText("time1");
+
+        // Don't know what they are but they should be the same.
+
+        assertEquals(time1_2, time1_1);
+
+        click("link=update");
+
+        sleep(250);
+
+        String time2_1 = getText("time1");
+        String time2_2 = getText("time1");
+
+        // Check that @Cache is still working
+
+        assertEquals(time2_2, time2_1);
+
+        assertFalse(time2_1.equals(time1_1),
+                    "After update the nanoseconds time did not change, meaning @Cache was broken.");
+
     }
 }
