@@ -522,4 +522,11 @@ public final class Element extends Node
         return this;
     }
 
+    /**
+     * Returns the namespace for this element (which is typically a URL). The namespace may be null.
+     */
+    public String getNamespace()
+    {
+        return _namespace;
+    }
 }
