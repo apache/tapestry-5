@@ -26,6 +26,7 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.*;
 import org.apache.tapestry.util.EnumSelectModel;
 
@@ -143,7 +144,9 @@ public final class Select extends AbstractField
 
         _tracker.recordInput(this, submittedValue);
 
-        Object selectedValue = _encoder.toValue(submittedValue);
+        Object selectedValue = InternalUtils.isBlank(submittedValue)
+                               ? null :
+                               _encoder.toValue(submittedValue);
 
         try
         {
