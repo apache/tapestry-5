@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.internal.hibernate;
 
-import java.util.Collection;
-
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.MessagesImpl;
+
+import java.util.Collection;
 
 class HibernateMessages
 {
@@ -33,16 +33,24 @@ class HibernateMessages
     {
         return MESSAGES.format("entity-catalog", InternalUtils.joinSorted(entityNames));
     }
-    
-    static String configurationImmutable() {
-    	return MESSAGES.get("configuration-immutable");
+
+    static String configurationImmutable()
+    {
+        return MESSAGES.get("configuration-immutable");
     }
-    
-    static String badEntityIdType(String entityName, String idClassName, String id) {
-    	return MESSAGES.format("bad-entity-id-type", entityName, idClassName, id);
+
+    static String badEntityIdType(String entityName, String idClassName, String id)
+    {
+        return MESSAGES.format("bad-entity-id-type", entityName, idClassName, id);
     }
-    
-    static String entityNotAttached(Object entity) {
-    	return MESSAGES.format("entity-not-attached", entity);
+
+    static String entityNotAttached(Object entity)
+    {
+        return MESSAGES.format("entity-not-attached", entity);
+    }
+
+    static String commitTransactionInterceptor(String serviceId, Class serviceInterface)
+    {
+        return MESSAGES.format("commit-transaction-interceptor", serviceId, serviceInterface.getName());
     }
 }

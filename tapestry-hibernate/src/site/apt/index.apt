@@ -23,3 +23,11 @@ Licensing Issues
   uses the "provided" scope);
   you will have to manually setup a dependency against your preferred version of Hibernate in your project's Maven POM.
   Once the library has stabilized, a Maven archetype (project template) will be created to help with this step.
+
+What's New?
+
+  * Transactions are now <aborted> (no longer <committed>) at the end of each request: you must now
+    explicitly commit the transaction if changes are to be saved.
+
+  * The new @CommitAfter annotation for component and service methods can now commit the transaction
+    automatically after the method is invoked.

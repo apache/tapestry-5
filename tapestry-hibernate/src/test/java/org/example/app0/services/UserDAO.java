@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,32 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.example.app0.pages;
+package org.example.app0.services;
 
-import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.hibernate.annotations.CommitAfter;
 import org.example.app0.entities.User;
-import org.example.app0.services.UserDAO;
 
-public class Start
+import java.util.List;
+
+public interface UserDAO
 {
+    @CommitAfter
+    void add(User user);
 
-    @InjectPage
-    private CommitAfterDemo _commitAfterDemo;
+    List<User> findAll();
 
-    @Inject
-    private UserDAO _userDAO;
-
-    Object onActionFromCommitAfter()
-    {
-        User user = new User();
-
-        user.setFirstName("Diane");
-
-        _userDAO.add(user);
-
-        _commitAfterDemo.setUser(user);
-
-        return _commitAfterDemo;
-    }
+    @CommitAfter
+    void delete(User... users);
 }

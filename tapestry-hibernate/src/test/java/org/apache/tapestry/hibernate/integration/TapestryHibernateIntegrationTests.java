@@ -84,4 +84,27 @@ public class TapestryHibernateIntegrationTests extends AbstractIntegrationTestSu
         assertTextSeries("name_%d", 0, "name1", "name2");
     }
 
+    public void commit_after_on_component_methods()
+    {
+        open("/");
+
+        clickAndWait("link=CommitAfter Demo");
+
+        assertText("name", "Diane");
+
+        clickAndWait("link=change name");
+
+        assertText("name", "Frank");
+
+        clickAndWait("link=runtime exception");
+
+        assertText("name", "Frank");
+
+        clickAndWait("link=checked exception");
+
+        assertText("name", "Troy");
+
+    }
+
+
 }
