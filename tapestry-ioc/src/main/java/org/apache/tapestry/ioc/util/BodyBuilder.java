@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,13 +19,14 @@ import org.apache.tapestry.ioc.services.MethodSignature;
 import java.util.Formatter;
 
 /**
- * Utility class for assembling the <em>body</em> used with Javassist when defining a method or
- * constructor. Basically, assists with formatting and with indentation. This makes the code that
- * assembles a method body much simpler ... and it makes the result neater, which will be easier to
- * debug (debugging dynamically generated code is hard enough that it should be easy to read the
- * input code before worrying about why it doesn't compile or execute properly).
+ * Utility class for assembling the <em>body</em> used with Javassist when defining a method or constructor. Basically,
+ * assists with formatting and with indentation. This makes the code that assembles a method body much simpler ... and
+ * it makes the result neater, which will be easier to debug (debugging dynamically generated code is hard enough that
+ * it should be easy to read the input code before worrying about why it doesn't compile or execute properly).
  * <p/>
  * This class is not threadsafe.
+ * <p/>
+ * Most of the methods return the BodyBuilder, to form a fluent interface.
  */
 public final class BodyBuilder
 {
@@ -49,11 +50,13 @@ public final class BodyBuilder
     /**
      * Clears the builder, returning it to its initial, empty state.
      */
-    public void clear()
+    public BodyBuilder clear()
     {
         _nestingDepth = 0;
         _atNewLine = true;
         _buffer.setLength(0);
+
+        return this;
     }
 
     /**
@@ -62,9 +65,11 @@ public final class BodyBuilder
      * @param format string format, as per {@link java.util.Formatter}
      * @param args   arguments referenced by format specifiers
      */
-    public void add(String format, Object... args)
+    public BodyBuilder add(String format, Object... args)
     {
         add(format, args, false);
+
+        return this;
     }
 
     /**
@@ -73,12 +78,14 @@ public final class BodyBuilder
      * @param format string format, as per {@link java.util.Formatter}
      * @param args   arguments referenced by format specifiers
      */
-    public void addln(String format, Object... args)
+    public BodyBuilder addln(String format, Object... args)
     {
         add(format, args, true);
+
+        return this;
     }
 
-    private void add(String format, Object[] args, boolean newLine)
+    private BodyBuilder add(String format, Object[] args, boolean newLine)
     {
         indent();
 
@@ -87,6 +94,8 @@ public final class BodyBuilder
         _formatter.format(format, args);
 
         if (newLine) newline();
+
+        return this;
     }
 
     private void newline()
@@ -98,7 +107,7 @@ public final class BodyBuilder
     /**
      * Begins a new block. Emits a "{", properly indented, on a new line.
      */
-    public void begin()
+    public BodyBuilder begin()
     {
         if (!_atNewLine) newline();
 
@@ -107,12 +116,14 @@ public final class BodyBuilder
         newline();
 
         _nestingDepth++;
+
+        return this;
     }
 
     /**
      * Ends the current block. Emits a "}", propertly indented, on a new line.
      */
-    public void end()
+    public BodyBuilder end()
     {
         if (!_atNewLine) newline();
 
@@ -124,6 +135,8 @@ public final class BodyBuilder
         _buffer.append("}");
 
         newline();
+
+        return this;
     }
 
     private void indent()
@@ -138,12 +151,11 @@ public final class BodyBuilder
     }
 
     /**
-     * Returns the current contents of the buffer. This value is often passed to methods such as
-     * {@link org.apache.tapestry.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or
-     * {@link org.apache.tapestry.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
+     * Returns the current contents of the buffer. This value is often passed to methods such as {@link
+     * org.apache.tapestry.ioc.services.ClassFab#addConstructor(Class[], Class[], String)} or {@link
+     * org.apache.tapestry.ioc.services.ClassFab#addMethod(int, MethodSignature, String)}.
      * <p/>
-     * A BodyBuilder can be used again after invoking toString(), typically by invoking
-     * {@link #clear()}.
+     * A BodyBuilder can be used again after invoking toString(), typically by invoking {@link #clear()}.
      */
     @Override
     public String toString()

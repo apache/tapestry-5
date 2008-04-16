@@ -66,6 +66,7 @@ import java.util.regex.Pattern;
 /**
  * The root module for Tapestry.
  */
+@SuppressWarnings({ "JavaDoc" })
 @Marker(Core.class)
 public final class TapestryModule
 {
@@ -1430,7 +1431,7 @@ public final class TapestryModule
      * @param renderQueue   does most of the work
      * @return the service
      * @see #contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
-     *      ValidationMessagesSource)
+     *      org.apache.tapestry.ioc.services.SymbolSource, AssetSource, ValidationMessagesSource)
      */
     public PartialMarkupRenderer buildPartialMarkupRenderer(Logger logger,
                                                             List<PartialMarkupRendererFilter> configuration,

@@ -1,8 +1,14 @@
 <html xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
-  <head>
-    <title>Start Page</title>
-  </head>
-  <body>
-    <h2>Test application for tapestry-hibernate integration tests</h2>
-  </body>
+    <head>
+        <title>Start Page</title>
+    </head>
+    <body>
+        <h2>Test application for tapestry-hibernate integration tests</h2>
+
+        <ul>
+            <li>
+                <t:actionlink t:id="commitAfter">CommitAfter Demo</t:actionlink>
+            </li>
+        </ul>
+    </body>
 </html>

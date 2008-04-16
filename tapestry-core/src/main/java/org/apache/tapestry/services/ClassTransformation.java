@@ -362,4 +362,13 @@ public interface ClassTransformation extends AnnotationProvider
     boolean isRootTransformation();
 
 
+    /**
+     * Adds a catch block to the method.  The body should end with a return or a throw. The special Javassist variable
+     * $e is the exception instance.
+     *
+     * @param methodSignature method to be extended.
+     * @param exceptionType   fully qualified class name of exception
+     * @param body            code to execute
+     */
+    void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body);
 }

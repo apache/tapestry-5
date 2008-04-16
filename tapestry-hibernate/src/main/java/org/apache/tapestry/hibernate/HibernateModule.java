@@ -17,17 +17,15 @@ package org.apache.tapestry.hibernate;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.hibernate.*;
-import org.apache.tapestry.ioc.Configuration;
+import org.apache.tapestry.ioc.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.MappedConfiguration;
-import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.InjectService;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.services.AliasContribution;
+import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.PersistentFieldStrategy;
 import org.apache.tapestry.services.ValueEncoderFactory;
 import org.hibernate.Session;
@@ -38,8 +36,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+@SuppressWarnings({ "JavaDoc" })
 public class HibernateModule
 {
+    public static void bind(ServiceBinder binder)
+    {
+        binder.bind(HibernateTransactionDecorator.class, HibernateTransactionDecoratorImpl.class);
+    }
 
     public static HibernateEntityPackageManager build(final Collection<String> packageNames)
     {
@@ -166,10 +169,22 @@ public class HibernateModule
      * Contributes the following: <dl> <dt>entity</dt> <dd>Stores the id of the entity and reloads from the {@link
      * Session}</dd> </dl>
      */
-    public void contributePersistentFieldManager(MappedConfiguration<String, PersistentFieldStrategy> configuration,
-                                                 ObjectLocator locator)
+    public static void contributePersistentFieldManager(
+            MappedConfiguration<String, PersistentFieldStrategy> configuration,
+            ObjectLocator locator)
     {
         configuration.add("entity", locator.autobuild(EntityPersistentFieldStrategy.class));
+    }
+
+    /**
+     * Adds the CommitAfter annotation work, to process the {@link org.apache.tapestry.hibernate.annotations.CommitAfter}
+     * annotation.
+     */
+    public static void contributeComponentClassTransformWorker(
+            OrderedConfiguration<ComponentClassTransformWorker> configuration,
+            ObjectLocator locator)
+    {
+        configuration.add("CommitAfter", locator.autobuild(CommitAfterWorker.class));
     }
 
 }

@@ -16,15 +16,30 @@ package org.example.app0.services;
 
 import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.hibernate.HibernateModule;
+import org.apache.tapestry.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry.ioc.MappedConfiguration;
+import org.apache.tapestry.ioc.ServiceBinder;
+import org.apache.tapestry.ioc.annotations.Match;
 import org.apache.tapestry.ioc.annotations.SubModule;
 
 @SubModule(HibernateModule.class)
 public class AppModule
 {
+    public static void bind(ServiceBinder binder)
+    {
+        binder.bind(UserDAO.class, UserDAOImpl.class);
+    }
+
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
         configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
     }
 
+    @Match("*DAO")
+    public static <T> T decorateTransactionally(HibernateTransactionDecorator decorator, Class<T> serviceInterface,
+                                                T delegate,
+                                                String serviceId)
+    {
+        return decorator.build(serviceInterface, delegate, serviceId);
+    }
 }

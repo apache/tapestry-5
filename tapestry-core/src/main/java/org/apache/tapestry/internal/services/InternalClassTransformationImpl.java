@@ -674,6 +674,27 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     }
 
 
+    public void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body)
+    {
+        failIfFrozen();
+
+        CtMethod method = findMethod(methodSignature);
+        CtClass exceptionCtType = findCtClass(exceptionType);
+
+        try
+        {
+            method.addCatch(body, exceptionCtType);
+        }
+        catch (CannotCompileException ex)
+        {
+            throw new MethodCompileException(ServicesMessages.methodCompileError(methodSignature, body, ex),
+                                             body, ex);
+        }
+
+        addMethodToDescription(String.format("catch(%s) in", exceptionType), methodSignature, body);
+
+    }
+
     public void prefixMethod(TransformMethodSignature methodSignature, String methodBody)
     {
         failIfFrozen();

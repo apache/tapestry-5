@@ -19,6 +19,7 @@ import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.hibernate.HibernateSessionManager;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.example.app0.entities.User;
+import org.example.app0.services.UserDAO;
 import org.hibernate.Session;
 
 import java.util.List;
@@ -28,6 +29,9 @@ public class PersistEntity
     @Persist("entity")
     @Property
     private User _user;
+
+    @Inject
+    private UserDAO _userDAO;
 
     @Inject
     private Session _session;
@@ -40,8 +44,7 @@ public class PersistEntity
         User user = new User();
         user.setFirstName("name");
 
-        _session.save(user);
-        _manager.commit();
+        _userDAO.add(user);
 
         _user = user;
     }
@@ -49,9 +52,8 @@ public class PersistEntity
     void onChangeName()
     {
         _user.setFirstName("name2");
-        // avoid having the changes saved if the request transaction is committed
-        // This may no longer be necessary due to TAPESTRY-2247
-        _session.evict(_user);
+
+        // No commit, so no real change.
     }
 
     void onSetToTransient()
@@ -66,9 +68,8 @@ public class PersistEntity
 
     void onDelete()
     {
-        for (User user : (List<User>) _session.createQuery("from User").list())
-            _session.delete(user);
+        List<User> users = _userDAO.findAll();
 
-        _manager.commit();
+        _userDAO.delete(users.toArray(new User[0]));
     }
 }
