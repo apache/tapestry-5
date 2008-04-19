@@ -10,6 +10,9 @@ Tapestry Core
 
 New And Of Note
 
+  * The Exception Report page now identifies the version of the Tapestry framework, and lists
+    out System properties (including the Java classpath).
+
   * The {{{ref/org/apache/tapestry/corelib/components/Grid.html}Grid}} component can now update itself in place,
     using Ajax, when paging or sorting links are clicked.
 
