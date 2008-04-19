@@ -33,7 +33,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
 {
     private final IdAllocator _idAllocator;
 
-    private final DocumentHeadBuilder _builder;
+    private final DocumentLinker _linker;
 
     private final SymbolSource _symbolSource;
 
@@ -46,21 +46,21 @@ public class PageRenderSupportImpl implements PageRenderSupport
     private final JSONObject _init = new JSONObject();
 
     /**
-     * @param builder      Used to assemble JavaScript includes and snippets
+     * @param linker       Used to assemble JavaScript includes and snippets
      * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
      *                     scripts)
      * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry.Asset}s
      * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
      *                     script link or script block
      */
-    public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
+    public PageRenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
                                  AssetSource assetSource, String... coreScripts)
     {
-        this(builder, symbolSource, assetSource, new IdAllocator(), coreScripts);
+        this(linker, symbolSource, assetSource, new IdAllocator(), coreScripts);
     }
 
     /**
-     * @param builder      Used to assemble JavaScript includes and snippets
+     * @param linker       Used to assemble JavaScript includes and snippets
      * @param symbolSource Used to example symbols (in {@linkplain #addClasspathScriptLink(String...) in classpath
      *                     scripts)
      * @param assetSource  Used to convert classpath scripts to {@link org.apache.tapestry.Asset}s
@@ -69,11 +69,11 @@ public class PageRenderSupportImpl implements PageRenderSupport
      *                     script link or script block
      */
 
-    public PageRenderSupportImpl(DocumentHeadBuilder builder, SymbolSource symbolSource,
+    public PageRenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
                                  AssetSource assetSource, IdAllocator idAllocator, String... coreScripts)
 
     {
-        _builder = builder;
+        _linker = linker;
         _symbolSource = symbolSource;
         _assetSource = assetSource;
         _idAllocator = idAllocator;
@@ -99,7 +99,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
         {
             notNull(asset, "scriptAsset");
 
-            _builder.addScriptLink(asset.toClientURL());
+            _linker.addScriptLink(asset.toClientURL());
         }
     }
 
@@ -117,7 +117,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
         Asset asset = _assetSource.getAsset(null, expanded, null);
 
-        _builder.addScriptLink(asset.toClientURL());
+        _linker.addScriptLink(asset.toClientURL());
     }
 
     public void addScript(String format, Object... arguments)
@@ -128,7 +128,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
         String script = format(format, arguments);
 
-        _builder.addScript(script);
+        _linker.addScript(script);
     }
 
     public void addInit(String functionName, JSONArray parameterList)
@@ -141,9 +141,22 @@ public class PageRenderSupportImpl implements PageRenderSupport
         addInitFunctionInvocation(functionName, parameter);
     }
 
-    public void addInit(String functionName, String parameter)
+    public void addInit(String functionName, String... parameters)
     {
-        addInitFunctionInvocation(functionName, parameter);
+        if (parameters.length == 1)
+        {
+            addInitFunctionInvocation(functionName, parameters[0]);
+            return;
+        }
+
+        JSONArray array = new JSONArray();
+
+        for (String parameter : parameters)
+        {
+            array.put(parameter);
+        }
+
+        addInitFunctionInvocation(functionName, array);
     }
 
     private void addInitFunctionInvocation(String functionName, Object parameters)
@@ -177,7 +190,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
     {
         notNull(stylesheet, "stylesheet");
 
-        _builder.addStylesheetLink(stylesheet.toClientURL(), media);
+        _linker.addStylesheetLink(stylesheet.toClientURL(), media);
     }
 
     private void addCore()

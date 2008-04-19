@@ -14,6 +14,12 @@ Upgrade Notes
 
 Release 5.0.12
 
+* TapestryModule
+
+  Many of the internal services of Tapestry have been split off into their own module,
+  {{{../apidocs/org/apache/tapestry/internal/services/InternalModule.html}InternalModule}}.
+  This should not affect any user code.
+
 * Form component
 
   The default {{{../apidocs/org/apache/tapestry/ValidationTracker.html}ValidationTracker}}

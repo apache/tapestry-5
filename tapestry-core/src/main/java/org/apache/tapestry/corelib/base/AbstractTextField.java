@@ -65,7 +65,7 @@ public abstract class AbstractTextField extends AbstractField
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
      * generally used to provide this object in a declarative fashion.
      */
-    @Parameter(defaultPrefix = "validate")
+    @Parameter(defaultPrefix = TapestryConstants.VALIDATE_BINDING_PREFIX)
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> _validate;
 
@@ -83,7 +83,7 @@ public abstract class AbstractTextField extends AbstractField
      * replace the nulls with some other value. The default strategy leaves nulls alone.  Another built-in strategy,
      * zero, replaces nulls with the value 0.
      */
-    @Parameter(defaultPrefix = "nullfieldstrategy", value = "default")
+    @Parameter(defaultPrefix = TapestryConstants.NULLFIELDSTRATEGY_BINDING_PREFIX, value = "default")
     private NullFieldStrategy _nulls;
 
     @Environmental
@@ -132,7 +132,7 @@ public abstract class AbstractTextField extends AbstractField
     }
 
     /**
-     * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
+     * Computes a default value for the "validate" parameter using {@link org.apache.tapestry.services.FieldValidatorDefaultSource}.
      */
     final FieldValidator defaultValidate()
     {

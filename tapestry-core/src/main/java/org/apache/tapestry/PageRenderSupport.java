@@ -101,11 +101,12 @@ public interface PageRenderSupport
     void addInit(String functionName, JSONObject parameter);
 
     /**
-     * Alternate version of {@link #addInit(String, org.apache.tapestry.json.JSONArray)} where just a single string is
-     * passed.
+     * Alternate version of {@link #addInit(String, org.apache.tapestry.json.JSONArray)} where one or more strings are
+     * passed.  A single string is added to the initialization call as itself; otherwise, the parameters are combined to
+     * form a {@link JSONArray}.
      *
      * @param functionName the name of the function (on the client-side Tapestry object) to invoke.
-     * @param parameter    the single string to pass to the function
+     * @param parameters
      */
-    void addInit(String functionName, String parameter);
+    void addInit(String functionName, String... parameters);
 }

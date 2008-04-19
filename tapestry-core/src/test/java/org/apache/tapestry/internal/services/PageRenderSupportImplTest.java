@@ -34,15 +34,15 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script_link_by_asset()
     {
-        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
+        DocumentLinker linker = mockDocumentLinker();
         Asset asset = mockAsset();
 
         train_toClientURL(asset, ASSET_URL);
-        builder.addScriptLink(ASSET_URL);
+        linker.addScriptLink(ASSET_URL);
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(builder, null, null);
+        PageRenderSupport support = new PageRenderSupportImpl(linker, null, null);
 
         support.addScriptLink(asset);
 
@@ -55,7 +55,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         getMocksControl().checkOrder(true);
 
         Asset coreAsset = mockAsset();
-        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
+        DocumentLinker linker = mockDocumentLinker();
         Asset asset = mockAsset();
         AssetSource assetSource = mockAssetSource();
         SymbolSource symbolSource = mockSymbolSource();
@@ -64,14 +64,14 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         train_getAsset(assetSource, null, CORE_ASSET_PATH, null, coreAsset);
 
         train_toClientURL(coreAsset, CORE_ASSET_URL);
-        builder.addScriptLink(CORE_ASSET_URL);
+        linker.addScriptLink(CORE_ASSET_URL);
 
         train_toClientURL(asset, ASSET_URL);
-        builder.addScriptLink(ASSET_URL);
+        linker.addScriptLink(ASSET_URL);
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
+        PageRenderSupport support = new PageRenderSupportImpl(linker, symbolSource, assetSource,
                                                               CORE_ASSET_PATH_UNEXPANDED);
 
         support.addScriptLink(asset);
@@ -82,13 +82,13 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
     @Test
     public void add_script()
     {
-        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
+        DocumentLinker linker = mockDocumentLinker();
 
-        builder.addScript("Tapestry.Foo(\"bar\");");
+        linker.addScript("Tapestry.Foo(\"bar\");");
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(builder, null, null);
+        PageRenderSupport support = new PageRenderSupportImpl(linker, null, null);
 
         support.addScript("Tapestry.Foo(\"%s\");", "bar");
 
@@ -101,7 +101,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         String path = "${root}/foo/bar.pdf";
         String expanded = "org/apache/tapestry/foo/bar.pdf";
 
-        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
+        DocumentLinker linker = mockDocumentLinker();
         Asset asset = mockAsset();
         SymbolSource source = mockSymbolSource();
         AssetSource assetSource = mockAssetSource();
@@ -111,11 +111,11 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
         train_getAsset(assetSource, null, expanded, null, asset);
 
         train_toClientURL(asset, ASSET_URL);
-        builder.addScriptLink(ASSET_URL);
+        linker.addScriptLink(ASSET_URL);
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(builder, source, assetSource);
+        PageRenderSupport support = new PageRenderSupportImpl(linker, source, assetSource);
 
         support.addClasspathScriptLink(path);
 
@@ -126,17 +126,54 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
     public void add_stylesheet_link()
     {
         String media = "print";
-        DocumentHeadBuilder builder = mockDocumentScriptBuilder();
+        DocumentLinker linker = mockDocumentLinker();
         Asset asset = mockAsset();
 
         train_toClientURL(asset, ASSET_URL);
-        builder.addStylesheetLink(ASSET_URL, media);
+        linker.addStylesheetLink(ASSET_URL, media);
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(builder, null, null);
+        PageRenderSupport support = new PageRenderSupportImpl(linker, null, null);
 
         support.addStylesheetLink(asset, media);
+
+        verify();
+    }
+
+    @Test
+    public void add_init_with_single_string_parameter()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addScript("Tapestry.init({\"foo\":[\"fred\",\"barney\"]});");
+
+        replay();
+
+        PageRenderSupportImpl support = new PageRenderSupportImpl(linker, null, null);
+
+        support.addInit("foo", "fred");
+        support.addInit("foo", "barney");
+
+        support.commit();
+
+        verify();
+    }
+
+    @Test
+    public void add_multiple_string_init_parameters()
+    {
+        DocumentLinker linker = mockDocumentLinker();
+
+        linker.addScript("Tapestry.init({\"foo\":[[\"fred\",\"barney\"]]});");
+
+        replay();
+
+        PageRenderSupportImpl support = new PageRenderSupportImpl(linker, null, null);
+
+        support.addInit("foo", "fred", "barney");
+
+        support.commit();
 
         verify();
     }

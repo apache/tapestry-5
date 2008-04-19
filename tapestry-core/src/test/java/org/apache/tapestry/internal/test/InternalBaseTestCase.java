@@ -497,9 +497,9 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
         return buffer.toString().trim();
     }
 
-    protected final DocumentHeadBuilder mockDocumentScriptBuilder()
+    protected final DocumentLinker mockDocumentLinker()
     {
-        return newMock(DocumentHeadBuilder.class);
+        return newMock(DocumentLinker.class);
     }
 
     protected final void train_canonicalizePageName(ComponentClassResolver resolver, String pageName,

@@ -136,38 +136,6 @@ var Tapestry = {
         return manager;
     },
 
-    initValidations : function(clientValidations)
-    {
-        $H(clientValidations).each(function(pair)
-        {
-            var field = $(pair.key);
-
-            Tapestry.getFormEventManager(field.form);
-
-            var specs = pair.value;
-
-            specs.each(function(spec)
-            {
-                // spec is a 2 or 3 element array.
-                // validator function name, message, optional constraint
-
-                var name = spec[0];
-                var message = spec[1];
-                var constraint = spec[2];
-
-                var vfunc = Tapestry.Validator[name];
-
-                if (vfunc == undefined)
-                {
-                    Tapestry.logError("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
-                    return;
-                }
-
-                vfunc.call(this, field, message, constraint);
-            });
-        });
-    },
-
     /**
      * Passed the JSON content of a Tapestry partial markup response, extracts
      * the script key (if present) and evals it, then uses the DOM loaded callback
@@ -263,6 +231,33 @@ Tapestry.Initializer = {
         };
 
         element.onclick = handler;
+    },
+
+    validate : function (field, specs)
+    {
+        field = $(field);
+
+        Tapestry.getFormEventManager(field.form);
+
+        specs.each(function(spec)
+        {
+            // spec is a 2 or 3 element array.
+            // validator function name, message, optional constraint
+
+            var name = spec[0];
+            var message = spec[1];
+            var constraint = spec[2];
+
+            var vfunc = Tapestry.Validator[name];
+
+            if (vfunc == undefined)
+            {
+                Tapestry.logError("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
+                return;
+            }
+
+            vfunc.call(this, field, message, constraint);
+        });
     },
 
     zone : function(spec)
