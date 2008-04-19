@@ -97,6 +97,13 @@ public final class TapestryModule
 
     private final EnvironmentalShadowBuilder _environmentalBuilder;
 
+
+    /**
+     * We inject all sorts of common dependencies (including builders) into the module itself (note: even though some of
+     * these service are defined by the module itself, that's ok because services are always lazy proxies).  This isn't
+     * about efficiency (it may be slightly more efficient, but not in any noticable way), it's about eliminating the
+     * need to keep injecting these dependencies into invividual service builder and contribution methods.
+     */
     public TapestryModule(PipelineBuilder pipelineBuilder,
 
                           PropertyShadowBuilder shadowBuilder,
@@ -136,7 +143,6 @@ public final class TapestryModule
         _strategyBuilder = strategyBuilder;
         _componentInstantiatorSource = componentInstantiatorSource;
         _propertyAccess = propertyAccess;
-
         _updateListenerHub = updateListenerHub;
         _request = request;
         _response = response;
@@ -240,6 +246,9 @@ public final class TapestryModule
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
 
+                                                            @Symbol(TapestryConstants.TAPESTRY_VERSION_SYMBOL)
+                                                            String version,
+
                                                             // @Inject not needed, because this isn't a service builder method
                                                             @Symbol("tapestry.scriptaculous.path")
                                                             String scriptaculousPath,
@@ -247,11 +256,15 @@ public final class TapestryModule
                                                             @Symbol("tapestry.datepicker.path")
                                                             String datepickerPath)
     {
-        configuration.add("tapestry", "org/apache/tapestry");
+        // TAPESTRY-2159:  All the classpath assets are inside a version numbered folder (i.e., 5.0.12).
+        // For scriptaculous, etc., this version is not the version of the library, but the version
+        // bundled with Tapestry.
 
-        configuration.add("scriptaculous", scriptaculousPath);
+        configuration.add("tapestry/" + version, "org/apache/tapestry");
 
-        configuration.add("datepicker", datepickerPath);
+        configuration.add("scriptaculous/" + version, scriptaculousPath);
+
+        configuration.add("datepicker/" + version, datepickerPath);
     }
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
@@ -1998,9 +2011,9 @@ public final class TapestryModule
     /**
      * Contributes filters: <dl> <dt>Ajax</dt> <dd>Determines if the request is Ajax oriented, and redirects to an
      * alternative handler if so</dd> <dt>ImmediateRender</dt> <dd>When {@linkplain
-     * org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL immediate action response
-     * rendering} is enabled, generates the markup response (instead of a page redirect response, which is the normal
-     * behavior) </dd> <dt>Secure</dt> <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
+     * TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL immediate action response rendering} is enabled,
+     * generates the markup response (instead of a page redirect response, which is the normal behavior) </dd>
+     * <dt>Secure</dt> <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
                                                        final RequestSecurityManager requestSecurityManager,

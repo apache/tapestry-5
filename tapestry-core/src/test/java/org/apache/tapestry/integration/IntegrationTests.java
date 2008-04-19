@@ -647,7 +647,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-asc.png");
+        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/UNKNOWN/corelib/components/sort-asc.png");
         assertAttribute("//img[@id='title:sort']/@alt", "[Asc]");
 
         clickAndWait("link=1");
@@ -656,7 +656,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         clickAndWait("link=Title");
 
-        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/corelib/components/sort-desc.png");
+        assertAttribute("//img[@id='title:sort']/@src", "assets/tapestry/UNKNOWN/corelib/components/sort-desc.png");
         assertAttribute("//img[@id='title:sort']/@alt", "[Desc]");
 
         clickAndWait("link=reset the Grid");
@@ -817,8 +817,8 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         // The lack of a leading slash indicates that the path was optimized, see TAPESTRY-1502
 
-        assertAttributeSeries("//script[%d]/@src", 1, "assets/scriptaculous/prototype.js",
-                              "assets/scriptaculous/scriptaculous.js");
+        assertAttributeSeries("//script[%d]/@src", 1, "assets/scriptaculous/UNKNOWN/prototype.js",
+                              "assets/scriptaculous/UNKNOWN/scriptaculous.js");
 
         clickAndWait("link=Clear Data");
 

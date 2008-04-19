@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -21,23 +21,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Used to represent a period of time, specifically as a configuration value. This is often
- * used to specify timeouts.
+ * Used to represent a period of time, specifically as a configuration value. This is often used to specify timeouts.
  * <p/>
  * TimePeriods are parsed from strings.
  * <p/>
- * The string specifys a number of terms. The values of all the terms are summed together to form
- * the total time period. Each term consists of a number followed by a unit.
- * Units (from largest to smallest) are:
- * <dl>
- * <dt>d <dd>day
- * <dt>h <dd>hour
- * <dt>m <dd>minute
- * <dt>s <dd>second
- * <dt>ms <dd>millisecond
- * </dl>
- * <p>  Example: "2 h 30 m". By convention, terms are specified largest to smallest.  A term without a unit is assumed to be milliseconds.  Units are case insensitive ("h" or "H"
- * are treated the same).
+ * The string specifys a number of terms. The values of all the terms are summed together to form the total time period.
+ * Each term consists of a number followed by a unit. Units (from largest to smallest) are: <dl> <dt>y <dd>year <dt>d
+ * <dd>day <dt>h <dd>hour <dt>m <dd>minute <dt>s <dd>second <dt>ms <dd>millisecond </dl> <p>  Example: "2 h 30 m". By
+ * convention, terms are specified largest to smallest.  A term without a unit is assumed to be milliseconds.  Units are
+ * case insensitive ("h" or "H" are treated the same).
  */
 public class TimeInterval
 {
@@ -50,8 +42,9 @@ public class TimeInterval
         UNITS.put("ms", 1l);
         UNITS.put("s", MILLISECOND);
         UNITS.put("m", 60 * MILLISECOND);
-        UNITS.put("h", 60 * 60 * MILLISECOND);
-        UNITS.put("d", 24 * 60 * 60 * MILLISECOND);
+        UNITS.put("h", 60 * UNITS.get("m"));
+        UNITS.put("d", 24 * UNITS.get("h"));
+        UNITS.put("y", 365 * UNITS.get("d"));
     }
 
     private static final Pattern PATTERN = Pattern.compile("\\s*(\\d+)\\s*([a-z]*)", Pattern.CASE_INSENSITIVE);

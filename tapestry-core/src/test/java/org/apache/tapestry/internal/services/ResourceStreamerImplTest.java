@@ -57,6 +57,7 @@ public class ResourceStreamerImplTest extends InternalBaseTestCase
 
         train_setContentLength(hsr, anyInt());
         train_setDateHeader(hsr, eq("Last-Modified"), anyLong());
+        train_setDateHeader(hsr, eq("Expires"), anyLong());
         train_setContentType(hsr, contentType);
         train_getOutputStream(hsr, new TestServletOutputStream());
 

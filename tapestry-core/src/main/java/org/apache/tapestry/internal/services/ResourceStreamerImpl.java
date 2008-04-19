@@ -16,6 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.util.TimeInterval;
 import org.apache.tapestry.services.Response;
 
 import java.io.BufferedInputStream;
@@ -33,6 +34,8 @@ public class ResourceStreamerImpl implements ResourceStreamer
     private final Map<String, String> _configuration;
 
     private final int _bufferSize = 1000;
+
+    private static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
 
     public ResourceStreamerImpl(final Response response, Map<String, String> configuration)
     {
@@ -56,6 +59,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
         long lastModified = connection.getLastModified();
 
         _response.setDateHeader("Last-Modified", lastModified);
+        _response.setDateHeader("Expires", lastModified + TEN_YEARS);
 
         String contentType = connection.getContentType();
 
