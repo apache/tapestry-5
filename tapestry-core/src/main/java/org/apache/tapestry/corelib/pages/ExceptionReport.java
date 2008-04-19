@@ -19,20 +19,24 @@ import org.apache.tapestry.annotations.ContentType;
 import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ExceptionReporter;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.Session;
 
+import java.util.List;
+
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
- * application. When {@link org.apache.tapestry.TapestryConstants#PRODUCTION_MODE_SYMBOL} is "true", it is very
- * abbreviated.
+ * application. When {@link TapestryConstants#PRODUCTION_MODE_SYMBOL} is "true", it is very abbreviated.
  *
  * @see org.apache.tapestry.corelib.components.ExceptionDisplay
  */
 @ContentType("text/html")
 public class ExceptionReport implements ExceptionReporter
 {
+    private static final String PATH_SEPARATOR_PROPERTY = "path.separator";
+
     @Property
     private String _attributeName;
 
@@ -42,11 +46,20 @@ public class ExceptionReport implements ExceptionReporter
 
     @Inject
     @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
-    @Property
+    @Property(write = false)
     private boolean _productionMode;
 
-    @Property
+    @Inject
+    @Symbol(TapestryConstants.TAPESTRY_VERSION_SYMBOL)
+    @Property(write = false)
+    private String _tapestryVersion;
+
+    @Property(write = false)
     private Throwable _rootException;
+
+    @Property
+    private String _propertyName;
+    private final String _pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
     public void reportException(Throwable exception)
     {
@@ -67,4 +80,32 @@ public class ExceptionReport implements ExceptionReporter
     {
         return getSession().getAttribute(_attributeName);
     }
+
+    /**
+     * Returns a <em>sorted</em> list of system property names.
+     */
+    public List<String> getSystemProperties()
+    {
+        return InternalUtils.sortedKeys(System.getProperties());
+    }
+
+    public String getPropertyValue()
+    {
+        return System.getProperty(_propertyName);
+    }
+
+    public boolean isSimpleProperty()
+    {
+        if (_propertyName.equals(PATH_SEPARATOR_PROPERTY)) return true;
+
+        return !getPropertyValue().contains(_pathSeparator);
+    }
+
+    public String[] getComplexPropertyValue()
+    {
+        // Neither : nor ; is a regexp character.
+
+        return getPropertyValue().split(_pathSeparator);
+    }
+
 }

@@ -138,6 +138,12 @@ public final class TapestryConstants
     public static final String FILE_CHECK_UPDATE_TIMEOUT_SYMBOL = "tapestry.file-check-update-timeout";
 
     /**
+     * The version number of the core Tapestry framework, or UNKNOWN if the version number is not available (which
+     * should only occur when developing Tapestry).
+     */
+    public static final String TAPESTRY_VERSION_SYMBOL = "tapestry.version";
+
+    /**
      * The page field persistence strategy that stores data in the session until the next request.
      */
     public static final String FLASH_PERSISTENCE_STRATEGY = "flash";
