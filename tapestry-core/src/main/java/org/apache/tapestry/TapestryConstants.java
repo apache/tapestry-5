@@ -52,6 +52,22 @@ public final class TapestryConstants
      */
     public static final String PROP_BINDING_PREFIX = "prop";
 
+    public static final String NULLFIELDSTRATEGY_BINDING_PREFIX = "nullfieldstrategy";
+
+    public static final String COMPONENT_BINDING_PREFIX = "component";
+
+    public static final String MESSAGE_BINDING_PREFIX = "message";
+
+    public static final String VALIDATE_BINDING_PREFIX = "validate";
+
+    public static final String TRANSLATE_BINDING_PREFIX = "translate";
+
+    public static final String BLOCK_BINDING_PREFIX = "block";
+
+    public static final String ASSET_BINDING_PREFIX = "asset";
+
+    public static final String VAR_BINDING_PREFIX = "var";
+
     /**
      * Meta data key applied to pages that sets the response content type. A factory default provides the value
      * "text/html" when not overridden.

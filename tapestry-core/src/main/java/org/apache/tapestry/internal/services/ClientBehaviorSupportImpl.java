@@ -130,7 +130,15 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
      */
     public void commit()
     {
-        if (_validations.length() > 0)
-            _pageRenderSupport.addScript("Tapestry.initValidations(%s);", _validations);
+        for (String field : _validations.keys())
+        {
+            JSONArray specs = _validations.getJSONArray(field);
+
+            JSONArray parameters = new JSONArray();
+            parameters.put(field);
+            parameters.put(specs);
+
+            _pageRenderSupport.addInit("validate", parameters);
+        }
     }
 }

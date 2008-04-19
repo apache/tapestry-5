@@ -29,15 +29,16 @@ public interface FieldValidatorDefaultSource
 {
     /**
      * Analyzes the property type and property annotations to determine the default set of validations for the property,
-     * which are wrapped to form a {@link FieldValidator} for a field.
+     * which are wrapped to form a {@link org.apache.tapestry.FieldValidator} for a field.
      *
-     * @param field
-     * @param overrideId
-     * @param overrideMessages
-     * @param locale
-     * @param propertyType
-     * @param propertyAnnotations
-     * @return
+     * @param field               Field component for which a validator is being created
+     * @param overrideId          the id of the component, used to locate related messages for labels and errors
+     * @param overrideMessages    where to search for label and error messages
+     * @param locale              locale used for locating messages
+     * @param propertyType        type of property bound to the editting parameter of the field (typically, the
+     *                            parameter named "value").
+     * @param propertyAnnotations source of annotations for the property being editted
+     * @return a validator reflecting all default validations for the field
      */
     FieldValidator createDefaultValidator(Field field, String overrideId, Messages overrideMessages, Locale locale,
                                           Class propertyType, AnnotationProvider propertyAnnotations);

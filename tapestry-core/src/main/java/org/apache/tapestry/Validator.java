@@ -53,9 +53,9 @@ public interface Validator<C, T>
     String getMessageKey();
 
     /**
-     * Invoked after the client-submitted value has been {@link Translator translated} to check that the value conforms
-     * to expectations (often, in terms of minimum or maximum value). If and only if the value is approved by all
-     * Validators is the value applied by the field.
+     * Invoked after the client-submitted value has been {@link org.apache.tapestry.Translator translated} to check that
+     * the value conforms to expectations (often, in terms of minimum or maximum value). If and only if the value is
+     * approved by all Validators is the value applied by the field.
      *
      * @param field           the field for which a client submitted value is being validated
      * @param constraintValue the value used to constrain
