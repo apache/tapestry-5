@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class TimeIntervalTest extends TestBase
         catch (RuntimeException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Unknown time interval unit 'mz' (in '30s 500mz').  Defined units: d, h, m, ms, s.");
+                         "Unknown time interval unit 'mz' (in '30s 500mz').  Defined units: d, h, m, ms, s, y.");
         }
     }
 
@@ -83,17 +83,17 @@ public class TimeIntervalTest extends TestBase
     @DataProvider(name = "mix_of_units_data")
     public Object[][] mix_of_units_data()
     {
-        return new Object[][]{{"54321", 54321},
+        return new Object[][] { { "54321", 54321 },
 
-                              {"30s", 30 * 1000},
+                { "30s", 30 * 1000 },
 
-                              {"1h 30m", 90 * 60 * 1000},
+                { "1h 30m", 90 * 60 * 1000 },
 
-                              {"2d", 2 * 24 * 60 * 60 * 1000},
+                { "2d", 2 * 24 * 60 * 60 * 1000 },
 
-                              {"2m", 2 * 60 * 1000},
+                { "2m", 2 * 60 * 1000 },
 
-                              {"23ms", 23}
+                { "23ms", 23 }
 
         };
     }

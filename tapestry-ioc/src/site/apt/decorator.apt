@@ -118,7 +118,7 @@ import org.slf4j.Logger;
 public class MyAppModule
 {
   public static Indexer build(Class serviceInterface, Logger logger,
-    LoggingInterceptorFactory decorator)
+    LoggingDecorator decorator)
   {
     return decorator.build(serviceInterface, logger,  new IndexerImpl());
   } 
@@ -205,4 +205,110 @@ Ordering of Decorators
    and that is passed to the last decorator method. The interceptor created there
    is passed to the the next-to-last decorator method, and so forth.
 
-    
+Creating your own Decorators
+
+  Decorators are a limited form of Aspect Oriented Programming, so we have
+  borrowed some of that terminology here.
+
+  A decorator exists to create an <interceptor>.  The interceptor wraps around
+  the service (because these interceptors can get chained, we talk about the "delegate" and not the "service").
+
+  Each method of the interceptor will take <advice>.  Advice
+  is provided by a {{{../apidocs/org/apache/tapestry/ioc/MethodAdvice.html}MethodAdvice}} instance.
+  The sole method, <<<advise()>>>, recieves an
+   {{{../apidocs/org/apache/tapestry/ioc/Invocation.html}Invocation}}.
+  MethodAdvice gives you a chance to see what the method invocation <is>; you can query
+  the name of the method, and the types and values of the parameters.
+
+  The MethodAdvice can override the parameters if necessary, then invoke <<<proceed()>>>.  This
+  call invokes the corresponding method on the original object, the delegate.
+
+  If the method call throws a runtime exception, that exception is not caught.  Your method advice can
+  put a try ... catch block around the call to proceed() if interested in catching runtime exception.
+
+  Checked exceptions are not thrown (since they are not part of the proceed() method's signature).  Instead
+  the invocation's <<<isFail()>>> method will return true.  You can then retrieve the exception or override it.
+
+  In the normal success case, you can ask for the return value and even override it before
+  returning from the advise() method.
+
+  In other words, you have total control.  Your MethodAdvise can query or change parameters, decide whether
+  it proceed into the original code, it can intercept exceptions that are thrown and replace them, and can
+  query or even replace the return value.
+
+  The
+  {{{../apidocs/org/apache/tapestry/service/AspectDecorator.html}AspectDecorator}} service
+  is how you put your MethodAdvise into action.
+
+  By way of an example, we'll show the current implementation of the LoggingDecorator service:
+
++----+
+public class LoggingDecoratorImpl implements LoggingDecorator
+{
+    private final AspectDecorator _aspectDecorator;
+
+    private final ExceptionTracker _exceptionTracker;
+
+    public LoggingDecoratorImpl(AspectDecorator aspectDecorator, ExceptionTracker exceptionTracker)
+    {
+        _aspectDecorator = aspectDecorator;
+        _exceptionTracker = exceptionTracker;
+    }
+
+    public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
+    {
+        final ServiceLogger serviceLogger = new ServiceLogger(logger, _exceptionTracker);
+
+        MethodAdvice advice = new MethodAdvice()
+        {
+            public void advise(Invocation invocation)
+            {
+                boolean debug = logger.isDebugEnabled();
+
+                if (debug) serviceLogger.entry(invocation);
+
+                try
+                {
+                    invocation.proceed();
+                }
+                catch (RuntimeException ex)
+                {
+                    if (debug) serviceLogger.fail(invocation, ex);
+
+                    throw ex;
+                }
+
+                if (!debug) return;
+
+                if (invocation.isFail())
+                {
+                    Exception thrown = invocation.getThrown(Exception.class);
+
+                    serviceLogger.fail(invocation, thrown);
+
+                    return;
+                }
+
+                serviceLogger.exit(invocation);
+            }
+        };
+
+        return _aspectDecorator.build(serviceInterface, delegate, advice,
+                                      String.format("<Logging interceptor for %s(%s)>", serviceId,
+                                                    serviceInterface.getName()));
+    }
+}
++---+
+
+  Most of the logging logic occurs inside the ServiceLogger object, the MethodAdvise exists to call the right methods at
+  the right time.  A Logger doesn't <change> parameter values (or thrown exceptions, or the result), it just
+  captures and logs the data.
+
+  Notice that for runtime exceptions, we catch the exception, log it, and rethrow it.
+
+  For checked exceptions, we use isFail() and getThrown().
+
+  The AspectDecorator service can also be used in more complicated ways: it is possible to
+  only advise some of the methods and not others, or use different advise for different methods.  Check the
+  JavaDoc for more details.
+

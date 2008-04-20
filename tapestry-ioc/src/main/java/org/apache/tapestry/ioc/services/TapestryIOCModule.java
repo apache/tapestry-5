@@ -54,6 +54,7 @@ public final class TapestryIOCModule
         binder.bind(Runnable.class, RegistryStartup.class).withId("RegistryStartup");
         binder.bind(MasterObjectProvider.class, MasterObjectProviderImpl.class);
         binder.bind(ClassNameLocator.class, ClassNameLocatorImpl.class);
+        binder.bind(AspectDecorator.class, AspectDecoratorImpl.class);
     }
 
     /**

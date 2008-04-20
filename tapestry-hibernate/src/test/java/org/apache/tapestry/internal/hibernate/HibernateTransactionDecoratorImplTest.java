@@ -17,8 +17,12 @@ package org.apache.tapestry.internal.hibernate;
 import org.apache.tapestry.hibernate.HibernateSessionManager;
 import org.apache.tapestry.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry.hibernate.annotations.CommitAfter;
-import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry.ioc.IOCUtilities;
+import org.apache.tapestry.ioc.Registry;
+import org.apache.tapestry.ioc.services.AspectDecorator;
 import org.apache.tapestry.test.TapestryTestCase;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
@@ -26,6 +30,26 @@ import java.sql.SQLException;
 @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
 {
+    private Registry _registry;
+
+    private AspectDecorator _aspectDecorator;
+
+    @BeforeClass
+    public void setup()
+    {
+        _registry = IOCUtilities.buildDefaultRegistry();
+
+        _aspectDecorator = _registry.getService(AspectDecorator.class);
+    }
+
+
+    @AfterClass
+    public void shutdown()
+    {
+        _aspectDecorator = null;
+        _registry.shutdown();
+        _registry = null;
+    }
 
     @Test
     public void undecorated()
@@ -179,7 +203,7 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
 
     private HibernateTransactionDecorator newHibernateSessionManagerDecorator(HibernateSessionManager manager)
     {
-        return new HibernateTransactionDecoratorImpl(new ClassFactoryImpl(), manager);
+        return new HibernateTransactionDecoratorImpl(_aspectDecorator, manager);
     }
 
     private void assertToString(VoidService interceptor)

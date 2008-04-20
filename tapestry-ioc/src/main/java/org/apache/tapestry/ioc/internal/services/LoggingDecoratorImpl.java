@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,146 +14,66 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import org.apache.tapestry.ioc.services.*;
-import static org.apache.tapestry.ioc.services.ClassFabUtils.toJavaClassName;
-import org.apache.tapestry.ioc.util.BodyBuilder;
+import org.apache.tapestry.ioc.Invocation;
+import org.apache.tapestry.ioc.MethodAdvice;
+import org.apache.tapestry.ioc.services.AspectDecorator;
+import org.apache.tapestry.ioc.services.ExceptionTracker;
+import org.apache.tapestry.ioc.services.LoggingDecorator;
 import org.slf4j.Logger;
-
-import static java.lang.String.format;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 
 public class LoggingDecoratorImpl implements LoggingDecorator
 {
-    private final ClassFactory _classFactory;
+    private final AspectDecorator _aspectDecorator;
 
     private final ExceptionTracker _exceptionTracker;
 
-    public LoggingDecoratorImpl(@Builtin
-    ClassFactory classFactory,
-
-                                ExceptionTracker exceptionTracker)
+    public LoggingDecoratorImpl(AspectDecorator aspectDecorator, ExceptionTracker exceptionTracker)
     {
-        _classFactory = classFactory;
+        _aspectDecorator = aspectDecorator;
         _exceptionTracker = exceptionTracker;
     }
 
-    public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, Logger logger)
+    public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
     {
-        Class interceptorClass = createInterceptorClass(serviceInterface, serviceId);
+        final ServiceLogger serviceLogger = new ServiceLogger(logger, _exceptionTracker);
 
-        ServiceLogger serviceLogger = new ServiceLogger(logger, _exceptionTracker);
-
-        Constructor cc = interceptorClass.getConstructors()[0];
-
-        Object interceptor = null;
-        Throwable fail = null;
-
-        try
+        MethodAdvice advice = new MethodAdvice()
         {
-            interceptor = cc.newInstance(delegate, serviceLogger);
-        }
-        catch (InvocationTargetException ite)
-        {
-            fail = ite.getTargetException();
-        }
-        catch (Exception ex)
-        {
-            fail = ex;
-        }
+            public void advise(Invocation invocation)
+            {
+                boolean debug = logger.isDebugEnabled();
 
-        if (fail != null) throw new RuntimeException(fail);
+                if (debug) serviceLogger.entry(invocation);
 
-        return serviceInterface.cast(interceptor);
+                try
+                {
+                    invocation.proceed();
+                }
+                catch (RuntimeException ex)
+                {
+                    if (debug) serviceLogger.fail(invocation, ex);
+
+                    throw ex;
+                }
+
+                if (!debug) return;
+
+                if (invocation.isFail())
+                {
+                    Exception thrown = invocation.getThrown(Exception.class);
+
+                    serviceLogger.fail(invocation, thrown);
+
+                    return;
+                }
+
+                serviceLogger.exit(invocation);
+            }
+        };
+
+        return _aspectDecorator.build(serviceInterface, delegate, advice,
+                                      String.format("<Logging interceptor for %s(%s)>", serviceId,
+                                                    serviceInterface.getName()));
     }
 
-    private Class createInterceptorClass(Class serviceInterface, String serviceId)
-    {
-        ClassFab cf = _classFactory.newClass(serviceInterface);
-
-        cf.addField("_delegate", Modifier.PRIVATE | Modifier.FINAL, serviceInterface);
-        cf.addField("_logger", Modifier.PRIVATE | Modifier.FINAL, ServiceLogger.class);
-
-        cf.addConstructor(new Class[]
-                {serviceInterface, ServiceLogger.class}, null, "{ _delegate = $1; _logger = $2; }");
-
-        addMethods(cf, serviceInterface, serviceId);
-
-        return cf.createClass();
-    }
-
-    private void addMethods(ClassFab cf, Class serviceInterface, String serviceId)
-    {
-        MethodIterator mi = new MethodIterator(serviceInterface);
-
-        while (mi.hasNext())
-            addMethod(cf, mi.next());
-
-        if (!mi.getToString())
-            cf.addToString(ServiceMessages.loggingInterceptor(serviceId, serviceInterface));
-    }
-
-    private void addMethod(ClassFab cf, MethodSignature signature)
-    {
-        String name = '"' + signature.getName() + '"';
-        Class returnType = signature.getReturnType();
-        boolean isVoid = returnType.equals(void.class);
-
-        // We'll see how well Javassist handles void methods with this setup
-
-        BodyBuilder builder = new BodyBuilder();
-        builder.begin();
-        builder.addln("boolean debug = _logger.isDebugEnabled();");
-
-        builder.addln("if (debug)");
-        builder.addln("  _logger.entry(%s, $args);", name);
-
-        builder.addln("try");
-        builder.begin();
-
-        if (!isVoid) builder.add("%s result = ", toJavaClassName(returnType));
-
-        builder.addln("_delegate.%s($$);", signature.getName());
-
-        if (isVoid)
-        {
-            builder.addln("if (debug)");
-            builder.addln(format("  _logger.voidExit(%s);", name));
-            builder.addln("return;");
-        }
-        else
-        {
-            builder.addln("if (debug)");
-            builder.addln(format("  _logger.exit(%s, ($w)result);", name));
-            builder.addln("return result;");
-        }
-
-        builder.end(); // try
-
-        // Now, a catch for each declared exception (if any)
-
-        if (signature.getExceptionTypes() != null)
-            for (Class exceptionType : signature.getExceptionTypes())
-                addExceptionHandler(builder, name, exceptionType);
-
-        // And a catch for RuntimeException
-
-        addExceptionHandler(builder, name, RuntimeException.class);
-
-        builder.end();
-
-        cf.addMethod(Modifier.PUBLIC, signature, builder.toString());
-    }
-
-    private void addExceptionHandler(BodyBuilder builder, String quotedMethodName,
-                                     Class exceptionType)
-    {
-        builder.addln("catch (%s ex)", exceptionType.getName());
-        builder.begin();
-        builder.addln("if (debug)");
-        builder.addln("  _logger.fail(%s, ex);", quotedMethodName);
-        builder.addln("throw ex;");
-        builder.end();
-    }
 }
