@@ -24,7 +24,7 @@ package org.apache.tapestry.hibernate;
 public interface HibernateTransactionDecorator
 {
     /**
-     * Builds an  transaction interceptor instance.
+     * Builds a transaction interceptor instance around the delegate.
      *
      * @param <T>
      * @param serviceInterface interface implemented by the delegate

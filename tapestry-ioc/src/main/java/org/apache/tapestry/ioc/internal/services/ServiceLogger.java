@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import org.apache.tapestry.ioc.internal.util.Defense;
+import org.apache.tapestry.ioc.Invocation;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
 import org.slf4j.Logger;
 
@@ -22,20 +22,22 @@ import static java.lang.String.format;
 import java.util.Iterator;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.services.LoggingDecoratorImpl} to delegate out
- * logging behavior to a seperate object (helps ensure no naming conflicts).
+ * Used by {@link org.apache.tapestry.ioc.internal.services.LoggingDecoratorImpl} to delegate out logging behavior to a
+ * seperate object (helps ensure no naming conflicts).
  */
 public final class ServiceLogger
 {
-    private final Logger _logger;
-
-    private final ExceptionTracker _exceptionTracker;
+    private static final int BUFFER_SIZE = 200;
 
     private static final String ENTER = "ENTER";
 
     private static final String EXIT = " EXIT";
 
     private static final String FAIL = " FAIL";
+
+    private final Logger _logger;
+
+    private final ExceptionTracker _exceptionTracker;
 
     public ServiceLogger(Logger logger, ExceptionTracker exceptionTracker)
     {
@@ -44,30 +46,21 @@ public final class ServiceLogger
     }
 
     /**
-     * Returns true if the debugging is enabled for the underlying Log.
-     */
-    public boolean isDebugEnabled()
-    {
-        return _logger.isDebugEnabled();
-    }
-
-    /**
      * Invoked when a method is first entered
      *
-     * @param name      of the method
-     * @param arguments
+     * @param invocation identifies method invoked as well as parameters passed to method
      */
-    public void entry(String name, Object[] arguments)
+    public void entry(Invocation invocation)
     {
-        StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder(BUFFER_SIZE);
 
-        buffer.append(format("[%s] %s(", ENTER, name));
+        buffer.append(format("[%s] %s(", ENTER, invocation.getMethodName()));
 
-        for (int i = 0; i < arguments.length; i++)
+        for (int i = 0; i < invocation.getParameterCount(); i++)
         {
             if (i > 0) buffer.append(", ");
 
-            convert(buffer, arguments[i]);
+            convert(buffer, invocation.getParameter(i));
         }
 
         buffer.append(")");
@@ -135,44 +128,38 @@ public final class ServiceLogger
     }
 
     /**
-     * Invoked when a method returns a value
+     * Invoked when a method exits (possibly returning a value).
      *
-     * @param name   of the method
-     * @param result the return value for the method invocation
+     * @param invocation identifies method invocation and  result value
      */
-    public void exit(String name, Object result)
+    public void exit(Invocation invocation)
     {
-        Defense.notNull(name, "name");
+        StringBuilder buffer = new StringBuilder(BUFFER_SIZE);
 
-        StringBuilder buffer = new StringBuilder();
+        buffer.append(format("[%s] %s", EXIT, invocation.getMethodName()));
 
-        buffer.append(format("[%s] %s [", EXIT, name));
-
-        convert(buffer, result);
-
-        buffer.append(']');
+        if (invocation.getResultType() != void.class)
+        {
+            buffer.append(" [");
+            convert(buffer, invocation.getResult());
+            buffer.append(']');
+        }
 
         _logger.debug(buffer.toString());
     }
 
     /**
-     * Invoked when void method finishes succesfully.
-     */
-    public void voidExit(String name)
-    {
-        _logger.debug(format("[%s] %s", EXIT, name));
-    }
-
-    /**
      * Invoked when method invocation instead throws an exception.
+     *
+     * @param invocation identifies method invocation which failed
+     * @param t          exception throws by method invocation
      */
-    public void fail(String name, Throwable t)
+    public void fail(Invocation invocation, Throwable t)
     {
-        if (_logger.isDebugEnabled())
-        {
-            _logger.debug(
-                    format("[%s] %s -- %s", FAIL, name, t.getClass().getName()),
-                    _exceptionTracker.exceptionLogged(t) ? null : t);
-        }
+        _logger.debug(
+                format("[%s] %s -- %s", FAIL,
+                       invocation.getMethodName(),
+                       t.getClass().getName()),
+                _exceptionTracker.exceptionLogged(t) ? null : t);
     }
 }
