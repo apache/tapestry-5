@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ public class TapestryUtilsTest extends Assert
     {
         return new Object[][]
                 {
-                        {"Suzy said: \"It's not the proper time\".",
-                         "'Suzy said: \\\"It\\'s not the proper time\\\".'"},
-                        {"regexp: \\d{4}", "'regexp: \\\\d{4}'"},
+                        { "Suzy said: \"It's not the proper time\".",
+                                "'Suzy said: \\\"It\\'s not the proper time\\\".'" },
+                        { "regexp: \\d{4}", "'regexp: \\\\d{4}'" },
 
                 };
     }
@@ -60,10 +60,29 @@ public class TapestryUtilsTest extends Assert
     {
         return new Object[][]
                 {
-                        {new String[0], ""},
-                        {new String[]
-                                {"fred"}, "fred"},
-                        {new String[]
-                                {"fred", "barney", "wilma"}, "barney fred wilma"}};
+                        { new String[0], "" },
+                        { new String[]
+                                { "fred" }, "fred" },
+                        { new String[]
+                                { "fred", "barney", "wilma" }, "barney fred wilma" } };
     }
+
+    @Test
+    public void read_version_number_missing()
+    {
+        assertEquals(TapestryUtils.readVersionNumber("no-such-file.properties"), "UNKNOWN");
+    }
+
+    @Test
+    public void read_version_number()
+    {
+        assertEquals(TapestryUtils.readVersionNumber("org/apache/tapestry/version.properties"), "1.2.3.4");
+    }
+
+    @Test
+    public void read_version_number_no_version_key()
+    {
+        assertEquals(TapestryUtils.readVersionNumber("org/apache/tapestry/noversion.properties"), "UNKNOWN");
+    }
+
 }

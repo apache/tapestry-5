@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal;
 
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.IOCUtilities;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.RegistryBuilder;
@@ -24,11 +23,6 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.TapestryModule;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
 
 /**
  * This class is used to build the {@link Registry}. The Registry contains {@link org.apache.tapestry.ioc.services.TapestryIOCModule}
@@ -142,13 +136,7 @@ public class TapestryAppInitializer
                                                                                                _appName),
                                                                                        "before:ServletContext");
 
-        ContributionDef versionContribution = new SyntheticSymbolSourceContributionDef("TapestryVersion",
-                                                                                       new SingleKeySymbolProvider(
-                                                                                               TapestryConstants.TAPESTRY_VERSION_SYMBOL,
-                                                                                               readTapestryVersionNumber()));
-
-        _builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution,
-                                            versionContribution));
+        _builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution));
     }
 
     public Registry getRegistry()
@@ -172,41 +160,5 @@ public class TapestryAppInitializer
     public long getStartTime()
     {
         return _startTime;
-    }
-
-    private String readTapestryVersionNumber()
-    {
-        String result = "UNKNOWN";
-
-        InputStream stream = getClass().getResourceAsStream(
-                "META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties");
-
-
-        if (stream != null)
-        {
-            Properties properties = new Properties();
-
-
-            try
-            {
-                stream = new BufferedInputStream(stream);
-
-                properties.load(stream);
-            }
-            catch (IOException ex)
-            {
-                // Just ignore it.
-            }
-
-            String version = properties.getProperty("version");
-
-            // Since the file, if it exists, is created by Maven and will have the key, I can't see
-            // how version would EVER be null, unless there's a problem reading the properties.
-
-            if (version != null) result = version;
-        }
-
-        return result;
-
     }
 }
