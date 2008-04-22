@@ -1779,6 +1779,10 @@ public final class TapestryModule
         // This should be overridden for particular applications.
         configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,it,zh_CN");
 
+        configuration.add(TapestryConstants.TAPESTRY_VERSION_SYMBOL,
+                          TapestryUtils.readVersionNumber(
+                                  "META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties"));
+
         configuration.add("tapestry.default-cookie-max-age", "7 d");
 
         configuration.add("tapestry.start-page-name", "start");
@@ -1864,8 +1868,8 @@ public final class TapestryModule
 
                 initializer.initializeApplication(context);
 
-// We don't care about the result, but this forces a load of the service
-// at application startup, rather than on first request.
+                // We don't care about the result, but this forces a load of the service
+                // at application startup, rather than on first request.
 
                 componentClassResolver.isPageName("ForceLoadAtStartup");
             }
