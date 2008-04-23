@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -138,4 +138,14 @@ public interface MarkupWriter
      * @return the currently active element
      */
     Element attributeNS(String namespace, String attributeName, String attributeValue);
+
+    /**
+     * Adds a markup writer listener that will be notified as elements are started and ended.
+     */
+    void addListener(MarkupWriterListener listener);
+
+    /**
+     * Removes a previously added listener.
+     */
+    void removeListener(MarkupWriterListener listener);
 }

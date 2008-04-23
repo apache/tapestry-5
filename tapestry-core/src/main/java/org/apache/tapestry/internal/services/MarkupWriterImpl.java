@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,10 +15,14 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.MarkupWriterListener;
 import org.apache.tapestry.dom.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 import java.io.PrintWriter;
+import java.util.List;
 
 public class MarkupWriterImpl implements MarkupWriter
 {
@@ -27,6 +31,8 @@ public class MarkupWriterImpl implements MarkupWriter
     private Element _current;
 
     private Text _currentText;
+
+    private final List<MarkupWriterListener> _listeners = CollectionFactory.newList();
 
     public MarkupWriterImpl()
     {
@@ -133,6 +139,8 @@ public class MarkupWriterImpl implements MarkupWriter
 
         _currentText = null;
 
+        fireElementDidStart();
+
         return _current;
     }
 
@@ -148,6 +156,8 @@ public class MarkupWriterImpl implements MarkupWriter
     public Element end()
     {
         ensureCurrentElement();
+
+        fireElementDidEnd();
 
         _current = _current.getParent();
 
@@ -190,6 +200,38 @@ public class MarkupWriterImpl implements MarkupWriter
 
         _currentText = null;
 
+
+        fireElementDidStart();
+
         return _current;
     }
+
+    public void addListener(MarkupWriterListener listener)
+    {
+        Defense.notNull(listener, "listener");
+
+        _listeners.add(listener);
+    }
+
+    public void removeListener(MarkupWriterListener listener)
+    {
+        _listeners.remove(listener);
+    }
+
+    private void fireElementDidStart()
+    {
+        for (MarkupWriterListener l : _listeners)
+        {
+            l.elementDidStart(_current);
+        }
+    }
+
+    private void fireElementDidEnd()
+    {
+        for (MarkupWriterListener l : _listeners)
+        {
+            l.elementDidEnd(_current);
+        }
+    }
 }
+
