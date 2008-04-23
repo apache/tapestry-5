@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
+import org.apache.tapestry.MarkupWriterListener;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.dom.XMLMarkupModel;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -256,5 +257,52 @@ public class MarkupWriterImplTest extends InternalBaseTestCase
 
         assertEquals(w.toString(),
                      "<?xml version=\"1.0\"?>\n<root>Normal Text <![CDATA[< & >]]>More Normal Text</root>");
+    }
+
+    @Test
+    public void listeners()
+    {
+        MarkupWriter w = new MarkupWriterImpl(new XMLMarkupModel());
+
+        MarkupWriterListener l = new MarkupWriterListener()
+        {
+            public void elementDidStart(Element element)
+            {
+                element.text("[Start: " + element.getName() + "]");
+            }
+
+            public void elementDidEnd(Element element)
+            {
+                element.text("[End: " + element.getName() + "]");
+            }
+        };
+
+        w.element("root");
+        w.element("no-listener");
+
+        w.write("before listener");
+
+        w.addListener(l);
+
+        w.element("listener");
+        w.write("before n-w-l");
+        w.element("nested-with-listener");
+        w.write("n-w-l text");
+        w.end();
+        w.write("after n-w-l");
+        w.end();
+
+        w.removeListener(l);
+
+        w.write("after listener");
+
+        w.end();
+        w.end();
+
+        // Because we are invoking Element.text(), the text added by the listener is appended to the body of the element,
+        // which is correct but may not be what you'd expect.
+
+        assertEquals(w.toString(), "<?xml version=\"1.0\"?>\n" +
+                "<root><no-listener>before listener<listener>[Start: listener]before n-w-l<nested-with-listener>[Start: nested-with-listener]n-w-l text[End: nested-with-listener]</nested-with-listener>after n-w-l[End: listener]</listener>after listener</no-listener></root>");
     }
 }
