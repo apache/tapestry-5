@@ -18,6 +18,11 @@ var Tapestry = {
 
     FORM_PREPARE_FOR_SUBMIT_EVENT : "form:prepareforsubmit",
 
+    DEBUG_ENABLED : false,
+
+    /** Time, in seconds, that console messages are visible. */
+    CONSOLE_DURATION : 10,
+
     FormEvent : Class.create(),
 
     FormEventManager : Class.create(),
@@ -97,11 +102,14 @@ var Tapestry = {
         $H(spec).each(function(pair)
         {
             var functionName = pair.key;
+
+            // Tapestry.logWarning("Initialize: #{name} ...", { name:functionName });
+
             var initf = Tapestry.Initializer[functionName];
 
             if (initf == undefined)
             {
-                Tapestry.logError("Function Tapestry.Initializer.#{name}() does not exist.", { name:functionName });
+                Tapestry.error("Function Tapestry.Initializer.#{name}() does not exist.", { name:functionName });
                 return;
             }
 
@@ -117,11 +125,52 @@ var Tapestry = {
         });
     },
 
-    logError : function (message, substitutions)
+    error : function (message, substitutions)
     {
-        var formatted = message.interpolate(substitutions);
+        Tapestry.updateConsole("t-err", message, substitutions);
+    },
 
-        window.alert(formatted);
+    warn : function (message, substitutions)
+    {
+        Tapestry.updateConsole("t-warn", message, substitutions);
+    },
+
+    debug : function (message, substitutions)
+    {
+        if (Tapestry.DEBUG_ENABLED)
+            Tapestry.updateConsole("t-debug", message, substitutions);
+    },
+
+    updateConsole : function (className, message, substitutions)
+    {
+        if (substitutions != undefined)
+            message = message.interpolate(substitutions);
+
+        if (Tapestry.console == undefined)
+        {
+            var body = $$("BODY").first();
+
+            Tapestry.console = new Element("div", { 'class': "t-console" });
+
+            body.insert({ bottom: Tapestry.console });
+        }
+
+        var div = new Element("div", { 'class': className }).update(message);
+
+        Tapestry.console.insert({ bottom: div });
+
+        var effect = new Effect.BlindUp(div, { delay: Tapestry.CONSOLE_DURATION,
+            afterFinish: function()
+            {
+                div.remove();
+            }});
+
+        div.observe("click", function()
+        {
+            effect.cancel();
+            div.remove();
+        });
+
     },
 
     getFormEventManager : function(form)
@@ -252,7 +301,7 @@ Tapestry.Initializer = {
 
             if (vfunc == undefined)
             {
-                Tapestry.logError("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
+                Tapestry.error("Function Tapestry.Validator.#{name}() does not exist for field '#{fieldName}'.", {name:name, fieldName:pair.key});
                 return;
             }
 
@@ -283,22 +332,26 @@ Tapestry.Initializer = {
     {
         trigger = $(trigger);
 
-        trigger.observe("change", function()
+        if (trigger.type == "radio")
+        {
+            $(trigger.form).observe("click", function()
+            {
+                $(element).formFragment.setVisible(trigger.checked);
+            });
+
+            return;
+        }
+
+        // Otherwise, we assume it is a checkbox.  The difference is
+        // that we can observe just the single checkbox element,
+        // rather than handling clicks anywhere in the form (as with
+        // the radio).
+
+        trigger.observe("click", function()
         {
             $(element).formFragment.setVisible(trigger.checked);
         });
 
-
-        if (trigger.type == "radio")
-        {
-            $(trigger.form).observe("change", function()
-            {
-                if (! trigger.checked)
-                {
-                    $(element).formFragment.hide();
-                }
-            });
-        }
     }
 };
 
@@ -451,7 +504,7 @@ Tapestry.ErrorPopup.prototype = {
         this.innerSpan = new Element("span");
         this.outerDiv = $(new Element("div", { 'class' : 't-error-popup' })).update(this.innerSpan).hide();
 
-        var body = $$('body')[0];
+        var body = $$('BODY').first();
 
         body.insert({ bottom: this.outerDiv });
 
