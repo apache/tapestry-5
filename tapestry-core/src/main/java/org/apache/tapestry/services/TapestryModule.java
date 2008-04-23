@@ -1425,6 +1425,9 @@ public final class TapestryModule
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
+                                         @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
+                                         final boolean productionMode,
+
                                          @Path("${tapestry.default-stylesheet}")
                                          final Asset stylesheetAsset,
 
@@ -1441,7 +1444,7 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                DocumentLinkerImpl linker = new DocumentLinkerImpl();
+                DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode);
 
                 PageRenderSupportImpl support = new PageRenderSupportImpl(linker, symbolSource, assetSource,
 

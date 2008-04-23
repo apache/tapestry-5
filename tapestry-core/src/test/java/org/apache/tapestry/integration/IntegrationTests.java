@@ -1853,7 +1853,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
 
         click("link=Add a row");
 
-        sleep(500);
+        sleep(1000);
 
         type("//input[@type='text'][1]", "5.1");
 

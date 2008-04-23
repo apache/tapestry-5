@@ -33,6 +33,13 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private final List<IncludedStylesheet> _includedStylesheets = newList();
 
+    private final boolean _developmentMode;
+
+    public DocumentLinkerImpl(boolean productionMode)
+    {
+        _developmentMode = !productionMode;
+    }
+
     private class IncludedStylesheet
     {
         private final String _url;
@@ -120,17 +127,21 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         // TAPESTRY-2364
 
+
         for (String scriptURL : _scripts)
         {
             body.element("script", "src", scriptURL, "type", "text/javascript");
         }
 
-        if (_scriptBlock.length() > 0)
+        boolean blockNeeded = (_developmentMode && !_scripts.isEmpty()) || _scriptBlock.length() > 0;
+
+        if (blockNeeded)
         {
             Element e = body.element("script", "type", "text/javascript");
             e.raw("\n<!--\n");
 
-            // This assumes that Prototype and tapestry.js is available.
+            if (_developmentMode)
+                e.text("Tapestry.DEBUG_ENABLED = true;\n");
 
             e.text("Tapestry.onDOMLoaded(function() {\n");
 
