@@ -117,16 +117,18 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentClassCache cache = mockComponentClassCache();
 
+        train_getLogger(model, logger);
+
         Class asoClass = SimpleASO.class;
 
         CtClass ctClass = findCtClass(StateHolder.class);
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _classFactory, logger,
-                                                                                         null);
         train_forName(cache, asoClass);
 
         replay();
 
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, null, ctClass,
+                                                                                         model);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();
@@ -182,16 +184,18 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
         ComponentClassCache cache = mockComponentClassCache();
 
+        train_getLogger(model, logger);
+
         Class asoClass = SimpleASO.class;
 
         CtClass ctClass = findCtClass(MaybeStateHolder.class);
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, _classFactory, logger,
-                                                                                         null);
         train_forName(cache, asoClass);
 
         replay();
 
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, null, ctClass,
+                                                                                         model);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();

@@ -363,22 +363,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
             return null;
         }
 
-        Class parameterType = writeMethod.getParameterTypes()[0];
-
-        Class wrapperType = ClassFabUtils.getWrapperType(parameterType);
+        Class propertyType = writeMethod.getParameterTypes()[0];
+        String propertyTypeName = ClassFabUtils.toJavaClassName(propertyType);
 
         // Cast the parameter from Object to the expected type for the method.
 
-        builder.addln("%s value = (%<s) $2;", ClassFabUtils.toJavaClassName(wrapperType));
+        builder.addln("%s value = %s;", propertyTypeName, ClassFabUtils.castReference("$2", propertyTypeName));
 
-        // Invoke the method, possibly converting a wrapper type to a primitive type along the way.
+        // Invoke the method.
 
-        builder.add("%s.%s(value", result.getFinalStepVariable(), writeMethod.getName());
-
-        if (parameterType != wrapperType)
-            builder.add(".%s()", ClassFabUtils.getUnwrapMethodName(parameterType.getName()));
-
-        builder.addln(");");
+        builder.addln("%s.%s(value);", result.getFinalStepVariable(), writeMethod.getName());
 
         builder.end();
 

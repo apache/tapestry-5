@@ -32,17 +32,17 @@ public class ClassFabUtilsTest extends IOCTestCase
     @DataProvider(name = "provider")
     public Object[][] createInputs()
     {
-        return new Object[][]{{"java.lang.Object", "java.lang.Object"},
+        return new Object[][] { { "java.lang.Object", "java.lang.Object" },
 
-                              {"int", "int"},
+                { "int", "int" },
 
-                              {"int[]", "[I"},
+                { "int[]", "[I" },
 
-                              {"java.lang.Throwable[]", "[Ljava.lang.Throwable;"},
+                { "java.lang.Throwable[]", "[Ljava.lang.Throwable;" },
 
-                              {"byte[][]", "[[B"},
+                { "byte[][]", "[[B" },
 
-                              {"java.lang.Runnable[][]", "[[Ljava.lang.Runnable;"}};
+                { "java.lang.Runnable[][]", "[[Ljava.lang.Runnable;" } };
     }
 
     @Test(dataProvider = "typeCodeProvider")
@@ -54,47 +54,43 @@ public class ClassFabUtilsTest extends IOCTestCase
     @DataProvider(name = "typeCodeProvider")
     public Object[][] get_type_code_provider()
     {
-        return new Object[][]{{int.class, "I"},
+        return new Object[][] { { int.class, "I" },
 
-                              {int[].class, "[I"},
+                { int[].class, "[I" },
 
-                              {Thread.class, "Ljava/lang/Thread;"},
+                { Thread.class, "Ljava/lang/Thread;" },
 
-                              {Thread[].class, "[Ljava/lang/Thread;"},
+                { Thread[].class, "[Ljava/lang/Thread;" },
 
-                              {Double[][].class, "[[Ljava/lang/Double;"},
+                { Double[][].class, "[[Ljava/lang/Double;" },
 
-                              {void.class, "V"}};
-    }
-
-    @Test
-    public void unwrap_method()
-    {
-        assertEquals(ClassFabUtils.getUnwrapMethodName("int"), "intValue");
-    }
-
-    @Test
-    public void wrapper_type_name()
-    {
-        assertEquals(ClassFabUtils.getWrapperTypeName("int"), "java.lang.Integer");
-    }
-
-    @Test
-    public void wrapper_type()
-    {
-        assertEquals(ClassFabUtils.getWrapperType(int.class), Integer.class);
-        assertEquals(ClassFabUtils.getWrapperType(getClass()), getClass());
-    }
-
-    @Test
-    public void unwrap_method_from_wrapper_type()
-    {
-        assertEquals(ClassFabUtils.getUnwrapMethodName(Boolean.class), "booleanValue");
+                { void.class, "V" } };
     }
 
     @Test
     public void primitive_type_from_wrapper_type()
     {
         assertSame(ClassFabUtils.getPrimitiveType(Boolean.class), boolean.class);
+    }
+
+    @Test
+    public void get_primitive_type_from_name()
+    {
+        assertSame(ClassFabUtils.getPrimitiveType("int"), int.class);
+    }
+
+    @Test
+    public void cast_reference_to_object_type()
+    {
+        assertEquals(ClassFabUtils.castReference("ref", "java.lang.String"),
+                     "(java.lang.String)ref");
+    }
+
+    @Test
+    public void cast_reference_to_primitive_type()
+    {
+        assertEquals(ClassFabUtils.castReference("ref", "short"),
+                     "((java.lang.Short)ref).shortValue()");
+
     }
 }

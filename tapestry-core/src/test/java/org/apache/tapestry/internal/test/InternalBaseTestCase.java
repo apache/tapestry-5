@@ -36,6 +36,7 @@ import org.apache.tapestry.ioc.services.PropertyAdapter;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.EmbeddedComponentModel;
+import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.RenderQueue;
 import org.apache.tapestry.services.ComponentClassResolver;
@@ -643,5 +644,13 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
     protected final ClientBehaviorSupport mockClientBehaviorSupport()
     {
         return newMock(ClientBehaviorSupport.class);
+    }
+
+    protected final MutableComponentModel mockMutableComponentModel(Logger logger)
+    {
+        MutableComponentModel model = mockMutableComponentModel();
+        train_getLogger(model, logger);
+
+        return model;
     }
 }

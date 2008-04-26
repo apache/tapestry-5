@@ -19,7 +19,8 @@ import org.apache.tapestry.ioc.MethodAdvice;
 
 /**
  * A decorator used to create an interceptor that delegates each method's invocation to an {@link
- * org.apache.tapestry.ioc.MethodAdvice} for advise.
+ * org.apache.tapestry.ioc.MethodAdvice} for advice.  Advice can inspect or change method parameters, inspect or change
+ * the method's return value, and inspect and change thrown exceptions (checked and unchecked).
  */
 public interface AspectDecorator
 {
@@ -37,7 +38,7 @@ public interface AspectDecorator
     <T> T build(Class<T> serviceInterface, T delegate, MethodAdvice advice, String description);
 
     /**
-     * Creates a builder that can be used to create the builder.  This is used when only some of the methods of need to
+     * Creates a builder that can be used to create the interceptor.  This is used when only some of the methods need to
      * be advised, or when different methods need to recieve different advice.
      *
      * @param serviceInterface defines the interface of the interceptor and the delegate

@@ -280,24 +280,11 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         for (int i = 0; i < parameterTypes.length; i++)
         {
             Class type = parameterTypes[i];
+            String typeName = ClassFabUtils.toJavaClassName(type);
 
-            builder.add("case %d: %s%d = ", i, PARAMETER_FIELD, i);
-
-            if (type.isPrimitive())
-            {
-                Class wrapperType = ClassFabUtils.getWrapperType(type);
-
-                builder.add("((%s)$2).%s()", wrapperType.getName(),
-                            ClassFabUtils.getUnwrapMethodName(wrapperType));
-            }
-            else
-            {
-                builder.add("(%s)$2", ClassFabUtils.toJavaClassName(type));
-            }
-
-            builder.addln(";");
-
-            builder.addln("return;");
+            builder.addln("case %d: %s%d = %s; return;",
+                          i, PARAMETER_FIELD, i,
+                          ClassFabUtils.castReference("$2", typeName));
         }
 
         builder.addln("default: throw new IllegalArgumentException(\"Parameter index out of range.\");");

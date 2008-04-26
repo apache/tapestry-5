@@ -357,7 +357,7 @@ public interface ClassTransformation extends AnnotationProvider
      * Returns true if this transformation represents a root class (one that extends directly from Object), or false if
      * this transformation is an extension of another transformed class.
      *
-     * @return true if root class, false is sub-class
+     * @return true if root class, false if sub-class
      */
     boolean isRootTransformation();
 
@@ -371,4 +371,9 @@ public interface ClassTransformation extends AnnotationProvider
      * @param body            code to execute
      */
     void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body);
+
+    /**
+     * Adds method advice for the indicated method.
+     */
+    void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice);
 }

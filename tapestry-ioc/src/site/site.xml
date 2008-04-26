@@ -43,6 +43,7 @@
 
         <menu name="Quick Links">
             <item name="Download" href="http://tapestry.apache.org/download.html"/>
+            <item name="Upgrade Notes" href="upgrade.html"/>
         </menu>
 
         <menu name="Tapestry IoC Container">

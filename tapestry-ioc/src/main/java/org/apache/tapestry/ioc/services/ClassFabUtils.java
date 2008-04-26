@@ -21,32 +21,32 @@ import static java.lang.String.format;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Handy method useful when creating new classes using {@link org.apache.tapestry.ioc.services.ClassFab}.
  */
 public final class ClassFabUtils
 {
-    private static long _uid = System.currentTimeMillis();
+    private static final AtomicLong UID_GENERATOR = new AtomicLong(System.currentTimeMillis());
 
-    private ClassFabUtils()
+    private static String nextUID()
     {
+        return Long.toHexString(UID_GENERATOR.getAndIncrement());
     }
 
     /**
      * Generates a unique class name, which will be in the default package.
      */
-
     public static synchronized String generateClassName(String baseName)
     {
-        return "$" + baseName + "_" + Long.toHexString(_uid++);
+        return "$" + baseName + "_" + nextUID();
     }
 
     /**
      * Returns a class name derived from the provided interfaceClass. The package part of the interface name is stripped
      * out, and the result passed to {@link #generateClassName(String)}.
      */
-
     public static String generateClassName(Class interfaceClass)
     {
         return generateClassName(interfaceClass.getSimpleName());
@@ -75,6 +75,11 @@ public final class ClassFabUtils
         if (method.getParameterTypes().length > 0) return false;
 
         return method.getReturnType().equals(String.class);
+    }
+
+    public static Class getPrimitiveType(String primitiveTypeName)
+    {
+        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveTypeName).getPrimitiveType();
     }
 
     private static class PrimitiveInfo
@@ -172,47 +177,62 @@ public final class ClassFabUtils
     }
 
     /**
-     * Given one of the primitive types, returns the name of the method that will unwrap the wrapped type to the
-     * primitive type.
+     * Given a wrapper type, determines the corresponding primitive type.
      */
-    public static String getUnwrapMethodName(String primitiveTypeName)
-    {
-        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveTypeName).getUnwrapMethod();
-    }
-
-    public static String getUnwrapMethodName(Class wrapperType)
-    {
-        PrimitiveInfo info = WRAPPER_TYPE_TO_PRIMITIVE_INFO.get(wrapperType);
-
-        return info.getUnwrapMethod();
-    }
-
-    /**
-     * Given the name of a primitive type, returns the name of the corresponding wrapper class.
-     */
-
-    public static String getWrapperTypeName(String primitiveType)
-    {
-        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveType).getWrapperType().getName();
-    }
-
     public static Class getPrimitiveType(Class wrapperType)
     {
         return WRAPPER_TYPE_TO_PRIMITIVE_INFO.get(wrapperType).getPrimitiveType();
     }
 
     /**
-     * Given some type (possibly a primitive) returns the corresponding primitive type. For non-primitives, the provided
-     * type is returned.
+     * Returns the wrapper type for an input type; for most types, this is the type.  For primitive types, it is the
+     * corresponding wrapper type.
+     *
+     * @param type type to check
+     * @return type or corresponding wrapper type
      */
-    public static Class getWrapperType(Class primitiveType)
+    public static Class getWrapperType(Class type)
     {
-        if (primitiveType.isPrimitive())
-            return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveType.getName()).getWrapperType();
+        PrimitiveInfo info = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName());
 
-        return primitiveType; // Not a primitive!
+        return info == null ? type : info.getWrapperType();
     }
 
+    /**
+     * Takes a reference and casts it to the desired type.  If the desired type is a primitive type, then the reference
+     * is cast to the correct wrapper type and a call to the correct unwrapper method is added. The end result is code
+     * that can be assigned to a field or parameter of the desired type (even if desired type is a primitive).
+     *
+     * @param reference   to be cast
+     * @param desiredType desired object or primitive type
+     * @return Javassist code to peform the cast
+     */
+    public static String castReference(String reference, String desiredType)
+    {
+        if (isPrimitiveType(desiredType))
+        {
+            PrimitiveInfo info = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(desiredType);
+
+            return String.format("((%s)%s).%s()",
+                                 info.getWrapperType().getName(), reference,
+                                 info.getUnwrapMethod());
+        }
+
+        return String.format("(%s)%s", desiredType, reference);
+    }
+
+
+    /**
+     * Given a type name, determines if that is the name of a primitive type.
+     */
+    public static boolean isPrimitiveType(String typeName)
+    {
+        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.containsKey(typeName);
+    }
+
+    /**
+     * Converts a Class to a JVM type code (the way class information is expressed in a class file).
+     */
     public static String getTypeCode(Class type)
     {
         if (type.equals(void.class)) return "V";
@@ -225,9 +245,9 @@ public final class ClassFabUtils
     }
 
     /**
-     * Creates a proxy for a given service interface around an {@link ObjectCreator} that can provide (on demand) an
-     * object (implementing the service interface) to delegate to. The ObjectCreator will be invoked on every method
-     * invocation ( if it is caching, that should be internal to its implementation).
+     * Creates a proxy for a given service interface around an {@link org.apache.tapestry.ioc.ObjectCreator} that can
+     * provide (on demand) an object (implementing the service interface) to delegate to. The ObjectCreator will be
+     * invoked on every method invocation (if it is caching, that should be internal to its implementation).
      *
      * @param <T>
      * @param classFab         used to create the new class
@@ -241,7 +261,7 @@ public final class ClassFabUtils
     {
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
 
-        classFab.addConstructor(new Class[]{ObjectCreator.class}, null, "_creator = $1;");
+        classFab.addConstructor(new Class[] { ObjectCreator.class }, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

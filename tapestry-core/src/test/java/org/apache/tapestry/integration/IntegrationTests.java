@@ -1995,4 +1995,28 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         assertEquals(getText("lastupdate"), timestamp,
                      "Timestamp should not have changed because updates are in-place.");
     }
+
+
+    @Test
+    public void method_advice()
+    {
+        start("Method Advice Demo");
+
+        // @ReverseStrings intercepted and reversed the result:
+        assertText("message", "!olleH");
+
+        // @ReverseStrings doesn't do anything for non-Strings
+        assertText("version", "5");
+
+        // @ReverseStrings filtered the checked exception to a string result
+        assertText("cranky",
+                   "Invocation of method getCranky() failed with org.apache.tapestry.integration.app1.services.DearGodWhyMeException.");
+
+        // Now to check advice on a setter that manipulates parameters
+
+        type("text", "Tapestry");
+        clickAndWait(SUBMIT);
+
+        assertText("output-text", "yrtsepaT");
+    }
 }

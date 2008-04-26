@@ -259,7 +259,9 @@ public class Start
 
             new Item("cachedpage2", "Cached Annotation2", "Caching method return values w/ inheritence"),
 
-            new Item("inplacegriddemo", "In-Place Grid Demo", "Grid that updates in-place using Ajax")
+            new Item("inplacegriddemo", "In-Place Grid Demo", "Grid that updates in-place using Ajax"),
+
+            new Item("methodadvicedemo", "Method Advice Demo", "Advising component methods.")
     );
 
     static

@@ -16,11 +16,8 @@ package org.apache.tapestry.internal.hibernate;
 
 import org.apache.tapestry.hibernate.HibernateSessionManager;
 import org.apache.tapestry.hibernate.annotations.CommitAfter;
-import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry.services.*;
 
 /**
  * Searches for methods that have the {@link org.apache.tapestry.hibernate.annotations.CommitAfter} annotation and adds
@@ -31,6 +28,27 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
 {
     private final HibernateSessionManager _manager;
 
+    private final ComponentMethodAdvice _advice = new ComponentMethodAdvice()
+    {
+        public void advise(ComponentMethodInvocation invocation)
+        {
+            try
+            {
+                invocation.proceed();
+
+                // Success or checked exception:
+
+                _manager.commit();
+            }
+            catch (RuntimeException ex)
+            {
+                _manager.abort();
+
+                throw ex;
+            }
+        }
+    };
+
     public CommitAfterWorker(HibernateSessionManager manager)
     {
         _manager = manager;
@@ -40,36 +58,7 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
     {
         for (TransformMethodSignature sig : transformation.findMethodsWithAnnotation(CommitAfter.class))
         {
-            addCommitAbortLogic(sig, transformation);
-        }
-    }
-
-    private void addCommitAbortLogic(TransformMethodSignature method, ClassTransformation transformation)
-    {
-        String managerField = transformation.addInjectedField(HibernateSessionManager.class, "manager", _manager);
-
-        // Handle the normal case, a succesful method invocation.
-
-        transformation.extendExistingMethod(method, String.format("%s.commit();", managerField));
-
-        // Now, abort on any RuntimeException
-
-        BodyBuilder builder = new BodyBuilder().begin().addln("%s.abort();", managerField);
-
-        builder.addln("throw $e;").end();
-
-        transformation.addCatch(method, RuntimeException.class.getName(), builder.toString());
-
-        // Now, a commit for each thrown exception
-
-        builder.clear();
-        builder.begin().addln("%s.commit();", managerField).addln("throw $e;").end();
-
-        String body = builder.toString();
-
-        for (String name : method.getExceptionTypes())
-        {
-            transformation.addCatch(method, name, body);
+            transformation.advise(sig, _advice);
         }
     }
 }

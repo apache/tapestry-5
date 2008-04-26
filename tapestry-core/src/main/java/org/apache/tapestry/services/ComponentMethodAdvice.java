@@ -12,19 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.services;
 
 /**
- * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
- * class is the transformed class.
+ * An object that receives control around an "advised" method of a component. The advise can query or even replace
+ * method parameters.  After invoking {@link org.apache.tapestry.services.ComponentMethodInvocation#proceed()}, the
+ * advise may query and override thrown exceptions or the return value of the invocation.
+ *
+ * @see ClassTransformation#advise(TransformMethodSignature, ComponentMethodAdvice)
  */
-public interface ComponentClassCache
+public interface ComponentMethodAdvice
 {
-    /**
-     * Gets the Class instance for the given fully-qualified class name.
-     *
-     * @param className fully qualified class name, or a primitive type name, or an array name (in source format)
-     * @return the class instance
-     */
-    Class forName(String className);
+    void advise(ComponentMethodInvocation invocation);
 }

@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc;
 
 /**
- * A method invocation passed to an {@link MethodAdvice}.
+ * A method invocation passed to an {@link org.apache.tapestry.ioc.MethodAdvice}.
  */
 public interface Invocation
 {
@@ -25,7 +25,8 @@ public interface Invocation
     String getMethodName();
 
     /**
-     * Returns the type of the method result, which may be a primtive type (i.e., int.class) or even void (void.class).
+     * Returns the type of the method result, which may be a primitive type (i.e., int.class) or even void
+     * (void.class).
      */
     Class getResultType();
 

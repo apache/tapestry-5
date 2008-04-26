@@ -300,7 +300,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
 }
 +---+
 
-  Most of the logging logic occurs inside the ServiceLogger object, the MethodAdvise exists to call the right methods at
+  Most of the logging logic occurs inside the ServiceLogger object, the MethodAdvice exists to call the right methods at
   the right time.  A Logger doesn't <change> parameter values (or thrown exceptions, or the result), it just
   captures and logs the data.
 
@@ -309,6 +309,6 @@ public class LoggingDecoratorImpl implements LoggingDecorator
   For checked exceptions, we use isFail() and getThrown().
 
   The AspectDecorator service can also be used in more complicated ways: it is possible to
-  only advise some of the methods and not others, or use different advise for different methods.  Check the
+  only advise some of the methods and not others, or use different advice for different methods.  Check the
   JavaDoc for more details.
 
