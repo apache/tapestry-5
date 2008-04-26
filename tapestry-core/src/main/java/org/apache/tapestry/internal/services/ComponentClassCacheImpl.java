@@ -44,24 +44,35 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
 
         if (result == null)
         {
-            // This step is necessary to handle primitives and, especially, primitive arrays.
+            result = lookupClassForType(className);
 
-            String jvmName = ClassFabUtils.toJVMBinaryName(className);
-
-            ClassLoader componentLoader = _classFactory.getClassLoader();
-
-            try
-            {
-                result = Class.forName(jvmName, true, componentLoader);
-            }
-            catch (ClassNotFoundException ex)
-            {
-                throw new RuntimeException(ex);
-            }
 
             _cache.put(className, result);
         }
 
         return result;
+    }
+
+    private Class lookupClassForType(String className)
+    {
+        if (className.equals("void")) return void.class;
+
+        if (ClassFabUtils.isPrimitiveType(className))
+            return ClassFabUtils.getPrimitiveType(className);
+
+        // This step is necessary to handle primitives arrays.
+
+        String jvmName = ClassFabUtils.toJVMBinaryName(className);
+
+        ClassLoader componentLoader = _classFactory.getClassLoader();
+
+        try
+        {
+            return Class.forName(jvmName, true, componentLoader);
+        }
+        catch (ClassNotFoundException ex)
+        {
+            throw new RuntimeException(ex);
+        }
     }
 }

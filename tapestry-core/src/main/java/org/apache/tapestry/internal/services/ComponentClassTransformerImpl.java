@@ -52,20 +52,25 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ClassFactory _classFactory;
 
+    private final ComponentClassCache _componentClassCache;
+
     private final String[] SUBPACKAGES = { "." + InternalConstants.PAGES_SUBPACKAGE + ".",
             "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
             "." + InternalConstants.MIXINS_SUBPACKAGE + ".",
             "." + InternalConstants.BASE_SUBPACKAGE + "." };
 
     /**
-     * @param workerChain the ordered list of class transform works as a chain of command instance
+     * @param workerChain         the ordered list of class transform works as a chain of command instance
+     * @param componentClassCache
      */
     public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource loggerSource,
-                                         @ComponentLayer ClassFactory classFactory)
+                                         @ComponentLayer ClassFactory classFactory,
+                                         ComponentClassCache componentClassCache)
     {
         _workerChain = workerChain;
         _loggerSource = loggerSource;
         _classFactory = classFactory;
+        _componentClassCache = componentClassCache;
     }
 
     /**
@@ -81,7 +86,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     {
         String parentClassname;
 
-// Component classes must be public
+        // Component classes must be public
 
         if (!Modifier.isPublic(ctClass.getModifiers())) return;
 
@@ -113,8 +118,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         Logger logger = _loggerSource.getLogger(classname);
 
-// If the parent class is in a controlled package, it will already have been loaded and
-// transformed (that is driven by the ComponentInstantiatorSource).
+        // If the parent class is in a controlled package, it will already have been loaded and
+        // transformed (that is driven by the ComponentInstantiatorSource).
 
         InternalClassTransformation parentTransformation = _nameToClassTransformation
                 .get(parentClassname);
@@ -136,11 +141,10 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource, parentModel);
 
-        InternalClassTransformation transformation = parentTransformation == null ? new InternalClassTransformationImpl(
-                ctClass, _classFactory, logger, model) : new InternalClassTransformationImpl(ctClass,
-                                                                                             parentTransformation,
-                                                                                             _classFactory, logger,
-                                                                                             model);
+        InternalClassTransformation transformation =
+                parentTransformation == null
+                ? new InternalClassTransformationImpl(_classFactory, _componentClassCache, ctClass, model)
+                : parentTransformation.createChildTransformation(ctClass, model);
 
         try
         {

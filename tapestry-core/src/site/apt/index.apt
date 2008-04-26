@@ -10,6 +10,9 @@ Tapestry Core
 
 New And Of Note
 
+  * It is now possible to provide method invocation advice to component methods. This opens up
+    a very powerful Aspect Oriented Programming approach to Tapestry components.
+
   * The Exception Report page now identifies the version of the Tapestry framework, and lists
     out System properties (including the Java classpath).
 
@@ -58,7 +61,6 @@ New And Of Note
 
   * The new "var:" binding prefix allows for temporary, untyped storage
     of render-time values without having to define a new component property.
-
  
 Changes from Tapestry 4 to Tapestry 5
 

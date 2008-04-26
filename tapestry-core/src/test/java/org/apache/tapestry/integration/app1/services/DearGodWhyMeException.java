@@ -12,19 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.integration.app1.services;
 
-/**
- * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
- * class is the transformed class.
- */
-public interface ComponentClassCache
+public class DearGodWhyMeException extends Exception
 {
-    /**
-     * Gets the Class instance for the given fully-qualified class name.
-     *
-     * @param className fully qualified class name, or a primitive type name, or an array name (in source format)
-     * @return the class instance
-     */
-    Class forName(String className);
 }

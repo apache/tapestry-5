@@ -22,6 +22,7 @@ import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
@@ -32,11 +33,9 @@ import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.ComponentModel;
+import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
-import org.apache.tapestry.services.FieldFilter;
-import org.apache.tapestry.services.MethodFilter;
-import org.apache.tapestry.services.TransformMethodSignature;
-import org.apache.tapestry.services.TransformUtils;
+import org.apache.tapestry.services.*;
 import org.slf4j.Logger;
 
 import static java.lang.String.format;
@@ -90,6 +89,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private Map<CtMethod, TransformMethodSignature> _methodSignatures = newMap();
 
+    private Map<TransformMethodSignature, InvocationBuilder> _methodToInvocationBuilder = CollectionFactory.newMap();
+
     // Key is field name, value is expression used to replace read access
 
     private Map<String, String> _fieldReadTransforms;
@@ -116,6 +117,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final ClassFactory _classFactory;
 
+    private final ComponentClassCache _componentClassCache;
+
     /**
      * Signature for newInstance() method of Instantiator.
      */
@@ -127,10 +130,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * This is a constructor for a base class.
      */
-    public InternalClassTransformationImpl(CtClass ctClass, ClassFactory classFactory, Logger logger,
-                                           ComponentModel componentModel)
+    public InternalClassTransformationImpl(ClassFactory classFactory, ComponentClassCache componentClassCache,
+                                           CtClass ctClass, ComponentModel componentModel)
     {
         _ctClass = ctClass;
+        _componentClassCache = componentClassCache;
         _classPool = _ctClass.getClassPool();
         _classFactory = classFactory;
         _parentTransformation = null;
@@ -138,7 +142,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         _idAllocator = new IdAllocator();
 
-        _logger = logger;
+        _logger = componentModel.getLogger();
 
         preloadMemberNames();
 
@@ -161,13 +165,15 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * Constructor for a component sub-class.
      */
-    public InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
-                                           ClassFactory classFactory, Logger logger, ComponentModel componentModel)
+    private InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
+                                            ClassFactory classFactory, ComponentClassCache componentClassCache,
+                                            ComponentModel componentModel)
     {
         _ctClass = ctClass;
+        _componentClassCache = componentClassCache;
         _classPool = _ctClass.getClassPool();
         _classFactory = classFactory;
-        _logger = logger;
+        _logger = componentModel.getLogger();
         _parentTransformation = parentTransformation;
         _componentModel = componentModel;
 
@@ -203,6 +209,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // The "}" will be added later, inside  finish().
     }
 
+    public InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel)
+    {
+        return new InternalClassTransformationImpl(childClass, this, _classFactory, _componentClassCache, childModel);
+    }
+
     private void freeze()
     {
         _frozen = true;
@@ -224,6 +235,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _formatter = null;
         // _ctClass = null; -- needed by toString()
         _classPool = null;
+        _methodToInvocationBuilder = null;
     }
 
     public String getResourcesFieldName()
@@ -673,6 +685,44 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         addMethodToDescription("extend existing", methodSignature, methodBody);
     }
 
+    public void copyMethod(TransformMethodSignature sourceMethod, int modifiers, String newMethodName)
+    {
+        failIfFrozen();
+
+        CtClass returnType = findCtClass(sourceMethod.getReturnType());
+        CtClass[] parameters = buildCtClassList(sourceMethod.getParameterTypes());
+        CtClass[] exceptions = buildCtClassList(sourceMethod.getExceptionTypes());
+        CtMethod source = findMethod(sourceMethod);
+
+        try
+        {
+            CtMethod method = new CtMethod(returnType, newMethodName, parameters, _ctClass);
+
+            method.setModifiers(modifiers);
+
+            method.setExceptionTypes(exceptions);
+
+            method.setBody(source, null);
+
+            _ctClass.addMethod(method);
+
+        }
+        catch (CannotCompileException ex)
+        {
+            throw new RuntimeException(String.format("Error copying method %s to new method %s().",
+                                                     sourceMethod,
+                                                     newMethodName), ex);
+        }
+        catch (NotFoundException ex)
+        {
+            throw new RuntimeException(ex);
+        }
+
+        // The new method is *not* considered an added method, so field references inside the method
+        // will be transformed.
+
+        _formatter.format("\n%s renamed to %s\n\n", sourceMethod, newMethodName);
+    }
 
     public void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body)
     {
@@ -1150,6 +1200,22 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         return null;
     }
 
+    public void advise(TransformMethodSignature methodSignature, ComponentMethodAdvice advice)
+    {
+        Defense.notNull(methodSignature, "methodSignature");
+        Defense.notNull(advice, "advice");
+
+        InvocationBuilder builder = _methodToInvocationBuilder.get(methodSignature);
+
+        if (builder == null)
+        {
+            builder = new InvocationBuilder(this, _classFactory, _componentClassCache, methodSignature);
+            _methodToInvocationBuilder.put(methodSignature, builder);
+        }
+
+        builder.addAdvice(advice);
+    }
+
     /**
      * Adds a parameter to the constructor for the class; the parameter is used to initialize the value for a field.
      *
@@ -1185,6 +1251,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     public void finish()
     {
         failIfFrozen();
+
+        for (InvocationBuilder builder : _methodToInvocationBuilder.values())
+        {
+            builder.commit();
+        }
 
         performFieldTransformations();
 
@@ -1316,16 +1387,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             // $1 is model, $2 is description, to $3 is first dynamic parameter.
 
-            constructor.add("%s = $%d", fieldName, i + 2);
+            // The arguments may be wrapper types, so we cast down to
+            // the primitive type.
 
-            if (primitive)
-            {
-                String methodName = ClassFabUtils.getUnwrapMethodName(argType);
+            String parameterReference = "$" + (i + 2);
 
-                constructor.add(".%s()", methodName);
-            }
-
-            constructor.addln(";");
+            constructor.addln("%s = %s;",
+                              fieldName,
+                              ClassFabUtils.castReference(parameterReference, fieldType.getName()));
 
             newInstance.add(", %s", fieldName);
         }

@@ -14,17 +14,20 @@
 
 package org.apache.tapestry.internal.services;
 
-/**
- * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
- * class is the transformed class.
- */
-public interface ComponentClassCache
+import org.apache.tapestry.ioc.MethodAdvice;
+
+public interface ComponentInvocationBuilder
 {
     /**
-     * Gets the Class instance for the given fully-qualified class name.
+     * Adds advice to the method invocation.
      *
-     * @param className fully qualified class name, or a primitive type name, or an array name (in source format)
-     * @return the class instance
+     * @param advice
      */
-    Class forName(String className);
+    void addAdvice(MethodAdvice advice);
+
+    /**
+     * Finalize the method invocation, creating the final ComponentMethodInvocation class and rewiring the component
+     * class to make use of it.
+     */
+    void commit();
 }

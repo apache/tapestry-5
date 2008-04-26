@@ -464,7 +464,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         String boundValue = "howdy!";
         final Logger logger = mockLogger();
 
-        MutableComponentModel model = mockMutableComponentModel();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         model.addParameter("value", false, TapestryConstants.PROP_BINDING_PREFIX);
 
@@ -509,7 +509,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         String boundValue = "yowza!";
         final Logger logger = mockLogger();
 
-        MutableComponentModel model = mockMutableComponentModel();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         model.addParameter("value", false, TapestryConstants.PROP_BINDING_PREFIX);
 
@@ -560,7 +560,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
      */
     private Component setupForIntegrationTest(final InternalComponentResources resources) throws Exception
     {
-        MutableComponentModel model = mockMutableComponentModel();
+        final Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         model.addParameter("invariantObject", false, TapestryConstants.PROP_BINDING_PREFIX);
         model.addParameter("invariantPrimitive", false, TapestryConstants.PROP_BINDING_PREFIX);
@@ -568,7 +569,6 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         model.addParameter("primitive", true, TapestryConstants.PROP_BINDING_PREFIX);
         model.addParameter("uncached", false, TapestryConstants.LITERAL_BINDING_PREFIX);
 
-        final Logger logger = mockLogger();
 
         Runnable phaseTwoTraining = new Runnable()
         {
@@ -599,9 +599,10 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         ClassFactory cf = new ClassFactoryImpl(loader, pool, logger);
 
         CtClass ctClass = pool.get(componentClassName);
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(ctClass, cf, logger, null);
 
         replay();
+
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(cf, null, ctClass, model);
 
         new ParameterWorker(source).transform(transformation, model);
 

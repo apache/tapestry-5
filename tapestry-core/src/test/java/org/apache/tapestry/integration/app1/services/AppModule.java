@@ -232,4 +232,10 @@ public class AppModule
         configuration.add(Track.class, GenericValueEncoderFactory.create(encoder));
     }
 
+
+    public static void contributeComponentClassTransformWorker(
+            OrderedConfiguration<ComponentClassTransformWorker> configuration)
+    {
+        configuration.add("ReverseStringsWorker", new ReverseStringsWorker());
+    }
 }

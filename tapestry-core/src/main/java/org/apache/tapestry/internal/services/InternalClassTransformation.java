@@ -14,10 +14,13 @@
 
 package org.apache.tapestry.internal.services;
 
+import javassist.CtClass;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
+import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
+import org.apache.tapestry.services.TransformMethodSignature;
 
 import java.util.List;
 
@@ -55,6 +58,21 @@ public interface InternalClassTransformation extends ClassTransformation
     /**
      * Searchs for an existing injection of an object, returning the name of the protected field into which the value
      * was injected.
+     * <p/>
+     * TODO: Howard sayz: Uggh! At least define a real key (MultiKey is intended for internal use, never part of an
+     * API). Is this necessary?  The cost of re-injection is tiny.
      */
     String searchForPreviousInjection(MultiKey key);
+
+    InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel);
+
+    /**
+     * Creates a new method by copying the body of an existing method.  This is part of the scheme for providing method
+     * advice.
+     *
+     * @param sourceMethod  method to be copied
+     * @param modifiers     modifiers for the new method
+     * @param newMethodName name of new method to create
+     */
+    void copyMethod(TransformMethodSignature sourceMethod, int modifiers, String newMethodName);
 }

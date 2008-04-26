@@ -20,6 +20,7 @@ import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.annotations.Retain;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.internal.InternalComponentResources;
+import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.internal.transform.FieldRemoval;
 import org.apache.tapestry.internal.transform.InheritedAnnotation;
@@ -30,6 +31,7 @@ import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 import org.apache.tapestry.ioc.util.BodyBuilder;
+import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.services.ClassTransformation;
@@ -169,7 +171,9 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         CtClass ctClass = findCtClass(targetClass);
 
-        return new InternalClassTransformationImpl(ctClass, _classFactory, logger, null);
+        MutableComponentModel model = new MutableComponentModelImpl("unknown-class", logger, null, null);
+
+        return new InternalClassTransformationImpl(_classFactory, null, ctClass, model);
     }
 
     @Test
@@ -475,11 +479,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         CtClass targetObjectCtClass = findCtClass(TargetObject.class);
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
         // so we'll just check that.
@@ -505,11 +510,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         CtClass targetObjectCtClass = findCtClass(TargetObject.class);
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel();
+
+        train_getLogger(model, logger);
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         String parentFieldName = ct.addInjectedField(String.class, "_value", value);
 
@@ -522,7 +530,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass subclassCtClass = findCtClass(TargetObjectSubclass.class);
 
-        ct = new InternalClassTransformationImpl(subclassCtClass, ct, _classFactory, logger, null);
+        ct = ct.createChildTransformation(subclassCtClass, model);
 
         String subclassFieldName = ct.addInjectedField(String.class, "_childValue", value);
 
@@ -536,7 +544,6 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
                      "return " + subclassFieldName + ";");
 
         ct.finish();
-
 
         Instantiator instantiator = ct.createInstantiator();
 
@@ -557,11 +564,12 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         CtClass targetObjectCtClass = findCtClass(TargetObject.class);
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         ct.addImplementedInterface(FooInterface.class);
         ct.addImplementedInterface(GetterMethodsInterface.class);
@@ -602,13 +610,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         ct.makeReadOnly("_value");
 
@@ -636,12 +645,13 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     public void removed_fields_should_not_show_up_as_unclaimed() throws Exception
     {
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(RemoveFieldBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, null, logger, null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(null, null, targetObjectCtClass, model);
 
         ct.removeField("_barney");
 
@@ -656,13 +666,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         ct.extendConstructor("_value = \"from constructor\";");
 
@@ -681,13 +692,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         ct.injectField("_value", "Tapestry");
 
@@ -723,13 +735,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
         InternalComponentResources resources = mockInternalComponentResources();
 
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         replaceAccessToField(ct, "foo");
         replaceAccessToField(ct, "bar");
@@ -1110,13 +1123,14 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     public void remove_field() throws Exception
     {
         Logger logger = mockLogger();
+        MutableComponentModel model = mockMutableComponentModel(logger);
 
         replay();
 
         CtClass targetObjectCtClass = findCtClass(FieldRemoval.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(targetObjectCtClass, _classFactory, logger,
-                                                                             null);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
+                                                                             model);
 
         ct.removeField("_fieldToRemove");
 

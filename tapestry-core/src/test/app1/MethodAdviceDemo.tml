@@ -1,0 +1,33 @@
+<html t:type="Border"
+      xmlns:t="http://tapestry.apache.org/schema/tapestry_5_0_0.xsd">
+
+    <h1>Method Advice Demo</h1>
+
+    <p>
+        Greetings and salutations:
+        <span id="message">${message}</span>.
+    </p>
+
+
+    <p>
+        The current Major version of Tapestry is:
+        <span id="version">${version}</span>
+    </p>
+
+
+    <t:beaneditform object="this"/>
+
+    <t:if test="text">
+        <p>
+            Stored text:
+            <span id="output-text">${text}</span>
+        </p>
+    </t:if>
+
+    <p>
+        Cranky:
+        <span id="cranky">${cranky}</span>
+    </p>
+
+
+</html>

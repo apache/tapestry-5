@@ -12,19 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package org.apache.tapestry.internal.services;
+package org.apache.tapestry.services;
+
+import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.ioc.Invocation;
 
 /**
- * A cache for converting between class names and component (or other) classes.  For component classes, ensures that the
- * class is the transformed class.
+ * Encapsulates the parameters, thrown exceptions, and result of a method invocation, allowing a {@link
+ * org.apache.tapestry.services.ComponentMethodAdvice} to encapsulate the invocation.
  */
-public interface ComponentClassCache
+public interface ComponentMethodInvocation extends Invocation
 {
     /**
-     * Gets the Class instance for the given fully-qualified class name.
-     *
-     * @param className fully qualified class name, or a primitive type name, or an array name (in source format)
-     * @return the class instance
+     * Returns the component resources for the component whose method is being intercepted.
      */
-    Class forName(String className);
+    ComponentResources getComponentResources();
 }
