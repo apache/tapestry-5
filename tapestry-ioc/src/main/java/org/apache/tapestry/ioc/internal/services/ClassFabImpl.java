@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.services.ClassFab}. Hides, as much as possible,
- * the underlying library (Javassist).
+ * Implementation of {@link org.apache.tapestry.ioc.services.ClassFab}. Hides, as much as possible, the underlying
+ * library (Javassist).
  */
 public class ClassFabImpl extends AbstractFab implements ClassFab
 {
@@ -48,8 +48,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     }
 
     /**
-     * Add fields, methods, and constructors are added, their psuedo-code is appended to this
-     * description, which is used by toString().
+     * Add fields, methods, and constructors are added, their psuedo-code is appended to this description, which is used
+     * by toString().
      */
     private final StringBuilder _description = new StringBuilder();
 
@@ -63,8 +63,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     }
 
     /**
-     * Returns a representation of the fabricated class, including inheritance, fields,
-     * constructors, methods and method bodies.
+     * Returns a representation of the fabricated class, including inheritance, fields, constructors, methods and method
+     * bodies.
      *
      * @since 1.1
      */
@@ -137,7 +137,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     {
         _lock.check();
 
-        CtClass ctType = convertClass(type);
+        CtClass ctType = toCtClass(type);
 
         try
         {
@@ -198,10 +198,10 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
         if (_addedSignatures.contains(ms))
             throw new RuntimeException(ServiceMessages.duplicateMethodInClass(ms, this));
 
-        CtClass ctReturnType = convertClass(ms.getReturnType());
+        CtClass ctReturnType = toCtClass(ms.getReturnType());
 
-        CtClass[] ctParameters = convertClasses(ms.getParameterTypes());
-        CtClass[] ctExceptions = convertClasses(ms.getExceptionTypes());
+        CtClass[] ctParameters = toCtClasses(ms.getParameterTypes());
+        CtClass[] ctExceptions = toCtClasses(ms.getExceptionTypes());
 
         CtMethod method = new CtMethod(ctReturnType, ms.getName(), ctParameters, getCtClass());
 
@@ -259,8 +259,8 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
         _lock.check();
 
-        CtClass[] ctParameters = convertClasses(parameterTypes);
-        CtClass[] ctExceptions = convertClasses(exceptions);
+        CtClass[] ctParameters = toCtClasses(parameterTypes);
+        CtClass[] ctExceptions = toCtClasses(exceptions);
 
         try
         {
@@ -289,8 +289,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     }
 
     /**
-     * Adds a listing of method (or constructor) parameters and thrown exceptions, and the body, to
-     * the description
+     * Adds a listing of method (or constructor) parameters and thrown exceptions, and the body, to the description
      *
      * @param parameterTypes types of method parameters, or null
      * @param exceptions     types of throw exceptions, or null

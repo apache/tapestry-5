@@ -173,7 +173,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl("unknown-class", logger, null, null);
 
-        return new InternalClassTransformationImpl(_classFactory, null, ctClass, model);
+        return new InternalClassTransformationImpl(_classFactory, ctClass, null, model, null);
     }
 
     @Test
@@ -483,8 +483,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
         // so we'll just check that.
@@ -516,8 +516,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         String parentFieldName = ct.addInjectedField(String.class, "_value", value);
 
@@ -568,8 +568,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         ct.addImplementedInterface(FooInterface.class);
         ct.addImplementedInterface(GetterMethodsInterface.class);
@@ -616,8 +616,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         ct.makeReadOnly("_value");
 
@@ -651,7 +651,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(RemoveFieldBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(null, null, targetObjectCtClass, model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(null, targetObjectCtClass, null, model,
+                                                                             null);
 
         ct.removeField("_barney");
 
@@ -672,8 +673,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         ct.extendConstructor("_value = \"from constructor\";");
 
@@ -698,8 +699,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         ct.injectField("_value", "Tapestry");
 
@@ -741,8 +742,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         replaceAccessToField(ct, "foo");
         replaceAccessToField(ct, "bar");
@@ -1129,8 +1130,8 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldRemoval.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, null, targetObjectCtClass,
-                                                                             model);
+        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+                                                                             model, null);
 
         ct.removeField("_fieldToRemove");
 

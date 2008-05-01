@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 The Apache Software Foundation
+// Copyright 2005, 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,16 +15,12 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import javassist.CtClass;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.slf4j.Logger;
 
-import java.util.Map;
-
 /**
- * Base class for {@link org.apache.tapestry.ioc.internal.services.ClassFabImpl}. This code is a
- * fork from HiveMind; it is kept seperate from ClassFabImpl in case we want to re-introduce the
- * idea of an InterfaceFab.
+ * Base class for {@link org.apache.tapestry.ioc.internal.services.ClassFabImpl}. This code is a fork from HiveMind; it
+ * is kept seperate from ClassFabImpl in case we want to re-introduce the idea of an InterfaceFab.
  */
 public class AbstractFab
 {
@@ -43,16 +39,11 @@ public class AbstractFab
         _logger = logger;
     }
 
-    /**
-     * Map from Class to CtClass.
-     */
-    private final Map<Class, CtClass> _ctClassCache = newMap();
-
     public void addInterface(Class interfaceClass)
     {
         _lock.check();
 
-        CtClass ctInterfaceClass = _source.getCtClass(interfaceClass);
+        CtClass ctInterfaceClass = _source.toCtClass(interfaceClass);
 
         try
         {
@@ -67,7 +58,7 @@ public class AbstractFab
         _ctClass.addInterface(ctInterfaceClass);
     }
 
-    protected CtClass[] convertClasses(Class[] inputClasses)
+    protected CtClass[] toCtClasses(Class[] inputClasses)
     {
         if (inputClasses == null || inputClasses.length == 0) return null;
 
@@ -76,7 +67,7 @@ public class AbstractFab
 
         for (int i = 0; i < count; i++)
         {
-            CtClass ctClass = convertClass(inputClasses[i]);
+            CtClass ctClass = toCtClass(inputClasses[i]);
 
             result[i] = ctClass;
         }
@@ -84,17 +75,9 @@ public class AbstractFab
         return result;
     }
 
-    protected CtClass convertClass(Class inputClass)
+    protected CtClass toCtClass(Class inputClass)
     {
-        CtClass result = _ctClassCache.get(inputClass);
-
-        if (result == null)
-        {
-            result = _source.getCtClass(inputClass);
-            _ctClassCache.put(inputClass, result);
-        }
-
-        return result;
+        return _source.toCtClass(inputClass);
     }
 
     public Class createClass()

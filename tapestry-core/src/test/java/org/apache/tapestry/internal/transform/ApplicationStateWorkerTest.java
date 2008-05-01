@@ -127,8 +127,8 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, null, ctClass,
-                                                                                         model);
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, ctClass, null,
+                                                                                         model, null);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();
@@ -194,8 +194,8 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, null, ctClass,
-                                                                                         model);
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, ctClass, null,
+                                                                                         model, null);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
         verify();
