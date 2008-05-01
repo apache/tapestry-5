@@ -30,6 +30,7 @@ public class InternalRequestGlobalsImpl implements InternalRequestGlobals
 
     public void storeClassLoaderException(Throwable classLoaderException)
     {
-        _classLoaderException = classLoaderException;
+        if (_classLoaderException == null)
+            _classLoaderException = classLoaderException;
     }
 }
