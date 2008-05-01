@@ -142,4 +142,52 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         assertSame(conduit.getPropertyType(), String.class);
     }
 
+    @Test
+    public void null_root_object()
+    {
+        PropertyConduit conduit = _source.create(StringHolderBean.class, "value.get()");
+
+        try
+        {
+            conduit.get(null);
+            unreachable();
+        }
+        catch (NullPointerException ex)
+        {
+            assertEquals(ex.getMessage(), "Root object of property expression 'value.get()' is null.");
+        }
+    }
+
+    @Test
+    public void null_property_in_chain()
+    {
+        PropertyConduit conduit = _source.create(CompositeBean.class, "simple.lastName");
+
+        CompositeBean bean = new CompositeBean();
+        bean.setSimple(null);
+
+        try
+        {
+            conduit.get(bean);
+            unreachable();
+        }
+        catch (NullPointerException ex)
+        {
+            assertMessageContains(ex, "Property 'simple' (within property expression 'simple.lastName', of",
+                                  ") is null.");
+        }
+    }
+
+    @Test
+    public void last_term_may_be_null()
+    {
+        PropertyConduit conduit = _source.create(CompositeBean.class, "simple.firstName");
+
+        CompositeBean bean = new CompositeBean();
+
+        bean.getSimple().setFirstName(null);
+
+        assertNull(conduit.get(bean));
+    }
+
 }
