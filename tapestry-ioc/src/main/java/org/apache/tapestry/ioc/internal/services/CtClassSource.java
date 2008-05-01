@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,102 +15,36 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import javassist.CtClass;
-import javassist.NotFoundException;
-import org.apache.tapestry.ioc.services.ClassFabUtils;
-
-import java.security.ProtectionDomain;
 
 /**
- * Wrapper around Javassist's {@link javassist.ClassPool} that manages the creation of new instances
- * of {@link javassist.CtClass} and converts finished CtClass's into instantiable Classes.
+ * Used when generating new classes on the fly.
+ *
+ * @see org.apache.tapestry.ioc.services.ClassFactory
  */
-class CtClassSource
+public interface CtClassSource
 {
-    private final ClassFactoryClassPool _pool;
-
-    private final ClassLoader _loader;
-
-    private final ProtectionDomain _domain = getClass().getProtectionDomain();
-
-    private int _createdClassCount = 0;
+    /**
+     * Returns the number of classes created.
+     */
+    int getCreatedClassCount();
 
     /**
-     * Returns the number of classes (and interfaces) created by this source.
+     * Converts an existing class to a CtClass instance.
      */
-    public synchronized int getCreatedClassCount()
-    {
-        return _createdClassCount;
-    }
+    CtClass toCtClass(Class searchClass);
 
-    public CtClassSource(ClassFactoryClassPool pool, ClassLoader loader)
-    {
-        _pool = pool;
-        _loader = loader;
-    }
+    /**
+     * Converts a class name to a CtClass instance.
+     */
+    CtClass toCtClass(String name);
 
-    public CtClass getCtClass(Class searchClass)
-    {
-        ClassLoader loader = searchClass.getClassLoader();
+    /**
+     * Createa a new CtClass instance.
+     */
+    CtClass newClass(String name, Class superClass);
 
-        // Add the class loader for the searchClass to the class pool and
-        // delegating class loader if needed.
-
-        _pool.addClassLoaderIfNeeded(loader);
-
-        String name = ClassFabUtils.toJavaClassName(searchClass);
-
-        try
-        {
-            return _pool.get(name);
-        }
-        catch (NotFoundException ex)
-        {
-            throw new RuntimeException(ServiceMessages.unableToLookupClass(name, ex), ex);
-        }
-    }
-
-    public synchronized CtClass newClass(String name, Class superClass)
-    {
-        CtClass ctSuperClass = getCtClass(superClass);
-
-        return _pool.makeClass(name, ctSuperClass);
-    }
-
-    private static final String WRITE_DIR = System.getProperty("javassist-write-dir");
-
-    public synchronized Class createClass(CtClass ctClass)
-    {
-        if (WRITE_DIR != null) writeClass(ctClass);
-
-        try
-        {
-            Class result = _pool.toClass(ctClass, _loader, _domain);
-
-            _createdClassCount++;
-
-            return result;
-        }
-        catch (Throwable ex)
-        {
-            throw new RuntimeException(ServiceMessages.unableToWriteClass(ctClass, ex), ex);
-        }
-    }
-
-    private void writeClass(CtClass ctClass)
-    {
-        try
-        {
-            boolean pruning = ctClass.stopPruning(true);
-
-            ctClass.writeFile(WRITE_DIR);
-
-            ctClass.defrost();
-
-            ctClass.stopPruning(pruning);
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace(System.err);
-        }
-    }
+    /**
+     * Used after constructing the CtClass fully, to convert it into a Class ready to be instantiated.
+     */
+    Class createClass(CtClass ctClass);
 }

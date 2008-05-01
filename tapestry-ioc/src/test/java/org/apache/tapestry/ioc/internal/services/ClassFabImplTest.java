@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ public class ClassFabImplTest extends IOCTestCase
 
         pool.addClassLoaderIfNeeded(threadLoader);
 
-        _source = new CtClassSource(pool, threadLoader);
+        _source = new CtClassSourceImpl(pool, threadLoader);
     }
 
     private ClassFab newClassFab(String className, Class superClass)
@@ -76,7 +76,7 @@ public class ClassFabImplTest extends IOCTestCase
 
         cf.addField("_stringValue", String.class);
 
-        MethodSignature setStringValue = new MethodSignature(void.class, "setStringValue", new Class[]{String.class},
+        MethodSignature setStringValue = new MethodSignature(void.class, "setStringValue", new Class[] { String.class },
                                                              null);
 
         cf.addMethod(Modifier.PUBLIC, setStringValue, "_stringValue = $1;");
@@ -118,7 +118,7 @@ public class ClassFabImplTest extends IOCTestCase
         ClassFab cf = newClassFab("Delegator", Object.class);
 
         cf.addField("_delegate", SampleService.class);
-        cf.addConstructor(new Class[]{SampleService.class}, null, "_delegate = $1;");
+        cf.addConstructor(new Class[] { SampleService.class }, null, "_delegate = $1;");
 
         cf.proxyMethodsToDelegate(SampleService.class, "_delegate", "<Delegator>");
 
@@ -152,7 +152,7 @@ public class ClassFabImplTest extends IOCTestCase
         ClassFab cf = newClassFab("ToStringDelegator", Object.class);
 
         cf.addField("_delegate", ToStringService.class);
-        cf.addConstructor(new Class[]{ToStringService.class}, null, "_delegate = $1;");
+        cf.addConstructor(new Class[] { ToStringService.class }, null, "_delegate = $1;");
 
         cf.proxyMethodsToDelegate(ToStringService.class, "_delegate", "<ToStringDelegator>");
 
@@ -178,7 +178,7 @@ public class ClassFabImplTest extends IOCTestCase
         ClassFab cf = newClassFab("ConstructableBean", Object.class);
 
         cf.addField("_stringValue", String.class);
-        cf.addConstructor(new Class[]{String.class}, null, "{ _stringValue = $1; }");
+        cf.addConstructor(new Class[] { String.class }, null, "{ _stringValue = $1; }");
 
         MethodSignature getStringValue = new MethodSignature(String.class, "getStringValue", null, null);
 
@@ -197,7 +197,7 @@ public class ClassFabImplTest extends IOCTestCase
 
         Constructor c = targetClass.getConstructors()[0];
 
-        Object targetBean = c.newInstance(new Object[]{"Buffy"});
+        Object targetBean = c.newInstance(new Object[] { "Buffy" });
 
         String actual = (String) _access.get(targetBean, "stringValue");
 
@@ -210,14 +210,14 @@ public class ClassFabImplTest extends IOCTestCase
         ClassFab cf = newClassFab("MyIntHolder", AbstractIntWrapper.class);
 
         cf.addField("_intValue", int.class);
-        cf.addConstructor(new Class[]{int.class}, null, "{ _intValue = $1; }");
+        cf.addConstructor(new Class[] { int.class }, null, "{ _intValue = $1; }");
 
         cf.addMethod(Modifier.PUBLIC, new MethodSignature(int.class, "getIntValue", null, null), "return _intValue;");
 
         Class targetClass = cf.createClass();
         Constructor c = targetClass.getConstructors()[0];
 
-        AbstractIntWrapper targetBean = (AbstractIntWrapper) c.newInstance(new Object[]{new Integer(137)});
+        AbstractIntWrapper targetBean = (AbstractIntWrapper) c.newInstance(new Object[] { new Integer(137) });
 
         assertEquals(targetBean.getIntValue(), 137);
     }
@@ -250,7 +250,7 @@ public class ClassFabImplTest extends IOCTestCase
 
         cf.addInterface(SimpleService.class);
 
-        cf.addMethod(Modifier.PUBLIC, new MethodSignature(int.class, "add", new Class[]{int.class, int.class}, null),
+        cf.addMethod(Modifier.PUBLIC, new MethodSignature(int.class, "add", new Class[] { int.class, int.class }, null),
                      "return $1 + $2;");
 
         Class targetClass = cf.createClass();
@@ -381,12 +381,12 @@ public class ClassFabImplTest extends IOCTestCase
 
         cf.addField("_map", Map.class);
 
-        cf.addConstructor(new Class[]{Map.class, Runnable.class},
-                          new Class[]{IllegalArgumentException.class, DataFormatException.class}, "{ _map = $1; }");
+        cf.addConstructor(new Class[] { Map.class, Runnable.class },
+                          new Class[] { IllegalArgumentException.class, DataFormatException.class }, "{ _map = $1; }");
 
-        MethodSignature sig = new MethodSignature(Map.class, "doTheNasty", new Class[]{int.class, String.class},
-                                                  new Class[]{InstantiationException.class,
-                                                              IllegalAccessException.class});
+        MethodSignature sig = new MethodSignature(Map.class, "doTheNasty", new Class[] { int.class, String.class },
+                                                  new Class[] { InstantiationException.class,
+                                                          IllegalAccessException.class });
 
         cf.addMethod(Modifier.PUBLIC + Modifier.FINAL + Modifier.SYNCHRONIZED, sig, "{ return _map; }");
 

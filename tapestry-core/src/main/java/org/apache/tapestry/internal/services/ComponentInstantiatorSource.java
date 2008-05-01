@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.event.InvalidationEventHub;
+import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
 /**
@@ -62,5 +63,10 @@ public interface ComponentInstantiatorSource extends InvalidationEventHub
      * subclasses of enhanced classes.
      */
     ClassFactory getClassFactory();
+
+    /**
+     * Returns a class source used when creating new classes dynamically.
+     */
+    CtClassSource getClassSource();
 
 }

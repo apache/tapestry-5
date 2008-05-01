@@ -24,9 +24,11 @@ import org.apache.tapestry.ioc.ServiceResources;
 import org.apache.tapestry.ioc.annotations.Marker;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.PerthreadManager;
+import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 import org.apache.tapestry.services.*;
 import org.slf4j.Logger;
 
@@ -229,5 +231,10 @@ public class InternalModule
         return service;
     }
 
+    @Marker(ComponentLayer.class)
+    public CtClassSource buildCtClassSource(PropertyShadowBuilder builder)
+    {
+        return builder.build(_componentInstantiatorSource, "classSource", CtClassSource.class);
+    }
 
 }

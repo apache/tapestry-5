@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 The Apache Software Foundation
+// Copyright 2006, 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -68,14 +68,21 @@ public class ClassFactoryImpl implements ClassFactory
      */
     public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, Logger logger)
     {
+        this(classLoader, pool, new CtClassSourceImpl(pool, classLoader), logger);
+    }
+
+    public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, CtClassSource classSource,
+                            Logger logger)
+    {
         _loader = classLoader;
 
         _pool = pool;
 
-        _classSource = new CtClassSource(_pool, classLoader);
+        _classSource = classSource;
 
         _logger = logger;
     }
+
 
     public ClassFab newClass(Class serviceInterface)
     {
@@ -131,7 +138,7 @@ public class ClassFactoryImpl implements ClassFactory
         Class declaringClass = method.getDeclaringClass();
         Class effectiveClass = importClass(declaringClass);
 
-        CtClass ctClass = _classSource.getCtClass(effectiveClass);
+        CtClass ctClass = _classSource.toCtClass(effectiveClass);
 
         StringBuilder builder = new StringBuilder("(");
 
@@ -172,7 +179,7 @@ public class ClassFactoryImpl implements ClassFactory
         builder.append(declaringClass.getName());
         builder.append("(");
 
-        CtClass ctClass = _classSource.getCtClass(declaringClass);
+        CtClass ctClass = _classSource.toCtClass(declaringClass);
 
         StringBuilder descripton = new StringBuilder("(");
 

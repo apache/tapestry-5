@@ -20,6 +20,8 @@ import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
+import org.apache.tapestry.ioc.internal.services.CtClassSource;
+import org.apache.tapestry.ioc.internal.services.CtClassSourceImpl;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.internal.util.Defense;
@@ -61,6 +63,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      * Map from class name to Instantiator.
      */
     private final Map<String, Instantiator> _instantiatorMap = newMap();
+    private CtClassSource _classSource;
 
     private class PackageAwareLoader extends Loader
     {
@@ -124,6 +127,8 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         classPool.appendClassPath(path);
 
+        _classSource = new CtClassSourceImpl(classPool, _loader);
+
         try
         {
             _loader.addTranslator(classPool, this);
@@ -133,7 +138,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
             throw new RuntimeException(ex);
         }
 
-        _classFactory = new ClassFactoryImpl(_loader, classPool, _logger);
+        _classFactory = new ClassFactoryImpl(_loader, classPool, _classSource, _logger);
     }
 
     // This is called from well within a synchronized block.
@@ -300,5 +305,10 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     public ClassFactory getClassFactory()
     {
         return _classFactory;
+    }
+
+    public CtClassSource getClassSource()
+    {
+        return _classSource;
     }
 }

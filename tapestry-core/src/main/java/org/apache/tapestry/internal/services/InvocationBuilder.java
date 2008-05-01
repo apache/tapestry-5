@@ -14,11 +14,10 @@
 
 package org.apache.tapestry.internal.services;
 
+import javassist.*;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.ioc.services.ClassFab;
+import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
-import org.apache.tapestry.ioc.services.ClassFactory;
-import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.services.ComponentMethodAdvice;
 import org.apache.tapestry.services.TransformMethodSignature;
@@ -28,48 +27,49 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Used by {@link org.apache.tapestry.internal.services.InternalClassTransformationImpl} to manage adding method
- * invocation advice to arbitrary methods.
+ * invocation advice to arbitrary component methods.
  */
 public class InvocationBuilder
 {
     private static final String FIELD_NAME = "_p";
 
-    private static final MethodSignature OVERRIDE_SIGNATURE =
-            new MethodSignature(void.class, "override", new Class[] { int.class, Object.class }, null);
-
-    private static final MethodSignature GET_PARAMETER_SIGNATURE =
-            new MethodSignature(Object.class, "getParameter", new Class[] { int.class }, null);
-
-    private static final MethodSignature INVOKE_ADVISED_METHOD_SIGNATURE =
-            new MethodSignature(void.class, "invokeAdvisedMethod", null, null);
-
-    private final InternalClassTransformation _transformation;
-
-    private final ClassFactory _classFactory;
-
-    private final TransformMethodSignature _methodSignature;
-
-    private final MethodInvocationInfo _info;
-
-    private static final AtomicLong UID_GENERATOR = new AtomicLong(System.currentTimeMillis());
-
     private static final int PROTECTED_FINAL = Modifier.PROTECTED | Modifier.FINAL;
 
     private static final int PUBLIC_FINAL = Modifier.PUBLIC | Modifier.FINAL;
+
+    private final InternalClassTransformation _transformation;
+
+    private final CtClassSource _classSource;
+
+    private final TransformMethodSignature _advisedMethod;
+
+    private final MethodInvocationInfo _info;
+
+    private final CtClass _invocationCtClass;
+
+    private final String _invocationClassName;
+
+    private static final AtomicLong UID_GENERATOR = new AtomicLong(System.currentTimeMillis());
 
     private static String nextUID()
     {
         return Long.toHexString(UID_GENERATOR.getAndIncrement());
     }
 
-    public InvocationBuilder(InternalClassTransformation transformation, ClassFactory classFactory,
-                             ComponentClassCache componentClassCache, TransformMethodSignature methodSignature)
+    public InvocationBuilder(InternalClassTransformation transformation,
+                             ComponentClassCache componentClassCache, TransformMethodSignature advisedMethod,
+                             CtClassSource classSource)
     {
         _transformation = transformation;
-        _classFactory = classFactory;
-        _methodSignature = methodSignature;
+        _advisedMethod = advisedMethod;
+        _classSource = classSource;
 
-        _info = new MethodInvocationInfo(methodSignature, componentClassCache);
+        _info = new MethodInvocationInfo(advisedMethod, componentClassCache);
+
+        _invocationClassName = _transformation.getClassName() + "$" + _advisedMethod.getMethodName() + "$invocation_" + nextUID();
+
+        _invocationCtClass = _classSource.newClass(_invocationClassName, AbstractComponentMethodInvocation.class);
+
     }
 
     public void addAdvice(ComponentMethodAdvice advice)
@@ -77,52 +77,55 @@ public class InvocationBuilder
         _info.addAdvice(advice);
     }
 
+    /**
+     * Commit the changes, creating the new class for the invocation, and renaming and rewriting the advised method.
+     */
     public void commit()
     {
         // The class name is the component class name plus the method name plus a unique uid. This places
         // the invocation in the same package as the component class; the original method will ultimately
         // be renamed and modified to be package private.
 
-        String className =
-                _transformation.getClassName() + "$" + _methodSignature.getMethodName() + "$invocation_" + nextUID();
+        try
+        {
+            createConstructor();
 
-        ClassFab invocationFab = _classFactory.newClass(className, AbstractComponentMethodInvocation.class);
+            implementOverride();
 
-        createConstructor(invocationFab);
+            implementGetParameter();
 
-        implementOverride(invocationFab);
+            String renamed = copyAdvisedMethod();
 
-        implementGetParameter(invocationFab);
+            implementInvokeAdvisedMethod(renamed);
 
-        String renamed = copyAdvisedMethod();
+            _classSource.createClass(_invocationCtClass);
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException(ex);
+        }
 
-        implementInvokeAdviseMethod(invocationFab, renamed);
-
-        rebuildOriginalMethod(className);
-
-        // Force the creation of the class now
-
-        invocationFab.createClass();
+        rebuildOriginalMethod();
     }
 
-    private void rebuildOriginalMethod(String invocationClassName)
+    private void rebuildOriginalMethod()
     {
         String methodInfoField = _transformation.addInjectedField(MethodInvocationInfo.class,
-                                                                  _methodSignature.getMethodName() + "Info",
+                                                                  _advisedMethod.getMethodName() + "Info",
                                                                   _info);
 
         String componentResourcesField = _transformation.getResourcesFieldName();
 
         BodyBuilder builder = new BodyBuilder().begin();
 
-        builder.addln("%s invocation = new %<s(%s, %s, $$);", invocationClassName, methodInfoField,
+        builder.addln("%s invocation = new %<s(%s, %s, $$);", _invocationClassName, methodInfoField,
                       componentResourcesField);
 
         // Off into the first MethodAdvice
 
         builder.addln("invocation.proceed();");
 
-        String[] exceptionTypes = _methodSignature.getExceptionTypes();
+        String[] exceptionTypes = _advisedMethod.getExceptionTypes();
         int exceptionCount = exceptionTypes.length;
 
         if (exceptionCount > 0)
@@ -138,7 +141,7 @@ public class InvocationBuilder
             }
         }
 
-        String returnType = _methodSignature.getReturnType();
+        String returnType = _advisedMethod.getReturnType();
 
         if (!returnType.equals("void"))
         {
@@ -150,18 +153,18 @@ public class InvocationBuilder
         builder.end();
 
         /** Replace the original method with the new implementation. */
-        _transformation.addMethod(_methodSignature, builder.toString());
+        _transformation.addMethod(_advisedMethod, builder.toString());
     }
 
-    private void implementInvokeAdviseMethod(ClassFab classFab, String advisedMethodName)
+    private void implementInvokeAdvisedMethod(String advisedMethodName) throws CannotCompileException
     {
         BodyBuilder builder = new BodyBuilder().begin();
 
-        boolean isVoid = _methodSignature.getReturnType().equals("void");
+        boolean isVoid = _advisedMethod.getReturnType().equals("void");
 
         builder.addln("%s component = (%<s) getComponentResources().getComponent();", _transformation.getClassName());
 
-        String[] exceptionTypes = _methodSignature.getExceptionTypes();
+        String[] exceptionTypes = _advisedMethod.getExceptionTypes();
         int exceptionCount = exceptionTypes.length;
 
         if (exceptionCount > 0)
@@ -171,7 +174,7 @@ public class InvocationBuilder
 
         builder.add("component.%s(", advisedMethodName);
 
-        for (int i = 0; i < _methodSignature.getParameterTypes().length; i++)
+        for (int i = 0; i < _advisedMethod.getParameterTypes().length; i++)
         {
             if (i > 0) builder.add(", ");
 
@@ -196,26 +199,32 @@ public class InvocationBuilder
 
         builder.end();
 
-        classFab.addMethod(PROTECTED_FINAL, INVOKE_ADVISED_METHOD_SIGNATURE, builder.toString());
+        CtMethod method = new CtMethod(CtClass.voidType, "invokeAdvisedMethod",
+                                       new CtClass[0], _invocationCtClass);
+
+        method.setModifiers(PROTECTED_FINAL);
+        method.setBody(builder.toString());
+
+        _invocationCtClass.addMethod(method);
     }
 
     private String copyAdvisedMethod()
     {
-        String newName = _transformation.newMemberName("advised$" + _methodSignature.getMethodName());
+        String newName = _transformation.newMemberName("advised$" + _advisedMethod.getMethodName());
 
-        _transformation.copyMethod(_methodSignature, Modifier.FINAL, newName);
+        _transformation.copyMethod(_advisedMethod, Modifier.FINAL, newName);
 
         return newName;
     }
 
-    private void createConstructor(ClassFab classFab)
+    private void createConstructor() throws CannotCompileException
     {
         int parameterCount = _info.getParameterCount();
 
-        Class[] parameterTypes = new Class[parameterCount + 2];
+        CtClass[] parameterTypes = new CtClass[parameterCount + 2];
 
-        parameterTypes[0] = MethodInvocationInfo.class;
-        parameterTypes[1] = ComponentResources.class;
+        parameterTypes[0] = toCtClass(MethodInvocationInfo.class);
+        parameterTypes[1] = toCtClass(ComponentResources.class);
 
         BodyBuilder builder = new BodyBuilder().begin().addln("super($1,$2);");
 
@@ -223,31 +232,44 @@ public class InvocationBuilder
         {
             String name = FIELD_NAME + i;
 
-            Class parameterType = _info.getParameterType(i);
+            String parameterTypeName = _advisedMethod.getParameterTypes()[i];
+
+            CtClass parameterType = _classSource.toCtClass(parameterTypeName);
+
+            CtField field = new CtField(parameterType, name, _invocationCtClass);
+            field.setModifiers(Modifier.PRIVATE);
+            _invocationCtClass.addField(field);
 
             parameterTypes[2 + i] = parameterType;
-
-            classFab.addField(name, _info.getParameterType(i));
 
             builder.addln("%s = $%d;", name, 3 + i);
         }
 
         builder.end();
 
-        classFab.addConstructor(parameterTypes, null, builder.toString());
+        CtConstructor constructor = new CtConstructor(parameterTypes, _invocationCtClass);
+        constructor.setBody(builder.toString());
+
+        _invocationCtClass.addConstructor(constructor);
+
     }
 
-    private void implementOverride(ClassFab classFab)
+    private CtClass toCtClass(Class input)
+    {
+        return _classSource.toCtClass(input);
+    }
+
+    private void implementOverride() throws CannotCompileException
     {
         BodyBuilder builder = new BodyBuilder().begin();
 
         builder.addln("switch ($1)").begin();
 
-        int count = _methodSignature.getParameterTypes().length;
+        int count = _advisedMethod.getParameterTypes().length;
 
         for (int i = 0; i < count; i++)
         {
-            String type = _methodSignature.getParameterTypes()[i];
+            String type = _advisedMethod.getParameterTypes()[i];
 
             builder.addln("case %d: %s = %s; break;", i, FIELD_NAME + i, ClassFabUtils.castReference("$2", type));
         }
@@ -256,16 +278,22 @@ public class InvocationBuilder
 
         builder.end().end();
 
-        classFab.addMethod(PUBLIC_FINAL, OVERRIDE_SIGNATURE, builder.toString());
+        CtMethod method = new CtMethod(CtClass.voidType, "override",
+                                       new CtClass[] { CtClass.intType, toCtClass(Object.class) }, _invocationCtClass);
+
+        method.setModifiers(PUBLIC_FINAL);
+        method.setBody(builder.toString());
+
+        _invocationCtClass.addMethod(method);
     }
 
-    private void implementGetParameter(ClassFab classFab)
+    private void implementGetParameter() throws CannotCompileException
     {
         BodyBuilder builder = new BodyBuilder().begin();
 
         builder.addln("switch ($1)").begin();
 
-        int count = _methodSignature.getParameterTypes().length;
+        int count = _advisedMethod.getParameterTypes().length;
 
         for (int i = 0; i < count; i++)
         {
@@ -276,7 +304,13 @@ public class InvocationBuilder
 
         builder.end().end();
 
-        classFab.addMethod(PUBLIC_FINAL, GET_PARAMETER_SIGNATURE, builder.toString());
+        CtMethod method = new CtMethod(toCtClass(Object.class), "getParameter",
+                                       new CtClass[] { CtClass.intType }, _invocationCtClass);
+
+        method.setModifiers(PUBLIC_FINAL);
+        method.setBody(builder.toString());
+
+        _invocationCtClass.addMethod(method);
     }
 
 }

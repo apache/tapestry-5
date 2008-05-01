@@ -20,6 +20,7 @@ import javassist.expr.FieldAccess;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.util.MultiKey;
+import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.Defense;
@@ -119,6 +120,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private final ComponentClassCache _componentClassCache;
 
+    private final CtClassSource _classSource;
+
     /**
      * Signature for newInstance() method of Instantiator.
      */
@@ -130,11 +133,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     /**
      * This is a constructor for a base class.
      */
-    public InternalClassTransformationImpl(ClassFactory classFactory, ComponentClassCache componentClassCache,
-                                           CtClass ctClass, ComponentModel componentModel)
+    public InternalClassTransformationImpl(ClassFactory classFactory, CtClass ctClass,
+                                           ComponentClassCache componentClassCache,
+                                           ComponentModel componentModel, CtClassSource classSource)
     {
         _ctClass = ctClass;
         _componentClassCache = componentClassCache;
+        _classSource = classSource;
         _classPool = _ctClass.getClassPool();
         _classFactory = classFactory;
         _parentTransformation = null;
@@ -166,11 +171,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      * Constructor for a component sub-class.
      */
     private InternalClassTransformationImpl(CtClass ctClass, InternalClassTransformation parentTransformation,
-                                            ClassFactory classFactory, ComponentClassCache componentClassCache,
+                                            ClassFactory classFactory, CtClassSource classSource,
+                                            ComponentClassCache componentClassCache,
                                             ComponentModel componentModel)
     {
         _ctClass = ctClass;
         _componentClassCache = componentClassCache;
+        _classSource = classSource;
         _classPool = _ctClass.getClassPool();
         _classFactory = classFactory;
         _logger = componentModel.getLogger();
@@ -182,8 +189,6 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         _idAllocator = parentTransformation.getIdAllocator();
 
         preloadMemberNames();
-
-        verifyFields();
 
         _constructorArgs = parentTransformation.getConstructorArgs();
 
@@ -211,7 +216,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel)
     {
-        return new InternalClassTransformationImpl(childClass, this, _classFactory, _componentClassCache, childModel);
+        return new InternalClassTransformationImpl(childClass, this, _classFactory, _classSource, _componentClassCache,
+                                                   childModel
+        );
     }
 
     private void freeze()
@@ -1186,6 +1193,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addInjectToConstructor(fieldName, ctType, value);
 
+        _addedFieldNames.add(fieldName);
+
         return fieldName;
     }
 
@@ -1209,7 +1218,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         if (builder == null)
         {
-            builder = new InvocationBuilder(this, _classFactory, _componentClassCache, methodSignature);
+            builder = new InvocationBuilder(this, _componentClassCache, methodSignature, _classSource);
             _methodToInvocationBuilder.put(methodSignature, builder);
         }
 

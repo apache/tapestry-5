@@ -602,7 +602,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(cf, null, ctClass, model);
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(cf, ctClass, null, model,
+                                                                                         null);
 
         new ParameterWorker(source).transform(transformation, model);
 

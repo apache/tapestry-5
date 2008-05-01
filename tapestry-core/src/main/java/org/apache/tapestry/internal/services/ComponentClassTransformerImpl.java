@@ -22,6 +22,7 @@ import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Resource;
+import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -52,6 +53,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     private final ClassFactory _classFactory;
 
+    private final CtClassSource _classSource;
+
     private final ComponentClassCache _componentClassCache;
 
     private final String[] SUBPACKAGES = { "." + InternalConstants.PAGES_SUBPACKAGE + ".",
@@ -61,16 +64,20 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
     /**
      * @param workerChain         the ordered list of class transform works as a chain of command instance
+     * @param classSource
      * @param componentClassCache
      */
-    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain, LoggerSource loggerSource,
+    public ComponentClassTransformerImpl(ComponentClassTransformWorker workerChain,
+                                         LoggerSource loggerSource,
                                          @ComponentLayer ClassFactory classFactory,
+                                         @ComponentLayer CtClassSource classSource,
                                          ComponentClassCache componentClassCache)
     {
         _workerChain = workerChain;
         _loggerSource = loggerSource;
         _classFactory = classFactory;
         _componentClassCache = componentClassCache;
+        _classSource = classSource;
     }
 
     /**
@@ -143,7 +150,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         InternalClassTransformation transformation =
                 parentTransformation == null
-                ? new InternalClassTransformationImpl(_classFactory, _componentClassCache, ctClass, model)
+                ? new InternalClassTransformationImpl(_classFactory, ctClass, _componentClassCache, model, _classSource)
                 : parentTransformation.createChildTransformation(ctClass, model);
 
         try
