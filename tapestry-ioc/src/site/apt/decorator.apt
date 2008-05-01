@@ -237,7 +237,7 @@ Creating your own Decorators
   query or even replace the return value.
 
   The
-  {{{../apidocs/org/apache/tapestry/service/AspectDecorator.html}AspectDecorator}} service
+  {{{../apidocs/org/apache/tapestry/ioc/services/AspectDecorator.html}AspectDecorator}} service
   is how you put your MethodAdvise into action.
 
   By way of an example, we'll show the current implementation of the LoggingDecorator service:

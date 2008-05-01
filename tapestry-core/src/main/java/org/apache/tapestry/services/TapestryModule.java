@@ -562,8 +562,6 @@ public final class TapestryModule
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
-                                         final RequestExceptionHandler exceptionHandler,
-
                                          // @Inject not needed because its a long, not a String
                                          @Symbol(TapestryConstants.FILE_CHECK_INTERVAL_SYMBOL)
                                          @IntermediateType(TimeInterval.class)
@@ -573,60 +571,11 @@ public final class TapestryModule
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
-                                         final InternalRequestGlobals requestGlobals,
+                                         LocalizationSetter localizationSetter,
 
-                                         LocalizationSetter localizationSetter)
+                                         ObjectLocator locator)
     {
         RequestFilter staticFilesFilter = new StaticFilesFilter(context);
-
-        RequestFilter errorFilter = new RequestFilter()
-        {
-            public boolean service(Request request, Response response, RequestHandler handler) throws IOException
-            {
-                try
-                {
-                    return handler.service(request, response);
-                }
-                catch (IOException ex)
-                {
-                    // Pass it through.
-                    throw ex;
-                }
-                catch (Throwable ex)
-                {
-                    // Most of the time, we've got exception linked up the kazoo ... but when ClassLoaders
-                    // get involved, things go screwy.  Exceptions when transforming classes can cause
-                    // a NoClassDefFoundError with no cause; here we're trying to link the cause back in.
-                    // TAPESTRY-2078
-
-                    if (ex.getCause() == null)
-                    {
-                        Throwable cause = requestGlobals.getClassLoaderException();
-
-                        if (cause != null)
-                        {
-
-                            try
-                            {
-                                ex.initCause(cause);
-                            }
-                            catch (IllegalStateException ise)
-                            {
-                                // TAPESTRY-2284: sometimes you just can't init the cause, and there's no way to
-                                // find out without trying.
-                            }
-                        }
-                    }
-
-                    exceptionHandler.handleRequestException(ex);
-
-                    // We assume a reponse has been sent and there's no need to handle the request
-                    // further.
-
-                    return true;
-                }
-            }
-        };
 
         RequestFilter storeIntoGlobals = new RequestFilter()
         {
@@ -643,7 +592,7 @@ public final class TapestryModule
 
         configuration.add("StaticFiles", staticFilesFilter);
 
-        configuration.add("ErrorFilter", errorFilter);
+        configuration.add("ErrorFilter", locator.autobuild(RequestErrorFilter.class));
 
         configuration.add("StoreIntoGlobals", storeIntoGlobals);
 
@@ -2057,4 +2006,5 @@ public final class TapestryModule
         configuration.add("default", new DefaultNullFieldStrategy());
         configuration.add("zero", new ZeroNullFieldStrategy());
     }
+
 }

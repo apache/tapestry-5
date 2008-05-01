@@ -19,6 +19,10 @@ package org.apache.tapestry.internal.services;
  */
 public interface InternalRequestGlobals
 {
+    /**
+     * Stores the throwable for later; only the first such exception is kept (later exceptions are ignored, see
+     * TAPESTRY-2399).
+     */
     void storeClassLoaderException(Throwable classLoaderException);
 
     Throwable getClassLoaderException();
