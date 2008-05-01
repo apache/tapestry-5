@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.ioc.AnnotationProvider;
-import org.apache.tapestry.services.PropertyConduitSource;
+import org.apache.tapestry.ioc.internal.util.Defense;
 
 import java.lang.annotation.Annotation;
 
 /**
- * Base class for {@link PropertyConduit} instances created by the {@link PropertyConduitSource}.
+ * Base class for {@link org.apache.tapestry.PropertyConduit} instances created by the {@link
+ * org.apache.tapestry.services.PropertyConduitSource}.
  */
 public abstract class BasePropertyConduit implements PropertyConduit
 {
@@ -31,9 +32,12 @@ public abstract class BasePropertyConduit implements PropertyConduit
 
     private final String _description;
 
-    public BasePropertyConduit(final Class propertyType,
-                               final AnnotationProvider annotationProvider, final String description)
+    public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description)
     {
+        Defense.notNull(propertyType, "propertyType");
+        Defense.notNull(annotationProvider, "annotationProvider");
+        Defense.notBlank(description, "description");
+
         _propertyType = propertyType;
         _annotationProvider = annotationProvider;
         _description = description;

@@ -253,6 +253,10 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         builder.addln("%s root = (%<s) $1;", ClassFabUtils.toJavaClassName(rootClass));
         String previousStep = "root";
 
+        builder.addln(
+                "if (root == null) throw new NullPointerException(\"Root object of property expression '%s' is null.\");",
+                expression);
+
         Class activeType = rootClass;
         ReadInfo readInfo = null;
 
@@ -311,6 +315,15 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
                 if (!forSetter) builder.add(" null");
 
                 builder.addln(";");
+            }
+            else
+            {
+                // Perform a null check on intermediate terms.
+                if (i < lastIndex - 1)
+                {
+                    builder.addln("if (%s == null) throw new NullPointerException(%s.nullTerm(\"%s\", \"%s\", root));",
+                                  thisStep, getClass().getName(), term, expression);
+                }
             }
 
             activeType = wrappedType;
@@ -490,5 +503,11 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
         }
 
         throw new NoSuchMethodException(ServicesMessages.noSuchMethod(activeType, methodName));
+    }
+
+    public static String nullTerm(String term, String expression, Object root)
+    {
+        return String.format("Property '%s' (within property expression '%s', of %s) is null.",
+                             term, expression, root);
     }
 }
