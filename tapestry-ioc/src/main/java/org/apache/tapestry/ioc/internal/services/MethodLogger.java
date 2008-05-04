@@ -23,9 +23,9 @@ import java.util.Iterator;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.services.LoggingDecoratorImpl} to delegate out logging behavior to a
- * seperate object (helps ensure no naming conflicts).
+ * seperate object.
  */
-public final class ServiceLogger
+public final class MethodLogger
 {
     private static final int BUFFER_SIZE = 200;
 
@@ -39,10 +39,15 @@ public final class ServiceLogger
 
     private final ExceptionTracker _exceptionTracker;
 
-    public ServiceLogger(Logger logger, ExceptionTracker exceptionTracker)
+    public MethodLogger(Logger logger, ExceptionTracker exceptionTracker)
     {
         _logger = logger;
         _exceptionTracker = exceptionTracker;
+    }
+
+    public boolean isDebugEnabled()
+    {
+        return _logger.isDebugEnabled();
     }
 
     /**

@@ -35,6 +35,13 @@ public class MyPage
   . . .
 ---
 
+@Log annotation
+
+  You may mark a method with the {{{../../apidocs/org/apache/tapestry/annotations/Log.html}Log}} annotation.
+  Method entry, exit (and any thrown exceptions) will be logged at DEBUG level. This is very convienient for
+  debugging, especially when placed on event handler methods.
+
+
 DEBUG Level
 
   When a component's logger is configured at the DEBUG level, you will see added output when the class is first

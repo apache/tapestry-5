@@ -10,6 +10,9 @@ Tapestry Core
 
 New And Of Note
 
+  * Component methods may be marked with the @Log annotation, to enable debug logging of
+    method entry (with parameters) and exit (with return value, or thrown exception).
+
   * It is now possible to provide method invocation advice to component methods. This opens up
     a very powerful Aspect Oriented Programming approach to Tapestry components.
 

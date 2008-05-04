@@ -297,7 +297,8 @@ public final class TapestryModule
      * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
      * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
      * org.apache.tapestry.annotations.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link
-     * Cached} annotation</dd></dl>
+     * org.apache.tapestry.annotations.Cached} annotation</dd><dt>Log</dt> <dd>Checks for the {@link
+     * org.apache.tapestry.annotations.Log} annotation</dd></dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -375,6 +376,8 @@ public final class TapestryModule
         configuration.add("ApplicationState", locator.autobuild(ApplicationStateWorker.class),
                           "after:Property");
         configuration.add("Environment", locator.autobuild(EnvironmentalWorker.class), "after:Property");
+
+        configuration.add("Log", locator.autobuild(LogWorker.class));
 
         // This one is always last. Any additional private fields that aren't annotated will
         // be converted to clear out at the end of the request.

@@ -184,7 +184,9 @@ public class HibernateModule
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
             ObjectLocator locator)
     {
-        configuration.add("CommitAfter", locator.autobuild(CommitAfterWorker.class));
+        // If logging is enabled, we want logging to be the first advice, wrapping around the commit advice.
+
+        configuration.add("CommitAfter", locator.autobuild(CommitAfterWorker.class), "after:Log");
     }
 
 }
