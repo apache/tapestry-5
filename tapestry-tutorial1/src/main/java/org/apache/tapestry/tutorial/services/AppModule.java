@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.tutorial.services;
 
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Marker;
@@ -26,8 +27,8 @@ import org.slf4j.Logger;
 import java.io.IOException;
 
 /**
- * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to
- * configure and extend Tapestry, or to place your own services.
+ * This module is automatically included as part of the Tapestry IoC Registry, it's a good place to configure and extend
+ * Tapestry, or to place your own services.
  */
 @Marker(Local.class)
 public class AppModule
@@ -41,15 +42,15 @@ public class AppModule
         // you can extend this list of locales (it's a comma seperated series of locale names;
         // the first locale name is the default when there's no reasonable match).
 
-        configuration.add("tapestry.supported-locales", "en");
+        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en");
+        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
     }
 
     /**
-     * This is a service definition, the service will be named TimingFilter. The interface,
-     * RequestFilter, is used within the RequestHandler service pipeline, which is built from the
-     * RequestHandler service configuration. Tapestry IoC is responsible for passing in an
-     * appropriate Log instance. Requests for static resources are handled at a higher level, so
-     * this filter will only be invoked for Tapestry related requests.
+     * This is a service definition, the service will be named TimingFilter. The interface, RequestFilter, is used
+     * within the RequestHandler service pipeline, which is built from the RequestHandler service configuration.
+     * Tapestry IoC is responsible for passing in an appropriate Log instance. Requests for static resources are handled
+     * at a higher level, so this filter will only be invoked for Tapestry related requests.
      */
     public RequestFilter buildTimingFilter(final Logger logger)
     {
@@ -79,9 +80,8 @@ public class AppModule
     }
 
     /**
-     * This is a contribution to the RequestHandler service configuration. This is how we extend
-     * Tapestry using the timing filter. A common use for this kind of filter is transaction
-     * management or security.
+     * This is a contribution to the RequestHandler service configuration. This is how we extend Tapestry using the
+     * timing filter. A common use for this kind of filter is transaction management or security.
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration,
 
