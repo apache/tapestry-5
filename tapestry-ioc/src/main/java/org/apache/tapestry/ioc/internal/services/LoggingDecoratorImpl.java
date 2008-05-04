@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import org.apache.tapestry.ioc.Invocation;
 import org.apache.tapestry.ioc.MethodAdvice;
 import org.apache.tapestry.ioc.services.AspectDecorator;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
@@ -35,41 +34,7 @@ public class LoggingDecoratorImpl implements LoggingDecorator
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
     {
-        final ServiceLogger serviceLogger = new ServiceLogger(logger, _exceptionTracker);
-
-        MethodAdvice advice = new MethodAdvice()
-        {
-            public void advise(Invocation invocation)
-            {
-                boolean debug = logger.isDebugEnabled();
-
-                if (debug) serviceLogger.entry(invocation);
-
-                try
-                {
-                    invocation.proceed();
-                }
-                catch (RuntimeException ex)
-                {
-                    if (debug) serviceLogger.fail(invocation, ex);
-
-                    throw ex;
-                }
-
-                if (!debug) return;
-
-                if (invocation.isFail())
-                {
-                    Exception thrown = invocation.getThrown(Exception.class);
-
-                    serviceLogger.fail(invocation, thrown);
-
-                    return;
-                }
-
-                serviceLogger.exit(invocation);
-            }
-        };
+        MethodAdvice advice = new LoggingAdvice(logger, _exceptionTracker);
 
         return _aspectDecorator.build(serviceInterface, delegate, advice,
                                       String.format("<Logging interceptor for %s(%s)>", serviceId,

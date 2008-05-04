@@ -17,19 +17,16 @@ package org.apache.tapestry.integration.app1.pages;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.annotations.ApplicationState;
 import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.Log;
 import org.apache.tapestry.corelib.components.BeanEditForm;
 import org.apache.tapestry.integration.app1.data.RegistrationData;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.json.JSONObject;
-import org.slf4j.Logger;
 
 public class ZoneDemo
 {
     @Component
     private BeanEditForm _form;
-
-    @Inject
-    private Logger _logger;
 
     private String _name;
 
@@ -63,12 +60,10 @@ public class ZoneDemo
         _name = name;
     }
 
+    @Log
     Object onActionFromSelect(String name)
     {
         _name = name;
-
-        _logger.info("Selected: '" + _name + "'");
-
 
         if (name.equals("Registration")) return _registrationForm;
 
