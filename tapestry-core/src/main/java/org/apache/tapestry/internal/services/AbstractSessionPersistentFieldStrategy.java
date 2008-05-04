@@ -117,8 +117,14 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
         builder.append(':');
         builder.append(fieldName);
 
-        Session session = _request.getSession(true);
+        Session session = _request.getSession(newValue != null);
 
-        session.setAttribute(builder.toString(), newValue);
+        // TAPESTRY-2308: The session will be false when newValue is null and the session
+        // does not already exist.
+
+        if (session != null)
+        {
+            session.setAttribute(builder.toString(), newValue);
+        }
     }
 }
