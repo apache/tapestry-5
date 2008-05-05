@@ -86,7 +86,7 @@ public class Autocomplete
     /**
      * Overwrites the default minimum characters to trigger a server round trip (the default is 1).
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private int _minChars;
 
     @Inject
@@ -97,14 +97,14 @@ public class Autocomplete
      * Overrides the default check frequency for determining whether to send a server request. The default is .4
      * seconds.
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private double _frequency;
 
     /**
      * If given, then the autocompleter will support multiple input values, seperated by any of the individual
      * characters in the string.
      */
-    @Parameter(defaultPrefix = "literal")
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     private String _tokens;
 
     /**

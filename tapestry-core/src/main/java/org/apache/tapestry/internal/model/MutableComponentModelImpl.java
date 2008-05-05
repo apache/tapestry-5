@@ -202,9 +202,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public String setFieldPersistenceStrategy(String fieldName, String strategy)
     {
-        String stripped = InternalUtils.stripMemberPrefix(fieldName);
-
-        String logicalFieldName = _persistentFieldNameAllocator.allocateId(stripped);
+        String logicalFieldName = _persistentFieldNameAllocator.allocateId(fieldName);
 
         if (_persistentFields == null) _persistentFields = newMap();
 
