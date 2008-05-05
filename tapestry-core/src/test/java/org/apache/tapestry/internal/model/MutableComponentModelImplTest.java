@@ -28,8 +28,8 @@ import org.testng.annotations.Test;
 import java.util.Arrays;
 
 /**
- * Tests {@link org.apache.tapestry.internal.model.MutableComponentModelImpl} and
- * {@link org.apache.tapestry.internal.model.MutableEmbeddedComponentModelImpl}.
+ * Tests {@link org.apache.tapestry.internal.model.MutableComponentModelImpl} and {@link
+ * org.apache.tapestry.internal.model.MutableEmbeddedComponentModelImpl}.
  */
 public class MutableComponentModelImplTest extends InternalBaseTestCase
 {
@@ -460,24 +460,6 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         assertEquals(model.setFieldPersistenceStrategy("fred", "session"), "fred");
         assertEquals(model.setFieldPersistenceStrategy("barney", "client"), "barney");
-
-        assertEquals(model.getPersistentFieldNames(), Arrays.asList("barney", "fred"));
-
-        verify();
-    }
-
-    @Test
-    public void persistent_field_names_have_punctuation_stripped()
-    {
-        Resource r = mockResource();
-        Logger logger = mockLogger();
-
-        replay();
-
-        MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-
-        assertEquals(model.setFieldPersistenceStrategy("_fred", "session"), "fred");
-        assertEquals(model.setFieldPersistenceStrategy("_$barney", "client"), "barney");
 
         assertEquals(model.getPersistentFieldNames(), Arrays.asList("barney", "fred"));
 

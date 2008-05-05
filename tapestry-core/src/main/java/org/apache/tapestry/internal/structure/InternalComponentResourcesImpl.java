@@ -44,6 +44,8 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 {
     private final Page _page;
 
+    private final String _completeId;
+
     private final String _nestedId;
 
     private final ComponentModel _componentModel;
@@ -54,10 +56,10 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private final ComponentResources _containerResources;
 
+    private final PageResources _pageResources;
+
     // Case insensitive
     private Map<String, Binding> _bindings;
-
-    private final PageResources _pageResources;
 
     private Messages _messages;
 
@@ -65,17 +67,18 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     private Map<String, Object> _renderVariables;
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
-                                          ComponentResources containerResources, Instantiator componentInstantiator,
-                                          PageResources elementResources)
+                                          ComponentResources containerResources, PageResources pageResources,
+                                          String completeId, String nestedId, Instantiator componentInstantiator
+    )
     {
         _page = page;
         _element = element;
         _containerResources = containerResources;
-        _pageResources = elementResources;
+        _pageResources = pageResources;
+        _completeId = completeId;
+        _nestedId = nestedId;
+
         _componentModel = componentInstantiator.getModel();
-
-        _nestedId = _element.getNestedId();
-
         _component = componentInstantiator.newInstance(this);
     }
 
@@ -116,12 +119,14 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
     }
 
     /**
-     * Delegates to the {@link Page#createActionLink(String, String, boolean, Object[])} on the containing page. Why the
-     * extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every component page element).
+     * Delegates to the {@link Page#createActionLink(String, String, boolean, Object[])} on the containing page. Uses
+     * the element's nested id (i.e., a mixin can generate a link, but the link targets the component, not the mixin
+     * itself). Why the extra layer? Trying to avoid some unwanted injection (of LinkFactory, into every component page
+     * element).
      */
     public Link createActionLink(String action, boolean forForm, Object... context)
     {
-        return _page.createActionLink(_nestedId, action, forForm, context);
+        return _page.createActionLink(_element.getNestedId(), action, forForm, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
@@ -141,7 +146,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public String getCompleteId()
     {
-        return _element.getCompleteId();
+        return _completeId;
     }
 
     public Component getComponent()
@@ -180,7 +185,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public String getNestedId()
     {
-        return _element.getNestedId();
+        return _nestedId;
     }
 
     public Component getPage()

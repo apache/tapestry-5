@@ -15,6 +15,7 @@
 package org.apache.tapestry.internal.structure;
 
 import org.apache.tapestry.Block;
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.InternalComponentResourcesCommon;
@@ -89,6 +90,16 @@ public interface ComponentPageElement extends ComponentResourcesCommon, Internal
      * @throws IllegalArgumentException if no component exists with the given id
      */
     ComponentPageElement getEmbeddedElement(String id);
+
+    /**
+     * Returns the {@link org.apache.tapestry.ComponentResources} for a mixin attached to this component element. Mixin
+     * ids are the simple names of the mixin class.
+     *
+     * @param mixinId the mixin id (case insensitive)
+     * @return the resources for the component
+     * @throws IllegalArgumentException if no mixin with the given id exists
+     */
+    ComponentResources getMixinResources(String mixinId);
 
     /**
      * Invoked when the component should render its body.

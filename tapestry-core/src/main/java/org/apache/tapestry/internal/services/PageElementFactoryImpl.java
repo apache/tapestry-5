@@ -283,8 +283,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public void addMixinByClassName(ComponentPageElement component, String mixinClassName)
     {
-        Instantiator mixinInstantiator = _componentInstantiatorSource
-                .findInstantiator(mixinClassName);
+        Instantiator mixinInstantiator = _componentInstantiatorSource.findInstantiator(mixinClassName);
 
         component.addMixin(mixinInstantiator);
     }

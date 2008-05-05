@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.ComponentResourcesCommon;
 import org.apache.tapestry.runtime.Component;
 
 /**
@@ -25,14 +24,16 @@ import org.apache.tapestry.runtime.Component;
 public interface ComponentSource
 {
     /**
-     * Gets a component by its complete id.
+     * Gets a component by its {@linkplain org.apache.tapestry.ComponentResourcesCommon#getCompleteId() complete id}. If
+     * the component id is for a mixin, then the mixin attached to the component will be returned. A mixin's complete id
+     * is its container's complete id, suffixed with "$" and the mixin's id (its simple class name).
      *
-     * @param componentId complete component id
+     * @param completeId complete component id (case insensitive)
      * @return the component
      * @throws IllegalArgumentException if the component can not be found
-     * @see ComponentResourcesCommon#getCompleteId()
+     * @see org.apache.tapestry.ComponentResourcesCommon#getCompleteId()
      */
-    Component getComponent(String componentId);
+    Component getComponent(String completeId);
 
     /**
      * Returns the page identified by its logical page name. A logical page name is the short form of a page name often

@@ -39,13 +39,12 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         TypeCoercer coercer = mockTypeCoercer();
         ComponentModel model = mockComponentModel();
 
-        train_getNestedId(element, "foo.bar");
-
         train_getModel(ins, model);
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null,
+                                                                                  null, ins);
 
         resources.renderInformalParameters(writer);
 
@@ -59,12 +58,9 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Component component = mockComponent();
         Instantiator ins = mockInstantiator(component);
         MarkupWriter writer = mockMarkupWriter();
-        TypeCoercer coercer = mockTypeCoercer();
         ComponentModel model = mockComponentModel();
         ParameterModel pmodel = mockParameterModel();
         Binding binding = mockBinding();
-
-        train_getNestedId(element, "foo.bar");
 
         train_getModel(ins, model);
 
@@ -72,7 +68,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null,
+                                                                                  null, ins);
 
         resources.bindParameter("fred", binding);
 
@@ -94,8 +91,6 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         String convertedValue = "*converted*";
         PageResources pageResources = mockPageResources();
 
-        train_getNestedId(element, "foo.bar");
-
         train_getModel(ins, model);
 
         train_getParameterModel(model, "fred", null);
@@ -108,8 +103,8 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins,
-                                                                                  pageResources);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, pageResources,
+                                                                                  null, null, ins);
 
         resources.bindParameter("fred", binding);
 
@@ -128,15 +123,13 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
 
         Object value = new Object();
 
-        train_getNestedId(element, "foo.bar");
-
         train_getModel(ins, model);
 
         train_isRendering(element, true);
 
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, null, null, ins);
 
         resources.storeRenderVariable("myRenderVar", value);
 
@@ -158,18 +151,15 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement element = mockComponentPageElement();
 
-        train_getNestedId(element, "foo.bar");
-
         train_getModel(ins, model);
 
         train_isRendering(element, true);
         train_isRendering(element, true);
 
-        train_getCompleteId(element, "Foo.bar");
-
         replay();
 
-        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
+        ComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar", null,
+                                                                          ins);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -196,18 +186,15 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement element = mockComponentPageElement();
 
-        train_getNestedId(element, "bar");
-
         train_getModel(ins, model);
 
         train_isRendering(element, true);
         train_isRendering(element, true);
 
-        train_getCompleteId(element, "Foo.bar");
-
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
+                                                                                  null, ins);
 
         resources.storeRenderVariable("fred", "FRED");
         resources.storeRenderVariable("barney", "BARNEY");
@@ -236,17 +223,14 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         ComponentModel model = mockComponentModel();
         ComponentPageElement element = mockComponentPageElement();
 
-        train_getNestedId(element, "foo.bar");
-
         train_getModel(ins, model);
 
         train_isRendering(element, false);
 
-        train_getCompleteId(element, "Foo.bar");
-
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, ins, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(null, element, null, null, "Foo.bar",
+                                                                                  null, ins);
 
 
         try
@@ -273,15 +257,14 @@ public class InternalComponentResourcesImplTest extends InternalBaseTestCase
         Page page = mockPage();
         PageLifecycleListener listener = newMock(PageLifecycleListener.class);
 
-        train_getNestedId(element, "foo.bar");
-
         train_getModel(ins, model);
 
         page.addLifecycleListener(listener);
 
         replay();
 
-        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, ins, null);
+        InternalComponentResources resources = new InternalComponentResourcesImpl(page, element, null, null, null,
+                                                                                  null, ins);
 
         resources.addPageLifecycleListener(listener);
 

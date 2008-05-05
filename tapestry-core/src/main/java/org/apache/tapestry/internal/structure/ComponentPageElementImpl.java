@@ -441,9 +441,10 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     private boolean _loaded;
 
     /**
-     * Map from mixin name to resources for the mixin. Created when first mixin is added.
+     * Map from mixin id (the simple name of the mixin class) to resources for the mixin. Created when first mixin is
+     * added.
      */
-    private Map<String, InternalComponentResources> _mixinsByShortName;
+    private Map<String, InternalComponentResources> _mixinIdToComponentResources;
 
     private final String _nestedId;
 
@@ -568,8 +569,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             }
         }
 
-        _coreResources = new InternalComponentResourcesImpl(_page, this, containerResources, instantiator,
-                                                            _pageResources);
+        _coreResources = new InternalComponentResourcesImpl(_page, this, containerResources, _pageResources,
+                                                            _completeId, _nestedId, instantiator
+        );
 
         _coreComponent = _coreResources.getComponent();
     }
@@ -597,21 +599,26 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
     public void addMixin(Instantiator instantiator)
     {
-        if (_mixinsByShortName == null)
+        if (_mixinIdToComponentResources == null)
         {
-            _mixinsByShortName = newCaseInsensitiveMap();
+            _mixinIdToComponentResources = newCaseInsensitiveMap();
             _components = newList();
         }
 
         String mixinClassName = instantiator.getModel().getComponentClassName();
         String mixinName = TapestryInternalUtils.lastTerm(mixinClassName);
 
+        String mixinExtension = "$" + mixinName.toLowerCase();
+
         InternalComponentResourcesImpl resources = new InternalComponentResourcesImpl(_page, this, _coreResources,
-                                                                                      instantiator, _pageResources);
+                                                                                      _pageResources,
+                                                                                      _completeId + mixinExtension,
+                                                                                      _nestedId + mixinExtension,
+                                                                                      instantiator);
 
         // TODO: Check for name collision?
 
-        _mixinsByShortName.put(mixinName, resources);
+        _mixinIdToComponentResources.put(mixinName, resources);
 
         _components.add(resources.getComponent());
     }
@@ -625,7 +632,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (dotx > 0)
         {
             String mixinName = parameterName.substring(0, dotx);
-            InternalComponentResources mixinResources = InternalUtils.get(_mixinsByShortName, mixinName);
+            InternalComponentResources mixinResources = InternalUtils.get(_mixinIdToComponentResources, mixinName);
 
             if (mixinResources == null) throw new TapestryException(
                     StructureMessages.missingMixinForParameter(_completeId, mixinName, parameterName), binding, null);
@@ -646,9 +653,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
             return;
         }
 
-        for (String mixinName : InternalUtils.sortedKeys(_mixinsByShortName))
+        for (String mixinName : InternalUtils.sortedKeys(_mixinIdToComponentResources))
         {
-            InternalComponentResources resources = _mixinsByShortName.get(mixinName);
+            InternalComponentResources resources = _mixinIdToComponentResources.get(mixinName);
             if (resources.getComponentModel().getParameterModel(parameterName) != null)
             {
                 resources.bindParameter(parameterName, binding);
@@ -800,11 +807,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         return embeddedElement;
     }
 
-
     public String getId()
     {
         return _id;
     }
+
 
     public Logger getLogger()
     {
@@ -815,9 +822,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
     {
         Component result = null;
 
-        if (_mixinsByShortName != null)
+        if (_mixinIdToComponentResources != null)
         {
-            for (InternalComponentResources resources : _mixinsByShortName.values())
+            for (InternalComponentResources resources : _mixinIdToComponentResources.values())
             {
                 if (resources.getComponentModel().getComponentClassName().equals(mixinClassName))
                 {
@@ -829,6 +836,20 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         if (result == null) throw new TapestryException(StructureMessages.unknownMixin(_completeId, mixinClassName),
                                                         getLocation(), null);
+
+        return result;
+    }
+
+    public ComponentResources getMixinResources(String mixinId)
+    {
+        ComponentResources result = null;
+
+        if (_mixinIdToComponentResources != null)
+            result = _mixinIdToComponentResources.get(mixinId);
+
+        if (result == null)
+            throw new IllegalArgumentException(
+                    String.format("Unable to locate mixin '%s' for component '%s'.", mixinId, _completeId));
 
         return result;
     }
@@ -1052,8 +1073,8 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         addUnboundParameterNames(null, unbound, _coreResources);
 
-        for (String name : InternalUtils.sortedKeys(_mixinsByShortName))
-            addUnboundParameterNames(name, unbound, _mixinsByShortName.get(name));
+        for (String name : InternalUtils.sortedKeys(_mixinIdToComponentResources))
+            addUnboundParameterNames(name, unbound, _mixinIdToComponentResources.get(name));
 
         if (unbound.isEmpty()) return;
 
@@ -1104,7 +1125,7 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
         if (dotx > 0)
         {
             String mixinName = parameterName.substring(0, dotx);
-            InternalComponentResources mixinResources = InternalUtils.get(_mixinsByShortName, mixinName);
+            InternalComponentResources mixinResources = InternalUtils.get(_mixinIdToComponentResources, mixinName);
 
             if (mixinResources == null) throw new TapestryException(
                     StructureMessages.missingMixinForParameter(_completeId, mixinName, parameterName), null, null);
@@ -1124,9 +1145,9 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
 
         // Search for mixin that it is a formal parameter of
 
-        for (String mixinName : InternalUtils.sortedKeys(_mixinsByShortName))
+        for (String mixinName : InternalUtils.sortedKeys(_mixinIdToComponentResources))
         {
-            InternalComponentResources resources = _mixinsByShortName.get(mixinName);
+            InternalComponentResources resources = _mixinIdToComponentResources.get(mixinName);
 
             pm = resources.getComponentModel().getParameterModel(parameterName);
 
