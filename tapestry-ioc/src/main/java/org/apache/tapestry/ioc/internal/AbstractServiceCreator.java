@@ -19,7 +19,7 @@ import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ServiceBuilderResources;
 import org.apache.tapestry.ioc.ServiceResources;
 import static org.apache.tapestry.ioc.internal.ConfigurationType.*;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.slf4j.Logger;
 
 import java.lang.reflect.ParameterizedType;
@@ -36,13 +36,13 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 {
     protected final String serviceId;
 
-    private final Map<Class, Object> parameterDefaults = newMap();
+    private final Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
 
     protected final ServiceBuilderResources resources;
 
     protected final Logger logger;
 
-    private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
+    private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = CollectionFactory.newMap();
 
     protected final String creatorDescription;
 
@@ -74,7 +74,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     protected final Map<Class, Object> getParameterDefaultsWithConfiguration(Class[] parameterTypes,
                                                                              Type[] genericParameterTypes)
     {
-        Map<Class, Object> result = newMap(parameterDefaults);
+        Map<Class, Object> result = CollectionFactory.newMap(parameterDefaults);
         ConfigurationType type = null;
 
         for (int i = 0; i < parameterTypes.length; i++)

@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc;
 
 import org.apache.tapestry.ioc.annotations.Match;
 import org.apache.tapestry.ioc.annotations.Order;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -94,7 +94,7 @@ public class BarneyModule
     {
         return new DecoratorList()
         {
-            private List<String> names = newList();
+            private List<String> names = CollectionFactory.newList();
 
             public void add(String name)
             {
