@@ -14,6 +14,8 @@
 
         <h1>Address Book</h1>
 
+        <t:grid source="addresses"/>
+
         <ul>
             <li>
                 <t:pagelink page="address/create">Create new address</t:pagelink>

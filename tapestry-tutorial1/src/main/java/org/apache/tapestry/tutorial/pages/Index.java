@@ -15,20 +15,33 @@
 package org.apache.tapestry.tutorial.pages;
 
 import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.tutorial.entities.Address;
+import org.hibernate.Session;
 
+import java.util.List;
 import java.util.Random;
 
 public class Index
 {
-    private final Random _random = new Random();
+    private final Random random = new Random();
 
     @InjectPage
-    private Guess _guess;
+    private Guess guess;
+
+    @Inject
+    private Session session;
 
     Object onAction()
     {
-        int target = _random.nextInt(10) + 1;
+        int target = random.nextInt(10) + 1;
 
-        return _guess.initialize(target);
+        return guess.initialize(target);
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    public List<Address> getAddresses()
+    {
+        return session.createCriteria(Address.class).list();
     }
 }

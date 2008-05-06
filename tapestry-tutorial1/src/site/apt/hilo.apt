@@ -77,11 +77,11 @@ package org.apache.tapestry.tutorial.pages;
 
 public class Guess
 {
-  private int _target;
+  private int target;
 
   Object initialize(int target)
   {
-    _target = target;
+    this.target = target;
 
     return this;
   }
@@ -92,14 +92,11 @@ public class Guess
    method is package private, not public;
   it is only expected to be invoked from the Index page (as we'll see in a moment), so there's no need to make it public.  Later we'll see that
   there's more initialization to be done
-  than just storing a value into the _target instance variable (which is why we don't simply name the method setTarget() ).
-  
-  <The naming convention, using leading underscores for fields, is NOT a requirement of Tapestry; that's
-   just my personal coding style.>
+  than just storing a value into the target instance variable (which is why we don't simply name the method setTarget() ).
 
   Now we can move back to the Index page.  What we want is to have the ActionLink component invoke a method on the Index page. We can then generate
   a random target number. We'll tell the Guess page what the target number is and then make sure that it is  the Guess page, and not the
-   Index page,
+  Index page,
   that renders the response into the user's web browser.  That's actually quite a few concepts to take in all at once.
   
   Let's start with the code, and break it down:
@@ -115,16 +112,16 @@ import org.apache.tapestry.annotations.InjectPage;
 
 public class Start
 {
-  private final Random _random = new Random();
+  private final Random random = new Random();
 
   @InjectPage
-  private Guess _guess;
+  private Guess guess;
 
   Object onAction()
   {
-    int target = _random.nextInt(10) + 1;
+    int target = random.nextInt(10) + 1;
 
-    return _guess.initialize(target);
+    return guess.initialize(target);
   }
 }
 ----
@@ -142,7 +139,7 @@ public class Start
 
   Injection can be a somewhat nebulous concept.  In terms of Tapestry, it means that some cooperating object needed by one class is provided to it.  The other
   object is often referred to as a "dependency"; in this case, the Index page <depends on> the Guess page to be fully functional, and an instance of the Guess
-  page is made available as the _guess instance variable.  The Index page doesn't, and can't, <create> the Guess page, it can only
+  page is made available as the guess instance variable.  The Index page doesn't, and can't, <create> the Guess page, it can only
   advertise, to Tapestry, that it needs the Guess page.  Tapestry will take care of the rest.
     
   Let's see what we do with this injected page.  It's used inside onAction().  You might guess that this method is invoked when the link ("Start guessing") is clicked.  But
@@ -204,7 +201,7 @@ public class Start
 ---
   public int getTarget()
   {
-    return _target;
+    return target;
   }
 ---
 
@@ -248,7 +245,7 @@ public class Start
   The same page instance will be used for request after request. 
   
   So, inside the action request, the code inside the onAction() event handler method <did> call the
-  initialize() method, and a value between 1 and 10 was stored in the _target instance variable. But
+  initialize() method, and a value between 1 and 10 was stored in the target instance variable. But
   at the end of that request, the value was lost, and in the subsequent render request for the Guess page,
   the value was zero.
   
@@ -257,7 +254,7 @@ public class Start
   
 ----
   @Persist
-  private int _target;
+  private int target;
 ----
 
   Now we can use the browser back button to return to the Start page, and click the link again.
@@ -317,7 +314,7 @@ public class Start
   
 ---
   @Property
-  private int _guess;
+  private int guess;
 ---
 
   Tapestry will automatically create the methods needed so that the guess property (it's smart
@@ -340,16 +337,16 @@ public class Start
 ---
   @Persist
   @Property
-  private String _message;
+  private String message;
 
   String onActionFromLink(int guess)
   {
-    if (guess == _target) return "GameOver";
+    if (guess == target) return "GameOver";
 
-    if (guess < _target)
-      _message = String.format("%d is too low.", guess);
+    if (guess < target)
+      message = String.format("%d is too low.", guess);
     else
-      _message = String.format("%d is too high.", guess);
+      message = String.format("%d is too high.", guess);
 
     return null;
   }
@@ -361,7 +358,7 @@ public class Start
   method parameter.
   We can then compare the guess from the user to the secret target number.
 
-  Notice how Tapestry adapts to the return value.  Here is may be null ... Tapestry interprets that
+  Notice how Tapestry adapts to the return value.  Here it may be null ... Tapestry interprets that
   as "stay on the same page".  You may also return a string ("GameOver"); Tapestry interprets <that>
   as the name of the page to render the response.
   
@@ -421,17 +418,17 @@ public class GameOver
 ---
   @Persist
   @Property
-  private int _count;
+  private int count;
 ---
 
-  Next we modified initialize() to ensure that _count is set to 0.  This is a safety
+  Next we modified initialize() to ensure that count is set to 0.  This is a safety
   precaution in case we add logic to play the game again.
   
 ---
   Object initialize(int target)
   {
-    _target = target;
-    _count = 0;
+    this.target = target;
+    this.count = 0;
 
     return this;
   }
@@ -444,14 +441,14 @@ public class GameOver
 ---
   Object onActionFromLink(int guess)
   {
-    _count++;
+    count++;
 
-    if (guess == _target) return _gameOver.initialize(_count);
+    if (guess == target) return gameOver.initialize(count);
 
-    if (guess < _target)
-      _message = String.format("%d is too low.", guess);
+    if (guess < target)
+      message = String.format("%d is too low.", guess);
     else
-      _message = String.format("%d is too high.", guess);
+      message = String.format("%d is too high.", guess);
 
     return null;
   }
@@ -474,11 +471,11 @@ public class GameOver
 {
   @Persist
   @Property
-  private int _count;
+  private int count;
 
   Object initialize(int count)
   {
-    _count = count;
+    this.count = count;
 
     return this;
   }
