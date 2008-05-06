@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ClassPropertyAdapter;
 import org.apache.tapestry.ioc.services.PropertyAccess;
 
@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class PropertyAccessImpl implements PropertyAccess
 {
-    private final Map<Class, ClassPropertyAdapter> _adapters = newConcurrentMap();
+    private final Map<Class, ClassPropertyAdapter> adapters = CollectionFactory.newConcurrentMap();
 
     public Object get(Object instance, String propertyName)
     {
@@ -46,7 +46,7 @@ public class PropertyAccessImpl implements PropertyAccess
      */
     public synchronized void clearCache()
     {
-        _adapters.clear();
+        adapters.clear();
 
         Introspector.flushCaches();
     }
@@ -58,22 +58,21 @@ public class PropertyAccessImpl implements PropertyAccess
 
     public ClassPropertyAdapter getAdapter(Class forClass)
     {
-        ClassPropertyAdapter result = _adapters.get(forClass);
+        ClassPropertyAdapter result = adapters.get(forClass);
 
         if (result == null)
         {
             result = buildAdapter(forClass);
-            _adapters.put(forClass, result);
+            adapters.put(forClass, result);
         }
 
         return result;
     }
 
     /**
-     * Builds a new adapter and updates the _adapters cache. This not only guards access to the
-     * adapter cache, but also serializes access to the Java Beans Introspector, which is not thread
-     * safe. In addition, handles the case where the class in question is an interface, accumulating
-     * properties inherited from super-classes.
+     * Builds a new adapter and updates the _adapters cache. This not only guards access to the adapter cache, but also
+     * serializes access to the Java Beans Introspector, which is not thread safe. In addition, handles the case where
+     * the class in question is an interface, accumulating properties inherited from super-classes.
      */
     private synchronized ClassPropertyAdapter buildAdapter(Class forClass)
     {
@@ -84,7 +83,7 @@ public class PropertyAccessImpl implements PropertyAccess
         {
             BeanInfo info = Introspector.getBeanInfo(forClass);
 
-            List<PropertyDescriptor> descriptors = newList();
+            List<PropertyDescriptor> descriptors = CollectionFactory.newList();
 
             addAll(descriptors, info.getPropertyDescriptors());
 
@@ -106,7 +105,7 @@ public class PropertyAccessImpl implements PropertyAccess
     private void addPropertiesFromExtendedInterfaces(Class forClass, List<PropertyDescriptor> descriptors)
             throws IntrospectionException
     {
-        LinkedList<Class> queue = newLinkedList();
+        LinkedList<Class> queue = CollectionFactory.newLinkedList();
 
         // Seed the queue
         addAll(queue, forClass.getInterfaces());

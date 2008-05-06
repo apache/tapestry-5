@@ -35,26 +35,26 @@ public final class BodyBuilder
      */
     private static final int DEFAULT_LENGTH = 200;
 
-    private final StringBuilder _buffer = new StringBuilder(DEFAULT_LENGTH);
+    private static final String INDENT = "  ";
 
-    private final Formatter _formatter = new Formatter(_buffer);
+    private final StringBuilder buffer = new StringBuilder(DEFAULT_LENGTH);
+
+    private final Formatter formatter = new Formatter(buffer);
 
     // Per level of nesting depth (two spaces).
 
-    private static final String INDENT = "  ";
+    private int nestingDepth = 0;
 
-    private int _nestingDepth = 0;
-
-    private boolean _atNewLine = true;
+    private boolean atNewLine = true;
 
     /**
      * Clears the builder, returning it to its initial, empty state.
      */
     public BodyBuilder clear()
     {
-        _nestingDepth = 0;
-        _atNewLine = true;
-        _buffer.setLength(0);
+        nestingDepth = 0;
+        atNewLine = true;
+        buffer.setLength(0);
 
         return this;
     }
@@ -91,7 +91,7 @@ public final class BodyBuilder
 
         // Format output, send to buffer
 
-        _formatter.format(format, args);
+        formatter.format(format, args);
 
         if (newLine) newline();
 
@@ -100,8 +100,8 @@ public final class BodyBuilder
 
     private void newline()
     {
-        _buffer.append("\n");
-        _atNewLine = true;
+        buffer.append("\n");
+        atNewLine = true;
     }
 
     /**
@@ -109,13 +109,13 @@ public final class BodyBuilder
      */
     public BodyBuilder begin()
     {
-        if (!_atNewLine) newline();
+        if (!atNewLine) newline();
 
         indent();
-        _buffer.append("{");
+        buffer.append("{");
         newline();
 
-        _nestingDepth++;
+        nestingDepth++;
 
         return this;
     }
@@ -125,14 +125,14 @@ public final class BodyBuilder
      */
     public BodyBuilder end()
     {
-        if (!_atNewLine) newline();
+        if (!atNewLine) newline();
 
         // TODO: Could check here if nesting depth goes below zero.
 
-        _nestingDepth--;
+        nestingDepth--;
 
         indent();
-        _buffer.append("}");
+        buffer.append("}");
 
         newline();
 
@@ -141,12 +141,12 @@ public final class BodyBuilder
 
     private void indent()
     {
-        if (_atNewLine)
+        if (atNewLine)
         {
-            for (int i = 0; i < _nestingDepth; i++)
-                _buffer.append(INDENT);
+            for (int i = 0; i < nestingDepth; i++)
+                buffer.append(INDENT);
 
-            _atNewLine = false;
+            atNewLine = false;
         }
     }
 
@@ -160,6 +160,6 @@ public final class BodyBuilder
     @Override
     public String toString()
     {
-        return _buffer.toString();
+        return buffer.toString();
     }
 }

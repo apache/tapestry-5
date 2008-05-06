@@ -49,7 +49,7 @@ public class TimeInterval
 
     private static final Pattern PATTERN = Pattern.compile("\\s*(\\d+)\\s*([a-z]*)", Pattern.CASE_INSENSITIVE);
 
-    private final long _milliseconds;
+    private final long milliseconds;
 
     /**
      * Creates a TimeInterval for a string.
@@ -58,17 +58,17 @@ public class TimeInterval
      */
     public TimeInterval(String input)
     {
-        _milliseconds = parseMilliseconds(input);
+        milliseconds = parseMilliseconds(input);
     }
 
     public long milliseconds()
     {
-        return _milliseconds;
+        return milliseconds;
     }
 
     public long seconds()
     {
-        return _milliseconds / MILLISECOND;
+        return milliseconds / MILLISECOND;
     }
 
     static long parseMilliseconds(String input)
@@ -124,7 +124,7 @@ public class TimeInterval
     @Override
     public String toString()
     {
-        return String.format("TimeInterval[%d ms]", _milliseconds);
+        return String.format("TimeInterval[%d ms]", milliseconds);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class TimeInterval
         {
             TimeInterval tp = (TimeInterval) obj;
 
-            return _milliseconds == tp._milliseconds;
+            return milliseconds == tp.milliseconds;
         }
 
         return false;

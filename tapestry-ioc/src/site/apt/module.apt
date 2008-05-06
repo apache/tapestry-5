@@ -119,20 +119,20 @@ public class MyAppModule
 
 public class MyModule
 {   
-  private final JobScheduler _scheduler;
-  private final FileSystem _fileSystem;
+  private final JobScheduler scheduler;
+  private final FileSystem fileSystem;
   
   public MyModule(JobScheduler scheduler, FileSystem fileSystem)
   {
-    _scheduler = scheduler;
-    _fileSystem = fileSystem;
+    this.scheduler = scheduler;
+    this.fileSystem = fileSystem;
   }
   
   public Indexer build()
   {
-    IndexerImpl indexer = new IndexerImpl(_fileSystem);
+    IndexerImpl indexer = new IndexerImpl(fileSystem);
       
-    _scheduler.scheduleDailyJob(indexer);
+    scheduler.scheduleDailyJob(indexer);
       
     return indexer;
   }

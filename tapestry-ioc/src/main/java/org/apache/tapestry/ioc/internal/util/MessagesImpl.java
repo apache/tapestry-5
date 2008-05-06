@@ -15,7 +15,6 @@
 package org.apache.tapestry.ioc.internal.util;
 
 import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.util.AbstractMessages;
 
 import java.util.Enumeration;
@@ -24,17 +23,15 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.Messages} based around a
- * {@link java.util.ResourceBundle}.
+ * Implementation of {@link org.apache.tapestry.ioc.Messages} based around a {@link java.util.ResourceBundle}.
  */
 public class MessagesImpl extends AbstractMessages
 {
-    private final Map<String, String> _properties = newCaseInsensitiveMap();
+    private final Map<String, String> properties = CollectionFactory.newCaseInsensitiveMap();
 
     /**
-     * Finds the messages for a given Messages utility class. Strings the trailing "Messages" and
-     * replaces it with "Strings" to form the base path. Loads the bundle using the default locale,
-     * and the class' class loader.
+     * Finds the messages for a given Messages utility class. Strings the trailing "Messages" and replaces it with
+     * "Strings" to form the base path. Loads the bundle using the default locale, and the class' class loader.
      *
      * @param forClass
      * @return Messages for the class
@@ -62,14 +59,14 @@ public class MessagesImpl extends AbstractMessages
             String key = e.nextElement();
             String value = bundle.getString(key);
 
-            _properties.put(key, value);
+            properties.put(key, value);
         }
     }
 
     @Override
     protected String valueForKey(String key)
     {
-        return _properties.get(key);
+        return properties.get(key);
     }
 
 }

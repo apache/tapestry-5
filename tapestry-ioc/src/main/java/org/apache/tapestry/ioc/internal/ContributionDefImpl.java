@@ -26,28 +26,28 @@ import java.util.Map;
 
 public class ContributionDefImpl implements ContributionDef
 {
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final Method _contributorMethod;
+    private final Method contributorMethod;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
     public ContributionDefImpl(String serviceId, Method contributorMethod, ClassFactory classFactory)
     {
-        _serviceId = serviceId;
-        _contributorMethod = contributorMethod;
-        _classFactory = classFactory;
+        this.serviceId = serviceId;
+        this.contributorMethod = contributorMethod;
+        this.classFactory = classFactory;
     }
 
     @Override
     public String toString()
     {
-        return InternalUtils.asString(_contributorMethod, _classFactory);
+        return InternalUtils.asString(contributorMethod, classFactory);
     }
 
     public String getServiceId()
     {
-        return _serviceId;
+        return serviceId;
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
@@ -82,17 +82,17 @@ public class ContributionDefImpl implements ContributionDef
 
         Throwable fail = null;
 
-        Object moduleBuilder = InternalUtils.isStatic(_contributorMethod) ? null : source
+        Object moduleBuilder = InternalUtils.isStatic(contributorMethod) ? null : source
                 .getModuleBuilder();
 
         try
         {
             Object[] parameters = InternalUtils.calculateParametersForMethod(
-                    _contributorMethod,
+                    contributorMethod,
                     locator,
                     parameterDefaults);
 
-            _contributorMethod.invoke(moduleBuilder, parameters);
+            contributorMethod.invoke(moduleBuilder, parameters);
         }
         catch (InvocationTargetException ex)
         {
@@ -105,6 +105,6 @@ public class ContributionDefImpl implements ContributionDef
 
         if (fail != null)
             throw new RuntimeException(IOCMessages
-                    .contributionMethodError(_contributorMethod, fail), fail);
+                    .contributionMethodError(contributorMethod, fail), fail);
     }
 }

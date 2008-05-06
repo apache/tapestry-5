@@ -56,14 +56,14 @@ public class TestBase extends Assert
         }
     }
 
-    private final MockTester _tester = new MockTester();
+    private final MockTester tester = new MockTester();
 
     /**
      * Returns the {@link IMocksControl} for this thread.
      */
     protected final IMocksControl getMocksControl()
     {
-        return _tester.getMocksControl();
+        return tester.getMocksControl();
     }
 
     /**
@@ -72,7 +72,7 @@ public class TestBase extends Assert
     @AfterMethod(alwaysRun = true)
     public final void discardMockControl()
     {
-        _tester.cleanup();
+        tester.cleanup();
     }
 
     /**
@@ -85,7 +85,7 @@ public class TestBase extends Assert
      */
     protected final <T> T newMock(Class<T> mockClass)
     {
-        return _tester.newMock(mockClass);
+        return tester.newMock(mockClass);
     }
 
     /**
@@ -94,7 +94,7 @@ public class TestBase extends Assert
      */
     protected final void replay()
     {
-        _tester.replay();
+        tester.replay();
     }
 
     /**
@@ -103,7 +103,7 @@ public class TestBase extends Assert
      */
     protected final void verify()
     {
-        _tester.verify();
+        tester.verify();
     }
 
     /**

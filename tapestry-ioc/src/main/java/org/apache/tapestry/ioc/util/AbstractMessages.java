@@ -25,28 +25,28 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * Abstract implementation of {@link Messages} that doesn't know where values come from (that
- * information is supplied in a subclass, via the {@link #valueForKey(String)} method).
+ * Abstract implementation of {@link Messages} that doesn't know where values come from (that information is supplied in
+ * a subclass, via the {@link #valueForKey(String)} method).
  */
 public abstract class AbstractMessages implements Messages
 {
-    private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
+    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
 
     /**
      * String key to MF instance.
      */
-    private final Map<String, MessageFormatter> _cache = newCaseInsensitiveMap();
+    private final Map<String, MessageFormatter> cache = newCaseInsensitiveMap();
 
-    private final Locale _locale;
+    private final Locale locale;
 
     protected AbstractMessages(Locale locale)
     {
-        _locale = locale;
+        this.locale = locale;
     }
 
     /**
-     * Invoked to provide the value for a particular key. This may be invoked multiple times even
-     * for the same key. The implementation should <em>ignore the case of the key</em>.
+     * Invoked to provide the value for a particular key. This may be invoked multiple times even for the same key. The
+     * implementation should <em>ignore the case of the key</em>.
      *
      * @param key the key to obtain a value for (case insensitive)
      * @return the value for the key, or null if this instance can not provide the value
@@ -68,11 +68,11 @@ public abstract class AbstractMessages implements Messages
 
     public MessageFormatter getFormatter(final String key)
     {
-        MessageFormatter result = _barrier.withRead(new Invokable<MessageFormatter>()
+        MessageFormatter result = barrier.withRead(new Invokable<MessageFormatter>()
         {
             public MessageFormatter invoke()
             {
-                return _cache.get(key);
+                return cache.get(key);
             }
         });
 
@@ -80,11 +80,11 @@ public abstract class AbstractMessages implements Messages
 
         final MessageFormatter newFormatter = buildMessageFormatter(key);
 
-        _barrier.withWrite(new Runnable()
+        barrier.withWrite(new Runnable()
         {
             public void run()
             {
-                _cache.put(key, newFormatter);
+                cache.put(key, newFormatter);
             }
         });
 
@@ -95,7 +95,7 @@ public abstract class AbstractMessages implements Messages
     {
         String format = get(key);
 
-        return new MessageFormatterImpl(format, _locale);
+        return new MessageFormatterImpl(format, locale);
     }
 
     public String format(String key, Object... args)

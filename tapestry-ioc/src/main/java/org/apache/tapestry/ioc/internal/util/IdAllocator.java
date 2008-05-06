@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -23,8 +21,8 @@ import java.util.Map;
 
 
 /**
- * Used to "uniquify" names within a given context. A base name is passed in, and the return value
- * is the base name, or the base name extended with a suffix to make it unique.
+ * Used to "uniquify" names within a given context. A base name is passed in, and the return value is the base name, or
+ * the base name extended with a suffix to make it unique.
  * <p/>
  * This class is not threadsafe.
  */
@@ -36,9 +34,9 @@ public final class IdAllocator
     /**
      * Map from allocated id to a generator for names associated with the allocated id.
      */
-    private final Map<String, NameGenerator> _generatorMap;
+    private final Map<String, NameGenerator> generatorMap;
 
-    private final String _namespace;
+    private final String namespace;
 
     /**
      * Generates unique names with a particular prefix.
@@ -62,7 +60,7 @@ public final class IdAllocator
         /**
          * Clones this instance, returning an equivalent but seperate copy.
          */
-        @SuppressWarnings({"CloneDoesntDeclareCloneNotSupportedException"})
+        @SuppressWarnings({ "CloneDoesntDeclareCloneNotSupportedException" })
         @Override
         public NameGenerator clone()
         {
@@ -96,8 +94,8 @@ public final class IdAllocator
 
     private IdAllocator(String namespace, Map<String, NameGenerator> generatorMap)
     {
-        _namespace = namespace;
-        _generatorMap = generatorMap;
+        this.namespace = namespace;
+        this.generatorMap = generatorMap;
     }
 
     /**
@@ -105,51 +103,50 @@ public final class IdAllocator
      */
     public List<String> getAllocatedIds()
     {
-        return InternalUtils.sortedKeys(_generatorMap);
+        return InternalUtils.sortedKeys(generatorMap);
     }
 
     /**
      * Creates a clone of this IdAllocator instance, copying the allocator's namespace and key map.
      */
-    @SuppressWarnings({"CloneDoesntCallSuperClone"})
+    @SuppressWarnings({ "CloneDoesntCallSuperClone" })
     @Override
     public IdAllocator clone()
     {
-        // Copying the _generatorMap is tricky; multiple keys will point to the same NameGenerator
+        // Copying the generatorMap is tricky; multiple keys will point to the same NameGenerator
         // instance. We need to clone the NameGenerators, then build a new map around the clones.
 
         IdentityHashMap<NameGenerator, NameGenerator> transformMap = new IdentityHashMap<NameGenerator, NameGenerator>();
 
-        for (NameGenerator original : _generatorMap.values())
+        for (NameGenerator original : generatorMap.values())
         {
             NameGenerator copy = original.clone();
 
             transformMap.put(original, copy);
         }
 
-        Map<String, NameGenerator> mapCopy = newMap();
+        Map<String, NameGenerator> mapCopy = CollectionFactory.newMap();
 
-        for (String key : _generatorMap.keySet())
+        for (String key : generatorMap.keySet())
         {
-            NameGenerator original = _generatorMap.get(key);
+            NameGenerator original = generatorMap.get(key);
             NameGenerator copy = transformMap.get(original);
 
             mapCopy.put(key, copy);
         }
 
-        return new IdAllocator(_namespace, mapCopy);
+        return new IdAllocator(namespace, mapCopy);
     }
 
     /**
-     * Allocates the id. Repeated calls for the same name will return "name", "name_0", "name_1",
-     * etc.
+     * Allocates the id. Repeated calls for the same name will return "name", "name_0", "name_1", etc.
      */
 
     public String allocateId(String name)
     {
-        String key = name + _namespace;
+        String key = name + namespace;
 
-        NameGenerator g = _generatorMap.get(key);
+        NameGenerator g = generatorMap.get(key);
         String result;
 
         if (g == null)
@@ -162,9 +159,9 @@ public final class IdAllocator
         // Handle the degenerate case, where a base name of the form "foo_0" has been
         // requested. Skip over any duplicates thus formed.
 
-        while (_generatorMap.containsKey(result)) result = g.nextId();
+        while (generatorMap.containsKey(result)) result = g.nextId();
 
-        _generatorMap.put(result, g);
+        generatorMap.put(result, g);
 
         return result;
     }
@@ -174,7 +171,7 @@ public final class IdAllocator
      */
     public boolean isAllocated(String name)
     {
-        return _generatorMap.containsKey(name);
+        return generatorMap.containsKey(name);
     }
 
     /**
@@ -183,6 +180,6 @@ public final class IdAllocator
 
     public void clear()
     {
-        _generatorMap.clear();
+        generatorMap.clear();
     }
 }

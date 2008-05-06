@@ -62,53 +62,53 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     static final String LOGGER_SOURCE_SERVICE_ID = "LoggerSource";
 
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
-    private final OneShotLock _eagerLoadLock = new OneShotLock();
+    private final OneShotLock eagerLoadLock = new OneShotLock();
 
-    private final Map<String, Object> _builtinServices = newCaseInsensitiveMap();
+    private final Map<String, Object> builtinServices = newCaseInsensitiveMap();
 
-    private final Map<String, Class> _builtinTypes = newCaseInsensitiveMap();
+    private final Map<String, Class> builtinTypes = newCaseInsensitiveMap();
 
-    private final RegistryShutdownHubImpl _registryShutdownHub;
+    private final RegistryShutdownHubImpl registryShutdownHub;
 
-    private final LoggerSource _loggerSource;
+    private final LoggerSource loggerSource;
 
     /**
      * Map from service id to the Module that contains the service.
      */
-    private final Map<String, Module> _serviceIdToModule = newCaseInsensitiveMap();
+    private final Map<String, Module> serviceIdToModule = newCaseInsensitiveMap();
 
-    private final Map<String, ServiceLifecycle> _lifecycles = newCaseInsensitiveMap();
+    private final Map<String, ServiceLifecycle> lifecycles = newCaseInsensitiveMap();
 
-    private final PerthreadManager _perthreadManager;
+    private final PerthreadManager perthreadManager;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final ServiceActivityTracker _tracker;
+    private final ServiceActivityTracker tracker;
 
-    private SymbolSource _symbolSource;
+    private SymbolSource symbolSource;
 
-    private final List<Module> _modules = newList();
+    private final List<Module> modules = newList();
 
     /**
      * From marker type to a list of marked service instances.
      */
-    private final Map<Class, List<ServiceDef>> _markerToServiceDef = newMap();
+    private final Map<Class, List<ServiceDef>> markerToServiceDef = newMap();
 
 
     public static final class OrderedConfigurationToOrdererAdaptor<T> implements OrderedConfiguration<T>
     {
-        private final Orderer<T> _orderer;
+        private final Orderer<T> orderer;
 
         public OrderedConfigurationToOrdererAdaptor(Orderer<T> orderer)
         {
-            _orderer = orderer;
+            this.orderer = orderer;
         }
 
         public void add(String id, T object, String... constraints)
         {
-            _orderer.add(id, object, constraints);
+            orderer.add(id, object, constraints);
         }
     }
 
@@ -121,35 +121,35 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     public RegistryImpl(Collection<ModuleDef> moduleDefs, ClassFactory classFactory, LoggerSource loggerSource)
     {
-        _loggerSource = loggerSource;
+        this.loggerSource = loggerSource;
 
         final ServiceActivityTrackerImpl scoreboardAndTracker = new ServiceActivityTrackerImpl();
 
-        _tracker = scoreboardAndTracker;
+        tracker = scoreboardAndTracker;
 
         addBuiltin(SERVICE_ACTIVITY_SCOREBOARD_SERVICE_ID, ServiceActivityScoreboard.class, scoreboardAndTracker);
 
-        addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, _loggerSource);
+        addBuiltin(LOGGER_SOURCE_SERVICE_ID, LoggerSource.class, this.loggerSource);
 
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
 
-        addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, _classFactory);
+        addBuiltin(CLASS_FACTORY_SERVICE_ID, ClassFactory.class, this.classFactory);
 
         Logger logger = loggerForBuiltinService(PERTHREAD_MANAGER_SERVICE_ID);
 
-        _perthreadManager = new PerthreadManagerImpl(logger);
+        perthreadManager = new PerthreadManagerImpl(logger);
 
-        addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, _perthreadManager);
+        addBuiltin(PERTHREAD_MANAGER_SERVICE_ID, PerthreadManager.class, perthreadManager);
 
         logger = loggerForBuiltinService(REGISTRY_SHUTDOWN_HUB_SERVICE_ID);
 
-        _registryShutdownHub = new RegistryShutdownHubImpl(logger);
+        registryShutdownHub = new RegistryShutdownHubImpl(logger);
 
-        addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, _registryShutdownHub);
+        addBuiltin(REGISTRY_SHUTDOWN_HUB_SERVICE_ID, RegistryShutdownHub.class, registryShutdownHub);
 
-        _lifecycles.put("singleton", new SingletonServiceLifecycle());
+        lifecycles.put("singleton", new SingletonServiceLifecycle());
 
-        _registryShutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
+        registryShutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
         {
             public void registryDidShutdown()
             {
@@ -159,28 +159,28 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         for (ModuleDef def : moduleDefs)
         {
-            logger = _loggerSource.getLogger(def.getLoggerName());
+            logger = this.loggerSource.getLogger(def.getLoggerName());
 
-            Module module = new ModuleImpl(this, _tracker, def, classFactory, logger);
+            Module module = new ModuleImpl(this, tracker, def, classFactory, logger);
 
-            _modules.add(module);
+            modules.add(module);
 
             for (String serviceId : def.getServiceIds())
             {
                 ServiceDef serviceDef = module.getServiceDef(serviceId);
 
-                Module existing = _serviceIdToModule.get(serviceId);
+                Module existing = serviceIdToModule.get(serviceId);
 
                 if (existing != null) throw new RuntimeException(IOCMessages.serviceIdConflict(serviceId, existing
                         .getServiceDef(serviceId), serviceDef));
 
-                _serviceIdToModule.put(serviceId, module);
+                serviceIdToModule.put(serviceId, module);
 
                 // The service is defined but will not have gone further than that.
-                _tracker.define(serviceDef, Status.DEFINED);
+                tracker.define(serviceDef, Status.DEFINED);
 
                 for (Class marker : serviceDef.getMarkers())
-                    InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
+                    InternalUtils.addToMapList(markerToServiceDef, marker, serviceDef);
 
             }
         }
@@ -197,11 +197,11 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     public void performRegistryStartup()
     {
-        _eagerLoadLock.lock();
+        eagerLoadLock.lock();
 
         List<EagerLoadServiceProxy> proxies = CollectionFactory.newList();
 
-        for (Module m : _modules)
+        for (Module m : modules)
             m.collectEagerLoadServices(proxies);
 
         // TAPESTRY-2267: Gather up all the proxies before instantiating any of them.
@@ -216,22 +216,22 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public Logger getServiceLogger(String serviceId)
     {
-        Module module = _serviceIdToModule.get(serviceId);
+        Module module = serviceIdToModule.get(serviceId);
 
         assert module != null;
 
-        return _loggerSource.getLogger(module.getLoggerName() + "." + serviceId);
+        return loggerSource.getLogger(module.getLoggerName() + "." + serviceId);
     }
 
     private Logger loggerForBuiltinService(String serviceId)
     {
-        return _loggerSource.getLogger(TapestryIOCModule.class + "." + serviceId);
+        return loggerSource.getLogger(TapestryIOCModule.class + "." + serviceId);
     }
 
     private <T> void addBuiltin(final String serviceId, final Class<T> serviceInterface, T service)
     {
-        _builtinTypes.put(serviceId, serviceInterface);
-        _builtinServices.put(serviceId, service);
+        builtinTypes.put(serviceId, serviceInterface);
+        builtinServices.put(serviceId, service);
 
         // Make sure each of the builtin services is also available via the Builtin annotation
         // marker.
@@ -270,23 +270,23 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         };
 
         for (Class marker : serviceDef.getMarkers())
-            InternalUtils.addToMapList(_markerToServiceDef, marker, serviceDef);
+            InternalUtils.addToMapList(markerToServiceDef, marker, serviceDef);
 
-        _tracker.define(serviceDef, Status.BUILTIN);
+        tracker.define(serviceDef, Status.BUILTIN);
     }
 
     public synchronized void shutdown()
     {
-        _lock.lock();
+        lock.lock();
 
-        _registryShutdownHub.fireRegistryDidShutdown();
+        registryShutdownHub.fireRegistryDidShutdown();
 
         SerializationSupport.clearProvider(this);
     }
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        _lock.check();
+        lock.check();
 
         T result = checkForBuiltinService(serviceId, serviceInterface);
         if (result != null) return result;
@@ -301,7 +301,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     private <T> T checkForBuiltinService(String serviceId, Class<T> serviceInterface)
     {
-        Object service = _builtinServices.get(serviceId);
+        Object service = builtinServices.get(serviceId);
 
         if (service == null) return null;
 
@@ -311,23 +311,23 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         }
         catch (ClassCastException ex)
         {
-            throw new RuntimeException(IOCMessages.serviceWrongInterface(serviceId, _builtinTypes
+            throw new RuntimeException(IOCMessages.serviceWrongInterface(serviceId, builtinTypes
                     .get(serviceId), serviceInterface));
         }
     }
 
     public void cleanupThread()
     {
-        _lock.check();
+        lock.check();
 
-        _perthreadManager.cleanup();
+        perthreadManager.cleanup();
     }
 
     private Module locateModuleForService(String serviceId)
     {
-        Module module = _serviceIdToModule.get(serviceId);
+        Module module = serviceIdToModule.get(serviceId);
 
-        if (module == null) throw new RuntimeException(IOCMessages.noSuchService(serviceId, _serviceIdToModule
+        if (module == null) throw new RuntimeException(IOCMessages.noSuchService(serviceId, serviceIdToModule
                 .keySet()));
 
         return module;
@@ -335,7 +335,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> Collection<T> getUnorderedConfiguration(ServiceDef serviceDef, Class<T> objectType)
     {
-        _lock.check();
+        lock.check();
 
         final Collection<T> result = newList();
 
@@ -347,7 +347,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        Collection<Module> modules = _modules;
+        Collection<Module> modules = this.modules;
 
         for (Module m : modules)
             addToUnorderedConfiguration(configuration, objectType, serviceDef, m);
@@ -358,7 +358,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     @SuppressWarnings("unchecked")
     public <T> List<T> getOrderedConfiguration(ServiceDef serviceDef, Class<T> objectType)
     {
-        _lock.check();
+        lock.check();
 
         String serviceId = serviceDef.getServiceId();
         Logger logger = getServiceLogger(serviceId);
@@ -367,7 +367,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         OrderedConfiguration<T> configuration = new OrderedConfigurationToOrdererAdaptor<T>(orderer);
 
-        Collection<Module> modules = _modules;
+        Collection<Module> modules = this.modules;
 
         for (Module m : modules)
             addToOrderedConfiguration(configuration, objectType, serviceDef, m);
@@ -393,7 +393,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <K, V> Map<K, V> getMappedConfiguration(ServiceDef serviceDef, Class<K> keyType, Class<V> objectType)
     {
-        _lock.check();
+        lock.check();
 
         // When the key type is String, then a case insensitive map is used for both cases.
 
@@ -408,7 +408,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        Collection<Module> modules = _modules;
+        Collection<Module> modules = this.modules;
 
         for (Module m : modules)
             addToMappedConfiguration(configuration, keyToContribution, keyType, objectType, serviceDef, m);
@@ -442,7 +442,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory, logger);
+        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
         for (ContributionDef def : contributions)
         {
@@ -471,7 +471,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory, logger);
+        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
         for (ContributionDef def : contributions)
         {
@@ -495,7 +495,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
         Logger logger = getServiceLogger(serviceId);
         boolean debug = logger.isDebugEnabled();
 
-        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, _classFactory, logger);
+        ObjectLocator locator = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
         for (ContributionDef def : contributions)
         {
@@ -510,7 +510,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> T getService(Class<T> serviceInterface)
     {
-        _lock.check();
+        lock.check();
 
         List<String> serviceIds = findServiceIdsForInterface(serviceInterface);
 
@@ -540,10 +540,10 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         List<String> result = newList();
 
-        for (Module module : _modules)
+        for (Module module : modules)
             result.addAll(module.findServiceIdsForInterface(serviceInterface));
 
-        for (Map.Entry<String, Object> entry : _builtinServices.entrySet())
+        for (Map.Entry<String, Object> entry : builtinServices.entrySet())
         {
             if (serviceInterface.isInstance(entry.getValue())) result.add(entry.getKey());
         }
@@ -555,9 +555,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public ServiceLifecycle getServiceLifecycle(String scope)
     {
-        _lock.check();
+        lock.check();
 
-        ServiceLifecycle result = _lifecycles.get(scope);
+        ServiceLifecycle result = lifecycles.get(scope);
 
         if (result == null)
         {
@@ -572,7 +572,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public List<ServiceDecorator> findDecoratorsForService(ServiceDef serviceDef)
     {
-        _lock.check();
+        lock.check();
 
         assert serviceDef != null;
 
@@ -580,13 +580,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         Orderer<ServiceDecorator> orderer = new Orderer<ServiceDecorator>(logger);
 
-        for (Module module : _modules)
+        for (Module module : modules)
         {
             Set<DecoratorDef> decorators = module.findMatchingDecoratorDefs(serviceDef);
 
             if (decorators.isEmpty()) continue;
 
-            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, _classFactory, logger);
+            ServiceResources resources = new ServiceResourcesImpl(this, module, serviceDef, classFactory, logger);
 
             for (DecoratorDef dd : decorators)
             {
@@ -601,14 +601,14 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public ClassFab newClass(Class serviceInterface)
     {
-        _lock.check();
+        lock.check();
 
-        return _classFactory.newClass(serviceInterface);
+        return classFactory.newClass(serviceInterface);
     }
 
     private <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
     {
-        _lock.check();
+        lock.check();
 
         AnnotationProvider effectiveProvider = annotationProvider != null ? annotationProvider : new NullAnnotationProvider();
 
@@ -632,13 +632,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
     {
         if (provider == null) return null;
 
-        for (Class marker : _markerToServiceDef.keySet())
+        for (Class marker : markerToServiceDef.keySet())
         {
             if (provider.getAnnotation(marker) == null) continue;
 
             List<ServiceDef> matches = newList();
 
-            for (ServiceDef def : _markerToServiceDef.get(marker))
+            for (ServiceDef def : markerToServiceDef.get(marker))
             {
                 if (objectType.isAssignableFrom(def.getServiceInterface())) matches.add(def);
             }
@@ -676,21 +676,21 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        _lock.check();
+        lock.check();
 
         return getObject(objectType, annotationProvider, this);
     }
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)
     {
-        _lock.check();
+        lock.check();
 
-        _registryShutdownHub.addRegistryShutdownListener(listener);
+        registryShutdownHub.addRegistryShutdownListener(listener);
     }
 
     public String expandSymbols(String input)
     {
-        _lock.check();
+        lock.check();
 
         // Again, a bit of work to avoid instantiating the SymbolSource until absolutely necessary.
 
@@ -704,9 +704,9 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
      */
     private synchronized SymbolSource getSymbolSource()
     {
-        if (_symbolSource == null) _symbolSource = getService(SYMBOL_SOURCE_SERVICE_ID, SymbolSource.class);
+        if (symbolSource == null) symbolSource = getService(SYMBOL_SOURCE_SERVICE_ID, SymbolSource.class);
 
-        return _symbolSource;
+        return symbolSource;
     }
 
     public <T> T autobuild(Class<T> clazz)
@@ -738,7 +738,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             failure = ex;
         }
 
-        String description = _classFactory.getConstructorLocation(constructor).toString();
+        String description = classFactory.getConstructorLocation(constructor).toString();
 
         throw new RuntimeException(IOCMessages.autobuildConstructorError(description, failure), failure);
     }
@@ -771,7 +771,7 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
             }
         };
 
-        ClassFab cf = _classFactory.newClass(interfaceClass);
+        ClassFab cf = classFactory.newClass(interfaceClass);
 
         String description = String.format("<Autobuild proxy %s(%s)>", implementationClass
                 .getName(), interfaceClass.getName());

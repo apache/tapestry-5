@@ -51,11 +51,11 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
      * Add fields, methods, and constructors are added, their psuedo-code is appended to this description, which is used
      * by toString().
      */
-    private final StringBuilder _description = new StringBuilder();
+    private final StringBuilder description = new StringBuilder();
 
-    private final Formatter _formatter = new Formatter(_description);
+    private final Formatter formatter = new Formatter(description);
 
-    private final Set<MethodSignature> _addedSignatures = newSet();
+    private final Set<MethodSignature> addedSignatures = newSet();
 
     public ClassFabImpl(CtClassSource source, CtClass ctClass, Logger logger)
     {
@@ -77,7 +77,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
         {
             buffer.append(buildClassAndInheritance());
 
-            buffer.append(_description.toString());
+            buffer.append(description.toString());
         }
         catch (Exception ex)
         {
@@ -135,7 +135,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     public void addField(String name, int modifiers, Class type)
     {
-        _lock.check();
+        lock.check();
 
         CtClass ctType = toCtClass(type);
 
@@ -152,14 +152,14 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
             throw new RuntimeException(ServiceMessages.unableToAddField(name, getCtClass(), ex), ex);
         }
 
-        _formatter.format("%s %s %s;\n\n", Modifier.toString(modifiers), ClassFabUtils
+        formatter.format("%s %s %s;\n\n", Modifier.toString(modifiers), ClassFabUtils
                 .toJavaClassName(type), name);
     }
 
     public void proxyMethodsToDelegate(Class serviceInterface, String delegateExpression,
                                        String toString)
     {
-        _lock.check();
+        lock.check();
 
         addInterface(serviceInterface);
 
@@ -181,7 +181,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     public void addToString(String toString)
     {
-        _lock.check();
+        lock.check();
 
         MethodSignature sig = new MethodSignature(String.class, "toString", null, null);
 
@@ -193,9 +193,9 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
 
     public void addMethod(int modifiers, MethodSignature ms, String body)
     {
-        _lock.check();
+        lock.check();
 
-        if (_addedSignatures.contains(ms))
+        if (addedSignatures.contains(ms))
             throw new RuntimeException(ServiceMessages.duplicateMethodInClass(ms, this));
 
         CtClass ctReturnType = toCtClass(ms.getReturnType());
@@ -218,22 +218,22 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
             throw new RuntimeException(ServiceMessages.unableToAddMethod(ms, getCtClass(), ex), ex);
         }
 
-        _addedSignatures.add(ms);
+        addedSignatures.add(ms);
 
         // modifiers, return type, name
 
-        _formatter.format("%s %s %s", Modifier.toString(modifiers), ClassFabUtils
+        formatter.format("%s %s %s", Modifier.toString(modifiers), ClassFabUtils
                 .toJavaClassName(ms.getReturnType()), ms.getName());
 
         // parameters, exceptions and body from this:
         addMethodDetailsToDescription(ms.getParameterTypes(), ms.getExceptionTypes(), body);
 
-        _description.append("\n\n");
+        description.append("\n\n");
     }
 
     public void addNoOpMethod(MethodSignature signature)
     {
-        _lock.check();
+        lock.check();
 
         Class returnType = signature.getReturnType();
 
@@ -257,7 +257,7 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     {
         Defense.notBlank(body, "body");
 
-        _lock.check();
+        lock.check();
 
         CtClass[] ctParameters = toCtClasses(parameterTypes);
         CtClass[] ctExceptions = toCtClasses(exceptions);
@@ -275,17 +275,17 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
             throw new RuntimeException(ServiceMessages.unableToAddConstructor(getCtClass(), ex), ex);
         }
 
-        _description.append("public ");
+        description.append("public ");
 
         // This isn't quite right; we should strip the package portion off of the name.
         // However, fabricated classes are almost always in the "default" package, so
         // this is OK.
 
-        _description.append(getName());
+        description.append(getName());
 
         addMethodDetailsToDescription(parameterTypes, exceptions, body);
 
-        _description.append("\n\n");
+        description.append("\n\n");
     }
 
     /**
@@ -298,35 +298,35 @@ public class ClassFabImpl extends AbstractFab implements ClassFab
     private void addMethodDetailsToDescription(Class[] parameterTypes, Class[] exceptions,
                                                String body)
     {
-        _description.append("(");
+        description.append("(");
 
         int count = InternalUtils.size(parameterTypes);
         for (int i = 0; i < count; i++)
         {
-            if (i > 0) _description.append(", ");
+            if (i > 0) description.append(", ");
 
-            _description.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
+            description.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
 
-            _description.append(" $");
-            _description.append(i + 1);
+            description.append(" $");
+            description.append(i + 1);
         }
 
-        _description.append(")");
+        description.append(")");
 
         count = InternalUtils.size(exceptions);
         for (int i = 0; i < count; i++)
         {
             if (i == 0)
-                _description.append("\n  throws ");
+                description.append("\n  throws ");
             else
-                _description.append(", ");
+                description.append(", ");
 
             // Since this can never be an array type, we don't need to use getJavaClassName
 
-            _description.append(exceptions[i].getName());
+            description.append(exceptions[i].getName());
         }
 
-        _description.append("\n");
-        _description.append(body);
+        description.append("\n");
+        description.append(body);
     }
 }

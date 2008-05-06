@@ -21,17 +21,16 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Responsible for constructing the interceptor stack, on demand, by invoking an ordered series of
- * decorators ({@link org.apache.tapestry.ioc.def.DecoratorDef} (which are converted into
- * {@link ServiceDecorator}s).
+ * Responsible for constructing the interceptor stack, on demand, by invoking an ordered series of decorators ({@link
+ * org.apache.tapestry.ioc.def.DecoratorDef} (which are converted into {@link ServiceDecorator}s).
  */
 public class InterceptorStackBuilder implements ObjectCreator
 {
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final ObjectCreator _coreServiceCreator;
+    private final ObjectCreator coreServiceCreator;
 
-    private final Module _module;
+    private final Module module;
 
     /**
      * @param module             the module containing the decorator method
@@ -41,16 +40,16 @@ public class InterceptorStackBuilder implements ObjectCreator
      */
     public InterceptorStackBuilder(Module module, String serviceId, ObjectCreator coreServiceCreator)
     {
-        _module = module;
-        _serviceId = serviceId;
-        _coreServiceCreator = coreServiceCreator;
+        this.module = module;
+        this.serviceId = serviceId;
+        this.coreServiceCreator = coreServiceCreator;
     }
 
     public Object createObject()
     {
-        Object current = _coreServiceCreator.createObject();
+        Object current = coreServiceCreator.createObject();
 
-        List<ServiceDecorator> decorators = _module.findDecoratorsForService(_serviceId);
+        List<ServiceDecorator> decorators = module.findDecoratorsForService(serviceId);
 
         // We get the decorators ordered according to their dependencies. However, we want to
         // process from the last interceptor to the first, so we reverse the list.

@@ -18,14 +18,14 @@ import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
 
 /**
- * Exception class used as a replacement for {@link java.lang.RuntimeException} when the exception
- * is related to a particular location.
+ * Exception class used as a replacement for {@link java.lang.RuntimeException} when the exception is related to a
+ * particular location.
  */
 public class TapestryException extends RuntimeException implements Locatable
 {
     private static final long serialVersionUID = 6396903640977182682L;
 
-    private transient final Location _location;
+    private transient final Location location;
 
     /**
      * @param message  a message (may be null)
@@ -55,20 +55,20 @@ public class TapestryException extends RuntimeException implements Locatable
     {
         super(message, cause);
 
-        _location = location;
+        this.location = location;
     }
 
     public Location getLocation()
     {
-        return _location;
+        return location;
     }
 
     @Override
     public String toString()
     {
-        if (_location == null) return super.toString();
+        if (location == null) return super.toString();
 
-        return String.format("%s [at %s]", super.toString(), _location);
+        return String.format("%s [at %s]", super.toString(), location);
     }
 
 }

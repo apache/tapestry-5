@@ -18,9 +18,9 @@ import static org.apache.tapestry.ioc.internal.MatchType.*;
 
 public class GlobPatternMatcher
 {
-    private String _substring;
+    private String substring;
 
-    private MatchType _type;
+    private MatchType type;
 
     public GlobPatternMatcher(String pattern)
     {
@@ -31,7 +31,7 @@ public class GlobPatternMatcher
     {
         if (pattern.equals("*"))
         {
-            _type = ANY;
+            type = ANY;
             return;
         }
 
@@ -40,56 +40,56 @@ public class GlobPatternMatcher
 
         if (globPrefix && globSuffix)
         {
-            _substring = pattern.substring(1, pattern.length() - 1);
-            _type = INFIX;
+            substring = pattern.substring(1, pattern.length() - 1);
+            type = INFIX;
             return;
         }
 
         if (globPrefix)
         {
-            _substring = pattern.substring(1);
-            _type = SUFFIX;
+            substring = pattern.substring(1);
+            type = SUFFIX;
             return;
         }
 
         if (globSuffix)
         {
-            _substring = pattern.substring(0, pattern.length() - 1);
-            _type = PREFIX;
+            substring = pattern.substring(0, pattern.length() - 1);
+            type = PREFIX;
             return;
         }
 
-        _type = MatchType.EXACT;
-        _substring = pattern;
+        type = MatchType.EXACT;
+        substring = pattern;
     }
 
     public boolean matches(String input)
     {
-        switch (_type)
+        switch (type)
         {
             case ANY:
                 return true;
 
             case EXACT:
 
-                return input.equalsIgnoreCase(_substring);
+                return input.equalsIgnoreCase(substring);
 
             case INFIX:
 
-                return input.toLowerCase().contains(_substring.toLowerCase());
+                return input.toLowerCase().contains(substring.toLowerCase());
 
             case PREFIX:
 
-                return input.regionMatches(true, 0, _substring, 0, _substring.length());
+                return input.regionMatches(true, 0, substring, 0, substring.length());
 
             default:
 
                 return input.regionMatches(
                         true,
-                        input.length() - _substring.length(),
-                        _substring,
+                        input.length() - substring.length(),
+                        substring,
                         0,
-                        _substring.length());
+                        substring.length());
         }
     }
 }

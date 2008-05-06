@@ -19,21 +19,21 @@ import org.apache.tapestry.ioc.services.SymbolProvider;
 import java.util.Map;
 
 /**
- * Provides symbol values from a Map of symbol names and symbol values (typically provided by a
- * Tapestry IOC service configuration).
+ * Provides symbol values from a Map of symbol names and symbol values (typically provided by a Tapestry IOC service
+ * configuration).
  */
 public class MapSymbolProvider implements SymbolProvider
 {
-    private final Map<String, String> _configuration;
+    private final Map<String, String> configuration;
 
     public MapSymbolProvider(final Map<String, String> configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public String valueForSymbol(String symbolName)
     {
-        return _configuration.get(symbolName);
+        return configuration.get(symbolName);
     }
 
 }

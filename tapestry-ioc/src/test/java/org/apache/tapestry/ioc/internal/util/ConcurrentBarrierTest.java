@@ -21,13 +21,13 @@ import org.testng.annotations.Test;
 import java.util.List;
 
 /**
- * Test is structured a bit oddly, since it evolved from when the Concurrence annotation and aspect
- * evolved into the {@link ConcurrentBarrier} utility class.
+ * Test is structured a bit oddly, since it evolved from when the Concurrence annotation and aspect evolved into the
+ * {@link ConcurrentBarrier} utility class.
  */
 @Test(sequential = true)
 public class ConcurrentBarrierTest extends TestBase
 {
-    private ConcurrentTarget _target = new ConcurrentTarget();
+    private ConcurrentTarget target = new ConcurrentTarget();
 
     private static final int THREAD_COUNT = 100;
 
@@ -40,7 +40,7 @@ public class ConcurrentBarrierTest extends TestBase
         {
             public void run()
             {
-                _target.incrementCounter();
+                target.incrementCounter();
             }
         };
 
@@ -55,7 +55,7 @@ public class ConcurrentBarrierTest extends TestBase
             public void run()
             {
                 // Gets a write lock, then a read lock.
-                _target.incrementCounterHard();
+                target.incrementCounterHard();
             }
         };
 
@@ -71,7 +71,7 @@ public class ConcurrentBarrierTest extends TestBase
             {
                 // A read lock method that upgrades to a write lock
 
-                _target.incrementIfNonNegative();
+                target.incrementIfNonNegative();
             }
         };
 
@@ -88,7 +88,7 @@ public class ConcurrentBarrierTest extends TestBase
 
                 // Read lock method invokes other class, that invokes write method.
 
-                _target.incrementViaRunnable();
+                target.incrementViaRunnable();
             }
         };
 
@@ -96,13 +96,13 @@ public class ConcurrentBarrierTest extends TestBase
     }
 
     /**
-     * Test that locking, especially read lock upgrade and downgrade, work properly when there's
-     * more than one object involved.
+     * Test that locking, especially read lock upgrade and downgrade, work properly when there's more than one object
+     * involved.
      */
     @Test
     public void multiple_synchronized_objects() throws Exception
     {
-        Runnable operation = new ConcurrentTargetWrapper(_target);
+        Runnable operation = new ConcurrentTargetWrapper(target);
 
         runOperationAndCheckCounter(operation);
     }
@@ -114,7 +114,7 @@ public class ConcurrentBarrierTest extends TestBase
         {
             public void run()
             {
-                _target.tryIncrementCounter();
+                target.tryIncrementCounter();
             }
         };
 
@@ -129,7 +129,7 @@ public class ConcurrentBarrierTest extends TestBase
             public void run()
             {
                 // Gets a write lock, then a read lock.
-                _target.tryIncrementCounterHard();
+                target.tryIncrementCounterHard();
             }
         };
 
@@ -145,7 +145,7 @@ public class ConcurrentBarrierTest extends TestBase
             {
                 // A read lock method that upgrades to a write lock
 
-                _target.tryIncrementIfNonNegative();
+                target.tryIncrementIfNonNegative();
             }
         };
 
@@ -162,11 +162,11 @@ public class ConcurrentBarrierTest extends TestBase
             {
                 // A read lock method that upgrades to a write lock
 
-                _target.tryIncrementIfNonNegative();
+                target.tryIncrementIfNonNegative();
             }
         };
 
-        _target.withRead(new Runnable()
+        target.withRead(new Runnable()
         {
             public void run()
             {
@@ -179,7 +179,7 @@ public class ConcurrentBarrierTest extends TestBase
                 }
             }
         });
-        assertEquals(_target.getCounter(), 0);
+        assertEquals(target.getCounter(), 0);
 
     }
 
@@ -188,7 +188,7 @@ public class ConcurrentBarrierTest extends TestBase
     {
         runOperation(operation);
 
-        assertEquals(_target.getCounter(), THREAD_COUNT);
+        assertEquals(target.getCounter(), THREAD_COUNT);
     }
 
     private void runOperation(Runnable operation)
@@ -197,7 +197,7 @@ public class ConcurrentBarrierTest extends TestBase
         List<Thread> threads = newList();
         List<Thread> running = newList();
 
-        _target.setCounter(0);
+        target.setCounter(0);
 
         for (int i = 0; i < THREAD_COUNT; i++)
         {

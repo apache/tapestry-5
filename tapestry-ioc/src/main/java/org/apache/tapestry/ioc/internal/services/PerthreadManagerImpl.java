@@ -35,19 +35,19 @@ public class PerthreadManagerImpl implements PerthreadManager
         }
     }
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final MapHolder _holder = new MapHolder();
+    private final MapHolder holder = new MapHolder();
 
     public PerthreadManagerImpl(Logger logger)
     {
-        _logger = logger;
+        this.logger = logger;
     }
 
 
     private synchronized Map getPerthreadMap()
     {
-        return _holder.get();
+        return holder.get();
     }
 
 
@@ -87,7 +87,7 @@ public class PerthreadManagerImpl implements PerthreadManager
             }
             catch (Exception ex)
             {
-                _logger.warn(ServiceMessages.threadCleanupError(listener, ex), ex);
+                logger.warn(ServiceMessages.threadCleanupError(listener, ex), ex);
             }
         }
 
@@ -96,7 +96,7 @@ public class PerthreadManagerImpl implements PerthreadManager
 
         synchronized (this)
         {
-            _holder.remove();
+            holder.remove();
         }
     }
 

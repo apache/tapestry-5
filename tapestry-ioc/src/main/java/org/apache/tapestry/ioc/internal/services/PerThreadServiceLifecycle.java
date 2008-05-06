@@ -25,38 +25,36 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 
 /**
- * Allows a service to exist "per thread" (in each thread). This involves an inner proxy,
- * which caches an object
- * derived from a {@link org.apache.tapestry.ioc.ObjectCreator} as a key in the
- * {@link org.apache.tapestry.ioc.services.PerthreadManager}.
+ * Allows a service to exist "per thread" (in each thread). This involves an inner proxy, which caches an object derived
+ * from a {@link org.apache.tapestry.ioc.ObjectCreator} as a key in the {@link org.apache.tapestry.ioc.services.PerthreadManager}.
  * Method invocations are delegated to the per-thread service instance.
  * <p/>
- * This scheme ensures that, although the service builder method will be invoked many times over the
- * life of the application, the service decoration process occurs only once. The final calling chain
- * is: Service Proxy --&gt; Decorator(s) --&gt; PerThread Proxy --&gt; (per thread) instance.
+ * This scheme ensures that, although the service builder method will be invoked many times over the life of the
+ * application, the service decoration process occurs only once. The final calling chain is: Service Proxy --&gt;
+ * Decorator(s) --&gt; PerThread Proxy --&gt; (per thread) instance.
  */
 public class PerThreadServiceLifecycle implements ServiceLifecycle
 {
-    private final PerthreadManager _perthreadManager;
-
-    private final ClassFactory _classFactory;
-
     private static final String PER_THREAD_METHOD_NAME = "_perThreadInstance";
+
+    private final PerthreadManager perthreadManager;
+
+    private final ClassFactory classFactory;
 
     public PerThreadServiceLifecycle(PerthreadManager perthreadManager,
 
                                      @Builtin
                                      ClassFactory classFactory)
     {
-        _perthreadManager = perthreadManager;
-        _classFactory = classFactory;
+        this.perthreadManager = perthreadManager;
+        this.classFactory = classFactory;
     }
 
     public Object createService(ServiceResources resources, ObjectCreator creator)
     {
         Class proxyClass = createProxyClass(resources);
 
-        ObjectCreator perThreadCreator = new PerThreadServiceCreator(_perthreadManager, creator);
+        ObjectCreator perThreadCreator = new PerThreadServiceCreator(perthreadManager, creator);
 
         try
         {
@@ -78,14 +76,14 @@ public class PerThreadServiceLifecycle implements ServiceLifecycle
     {
         Class serviceInterface = resources.getServiceInterface();
 
-        ClassFab cf = _classFactory.newClass(serviceInterface);
+        ClassFab cf = classFactory.newClass(serviceInterface);
 
         cf.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
 
         // Constructor takes a ServiceCreator
 
         cf.addConstructor(new Class[]
-                {ObjectCreator.class}, null, "_creator = $1;");
+                { ObjectCreator.class }, null, "_creator = $1;");
 
         String body = format("return (%s) _creator.createObject();", serviceInterface.getName());
 

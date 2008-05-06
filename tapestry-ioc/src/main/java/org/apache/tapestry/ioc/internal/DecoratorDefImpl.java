@@ -31,21 +31,21 @@ import java.util.List;
 
 public class DecoratorDefImpl implements DecoratorDef
 {
-    private final String _decoratorId;
+    private final String decoratorId;
 
-    private final Method _decoratorMethod;
+    private final Method decoratorMethod;
 
-    private final IdMatcher _idMatcher;
+    private final IdMatcher idMatcher;
 
-    private final String[] _constraints;
+    private final String[] constraints;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
     public DecoratorDefImpl(String decoratorId, Method decoratorMethod, String[] patterns,
                             String[] constraints, ClassFactory classFactory)
     {
-        _decoratorId = notBlank(decoratorId, "decoratorId");
-        _decoratorMethod = notNull(decoratorMethod, "decoratorMethod");
+        this.decoratorId = notBlank(decoratorId, "decoratorId");
+        this.decoratorMethod = notNull(decoratorMethod, "decoratorMethod");
 
         List<IdMatcher> matchers = CollectionFactory.newList();
 
@@ -55,34 +55,34 @@ public class DecoratorDefImpl implements DecoratorDef
             matchers.add(matcher);
         }
 
-        _idMatcher = new OrIdMatcher(matchers);
+        idMatcher = new OrIdMatcher(matchers);
 
-        _constraints = constraints != null ? constraints : new String[0];
+        this.constraints = constraints != null ? constraints : new String[0];
 
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
     }
 
     @Override
     public String toString()
     {
-        return InternalUtils.asString(_decoratorMethod, _classFactory);
+        return InternalUtils.asString(decoratorMethod, classFactory);
     }
 
     public String[] getConstraints()
     {
-        return _constraints;
+        return constraints;
     }
 
     public String getDecoratorId()
     {
-        return _decoratorId;
+        return decoratorId;
     }
 
     public ServiceDecorator createDecorator(ModuleBuilderSource moduleBuilderSource,
                                             ServiceResources resources)
     {
-        return new ServiceDecoratorImpl(_decoratorMethod, moduleBuilderSource, resources,
-                                        _classFactory);
+        return new ServiceDecoratorImpl(decoratorMethod, moduleBuilderSource, resources,
+                                        classFactory);
     }
 
     /**
@@ -92,7 +92,7 @@ public class DecoratorDefImpl implements DecoratorDef
     {
         String serviceId = serviceDef.getServiceId();
 
-        return _idMatcher.matches(serviceId);
+        return idMatcher.matches(serviceId);
     }
 
 }

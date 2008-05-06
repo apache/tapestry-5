@@ -23,18 +23,18 @@ import java.io.Serializable;
  */
 class ServiceProxyToken implements Serializable
 {
-    private final String _serviceId;
+    private final String serviceId;
 
     ServiceProxyToken(String serviceId)
     {
-        _serviceId = serviceId;
+        this.serviceId = serviceId;
     }
 
     Object readResolve() throws ObjectStreamException
     {
         try
         {
-            return SerializationSupport.readResolve(_serviceId);
+            return SerializationSupport.readResolve(serviceId);
         }
         catch (Exception ex)
         {

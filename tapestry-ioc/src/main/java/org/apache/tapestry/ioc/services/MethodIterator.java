@@ -21,22 +21,21 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * Utility used to iterate over the publically visible methods of a class or interface. The
- * MethodIterator understands some complications that can occur when a class inherits the same
- * method from multiple interfaces and with slightly different signatures (due to the fact that
- * declared thrown exceptions can vary slightly for the "same" method).
+ * Utility used to iterate over the publically visible methods of a class or interface. The MethodIterator understands
+ * some complications that can occur when a class inherits the same method from multiple interfaces and with slightly
+ * different signatures (due to the fact that declared thrown exceptions can vary slightly for the "same" method).
  *
  * @see org.apache.tapestry.ioc.services.MethodSignature#isOverridingSignatureOf(MethodSignature)
  */
 public class MethodIterator
 {
-    private boolean _toString;
+    private boolean toString;
 
-    private int _index = 0;
+    private int index = 0;
 
-    private final int _count;
+    private final int count;
 
-    private final List<MethodSignature> _signatures;
+    private final List<MethodSignature> signatures;
 
     private static final Comparator<MethodSignature> COMPARATOR = new Comparator<MethodSignature>()
     {
@@ -57,16 +56,16 @@ public class MethodIterator
         for (int i = 0; i < methods.length; i++)
             processMethod(methods[i], map);
 
-        _signatures = newList(map.values());
-        _count = _signatures.size();
+        signatures = newList(map.values());
+        count = signatures.size();
 
 
-        Collections.sort(_signatures, COMPARATOR);
+        Collections.sort(signatures, COMPARATOR);
     }
 
     private void processMethod(Method m, Map<String, MethodSignature> map)
     {
-        _toString |= ClassFabUtils.isToString(m);
+        toString |= ClassFabUtils.isToString(m);
 
         MethodSignature sig = new MethodSignature(m);
         String uid = sig.getUniqueId();
@@ -78,31 +77,29 @@ public class MethodIterator
 
     public boolean hasNext()
     {
-        return _index < _count;
+        return index < count;
     }
 
     /**
-     * Returns the next method (as a {@link MethodSignature}, returning null when all are
-     * exhausted. Each method signature is returned exactly once (even if the same method signature
-     * is defined in multiple inherited classes or interfaces). The method signatures returned in
-     * ascending order, according to the "natural ordering".
+     * Returns the next method (as a {@link MethodSignature}, returning null when all are exhausted. Each method
+     * signature is returned exactly once (even if the same method signature is defined in multiple inherited classes or
+     * interfaces). The method signatures returned in ascending order, according to the "natural ordering".
      *
      * @throws NoSuchElementException if there are no more signatures
      */
     public MethodSignature next()
     {
-        if (_index >= _count) throw new NoSuchElementException();
+        if (index >= count) throw new NoSuchElementException();
 
-        return _signatures.get(_index++);
+        return signatures.get(index++);
     }
 
     /**
-     * Returns true if the method <code>public String toString()</code> is part of the interface.
-     * This will be known immediately after iterator contruction (it is not necessary to iterate the
-     * methods first).
+     * Returns true if the method <code>public String toString()</code> is part of the interface. This will be known
+     * immediately after iterator contruction (it is not necessary to iterate the methods first).
      */
     public boolean getToString()
     {
-        return _toString;
+        return toString;
     }
 }

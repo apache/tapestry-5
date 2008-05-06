@@ -28,9 +28,9 @@ public class Stack<E>
 
     private static final int DEFAULT_ARRAY_SIZE = 20;
 
-    private Object[] _items;
+    private Object[] items;
 
-    private int _index = -1;
+    private int index = -1;
 
     /**
      * Normal constructor supporting an initial size of 20.
@@ -46,7 +46,7 @@ public class Stack<E>
      */
     public Stack(int initialSize)
     {
-        _items = new Object[Math.max(initialSize, MINIMUM_SIZE)];
+        items = new Object[Math.max(initialSize, MINIMUM_SIZE)];
     }
 
     /**
@@ -54,7 +54,7 @@ public class Stack<E>
      */
     public boolean isEmpty()
     {
-        return _index < 0;
+        return index < 0;
     }
 
     /**
@@ -62,9 +62,9 @@ public class Stack<E>
      */
     public void clear()
     {
-        for (int i = 0; i <= _index; i++) _items[i] = null;
+        for (int i = 0; i <= index; i++) items[i] = null;
 
-        _index = -1;
+        index = -1;
     }
 
     /**
@@ -72,18 +72,18 @@ public class Stack<E>
      */
     public void push(E item)
     {
-        _index++;
+        index++;
 
-        if (_index == _items.length)
+        if (index == items.length)
         {
-            int newCapacity = (_items.length * 3) / 2 + 1;
+            int newCapacity = (items.length * 3) / 2 + 1;
             Object[] newItems = new Object[newCapacity];
-            System.arraycopy(_items, 0, newItems, 0, _items.length);
+            System.arraycopy(items, 0, newItems, 0, items.length);
 
-            _items = newItems;
+            items = newItems;
         }
 
-        _items[_index] = item;
+        items[index] = item;
     }
 
     /**
@@ -97,18 +97,18 @@ public class Stack<E>
     {
         checkIfEmpty();
 
-        Object result = _items[_index];
+        Object result = items[index];
 
-        _items[_index] = null;
+        items[index] = null;
 
-        _index--;
+        index--;
 
         return (E) result;
     }
 
     private void checkIfEmpty()
     {
-        if (_index < 0) throw new IllegalStateException(UtilMessages.stackIsEmpty());
+        if (index < 0) throw new IllegalStateException(UtilMessages.stackIsEmpty());
     }
 
     /**
@@ -122,7 +122,7 @@ public class Stack<E>
     {
         checkIfEmpty();
 
-        return (E) _items[_index];
+        return (E) items[index];
     }
 
     /**
@@ -135,11 +135,11 @@ public class Stack<E>
     {
         StringBuilder builder = new StringBuilder("Stack[");
 
-        for (int i = _index; i >= 0; i--)
+        for (int i = index; i >= 0; i--)
         {
-            if (i != _index) builder.append(", ");
+            if (i != index) builder.append(", ");
 
-            builder.append(String.valueOf(_items[i]));
+            builder.append(String.valueOf(items[i]));
         }
 
         builder.append("]");
@@ -156,9 +156,9 @@ public class Stack<E>
      */
     public Object[] getSnapshot()
     {
-        Object[] result = new Object[_index + 1];
+        Object[] result = new Object[index + 1];
 
-        System.arraycopy(_items, 0, result, 0, _index + 1);
+        System.arraycopy(items, 0, result, 0, index + 1);
 
         return result;
     }

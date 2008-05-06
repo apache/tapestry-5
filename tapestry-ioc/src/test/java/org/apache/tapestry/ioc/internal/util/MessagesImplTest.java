@@ -21,58 +21,58 @@ import org.testng.annotations.Test;
 
 public class MessagesImplTest extends IOCTestCase
 {
-    private final Messages _messages = MessagesImpl.forClass(TargetMessages.class);
+    private final Messages messages = MessagesImpl.forClass(TargetMessages.class);
 
     @Test
     public void contains_key()
     {
-        assertTrue(_messages.contains("no-args"));
-        assertFalse(_messages.contains("xyzzyx"));
+        assertTrue(messages.contains("no-args"));
+        assertFalse(messages.contains("xyzzyx"));
     }
 
     @Test
     public void contains_key_is_case_insensitive()
     {
-        assertTrue(_messages.contains("No-Args"));
-        assertFalse(_messages.contains("Xyzzyx"));
+        assertTrue(messages.contains("No-Args"));
+        assertFalse(messages.contains("Xyzzyx"));
     }
 
     @Test
     public void get_message_from_catalog()
     {
-        assertEquals(_messages.get("no-args"), "No arguments.");
-        assertEquals(_messages.get("something-failed"), "Something failed: %s");
+        assertEquals(messages.get("no-args"), "No arguments.");
+        assertEquals(messages.get("something-failed"), "Something failed: %s");
     }
 
     @Test
     public void get_message_from_catalog_is_case_insensitive()
     {
-        assertEquals(_messages.get("No-args"), "No arguments.");
-        assertEquals(_messages.get("Something-Failed"), "Something failed: %s");
+        assertEquals(messages.get("No-args"), "No arguments.");
+        assertEquals(messages.get("Something-Failed"), "Something failed: %s");
     }
 
     @Test
     public void get_unknown_message_from_catalog()
     {
-        assertEquals(_messages.get("does-not-exist"), "[[missing key: does-not-exist]]");
+        assertEquals(messages.get("does-not-exist"), "[[missing key: does-not-exist]]");
     }
 
     @Test
     public void format_message()
     {
-        assertEquals(_messages.format("result", "good"), "The result is 'good'.");
+        assertEquals(messages.format("result", "good"), "The result is 'good'.");
     }
 
     @Test
     public void format_message_is_case_insensitive()
     {
-        assertEquals(_messages.format("Result", "good"), "The result is 'good'.");
+        assertEquals(messages.format("Result", "good"), "The result is 'good'.");
     }
 
     @Test
     public void get_formatter()
     {
-        MessageFormatter mf = _messages.getFormatter("result");
+        MessageFormatter mf = messages.getFormatter("result");
 
         assertEquals(mf.format("great"), "The result is 'great'.");
     }
@@ -80,9 +80,9 @@ public class MessagesImplTest extends IOCTestCase
     @Test
     public void formatters_are_cached()
     {
-        MessageFormatter mf1 = _messages.getFormatter("result");
+        MessageFormatter mf1 = messages.getFormatter("result");
         // Throw in a case-insensitive check:
-        MessageFormatter mf2 = _messages.getFormatter("Result");
+        MessageFormatter mf2 = messages.getFormatter("Result");
 
         assertSame(mf2, mf1);
     }
@@ -90,6 +90,6 @@ public class MessagesImplTest extends IOCTestCase
     @Test
     public void format_unknown_key()
     {
-        assertEquals(_messages.format("rezult", "good"), "[[missing key: rezult]]");
+        assertEquals(messages.format("rezult", "good"), "[[missing key: rezult]]");
     }
 }

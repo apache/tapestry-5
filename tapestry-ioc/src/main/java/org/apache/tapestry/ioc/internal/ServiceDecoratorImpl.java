@@ -31,50 +31,50 @@ import java.util.Map;
  */
 public class ServiceDecoratorImpl implements ServiceDecorator
 {
-    private final ModuleBuilderSource _moduleBuilderSource;
+    private final ModuleBuilderSource moduleBuilderSource;
 
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final Map<Class, Object> _parameterDefaults = newMap();
+    private final Map<Class, Object> parameterDefaults = newMap();
 
     private final Logger _logger;
 
-    private final ServiceResources _resources;
+    private final ServiceResources resources;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Method _decoratorMethod;
+    private final Method decoratorMethod;
 
-    private final Class _serviceInterface;
+    private final Class serviceInterface;
 
     public ServiceDecoratorImpl(Method method, ModuleBuilderSource moduleBuilderSource,
                                 ServiceResources resources, ClassFactory classFactory)
     {
-        _serviceId = resources.getServiceId();
-        _decoratorMethod = method;
-        _moduleBuilderSource = moduleBuilderSource;
-        _resources = resources;
-        _serviceInterface = resources.getServiceInterface();
+        serviceId = resources.getServiceId();
+        decoratorMethod = method;
+        this.moduleBuilderSource = moduleBuilderSource;
+        this.resources = resources;
+        serviceInterface = resources.getServiceInterface();
         _logger = resources.getLogger();
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
 
-        _parameterDefaults.put(String.class, _serviceId);
-        _parameterDefaults.put(ServiceResources.class, resources);
-        _parameterDefaults.put(Logger.class, _logger);
-        _parameterDefaults.put(Class.class, _serviceInterface);
+        parameterDefaults.put(String.class, serviceId);
+        parameterDefaults.put(ServiceResources.class, resources);
+        parameterDefaults.put(Logger.class, _logger);
+        parameterDefaults.put(Class.class, serviceInterface);
 
     }
 
     private String methodId()
     {
-        return InternalUtils.asString(_decoratorMethod, _classFactory);
+        return InternalUtils.asString(decoratorMethod, classFactory);
     }
 
     public Object createInterceptor(Object delegate)
     {
         // Create a copy of the parameters map so that Object.class points to the delegate instance.
 
-        Map<Class, Object> parameterDefaults = newMap(_parameterDefaults);
+        Map<Class, Object> parameterDefaults = newMap(this.parameterDefaults);
         parameterDefaults.put(Object.class, delegate);
 
         if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.invokingMethod(methodId()));
@@ -82,17 +82,17 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         Object result = null;
         Throwable failure = null;
 
-        Object moduleBuilder = InternalUtils.isStatic(_decoratorMethod) ? null
-                               : _moduleBuilderSource.getModuleBuilder();
+        Object moduleBuilder = InternalUtils.isStatic(decoratorMethod) ? null
+                               : moduleBuilderSource.getModuleBuilder();
 
         try
         {
             Object[] parameters = InternalUtils.calculateParametersForMethod(
-                    _decoratorMethod,
-                    _resources,
+                    decoratorMethod,
+                    resources,
                     parameterDefaults);
 
-            result = _decoratorMethod.invoke(moduleBuilder, parameters);
+            result = decoratorMethod.invoke(moduleBuilder, parameters);
         }
         catch (InvocationTargetException ite)
         {
@@ -106,17 +106,17 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
         if (failure != null)
             throw new RuntimeException(IOCMessages.decoratorMethodError(
-                    _decoratorMethod,
-                    _serviceId,
+                    decoratorMethod,
+                    serviceId,
                     failure), failure);
 
-        if (result != null && !_serviceInterface.isInstance(result))
+        if (result != null && !serviceInterface.isInstance(result))
         {
             _logger.warn(IOCMessages.decoratorReturnedWrongType(
-                    _decoratorMethod,
-                    _serviceId,
+                    decoratorMethod,
+                    serviceId,
                     result,
-                    _serviceInterface));
+                    serviceInterface));
 
             // Change the result to null so that we won't use the interceptor,
             // and so that ClassCastExceptions don't occur later down the pipeline.

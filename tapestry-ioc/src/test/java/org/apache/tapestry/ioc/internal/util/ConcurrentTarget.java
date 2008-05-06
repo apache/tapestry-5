@@ -18,14 +18,14 @@ import java.util.concurrent.TimeUnit;
 
 public class ConcurrentTarget
 {
-    private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
+    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
 
-    private int _counter;
+    private int counter;
 
     // Used to check if read locks accumulate when a read lock method calls another read lock method
     public int readCounter()
     {
-        return _barrier.withRead(new Invokable<Integer>()
+        return barrier.withRead(new Invokable<Integer>()
         {
             public Integer invoke()
             {
@@ -36,44 +36,44 @@ public class ConcurrentTarget
 
     public int getCounter()
     {
-        return _barrier.withRead(new Invokable<Integer>()
+        return barrier.withRead(new Invokable<Integer>()
         {
             public Integer invoke()
             {
-                return _counter;
+                return counter;
             }
         });
     }
 
     public void incrementCounter()
     {
-        _barrier.withWrite(new Runnable()
+        barrier.withWrite(new Runnable()
         {
             public void run()
             {
-                _counter++;
+                counter++;
             }
         });
     }
 
     public void setCounter(final int counter)
     {
-        _barrier.withWrite(new Runnable()
+        barrier.withWrite(new Runnable()
         {
             public void run()
             {
-                _counter = counter;
+                ConcurrentTarget.this.counter = counter;
             }
         });
     }
 
     public void incrementIfNonNegative()
     {
-        _barrier.withRead(new Runnable()
+        barrier.withRead(new Runnable()
         {
             public void run()
             {
-                if (_counter >= 0)
+                if (counter >= 0)
                     incrementCounter();
             }
         });
@@ -81,7 +81,7 @@ public class ConcurrentTarget
 
     public void incrementViaRunnable()
     {
-        _barrier.withRead(new Runnable()
+        barrier.withRead(new Runnable()
         {
             public void run()
             {
@@ -100,44 +100,44 @@ public class ConcurrentTarget
 
     public void incrementCounterHard()
     {
-        _barrier.withWrite(new Runnable()
+        barrier.withWrite(new Runnable()
         {
             public void run()
             {
-                _counter = getCounter() + 1;
+                counter = getCounter() + 1;
             }
         });
     }
 
     public void tryIncrementCounter()
     {
-        _barrier.tryWithWrite(new Runnable()
+        barrier.tryWithWrite(new Runnable()
         {
             public void run()
             {
-                _counter++;
+                counter++;
             }
         }, 20, TimeUnit.MILLISECONDS);
     }
 
     public void tryIncrementCounterHard()
     {
-        _barrier.tryWithWrite(new Runnable()
+        barrier.tryWithWrite(new Runnable()
         {
             public void run()
             {
-                _counter = getCounter() + 1;
+                counter = getCounter() + 1;
             }
         }, 20, TimeUnit.MILLISECONDS);
     }
 
     public void tryIncrementIfNonNegative()
     {
-        _barrier.withRead(new Runnable()
+        barrier.withRead(new Runnable()
         {
             public void run()
             {
-                if (_counter >= 0)
+                if (counter >= 0)
                     tryIncrementCounter();
             }
         });
@@ -146,6 +146,6 @@ public class ConcurrentTarget
 
     public void withRead(Runnable runnable)
     {
-        _barrier.withRead(runnable);
+        barrier.withRead(runnable);
     }
 }

@@ -14,8 +14,6 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 import java.util.Iterator;
@@ -23,42 +21,33 @@ import java.util.LinkedList;
 import java.util.Set;
 
 /**
- * Used to search from a particular class up the inheritance hierarchy of extended classes and
- * implemented interfaces.
+ * Used to search from a particular class up the inheritance hierarchy of extended classes and implemented interfaces.
  * <p/>
- * The search starts with the initial class (provided in the constructor). It progresses up the
- * inheritance chain, but skips java.lang.Object.
+ * The search starts with the initial class (provided in the constructor). It progresses up the inheritance chain, but
+ * skips java.lang.Object.
  * <p/>
- * Once classes are exhausted, the inheritance hiearchy is searched. This is a breadth-first search,
- * rooted in the interfaces implemented by the initial class at its super classes.
+ * Once classes are exhausted, the inheritance hiearchy is searched. This is a breadth-first search, rooted in the
+ * interfaces implemented by the initial class at its super classes.
  * <p/>
  * Once all interfaces are exhausted, java.lang.Object is returned (it is always returned last).
  * <p/>
- * Two minor tweak to normal inheritance rules:
- * <ul>
- * <li> Normally, the parent class of an <em>object</em> array is java.lang.Object, which is odd
- * because Foo[] is assignable to Object[]. Thus, we tweak the search so that the effective super
- * class of Foo[] is Object[].
- * <li> The "super class" of a primtive type is its <em>wrapper type</em>, with the exception of
- * void, whose "super class" is left at its normal value (Object.class)
- * </ul>
+ * Two minor tweak to normal inheritance rules: <ul> <li> Normally, the parent class of an <em>object</em> array is
+ * java.lang.Object, which is odd because Foo[] is assignable to Object[]. Thus, we tweak the search so that the
+ * effective super class of Foo[] is Object[]. <li> The "super class" of a primtive type is its <em>wrapper type</em>,
+ * with the exception of void, whose "super class" is left at its normal value (Object.class) </ul>
  * <p/>
- * This class implements the {@link Iterable} interface, so it can be used directly in a for loop:
- * <code>
- * for (Class search : new InheritanceSearch(startClass)) {
- * ...
- * }
- * </code>
+ * This class implements the {@link Iterable} interface, so it can be used directly in a for loop: <code> for (Class
+ * search : new InheritanceSearch(startClass)) { ... } </code>
  * <p/>
  * This class is not threadsafe.
  */
 public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 {
-    private Class _searchClass;
+    private Class searchClass;
 
-    private final Set<Class> _addedInterfaces = newSet();
+    private final Set<Class> addedInterfaces = CollectionFactory.newSet();
 
-    private final LinkedList<Class> _interfaceQueue = newLinkedList();
+    private final LinkedList<Class> interfaceQueue = CollectionFactory.newLinkedList();
 
     private enum State
     {
@@ -69,7 +58,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
     public InheritanceSearch(Class searchClass)
     {
-        _searchClass = searchClass;
+        this.searchClass = searchClass;
 
         queueInterfaces(searchClass);
 
@@ -80,10 +69,10 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
     {
         for (Class intf : searchClass.getInterfaces())
         {
-            if (_addedInterfaces.contains(intf)) continue;
+            if (addedInterfaces.contains(intf)) continue;
 
-            _interfaceQueue.addLast(intf);
-            _addedInterfaces.add(intf);
+            interfaceQueue.addLast(intf);
+            addedInterfaces.add(intf);
         }
     }
 
@@ -103,24 +92,24 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
         {
             case CLASS:
 
-                Class result = _searchClass;
+                Class result = searchClass;
 
-                _searchClass = parentOf(_searchClass);
+                searchClass = parentOf(searchClass);
 
-                if (_searchClass == null) _state = State.INTERFACE;
-                else queueInterfaces(_searchClass);
+                if (searchClass == null) _state = State.INTERFACE;
+                else queueInterfaces(searchClass);
 
                 return result;
 
             case INTERFACE:
 
-                if (_interfaceQueue.isEmpty())
+                if (interfaceQueue.isEmpty())
                 {
                     _state = State.DONE;
                     return Object.class;
                 }
 
-                Class intf = _interfaceQueue.removeFirst();
+                Class intf = interfaceQueue.removeFirst();
 
                 queueInterfaces(intf);
 
@@ -133,8 +122,8 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
     }
 
     /**
-     * Returns the parent of the given class. Tweaks inheritance for object arrays. Returns null
-     * instead of Object.class.
+     * Returns the parent of the given class. Tweaks inheritance for object arrays. Returns null instead of
+     * Object.class.
      */
     private Class parentOf(Class clazz)
     {

@@ -33,9 +33,9 @@ import java.util.zip.DataFormatException;
 
 public class ClassFabImplTest extends IOCTestCase
 {
-    private final CtClassSource _source;
+    private final CtClassSource source;
 
-    private final PropertyAccess _access = new PropertyAccessImpl();
+    private final PropertyAccess access = new PropertyAccessImpl();
 
     public interface SampleService
     {
@@ -59,14 +59,14 @@ public class ClassFabImplTest extends IOCTestCase
 
         pool.addClassLoaderIfNeeded(threadLoader);
 
-        _source = new CtClassSourceImpl(pool, threadLoader);
+        source = new CtClassSourceImpl(pool, threadLoader);
     }
 
     private ClassFab newClassFab(String className, Class superClass)
     {
-        CtClass ctClass = _source.newClass(className, superClass);
+        CtClass ctClass = source.newClass(className, superClass);
 
-        return new ClassFabImpl(_source, ctClass, LoggerFactory.getLogger("ClassFab"));
+        return new ClassFabImpl(source, ctClass, LoggerFactory.getLogger("ClassFab"));
     }
 
     @Test
@@ -89,11 +89,11 @@ public class ClassFabImplTest extends IOCTestCase
 
         Object targetBean = targetClass.newInstance();
 
-        _access.set(targetBean, "stringValue", "Fred");
+        access.set(targetBean, "stringValue", "Fred");
 
         // May keep a test-time dependency on HiveMind, just for PropertyUtils.
 
-        String actual = (String) _access.get(targetBean, "stringValue");
+        String actual = (String) access.get(targetBean, "stringValue");
 
         assertEquals(actual, "Fred");
     }
@@ -199,7 +199,7 @@ public class ClassFabImplTest extends IOCTestCase
 
         Object targetBean = c.newInstance(new Object[] { "Buffy" });
 
-        String actual = (String) _access.get(targetBean, "stringValue");
+        String actual = (String) access.get(targetBean, "stringValue");
 
         assertEquals("Buffy", actual);
     }
@@ -421,8 +421,8 @@ public class ClassFabImplTest extends IOCTestCase
 
         instance.run();
 
-        assertEquals(_access.get(instance, "int"), 0);
-        assertEquals(_access.get(instance, "double"), 0.0d);
+        assertEquals(access.get(instance, "int"), 0);
+        assertEquals(access.get(instance, "double"), 0.0d);
     }
 
     private void assertContains(String actual, String expectedSubstring)

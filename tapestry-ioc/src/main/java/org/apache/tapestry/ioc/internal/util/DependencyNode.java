@@ -21,24 +21,24 @@ import org.slf4j.Logger;
 import java.util.List;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.util.Orderer} to establish backward dependencies
- * for {@link org.apache.tapestry.ioc.Orderable} objects.
+ * Used by {@link org.apache.tapestry.ioc.internal.util.Orderer} to establish backward dependencies for {@link
+ * org.apache.tapestry.ioc.Orderable} objects.
  *
  * @param <T>
  */
 
 class DependencyNode<T>
 {
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Orderable<T> _orderable;
+    private final Orderable<T> orderable;
 
-    private final List<DependencyNode<T>> _dependencies = newList();
+    private final List<DependencyNode<T>> dependencies = CollectionFactory.newList();
 
     DependencyNode(Logger logger, Orderable<T> orderable)
     {
-        _logger = logger;
-        _orderable = orderable;
+        this.logger = logger;
+        this.orderable = orderable;
     }
 
     @Override
@@ -48,7 +48,7 @@ class DependencyNode<T>
 
         boolean first = true;
 
-        for (DependencyNode<T> node : _dependencies)
+        for (DependencyNode<T> node : dependencies)
         {
 
             buffer.append(first ? ": " : ", ");
@@ -68,14 +68,14 @@ class DependencyNode<T>
      */
     public String getId()
     {
-        return _orderable.getId();
+        return orderable.getId();
     }
 
     void addDependency(DependencyNode<T> node)
     {
         if (node.isReachable(this))
         {
-            _logger.warn(UtilMessages.dependencyCycle(node, this));
+            logger.warn(UtilMessages.dependencyCycle(node, this));
             return;
         }
 
@@ -83,7 +83,7 @@ class DependencyNode<T>
         // That forces the other node's orderable
         // to appear before this node's orderable.
 
-        _dependencies.add(node);
+        dependencies.add(node);
     }
 
     boolean isReachable(DependencyNode<T> node)
@@ -92,7 +92,7 @@ class DependencyNode<T>
 
         // Quick fast pass for immediate dependencies
 
-        for (DependencyNode<T> d : _dependencies)
+        for (DependencyNode<T> d : dependencies)
         {
             if (d == node) return true;
         }
@@ -100,7 +100,7 @@ class DependencyNode<T>
         // Slower second pass looks for
         // indirect dependencies
 
-        for (DependencyNode<T> d : _dependencies)
+        for (DependencyNode<T> d : dependencies)
         {
             if (d.isReachable(node)) return true;
         }
@@ -122,16 +122,16 @@ class DependencyNode<T>
 
     private void fillOrder(List<Orderable<T>> list)
     {
-        if (list.contains(_orderable)) return;
+        if (list.contains(orderable)) return;
 
         // Recusively add dependencies
 
-        for (DependencyNode<T> node : _dependencies)
+        for (DependencyNode<T> node : dependencies)
         {
             node.fillOrder(list);
         }
 
-        list.add(_orderable);
+        list.add(orderable);
     }
 
 }

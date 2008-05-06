@@ -27,12 +27,12 @@ import org.testng.annotations.Test;
  */
 public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 {
-    private AspectDecorator _decorator;
+    private AspectDecorator decorator;
 
     @BeforeClass
     public void setup()
     {
-        _decorator = getService(AspectDecorator.class);
+        decorator = getService(AspectDecorator.class);
     }
 
     public interface Subject
@@ -62,7 +62,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         replay();
 
-        AspectInterceptorBuilder<Subject> builder = _decorator.createBuilder(Subject.class, delegate, "<Subject>");
+        AspectInterceptorBuilder<Subject> builder = decorator.createBuilder(Subject.class, delegate, "<Subject>");
 
         builder.adviseMethod(Subject.class.getMethod("advised"), advice);
 
@@ -83,7 +83,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         replay();
 
-        AspectInterceptorBuilder<Subject> builder = _decorator.createBuilder(Subject.class, delegate, "<Subject>");
+        AspectInterceptorBuilder<Subject> builder = decorator.createBuilder(Subject.class, delegate, "<Subject>");
 
         // This method doesn't belong.
 
@@ -112,7 +112,7 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
 
         replay();
 
-        AspectInterceptorBuilder<Subject> builder = _decorator.createBuilder(Subject.class, delegate, "<Subject>");
+        AspectInterceptorBuilder<Subject> builder = decorator.createBuilder(Subject.class, delegate, "<Subject>");
 
 
         builder.adviseMethod(Subject.class.getMethod("advised"), advice);

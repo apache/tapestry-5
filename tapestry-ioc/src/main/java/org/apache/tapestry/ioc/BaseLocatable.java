@@ -19,15 +19,15 @@ package org.apache.tapestry.ioc;
  */
 public class BaseLocatable implements Locatable
 {
-    private final Location _location;
+    private final Location location;
 
     protected BaseLocatable(Location location)
     {
-        _location = location;
+        this.location = location;
     }
 
     public final Location getLocation()
     {
-        return _location;
+        return location;
     }
 }

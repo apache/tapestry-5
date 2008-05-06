@@ -25,11 +25,11 @@ import java.lang.reflect.Method;
 
 public class AspectDecoratorImpl implements AspectDecorator
 {
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
     public AspectDecoratorImpl(@Builtin ClassFactory classFactory)
     {
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, MethodAdvice advice, String description)
@@ -63,7 +63,7 @@ public class AspectDecoratorImpl implements AspectDecorator
             public void adviseMethod(Method method, MethodAdvice advice)
             {
                 if (_builder == null)
-                    _builder = new AspectInterceptorBuilderImpl<T>(_classFactory, serviceInterface, delegate,
+                    _builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate,
                                                                    description);
 
                 _builder.adviseMethod(method, advice);

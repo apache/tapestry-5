@@ -240,24 +240,24 @@ Creating your own Decorators
   {{{../apidocs/org/apache/tapestry/ioc/services/AspectDecorator.html}AspectDecorator}} service
   is how you put your MethodAdvise into action.
 
-  By way of an example, we'll show the current implementation of the LoggingDecorator service:
+  By way of an example, we'll show an implementation of the LoggingDecorator service:
 
 +----+
 public class LoggingDecoratorImpl implements LoggingDecorator
 {
-    private final AspectDecorator _aspectDecorator;
+    private final AspectDecorator aspectDecorator;
 
-    private final ExceptionTracker _exceptionTracker;
+    private final ExceptionTracker exceptionTracker;
 
     public LoggingDecoratorImpl(AspectDecorator aspectDecorator, ExceptionTracker exceptionTracker)
     {
-        _aspectDecorator = aspectDecorator;
-        _exceptionTracker = exceptionTracker;
+        this.aspectDecorator = aspectDecorator;
+        this.exceptionTracker = exceptionTracker;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
     {
-        final ServiceLogger serviceLogger = new ServiceLogger(logger, _exceptionTracker);
+        final ServiceLogger serviceLogger = new ServiceLogger(logger, exceptionTracker);
 
         MethodAdvice advice = new MethodAdvice()
         {
@@ -293,12 +293,14 @@ public class LoggingDecoratorImpl implements LoggingDecorator
             }
         };
 
-        return _aspectDecorator.build(serviceInterface, delegate, advice,
+        return aspectDecorator.build(serviceInterface, delegate, advice,
                                       String.format("<Logging interceptor for %s(%s)>", serviceId,
                                                     serviceInterface.getName()));
     }
 }
 +---+
+
+  <The actual code has been refactored slightly since this documentation was written.> 
 
   Most of the logging logic occurs inside the ServiceLogger object, the MethodAdvice exists to call the right methods at
   the right time.  A Logger doesn't <change> parameter values (or thrown exceptions, or the result), it just

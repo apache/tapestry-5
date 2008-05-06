@@ -34,16 +34,16 @@ import java.lang.reflect.Method;
  */
 public class ClassFactoryImpl implements ClassFactory
 {
-    private final Logger _logger;
+    private final Logger logger;
 
     /**
      * ClassPool shared by all modules (all CtClassSource instances).
      */
-    private final ClassFactoryClassPool _pool;
+    private final ClassFactoryClassPool pool;
 
-    private final CtClassSource _classSource;
+    private final CtClassSource classSource;
 
-    private final ClassLoader _loader;
+    private final ClassLoader loader;
 
     public ClassFactoryImpl(ClassLoader classLoader)
     {
@@ -74,13 +74,13 @@ public class ClassFactoryImpl implements ClassFactory
     public ClassFactoryImpl(ClassLoader classLoader, ClassFactoryClassPool pool, CtClassSource classSource,
                             Logger logger)
     {
-        _loader = classLoader;
+        loader = classLoader;
 
-        _pool = pool;
+        this.pool = pool;
 
-        _classSource = classSource;
+        this.classSource = classSource;
 
-        _logger = logger;
+        this.logger = logger;
     }
 
 
@@ -97,15 +97,15 @@ public class ClassFactoryImpl implements ClassFactory
 
     public ClassFab newClass(String name, Class superClass)
     {
-        if (_logger.isDebugEnabled())
-            _logger.debug(String.format("Create ClassFab for %s (extends %s)", name, superClass
+        if (logger.isDebugEnabled())
+            logger.debug(String.format("Create ClassFab for %s (extends %s)", name, superClass
                     .getName()));
 
         try
         {
-            CtClass ctNewClass = _classSource.newClass(name, superClass);
+            CtClass ctNewClass = classSource.newClass(name, superClass);
 
-            return new ClassFabImpl(_classSource, ctNewClass, _logger);
+            return new ClassFabImpl(classSource, ctNewClass, logger);
         }
         catch (Exception ex)
         {
@@ -115,17 +115,17 @@ public class ClassFactoryImpl implements ClassFactory
 
     public Class importClass(Class clazz)
     {
-        return _pool.importClass(clazz);
+        return pool.importClass(clazz);
     }
 
     public int getCreatedClassCount()
     {
-        return _classSource.getCreatedClassCount();
+        return classSource.getCreatedClassCount();
     }
 
     public ClassLoader getClassLoader()
     {
-        return _loader;
+        return loader;
     }
 
     public Location getMethodLocation(Method method)
@@ -138,7 +138,7 @@ public class ClassFactoryImpl implements ClassFactory
         Class declaringClass = method.getDeclaringClass();
         Class effectiveClass = importClass(declaringClass);
 
-        CtClass ctClass = _classSource.toCtClass(effectiveClass);
+        CtClass ctClass = classSource.toCtClass(effectiveClass);
 
         StringBuilder builder = new StringBuilder("(");
 
@@ -179,7 +179,7 @@ public class ClassFactoryImpl implements ClassFactory
         builder.append(declaringClass.getName());
         builder.append("(");
 
-        CtClass ctClass = _classSource.toCtClass(declaringClass);
+        CtClass ctClass = classSource.toCtClass(declaringClass);
 
         StringBuilder descripton = new StringBuilder("(");
 

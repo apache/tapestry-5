@@ -23,38 +23,36 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A key component in implementing the "Gang of Four" Strategy pattern. A StrategyRegistry will
- * match up a given input type with a registered strategy for that type.
+ * A key component in implementing the "Gang of Four" Strategy pattern. A StrategyRegistry will match up a given input
+ * type with a registered strategy for that type.
  *
  * @param <A> the type of the strategy adapter
  */
 public final class StrategyRegistry<A>
 {
-    private final Class<A> _adapterType;
+    private final Class<A> adapterType;
 
-    private final boolean _allowNonMatch;
+    private final boolean allowNonMatch;
 
-    private final Map<Class, A> _registrations = newMap();
+    private final Map<Class, A> registrations = newMap();
 
-    private final Map<Class, A> _cache = newConcurrentMap();
+    private final Map<Class, A> cache = newConcurrentMap();
 
     /**
-     * Used to identify types for which there is no matching adapter; we're using it as if it were
-     * a ConcurrentSet.
+     * Used to identify types for which there is no matching adapter; we're using it as if it were a ConcurrentSet.
      */
     private final Map<Class, Boolean> _unmatched = newConcurrentMap();
 
     private StrategyRegistry(Class<A> adapterType, Map<Class, A> registrations, boolean allowNonMatch)
     {
-        _adapterType = adapterType;
-        _allowNonMatch = allowNonMatch;
+        this.adapterType = adapterType;
+        this.allowNonMatch = allowNonMatch;
 
-        _registrations.putAll(registrations);
+        this.registrations.putAll(registrations);
     }
 
     /**
-     * Creates a strategy registry for the given adapter type. The registry will be configured
-     * to require matches.
+     * Creates a strategy registry for the given adapter type. The registry will be configured to require matches.
      *
      * @param adapterType   the type of adapter retrieved from the registry
      * @param registrations map of registrations (the contents of the map are copied)
@@ -81,18 +79,18 @@ public final class StrategyRegistry<A>
 
     public void clearCache()
     {
-        _cache.clear();
+        cache.clear();
         _unmatched.clear();
     }
 
     public Class<A> getAdapterType()
     {
-        return _adapterType;
+        return adapterType;
     }
 
     /**
-     * Gets an adapter for an object. Searches based on the value's class, unless the value is null,
-     * in which case, a search on class void is used.
+     * Gets an adapter for an object. Searches based on the value's class, unless the value is null, in which case, a
+     * search on class void is used.
      *
      * @param value for which an adapter is needed
      * @return the adapter for the value or null if not found (and allowNonMatch is true)
@@ -114,7 +112,7 @@ public final class StrategyRegistry<A>
     public A get(Class type)
     {
 
-        A result = _cache.get(type);
+        A result = cache.get(type);
 
         if (result != null) return result;
 
@@ -128,7 +126,7 @@ public final class StrategyRegistry<A>
 
         if (result != null)
         {
-            _cache.put(type, result);
+            cache.put(type, result);
         }
         else
         {
@@ -142,22 +140,22 @@ public final class StrategyRegistry<A>
     {
         for (Class t : new InheritanceSearch(type))
         {
-            A result = _registrations.get(t);
+            A result = registrations.get(t);
 
             if (result != null) return result;
         }
 
-        if (_allowNonMatch) return null;
+        if (allowNonMatch) return null;
 
         // Report the error. These things really confused the hell out of people in Tap4, so we're
         // going the extra mile on the exception message.
 
         List<String> names = newList();
-        for (Class t : _registrations.keySet())
+        for (Class t : registrations.keySet())
             names.add(t.getName());
 
         throw new IllegalArgumentException(UtilMessages
-                .noStrategyAdapter(type, _adapterType, names));
+                .noStrategyAdapter(type, adapterType, names));
     }
 
     /**
@@ -165,12 +163,12 @@ public final class StrategyRegistry<A>
      */
     public Collection<Class> getTypes()
     {
-        return CollectionFactory.newList(_registrations.keySet());
+        return CollectionFactory.newList(registrations.keySet());
     }
 
     @Override
     public String toString()
     {
-        return String.format("StrategyRegistry[%s]", _adapterType.getName());
+        return String.format("StrategyRegistry[%s]", adapterType.getName());
     }
 }

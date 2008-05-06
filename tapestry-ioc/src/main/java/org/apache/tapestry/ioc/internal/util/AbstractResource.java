@@ -30,32 +30,30 @@ import java.util.Locale;
  */
 public abstract class AbstractResource implements Resource
 {
-    private final String _path;
+    private final String path;
 
     protected AbstractResource(String path)
     {
-        notNull(path, "path");
-        _path = path;
-
+        this.path = notNull(path, "path");
     }
 
     public final String getPath()
     {
-        return _path;
+        return path;
     }
 
     public final String getFile()
     {
-        int slashx = _path.lastIndexOf('/');
+        int slashx = path.lastIndexOf('/');
 
-        return _path.substring(slashx + 1);
+        return path.substring(slashx + 1);
     }
 
     public final String getFolder()
     {
-        int slashx = _path.lastIndexOf('/');
+        int slashx = path.lastIndexOf('/');
 
-        return (slashx < 0) ? "" : _path.substring(0, slashx);
+        return (slashx < 0) ? "" : path.substring(0, slashx);
     }
 
     public final Resource forFile(String relativePath)
@@ -99,7 +97,7 @@ public abstract class AbstractResource implements Resource
 
     public final Resource forLocale(Locale locale)
     {
-        for (String path : new LocalizedNameGenerator(_path, locale))
+        for (String path : new LocalizedNameGenerator(this.path, locale))
         {
             Resource potential = createResource(path);
 
@@ -113,11 +111,11 @@ public abstract class AbstractResource implements Resource
     {
         notBlank(extension, "extension");
 
-        int dotx = _path.lastIndexOf('.');
+        int dotx = path.lastIndexOf('.');
 
-        if (dotx < 0) return createResource(_path + "." + extension);
+        if (dotx < 0) return createResource(path + "." + extension);
 
-        return createResource(_path.substring(0, dotx + 1) + extension);
+        return createResource(path.substring(0, dotx + 1) + extension);
     }
 
     /**
@@ -126,7 +124,7 @@ public abstract class AbstractResource implements Resource
      */
     private Resource createResource(String path)
     {
-        if (_path.equals(path)) return this;
+        if (this.path.equals(path)) return this;
 
         return newResource(path);
     }

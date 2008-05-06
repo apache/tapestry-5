@@ -23,46 +23,46 @@ import java.util.Map;
 
 public class ExceptionInfoImpl implements ExceptionInfo
 {
-    private final String _className;
+    private final String className;
 
-    private final String _message;
+    private final String message;
 
-    private final Map<String, Object> _properties;
+    private final Map<String, Object> properties;
 
-    private final List<StackTraceElement> _stackTrace;
+    private final List<StackTraceElement> stackTrace;
 
     public ExceptionInfoImpl(Throwable t, Map<String, Object> properties, List<StackTraceElement> stackTrace)
     {
-        _className = t.getClass().getName();
-        _message = t.getMessage() != null ? t.getMessage() : "";
+        className = t.getClass().getName();
+        message = t.getMessage() != null ? t.getMessage() : "";
 
-        _properties = properties;
-        _stackTrace = unmodifiableList(stackTrace);
+        this.properties = properties;
+        this.stackTrace = unmodifiableList(stackTrace);
     }
 
     public String getClassName()
     {
-        return _className;
+        return className;
     }
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     public Object getProperty(String name)
     {
-        return _properties.get(name);
+        return properties.get(name);
     }
 
     public List<String> getPropertyNames()
     {
-        return InternalUtils.sortedKeys(_properties);
+        return InternalUtils.sortedKeys(properties);
     }
 
     public List<StackTraceElement> getStackTrace()
     {
-        return _stackTrace;
+        return stackTrace;
     }
 
 }

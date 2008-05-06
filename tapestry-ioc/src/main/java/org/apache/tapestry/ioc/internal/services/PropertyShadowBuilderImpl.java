@@ -22,23 +22,23 @@ import java.lang.reflect.Modifier;
 
 public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
 {
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final PropertyAccess _propertyAccess;
+    private final PropertyAccess propertyAccess;
 
     public PropertyShadowBuilderImpl(@Builtin
     ClassFactory classFactory,
 
                                      PropertyAccess propertyAccess)
     {
-        _classFactory = classFactory;
-        _propertyAccess = propertyAccess;
+        this.classFactory = classFactory;
+        this.propertyAccess = propertyAccess;
     }
 
     public <T> T build(Object source, String propertyName, Class<T> propertyType)
     {
         Class sourceClass = source.getClass();
-        PropertyAdapter adapter = _propertyAccess.getAdapter(sourceClass).getPropertyAdapter(
+        PropertyAdapter adapter = propertyAccess.getAdapter(sourceClass).getPropertyAdapter(
                 propertyName);
 
         // TODO: Perhaps extend ClassPropertyAdapter to do these checks?
@@ -56,12 +56,12 @@ public class PropertyShadowBuilderImpl implements PropertyShadowBuilder
                     adapter.getType(),
                     propertyType));
 
-        ClassFab cf = _classFactory.newClass(propertyType);
+        ClassFab cf = classFactory.newClass(propertyType);
 
         cf.addField("_source", Modifier.PRIVATE | Modifier.FINAL, sourceClass);
 
         cf.addConstructor(new Class[]
-                {sourceClass}, null, "_source = $1;");
+                { sourceClass }, null, "_source = $1;");
 
         String body = format("return _source.%s();", adapter.getReadMethod().getName());
 

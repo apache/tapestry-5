@@ -19,39 +19,37 @@ import org.apache.tapestry.ioc.ServiceLifecycle;
 import org.apache.tapestry.ioc.ServiceResources;
 
 /**
- * Wrapper around a lifecycle, a set of resources for a service, and an underlying
- * {@link ObjectCreator} for a service that allows the service lifecycle to alter the way that the
- * service is created (this is needed for the more advanced, non-singleton types of service
- * lifecycles).
+ * Wrapper around a lifecycle, a set of resources for a service, and an underlying {@link ObjectCreator} for a service
+ * that allows the service lifecycle to alter the way that the service is created (this is needed for the more advanced,
+ * non-singleton types of service lifecycles).
  */
 public class LifecycleWrappedServiceCreator implements ObjectCreator
 {
-    private final InternalRegistry _registry;
+    private final InternalRegistry registry;
 
-    private final String _serviceScope;
+    private final String serviceScope;
 
-    private final ServiceResources _resources;
+    private final ServiceResources resources;
 
-    private final ObjectCreator _creator;
+    private final ObjectCreator creator;
 
     public LifecycleWrappedServiceCreator(InternalRegistry registry, String serviceScope,
                                           ServiceResources resources, ObjectCreator creator)
     {
-        _registry = registry;
-        _serviceScope = serviceScope;
-        _resources = resources;
-        _creator = creator;
+        this.registry = registry;
+        this.serviceScope = serviceScope;
+        this.resources = resources;
+        this.creator = creator;
     }
 
     /**
-     * Passes the resources and the service creator through the
-     * {@link org.apache.tapestry.ioc.ServiceLifecycle}.
+     * Passes the resources and the service creator through the {@link org.apache.tapestry.ioc.ServiceLifecycle}.
      */
     public Object createObject()
     {
-        ServiceLifecycle lifecycle = _registry.getServiceLifecycle(_serviceScope);
+        ServiceLifecycle lifecycle = registry.getServiceLifecycle(serviceScope);
 
-        return lifecycle.createService(_resources, _creator);
+        return lifecycle.createService(resources, creator);
     }
 
 }

@@ -21,36 +21,34 @@ import org.slf4j.Logger;
 import java.util.List;
 
 /**
- * Startup service for Tapestry IoC: automatically invoked at
- * {@linkplain Registry#performRegistryStartup() registry startup} to execute a series of
- * operations, via its ordered configuration of Runnable objects.
+ * Startup service for Tapestry IoC: automatically invoked at {@linkplain Registry#performRegistryStartup() registry
+ * startup} to execute a series of operations, via its ordered configuration of Runnable objects.
  */
 public class RegistryStartup implements Runnable
 {
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final List<Runnable> _configuration;
+    private final List<Runnable> configuration;
 
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
     public RegistryStartup(Logger logger, final List<Runnable> configuration)
     {
-        _logger = logger;
-        _configuration = configuration;
+        this.logger = logger;
+        this.configuration = configuration;
     }
 
     /**
-     * Invokes run() on each contributed object. If the object throws a runtime exception, it is
-     * logged but startup continues anyway. This method may only be
-     * {@linkplain OneShotLock invoked once}.
+     * Invokes run() on each contributed object. If the object throws a runtime exception, it is logged but startup
+     * continues anyway. This method may only be {@linkplain OneShotLock invoked once}.
      */
     public void run()
     {
-        _lock.lock();
+        lock.lock();
 
         // Do we want extra exception catching here?
 
-        for (Runnable r : _configuration)
+        for (Runnable r : configuration)
         {
             try
             {
@@ -58,14 +56,14 @@ public class RegistryStartup implements Runnable
             }
             catch (RuntimeException ex)
             {
-                _logger.error(ServiceMessages.startupFailure(ex));
+                logger.error(ServiceMessages.startupFailure(ex));
             }
         }
 
         // We don't need them any more since this method can only be run once. It's a insignificant
         // savings, but still a nice thing to do.
 
-        _configuration.clear();
+        configuration.clear();
     }
 
 }

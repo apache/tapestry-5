@@ -26,21 +26,21 @@ import java.util.NoSuchElementException;
  */
 public class LocalizedNameGenerator implements Iterator<String>, Iterable<String>
 {
-    private final int _baseNameLength;
+    private final int baseNameLength;
 
-    private final String _suffix;
+    private final String suffix;
 
-    private final StringBuilder _builder;
+    private final StringBuilder builder;
 
-    private final String _language;
+    private final String language;
 
-    private final String _country;
+    private final String country;
 
-    private final String _variant;
+    private final String variant;
 
-    private int _state;
+    private int state;
 
-    private int _prevState;
+    private int prevState;
 
     private static final int INITIAL = 0;
 
@@ -69,56 +69,56 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
         String baseName = path.substring(0, dotx);
 
-        _suffix = path.substring(dotx);
+        suffix = path.substring(dotx);
 
-        _baseNameLength = dotx;
+        baseNameLength = dotx;
 
-        _language = locale.getLanguage();
-        _country = locale.getCountry();
-        _variant = locale.getVariant();
+        language = locale.getLanguage();
+        country = locale.getCountry();
+        variant = locale.getVariant();
 
-        _state = INITIAL;
-        _prevState = INITIAL;
+        state = INITIAL;
+        prevState = INITIAL;
 
-        _builder = new StringBuilder(baseName);
+        builder = new StringBuilder(baseName);
 
         advance();
     }
 
     private void advance()
     {
-        _prevState = _state;
+        prevState = state;
 
-        while (_state != EXHAUSTED)
+        while (state != EXHAUSTED)
         {
-            _state++;
+            state++;
 
-            switch (_state)
+            switch (state)
             {
                 case LCV:
 
-                    if (InternalUtils.isBlank(_variant)) continue;
+                    if (InternalUtils.isBlank(variant)) continue;
 
                     return;
 
                 case LC:
 
-                    if (InternalUtils.isBlank(_country)) continue;
+                    if (InternalUtils.isBlank(country)) continue;
 
                     return;
 
                 case LV:
 
-                    // If _country is null, then we've already generated this string
+                    // If country is null, then we've already generated this string
                     // as state LCV and we can continue directly to state L
 
-                    if (InternalUtils.isBlank(_variant) || InternalUtils.isBlank(_country)) continue;
+                    if (InternalUtils.isBlank(variant) || InternalUtils.isBlank(country)) continue;
 
                     return;
 
                 case L:
 
-                    if (InternalUtils.isBlank(_language)) continue;
+                    if (InternalUtils.isBlank(language)) continue;
 
                     return;
 
@@ -135,7 +135,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
     public boolean hasNext()
     {
-        return _state != EXHAUSTED;
+        return state != EXHAUSTED;
     }
 
     /**
@@ -146,7 +146,7 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
     public String next()
     {
-        if (_state == EXHAUSTED) throw new NoSuchElementException();
+        if (state == EXHAUSTED) throw new NoSuchElementException();
 
         String result = build();
 
@@ -157,54 +157,54 @@ public class LocalizedNameGenerator implements Iterator<String>, Iterable<String
 
     private String build()
     {
-        _builder.setLength(_baseNameLength);
+        builder.setLength(baseNameLength);
 
-        if (_state == LC || _state == LCV || _state == L)
+        if (state == LC || state == LCV || state == L)
         {
-            _builder.append('_');
-            _builder.append(_language);
+            builder.append('_');
+            builder.append(language);
         }
 
         // For LV, we want two underscores between language
         // and variant.
 
-        if (_state == LC || _state == LCV || _state == LV)
+        if (state == LC || state == LCV || state == LV)
         {
-            _builder.append('_');
+            builder.append('_');
 
-            if (_state != LV) _builder.append(_country);
+            if (state != LV) builder.append(country);
         }
 
-        if (_state == LV || _state == LCV)
+        if (state == LV || state == LCV)
         {
-            _builder.append('_');
-            _builder.append(_variant);
+            builder.append('_');
+            builder.append(variant);
         }
 
-        if (_suffix != null) _builder.append(_suffix);
+        if (suffix != null) builder.append(suffix);
 
-        return _builder.toString();
+        return builder.toString();
     }
 
     public Locale getCurrentLocale()
     {
-        switch (_prevState)
+        switch (prevState)
         {
             case LCV:
 
-                return new Locale(_language, _country, _variant);
+                return new Locale(language, country, variant);
 
             case LC:
 
-                return new Locale(_language, _country, "");
+                return new Locale(language, country, "");
 
             case LV:
 
-                return new Locale(_language, "", _variant);
+                return new Locale(language, "", variant);
 
             case L:
 
-                return new Locale(_language, "", "");
+                return new Locale(language, "", "");
 
             default:
                 return null;

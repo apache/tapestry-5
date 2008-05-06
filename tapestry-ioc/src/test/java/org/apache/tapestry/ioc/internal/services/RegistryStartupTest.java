@@ -122,11 +122,11 @@ public class RegistryStartupTest extends IOCTestCase
     {
         Registry r = buildRegistry(StartupModule.class);
 
-        assertFalse(StartupModule._startupInvoked);
+        assertFalse(StartupModule.startupInvoked);
 
         r.performRegistryStartup();
 
-        assertTrue(StartupModule._startupInvoked);
+        assertTrue(StartupModule.startupInvoked);
 
         // Ideally we'd have a way to show that the PerthreadManager was notified after
         // RegistryStartup did its thing, but ...

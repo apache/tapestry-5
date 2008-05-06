@@ -17,22 +17,22 @@ package org.apache.tapestry.ioc.internal.util;
 
 public class ConcurrentTargetWrapper implements Runnable
 {
-    private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
+    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
 
-    private final ConcurrentTarget _target;
+    private final ConcurrentTarget target;
 
     public ConcurrentTargetWrapper(ConcurrentTarget target)
     {
-        _target = target;
+        this.target = target;
     }
 
     public void run()
     {
-        _barrier.withRead(new Runnable()
+        barrier.withRead(new Runnable()
         {
             public void run()
             {
-                _target.incrementCounter();
+                target.incrementCounter();
             }
         });
     }

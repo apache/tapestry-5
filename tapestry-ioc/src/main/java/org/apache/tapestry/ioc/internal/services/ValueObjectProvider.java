@@ -24,23 +24,22 @@ import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 
 /**
- * Provides an object when the {@link Value} annotation is present. The string value has symbols
- * expanded, and then is {@link TypeCoercer coerced} to the associated type.   The value
- * may first be coerced to an intermediate type if
- * the {@link IntermediateType} annotation is present.
+ * Provides an object when the {@link Value} annotation is present. The string value has symbols expanded, and then is
+ * {@link TypeCoercer coerced} to the associated type.   The value may first be coerced to an intermediate type if the
+ * {@link IntermediateType} annotation is present.
  */
 public class ValueObjectProvider implements ObjectProvider
 {
-    private final SymbolSource _symbolSource;
+    private final SymbolSource symbolSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
     public ValueObjectProvider(@Builtin SymbolSource symbolSource,
 
                                @Builtin TypeCoercer typeCoercer)
     {
-        _symbolSource = symbolSource;
-        _typeCoercer = typeCoercer;
+        this.symbolSource = symbolSource;
+        this.typeCoercer = typeCoercer;
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
@@ -50,12 +49,12 @@ public class ValueObjectProvider implements ObjectProvider
         if (annotation == null) return null;
 
         String value = annotation.value();
-        Object expanded = _symbolSource.expandSymbols(value);
+        Object expanded = symbolSource.expandSymbols(value);
 
         IntermediateType intermediate = annotationProvider.getAnnotation(IntermediateType.class);
 
-        if (intermediate != null) expanded = _typeCoercer.coerce(expanded, intermediate.value());
+        if (intermediate != null) expanded = typeCoercer.coerce(expanded, intermediate.value());
 
-        return _typeCoercer.coerce(expanded, objectType);
+        return typeCoercer.coerce(expanded, objectType);
     }
 }

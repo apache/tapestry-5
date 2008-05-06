@@ -32,24 +32,24 @@ import java.util.List;
 public class PipelineBuilderImplTest extends IOCInternalTestCase
 {
 
-    private PipelineBuilder _builder;
+    private PipelineBuilder builder;
 
-    private Registry _registry;
+    private Registry registry;
 
     @BeforeClass
     public void setup_builder()
     {
-        _registry = buildRegistry();
-        _builder = _registry.getService("PipelineBuilder", PipelineBuilder.class);
+        registry = buildRegistry();
+        builder = registry.getService("PipelineBuilder", PipelineBuilder.class);
     }
 
     @AfterClass
     public void shutdown_builder()
     {
-        _registry.shutdown();
+        registry.shutdown();
 
-        _builder = null;
-        _registry = null;
+        builder = null;
+        registry = null;
     }
 
     @Test
@@ -91,7 +91,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
             }
         };
 
-        StandardService pipeline = _builder.build(
+        StandardService pipeline = builder.build(
                 logger,
                 StandardService.class,
                 StandardFilter.class,
@@ -115,7 +115,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
 
         List<StandardFilter> filters = newList();
 
-        StandardService pipeline = _builder.build(
+        StandardService pipeline = builder.build(
                 logger,
                 StandardService.class,
                 StandardFilter.class,
@@ -136,7 +136,7 @@ public class PipelineBuilderImplTest extends IOCInternalTestCase
 
         List<StandardFilter> filters = newList();
 
-        StandardService pipeline = _builder.build(
+        StandardService pipeline = builder.build(
                 logger,
                 StandardService.class,
                 StandardFilter.class,

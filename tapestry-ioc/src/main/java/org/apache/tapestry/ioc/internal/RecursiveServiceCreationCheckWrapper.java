@@ -19,55 +19,54 @@ import org.apache.tapestry.ioc.def.ServiceDef;
 import org.slf4j.Logger;
 
 /**
- * Decorator for {@link org.apache.tapestry.ioc.ObjectCreator} that ensures the service is only
- * created once. This detects a situation where the service builder for a service directly or
- * indirectly invokes methods on the service itself. This would show up as a second call up the
- * ServiceCreator stack injected into the proxy, potentially leading to endless recursion. We try to
- * identify that recursion and produce a useable exception report.
+ * Decorator for {@link org.apache.tapestry.ioc.ObjectCreator} that ensures the service is only created once. This
+ * detects a situation where the service builder for a service directly or indirectly invokes methods on the service
+ * itself. This would show up as a second call up the ServiceCreator stack injected into the proxy, potentially leading
+ * to endless recursion. We try to identify that recursion and produce a useable exception report.
  */
 public class RecursiveServiceCreationCheckWrapper implements ObjectCreator
 {
-    private final ServiceDef _serviceDef;
+    private final ServiceDef serviceDef;
 
-    private final ObjectCreator _delegate;
+    private final ObjectCreator delegate;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private boolean _locked;
+    private boolean locked;
 
     public RecursiveServiceCreationCheckWrapper(ServiceDef serviceDef, ObjectCreator delegate,
                                                 Logger logger)
     {
-        _serviceDef = serviceDef;
-        _delegate = delegate;
-        _logger = logger;
+        this.serviceDef = serviceDef;
+        this.delegate = delegate;
+        this.logger = logger;
     }
 
     /**
-     * We could make this method synchronized, but in the context of creating a service for a proxy,
-     * it will already be synchronized (inside the proxy).
+     * We could make this method synchronized, but in the context of creating a service for a proxy, it will already be
+     * synchronized (inside the proxy).
      */
     public Object createObject()
     {
-        if (_locked)
-            throw new IllegalStateException(IOCMessages.recursiveServiceBuild(_serviceDef));
+        if (locked)
+            throw new IllegalStateException(IOCMessages.recursiveServiceBuild(serviceDef));
 
         // Set the lock, to ensure that recursive service construction fails.
 
-        _locked = true;
+        locked = true;
 
         try
         {
-            return _delegate.createObject();
+            return delegate.createObject();
         }
         catch (RuntimeException ex)
         {
-            _logger.error(IOCMessages.serviceConstructionFailed(_serviceDef, ex), ex);
+            logger.error(IOCMessages.serviceConstructionFailed(serviceDef, ex), ex);
 
             // Release the lock on failure; the service is now in an unknown state, but we may
             // be able to continue from here.
 
-            _locked = false;
+            locked = false;
 
             throw ex;
         }

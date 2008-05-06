@@ -39,22 +39,22 @@ import java.util.Set;
  */
 public final class RegistryBuilder
 {
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
     /**
      * Module defs, keyed on module id.
      */
-    final List<ModuleDef> _modules = newList();
+    final List<ModuleDef> modules = newList();
 
-    private final ClassLoader _classLoader;
+    private final ClassLoader classLoader;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final LoggerSource _loggerSource;
+    private final LoggerSource loggerSource;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Set<Class> _addedModuleClasses = CollectionFactory.newSet();
+    private final Set<Class> addedModuleClasses = CollectionFactory.newSet();
 
     public RegistryBuilder()
     {
@@ -68,34 +68,34 @@ public final class RegistryBuilder
 
     public RegistryBuilder(ClassLoader classLoader, LoggerSource loggerSource)
     {
-        _classLoader = classLoader;
-        _loggerSource = loggerSource;
-        _logger = loggerSource.getLogger(RegistryBuilder.class);
+        this.classLoader = classLoader;
+        this.loggerSource = loggerSource;
+        logger = loggerSource.getLogger(RegistryBuilder.class);
 
         // Make the ClassFactory appear to be a service inside TapestryIOCModule, even before that
         // module exists.
 
         Logger classFactoryLogger = loggerSource.getLogger(TapestryIOCModule.class.getName() + ".ClassFactory");
 
-        _classFactory = new ClassFactoryImpl(_classLoader, classFactoryLogger);
+        classFactory = new ClassFactoryImpl(this.classLoader, classFactoryLogger);
 
         add(TapestryIOCModule.class);
     }
 
     public void add(ModuleDef moduleDef)
     {
-        _lock.check();
+        lock.check();
 
         // TODO: Some way to ensure that duplicate modules are not being added.
         // Part of TAPESTRY-2117 is in add(Class...) and that may be as much as we can
         // do as there is no concept of ModuleDef identity.
 
-        _modules.add(moduleDef);
+        modules.add(moduleDef);
     }
 
     public void add(Class... moduleBuilderClasses)
     {
-        _lock.check();
+        lock.check();
 
         List<Class> queue = newList(Arrays.asList(moduleBuilderClasses));
 
@@ -105,11 +105,11 @@ public final class RegistryBuilder
 
             // Quietly ignore previously added classes.
 
-            if (_addedModuleClasses.contains(c)) continue;
+            if (addedModuleClasses.contains(c)) continue;
 
-            _addedModuleClasses.add(c);
+            addedModuleClasses.add(c);
 
-            ModuleDef def = new DefaultModuleDefImpl(c, _logger, _classFactory);
+            ModuleDef def = new DefaultModuleDefImpl(c, logger, classFactory);
             add(def);
 
             SubModule annotation = ((AnnotatedElement) c).getAnnotation(SubModule.class);
@@ -122,11 +122,11 @@ public final class RegistryBuilder
 
     public void add(String classname)
     {
-        _lock.check();
+        lock.check();
 
         try
         {
-            Class builderClass = Class.forName(classname, true, _classLoader);
+            Class builderClass = Class.forName(classname, true, classLoader);
 
             add(builderClass);
         }
@@ -138,24 +138,24 @@ public final class RegistryBuilder
 
     public Registry build()
     {
-        _lock.lock();
+        lock.lock();
 
-        RegistryImpl registry = new RegistryImpl(_modules, _classFactory, _loggerSource);
+        RegistryImpl registry = new RegistryImpl(modules, classFactory, loggerSource);
 
         return new RegistryWrapper(registry);
     }
 
     public ClassLoader getClassLoader()
     {
-        _lock.check();
+        lock.check();
 
-        return _classLoader;
+        return classLoader;
     }
 
     public Logger getLogger()
     {
-        _lock.check();
+        lock.check();
 
-        return _logger;
+        return logger;
     }
 }

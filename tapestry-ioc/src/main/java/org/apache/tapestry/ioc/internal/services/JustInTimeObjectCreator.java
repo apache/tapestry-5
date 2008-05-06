@@ -21,63 +21,62 @@ import org.apache.tapestry.ioc.services.RegistryShutdownListener;
 import org.apache.tapestry.ioc.services.Status;
 
 /**
- * Invoked from a fabricated service delegate to get or realize (instantiate and configure) the
- * service implementation. This includes synchronization logic, to prevent multiple threads from
- * attempting to realize the same service at the same time (a service should be realized only once).
- * The additional interfaces implemented by this class support eager loading of services (at
- * application startup), and orderly shutdown of proxies.
+ * Invoked from a fabricated service delegate to get or realize (instantiate and configure) the service implementation.
+ * This includes synchronization logic, to prevent multiple threads from attempting to realize the same service at the
+ * same time (a service should be realized only once). The additional interfaces implemented by this class support eager
+ * loading of services (at application startup), and orderly shutdown of proxies.
  */
 public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceProxy,
-                                                RegistryShutdownListener
+        RegistryShutdownListener
 {
-    private final ServiceActivityTracker _tracker;
+    private final ServiceActivityTracker tracker;
 
-    private ObjectCreator _creator;
+    private ObjectCreator creator;
 
-    private boolean _shutdown;
+    private boolean shutdown;
 
-    private Object _object;
+    private Object object;
 
-    private final String _serviceId;
+    private final String serviceId;
 
     public JustInTimeObjectCreator(ServiceActivityTracker tracker, ObjectCreator creator,
                                    String serviceId)
     {
-        _tracker = tracker;
-        _creator = creator;
-        _serviceId = serviceId;
+        this.tracker = tracker;
+        this.creator = creator;
+        this.serviceId = serviceId;
     }
 
     /**
-     * Checks to see if the proxy has been shutdown, then invokes
-     * {@link ObjectCreator#createObject()} if it has not already done so.
+     * Checks to see if the proxy has been shutdown, then invokes {@link ObjectCreator#createObject()} if it has not
+     * already done so.
      *
      * @throws IllegalStateException if the registry has been shutdown
      */
     public synchronized Object createObject()
     {
-        if (_shutdown)
-            throw new IllegalStateException(ServiceMessages.registryShutdown(_serviceId));
+        if (shutdown)
+            throw new IllegalStateException(ServiceMessages.registryShutdown(serviceId));
 
-        if (_object == null)
+        if (object == null)
         {
             try
             {
-                _object = _creator.createObject();
+                object = creator.createObject();
 
                 // And if that's successful ...
 
-                _tracker.setStatus(_serviceId, Status.REAL);
+                tracker.setStatus(serviceId, Status.REAL);
 
-                _creator = null;
+                creator = null;
             }
             catch (RuntimeException ex)
             {
-                throw new RuntimeException(ServiceMessages.serviceBuildFailure(_serviceId, ex), ex);
+                throw new RuntimeException(ServiceMessages.serviceBuildFailure(serviceId, ex), ex);
             }
         }
 
-        return _object;
+        return object;
     }
 
     /**
@@ -95,9 +94,9 @@ public class JustInTimeObjectCreator implements ObjectCreator, EagerLoadServiceP
      */
     public synchronized void registryDidShutdown()
     {
-        _shutdown = true;
-        _object = null;
-        _creator = null;
+        shutdown = true;
+        object = null;
+        creator = null;
     }
 
 }

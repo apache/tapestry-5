@@ -34,19 +34,19 @@ public final class MockTester
         }
     }
 
-    private final ThreadLocalControl _localControl = new ThreadLocalControl();
+    private final ThreadLocalControl localControl = new ThreadLocalControl();
 
     /**
      * Invoked after an individual unit test (i.e., a test method invocation) to discard the mock control.
      */
     public synchronized void cleanup()
     {
-        _localControl.remove();
+        localControl.remove();
     }
 
     public synchronized IMocksControl getMocksControl()
     {
-        return _localControl.get();
+        return localControl.get();
     }
 
     /**

@@ -21,16 +21,16 @@ import org.slf4j.Logger;
 
 public class LoggingAdvice implements MethodAdvice
 {
-    private final MethodLogger _methodLogger;
+    private final MethodLogger methodLogger;
 
     public LoggingAdvice(Logger logger, ExceptionTracker exceptionTracker)
     {
-        _methodLogger = new MethodLogger(logger, exceptionTracker);
+        methodLogger = new MethodLogger(logger, exceptionTracker);
     }
 
     public void advise(Invocation invocation)
     {
-        boolean debug = _methodLogger.isDebugEnabled();
+        boolean debug = methodLogger.isDebugEnabled();
 
         if (!debug)
         {
@@ -38,7 +38,7 @@ public class LoggingAdvice implements MethodAdvice
             return;
         }
 
-        _methodLogger.entry(invocation);
+        methodLogger.entry(invocation);
 
         try
         {
@@ -46,7 +46,7 @@ public class LoggingAdvice implements MethodAdvice
         }
         catch (RuntimeException ex)
         {
-            _methodLogger.fail(invocation, ex);
+            methodLogger.fail(invocation, ex);
 
             throw ex;
         }
@@ -55,11 +55,11 @@ public class LoggingAdvice implements MethodAdvice
         {
             Exception thrown = invocation.getThrown(Exception.class);
 
-            _methodLogger.fail(invocation, thrown);
+            methodLogger.fail(invocation, thrown);
 
             return;
         }
 
-        _methodLogger.exit(invocation);
+        methodLogger.exit(invocation);
     }
 }

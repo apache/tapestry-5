@@ -19,20 +19,19 @@ package org.apache.tapestry.ioc.internal.util;
 
 
 /**
- * Evolved from a test for aspects + annotations to a test of a class that utilizeds OneShotLock as
- * a utility.
+ * Evolved from a test for aspects + annotations to a test of a class that utilizeds OneShotLock as a utility.
  */
 public class OneShotLockSubject
 {
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
     public void go()
     {
-        _lock.check();
+        lock.check();
     }
 
     public void done()
     {
-        _lock.lock();
+        lock.lock();
     }
 }

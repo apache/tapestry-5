@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Scope;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
 
 import java.util.Set;
@@ -24,13 +24,13 @@ import java.util.Set;
 @Scope(PERTHREAD_SCOPE)
 public class ExceptionTrackerImpl implements ExceptionTracker
 {
-    private final Set<Throwable> _exceptions = newSet();
+    private final Set<Throwable> exceptions = CollectionFactory.newSet();
 
     public boolean exceptionLogged(Throwable exception)
     {
-        boolean result = _exceptions.contains(exception);
+        boolean result = exceptions.contains(exception);
 
-        _exceptions.add(exception);
+        exceptions.add(exception);
 
         return result;
     }

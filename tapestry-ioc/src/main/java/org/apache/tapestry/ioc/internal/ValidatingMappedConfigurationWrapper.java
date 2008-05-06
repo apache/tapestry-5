@@ -21,12 +21,9 @@ import org.slf4j.Logger;
 import java.util.Map;
 
 /**
- * Provides two forms of validation for mapped configurations:
- * <ul>
- * <li>If either key or value is null, then a warning is logged </li>
- * <li>If the key has previously been stored (by some other
- * {@link org.apache.tapestry.ioc.def.ContributionDef}, then a warning is logged</li>
- * </ul>
+ * Provides two forms of validation for mapped configurations: <ul> <li>If either key or value is null, then a warning
+ * is logged </li> <li>If the key has previously been stored (by some other {@link
+ * org.apache.tapestry.ioc.def.ContributionDef}, then a warning is logged</li> </ul>
  * <p/>
  * When a warning is logged, the key/value pair is not added to the delegate.
  *
@@ -35,79 +32,79 @@ import java.util.Map;
  */
 public class ValidatingMappedConfigurationWrapper<K, V> implements MappedConfiguration<K, V>
 {
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final ContributionDef _contributionDef;
+    private final ContributionDef contributionDef;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Class<K> _expectedKeyType;
+    private final Class<K> expectedKeyType;
 
-    private final Class<V> _expectedValueType;
+    private final Class<V> expectedValueType;
 
-    private final Map<K, ContributionDef> _keyToContributor;
+    private final Map<K, ContributionDef> keyToContributor;
 
-    private final MappedConfiguration<K, V> _delegate;
+    private final MappedConfiguration<K, V> delegate;
 
     public ValidatingMappedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
                                                 Logger logger, Class<K> expectedKeyType, Class<V> expectedValueType,
                                                 Map<K, ContributionDef> keyToContributor,
                                                 MappedConfiguration<K, V> delegate)
     {
-        _serviceId = serviceId;
-        _contributionDef = contributionDef;
-        _logger = logger;
-        _expectedKeyType = expectedKeyType;
-        _expectedValueType = expectedValueType;
-        _keyToContributor = keyToContributor;
-        _delegate = delegate;
+        this.serviceId = serviceId;
+        this.contributionDef = contributionDef;
+        this.logger = logger;
+        this.expectedKeyType = expectedKeyType;
+        this.expectedValueType = expectedValueType;
+        this.keyToContributor = keyToContributor;
+        this.delegate = delegate;
     }
 
     public void add(K key, V value)
     {
         if (key == null)
         {
-            _logger.warn(IOCMessages.contributionKeyWasNull(_serviceId, _contributionDef));
+            logger.warn(IOCMessages.contributionKeyWasNull(serviceId, contributionDef));
             return;
         }
 
         if (value == null)
         {
-            _logger.warn(IOCMessages.contributionWasNull(_serviceId, _contributionDef));
+            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
             return;
         }
 
-        if (!_expectedKeyType.isInstance(key))
+        if (!expectedKeyType.isInstance(key))
         {
-            _logger.warn(IOCMessages.contributionWrongKeyType(_serviceId, _contributionDef, key
-                    .getClass(), _expectedKeyType));
+            logger.warn(IOCMessages.contributionWrongKeyType(serviceId, contributionDef, key
+                    .getClass(), expectedKeyType));
             return;
         }
 
-        if (!_expectedValueType.isInstance(value))
+        if (!expectedValueType.isInstance(value))
         {
-            _logger.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, value
-                    .getClass(), _expectedValueType));
+            logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, value
+                    .getClass(), expectedValueType));
             return;
         }
 
-        ContributionDef existing = _keyToContributor.get(key);
+        ContributionDef existing = keyToContributor.get(key);
 
         if (existing != null)
         {
-            _logger.warn(IOCMessages.contributionDuplicateKey(
-                    _serviceId,
-                    _contributionDef,
+            logger.warn(IOCMessages.contributionDuplicateKey(
+                    serviceId,
+                    contributionDef,
                     existing));
             return;
         }
 
-        _delegate.add(key, value);
+        delegate.add(key, value);
 
         // Remember that this key is provided by this contribution, when looking
         // for future conflicts.
 
-        _keyToContributor.put(key, _contributionDef);
+        keyToContributor.put(key, contributionDef);
     }
 
 }

@@ -24,33 +24,33 @@ import java.util.List;
 
 public class RegistryShutdownHubImpl implements RegistryShutdownHub
 {
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final List<RegistryShutdownListener> _listeners = newThreadSafeList();
+    private final List<RegistryShutdownListener> listeners = newThreadSafeList();
 
     public RegistryShutdownHubImpl(Logger logger)
     {
-        _logger = logger;
+        this.logger = logger;
     }
 
     public void addRegistryShutdownListener(RegistryShutdownListener listener)
     {
-        _lock.check();
+        lock.check();
 
-        _listeners.add(listener);
+        listeners.add(listener);
     }
 
     /**
-     * Fires the {@link RegistryShutdownListener#registryDidShutdown()} method on each listener. At
-     * the end, all the listeners are discarded.
+     * Fires the {@link RegistryShutdownListener#registryDidShutdown()} method on each listener. At the end, all the
+     * listeners are discarded.
      */
     public void fireRegistryDidShutdown()
     {
-        _lock.lock();
+        lock.lock();
 
-        for (RegistryShutdownListener l : _listeners)
+        for (RegistryShutdownListener l : listeners)
         {
             try
             {
@@ -58,11 +58,11 @@ public class RegistryShutdownHubImpl implements RegistryShutdownHub
             }
             catch (Exception ex)
             {
-                _logger.error(ServiceMessages.shutdownListenerError(l, ex), ex);
+                logger.error(ServiceMessages.shutdownListenerError(l, ex), ex);
             }
         }
 
-        _listeners.clear();
+        listeners.clear();
     }
 
 }

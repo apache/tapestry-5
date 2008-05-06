@@ -49,11 +49,11 @@ Simple Services
 +----+
 public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 {
-    private final PropertyAccess _propertyAccess;
+    private final PropertyAccess propertyAccess;
 
     public ExceptionAnalyzerImpl(PropertyAccess propertyAccess)
     {
-        _propertyAccess = propertyAccess;
+        this.propertyAccess = propertyAccess;
     }
 
     . . .
@@ -108,7 +108,7 @@ Service Disambiguation
   @Marker(ContextProvider.class)
   public AssetFactory buildContextAssetFactory(ApplicationGlobals globals)
   {
-    return new ContextAssetFactory(_request, globals.getContext());
+    return new ContextAssetFactory(request, globals.getContext());
   }
 +---+
 

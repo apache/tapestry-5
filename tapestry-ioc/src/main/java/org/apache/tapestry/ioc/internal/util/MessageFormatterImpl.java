@@ -21,14 +21,14 @@ import java.util.Locale;
 
 public class MessageFormatterImpl implements MessageFormatter
 {
-    private final String _format;
+    private final String format;
 
-    private final Locale _locale;
+    private final Locale locale;
 
     public MessageFormatterImpl(String format, Locale locale)
     {
-        _format = format;
-        _locale = locale;
+        this.format = format;
+        this.locale = locale;
     }
 
     public String format(Object... args)
@@ -49,7 +49,7 @@ public class MessageFormatterImpl implements MessageFormatter
         // Might be tempting to create a Formatter object and just keep reusing it ... but
         // Formatters are not threadsafe.
 
-        return String.format(_locale, _format, args);
+        return String.format(locale, format, args);
     }
 
 }

@@ -22,20 +22,20 @@ import org.apache.tapestry.ioc.Resource;
  */
 public final class StringLocation implements Location
 {
-    private final String _description;
+    private final String description;
 
-    private final int _line;
+    private final int line;
 
     public StringLocation(String description, int line)
     {
-        _description = description;
-        _line = line;
+        this.description = description;
+        this.line = line;
     }
 
     @Override
     public String toString()
     {
-        return _description;
+        return description;
     }
 
     /**
@@ -48,12 +48,11 @@ public final class StringLocation implements Location
 
     public int getLine()
     {
-        return _line;
+        return line;
     }
 
     /**
-     * Returns null; we don't know where the file really is (it's probably a class on the class
-     * path).
+     * Returns null; we don't know where the file really is (it's probably a class on the class path).
      */
     public Resource getResource()
     {

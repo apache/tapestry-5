@@ -28,35 +28,34 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Used by the {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to create
- * bridge classes and to create instances of bridge classes. A bridge class implements the
- * <em>service</em> interface. Within the chain, bridge 1 is passed to filter 1. Invoking methods
- * on bridge 1 will invoke methods on filter 2.
+ * Used by the {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to create bridge classes and to
+ * create instances of bridge classes. A bridge class implements the <em>service</em> interface. Within the chain,
+ * bridge 1 is passed to filter 1. Invoking methods on bridge 1 will invoke methods on filter 2.
  */
 class BridgeBuilder<S, F>
 {
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Class<S> _serviceInterface;
+    private final Class<S> serviceInterface;
 
-    private final Class<F> _filterInterface;
+    private final Class<F> filterInterface;
 
-    private final ClassFab _classFab;
+    private final ClassFab classFab;
 
-    private final FilterMethodAnalyzer _filterMethodAnalyzer;
+    private final FilterMethodAnalyzer filterMethodAnalyzer;
 
-    private Constructor _constructor;
+    private Constructor constructor;
 
     BridgeBuilder(Logger logger, Class<S> serviceInterface, Class<F> filterInterface,
                   ClassFactory classFactory)
     {
-        _logger = logger;
-        _serviceInterface = serviceInterface;
-        _filterInterface = filterInterface;
+        this.logger = logger;
+        this.serviceInterface = serviceInterface;
+        this.filterInterface = filterInterface;
 
-        _classFab = classFactory.newClass(_serviceInterface);
+        classFab = classFactory.newClass(this.serviceInterface);
 
-        _filterMethodAnalyzer = new FilterMethodAnalyzer(serviceInterface);
+        filterMethodAnalyzer = new FilterMethodAnalyzer(serviceInterface);
     }
 
     private void createClass()
@@ -66,7 +65,7 @@ class BridgeBuilder<S, F>
 
         createInfrastructure();
 
-        MethodIterator mi = new MethodIterator(_serviceInterface);
+        MethodIterator mi = new MethodIterator(serviceInterface);
 
         while (mi.hasNext())
         {
@@ -75,7 +74,7 @@ class BridgeBuilder<S, F>
 
         boolean toStringMethodExists = mi.getToString();
 
-        mi = new MethodIterator(_filterInterface);
+        mi = new MethodIterator(filterInterface);
 
         while (mi.hasNext())
         {
@@ -95,25 +94,25 @@ class BridgeBuilder<S, F>
         {
             String toString = format(
                     "<PipelineBridge from %s to %s>",
-                    _serviceInterface.getName(),
-                    _filterInterface.getName());
-            _classFab.addToString(toString);
+                    serviceInterface.getName(),
+                    filterInterface.getName());
+            classFab.addToString(toString);
         }
 
-        Class bridgeClass = _classFab.createClass();
+        Class bridgeClass = classFab.createClass();
 
-        _constructor = bridgeClass.getConstructors()[0];
+        constructor = bridgeClass.getConstructors()[0];
     }
 
     private void createInfrastructure()
     {
-        _classFab.addField("_next", Modifier.PRIVATE | Modifier.FINAL, _serviceInterface);
-        _classFab.addField("_filter", Modifier.PRIVATE | Modifier.FINAL, _filterInterface);
+        classFab.addField("_next", Modifier.PRIVATE | Modifier.FINAL, serviceInterface);
+        classFab.addField("_filter", Modifier.PRIVATE | Modifier.FINAL, filterInterface);
 
-        _classFab.addConstructor(new Class[]
-                {_serviceInterface, _filterInterface}, null, "{ _next = $1; _filter = $2; }");
+        classFab.addConstructor(new Class[]
+                { serviceInterface, filterInterface }, null, "{ _next = $1; _filter = $2; }");
 
-        _classFab.addInterface(_serviceInterface);
+        classFab.addInterface(serviceInterface);
     }
 
     /**
@@ -124,13 +123,13 @@ class BridgeBuilder<S, F>
      */
     public S instantiateBridge(S nextBridge, F filter)
     {
-        if (_constructor == null) createClass();
+        if (constructor == null) createClass();
 
         try
         {
-            Object instance = _constructor.newInstance(nextBridge, filter);
+            Object instance = constructor.newInstance(nextBridge, filter);
 
-            return _serviceInterface.cast(instance);
+            return serviceInterface.cast(instance);
         }
         catch (Exception ex)
         {
@@ -146,18 +145,17 @@ class BridgeBuilder<S, F>
         {
             MethodSignature ms = (MethodSignature) i.next();
 
-            _logger.error(ServiceMessages
-                    .extraFilterMethod(ms, _filterInterface, _serviceInterface));
+            logger.error(ServiceMessages
+                    .extraFilterMethod(ms, filterInterface, serviceInterface));
         }
     }
 
     /**
-     * Finds a matching method in filterMethods for the given service method. A matching method has
-     * the same signature as the service interface method, but with an additional parameter matching
-     * the service interface itself.
+     * Finds a matching method in filterMethods for the given service method. A matching method has the same signature
+     * as the service interface method, but with an additional parameter matching the service interface itself.
      * <p/>
-     * The matching method signature from the list of filterMethods is removed and code generation
-     * strategies for making the two methods call each other are added.
+     * The matching method signature from the list of filterMethods is removed and code generation strategies for making
+     * the two methods call each other are added.
      */
     private void addBridgeMethod(MethodSignature ms, List filterMethods)
     {
@@ -167,7 +165,7 @@ class BridgeBuilder<S, F>
         {
             MethodSignature fms = (MethodSignature) i.next();
 
-            int position = _filterMethodAnalyzer.findServiceInterfacePosition(ms, fms);
+            int position = filterMethodAnalyzer.findServiceInterfacePosition(ms, fms);
 
             if (position >= 0)
             {
@@ -177,19 +175,19 @@ class BridgeBuilder<S, F>
             }
         }
 
-        String message = ServiceMessages.unmatchedServiceMethod(ms, _filterInterface);
+        String message = ServiceMessages.unmatchedServiceMethod(ms, filterInterface);
 
-        _logger.error(message);
+        logger.error(message);
 
         String code = format("throw new %s(\"%s\");", RuntimeException.class.getName(), message);
 
-        _classFab.addMethod(Modifier.PUBLIC, ms, code);
+        classFab.addMethod(Modifier.PUBLIC, ms, code);
     }
 
     /**
-     * Adds a method to the class which bridges from the service method to the corresponding method
-     * in the filter interface. The next service (either another Bridge, or the terminator at the
-     * end of the pipeline) is passed to the filter).
+     * Adds a method to the class which bridges from the service method to the corresponding method in the filter
+     * interface. The next service (either another Bridge, or the terminator at the end of the pipeline) is passed to
+     * the filter).
      */
     private void addBridgeMethod(int position, MethodSignature ms, MethodSignature fms)
     {
@@ -233,7 +231,7 @@ class BridgeBuilder<S, F>
         // This should work, unless the exception types turn out to not be compatble. We still
         // don't do a check on that, and not sure that Javassist does either!
 
-        _classFab.addMethod(Modifier.PUBLIC, ms, buffer.toString());
+        classFab.addMethod(Modifier.PUBLIC, ms, buffer.toString());
     }
 
 }

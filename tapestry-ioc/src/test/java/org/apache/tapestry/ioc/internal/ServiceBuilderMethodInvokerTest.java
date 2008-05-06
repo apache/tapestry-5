@@ -42,7 +42,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         ServiceBuilderResources resources = mockServiceBuilderResources();
         Logger logger = mockLogger();
 
-        fixture._fie = mockFieService();
+        fixture.fie = mockFieService();
 
         trainForConstructor(resources, logger);
 
@@ -57,7 +57,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Object actual = sc.createObject();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
 
         verify();
     }
@@ -80,12 +80,12 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Logger logger = mockLogger();
 
-        fixture._expectedServiceId = SERVICE_ID;
-        fixture._expectedServiceInterface = FieService.class;
-        fixture._expectedServiceResources = resources;
-        fixture._expectedLogger = logger;
+        fixture.expectedServiceId = SERVICE_ID;
+        fixture.expectedServiceInterface = FieService.class;
+        fixture.expectedServiceResources = resources;
+        fixture.expectedLogger = logger;
 
-        fixture._fie = mockFieService();
+        fixture.fie = mockFieService();
 
         trainForConstructor(resources, logger);
 
@@ -101,7 +101,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Object actual = sc.createObject();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
 
         verify();
     }
@@ -115,9 +115,9 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Logger logger = mockLogger();
 
-        fixture._expectedString = "Injected";
+        fixture.expectedString = "Injected";
 
-        fixture._fie = mockFieService();
+        fixture.fie = mockFieService();
 
         trainForConstructor(resources, logger);
 
@@ -138,7 +138,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Object actual = sc.createObject();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
 
         verify();
     }
@@ -150,14 +150,14 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         ServiceBuilderResources resources = mockServiceBuilderResources();
         Logger logger = mockLogger();
 
-        fixture._fie = mockFieService();
-        fixture._expectedFoe = newFoe();
+        fixture.fie = mockFieService();
+        fixture.expectedFoe = newFoe();
 
         trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
-        train_getService(resources, "Foe", FoeService.class, fixture._expectedFoe);
+        train_getService(resources, "Foe", FoeService.class, fixture.expectedFoe);
 
         train_isDebugEnabled(logger, false);
 
@@ -168,7 +168,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Object actual = sc.createObject();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
 
         verify();
     }
@@ -181,9 +181,9 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         ServiceBuilderResources resources = mockServiceBuilderResources();
         Logger logger = mockLogger();
 
-        fixture._fie = mockFieService();
+        fixture.fie = mockFieService();
         List<Runnable> result = newMock(List.class);
-        fixture._expectedConfiguration = result;
+        fixture.expectedConfiguration = result;
 
         trainForConstructor(resources, logger);
 
@@ -200,7 +200,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Object actual = sc.createObject();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
 
         verify();
 
@@ -214,9 +214,9 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         ServiceBuilderResources resources = mockServiceBuilderResources();
         Logger logger = mockLogger();
 
-        fixture._fie = mockFieService();
+        fixture.fie = mockFieService();
         Collection<Runnable> result = newMock(Collection.class);
-        fixture._expectedConfiguration = result;
+        fixture.expectedConfiguration = result;
 
         trainForConstructor(resources, logger);
 
@@ -233,7 +233,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         Object actual = sc.createObject();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
 
         verify();
     }
@@ -322,15 +322,15 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
         ServiceBuilderResources resources = mockServiceBuilderResources();
         Logger logger = mockLogger();
 
-        fixture._fie = mockFieService();
-        fixture._expectedFoe = mockFoeService();
+        fixture.fie = mockFieService();
+        fixture.expectedFoe = mockFoeService();
 
         trainForConstructor(resources, logger);
 
         train_getModuleBuilder(resources, fixture);
 
         expect(resources.getObject(eq(FoeService.class), isA(AnnotationProvider.class))).andReturn(
-                fixture._expectedFoe);
+                fixture.expectedFoe);
 
         train_isDebugEnabled(logger, false);
 
@@ -342,7 +342,7 @@ public class ServiceBuilderMethodInvokerTest extends IOCInternalTestCase
 
         verify();
 
-        assertSame(actual, fixture._fie);
+        assertSame(actual, fixture.fie);
     }
 
     protected final void train_getModuleBuilder(ServiceBuilderResources resources,

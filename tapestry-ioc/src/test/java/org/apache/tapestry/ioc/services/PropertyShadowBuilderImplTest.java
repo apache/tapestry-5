@@ -24,26 +24,26 @@ import java.util.Map;
 
 public class PropertyShadowBuilderImplTest extends IOCTestCase
 {
-    private Registry _registry;
-    private PropertyShadowBuilder _builder;
+    private Registry registry;
+    private PropertyShadowBuilder builder;
 
     private final String CLASS_NAME = getClass().getName();
 
     @BeforeClass
     public void setup_registry()
     {
-        _registry = buildRegistry();
+        registry = buildRegistry();
 
-        _builder = _registry.getService("PropertyShadowBuilder", PropertyShadowBuilder.class);
+        builder = registry.getService("PropertyShadowBuilder", PropertyShadowBuilder.class);
     }
 
     @AfterClass
     public void shutdown_registry()
     {
-        _registry.shutdown();
+        registry.shutdown();
 
-        _registry = null;
-        _builder = null;
+        registry = null;
+        builder = null;
     }
 
     public class FooHolder
@@ -94,7 +94,7 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
 
         holder.setFoo(foo);
 
-        Foo shadow = _builder.build(holder, "foo", Foo.class);
+        Foo shadow = builder.build(holder, "foo", Foo.class);
 
         for (int i = 0; i < 3; i++)
         {
@@ -119,7 +119,7 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
 
         try
         {
-            _builder.build(holder, "bar", Foo.class);
+            builder.build(holder, "bar", Foo.class);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -136,7 +136,7 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
 
         try
         {
-            _builder.build(holder, "count", Map.class);
+            builder.build(holder, "count", Map.class);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -153,7 +153,7 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
 
         try
         {
-            _builder.build(holder, "writeOnly", Foo.class);
+            builder.build(holder, "writeOnly", Foo.class);
             unreachable();
         }
         catch (RuntimeException ex)

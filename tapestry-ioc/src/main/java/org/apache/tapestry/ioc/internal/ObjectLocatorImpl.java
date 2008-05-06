@@ -18,56 +18,55 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 
 /**
- * Base service locator class used when only the module is known (i.e., when instantiating a module
- * builder class).
+ * Base service locator class used when only the module is known (i.e., when instantiating a module builder class).
  */
 public class ObjectLocatorImpl implements ObjectLocator
 {
-    private final InternalRegistry _registry;
+    private final InternalRegistry registry;
 
-    private final Module _module;
+    private final Module module;
 
     public ObjectLocatorImpl(InternalRegistry registry, Module module)
     {
-        _registry = registry;
-        _module = module;
+        this.registry = registry;
+        this.module = module;
     }
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        String expandedServiceId = _registry.expandSymbols(serviceId);
+        String expandedServiceId = registry.expandSymbols(serviceId);
 
-        return _registry.getService(expandedServiceId, serviceInterface);
+        return registry.getService(expandedServiceId, serviceInterface);
     }
 
     public <T> T getService(Class<T> serviceInterface)
     {
-        return _registry.getService(serviceInterface);
+        return registry.getService(serviceInterface);
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return _registry.getObject(objectType, annotationProvider);
+        return registry.getObject(objectType, annotationProvider);
     }
 
     protected InternalRegistry getRegistry()
     {
-        return _registry;
+        return registry;
     }
 
     protected Module getModule()
     {
-        return _module;
+        return module;
     }
 
     public <T> T autobuild(Class<T> clazz)
     {
-        return _registry.autobuild(clazz);
+        return registry.autobuild(clazz);
     }
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
-        return _registry.proxy(interfaceClass, implementationClass);
+        return registry.proxy(interfaceClass, implementationClass);
     }
 
 }

@@ -17,46 +17,45 @@ package org.apache.tapestry.ioc;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 
 /**
- * A wrapper that allows objects of a target type to be ordered. Each Orderable object is given a
- * unique id and a set of pre-requisites (objects which should be ordered earlier) and
- * post-requisites (objects which should be ordered later).
+ * A wrapper that allows objects of a target type to be ordered. Each Orderable object is given a unique id and a set of
+ * pre-requisites (objects which should be ordered earlier) and post-requisites (objects which should be ordered
+ * later).
  *
  * @param <T>
  */
 public class Orderable<T>
 {
-    private final String _id;
+    private final String id;
 
-    private final T _target;
+    private final T target;
 
-    private final String[] _constraints;
+    private final String[] constraints;
 
     /**
      * @param id     unique identifier for the target object
-     * @param target the object to be ordered; this may also be null (in which case the id represents a
-     *               placeholder)
+     * @param target the object to be ordered; this may also be null (in which case the id represents a placeholder)
      */
 
     public Orderable(String id, T target, String... constraints)
     {
-        _id = notBlank(id, "id");
-        _target = target;
-        _constraints = constraints;
+        this.id = notBlank(id, "id");
+        this.target = target;
+        this.constraints = constraints;
     }
 
     public String getId()
     {
-        return _id;
+        return id;
     }
 
     public T getTarget()
     {
-        return _target;
+        return target;
     }
 
     public String[] getConstraints()
     {
-        return _constraints;
+        return constraints;
     }
 
     @Override
@@ -64,16 +63,16 @@ public class Orderable<T>
     {
         StringBuilder buffer = new StringBuilder("Orderable[");
 
-        buffer.append(_id);
+        buffer.append(id);
 
-        for (String c : _constraints)
+        for (String c : constraints)
         {
             buffer.append(" ");
             buffer.append(c);
         }
 
         buffer.append(" ");
-        buffer.append(_target.toString());
+        buffer.append(target.toString());
         buffer.append("]");
 
         return buffer.toString();

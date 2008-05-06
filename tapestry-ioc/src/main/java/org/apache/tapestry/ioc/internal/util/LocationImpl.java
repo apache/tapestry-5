@@ -24,11 +24,11 @@ import java.util.Formatter;
  */
 public final class LocationImpl implements Location
 {
-    private final Resource _resource;
+    private final Resource resource;
 
-    private final int _line;
+    private final int line;
 
-    private final int _column;
+    private final int column;
 
     private static final int UNKNOWN = -1;
 
@@ -44,35 +44,35 @@ public final class LocationImpl implements Location
 
     public LocationImpl(Resource resource, int line, int column)
     {
-        _resource = resource;
-        _line = line;
-        _column = column;
+        this.resource = resource;
+        this.line = line;
+        this.column = column;
     }
 
     public Resource getResource()
     {
-        return _resource;
+        return resource;
     }
 
     public int getLine()
     {
-        return _line;
+        return line;
     }
 
     public int getColumn()
     {
-        return _column;
+        return column;
     }
 
     @Override
     public String toString()
     {
-        StringBuilder buffer = new StringBuilder(_resource.toString());
+        StringBuilder buffer = new StringBuilder(resource.toString());
         Formatter formatter = new Formatter(buffer);
 
-        if (_line != UNKNOWN) formatter.format(", line %d", _line);
+        if (line != UNKNOWN) formatter.format(", line %d", line);
 
-        if (_column != UNKNOWN) formatter.format(", column %d", _column);
+        if (column != UNKNOWN) formatter.format(", column %d", column);
 
         return buffer.toString();
     }
@@ -82,9 +82,9 @@ public final class LocationImpl implements Location
     {
         final int PRIME = 31;
         int result = 1;
-        result = PRIME * result + _column;
-        result = PRIME * result + _line;
-        result = PRIME * result + ((_resource == null) ? 0 : _resource.hashCode());
+        result = PRIME * result + column;
+        result = PRIME * result + line;
+        result = PRIME * result + ((resource == null) ? 0 : resource.hashCode());
         return result;
     }
 
@@ -95,13 +95,13 @@ public final class LocationImpl implements Location
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         final LocationImpl other = (LocationImpl) obj;
-        if (_column != other._column) return false;
-        if (_line != other._line) return false;
-        if (_resource == null)
+        if (column != other.column) return false;
+        if (line != other.line) return false;
+        if (resource == null)
         {
-            if (other._resource != null) return false;
+            if (other.resource != null) return false;
         }
-        else if (!_resource.equals(other._resource)) return false;
+        else if (!resource.equals(other.resource)) return false;
         return true;
     }
 

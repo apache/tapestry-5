@@ -18,7 +18,7 @@ import org.apache.tapestry.ioc.OrderedConfiguration;
 
 public class StartupModule
 {
-    public static boolean _startupInvoked;
+    public static boolean startupInvoked;
 
     public static void contributeRegistryStartup(OrderedConfiguration<Runnable> configuration)
     {
@@ -26,7 +26,7 @@ public class StartupModule
         {
             public void run()
             {
-                _startupInvoked = true;
+                startupInvoked = true;
             }
         };
 

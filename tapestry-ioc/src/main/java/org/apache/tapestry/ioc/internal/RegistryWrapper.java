@@ -19,58 +19,58 @@ import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.Registry;
 
 /**
- * A wrapper around {@link InternalRegistry} that exists to expand symbols in a service id before
- * invoking {@link ObjectLocator#getService(Class)}.
+ * A wrapper around {@link InternalRegistry} that exists to expand symbols in a service id before invoking {@link
+ * ObjectLocator#getService(Class)}.
  */
 public class RegistryWrapper implements Registry
 {
-    private final InternalRegistry _registry;
+    private final InternalRegistry registry;
 
     public RegistryWrapper(final InternalRegistry registry)
     {
-        _registry = registry;
+        this.registry = registry;
     }
 
     public void cleanupThread()
     {
-        _registry.cleanupThread();
+        registry.cleanupThread();
     }
 
     public void shutdown()
     {
-        _registry.shutdown();
+        registry.shutdown();
     }
 
     public <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return _registry.getObject(objectType, annotationProvider);
+        return registry.getObject(objectType, annotationProvider);
     }
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        String expandedServiceId = _registry.expandSymbols(serviceId);
+        String expandedServiceId = registry.expandSymbols(serviceId);
 
-        return _registry.getService(expandedServiceId, serviceInterface);
+        return registry.getService(expandedServiceId, serviceInterface);
     }
 
     public <T> T getService(Class<T> serviceInterface)
     {
-        return _registry.getService(serviceInterface);
+        return registry.getService(serviceInterface);
     }
 
     public <T> T autobuild(Class<T> clazz)
     {
-        return _registry.autobuild(clazz);
+        return registry.autobuild(clazz);
     }
 
     public void performRegistryStartup()
     {
-        _registry.performRegistryStartup();
+        registry.performRegistryStartup();
     }
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
-        return _registry.proxy(interfaceClass, implementationClass);
+        return registry.proxy(interfaceClass, implementationClass);
     }
 
 }

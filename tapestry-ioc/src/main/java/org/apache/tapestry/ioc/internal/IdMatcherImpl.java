@@ -21,15 +21,15 @@ import org.apache.tapestry.ioc.IdMatcher;
  */
 public class IdMatcherImpl implements IdMatcher
 {
-    private final GlobPatternMatcher _globMatcher;
+    private final GlobPatternMatcher globMatcher;
 
     public IdMatcherImpl(String pattern)
     {
-        _globMatcher = new GlobPatternMatcher(pattern);
+        globMatcher = new GlobPatternMatcher(pattern);
     }
 
     public boolean matches(String id)
     {
-        return _globMatcher.matches(id);
+        return globMatcher.matches(id);
     }
 }

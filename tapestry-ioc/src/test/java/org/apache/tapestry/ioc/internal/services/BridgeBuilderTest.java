@@ -23,7 +23,7 @@ import java.io.Serializable;
 
 public class BridgeBuilderTest extends IOCInternalTestCase
 {
-    private ClassFactory _classFactory = new ClassFactoryImpl();
+    private ClassFactory classFactory = new ClassFactoryImpl();
 
     @Test
     public void standard_interface_and_filter()
@@ -33,7 +33,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         replay();
 
         BridgeBuilder<StandardService, StandardFilter> bb = new BridgeBuilder<StandardService, StandardFilter>(
-                logger, StandardService.class, StandardFilter.class, _classFactory);
+                logger, StandardService.class, StandardFilter.class, classFactory);
 
         StandardFilter sf = new StandardFilter()
         {
@@ -76,7 +76,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         replay();
 
         BridgeBuilder<ToStringService, ToStringFilter> bb = new BridgeBuilder<ToStringService, ToStringFilter>(
-                logger, ToStringService.class, ToStringFilter.class, _classFactory);
+                logger, ToStringService.class, ToStringFilter.class, classFactory);
 
         ToStringFilter f = new ToStringFilter()
         {
@@ -115,7 +115,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         replay();
 
         BridgeBuilder<ExtraServiceMethod, Serializable> bb = new BridgeBuilder<ExtraServiceMethod, Serializable>(
-                logger, ExtraServiceMethod.class, Serializable.class, _classFactory);
+                logger, ExtraServiceMethod.class, Serializable.class, classFactory);
 
         ExtraServiceMethod esm = bb.instantiateBridge(next, filter);
 
@@ -149,7 +149,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         replay();
 
         BridgeBuilder<Serializable, ExtraFilterMethod> bb = new BridgeBuilder<Serializable, ExtraFilterMethod>(
-                logger, Serializable.class, ExtraFilterMethod.class, _classFactory);
+                logger, Serializable.class, ExtraFilterMethod.class, classFactory);
 
         assertNotNull(bb.instantiateBridge(next, filter));
 
@@ -164,7 +164,7 @@ public class BridgeBuilderTest extends IOCInternalTestCase
         replay();
 
         BridgeBuilder<MiddleService, MiddleFilter> bb = new BridgeBuilder<MiddleService, MiddleFilter>(
-                logger, MiddleService.class, MiddleFilter.class, _classFactory);
+                logger, MiddleService.class, MiddleFilter.class, classFactory);
 
         MiddleFilter mf = new MiddleFilter()
         {

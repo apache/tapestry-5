@@ -37,18 +37,18 @@ import java.util.Set;
 
 public class DefaultModuleDefImplTest extends IOCTestCase
 {
-    private ClassFactory _classFactory;
+    private ClassFactory classFactory;
 
     @BeforeClass
     public void setup()
     {
-        _classFactory = new ClassFactoryImpl();
+        classFactory = new ClassFactoryImpl();
     }
 
     @AfterClass
     public void cleanup()
     {
-        _classFactory = null;
+        classFactory = null;
     }
 
     @Test
@@ -62,7 +62,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(SimpleModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(SimpleModule.class, logger, classFactory);
 
         assertEquals(md.toString(), "ModuleDef[" + className + " Barney, Fred, Wilma]");
 
@@ -126,10 +126,10 @@ public class DefaultModuleDefImplTest extends IOCTestCase
     public void service_id_conflict() throws Exception
     {
         Method conflictMethod = ServiceIdConflictMethodModule.class.getMethod("buildFred");
-        String conflictMethodString = InternalUtils.asString(conflictMethod, _classFactory);
+        String conflictMethodString = InternalUtils.asString(conflictMethod, classFactory);
 
         String expectedMethod = InternalUtils.asString(ServiceIdConflictMethodModule.class
-                .getMethod("buildFred", Object.class), _classFactory);
+                .getMethod("buildFred", Object.class), classFactory);
 
         Logger logger = mockLogger();
 
@@ -139,7 +139,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         // BigDecimal is arbitrary, any class would do.
 
-        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(ServiceIdConflictMethodModule.class, logger, classFactory);
 
         Set<String> ids = md.getServiceIds();
 
@@ -276,7 +276,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(moduleClass, logger, classFactory);
 
         Set<ContributionDef> defs = md.getContributionDefs();
 
@@ -339,7 +339,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(AutobuildModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(AutobuildModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("StringHolder");
 
@@ -358,7 +358,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(ComplexAutobuildModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(ComplexAutobuildModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("SH");
 
@@ -379,7 +379,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, _classFactory);
+            new DefaultModuleDefImpl(UninstantiableAutobuildServiceModule.class, logger, classFactory);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -400,7 +400,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(NonStaticBindMethodModule.class, logger, classFactory);
 
         // Prove that the bind method was not invoke
 
@@ -431,7 +431,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         replay();
 
         ModuleDef def = new DefaultModuleDefImpl(MutlipleAutobuildServiceConstructorsModule.class, logger,
-                                                 _classFactory);
+                                                 classFactory);
 
         ServiceDef sd = def.getServiceDef("StringHolder");
 
@@ -456,7 +456,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         try
         {
-            new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, _classFactory);
+            new DefaultModuleDefImpl(ExceptionInBindMethod.class, logger, classFactory);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -477,7 +477,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(EagerLoadViaAnnotationModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("Runnable");
 
@@ -493,7 +493,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("Greeter");
 
@@ -509,7 +509,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("RedGreeter");
 
@@ -525,7 +525,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("SecondRedGreeter");
 
@@ -542,7 +542,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
 
         replay();
 
-        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, _classFactory);
+        ModuleDef md = new DefaultModuleDefImpl(MarkerModule.class, logger, classFactory);
 
         ServiceDef sd = md.getServiceDef("SurprisinglyBlueGreeter");
 

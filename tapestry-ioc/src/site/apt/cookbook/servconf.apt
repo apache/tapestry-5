@@ -76,11 +76,11 @@ public class MyAppModule
 +----+
 public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
 {
-  private final Set<String> _digestExtensions;
+  private final Set<String> digestExtensions;
 
   public ResourceDigestGeneratorImpl(Collection<String> configuration)
   {
-      _digestExtensions = new HashSet<String>(configuration);
+      digestExtensions = new HashSet<String>(configuration);
   }
 
   . . .

@@ -14,6 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InheritanceSearch;
@@ -29,22 +30,22 @@ public class TypeCoercerImpl implements TypeCoercer
 {
     // Read only after constructor
 
-    private final Map<Class, List<CoercionTuple>> _sourceTypeToTuple = newMap();
+    private final Map<Class, List<CoercionTuple>> sourceTypeToTuple = CollectionFactory.newMap();
 
     // Access to the cache must be thread safe
 
-    private final Map<CacheKey, Coercion> _cache = newConcurrentMap();
+    private final Map<CacheKey, Coercion> cache = CollectionFactory.newConcurrentMap();
 
     static class CacheKey
     {
-        private final Class _sourceClass;
+        private final Class sourceClass;
 
-        private final Class _targetClass;
+        private final Class targetClass;
 
         CacheKey(final Class sourceClass, final Class targetClass)
         {
-            _sourceClass = sourceClass;
-            _targetClass = targetClass;
+            this.sourceClass = sourceClass;
+            this.targetClass = targetClass;
         }
 
         @Override
@@ -56,20 +57,20 @@ public class TypeCoercerImpl implements TypeCoercer
 
             CacheKey other = (CacheKey) obj;
 
-            return _sourceClass.equals(other._sourceClass)
-                    && _targetClass.equals(other._targetClass);
+            return sourceClass.equals(other.sourceClass)
+                    && targetClass.equals(other.targetClass);
         }
 
         @Override
         public int hashCode()
         {
-            return _sourceClass.hashCode() * 27 % _targetClass.hashCode();
+            return sourceClass.hashCode() * 27 % targetClass.hashCode();
         }
 
         @Override
         public String toString()
         {
-            return String.format("CacheKey[%s --> %s]", _sourceClass.getName(), _targetClass
+            return String.format("CacheKey[%s --> %s]", sourceClass.getName(), targetClass
                     .getName());
         }
     }
@@ -94,7 +95,7 @@ public class TypeCoercerImpl implements TypeCoercer
         {
             Class key = tuple.getSourceType();
 
-            InternalUtils.addToMapList(_sourceTypeToTuple, key, tuple);
+            InternalUtils.addToMapList(sourceTypeToTuple, key, tuple);
         }
     }
 
@@ -161,12 +162,12 @@ public class TypeCoercerImpl implements TypeCoercer
     {
         CacheKey key = new CacheKey(sourceType, targetType);
 
-        Coercion result = _cache.get(key);
+        Coercion result = cache.get(key);
 
         if (result == null)
         {
             result = findOrCreateCoercion(sourceType, targetType);
-            _cache.put(key, result);
+            cache.put(key, result);
         }
 
         return result;
@@ -174,29 +175,27 @@ public class TypeCoercerImpl implements TypeCoercer
 
     public void clearCache()
     {
-        _cache.clear();
+        cache.clear();
     }
 
     /**
-     * Here's the real meat; we do a search of the space to find coercions, or a system of
-     * coercions, that accomplish the desired coercion.
+     * Here's the real meat; we do a search of the space to find coercions, or a system of coercions, that accomplish
+     * the desired coercion.
      * <p/>
-     * There's <strong>TREMENDOUS</strong> room to improve this algorithm. For example, inheritance
-     * lists could be cached. Further, there's probably more ways to early prune the search.
-     * However, even with dozens or perhaps hundreds of tuples, I suspect the search will still
-     * grind to a conclusion quickly.
+     * There's <strong>TREMENDOUS</strong> room to improve this algorithm. For example, inheritance lists could be
+     * cached. Further, there's probably more ways to early prune the search. However, even with dozens or perhaps
+     * hundreds of tuples, I suspect the search will still grind to a conclusion quickly.
      * <p/>
-     * The order of operations should help ensure that the most efficient tuple chain is located. If
-     * you think about how tuples are added to the queue, there are two factors: size (the number of
-     * steps in the coercion) and "class distance" (that is, number of steps up the inheritance
-     * hiearchy). All the appropriate 1 step coercions will be considered first, in class distance
-     * order. Along the way, we'll queue up all the 2 step coercions, again in class distance order.
-     * By the time we reach some of those, we'll have begun queing up the 3 step coercions, and so
-     * forth, until we run out of input tuples we can use to fabricate multi-step compound
-     * coercions, or reach a final response.
+     * The order of operations should help ensure that the most efficient tuple chain is located. If you think about how
+     * tuples are added to the queue, there are two factors: size (the number of steps in the coercion) and "class
+     * distance" (that is, number of steps up the inheritance hiearchy). All the appropriate 1 step coercions will be
+     * considered first, in class distance order. Along the way, we'll queue up all the 2 step coercions, again in class
+     * distance order. By the time we reach some of those, we'll have begun queing up the 3 step coercions, and so
+     * forth, until we run out of input tuples we can use to fabricate multi-step compound coercions, or reach a final
+     * response.
      * <p/>
-     * This does create a good number of short lived temporary objects (the compound tuples), but
-     * that's what the GC is really good at.
+     * This does create a good number of short lived temporary objects (the compound tuples), but that's what the GC is
+     * really good at.
      *
      * @param sourceType
      * @param targetType
@@ -250,15 +249,15 @@ public class TypeCoercerImpl implements TypeCoercer
     }
 
     /**
-     * Coercion from null is special; we match based on the target type and its not
-     * a spanning search. In many cases, we return a pass-thru that leaves the value as null.
+     * Coercion from null is special; we match based on the target type and its not a spanning search. In many cases, we
+     * return a pass-thru that leaves the value as null.
      *
      * @param targetType desired type
      * @return the coercion
      */
     private Coercion searchForNullCoercion(Class targetType)
     {
-        List<CoercionTuple> tuples = _sourceTypeToTuple.get(void.class);
+        List<CoercionTuple> tuples = sourceTypeToTuple.get(void.class);
 
         // We know it will never be null, because we make contributions
         // to ensure this, but a little check doesn't hurt.
@@ -280,14 +279,13 @@ public class TypeCoercerImpl implements TypeCoercer
     }
 
     /**
-     * Builds a string listing all the coercions configured for the type coercer, sorted
-     * alphabetically.
+     * Builds a string listing all the coercions configured for the type coercer, sorted alphabetically.
      */
     private String buildCoercionCatalog()
     {
         List<String> descriptions = newList();
 
-        for (List<CoercionTuple> list : _sourceTypeToTuple.values())
+        for (List<CoercionTuple> list : sourceTypeToTuple.values())
         {
             for (CoercionTuple tuple : list)
                 descriptions.add(tuple.toString());
@@ -306,7 +304,7 @@ public class TypeCoercerImpl implements TypeCoercer
 
         for (Class c : new InheritanceSearch(sourceType))
         {
-            List<CoercionTuple> tuples = _sourceTypeToTuple.get(c);
+            List<CoercionTuple> tuples = sourceTypeToTuple.get(c);
 
             if (tuples == null) continue;
 
@@ -324,8 +322,8 @@ public class TypeCoercerImpl implements TypeCoercer
     }
 
     /**
-     * Creates and adds to the pool a new set of coercions based on an intermediate tuple. Adds
-     * compound coercion tuples to the end of the queue.
+     * Creates and adds to the pool a new set of coercions based on an intermediate tuple. Adds compound coercion tuples
+     * to the end of the queue.
      *
      * @param sourceType        the source type of the coercion
      * @param intermediateTuple a tuple that converts from the source type to some intermediate type (that is not
@@ -342,7 +340,7 @@ public class TypeCoercerImpl implements TypeCoercer
 
         for (Class c : new InheritanceSearch(intermediateType))
         {
-            List<CoercionTuple> tuples = _sourceTypeToTuple.get(c);
+            List<CoercionTuple> tuples = sourceTypeToTuple.get(c);
 
             if (tuples == null) continue;
 

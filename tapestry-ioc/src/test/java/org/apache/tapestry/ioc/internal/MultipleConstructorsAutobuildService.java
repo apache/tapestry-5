@@ -19,7 +19,7 @@ import org.apache.tapestry.ioc.annotations.InjectService;
 
 public class MultipleConstructorsAutobuildService implements StringHolder
 {
-    private final StringHolder _delegate;
+    private final StringHolder delegate;
 
     public MultipleConstructorsAutobuildService()
     {
@@ -28,17 +28,17 @@ public class MultipleConstructorsAutobuildService implements StringHolder
 
     public MultipleConstructorsAutobuildService(@InjectService("ToUpperCaseStringHolder")StringHolder delegate)
     {
-        _delegate = delegate;
+        this.delegate = delegate;
     }
 
     public String getValue()
     {
-        return _delegate.getValue();
+        return delegate.getValue();
     }
 
     public void setValue(String value)
     {
-        _delegate.setValue(value);
+        delegate.setValue(value);
     }
 
 }

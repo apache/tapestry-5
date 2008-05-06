@@ -19,28 +19,28 @@ package org.apache.tapestry.ioc.internal.services;
  */
 public class TargetBean
 {
-    private String _firstName;
+    private String firstName;
 
-    private String _lastName;
+    private String lastName;
 
     public String getFirstName()
     {
-        return _firstName;
+        return firstName;
     }
 
     public String getLastName()
     {
-        return _lastName;
+        return lastName;
     }
 
     public void setFirstName(String firstName)
     {
-        _firstName = firstName;
+        this.firstName = firstName;
     }
 
     public void setLastName(String lastName)
     {
-        _lastName = lastName;
+        this.lastName = lastName;
     }
 
 }

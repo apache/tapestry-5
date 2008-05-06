@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.services.SymbolSource;
@@ -25,20 +25,19 @@ import java.util.Map;
 
 public class SymbolSourceImpl implements SymbolSource
 {
-    private final List<SymbolProvider> _providers;
+    private final List<SymbolProvider> providers;
 
     /**
      * Cache of symbol name to fully expanded symbol value.
      */
-    private final Map<String, String> _cache = newConcurrentMap();
+    private final Map<String, String> _cache = CollectionFactory.newConcurrentMap();
 
     /**
-     * Contains execution data needed when performing an expansion (largely, to check for endless
-     * recursion).
+     * Contains execution data needed when performing an expansion (largely, to check for endless recursion).
      */
     private class SymbolExpansion
     {
-        private final LinkedList<String> _expandingSymbols = newLinkedList();
+        private final LinkedList<String> expandingSymbols = newLinkedList();
 
         String expandSymbols(String input)
         {
@@ -72,7 +71,7 @@ public class SymbolSourceImpl implements SymbolSource
 
                 if (endx < 0)
                 {
-                    String message = _expandingSymbols.isEmpty() ? ServiceMessages
+                    String message = expandingSymbols.isEmpty() ? ServiceMessages
                             .missingSymbolCloseBrace(input) : ServiceMessages
                             .missingSymbolCloseBraceInPath(input, path());
 
@@ -107,19 +106,19 @@ public class SymbolSourceImpl implements SymbolSource
 
         String expandSymbol(String symbolName)
         {
-            if (_expandingSymbols.contains(symbolName))
+            if (expandingSymbols.contains(symbolName))
             {
-                _expandingSymbols.add(symbolName);
+                expandingSymbols.add(symbolName);
                 throw new RuntimeException(ServiceMessages.recursiveSymbol(
                         symbolName,
                         pathFrom(symbolName)));
             }
 
-            _expandingSymbols.addLast(symbolName);
+            expandingSymbols.addLast(symbolName);
 
             String value = null;
 
-            for (SymbolProvider provider : _providers)
+            for (SymbolProvider provider : providers)
             {
                 value = provider.valueForSymbol(symbolName);
 
@@ -129,7 +128,7 @@ public class SymbolSourceImpl implements SymbolSource
             if (value == null)
             {
 
-                String message = _expandingSymbols.size() == 1 ? ServiceMessages
+                String message = expandingSymbols.size() == 1 ? ServiceMessages
                         .symbolUndefined(symbolName) : ServiceMessages.symbolUndefinedInPath(
                         symbolName,
                         path());
@@ -143,7 +142,7 @@ public class SymbolSourceImpl implements SymbolSource
 
             // And we're done expanding this symbol
 
-            _expandingSymbols.removeLast();
+            expandingSymbols.removeLast();
 
             return result;
 
@@ -155,7 +154,7 @@ public class SymbolSourceImpl implements SymbolSource
 
             boolean first = true;
 
-            for (String symbolName : _expandingSymbols)
+            for (String symbolName : expandingSymbols)
             {
                 if (!first) builder.append(" --> ");
 
@@ -174,7 +173,7 @@ public class SymbolSourceImpl implements SymbolSource
             boolean first = true;
             boolean match = false;
 
-            for (String symbolName : _expandingSymbols)
+            for (String symbolName : expandingSymbols)
             {
                 if (!match)
                 {
@@ -197,7 +196,7 @@ public class SymbolSourceImpl implements SymbolSource
 
     public SymbolSourceImpl(final List<SymbolProvider> providers)
     {
-        _providers = providers;
+        this.providers = providers;
     }
 
     public String expandSymbols(String input)
