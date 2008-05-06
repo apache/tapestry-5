@@ -14,52 +14,52 @@
 
 package org.apache.tapestry.tutorial.pages;
 
-import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotations.Property;
 
 public class Guess
 {
     @Persist
-    private int _target;
+    private int target;
 
     @Property
-    private int _guess;
+    private int guess;
 
     @Persist
     @Property
-    private String _message;
+    private String message;
 
     @Persist
-    private int _count;
+    private int count;
 
     @InjectPage
-    private GameOver _gameOver;
+    private GameOver gameOver;
 
     Object onActionFromLink(int guess)
     {
-        _count++;
+        count++;
 
-        if (guess == _target) return _gameOver.initialize(_count);
+        if (guess == target) return gameOver.initialize(count);
 
-        if (guess < _target)
-            _message = String.format("%d is too low.", guess);
+        if (guess < target)
+            message = String.format("%d is too low.", guess);
         else
-            _message = String.format("%d is too high.", guess);
+            message = String.format("%d is too high.", guess);
 
         return null;
     }
 
     Object initialize(int target)
     {
-        _target = target;
-        _count = 0;
+        this.target = target;
+        count = 0;
 
         return this;
     }
 
     public int getTarget()
     {
-        return _target;
+        return target;
     }
 }

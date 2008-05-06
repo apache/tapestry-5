@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,11 +14,30 @@
 
 package org.apache.tapestry.tutorial.pages.address;
 
+import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.Property;
-import org.apache.tapestry.tutorial.data.Address;
+import org.apache.tapestry.hibernate.annotations.CommitAfter;
+import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.tutorial.entities.Address;
+import org.apache.tapestry.tutorial.pages.Index;
+import org.hibernate.Session;
 
 public class CreateAddress
 {
     @Property
-    private Address _address;
+    private Address address;
+
+    @Inject
+    private Session session;
+
+    @InjectPage
+    private Index index;
+
+    @CommitAfter
+    Object onSuccess()
+    {
+        session.persist(address);
+
+        return index;
+    }
 }
