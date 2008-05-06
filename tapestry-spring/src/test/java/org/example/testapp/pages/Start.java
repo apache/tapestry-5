@@ -29,14 +29,14 @@ public class Start
 
     // We're matching on type here, just as we would a service provided in a T5 IoC module.
     @Inject
-    private Upcase _upcaseBean;
+    private Upcase upcaseBean;
 
     @Inject
-    private WebApplicationContext _context;
+    private WebApplicationContext context;
 
     void onSuccess()
     {
-        _input = _upcaseBean.toUpperCase(_input);
+        _input = upcaseBean.toUpperCase(_input);
     }
 
     public String getInput()
@@ -51,7 +51,7 @@ public class Start
 
     public String getSpringBeans()
     {
-        return InternalUtils.join(Arrays.asList(_context.getBeanDefinitionNames()));
+        return InternalUtils.join(Arrays.asList(context.getBeanDefinitionNames()));
     }
 
 }

@@ -31,34 +31,33 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions,
- * compatible with Tapestry 5 IoC, for the beans defined in the context, as well as the context
- * itself.
+ * A wrapper that converts a Spring {@link ApplicationContext} into a set of service definitions, compatible with
+ * Tapestry 5 IoC, for the beans defined in the context, as well as the context itself.
  */
 public class SpringModuleDef implements ModuleDef
 {
     private static final String CONTEXT_SERVICE_ID = WebApplicationContext.class.getSimpleName();
 
-    private final ApplicationContext _context;
+    private final ApplicationContext context;
 
-    private final Map<String, ServiceDef> _serviceDefs = newCaseInsensitiveMap();
+    private final Map<String, ServiceDef> serviceDefs = newCaseInsensitiveMap();
 
     public SpringModuleDef(final ApplicationContext context)
     {
-        _context = context;
+        this.context = context;
 
-        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(_context))
+        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(this.context))
         {
             ServiceDef serviceDef = new ServiceDef()
             {
                 private Object getBean()
                 {
-                    return _context.getBean(beanName);
+                    return this.context.getBean(beanName);
                 }
 
                 private Class getBeanType()
                 {
-                    return _context.getType(beanName);
+                    return this.context.getType(beanName);
                 }
 
                 public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
@@ -100,7 +99,7 @@ public class SpringModuleDef implements ModuleDef
 
             };
 
-            _serviceDefs.put(beanName, serviceDef);
+            serviceDefs.put(beanName, serviceDef);
         }
 
         // And add one service that is the Spring WebApplicationContext.
@@ -114,7 +113,7 @@ public class SpringModuleDef implements ModuleDef
                 {
                     public Object createObject()
                     {
-                        return _context;
+                        return this.context;
                     }
                 };
             }
@@ -147,7 +146,7 @@ public class SpringModuleDef implements ModuleDef
 
         };
 
-        _serviceDefs.put(CONTEXT_SERVICE_ID, serviceDef);
+        serviceDefs.put(CONTEXT_SERVICE_ID, serviceDef);
     }
 
     public Class getBuilderClass()
@@ -178,12 +177,12 @@ public class SpringModuleDef implements ModuleDef
 
     public ServiceDef getServiceDef(String serviceId)
     {
-        return _serviceDefs.get(serviceId);
+        return serviceDefs.get(serviceId);
     }
 
     public Set<String> getServiceIds()
     {
-        return _serviceDefs.keySet();
+        return serviceDefs.keySet();
     }
 
 }

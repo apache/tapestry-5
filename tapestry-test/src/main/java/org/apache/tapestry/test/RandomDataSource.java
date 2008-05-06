@@ -21,15 +21,15 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Provides access to random data that can be used when populating a test database with "reasonable"
- * data. The majority of this is access to random words from an american english dictionary, which
- * can be strung together to form names, sentences and paragraphs.
+ * Provides access to random data that can be used when populating a test database with "reasonable" data. The majority
+ * of this is access to random words from an american english dictionary, which can be strung together to form names,
+ * sentences and paragraphs.
  */
 public final class RandomDataSource
 {
-    private final Random _random = new Random(System.currentTimeMillis());
+    private final Random random = new Random(System.currentTimeMillis());
 
-    private final List<String> _words = new ArrayList<String>();
+    private final List<String> words = new ArrayList<String>();
 
     public RandomDataSource()
     {
@@ -39,7 +39,7 @@ public final class RandomDataSource
         for (int i = 0; i < 3; i++)
             readWords("american." + i);
 
-        System.out.printf("Dictionary contains %d words\n", _words.size());
+        System.out.printf("Dictionary contains %d words\n", words.size());
     }
 
     private void readWords(String name)
@@ -65,7 +65,7 @@ public final class RandomDataSource
                 if (word == null) break;
 
                 count++;
-                _words.add(word);
+                words.add(word);
             }
 
             r.close();
@@ -82,14 +82,14 @@ public final class RandomDataSource
     {
         assert percent > 0 && percent <= 100;
 
-        return _random.nextInt(100) < percent;
+        return random.nextInt(100) < percent;
     }
 
     public int random(int min, int max)
     {
         assert min <= max;
 
-        return _random.nextInt(max - min + 1) + min;
+        return random.nextInt(max - min + 1) + min;
     }
 
     /**
@@ -97,9 +97,9 @@ public final class RandomDataSource
      */
     public String word()
     {
-        int index = _random.nextInt(_words.size());
+        int index = random.nextInt(words.size());
 
-        return _words.get(index);
+        return words.get(index);
     }
 
     /**
@@ -135,7 +135,7 @@ public final class RandomDataSource
     {
         assert values.length > 0;
 
-        int index = _random.nextInt(values.length);
+        int index = random.nextInt(values.length);
 
         return values[index];
     }
@@ -149,8 +149,8 @@ public final class RandomDataSource
     }
 
     /**
-     * Creates a space-separated list of random words. If in sentence form, then the first word is
-     * capitalized, and a period is appended.
+     * Creates a space-separated list of random words. If in sentence form, then the first word is capitalized, and a
+     * period is appended.
      *
      * @param minWords   minimun number of words in the list
      * @param maxWords   maximum number of words in the list
@@ -183,8 +183,8 @@ public final class RandomDataSource
     }
 
     /**
-     * Strings together a random number of word lists (in sentence form) to create something that
-     * looks like a paragraph.
+     * Strings together a random number of word lists (in sentence form) to create something that looks like a
+     * paragraph.
      *
      * @param minSentences per paragraph
      * @param maxSentences per paragraph

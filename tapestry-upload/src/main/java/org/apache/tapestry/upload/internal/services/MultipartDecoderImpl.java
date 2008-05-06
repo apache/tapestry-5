@@ -40,13 +40,13 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 {
     private final Map<String, UploadedFileItem> _uploads = newMap();
 
-    private final String _repositoryLocation;
+    private final String repositoryLocation;
 
-    private final int _repositoryThreshold;
+    private final int repositoryThreshold;
 
-    private final long _maxRequestSize;
+    private final long maxRequestSize;
 
-    private final long _maxFileSize;
+    private final long maxFileSize;
 
     public MultipartDecoderImpl(
 
@@ -62,10 +62,10 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
             @Symbol(UploadSymbols.FILESIZE_MAX)
             long maxFileSize)
     {
-        _repositoryLocation = repositoryLocation;
-        _repositoryThreshold = repositoryThreshold;
-        _maxRequestSize = maxRequestSize;
-        _maxFileSize = maxFileSize;
+        this.repositoryLocation = repositoryLocation;
+        this.repositoryThreshold = repositoryThreshold;
+        this.maxRequestSize = maxRequestSize;
+        this.maxFileSize = maxFileSize;
     }
 
     public UploadedFile getFileUpload(String parameterName)
@@ -103,12 +103,12 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     protected ServletFileUpload createFileUpload()
     {
-        FileItemFactory factory = new DiskFileItemFactory(_repositoryThreshold, new File(_repositoryLocation));
+        FileItemFactory factory = new DiskFileItemFactory(repositoryThreshold, new File(repositoryLocation));
         ServletFileUpload upload = new ServletFileUpload(factory);
 
         // set maximum file upload size
-        upload.setSizeMax(_maxRequestSize);
-        upload.setFileSizeMax(_maxFileSize);
+        upload.setSizeMax(maxRequestSize);
+        upload.setFileSizeMax(maxFileSize);
 
         return upload;
     }

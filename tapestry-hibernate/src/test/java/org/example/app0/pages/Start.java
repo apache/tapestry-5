@@ -23,10 +23,10 @@ public class Start
 {
 
     @InjectPage
-    private CommitAfterDemo _commitAfterDemo;
+    private CommitAfterDemo commitAfterDemo;
 
     @Inject
-    private UserDAO _userDAO;
+    private UserDAO userDAO;
 
     Object onActionFromCommitAfter()
     {
@@ -34,10 +34,10 @@ public class Start
 
         user.setFirstName("Diane");
 
-        _userDAO.add(user);
+        userDAO.add(user);
 
-        _commitAfterDemo.setUser(user);
+        commitAfterDemo.setUser(user);
 
-        return _commitAfterDemo;
+        return commitAfterDemo;
     }
 }

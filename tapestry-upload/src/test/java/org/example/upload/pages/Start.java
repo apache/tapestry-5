@@ -24,22 +24,22 @@ public class Start
     public static final String TARGET_DIR = "target/tmp/";
 
     @Persist
-    private UploadedFile _file;
+    private UploadedFile file;
 
     public UploadedFile getFile()
     {
-        return _file;
+        return file;
     }
 
     public void setFile(UploadedFile file)
     {
-        _file = file;
+        this.file = file;
     }
 
     public void onSuccess()
     {
-        File copied = new File(TARGET_DIR + _file.getFileName());
+        File copied = new File(TARGET_DIR + file.getFileName());
 
-        _file.write(copied);
+        file.write(copied);
     }
 }

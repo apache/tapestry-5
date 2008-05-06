@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class ParameterValue
 {
-    private final List<String> _values = newList();
+    private final List<String> values = newList();
 
     public static final ParameterValue NULL = new ParameterValue()
     {
@@ -42,7 +42,7 @@ public class ParameterValue
 
     public ParameterValue(String value)
     {
-        _values.add(value);
+        values.add(value);
     }
 
     public ParameterValue(String... values)
@@ -58,7 +58,7 @@ public class ParameterValue
      */
     public String single()
     {
-        return _values.get(0);
+        return values.get(0);
     }
 
     /**
@@ -66,16 +66,16 @@ public class ParameterValue
      */
     public String[] multi()
     {
-        return _values.toArray(new String[_values.size()]);
+        return values.toArray(new String[values.size()]);
     }
 
     public void add(String value)
     {
-        _values.add(value);
+        values.add(value);
     }
 
     public boolean isMulti()
     {
-        return _values.size() > 1;
+        return values.size() > 1;
     }
 }

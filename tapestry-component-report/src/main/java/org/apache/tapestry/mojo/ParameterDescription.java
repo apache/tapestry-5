@@ -16,65 +16,65 @@ package org.apache.tapestry.mojo;
 
 public class ParameterDescription
 {
-    private final String _name;
+    private final String name;
 
-    private final String _type;
+    private final String type;
 
-    private final String _defaultValue;
+    private final String defaultValue;
 
-    private final String _defaultPrefix;
+    private final String defaultPrefix;
 
-    private final boolean _required;
+    private final boolean required;
 
-    private final boolean _cache;
+    private final boolean cache;
 
-    private final String _description;
+    private final String description;
 
     public ParameterDescription(String name, String type, String defaultValue,
                                 String defaultPrefix, boolean required, boolean cache, String description)
     {
-        _name = name;
-        _type = type;
-        _defaultValue = defaultValue;
-        _defaultPrefix = defaultPrefix;
-        _required = required;
-        _cache = cache;
-        _description = description;
+        this.name = name;
+        this.type = type;
+        this.defaultValue = defaultValue;
+        this.defaultPrefix = defaultPrefix;
+        this.required = required;
+        this.cache = cache;
+        this.description = description;
     }
 
     public boolean getCache()
     {
-        return _cache;
+        return cache;
     }
 
     public String getDefaultPrefix()
     {
-        return _defaultPrefix;
+        return defaultPrefix;
     }
 
     public String getDefaultValue()
     {
-        return _defaultValue;
+        return defaultValue;
     }
 
     public String getDescription()
     {
-        return _description;
+        return description;
     }
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     public boolean getRequired()
     {
-        return _required;
+        return required;
     }
 
     public String getType()
     {
-        return _type;
+        return type;
     }
 
 }

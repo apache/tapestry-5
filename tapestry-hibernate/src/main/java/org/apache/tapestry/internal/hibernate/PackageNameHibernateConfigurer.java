@@ -26,15 +26,15 @@ import org.hibernate.cfg.Configuration;
  */
 public final class PackageNameHibernateConfigurer implements HibernateConfigurer
 {
-    private final HibernateEntityPackageManager _packageManager;
+    private final HibernateEntityPackageManager packageManager;
 
-    private final ClassNameLocator _classNameLocator;
+    private final ClassNameLocator classNameLocator;
 
     public PackageNameHibernateConfigurer(HibernateEntityPackageManager packageManager,
                                           ClassNameLocator classNameLocator)
     {
-        _packageManager = packageManager;
-        _classNameLocator = classNameLocator;
+        this.packageManager = packageManager;
+        this.classNameLocator = classNameLocator;
     }
 
     public void configure(Configuration configuration)
@@ -44,11 +44,11 @@ public final class PackageNameHibernateConfigurer implements HibernateConfigurer
 
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
-        for (String packageName : _packageManager.getPackageNames())
+        for (String packageName : packageManager.getPackageNames())
         {
             cfg.addPackage(packageName);
 
-            for (String className : _classNameLocator.locateClassNames(packageName))
+            for (String className : classNameLocator.locateClassNames(packageName))
             {
                 try
                 {

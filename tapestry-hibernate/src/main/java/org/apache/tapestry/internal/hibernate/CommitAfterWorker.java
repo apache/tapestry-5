@@ -26,9 +26,9 @@ import org.apache.tapestry.services.*;
  */
 public class CommitAfterWorker implements ComponentClassTransformWorker
 {
-    private final HibernateSessionManager _manager;
+    private final HibernateSessionManager manager;
 
-    private final ComponentMethodAdvice _advice = new ComponentMethodAdvice()
+    private final ComponentMethodAdvice advice = new ComponentMethodAdvice()
     {
         public void advise(ComponentMethodInvocation invocation)
         {
@@ -38,11 +38,11 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
 
                 // Success or checked exception:
 
-                _manager.commit();
+                manager.commit();
             }
             catch (RuntimeException ex)
             {
-                _manager.abort();
+                manager.abort();
 
                 throw ex;
             }
@@ -51,14 +51,14 @@ public class CommitAfterWorker implements ComponentClassTransformWorker
 
     public CommitAfterWorker(HibernateSessionManager manager)
     {
-        _manager = manager;
+        this.manager = manager;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {
         for (TransformMethodSignature sig : transformation.findMethodsWithAnnotation(CommitAfter.class))
         {
-            transformation.advise(sig, _advice);
+            transformation.advise(sig, advice);
         }
     }
 }

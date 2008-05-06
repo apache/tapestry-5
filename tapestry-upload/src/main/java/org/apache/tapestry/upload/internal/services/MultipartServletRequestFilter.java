@@ -28,17 +28,17 @@ import java.io.IOException;
  */
 public class MultipartServletRequestFilter implements HttpServletRequestFilter
 {
-    private final MultipartDecoder _decoder;
+    private final MultipartDecoder decoder;
 
     public MultipartServletRequestFilter(MultipartDecoder multipartDecoder)
     {
-        _decoder = multipartDecoder;
+        decoder = multipartDecoder;
     }
 
     public boolean service(HttpServletRequest request, HttpServletResponse response, HttpServletRequestHandler handler)
             throws IOException
     {
-        HttpServletRequest newRequest = ServletFileUpload.isMultipartContent(request) ? _decoder.decode(
+        HttpServletRequest newRequest = ServletFileUpload.isMultipartContent(request) ? decoder.decode(
                 request) : request;
 
         return handler.service(newRequest, response);

@@ -17,16 +17,15 @@ package org.apache.tapestry.test;
 import com.thoughtworks.selenium.CommandProcessor;
 
 /**
- * A wrapper around a standard command processor that adds additional exception reporting when a
- * failure occurs.
+ * A wrapper around a standard command processor that adds additional exception reporting when a failure occurs.
  */
 public class ErrorReportingCommandProcessor implements CommandProcessor
 {
-    private final CommandProcessor _delegate;
+    private final CommandProcessor delegate;
 
     public ErrorReportingCommandProcessor(final CommandProcessor delegate)
     {
-        _delegate = delegate;
+        this.delegate = delegate;
     }
 
     private static final String BORDER = "**********************************************************************";
@@ -53,7 +52,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
 
         builder.append("\n\nPage source:\n\n");
 
-        builder.append(_delegate.getString("getHtmlSource", new String[]{}));
+        builder.append(delegate.getString("getHtmlSource", new String[] { }));
 
         builder.append("\n");
         builder.append(BORDER);
@@ -65,7 +64,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.doCommand(command, args);
+            return delegate.doCommand(command, args);
         }
         catch (RuntimeException ex)
         {
@@ -78,7 +77,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.getBoolean(string, strings);
+            return delegate.getBoolean(string, strings);
         }
         catch (RuntimeException ex)
         {
@@ -91,7 +90,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.getBooleanArray(string, strings);
+            return delegate.getBooleanArray(string, strings);
         }
         catch (RuntimeException ex)
         {
@@ -104,7 +103,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.getNumber(string, strings);
+            return delegate.getNumber(string, strings);
         }
         catch (RuntimeException ex)
         {
@@ -117,7 +116,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.getNumberArray(string, strings);
+            return delegate.getNumberArray(string, strings);
         }
         catch (RuntimeException ex)
         {
@@ -130,7 +129,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.getString(string, strings);
+            return delegate.getString(string, strings);
         }
         catch (RuntimeException ex)
         {
@@ -143,7 +142,7 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
     {
         try
         {
-            return _delegate.getStringArray(string, strings);
+            return delegate.getStringArray(string, strings);
         }
         catch (RuntimeException ex)
         {
@@ -154,12 +153,12 @@ public class ErrorReportingCommandProcessor implements CommandProcessor
 
     public void start()
     {
-        _delegate.start();
+        delegate.start();
     }
 
     public void stop()
     {
-        _delegate.stop();
+        delegate.stop();
     }
 
 }

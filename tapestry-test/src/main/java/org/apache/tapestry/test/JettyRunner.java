@@ -37,15 +37,15 @@ public class JettyRunner
 
     public static final int DEFAULT_SECURE_PORT = 8443;
 
-    private final File _workingDir;
+    private final File workingDir;
 
-    private final String _contextPath;
+    private final String contextPath;
 
-    private final int _port;
+    private final int port;
 
-    private final String _warPath;
+    private final String warPath;
 
-    private final Server _jetty;
+    private final Server jetty;
 
     /**
      * Creates and starts a new instance of Jetty. This should be done from a test case setup method.
@@ -57,12 +57,12 @@ public class JettyRunner
      */
     public JettyRunner(File workingDir, String contextPath, int port, String warPath)
     {
-        _workingDir = workingDir;
-        _contextPath = contextPath;
-        _port = port;
-        _warPath = warPath;
+        this.workingDir = workingDir;
+        this.contextPath = contextPath;
+        this.port = port;
+        this.warPath = warPath;
 
-        _jetty = createAndStart();
+        jetty = createAndStart();
     }
 
     /**
@@ -70,14 +70,14 @@ public class JettyRunner
      */
     public void stop()
     {
-        System.out.printf("Stopping Jetty instance on port %d\n", _port);
+        System.out.printf("Stopping Jetty instance on port %d\n", port);
 
         try
         {
             // Stop immediately and not gracefully.
-            _jetty.stop(false);
+            jetty.stop(false);
 
-            while (_jetty.isStarted())
+            while (jetty.isStarted())
             {
                 Thread.sleep(100);
             }
@@ -93,7 +93,7 @@ public class JettyRunner
     @Override
     public String toString()
     {
-        return format("<JettyRunner %s:%d (%s)>", _contextPath, _port, _warPath);
+        return format("<JettyRunner %s:%d (%s)>", contextPath, port, warPath);
     }
 
 
@@ -102,19 +102,19 @@ public class JettyRunner
         try
         {
 
-            String warPath = new File(_workingDir, _warPath).getPath();
-            String webDefaults = new File(_workingDir, "src/test/conf/webdefault.xml").getPath();
+            String warPath = new File(workingDir, this.warPath).getPath();
+            String webDefaults = new File(workingDir, "src/test/conf/webdefault.xml").getPath();
 
-            File keystoreFile = new File(_workingDir, "src/test/conf/keystore");
+            File keystoreFile = new File(workingDir, "src/test/conf/keystore");
             String keystore = keystoreFile.getPath();
 
-            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", _port, _contextPath, warPath);
+            System.out.printf("Starting Jetty instance on port %d (%s mapped to %s)\n", port, contextPath, warPath);
 
             Server server = new Server();
 
 
             SocketListener socketListener = new SocketListener();
-            socketListener.setPort(_port);
+            socketListener.setPort(port);
             server.addListener(socketListener);
 
             if (keystoreFile.exists())
@@ -131,7 +131,7 @@ public class JettyRunner
             NCSARequestLog log = new NCSARequestLog();
             server.setRequestLog(log);
 
-            WebApplicationContext context = server.addWebApplication(_contextPath, warPath);
+            WebApplicationContext context = server.addWebApplication(contextPath, warPath);
 
             context.setDefaultsDescriptor(webDefaults);
 
