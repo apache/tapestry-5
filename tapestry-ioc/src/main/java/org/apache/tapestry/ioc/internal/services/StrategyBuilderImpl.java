@@ -22,12 +22,11 @@ import java.lang.reflect.Modifier;
 
 public class StrategyBuilderImpl implements StrategyBuilder
 {
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    public StrategyBuilderImpl(@Builtin
-    ClassFactory classFactory)
+    public StrategyBuilderImpl(@Builtin ClassFactory classFactory)
     {
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
     }
 
     public <S> S build(StrategyRegistry<S> registry)
@@ -52,13 +51,13 @@ public class StrategyBuilderImpl implements StrategyBuilder
 
     private Class createImplClass(Class interfaceClass)
     {
-        ClassFab cf = _classFactory.newClass(interfaceClass);
+        ClassFab cf = classFactory.newClass(interfaceClass);
 
         String interfaceClassName = interfaceClass.getName();
 
         cf.addField("_registry", Modifier.PRIVATE | Modifier.FINAL, StrategyRegistry.class);
         cf.addConstructor(new Class[]
-                {StrategyRegistry.class}, null, "_registry = $1;");
+                { StrategyRegistry.class }, null, "_registry = $1;");
 
         BodyBuilder builder = new BodyBuilder();
 

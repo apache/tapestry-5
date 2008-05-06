@@ -30,7 +30,7 @@ import java.util.Map;
 public class BarneyModule
 {
     @Match(
-            {"UnorderedNames", "Fred", "PrivateFredAlias"})
+            { "UnorderedNames", "Fred", "PrivateFredAlias" })
     @Order("after:Beta")
     public Object decorateGamma(Object delegate, DecoratorList list)
     {
@@ -87,23 +87,23 @@ public class BarneyModule
     }
 
     /**
-     * Put DecoratorList in module barney, where so it won't accidentally be decorated (which
-     * recusively builds the service, and is caught as a failure).
+     * Put DecoratorList in module barney, where so it won't accidentally be decorated (which recusively builds the
+     * service, and is caught as a failure).
      */
     public DecoratorList buildDecoratorList()
     {
         return new DecoratorList()
         {
-            private List<String> _names = newList();
+            private List<String> names = newList();
 
             public void add(String name)
             {
-                _names.add(name);
+                names.add(name);
             }
 
             public List<String> getNames()
             {
-                return _names;
+                return names;
             }
         };
     }

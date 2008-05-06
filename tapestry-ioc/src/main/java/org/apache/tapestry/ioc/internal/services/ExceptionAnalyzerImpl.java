@@ -25,15 +25,15 @@ import java.util.Set;
 
 public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
 {
-    private final PropertyAccess _propertyAccess;
+    private final PropertyAccess propertyAccess;
 
-    private final Set<String> _throwableProperties;
+    private final Set<String> throwableProperties;
 
     public ExceptionAnalyzerImpl(PropertyAccess propertyAccess)
     {
-        _propertyAccess = propertyAccess;
+        this.propertyAccess = propertyAccess;
 
-        _throwableProperties = newSet(_propertyAccess.getAdapter(Throwable.class)
+        throwableProperties = newSet(this.propertyAccess.getAdapter(Throwable.class)
                 .getPropertyNames());
     }
 
@@ -96,11 +96,11 @@ public class ExceptionAnalyzerImpl implements ExceptionAnalyzer
     {
         Map<String, Object> properties = newMap();
 
-        ClassPropertyAdapter adapter = _propertyAccess.getAdapter(t);
+        ClassPropertyAdapter adapter = propertyAccess.getAdapter(t);
 
         for (String name : adapter.getPropertyNames())
         {
-            if (_throwableProperties.contains(name)) continue;
+            if (throwableProperties.contains(name)) continue;
 
             Object value = adapter.get(t, name);
 

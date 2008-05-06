@@ -161,14 +161,14 @@ public class TableMetricProducer implements MetricProducer
 {
   . . . 
 
-  private QueueWriter _queueWriter = new QueueWriter();
+  private QueueWriter queueWriter = new QueueWriter();
 
   public void execute() 
   {
     int rowCount = . . .;
     Metric metric = new Metric("app/clients", System.currentTimeMillis(), rowCount);
 
-   _queueWriter.sendMetric(metric);
+   queueWriter.sendMetric(metric);
   }
 +-----+
 
@@ -179,7 +179,7 @@ public class TableMetricProducer implements MetricProducer
   to make the QueueWriter shareable:
 
 +----+
-  private final QueueWriter _queueWriter = QueueWriter.getInstance();
+  private final QueueWriter queueWriter = QueueWriter.getInstance();
 +----+
 
   ... and inside class QueueWriter:
@@ -187,7 +187,7 @@ public class TableMetricProducer implements MetricProducer
 +----+
 public class QueueWriter
 {
-  private static QueueWriter _instance;
+  private static QueueWriter instance;
 
   private QueueWriter()
   {
@@ -196,10 +196,10 @@ public class QueueWriter
 
   public static getInstance()
   {
-    if (_instance == null)
-      _instance = new QueueWriter();
+    if (instance == null)
+      instance = new QueueWriter();
 
-    return _instance;
+    return instance;
   }
 }
 +-----+
@@ -209,10 +209,10 @@ public class QueueWriter
 +-----+
   public synchronized static getInstance()
   {
-    if (_instance == null)
-      _instance = new QueueWriter();
+    if (instance == null)
+      instance = new QueueWriter();
 
-    return _instance;
+    return instance;
   }
 +----+
 
@@ -237,7 +237,7 @@ public class QueueWriter
 +----+
 public class TableMetricProducer implements MetricProducer
 {
-  private final QueueWriter _queueWriter;
+  private final QueueWriter queueWriter;
 
   /**
    * The normal constructor.
@@ -254,7 +254,7 @@ public class TableMetricProducer implements MetricProducer
    */
   TableMetricProducer(QueueWriter queueWriter, . . .)
   {
-    _queueWriter = queueWriter;
+    queueWriter = queueWriter;
     . . . 
   }
 
@@ -263,7 +263,7 @@ public class TableMetricProducer implements MetricProducer
     int rowCount = . . .;
     Metric metric = new Metric("app/clients", System.currentTimeMillis(), rowCount);
 
-   _queueWriter.sendMetric(metric);
+   queueWriter.sendMetric(metric);
   }
 }
 +----+

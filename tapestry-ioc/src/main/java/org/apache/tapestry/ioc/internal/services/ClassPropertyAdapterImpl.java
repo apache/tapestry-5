@@ -27,13 +27,13 @@ import java.util.Map;
 
 public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 {
-    private final Map<String, PropertyAdapter> _adapters = newCaseInsensitiveMap();
+    private final Map<String, PropertyAdapter> adapters = newCaseInsensitiveMap();
 
-    private final Class _beanType;
+    private final Class beanType;
 
     public ClassPropertyAdapterImpl(Class beanType, List<PropertyDescriptor> descriptors)
     {
-        _beanType = beanType;
+        this.beanType = beanType;
 
         for (PropertyDescriptor pd : descriptors)
         {
@@ -49,31 +49,31 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 
             PropertyAdapter pa = new PropertyAdapterImpl(pd.getName(), propertyType, readMethod, pd.getWriteMethod());
 
-            _adapters.put(pa.getName(), pa);
+            adapters.put(pa.getName(), pa);
         }
     }
 
     public Class getBeanType()
     {
-        return _beanType;
+        return beanType;
     }
 
     @Override
     public String toString()
     {
-        String names = InternalUtils.joinSorted(_adapters.keySet());
+        String names = InternalUtils.joinSorted(adapters.keySet());
 
-        return String.format("<ClassPropertyAdaptor %s : %s>", _beanType.getName(), names);
+        return String.format("<ClassPropertyAdaptor %s : %s>", beanType.getName(), names);
     }
 
     public List<String> getPropertyNames()
     {
-        return InternalUtils.sortedKeys(_adapters);
+        return InternalUtils.sortedKeys(adapters);
     }
 
     public PropertyAdapter getPropertyAdapter(String name)
     {
-        return _adapters.get(name);
+        return adapters.get(name);
     }
 
     public Object get(Object instance, String propertyName)
@@ -88,9 +88,9 @@ public class ClassPropertyAdapterImpl implements ClassPropertyAdapter
 
     private PropertyAdapter adaptorFor(String name)
     {
-        PropertyAdapter pa = _adapters.get(name);
+        PropertyAdapter pa = adapters.get(name);
 
-        if (pa == null) throw new IllegalArgumentException(ServiceMessages.noSuchProperty(_beanType, name));
+        if (pa == null) throw new IllegalArgumentException(ServiceMessages.noSuchProperty(beanType, name));
 
         return pa;
     }

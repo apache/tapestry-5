@@ -23,17 +23,17 @@ import java.util.List;
 
 public class MasterObjectProviderImpl implements MasterObjectProvider
 {
-    private final List<ObjectProvider> _configuration;
+    private final List<ObjectProvider> configuration;
 
     public MasterObjectProviderImpl(List<ObjectProvider> configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator,
                          boolean required)
     {
-        for (ObjectProvider provider : _configuration)
+        for (ObjectProvider provider : configuration)
         {
             T result = provider.provide(objectType, annotationProvider, locator);
 

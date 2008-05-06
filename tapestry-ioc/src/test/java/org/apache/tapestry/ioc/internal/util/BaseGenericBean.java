@@ -16,15 +16,15 @@ package org.apache.tapestry.ioc.internal.util;
 
 public class BaseGenericBean<T>
 {
-    private T _value;
+    private T value;
 
     public T getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(T value)
     {
-        _value = value;
+        this.value = value;
     }
 }

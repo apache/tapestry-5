@@ -23,16 +23,16 @@ import java.util.Collection;
  */
 public final class OrIdMatcher implements IdMatcher
 {
-    private final IdMatcher[] _matchers;
+    private final IdMatcher[] matchers;
 
     public OrIdMatcher(Collection<IdMatcher> matchers)
     {
-        _matchers = matchers.toArray(new IdMatcher[matchers.size()]);
+        this.matchers = matchers.toArray(new IdMatcher[matchers.size()]);
     }
 
     public boolean matches(String id)
     {
-        for (IdMatcher m : _matchers)
+        for (IdMatcher m : matchers)
             if (m.matches(id)) return true;
 
         return false;

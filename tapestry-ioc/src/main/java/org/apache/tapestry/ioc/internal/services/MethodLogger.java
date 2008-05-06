@@ -35,19 +35,19 @@ public final class MethodLogger
 
     private static final String FAIL = " FAIL";
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final ExceptionTracker _exceptionTracker;
+    private final ExceptionTracker exceptionTracker;
 
     public MethodLogger(Logger logger, ExceptionTracker exceptionTracker)
     {
-        _logger = logger;
-        _exceptionTracker = exceptionTracker;
+        this.logger = logger;
+        this.exceptionTracker = exceptionTracker;
     }
 
     public boolean isDebugEnabled()
     {
-        return _logger.isDebugEnabled();
+        return logger.isDebugEnabled();
     }
 
     /**
@@ -70,7 +70,7 @@ public final class MethodLogger
 
         buffer.append(")");
 
-        _logger.debug(buffer.toString());
+        logger.debug(buffer.toString());
     }
 
     private void convert(StringBuilder buffer, Object object)
@@ -150,7 +150,7 @@ public final class MethodLogger
             buffer.append(']');
         }
 
-        _logger.debug(buffer.toString());
+        logger.debug(buffer.toString());
     }
 
     /**
@@ -161,10 +161,10 @@ public final class MethodLogger
      */
     public void fail(Invocation invocation, Throwable t)
     {
-        _logger.debug(
+        logger.debug(
                 format("[%s] %s -- %s", FAIL,
                        invocation.getMethodName(),
                        t.getClass().getName()),
-                _exceptionTracker.exceptionLogged(t) ? null : t);
+                exceptionTracker.exceptionLogged(t) ? null : t);
     }
 }

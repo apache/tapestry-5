@@ -37,18 +37,18 @@ import java.util.*;
 
 public class ModuleImpl implements Module
 {
-    private final InternalRegistry _registry;
+    private final InternalRegistry registry;
 
-    private final ServiceActivityTracker _tracker;
+    private final ServiceActivityTracker tracker;
 
-    private final ModuleDef _moduleDef;
+    private final ModuleDef moduleDef;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Logger _logger;
+    private final Logger logger;
 
     // Guarded by MUTEX
-    private Object _moduleBuilder;
+    private Object moduleBuilder;
 
     /**
      * A single mutex, shared by all modules, that serializes creation of services across all threads. This is a bit
@@ -60,21 +60,21 @@ public class ModuleImpl implements Module
     // Set to true when invoking the module constructor. Used to
     // detect endless loops caused by irresponsible dependencies in
     // the constructor. Guarded by MUTEX.
-    private boolean _insideConstructor;
+    private boolean insideConstructor;
 
     /**
      * Keyed on fully qualified service id; values are instantiated services (proxies).
      */
-    private final Map<String, Object> _services = newCaseInsensitiveMap();
+    private final Map<String, Object> services = newCaseInsensitiveMap();
 
     public ModuleImpl(InternalRegistry registry, ServiceActivityTracker tracker, ModuleDef moduleDef,
                       ClassFactory classFactory, Logger logger)
     {
-        _registry = registry;
-        _tracker = tracker;
-        _moduleDef = moduleDef;
-        _classFactory = classFactory;
-        _logger = logger;
+        this.registry = registry;
+        this.tracker = tracker;
+        this.moduleDef = moduleDef;
+        this.classFactory = classFactory;
+        this.logger = logger;
     }
 
     public <T> T getService(String serviceId, Class<T> serviceInterface)
@@ -83,7 +83,7 @@ public class ModuleImpl implements Module
         notNull(serviceInterface, "serviceInterface");
         // module may be null.
 
-        ServiceDef def = _moduleDef.getServiceDef(serviceId);
+        ServiceDef def = moduleDef.getServiceDef(serviceId);
 
         // RegistryImpl should already have checked that the service exists.
         assert def != null;
@@ -109,7 +109,7 @@ public class ModuleImpl implements Module
     {
         Set<DecoratorDef> result = newSet();
 
-        for (DecoratorDef def : _moduleDef.getDecoratorDefs())
+        for (DecoratorDef def : moduleDef.getDecoratorDefs())
         {
             if (def.matches(serviceDef)) result.add(def);
         }
@@ -119,9 +119,9 @@ public class ModuleImpl implements Module
 
     public List<ServiceDecorator> findDecoratorsForService(String serviceId)
     {
-        ServiceDef sd = _moduleDef.getServiceDef(serviceId);
+        ServiceDef sd = moduleDef.getServiceDef(serviceId);
 
-        return _registry.findDecoratorsForService(sd);
+        return registry.findDecoratorsForService(sd);
     }
 
     @SuppressWarnings("unchecked")
@@ -131,9 +131,9 @@ public class ModuleImpl implements Module
 
         Collection<String> result = newList();
 
-        for (String id : _moduleDef.getServiceIds())
+        for (String id : moduleDef.getServiceIds())
         {
-            ServiceDef def = _moduleDef.getServiceDef(id);
+            ServiceDef def = moduleDef.getServiceDef(id);
 
             if (serviceInterface.isAssignableFrom(def.getServiceInterface())) result.add(id);
         }
@@ -156,12 +156,12 @@ public class ModuleImpl implements Module
         {
             String key = def.getServiceId();
 
-            Object result = _services.get(key);
+            Object result = services.get(key);
 
             if (result == null)
             {
                 result = create(def, eagerLoadProxies);
-                _services.put(key, result);
+                services.put(key, result);
             }
 
             return result;
@@ -172,9 +172,9 @@ public class ModuleImpl implements Module
     {
         synchronized (MUTEX)
         {
-            for (String serviceId : _moduleDef.getServiceIds())
+            for (String serviceId : moduleDef.getServiceIds())
             {
-                ServiceDef def = _moduleDef.getServiceDef(serviceId);
+                ServiceDef def = moduleDef.getServiceDef(serviceId);
 
                 if (def.isEagerLoad()) findOrCreate(def, proxies);
             }
@@ -190,13 +190,13 @@ public class ModuleImpl implements Module
     {
         String serviceId = def.getServiceId();
 
-        Logger logger = _registry.getServiceLogger(serviceId);
+        Logger logger = registry.getServiceLogger(serviceId);
 
         if (logger.isDebugEnabled()) logger.debug(IOCMessages.creatingService(serviceId));
 
         try
         {
-            ServiceBuilderResources resources = new ServiceResourcesImpl(_registry, this, def, _classFactory, logger);
+            ServiceBuilderResources resources = new ServiceResourcesImpl(registry, this, def, classFactory, logger);
 
             // Build up a stack of operations that will be needed to realize the service
             // (by the proxy, at a later date).
@@ -211,22 +211,22 @@ public class ModuleImpl implements Module
 
             if (!serviceInterface.isInterface()) return creator.createObject();
 
-            creator = new LifecycleWrappedServiceCreator(_registry, def.getServiceScope(), resources, creator);
+            creator = new LifecycleWrappedServiceCreator(registry, def.getServiceScope(), resources, creator);
 
             // Don't allow the core IOC services services to be decorated.
 
-            if (!TapestryIOCModule.class.equals(_moduleDef.getBuilderClass()))
+            if (!TapestryIOCModule.class.equals(moduleDef.getBuilderClass()))
                 creator = new InterceptorStackBuilder(this, serviceId, creator);
 
             // Add a wrapper that checks for recursion.
 
             creator = new RecursiveServiceCreationCheckWrapper(def, creator, logger);
 
-            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(_tracker, creator, serviceId);
+            JustInTimeObjectCreator delegate = new JustInTimeObjectCreator(tracker, creator, serviceId);
 
             Object proxy = createProxy(resources, delegate);
 
-            _registry.addRegistryShutdownListener(delegate);
+            registry.addRegistryShutdownListener(delegate);
 
             // Occasionally service A may invoke service B from its service builder method; if
             // service B
@@ -236,7 +236,7 @@ public class ModuleImpl implements Module
 
             if (def.isEagerLoad() && eagerLoadProxies != null) eagerLoadProxies.add(delegate);
 
-            _tracker.setStatus(serviceId, Status.VIRTUAL);
+            tracker.setStatus(serviceId, Status.VIRTUAL);
 
             return proxy;
         }
@@ -250,9 +250,9 @@ public class ModuleImpl implements Module
     {
         synchronized (MUTEX)
         {
-            if (_moduleBuilder == null) _moduleBuilder = instantiateModuleBuilder();
+            if (moduleBuilder == null) moduleBuilder = instantiateModuleBuilder();
 
-            return _moduleBuilder;
+            return moduleBuilder;
         }
     }
 
@@ -261,7 +261,7 @@ public class ModuleImpl implements Module
      */
     private Object instantiateModuleBuilder()
     {
-        Class builderClass = _moduleDef.getBuilderClass();
+        Class builderClass = moduleDef.getBuilderClass();
 
         Constructor[] constructors = builderClass.getConstructors();
 
@@ -283,25 +283,25 @@ public class ModuleImpl implements Module
 
             Arrays.sort(constructors, comparator);
 
-            _logger.warn(IOCMessages.tooManyPublicConstructors(builderClass, constructors[0]));
+            logger.warn(IOCMessages.tooManyPublicConstructors(builderClass, constructors[0]));
         }
 
         Constructor constructor = constructors[0];
 
-        if (_insideConstructor)
+        if (insideConstructor)
             throw new RuntimeException(IOCMessages.recursiveModuleConstructor(builderClass, constructor));
 
-        ObjectLocator locator = new ObjectLocatorImpl(_registry, this);
+        ObjectLocator locator = new ObjectLocatorImpl(registry, this);
         Map<Class, Object> parameterDefaults = newMap();
 
-        parameterDefaults.put(Logger.class, _logger);
+        parameterDefaults.put(Logger.class, logger);
         parameterDefaults.put(ObjectLocator.class, locator);
 
         Throwable fail = null;
 
         try
         {
-            _insideConstructor = true;
+            insideConstructor = true;
 
             Object[] parameterValues = InternalUtils.calculateParameters(locator, parameterDefaults,
                                                                          constructor.getParameterTypes(),
@@ -319,7 +319,7 @@ public class ModuleImpl implements Module
         }
         finally
         {
-            _insideConstructor = false;
+            insideConstructor = false;
         }
 
         throw new RuntimeException(IOCMessages.instantiateBuilderError(builderClass, fail), fail);
@@ -340,7 +340,7 @@ public class ModuleImpl implements Module
     {
         ServiceProxyToken token = SerializationSupport.createToken(serviceId);
 
-        ClassFab classFab = _registry.newClass(serviceInterface);
+        ClassFab classFab = registry.newClass(serviceInterface);
 
         classFab.addField("_creator", Modifier.PRIVATE | Modifier.FINAL, ObjectCreator.class);
         classFab.addField("_token", Modifier.PRIVATE | Modifier.FINAL, ServiceProxyToken.class);
@@ -387,7 +387,7 @@ public class ModuleImpl implements Module
     {
         Set<ContributionDef> result = newSet();
 
-        for (ContributionDef def : _moduleDef.getContributionDefs())
+        for (ContributionDef def : moduleDef.getContributionDefs())
         {
             if (def.getServiceId().equals(serviceId)) result.add(def);
         }
@@ -397,12 +397,12 @@ public class ModuleImpl implements Module
 
     public ServiceDef getServiceDef(String serviceId)
     {
-        return _moduleDef.getServiceDef(serviceId);
+        return moduleDef.getServiceDef(serviceId);
     }
 
     public String getLoggerName()
     {
-        return _moduleDef.getLoggerName();
+        return moduleDef.getLoggerName();
     }
 
 }

@@ -26,17 +26,17 @@ import java.util.Map;
 
 public class ChainBuilderImpl implements ChainBuilder
 {
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
     /**
      * Map, keyed on service interface, of implementation Class.
      */
 
-    private final Map<Class, Class> _cache = newConcurrentMap();
+    private final Map<Class, Class> cache = newConcurrentMap();
 
     public ChainBuilderImpl(@Builtin ClassFactory classFactory)
     {
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
     }
 
     @SuppressWarnings("unchecked")
@@ -49,12 +49,12 @@ public class ChainBuilderImpl implements ChainBuilder
 
     private Class findImplementationClass(Class commandInterface)
     {
-        Class result = _cache.get(commandInterface);
+        Class result = cache.get(commandInterface);
 
         if (result == null)
         {
             result = constructImplementationClass(commandInterface);
-            _cache.put(commandInterface, result);
+            cache.put(commandInterface, result);
         }
 
         return result;
@@ -68,7 +68,7 @@ public class ChainBuilderImpl implements ChainBuilder
 
         String name = ClassFabUtils.generateClassName(commandInterface);
 
-        ClassFab cf = _classFactory.newClass(name, Object.class);
+        ClassFab cf = classFactory.newClass(name, Object.class);
 
         addInfrastructure(cf, commandInterface);
 
@@ -105,7 +105,7 @@ public class ChainBuilderImpl implements ChainBuilder
         BodyBuilder builder = new BodyBuilder();
         builder.addln("_commands = (%s[]) $1.toArray(new %<s[0]);", commandInterface.getName());
 
-        cf.addConstructor(new Class[]{List.class}, null, builder.toString());
+        cf.addConstructor(new Class[] { List.class }, null, builder.toString());
     }
 
     @SuppressWarnings("unchecked")

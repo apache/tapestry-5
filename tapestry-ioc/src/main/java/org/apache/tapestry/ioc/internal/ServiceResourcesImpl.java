@@ -28,49 +28,48 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implementation of {@link org.apache.tapestry.ioc.ServiceBuilderResources}. We just have one
- * implementation that fills the purposes of methods that need a
- * {@link org.apache.tapestry.ioc.ServiceResources} (which includes service decorator methods) as
- * well as methods that need a {@link org.apache.tapestry.ioc.ServiceBuilderResources} (which is
- * just service builder methods). Since it is most commonly used for the former, we'll just leave
- * the name as ServiceResourcesImpl.
+ * Implementation of {@link org.apache.tapestry.ioc.ServiceBuilderResources}. We just have one implementation that fills
+ * the purposes of methods that need a {@link org.apache.tapestry.ioc.ServiceResources} (which includes service
+ * decorator methods) as well as methods that need a {@link org.apache.tapestry.ioc.ServiceBuilderResources} (which is
+ * just service builder methods). Since it is most commonly used for the former, we'll just leave the name as
+ * ServiceResourcesImpl.
  */
 public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBuilderResources
 {
-    private final ServiceDef _serviceDef;
+    private final ServiceDef serviceDef;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
     public ServiceResourcesImpl(InternalRegistry registry, Module module, ServiceDef serviceDef,
                                 ClassFactory classFactory, Logger logger)
     {
         super(registry, module);
 
-        _serviceDef = serviceDef;
-        _classFactory = classFactory;
-        _logger = logger;
+        this.serviceDef = serviceDef;
+        this.classFactory = classFactory;
+        this.logger = logger;
     }
 
     public String getServiceId()
     {
-        return _serviceDef.getServiceId();
+        return serviceDef.getServiceId();
     }
 
     public Class getServiceInterface()
     {
-        return _serviceDef.getServiceInterface();
+        return serviceDef.getServiceInterface();
     }
 
     public Logger getLogger()
     {
-        return _logger;
+        return logger;
     }
 
     public <T> Collection<T> getUnorderedConfiguration(Class<T> valueType)
     {
-        Collection<T> result = getRegistry().getUnorderedConfiguration(_serviceDef, valueType);
+        Collection<T> result = getRegistry().getUnorderedConfiguration(serviceDef, valueType);
 
         logConfiguration(result);
 
@@ -79,13 +78,13 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     private void logConfiguration(Collection configuration)
     {
-        if (_logger.isDebugEnabled())
-            _logger.debug(IOCMessages.constructedConfiguration(configuration));
+        if (logger.isDebugEnabled())
+            logger.debug(IOCMessages.constructedConfiguration(configuration));
     }
 
     public <T> List<T> getOrderedConfiguration(Class<T> valueType)
     {
-        List<T> result = getRegistry().getOrderedConfiguration(_serviceDef, valueType);
+        List<T> result = getRegistry().getOrderedConfiguration(serviceDef, valueType);
 
         logConfiguration(result);
 
@@ -94,9 +93,9 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
 
     public <K, V> Map<K, V> getMappedConfiguration(Class<K> keyType, Class<V> valueType)
     {
-        Map<K, V> result = getRegistry().getMappedConfiguration(_serviceDef, keyType, valueType);
+        Map<K, V> result = getRegistry().getMappedConfiguration(serviceDef, keyType, valueType);
 
-        if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.constructedConfiguration(result));
+        if (logger.isDebugEnabled()) logger.debug(IOCMessages.constructedConfiguration(result));
 
         return result;
     }
@@ -116,7 +115,7 @@ public class ServiceResourcesImpl extends ObjectLocatorImpl implements ServiceBu
         if (constructor == null)
             throw new RuntimeException(IOCMessages.noAutobuildConstructor(clazz));
 
-        String description = _classFactory.getConstructorLocation(constructor).toString();
+        String description = classFactory.getConstructorLocation(constructor).toString();
 
         ObjectCreator creator = new ConstructorServiceCreator(this, description, constructor);
 

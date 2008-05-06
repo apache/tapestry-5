@@ -24,30 +24,30 @@ import org.slf4j.Logger;
  */
 public class AbstractFab
 {
-    protected final OneShotLock _lock = new OneShotLock();
+    protected final OneShotLock lock = new OneShotLock();
 
-    private final CtClass _ctClass;
+    private final CtClass ctClass;
 
-    private final CtClassSource _source;
+    private final CtClassSource source;
 
-    private final Logger _logger;
+    private final Logger logger;
 
     public AbstractFab(CtClassSource source, CtClass ctClass, Logger logger)
     {
-        _ctClass = ctClass;
-        _source = source;
-        _logger = logger;
+        this.ctClass = ctClass;
+        this.source = source;
+        this.logger = logger;
     }
 
     public void addInterface(Class interfaceClass)
     {
-        _lock.check();
+        lock.check();
 
-        CtClass ctInterfaceClass = _source.toCtClass(interfaceClass);
+        CtClass ctInterfaceClass = source.toCtClass(interfaceClass);
 
         try
         {
-            for (CtClass existing : _ctClass.getInterfaces())
+            for (CtClass existing : ctClass.getInterfaces())
                 if (existing == ctInterfaceClass) return;
         }
         catch (Exception ex)
@@ -55,7 +55,7 @@ public class AbstractFab
             // Don't think this code is actually reachable.
         }
 
-        _ctClass.addInterface(ctInterfaceClass);
+        ctClass.addInterface(ctInterfaceClass);
     }
 
     protected CtClass[] toCtClasses(Class[] inputClasses)
@@ -77,26 +77,26 @@ public class AbstractFab
 
     protected CtClass toCtClass(Class inputClass)
     {
-        return _source.toCtClass(inputClass);
+        return source.toCtClass(inputClass);
     }
 
     public Class createClass()
     {
-        _lock.lock();
+        lock.lock();
 
-        if (_logger.isDebugEnabled()) _logger.debug(String.format("Creating class from %s", this));
+        if (logger.isDebugEnabled()) logger.debug(String.format("Creating class from %s", this));
 
-        return _source.createClass(_ctClass);
+        return source.createClass(ctClass);
     }
 
     protected CtClass getCtClass()
     {
-        return _ctClass;
+        return ctClass;
     }
 
     protected CtClassSource getSource()
     {
-        return _source;
+        return source;
     }
 
 }

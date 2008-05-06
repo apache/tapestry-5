@@ -18,16 +18,14 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * An mapped collection where the keys are always strings and access to values is case-insensitive.
- * The case of keys in the map is <em>maintained</em>, but on any access to a key (directly or
- * indirectly), all key comparisons are performed in a case-insensitive manner. The map
- * implementation is intended to support a reasonably finite number (dozens or hundreds, not
- * thousands or millions of key/value pairs. Unlike HashMap, it is based on a sorted list of entries
- * rather than hash bucket. It is also geared towards a largely static map, one that is created and
- * then used without modification.
+ * An mapped collection where the keys are always strings and access to values is case-insensitive. The case of keys in
+ * the map is <em>maintained</em>, but on any access to a key (directly or indirectly), all key comparisons are
+ * performed in a case-insensitive manner. The map implementation is intended to support a reasonably finite number
+ * (dozens or hundreds, not thousands or millions of key/value pairs. Unlike HashMap, it is based on a sorted list of
+ * entries rather than hash bucket. It is also geared towards a largely static map, one that is created and then used
+ * without modification.
  *
- * @param <V>
- * the type of value stored
+ * @param <V> the type of value stored
  */
 public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Serializable
 {
@@ -41,95 +39,95 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
     {
         private static final long serialVersionUID = 6713986085221148350L;
 
-        private String _key;
+        private String key;
 
-        private final int _hashCode;
+        private final int hashCode;
 
-        V _value;
+        V value;
 
         public CIMEntry(final String key, final int hashCode, V value)
         {
-            _key = key;
-            _hashCode = hashCode;
-            _value = value;
+            this.key = key;
+            this.hashCode = hashCode;
+            this.value = value;
         }
 
         public String getKey()
         {
-            return _key;
+            return key;
         }
 
         public V getValue()
         {
-            return _value;
+            return value;
         }
 
         public V setValue(V value)
         {
-            V result = _value;
+            V result = this.value;
 
-            _value = value;
+            this.value = value;
 
             return result;
         }
 
         /**
-         * Returns true if both keys are null, or if the provided key is the same as, or
-         * case-insensitively equal to, the entrie's key.
+         * Returns true if both keys are null, or if the provided key is the same as, or case-insensitively equal to,
+         * the entrie's key.
          *
          * @param key to compare against
          * @return true if equal
          */
-        @SuppressWarnings({"StringEquality"})
+        @SuppressWarnings({ "StringEquality" })
         boolean matches(String key)
         {
-            return key == _key || (key != null && key.equalsIgnoreCase(_key));
+            return key == this.key || (key != null && key.equalsIgnoreCase(this.key));
         }
 
         boolean valueMatches(Object value)
         {
-            return value == _value || (value != null && value.equals(_value));
+            return value == this.value || (value != null && value.equals(this.value));
         }
     }
 
     private class EntrySetIterator implements Iterator
     {
-        int _expectedModCount = _modCount;
+        int expectedModCount = modCount;
 
-        int _index;
+        int index;
 
-        int _current = -1;
+        int current = -1;
 
         public boolean hasNext()
         {
-            return _index < _size;
+            return index < size;
         }
 
         public Object next()
         {
             check();
 
-            if (_index >= _size) throw new NoSuchElementException();
+            if (index >= size) throw new NoSuchElementException();
 
-            _current = _index++;
+            current = index++;
 
-            return _entries[_current];
+            return entries[current];
         }
 
         public void remove()
         {
             check();
 
-            if (_current < 0) throw new NoSuchElementException();
+            if (current < 0) throw new NoSuchElementException();
 
-            new Position(_current, true).remove();
+            new Position(current, true).remove();
 
-            _expectedModCount = _modCount;
+            expectedModCount = modCount;
         }
 
         private void check()
         {
-            if (_expectedModCount != _modCount) throw new ConcurrentModificationException();
+            if (expectedModCount != modCount) throw new ConcurrentModificationException();
         }
     }
 
@@ -145,7 +143,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         @Override
         public int size()
         {
-            return _size;
+            return size;
         }
 
         @Override
@@ -188,48 +186,48 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
     private class Position
     {
-        private final int _cursor;
+        private final int cursor;
 
-        private final boolean _found;
+        private final boolean found;
 
         Position(int cursor, boolean found)
         {
-            _cursor = cursor;
-            _found = found;
+            this.cursor = cursor;
+            this.found = found;
         }
 
         boolean isFound()
         {
-            return _found;
+            return found;
         }
 
         CIMEntry<V> entry()
         {
-            return _entries[_cursor];
+            return entries[cursor];
         }
 
         V get()
         {
-            return _found ? _entries[_cursor]._value : null;
+            return found ? entries[cursor].value : null;
         }
 
         V remove()
         {
-            if (!_found) return null;
+            if (!found) return null;
 
-            V result = _entries[_cursor]._value;
+            V result = entries[cursor].value;
 
             // Remove the entry by shifting everything else down.
 
-            System.arraycopy(_entries, _cursor + 1, _entries, _cursor, _size - _cursor - 1);
+            System.arraycopy(entries, cursor + 1, entries, cursor, size - cursor - 1);
 
             // We shifted down, leaving one (now duplicate) entry behind.
 
-            _entries[--_size] = null;
+            entries[--size] = null;
 
             // A structural change for sure
 
-            _modCount++;
+            modCount++;
 
             return result;
         }
@@ -237,56 +235,56 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         @SuppressWarnings("unchecked")
         V put(String key, int hashCode, V newValue)
         {
-            if (_found)
+            if (found)
             {
-                CIMEntry<V> e = _entries[_cursor];
+                CIMEntry<V> e = entries[cursor];
 
-                V result = e._value;
+                V result = e.value;
 
-                // Not a structural change, so no change to _modCount
+                // Not a structural change, so no change to modCount
 
                 // Update the key (to maintain case). By definition, the hash code
                 // will not change.
 
-                e._key = key;
-                e._value = newValue;
+                e.key = key;
+                e.value = newValue;
 
                 return result;
             }
 
             // Not found, we're going to add it.
 
-            int newSize = _size + 1;
+            int newSize = size + 1;
 
-            if (newSize == _entries.length)
+            if (newSize == entries.length)
             {
                 // Time to expand!
 
-                int newCapacity = (_size * 3) / 2 + 1;
+                int newCapacity = (size * 3) / 2 + 1;
 
                 CIMEntry<V>[] newEntries = new CIMEntry[newCapacity];
 
-                System.arraycopy(_entries, 0, newEntries, 0, _cursor);
+                System.arraycopy(entries, 0, newEntries, 0, cursor);
 
-                System.arraycopy(_entries, _cursor, newEntries, _cursor + 1, _size - _cursor);
+                System.arraycopy(entries, cursor, newEntries, cursor + 1, size - cursor);
 
-                _entries = newEntries;
+                entries = newEntries;
             }
             else
             {
                 // Open up a space for the new entry
 
-                System.arraycopy(_entries, _cursor, _entries, _cursor + 1, _size - _cursor);
+                System.arraycopy(entries, cursor, entries, cursor + 1, size - cursor);
             }
 
             CIMEntry<V> newEntry = new CIMEntry<V>(key, hashCode, newValue);
-            _entries[_cursor] = newEntry;
+            entries[cursor] = newEntry;
 
-            _size++;
+            size++;
 
             // This is definately a structural change
 
-            _modCount++;
+            modCount++;
 
             return null;
         }
@@ -295,13 +293,13 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
     // The list of entries. This is kept sorted by hash code. In some cases, there may be different
     // keys with the same hash code in adjacent indexes.
-    private CIMEntry<V>[] _entries;
+    private CIMEntry<V>[] entries;
 
-    private int _size = 0;
+    private int size = 0;
 
     // Used by iterators to check for concurrent modifications
 
-    private transient int _modCount = 0;
+    private transient int modCount = 0;
 
     private transient Set<Map.Entry<String, V>> _entrySet;
 
@@ -313,7 +311,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
     @SuppressWarnings("unchecked")
     public CaseInsensitiveMap(int size)
     {
-        _entries = new CIMEntry[Math.max(size, 3)];
+        entries = new CIMEntry[Math.max(size, 3)];
     }
 
     public CaseInsensitiveMap(Map<String, ? extends V> map)
@@ -329,23 +327,23 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
     @Override
     public void clear()
     {
-        for (int i = 0; i < _size; i++)
-            _entries[i] = null;
+        for (int i = 0; i < size; i++)
+            entries[i] = null;
 
-        _size = 0;
-        _modCount++;
+        size = 0;
+        modCount++;
     }
 
     @Override
     public boolean isEmpty()
     {
-        return _size == 0;
+        return size == 0;
     }
 
     @Override
     public int size()
     {
-        return _size;
+        return size;
     }
 
     @SuppressWarnings("unchecked")
@@ -396,15 +394,15 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
     }
 
     /**
-     * Searches the elements for the index of the indicated key and (case insensitive) hash code.
-     * Sets the _cursor and _found attributes.
+     * Searches the elements for the index of the indicated key and (case insensitive) hash code. Sets the _cursor and
+     * _found attributes.
      */
     private Position select(String key, int hashCode)
     {
-        if (_size == 0) return new Position(0, false);
+        if (size == 0) return new Position(0, false);
 
         int low = 0;
-        int high = _size - 1;
+        int high = size - 1;
 
         int cursor;
 
@@ -412,15 +410,15 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
         {
             cursor = (low + high) >> 1;
 
-            CIMEntry e = _entries[cursor];
+            CIMEntry e = entries[cursor];
 
-            if (e._hashCode < hashCode)
+            if (e.hashCode < hashCode)
             {
                 low = cursor + 1;
                 continue;
             }
 
-            if (e._hashCode > hashCode)
+            if (e.hashCode > hashCode)
             {
                 high = cursor - 1;
                 continue;
@@ -433,9 +431,9 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
     }
 
     /**
-     * select() has located a matching hashCode, but there's an outlying possibility that multiple
-     * keys share the same hashCode. Backup the cursor until we get to locate the initial hashCode
-     * match, then march forward until the key is located, or the hashCode stops matching.
+     * select() has located a matching hashCode, but there's an outlying possibility that multiple keys share the same
+     * hashCode. Backup the cursor until we get to locate the initial hashCode match, then march forward until the key
+     * is located, or the hashCode stops matching.
      *
      * @param key
      * @param hashCode
@@ -446,14 +444,14 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
         while (cursor > 0)
         {
-            if (_entries[cursor - 1]._hashCode != hashCode) break;
+            if (entries[cursor - 1].hashCode != hashCode) break;
 
             cursor--;
         }
 
         while (true)
         {
-            if (_entries[cursor].matches(key))
+            if (entries[cursor].matches(key))
             {
                 found = true;
                 break;
@@ -464,7 +462,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
             cursor++;
 
             // If out of entries,
-            if (cursor >= _size || _entries[cursor]._hashCode != hashCode) break;
+            if (cursor >= size || entries[cursor].hashCode != hashCode) break;
         }
 
         return new Position(cursor, found);

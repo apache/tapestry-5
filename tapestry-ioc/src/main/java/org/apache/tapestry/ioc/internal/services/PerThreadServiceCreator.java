@@ -25,33 +25,31 @@ import org.apache.tapestry.ioc.services.PerthreadManager;
  */
 public class PerThreadServiceCreator implements ObjectCreator
 {
-    private final PerthreadManager _perthreadManager;
+    private final PerthreadManager perthreadManager;
 
-    private final ObjectCreator _delegate;
+    private final ObjectCreator delegate;
 
     public PerThreadServiceCreator(PerthreadManager perthreadManager, ObjectCreator delegate)
     {
-        _perthreadManager = perthreadManager;
-        _delegate = delegate;
+        this.perthreadManager = perthreadManager;
+        this.delegate = delegate;
     }
 
     /**
-     * For each thread, the first call will use the delegate
-     * {@link org.apache.tapestry.ioc.ObjectCreator} to create an instance,
-     * and later calls will reuse the same per-thread instance. The instance
-     * is stored in the {@link org.apache.tapestry.ioc.services.PerthreadManager} and will
-     * be released at the end of the request.
+     * For each thread, the first call will use the delegate {@link org.apache.tapestry.ioc.ObjectCreator} to create an
+     * instance, and later calls will reuse the same per-thread instance. The instance is stored in the {@link
+     * org.apache.tapestry.ioc.services.PerthreadManager} and will be released at the end of the request.
      */
     public Object createObject()
     {
         // Use the ObjectCreator instance as the key.  it will be unique.
 
-        Object perthreadInstance = _perthreadManager.get(_delegate);
+        Object perthreadInstance = perthreadManager.get(delegate);
 
         if (perthreadInstance == null)
         {
-            perthreadInstance = _delegate.createObject();
-            _perthreadManager.put(_delegate, perthreadInstance);
+            perthreadInstance = delegate.createObject();
+            perthreadManager.put(delegate, perthreadInstance);
         }
 
         return perthreadInstance;

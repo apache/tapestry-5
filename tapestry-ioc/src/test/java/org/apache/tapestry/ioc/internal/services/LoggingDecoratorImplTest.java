@@ -32,12 +32,12 @@ import org.xml.sax.SAXParseException;
  */
 public class LoggingDecoratorImplTest extends IOCInternalTestCase
 {
-    private AspectDecorator _aspectDecorator;
+    private AspectDecorator aspectDecorator;
 
     @BeforeClass
     public void setup()
     {
-        _aspectDecorator = getService(AspectDecorator.class);
+        aspectDecorator = getService(AspectDecorator.class);
     }
 
     public interface UpcaseService
@@ -89,7 +89,7 @@ public class LoggingDecoratorImplTest extends IOCInternalTestCase
 
     private LoggingDecoratorImpl newLoggingDecorator()
     {
-        return new LoggingDecoratorImpl(_aspectDecorator, new ExceptionTrackerImpl());
+        return new LoggingDecoratorImpl(aspectDecorator, new ExceptionTrackerImpl());
     }
 
     @Test

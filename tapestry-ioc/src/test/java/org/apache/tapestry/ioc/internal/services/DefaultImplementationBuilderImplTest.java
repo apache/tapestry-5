@@ -22,24 +22,24 @@ import org.testng.annotations.Test;
 
 public class DefaultImplementationBuilderImplTest extends IOCInternalTestCase
 {
-    private DefaultImplementationBuilder _builder;
+    private DefaultImplementationBuilder builder;
 
     @BeforeClass
     public void setup_builder()
     {
-        _builder = getService("DefaultImplementationBuilder", DefaultImplementationBuilder.class);
+        builder = getService("DefaultImplementationBuilder", DefaultImplementationBuilder.class);
     }
 
     @AfterClass
     public void cleanup_builder()
     {
-        _builder = null;
+        builder = null;
     }
 
     @Test
     public void simple_interface()
     {
-        Runnable r = _builder.createDefaultImplementation(Runnable.class);
+        Runnable r = builder.createDefaultImplementation(Runnable.class);
 
         r.run();
 
@@ -54,7 +54,7 @@ public class DefaultImplementationBuilderImplTest extends IOCInternalTestCase
     @Test
     public void interface_has_toString()
     {
-        ToString ts = _builder.createDefaultImplementation(ToString.class);
+        ToString ts = builder.createDefaultImplementation(ToString.class);
 
         assertNull(ts.toString());
     }
@@ -70,8 +70,8 @@ public class DefaultImplementationBuilderImplTest extends IOCInternalTestCase
 
         for (int i = 0; i < 2; i++)
         {
-            r1 = _builder.createDefaultImplementation(Runnable.class);
-            r2 = _builder.createDefaultImplementation(Runnable.class);
+            r1 = builder.createDefaultImplementation(Runnable.class);
+            r2 = builder.createDefaultImplementation(Runnable.class);
 
             if (r1 == r2) break;
         }

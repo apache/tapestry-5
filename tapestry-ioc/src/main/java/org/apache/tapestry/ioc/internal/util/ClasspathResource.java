@@ -24,11 +24,13 @@ import java.net.URL;
  */
 public final class ClasspathResource extends AbstractResource
 {
-    private final ClassLoader _classLoader;
+    private final ClassLoader classLoader;
 
-    private URL _url;
+    // Guarded by this
+    private URL url;
 
-    private boolean _urlResolved;
+    // Guarded by this
+    private boolean urlResolved;
 
     public ClasspathResource(String path)
     {
@@ -41,24 +43,24 @@ public final class ClasspathResource extends AbstractResource
 
         notNull(classLoader, "classLoader");
 
-        _classLoader = classLoader;
+        this.classLoader = classLoader;
     }
 
     @Override
     protected Resource newResource(String path)
     {
-        return new ClasspathResource(_classLoader, path);
+        return new ClasspathResource(classLoader, path);
     }
 
     public synchronized URL toURL()
     {
-        if (!_urlResolved)
+        if (!urlResolved)
         {
-            _url = _classLoader.getResource(getPath());
-            _urlResolved = true;
+            url = classLoader.getResource(getPath());
+            urlResolved = true;
         }
 
-        return _url;
+        return url;
     }
 
     @Override
@@ -72,7 +74,7 @@ public final class ClasspathResource extends AbstractResource
 
         ClasspathResource other = (ClasspathResource) obj;
 
-        return other._classLoader == _classLoader && other.getPath().equals(getPath());
+        return other.classLoader == classLoader && other.getPath().equals(getPath());
     }
 
     @Override

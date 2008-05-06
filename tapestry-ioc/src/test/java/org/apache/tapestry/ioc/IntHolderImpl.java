@@ -16,16 +16,16 @@ package org.apache.tapestry.ioc;
 
 public class IntHolderImpl implements IntHolder
 {
-    private final int _value;
+    private final int value;
 
     public IntHolderImpl(final int value)
     {
-        _value = value;
+        this.value = value;
     }
 
     public int getValue()
     {
-        return _value;
+        return value;
     }
 
 }

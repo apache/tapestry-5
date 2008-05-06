@@ -259,11 +259,11 @@ public class MyModule
 +---+
 public class MyServiceImpl implements MyService
 {
-  private final JobScheduler _jobScheduler;
+  private final JobScheduler jobScheduler;
 
   public MyServiceImpl(@Clustered JobScheduler jobScheduler)
   {
-    _jobScheduler = jobScheduler;
+    this.jobScheduler = jobScheduler;
   }
 
   . . .
@@ -304,12 +304,14 @@ import org.apache.tapestry.ioc.annotations.InjectService;
 
 public class IndexerImpl implements Indexer
 {
-  private final FileSystem _fileSystem;
+  private final FileSystem fileSystem;
   
   public IndexerImpl(@InjectService("FileSystem") FileSystem fileSystem)
   {
-    _fileSystem = fileSystem;
+    this.fileSystem = fileSystem;
   }
+
+  . . .
 }
 +---+  
 
@@ -332,16 +334,18 @@ import org.apache.tapestry.ioc.annotations.InjectService;
 
 public class IndexerImpl implements Indexer
 {
-  private final FileSystem _fileSystem;
+  private final FileSystem fileSystem;
   
   public IndexerImpl(@InjectService("FileSystem") FileSystem fileSystem,
   
   @InjectService("JobScheduler") JobScheduler scheduler)
   {
-    _fileSystem = fileSystem;
+    this.fileSystem = fileSystem;
     
     scheduler.scheduleDailyJob(this); // Bad Idea
   }
+
+  . . .
 }
 +---+
  

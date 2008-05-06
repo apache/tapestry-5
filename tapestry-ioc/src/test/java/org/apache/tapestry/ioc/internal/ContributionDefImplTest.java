@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 
 public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilderSource
 {
-    private Object _toContribute;
+    private Object toContribute;
 
     public Object getModuleBuilder()
     {
@@ -37,11 +37,11 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     @Test
     public void unordered_contribution()
     {
-        _toContribute = new Object();
+        toContribute = new Object();
         Configuration configuration = mockConfiguration();
         ObjectLocator locator = mockObjectLocator();
 
-        configuration.add(_toContribute);
+        configuration.add(toContribute);
 
         replay();
 
@@ -161,7 +161,7 @@ public class ContributionDefImplTest extends IOCTestCase implements ModuleBuilde
     @SuppressWarnings("unchecked")
     public void contributeUnordered(Configuration configuration)
     {
-        configuration.add(_toContribute);
+        configuration.add(toContribute);
     }
 
     public void contributeUnorderedParameter(Configuration<UpcaseService> configuration,

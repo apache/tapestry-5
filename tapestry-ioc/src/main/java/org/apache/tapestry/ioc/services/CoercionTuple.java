@@ -19,8 +19,8 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 /**
  * An immutable object that represents a mapping from one type to another. This is also the contribution type when
  * building the {@link org.apache.tapestry.ioc.services.TypeCoercer} service. Wraps a {@link
- * org.apache.tapestry.ioc.services.Coercion} object that performs the work with additional properties that describe
- * the input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
+ * org.apache.tapestry.ioc.services.Coercion} object that performs the work with additional properties that describe the
+ * input and output types of the coercion, needed when searching for an appropriate coercion (or sequence of
  * coercions).
  *
  * @param <S> source (input) type
@@ -28,11 +28,11 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
  */
 public final class CoercionTuple<S, T>
 {
-    private final Class<S> _sourceType;
+    private final Class<S> sourceType;
 
-    private final Class<T> _targetType;
+    private final Class<T> targetType;
 
-    private final Coercion<S, T> _coercion;
+    private final Coercion<S, T> coercion;
 
     /**
      * Wraps an arbitrary coercion with an implementation of toString() that identifies the source and target types.
@@ -54,7 +54,7 @@ public final class CoercionTuple<S, T>
         @Override
         public String toString()
         {
-            return String.format("%s --> %s", convert(_sourceType), convert(_targetType));
+            return String.format("%s --> %s", convert(sourceType), convert(targetType));
         }
     }
 
@@ -97,30 +97,30 @@ public final class CoercionTuple<S, T>
         notNull(targetType, "targetType");
         notNull(coercion, "coercion");
 
-        _sourceType = sourceType;
-        _targetType = targetType;
-        _coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;
+        this.sourceType = sourceType;
+        this.targetType = targetType;
+        this.coercion = wrap ? new CoercionWrapper<S, T>(coercion) : coercion;
     }
 
     @Override
     public String toString()
     {
-        return _coercion.toString();
+        return coercion.toString();
     }
 
     public Coercion<S, T> getCoercion()
     {
-        return _coercion;
+        return coercion;
     }
 
     public Class<S> getSourceType()
     {
-        return _sourceType;
+        return sourceType;
     }
 
     public Class<T> getTargetType()
     {
-        return _targetType;
+        return targetType;
     }
 
 }

@@ -15,12 +15,12 @@
 package org.apache.tapestry.ioc.internal.util;
 
 /**
- * Logic for handling one shot semantics for classes; classes that include a method (or methods)
- * that "locks down" the instance, to prevent it from being used again in the future.
+ * Logic for handling one shot semantics for classes; classes that include a method (or methods) that "locks down" the
+ * instance, to prevent it from being used again in the future.
  */
 public class OneShotLock
 {
-    private boolean _lock;
+    private boolean lock;
 
     /**
      * Checks to see if the lock has been set (via {@link #lock()}).
@@ -34,7 +34,7 @@ public class OneShotLock
 
     private void innerCheck()
     {
-        if (_lock)
+        if (lock)
         {
             // This is how I would think it would be:
 
@@ -46,6 +46,7 @@ public class OneShotLock
             // ... so why do we get element 4?  Found this via trial and error.  Some extra stack frame
             // gets in there somehow, as in, getStackTrace() must be calling something (probably native)
             // that creates the actual array, and includes itself as [0], getStackTrace() as [1], etc.
+            // Maybe it's something to do with synchronized?
 
             StackTraceElement element = Thread.currentThread().getStackTrace()[4];
 
@@ -60,6 +61,6 @@ public class OneShotLock
     {
         innerCheck();
 
-        _lock = true;
+        lock = true;
     }
 }

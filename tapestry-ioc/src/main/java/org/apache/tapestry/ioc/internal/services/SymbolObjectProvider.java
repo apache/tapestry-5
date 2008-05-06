@@ -28,16 +28,16 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
  */
 public class SymbolObjectProvider implements ObjectProvider
 {
-    private final SymbolSource _symbolSource;
+    private final SymbolSource symbolSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
     public SymbolObjectProvider(@Builtin SymbolSource symbolSource,
 
                                 @Builtin TypeCoercer typeCoercer)
     {
-        _symbolSource = symbolSource;
-        _typeCoercer = typeCoercer;
+        this.symbolSource = symbolSource;
+        this.typeCoercer = typeCoercer;
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider, ObjectLocator locator)
@@ -46,13 +46,13 @@ public class SymbolObjectProvider implements ObjectProvider
 
         if (annotation == null) return null;
 
-        Object value = _symbolSource.valueForSymbol(annotation.value());
+        Object value = symbolSource.valueForSymbol(annotation.value());
 
         IntermediateType it = annotationProvider.getAnnotation(IntermediateType.class);
 
-        if (it != null) value = _typeCoercer.coerce(value, it.value());
+        if (it != null) value = typeCoercer.coerce(value, it.value());
 
-        return _typeCoercer.coerce(value, objectType);
+        return typeCoercer.coerce(value, objectType);
     }
 
 }

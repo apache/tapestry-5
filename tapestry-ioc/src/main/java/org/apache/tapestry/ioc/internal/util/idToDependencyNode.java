@@ -29,7 +29,7 @@ import java.util.Map;
  * Used to order objects into an "execution" order. Each object must have a unique id. It may specify a list of
  * constraints which identify the ordering of the objects.
  */
-public class Orderer<T>
+public class idToDependencyNode<T>
 {
     private final OneShotLock lock = new OneShotLock();
 
@@ -39,12 +39,12 @@ public class Orderer<T>
 
     private final Map<String, Orderable<T>> idToOrderable = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, DependencyNode<T>> _dependencyNodesById = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, DependencyNode<T>> idToDependencyNode = CollectionFactory.newCaseInsensitiveMap();
 
     // Special node that is always dead last: all other nodes are a dependency
     // of the trailer.
 
-    private DependencyNode<T> _trailer;
+    private DependencyNode<T> trailer;
 
     interface DependencyLinker<T>
     {
@@ -54,7 +54,7 @@ public class Orderer<T>
     // before: source is added as a dependency of target, so source will
     // appear before target.
 
-    final DependencyLinker<T> _before = new DependencyLinker<T>()
+    final DependencyLinker<T> before = new DependencyLinker<T>()
     {
         public void link(DependencyNode<T> source, DependencyNode<T> target)
         {
@@ -65,7 +65,7 @@ public class Orderer<T>
     // after: target is added as a dependency of source, so source will appear
     // after target.
 
-    final DependencyLinker<T> _after = new DependencyLinker<T>()
+    final DependencyLinker<T> after = new DependencyLinker<T>()
     {
         public void link(DependencyNode<T> source, DependencyNode<T> target)
         {
@@ -73,7 +73,7 @@ public class Orderer<T>
         }
     };
 
-    public Orderer(Logger logger)
+    public idToDependencyNode(Logger logger)
     {
         this.logger = logger;
     }
@@ -106,7 +106,7 @@ public class Orderer<T>
      * @param id          unique, qualified id for the target
      * @param target      the object to be ordered (or null as a placeholder)
      * @param constraints optional, variable constraints
-     * @see #add(Orderable)
+     * @see #add(org.apache.tapestry.ioc.Orderable)
      */
 
     public void add(String id, T target, String... constraints)
@@ -124,7 +124,7 @@ public class Orderer<T>
 
         List<T> result = newList();
 
-        for (Orderable<T> orderable : _trailer.getOrdered())
+        for (Orderable<T> orderable : trailer.getOrdered())
         {
             T target = orderable.getTarget();
 
@@ -138,7 +138,7 @@ public class Orderer<T>
 
     private void initializeGraph()
     {
-        _trailer = new DependencyNode<T>(logger, new Orderable<T>("*-trailer-*", null));
+        trailer = new DependencyNode<T>(logger, new Orderable<T>("*-trailer-*", null));
 
         addNodes();
 
@@ -151,9 +151,9 @@ public class Orderer<T>
         {
             DependencyNode<T> node = new DependencyNode<T>(logger, orderable);
 
-            _dependencyNodesById.put(orderable.getId(), node);
+            idToDependencyNode.put(orderable.getId(), node);
 
-            _trailer.addDependency(node);
+            trailer.addDependency(node);
         }
     }
 
@@ -184,8 +184,8 @@ public class Orderer<T>
         DependencyLinker<T> linker = null;
 
         if ("after".equals(type))
-            linker = _after;
-        else if ("before".equals(type)) linker = _before;
+            linker = after;
+        else if ("before".equals(type)) linker = before;
 
         if (linker == null)
         {
@@ -202,7 +202,7 @@ public class Orderer<T>
     {
         Collection<DependencyNode<T>> nodes = findDependencies(sourceId, patternList);
 
-        DependencyNode<T> source = _dependencyNodesById.get(sourceId);
+        DependencyNode<T> source = idToDependencyNode.get(sourceId);
 
         for (DependencyNode<T> target : nodes)
         {
@@ -216,11 +216,11 @@ public class Orderer<T>
 
         Collection<DependencyNode<T>> result = newList();
 
-        for (String id : _dependencyNodesById.keySet())
+        for (String id : idToDependencyNode.keySet())
         {
             if (sourceId.equals(id)) continue;
 
-            if (matcher.matches(id)) result.add(_dependencyNodesById.get(id));
+            if (matcher.matches(id)) result.add(idToDependencyNode.get(id));
         }
 
         return result;

@@ -79,45 +79,25 @@ public final class ClassFabUtils
 
     public static Class getPrimitiveType(String primitiveTypeName)
     {
-        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveTypeName).getPrimitiveType();
+        return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(primitiveTypeName).primitiveType;
     }
 
     private static class PrimitiveInfo
     {
-        private final Class _primitiveType;
+        private final Class primitiveType;
 
-        private final String _typeCode;
+        private final String typeCode;
 
-        private final Class _wrapperType;
+        private final Class wrapperType;
 
-        private final String _unwrapMethod;
+        private final String unwrapMethod;
 
         public PrimitiveInfo(Class primitiveType, String typeCode, Class wrapperType, String unwrapMethod)
         {
-            _primitiveType = primitiveType;
-            _typeCode = typeCode;
-            _wrapperType = wrapperType;
-            _unwrapMethod = unwrapMethod;
-        }
-
-        public String getTypeCode()
-        {
-            return _typeCode;
-        }
-
-        public String getUnwrapMethod()
-        {
-            return _unwrapMethod;
-        }
-
-        public Class getWrapperType()
-        {
-            return _wrapperType;
-        }
-
-        public Class getPrimitiveType()
-        {
-            return _primitiveType;
+            this.primitiveType = primitiveType;
+            this.typeCode = typeCode;
+            this.wrapperType = wrapperType;
+            this.unwrapMethod = unwrapMethod;
         }
     }
 
@@ -165,7 +145,10 @@ public final class ClassFabUtils
 
         PrimitiveInfo pi = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type);
 
-        if (pi != null) buffer.append(pi.getTypeCode());
+        if (pi != null)
+        {
+            buffer.append(pi.typeCode);
+        }
         else
         {
             buffer.append("L");
@@ -181,7 +164,7 @@ public final class ClassFabUtils
      */
     public static Class getPrimitiveType(Class wrapperType)
     {
-        return WRAPPER_TYPE_TO_PRIMITIVE_INFO.get(wrapperType).getPrimitiveType();
+        return WRAPPER_TYPE_TO_PRIMITIVE_INFO.get(wrapperType).primitiveType;
     }
 
     /**
@@ -195,7 +178,7 @@ public final class ClassFabUtils
     {
         PrimitiveInfo info = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName());
 
-        return info == null ? type : info.getWrapperType();
+        return info == null ? type : info.wrapperType;
     }
 
     /**
@@ -214,8 +197,8 @@ public final class ClassFabUtils
             PrimitiveInfo info = PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(desiredType);
 
             return String.format("((%s)%s).%s()",
-                                 info.getWrapperType().getName(), reference,
-                                 info.getUnwrapMethod());
+                                 info.wrapperType.getName(), reference,
+                                 info.unwrapMethod);
         }
 
         return String.format("(%s)%s", desiredType, reference);
@@ -237,7 +220,7 @@ public final class ClassFabUtils
     {
         if (type.equals(void.class)) return "V";
 
-        if (type.isPrimitive()) return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName()).getTypeCode();
+        if (type.isPrimitive()) return PRIMITIVE_TYPE_NAME_TO_PRIMITIVE_INFO.get(type.getName()).typeCode;
 
         if (type.isArray()) return "[" + getTypeCode(type.getComponentType());
 

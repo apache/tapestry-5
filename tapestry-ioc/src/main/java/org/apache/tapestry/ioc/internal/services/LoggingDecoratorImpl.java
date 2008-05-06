@@ -22,23 +22,23 @@ import org.slf4j.Logger;
 
 public class LoggingDecoratorImpl implements LoggingDecorator
 {
-    private final AspectDecorator _aspectDecorator;
+    private final AspectDecorator aspectDecorator;
 
-    private final ExceptionTracker _exceptionTracker;
+    private final ExceptionTracker exceptionTracker;
 
     public LoggingDecoratorImpl(AspectDecorator aspectDecorator, ExceptionTracker exceptionTracker)
     {
-        _aspectDecorator = aspectDecorator;
-        _exceptionTracker = exceptionTracker;
+        this.aspectDecorator = aspectDecorator;
+        this.exceptionTracker = exceptionTracker;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId, final Logger logger)
     {
-        MethodAdvice advice = new LoggingAdvice(logger, _exceptionTracker);
+        MethodAdvice advice = new LoggingAdvice(logger, exceptionTracker);
 
-        return _aspectDecorator.build(serviceInterface, delegate, advice,
-                                      String.format("<Logging interceptor for %s(%s)>", serviceId,
-                                                    serviceInterface.getName()));
+        return aspectDecorator.build(serviceInterface, delegate, advice,
+                                     String.format("<Logging interceptor for %s(%s)>", serviceId,
+                                                   serviceInterface.getName()));
     }
 
 }

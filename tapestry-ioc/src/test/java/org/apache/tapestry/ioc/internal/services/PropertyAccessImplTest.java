@@ -33,9 +33,9 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 {
     private static final String CLASS_NAME = PropertyAccessImplTest.class.getName();
 
-    private PropertyAccess _access = new PropertyAccessImpl();
+    private PropertyAccess access = new PropertyAccessImpl();
 
-    private Random _random = new Random();
+    private Random random = new Random();
 
     public static class Bean
     {
@@ -155,11 +155,11 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         Bean b = new Bean();
 
-        int value = _random.nextInt();
+        int value = random.nextInt();
 
         b.setValue(value);
 
-        assertEquals(_access.get(b, "value"), value);
+        assertEquals(access.get(b, "value"), value);
     }
 
     @Test
@@ -167,11 +167,11 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         Bean b = new Bean();
 
-        int value = _random.nextInt();
+        int value = random.nextInt();
 
         b.setValue(value);
 
-        assertEquals(_access.get(b, "VALUE"), value);
+        assertEquals(access.get(b, "VALUE"), value);
     }
 
     @Test
@@ -179,9 +179,9 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         Bean b = new Bean();
 
-        int value = _random.nextInt();
+        int value = random.nextInt();
 
-        _access.set(b, "value", value);
+        access.set(b, "value", value);
 
         assertEquals(b.getValue(), value);
     }
@@ -191,9 +191,9 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     {
         Bean b = new Bean();
 
-        int value = _random.nextInt();
+        int value = random.nextInt();
 
-        _access.set(b, "VALUE", value);
+        access.set(b, "VALUE", value);
 
         assertEquals(b.getValue(), value);
     }
@@ -205,7 +205,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         try
         {
-            _access.get(b, "zaphod");
+            access.get(b, "zaphod");
 
             unreachable();
         }
@@ -223,7 +223,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         try
         {
-            _access.set(b, "class", null);
+            access.set(b, "class", null);
             unreachable();
         }
         catch (UnsupportedOperationException ex)
@@ -240,7 +240,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         try
         {
-            _access.get(b, "writeOnly");
+            access.get(b, "writeOnly");
             unreachable();
         }
         catch (UnsupportedOperationException ex)
@@ -257,7 +257,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         try
         {
-            _access.get(b, "failure");
+            access.get(b, "failure");
             unreachable();
         }
         catch (RuntimeException ex)
@@ -273,7 +273,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         try
         {
-            _access.set(b, "failure", false);
+            access.set(b, "failure", false);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -290,7 +290,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         try
         {
-            _access.get(b, "google");
+            access.get(b, "google");
             unreachable();
         }
         catch (RuntimeException ex)
@@ -302,17 +302,17 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void clear_wipes_internal_cache()
     {
-        ClassPropertyAdapter cpa1 = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa1 = access.getAdapter(Bean.class);
 
         assertSame(cpa1.getBeanType(), Bean.class);
 
-        ClassPropertyAdapter cpa2 = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa2 = access.getAdapter(Bean.class);
 
         assertSame(cpa2, cpa1);
 
-        _access.clearCache();
+        access.clearCache();
 
-        ClassPropertyAdapter cpa3 = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa3 = access.getAdapter(Bean.class);
 
         assertNotSame(cpa3, cpa1);
     }
@@ -320,7 +320,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void class_property_adapter_toString()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
         assertEquals(cpa.toString(),
                      "<ClassPropertyAdaptor " + CLASS_NAME + "$Bean : class, readOnly, value, writeOnly>");
@@ -329,7 +329,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void property_adapter_read_only_property()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
         PropertyAdapter pa = cpa.getPropertyAdapter("readOnly");
 
         assertTrue(pa.isRead());
@@ -343,7 +343,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void property_adapter_write_only_property()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
         PropertyAdapter pa = cpa.getPropertyAdapter("writeOnly");
 
         assertFalse(pa.isRead());
@@ -356,7 +356,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void class_property_adapter_returns_null_for_unknown_property()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
         assertNull(cpa.getPropertyAdapter("google"));
     }
@@ -364,7 +364,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void access_to_property_type()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
         assertEquals(cpa.getPropertyAdapter("value").getType(), int.class);
         assertEquals(cpa.getPropertyAdapter("readOnly").getType(), String.class);
@@ -374,7 +374,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void property_names()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(Bean.class);
+        ClassPropertyAdapter cpa = access.getAdapter(Bean.class);
 
         assertEquals(cpa.getPropertyNames(), Arrays.asList("class", "readOnly", "value", "writeOnly"));
     }
@@ -388,7 +388,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
         Bean b = new Bean();
 
-        int value = _random.nextInt();
+        int value = random.nextInt();
 
         pa.set(b, "value", value);
 
@@ -400,7 +400,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void super_interface_methods_inherited_by_sub_interface()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(SubInterface.class);
+        ClassPropertyAdapter cpa = access.getAdapter(SubInterface.class);
 
         assertEquals(cpa.getPropertyNames(), Arrays.asList("grandParentProperty", "parentProperty", "subProperty"));
     }
@@ -408,7 +408,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void indexed_properties_are_ignored()
     {
-        ClassPropertyAdapter cpa = _access.getAdapter(BeanWithIndexedProperty.class);
+        ClassPropertyAdapter cpa = access.getAdapter(BeanWithIndexedProperty.class);
 
         assertEquals(cpa.getPropertyNames(), Arrays.asList("class", "primitiveProperty"));
     }
@@ -416,7 +416,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void get_annotation_when_annotation_not_present()
     {
-        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class)
+        PropertyAdapter pa = access.getAdapter(AnnotatedBean.class)
                 .getPropertyAdapter("readWrite");
 
         assertNull(pa.getAnnotation(Scope.class));
@@ -425,7 +425,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void get_annotation_with_annotation_on_write_method()
     {
-        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter("annotationOnWrite");
+        PropertyAdapter pa = access.getAdapter(AnnotatedBean.class).getPropertyAdapter("annotationOnWrite");
 
         Scope annotation = pa.getAnnotation(Scope.class);
         assertNotNull(annotation);
@@ -436,7 +436,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void read_method_annotation_overrides_write_method_annotation()
     {
-        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter("annotationOnRead");
+        PropertyAdapter pa = access.getAdapter(AnnotatedBean.class).getPropertyAdapter("annotationOnRead");
 
         Scope annotation = pa.getAnnotation(Scope.class);
         assertNotNull(annotation);
@@ -447,7 +447,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void no_write_method_reading_missing_annotation()
     {
-        PropertyAdapter pa = _access.getAdapter(AnnotatedBean.class).getPropertyAdapter("readOnly");
+        PropertyAdapter pa = access.getAdapter(AnnotatedBean.class).getPropertyAdapter("readOnly");
 
         assertNull(pa.getAnnotation(Scope.class));
     }
@@ -455,7 +455,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
     @Test
     public void using_generics()
     {
-        ClassPropertyAdapter cpa1 = _access.getAdapter(StringLongPair.class);
+        ClassPropertyAdapter cpa1 = access.getAdapter(StringLongPair.class);
 
         PropertyAdapter pa1 = cpa1.getPropertyAdapter("key");
         assertSame(pa1.getType(), String.class);
@@ -468,7 +468,7 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
         // On the base class, which defines the generic parameter type variables,
         // the properties just look like Object.
 
-        ClassPropertyAdapter cpa2 = _access.getAdapter(Pair.class);
+        ClassPropertyAdapter cpa2 = access.getAdapter(Pair.class);
 
         pa1 = cpa2.getPropertyAdapter("key");
         assertSame(pa1.getType(), Object.class);

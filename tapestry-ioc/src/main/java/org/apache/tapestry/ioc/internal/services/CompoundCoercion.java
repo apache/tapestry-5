@@ -19,23 +19,20 @@ import org.apache.tapestry.ioc.services.Coercion;
 /**
  * Combines two coercions to create a coercsion through an intermediate type.
  *
- * @param <S>
- * The source (input) type
- * @param <I>
- * The intermediate type
- * @param <T>
- * The target (output) type
+ * @param <S> The source (input) type
+ * @param <I> The intermediate type
+ * @param <T> The target (output) type
  */
 public class CompoundCoercion<S, I, T> implements Coercion<S, T>
 {
-    private final Coercion<S, I> _op1;
+    private final Coercion<S, I> op1;
 
-    private final Coercion<I, T> _op2;
+    private final Coercion<I, T> op2;
 
     public CompoundCoercion(Coercion<S, I> op1, Coercion<I, T> op2)
     {
-        _op1 = op1;
-        _op2 = op2;
+        this.op1 = op1;
+        this.op2 = op2;
     }
 
     public T coerce(S input)
@@ -43,14 +40,14 @@ public class CompoundCoercion<S, I, T> implements Coercion<S, T>
         // Run the input through the first operation (S --> I), then run the result of that through
         // the second operation (I --> T).
 
-        I intermediate = _op1.coerce(input);
+        I intermediate = op1.coerce(input);
 
-        return _op2.coerce(intermediate);
+        return op2.coerce(intermediate);
     }
 
     @Override
     public String toString()
     {
-        return String.format("%s, %s", _op1, _op2);
+        return String.format("%s, %s", op1, op2);
     }
 }

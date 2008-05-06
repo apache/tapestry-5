@@ -16,27 +16,27 @@ package org.apache.tapestry.ioc.internal.util;
 
 public class Pair<K, V>
 {
-    private K _key;
+    private K key;
 
-    private V _value;
+    private V value;
 
     public K getKey()
     {
-        return _key;
+        return key;
     }
 
     public void setKey(K key)
     {
-        _key = key;
+        this.key = key;
     }
 
     public V getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(V value)
     {
-        _value = value;
+        this.value = value;
     }
 }

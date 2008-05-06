@@ -23,60 +23,60 @@ import java.util.Random;
 
 public class LocationImplTest extends IOCTestCase
 {
-    private final Random _random = new Random();
+    private final Random random = new Random();
 
-    private final Resource _resource = new ClasspathResource("/foo/Bar.xml");
+    private final Resource resource = new ClasspathResource("/foo/Bar.xml");
 
     @Test
     public void all_three_parameters()
     {
 
-        int line = _random.nextInt();
-        int column = _random.nextInt();
+        int line = random.nextInt();
+        int column = random.nextInt();
 
-        Location l = new LocationImpl(_resource, line, column);
+        Location l = new LocationImpl(resource, line, column);
 
-        assertSame(l.getResource(), _resource);
+        assertSame(l.getResource(), resource);
         assertEquals(l.getLine(), line);
         assertEquals(l.getColumn(), column);
 
-        assertEquals(l.toString(), String.format("%s, line %d, column %d", _resource, line, column));
+        assertEquals(l.toString(), String.format("%s, line %d, column %d", resource, line, column));
     }
 
     @Test
     public void unknown_column()
     {
-        int line = _random.nextInt();
+        int line = random.nextInt();
 
-        Location l = new LocationImpl(_resource, line);
+        Location l = new LocationImpl(resource, line);
 
-        assertSame(l.getResource(), _resource);
+        assertSame(l.getResource(), resource);
         assertEquals(l.getLine(), line);
         assertEquals(l.getColumn(), -1);
 
-        assertEquals(l.toString(), String.format("%s, line %d", _resource, line));
+        assertEquals(l.toString(), String.format("%s, line %d", resource, line));
     }
 
     @Test
     public void unknown_line_and_column()
     {
-        Location l = new LocationImpl(_resource);
+        Location l = new LocationImpl(resource);
 
-        assertSame(l.getResource(), _resource);
+        assertSame(l.getResource(), resource);
         assertEquals(l.getLine(), -1);
         assertEquals(l.getColumn(), -1);
 
-        assertEquals(l.toString(), _resource.toString());
+        assertEquals(l.toString(), resource.toString());
     }
 
     @Test
     public void equality()
     {
-        Location l1 = new LocationImpl(_resource, 22, 7);
-        Location l2 = new LocationImpl(_resource, 22, 7);
+        Location l1 = new LocationImpl(resource, 22, 7);
+        Location l2 = new LocationImpl(resource, 22, 7);
         Location l3 = new LocationImpl(null, 22, 7);
-        Location l4 = new LocationImpl(_resource, 99, 7);
-        Location l5 = new LocationImpl(_resource, 22, 99);
+        Location l4 = new LocationImpl(resource, 99, 7);
+        Location l5 = new LocationImpl(resource, 22, 99);
         Location l6 = new LocationImpl(new ClasspathResource("/baz/Biff.txt"), 22, 7);
 
         assertEquals(l1, l1);

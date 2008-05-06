@@ -34,17 +34,17 @@ import java.util.Map;
  */
 public abstract class AbstractServiceCreator implements ObjectCreator
 {
-    protected final String _serviceId;
+    protected final String serviceId;
 
-    private final Map<Class, Object> _parameterDefaults = newMap();
+    private final Map<Class, Object> parameterDefaults = newMap();
 
-    protected final ServiceBuilderResources _resources;
+    protected final ServiceBuilderResources resources;
 
-    protected final Logger _logger;
+    protected final Logger logger;
 
     private final static Map<Class, ConfigurationType> PARAMETER_TYPE_TO_CONFIGURATION_TYPE = newMap();
 
-    protected final String _creatorDescription;
+    protected final String creatorDescription;
 
     static
     {
@@ -55,16 +55,16 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
     public AbstractServiceCreator(ServiceBuilderResources resources, String creatorDescription)
     {
-        _serviceId = resources.getServiceId();
-        _resources = resources;
-        _creatorDescription = creatorDescription;
-        _logger = resources.getLogger();
+        serviceId = resources.getServiceId();
+        this.resources = resources;
+        this.creatorDescription = creatorDescription;
+        logger = resources.getLogger();
 
-        _parameterDefaults.put(String.class, _serviceId);
-        _parameterDefaults.put(ObjectLocator.class, resources);
-        _parameterDefaults.put(ServiceResources.class, resources);
-        _parameterDefaults.put(Logger.class, _logger);
-        _parameterDefaults.put(Class.class, resources.getServiceInterface());
+        parameterDefaults.put(String.class, serviceId);
+        parameterDefaults.put(ObjectLocator.class, resources);
+        parameterDefaults.put(ServiceResources.class, resources);
+        parameterDefaults.put(Logger.class, logger);
+        parameterDefaults.put(Class.class, resources.getServiceInterface());
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     protected final Map<Class, Object> getParameterDefaultsWithConfiguration(Class[] parameterTypes,
                                                                              Type[] genericParameterTypes)
     {
-        Map<Class, Object> result = newMap(_parameterDefaults);
+        Map<Class, Object> result = newMap(parameterDefaults);
         ConfigurationType type = null;
 
         for (int i = 0; i < parameterTypes.length; i++)
@@ -87,7 +87,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
 
             if (type != null)
             {
-                _logger.warn(IOCMessages.tooManyConfigurationParameters(_creatorDescription));
+                logger.warn(IOCMessages.tooManyConfigurationParameters(creatorDescription));
                 break;
             }
 
@@ -128,7 +128,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     private void addOrderedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
-        List configuration = _resources.getOrderedConfiguration(valueType);
+        List configuration = resources.getOrderedConfiguration(valueType);
 
         parameterDefaults.put(List.class, configuration);
     }
@@ -137,7 +137,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
     private void addUnorderedConfigurationParameter(Map<Class, Object> parameterDefaults, Type genericType)
     {
         Class valueType = findParameterizedTypeFromGenericType(genericType);
-        Collection configuration = _resources.getUnorderedConfiguration(valueType);
+        Collection configuration = resources.getUnorderedConfiguration(valueType);
 
         parameterDefaults.put(Collection.class, configuration);
     }
@@ -151,7 +151,7 @@ public abstract class AbstractServiceCreator implements ObjectCreator
         if (keyType == null || valueType == null)
             throw new IllegalArgumentException(IOCMessages.genericTypeNotSupported(genericType));
 
-        Map configuration = _resources.getMappedConfiguration(keyType, valueType);
+        Map configuration = resources.getMappedConfiguration(keyType, valueType);
 
         parameterDefaults.put(Map.class, configuration);
     }

@@ -22,11 +22,11 @@ import java.util.List;
 
 public class StaticModule
 {
-    private static boolean _instantiated;
+    private static boolean instantiated;
 
-    private static boolean _fredRan;
+    private static boolean fredRan;
 
-    private static boolean _decoratorRan;
+    private static boolean decoratorRan;
 
     public StaticModule()
     {
@@ -69,32 +69,32 @@ public class StaticModule
 
     public static synchronized void setFredRan(boolean fredRan)
     {
-        _fredRan = fredRan;
+        StaticModule.fredRan = fredRan;
     }
 
     public static synchronized boolean getFredRan()
     {
-        return _fredRan;
+        return fredRan;
     }
 
     public static synchronized void setInstantiated(boolean instantiated)
     {
-        _instantiated = instantiated;
+        StaticModule.instantiated = instantiated;
     }
 
     public static synchronized boolean isInstantiated()
     {
-        return _instantiated;
+        return instantiated;
     }
 
     public static synchronized void setDecoratorRan(boolean decoratorRan)
     {
-        _decoratorRan = decoratorRan;
+        StaticModule.decoratorRan = decoratorRan;
     }
 
     public static synchronized boolean getDecoratorRan()
     {
-        return _decoratorRan;
+        return decoratorRan;
     }
 
     public static NameListHolder buildNames(final Collection<String> configuration)

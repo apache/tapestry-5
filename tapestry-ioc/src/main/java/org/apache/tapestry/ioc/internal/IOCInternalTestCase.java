@@ -28,49 +28,49 @@ import java.util.List;
 
 public class IOCInternalTestCase extends IOCTestCase implements Registry
 {
-    private static Registry _registry;
+    private static Registry registry;
 
-    private static ClassFactory _classFactory;
+    private static ClassFactory classFactory;
 
     @AfterMethod
     public final void cleanupThread()
     {
-        _registry.cleanupThread();
+        registry.cleanupThread();
     }
 
     public final ClassFactory getClassFactory()
     {
-        return _classFactory;
+        return classFactory;
     }
 
     public final <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return _registry.getObject(objectType, annotationProvider);
+        return registry.getObject(objectType, annotationProvider);
     }
 
     public final <T> T getService(Class<T> serviceInterface)
     {
-        return _registry.getService(serviceInterface);
+        return registry.getService(serviceInterface);
     }
 
     public final <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        return _registry.getService(serviceId, serviceInterface);
+        return registry.getService(serviceId, serviceInterface);
     }
 
     public final <T> T autobuild(Class<T> clazz)
     {
-        return _registry.autobuild(clazz);
+        return registry.autobuild(clazz);
     }
 
     public final void performRegistryStartup()
     {
-        _registry.performRegistryStartup();
+        registry.performRegistryStartup();
     }
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
-        return _registry.proxy(interfaceClass, implementationClass);
+        return registry.proxy(interfaceClass, implementationClass);
     }
 
 
@@ -79,11 +79,11 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     {
         RegistryBuilder builder = new RegistryBuilder();
 
-        _registry = builder.build();
+        registry = builder.build();
 
-        _registry.performRegistryStartup();
+        registry.performRegistryStartup();
 
-        _classFactory = _registry.getService(ClassFactory.class);
+        classFactory = registry.getService(ClassFactory.class);
     }
 
     public final void shutdown()
@@ -95,10 +95,10 @@ public class IOCInternalTestCase extends IOCTestCase implements Registry
     @AfterSuite
     public final void shutdown_registry()
     {
-        _registry.shutdown();
+        registry.shutdown();
 
-        _registry = null;
-        _classFactory = null;
+        registry = null;
+        classFactory = null;
     }
 
     protected final InternalRegistry mockInternalRegistry()

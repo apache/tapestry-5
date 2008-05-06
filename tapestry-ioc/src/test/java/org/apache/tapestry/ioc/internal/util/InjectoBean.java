@@ -18,8 +18,8 @@ import org.apache.tapestry.ioc.annotations.Inject;
 
 public class InjectoBean
 {
-    private final String _foo;
-    private final Runnable _bar;
+    private final String foo;
+    private final Runnable bar;
 
     public InjectoBean()
     {
@@ -38,17 +38,17 @@ public class InjectoBean
     public InjectoBean(String foo, Runnable bar)
     {
 
-        _foo = foo;
-        _bar = bar;
+        this.foo = foo;
+        this.bar = bar;
     }
 
     public String getFoo()
     {
-        return _foo;
+        return foo;
     }
 
     public Runnable getBar()
     {
-        return _bar;
+        return bar;
     }
 }

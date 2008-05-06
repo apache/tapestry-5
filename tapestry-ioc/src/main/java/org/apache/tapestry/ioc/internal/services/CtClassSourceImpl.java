@@ -26,26 +26,26 @@ import java.security.ProtectionDomain;
  */
 public class CtClassSourceImpl implements CtClassSource
 {
-    private final ClassFactoryClassPool _pool;
+    private final ClassFactoryClassPool pool;
 
-    private final ClassLoader _loader;
+    private final ClassLoader loader;
 
-    private final ProtectionDomain _domain = getClass().getProtectionDomain();
+    private final ProtectionDomain domain = getClass().getProtectionDomain();
 
-    private int _createdClassCount = 0;
+    private int createdClassCount = 0;
 
     /**
      * Returns the number of classes (and interfaces) created by this source.
      */
     public synchronized int getCreatedClassCount()
     {
-        return _createdClassCount;
+        return createdClassCount;
     }
 
     public CtClassSourceImpl(ClassFactoryClassPool pool, ClassLoader loader)
     {
-        _pool = pool;
-        _loader = loader;
+        this.pool = pool;
+        this.loader = loader;
     }
 
     public CtClass toCtClass(Class searchClass)
@@ -55,7 +55,7 @@ public class CtClassSourceImpl implements CtClassSource
         // Add the class loader for the searchClass to the class pool and
         // delegating class loader if needed.
 
-        _pool.addClassLoaderIfNeeded(loader);
+        pool.addClassLoaderIfNeeded(loader);
 
         String name = ClassFabUtils.toJavaClassName(searchClass);
 
@@ -66,7 +66,7 @@ public class CtClassSourceImpl implements CtClassSource
     {
         try
         {
-            return _pool.get(name);
+            return pool.get(name);
         }
         catch (NotFoundException ex)
         {
@@ -78,7 +78,7 @@ public class CtClassSourceImpl implements CtClassSource
     {
         CtClass ctSuperClass = toCtClass(superClass);
 
-        return _pool.makeClass(name, ctSuperClass);
+        return pool.makeClass(name, ctSuperClass);
     }
 
     private static final String WRITE_DIR = System.getProperty("javassist-write-dir");
@@ -89,9 +89,9 @@ public class CtClassSourceImpl implements CtClassSource
 
         try
         {
-            Class result = _pool.toClass(ctClass, _loader, _domain);
+            Class result = pool.toClass(ctClass, loader, domain);
 
-            _createdClassCount++;
+            createdClassCount++;
 
             return result;
         }

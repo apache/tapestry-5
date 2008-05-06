@@ -18,9 +18,6 @@ import org.apache.tapestry.ioc.services.ExceptionTracker;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-/**
- *
- */
 public class ExceptionTrackerImplTest extends Assert
 {
     @Test

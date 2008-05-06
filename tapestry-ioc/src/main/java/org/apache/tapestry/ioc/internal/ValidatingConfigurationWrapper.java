@@ -23,49 +23,49 @@ import org.slf4j.Logger;
  */
 public class ValidatingConfigurationWrapper<T> implements Configuration<T>
 {
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final ContributionDef _contributionDef;
+    private final ContributionDef contributionDef;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Configuration<T> _delegate;
+    private final Configuration<T> delegate;
 
-    private final Class _expectedType;
+    private final Class expectedType;
 
     // Need a strategy for determing the right order for this mass of parameters!
 
     public ValidatingConfigurationWrapper(String serviceId, Logger logger, Class expectedType,
                                           ContributionDef contributionDef, Configuration<T> delegate)
     {
-        _serviceId = serviceId;
-        _logger = logger;
-        _expectedType = expectedType;
-        _contributionDef = contributionDef;
-        _delegate = delegate;
+        this.serviceId = serviceId;
+        this.logger = logger;
+        this.expectedType = expectedType;
+        this.contributionDef = contributionDef;
+        this.delegate = delegate;
     }
 
     public void add(T object)
     {
         if (object == null)
         {
-            _logger.warn(IOCMessages.contributionWasNull(_serviceId, _contributionDef));
+            logger.warn(IOCMessages.contributionWasNull(serviceId, contributionDef));
             return;
         }
 
         // Sure, we say it is type T ... but is it really?
 
-        if (!_expectedType.isInstance(object))
+        if (!expectedType.isInstance(object))
         {
-            _logger.warn(IOCMessages.contributionWrongValueType(
-                    _serviceId,
-                    _contributionDef,
+            logger.warn(IOCMessages.contributionWrongValueType(
+                    serviceId,
+                    contributionDef,
                     object.getClass(),
-                    _expectedType));
+                    expectedType));
             return;
         }
 
-        _delegate.add(object);
+        delegate.add(object);
     }
 
 }

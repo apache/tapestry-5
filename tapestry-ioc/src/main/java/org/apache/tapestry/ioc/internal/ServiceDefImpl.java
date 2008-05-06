@@ -23,17 +23,17 @@ import java.util.Set;
 
 public class ServiceDefImpl implements ServiceDef
 {
-    private final Class _serviceInterface;
+    private final Class serviceInterface;
 
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final String _scope;
+    private final String scope;
 
-    private final boolean _eagerLoad;
+    private final boolean eagerLoad;
 
-    private final ObjectCreatorSource _source;
+    private final ObjectCreatorSource source;
 
-    private final Set<Class> _markers;
+    private final Set<Class> markers;
 
     /**
      * @param serviceInterface interface implemented by the service (or the service implementation class, for
@@ -47,49 +47,49 @@ public class ServiceDefImpl implements ServiceDef
     ServiceDefImpl(Class serviceInterface, String serviceId, Set<Class> markers, String scope,
                    boolean eagerLoad, ObjectCreatorSource source)
     {
-        _serviceInterface = serviceInterface;
-        _serviceId = serviceId;
-        _scope = scope;
-        _eagerLoad = eagerLoad;
-        _source = source;
+        this.serviceInterface = serviceInterface;
+        this.serviceId = serviceId;
+        this.scope = scope;
+        this.eagerLoad = eagerLoad;
+        this.source = source;
 
-        _markers = markers;
+        this.markers = markers;
     }
 
     @Override
     public String toString()
     {
-        return _source.getDescription();
+        return source.getDescription();
     }
 
     public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
     {
-        return _source.constructCreator(resources);
+        return source.constructCreator(resources);
     }
 
     public String getServiceId()
     {
-        return _serviceId;
+        return serviceId;
     }
 
     public Class getServiceInterface()
     {
-        return _serviceInterface;
+        return serviceInterface;
     }
 
     public String getServiceScope()
     {
-        return _scope;
+        return scope;
     }
 
     public boolean isEagerLoad()
     {
-        return _eagerLoad;
+        return eagerLoad;
     }
 
     public Set<Class> getMarkers()
     {
-        return _markers;
+        return markers;
     }
 
 }

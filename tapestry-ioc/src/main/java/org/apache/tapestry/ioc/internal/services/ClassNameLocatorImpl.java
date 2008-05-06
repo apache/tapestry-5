@@ -32,18 +32,18 @@ public class ClassNameLocatorImpl implements ClassNameLocator
 {
     private static final String CLASS_SUFFIX = ".class";
 
-    private final ClassLoader _contextClassLoader = Thread.currentThread().getContextClassLoader();
+    private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
     static class Queued
     {
-        final URL _packageURL;
+        final URL packageURL;
 
-        final String _packagePath;
+        final String packagePath;
 
         public Queued(final URL packageURL, final String packagePath)
         {
-            _packageURL = packageURL;
-            _packagePath = packagePath;
+            this.packageURL = packageURL;
+            this.packagePath = packagePath;
         }
     }
 
@@ -70,7 +70,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
     {
         Collection<String> result = CollectionFactory.newList();
 
-        Enumeration<URL> urls = _contextClassLoader.getResources(packagePath);
+        Enumeration<URL> urls = contextClassLoader.getResources(packagePath);
 
         while (urls.hasMoreElements())
         {
@@ -111,7 +111,7 @@ public class ClassNameLocatorImpl implements ClassNameLocator
             {
                 Queued queued = queue.pop();
 
-                scanDirStream(queued._packagePath, queued._packageURL, componentClassNames, queue);
+                scanDirStream(queued.packagePath, queued.packageURL, componentClassNames, queue);
             }
         }
         else

@@ -33,19 +33,19 @@ import java.util.Set;
 
 public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 {
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
-    private final ServiceDefAccumulator _accumulator;
+    private final ServiceDefAccumulator accumulator;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Set<Class> _defaultMarkers;
+    private final Set<Class> defaultMarkers;
 
     public ServiceBinderImpl(ServiceDefAccumulator accumulator, ClassFactory classFactory, Set<Class> defaultMarkers)
     {
-        _accumulator = accumulator;
-        _classFactory = classFactory;
-        _defaultMarkers = defaultMarkers;
+        this.accumulator = accumulator;
+        this.classFactory = classFactory;
+        this.defaultMarkers = defaultMarkers;
     }
 
     private String _serviceId;
@@ -62,7 +62,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public void finish()
     {
-        _lock.lock();
+        lock.lock();
 
         flush();
     }
@@ -82,17 +82,17 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
             public String getDescription()
             {
-                return _classFactory.getConstructorLocation(constructor).toString();
+                return classFactory.getConstructorLocation(constructor).toString();
             }
         };
 
         // Combine service-specific markers with those inherited form the module.
-        Set<Class> markers = CollectionFactory.newSet(_defaultMarkers);
+        Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
         markers.addAll(_markers);
 
         ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, markers, _scope, _eagerLoad, source);
 
-        _accumulator.addServiceDef(serviceDef);
+        accumulator.addServiceDef(serviceDef);
 
         _serviceId = null;
         _serviceInterface = null;
@@ -122,7 +122,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         notNull(serviceInterface, "serviceIterface");
         notNull(serviceImplementation, "serviceImplementation");
 
-        _lock.check();
+        lock.check();
 
         flush();
 
@@ -151,7 +151,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public ServiceBindingOptions eagerLoad()
     {
-        _lock.check();
+        lock.check();
 
         _eagerLoad = true;
 
@@ -162,7 +162,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     {
         notBlank(id, "id");
 
-        _lock.check();
+        lock.check();
 
         _serviceId = id;
 
@@ -173,7 +173,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     {
         notBlank(scope, "scope");
 
-        _lock.check();
+        lock.check();
 
         _scope = scope;
 
@@ -182,7 +182,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     public <T extends Annotation> ServiceBindingOptions withMarker(Class<T>... marker)
     {
-        _lock.check();
+        lock.check();
 
         InternalUtils.validateMarkerAnnotations(marker);
 

@@ -17,17 +17,16 @@ package org.apache.tapestry.ioc.internal.services;
 import org.apache.tapestry.ioc.services.MethodSignature;
 
 /**
- * Used by {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to analyze service
- * interface methods against filter interface methods to find the position of the extra service
- * parameter (in the filter method).
+ * Used by {@link org.apache.tapestry.ioc.internal.services.PipelineBuilderImpl} to analyze service interface methods
+ * against filter interface methods to find the position of the extra service parameter (in the filter method).
  */
 public class FilterMethodAnalyzer
 {
-    private final Class _serviceInterface;
+    private final Class serviceInterface;
 
     FilterMethodAnalyzer(Class serviceInterface)
     {
-        _serviceInterface = serviceInterface;
+        this.serviceInterface = serviceInterface;
     }
 
     public int findServiceInterfacePosition(MethodSignature ms, MethodSignature fms)
@@ -53,7 +52,7 @@ public class FilterMethodAnalyzer
 
         for (int i = 0; i < filterParameterCount; i++)
         {
-            if (filterParameters[i] == _serviceInterface)
+            if (filterParameters[i] == serviceInterface)
             {
                 result = i;
                 found = true;

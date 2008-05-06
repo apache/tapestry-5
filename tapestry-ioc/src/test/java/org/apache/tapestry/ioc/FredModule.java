@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc;
 
 import org.apache.tapestry.ioc.annotations.Match;
 import org.apache.tapestry.ioc.annotations.Order;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -29,8 +29,8 @@ public class FredModule
 {
 
     /**
-     * Doesn't matter what the service does, we just want to verify that the decorators are invoked
-     * in the order we expect.
+     * Doesn't matter what the service does, we just want to verify that the decorators are invoked in the order we
+     * expect.
      */
     public Runnable buildFred()
     {
@@ -43,7 +43,7 @@ public class FredModule
     }
 
     @Match(
-            {"UnorderedNames", "Fred"})
+            { "UnorderedNames", "Fred" })
     @Order("before:Beta")
     public Object decorateAlpha(Object delegate, DecoratorList list)
     {
@@ -53,7 +53,7 @@ public class FredModule
     }
 
     @Match(
-            {"UnorderedNames", "Fred"})
+            { "UnorderedNames", "Fred" })
     public Object decorateBeta(Object delegate, DecoratorList list)
     {
         list.add("beta");
@@ -63,7 +63,7 @@ public class FredModule
 
     public NameListHolder buildUnorderedNames(Collection<String> configuration)
     {
-        final List<String> sorted = newList(configuration);
+        final List<String> sorted = CollectionFactory.newList(configuration);
 
         Collections.sort(sorted);
 

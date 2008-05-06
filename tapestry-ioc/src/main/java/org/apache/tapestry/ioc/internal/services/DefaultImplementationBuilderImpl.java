@@ -25,24 +25,23 @@ import java.util.Map;
  */
 public class DefaultImplementationBuilderImpl implements DefaultImplementationBuilder
 {
-    private final Map<Class, Object> _cache = newConcurrentMap();
+    private final Map<Class, Object> cache = newConcurrentMap();
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    public DefaultImplementationBuilderImpl(@Builtin
-    ClassFactory classFactory)
+    public DefaultImplementationBuilderImpl(@Builtin ClassFactory classFactory)
     {
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
     }
 
     public <S> S createDefaultImplementation(Class<S> serviceInterface)
     {
-        S instance = serviceInterface.cast(_cache.get(serviceInterface));
+        S instance = serviceInterface.cast(cache.get(serviceInterface));
 
         if (instance == null)
         {
             instance = createInstance(serviceInterface);
-            _cache.put(serviceInterface, instance);
+            cache.put(serviceInterface, instance);
         }
 
         return instance;
@@ -64,7 +63,7 @@ public class DefaultImplementationBuilderImpl implements DefaultImplementationBu
         {
             S instance = noopClass.newInstance();
 
-            _cache.put(serviceInterface, instance);
+            cache.put(serviceInterface, instance);
 
             return instance;
         }
@@ -77,7 +76,7 @@ public class DefaultImplementationBuilderImpl implements DefaultImplementationBu
     @SuppressWarnings("unchecked")
     private <S> Class<S> createClass(Class<S> serviceInterface)
     {
-        ClassFab cf = _classFactory.newClass(serviceInterface);
+        ClassFab cf = classFactory.newClass(serviceInterface);
 
         MethodIterator mi = new MethodIterator(serviceInterface);
 

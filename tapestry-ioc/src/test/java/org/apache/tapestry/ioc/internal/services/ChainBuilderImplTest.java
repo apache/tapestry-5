@@ -24,7 +24,7 @@ import java.util.List;
 
 public class ChainBuilderImplTest extends IOCInternalTestCase
 {
-    private final ChainBuilder _builder = new ChainBuilderImpl(new ClassFactoryImpl());
+    private final ChainBuilder builder = new ChainBuilderImpl(new ClassFactoryImpl());
 
     @Test
     public void simple_void_method()
@@ -185,7 +185,7 @@ public class ChainBuilderImplTest extends IOCInternalTestCase
     {
         List<T> list = Arrays.asList(commands);
 
-        return _builder.build(commandInterface, list);
+        return builder.build(commandInterface, list);
     }
 
 }

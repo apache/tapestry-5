@@ -25,22 +25,22 @@ import java.util.List;
  */
 public class ExceptionAnalysisImpl implements ExceptionAnalysis
 {
-    private final List<ExceptionInfo> _infos;
+    private final List<ExceptionInfo> infos;
 
     public ExceptionAnalysisImpl(final List<ExceptionInfo> infos)
     {
-        _infos = unmodifiableList(infos);
+        this.infos = unmodifiableList(infos);
     }
 
     public List<ExceptionInfo> getExceptionInfos()
     {
-        return _infos;
+        return infos;
     }
 
     @Override
     public String toString()
     {
-        ExceptionInfo first = _infos.get(0);
+        ExceptionInfo first = infos.get(0);
 
         return String.format("ExceptionAnalysis[%s -- %s]", first.getClassName(), first
                 .getMessage());

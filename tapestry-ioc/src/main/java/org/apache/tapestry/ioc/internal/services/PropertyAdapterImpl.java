@@ -24,67 +24,67 @@ import java.lang.reflect.Method;
 
 public class PropertyAdapterImpl implements PropertyAdapter
 {
-    private final String _name;
+    private final String name;
 
-    private final Method _readMethod;
+    private final Method readMethod;
 
-    private final Method _writeMethod;
+    private final Method writeMethod;
 
-    private final Class _type;
+    private final Class type;
 
-    private final boolean _castRequired;
+    private final boolean castRequired;
 
     public PropertyAdapterImpl(String name, Class type, Method readMethod, Method writeMethod)
     {
-        _name = notBlank(name, "name");
-        _type = notNull(type, "type");
+        this.name = notBlank(name, "name");
+        this.type = notNull(type, "type");
 
-        _readMethod = readMethod;
-        _writeMethod = writeMethod;
+        this.readMethod = readMethod;
+        this.writeMethod = writeMethod;
 
-        _castRequired = readMethod != null && readMethod.getReturnType() != type;
+        castRequired = readMethod != null && readMethod.getReturnType() != type;
     }
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     public Method getReadMethod()
     {
-        return _readMethod;
+        return readMethod;
     }
 
     public Class getType()
     {
-        return _type;
+        return type;
     }
 
     public Method getWriteMethod()
     {
-        return _writeMethod;
+        return writeMethod;
     }
 
     public boolean isRead()
     {
-        return _readMethod != null;
+        return readMethod != null;
     }
 
     public boolean isUpdate()
     {
-        return _writeMethod != null;
+        return writeMethod != null;
     }
 
     public Object get(Object instance)
     {
-        if (_readMethod == null)
-            throw new UnsupportedOperationException(ServiceMessages.readNotSupported(instance, _name));
+        if (readMethod == null)
+            throw new UnsupportedOperationException(ServiceMessages.readNotSupported(instance, name));
 
         Throwable fail;
 
         try
         {
-            return _readMethod.invoke(instance);
+            return readMethod.invoke(instance);
         }
         catch (InvocationTargetException ex)
         {
@@ -95,19 +95,19 @@ public class PropertyAdapterImpl implements PropertyAdapter
             fail = ex;
         }
 
-        throw new RuntimeException(ServiceMessages.readFailure(_name, instance, fail), fail);
+        throw new RuntimeException(ServiceMessages.readFailure(name, instance, fail), fail);
     }
 
     public void set(Object instance, Object value)
     {
-        if (_writeMethod == null)
-            throw new UnsupportedOperationException(ServiceMessages.writeNotSupported(instance, _name));
+        if (writeMethod == null)
+            throw new UnsupportedOperationException(ServiceMessages.writeNotSupported(instance, name));
 
         Throwable fail;
 
         try
         {
-            _writeMethod.invoke(instance, value);
+            writeMethod.invoke(instance, value);
 
             return;
         }
@@ -120,20 +120,20 @@ public class PropertyAdapterImpl implements PropertyAdapter
             fail = ex;
         }
 
-        throw new RuntimeException(ServiceMessages.writeFailure(_name, instance, fail), fail);
+        throw new RuntimeException(ServiceMessages.writeFailure(name, instance, fail), fail);
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        T result = _readMethod != null ? _readMethod.getAnnotation(annotationClass) : null;
+        T result = readMethod != null ? readMethod.getAnnotation(annotationClass) : null;
 
-        if (result == null && _writeMethod != null) result = _writeMethod.getAnnotation(annotationClass);
+        if (result == null && writeMethod != null) result = writeMethod.getAnnotation(annotationClass);
 
         return result;
     }
 
     public boolean isCastRequired()
     {
-        return _castRequired;
+        return castRequired;
     }
 }

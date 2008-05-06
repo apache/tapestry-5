@@ -39,18 +39,19 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
     private static final int PRIVATE_FINAL = Modifier.PRIVATE | Modifier.FINAL;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Class<T> _serviceInterface;
+    private final Class<T> serviceInterface;
 
-    private final ClassFab _interceptorFab;
+    private final ClassFab interceptorFab;
 
-    private final String _delegateFieldName;
+    private final String delegateFieldName;
 
-    private final String _description;
+    private final String description;
 
-    private boolean _sawToString;
-    private final OneShotLock _lock = new OneShotLock();
+    private boolean sawToString;
+
+    private final OneShotLock lock = new OneShotLock();
 
     private static class Injection
     {
@@ -66,26 +67,26 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         }
     }
 
-    private final List<Injection> _injections = CollectionFactory.newList();
+    private final List<Injection> injections = CollectionFactory.newList();
 
-    private final Map<Object, Injection> _objectToInjection = CollectionFactory.newMap();
+    private final Map<Object, Injection> objectToInjection = CollectionFactory.newMap();
 
-    private final Set<Method> _remainingMethods = CollectionFactory.newSet();
+    private final Set<Method> remainingMethods = CollectionFactory.newSet();
 
-    private final Set<Method> _advisedMethods = CollectionFactory.newSet();
+    private final Set<Method> advisedMethods = CollectionFactory.newSet();
 
     public AspectInterceptorBuilderImpl(ClassFactory classFactory, Class<T> serviceInterface, T delegate,
                                         String description)
     {
-        _classFactory = classFactory;
-        _serviceInterface = serviceInterface;
-        _description = description;
+        this.classFactory = classFactory;
+        this.serviceInterface = serviceInterface;
+        this.description = description;
 
-        _interceptorFab = _classFactory.newClass(serviceInterface);
+        interceptorFab = this.classFactory.newClass(serviceInterface);
 
-        _delegateFieldName = inject(_serviceInterface, delegate);
+        delegateFieldName = inject(serviceInterface, delegate);
 
-        _remainingMethods.addAll(Arrays.asList(serviceInterface.getMethods()));
+        remainingMethods.addAll(Arrays.asList(serviceInterface.getMethods()));
     }
 
     public void adviseMethod(Method method, MethodAdvice advice)
@@ -93,16 +94,16 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         Defense.notNull(method, "method");
         Defense.notNull(advice, "advice");
 
-        _lock.check();
+        lock.check();
 
-        if (_advisedMethods.contains(method))
+        if (advisedMethods.contains(method))
             throw new IllegalArgumentException(String.format("Method %s has already been advised.", method));
 
-        if (!_remainingMethods.contains(method))
+        if (!remainingMethods.contains(method))
             throw new IllegalArgumentException(
-                    String.format("Method %s is not defined for interface %s.", method, _serviceInterface));
+                    String.format("Method %s is not defined for interface %s.", method, serviceInterface));
 
-        _sawToString |= ClassFabUtils.isToString(method);
+        sawToString |= ClassFabUtils.isToString(method);
 
         String invocationClassName = createInvocationClass(method);
 
@@ -112,7 +113,7 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         String aspectFieldName = inject(MethodAdvice.class, advice);
 
         builder.addln("%s invocation = new %s(%s, %s, $$);", Invocation.class.getName(), invocationClassName,
-                      methodFieldName, _delegateFieldName);
+                      methodFieldName, delegateFieldName);
 
         builder.addln("%s.advise(invocation);", aspectFieldName);
 
@@ -140,18 +141,18 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
         builder.end();
 
-        _interceptorFab.addMethod(Modifier.PUBLIC, new MethodSignature(method), builder.toString());
+        interceptorFab.addMethod(Modifier.PUBLIC, new MethodSignature(method), builder.toString());
 
-        _remainingMethods.remove(method);
-        _advisedMethods.add(method);
+        remainingMethods.remove(method);
+        advisedMethods.add(method);
     }
 
     private String createInvocationClass(Method method)
     {
-        String baseName = _serviceInterface.getSimpleName() + "$" + method.getName();
+        String baseName = serviceInterface.getSimpleName() + "$" + method.getName();
         String className = ClassFabUtils.generateClassName(baseName);
 
-        ClassFab invocationFab = _classFactory.newClass(className, AbstractInvocation.class);
+        ClassFab invocationFab = classFactory.newClass(className, AbstractInvocation.class);
 
         List<Class> constructorTypes = CollectionFactory.newList();
 
@@ -159,8 +160,8 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
         constructorTypes.add(Method.class); // And passed up to the super class
 
-        invocationFab.addField("_delegate", PRIVATE_FINAL, _serviceInterface);
-        constructorTypes.add(_serviceInterface);
+        invocationFab.addField("_delegate", PRIVATE_FINAL, serviceInterface);
+        constructorTypes.add(serviceInterface);
 
         BodyBuilder constructorBuilder = new BodyBuilder().begin().addln("super($1);").addln("_delegate = $2;");
 
@@ -298,7 +299,7 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
     public T build()
     {
-        _lock.lock();
+        lock.lock();
 
         // Hit all the methods that haven't been referenced so far.
 
@@ -306,14 +307,14 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
         // And if we haven't seend a toString(), we can add it now.
 
-        if (!_sawToString)
-            _interceptorFab.addToString(_description);
+        if (!sawToString)
+            interceptorFab.addToString(description);
 
         Object[] parameters = createConstructor();
 
         try
         {
-            Class c = _interceptorFab.createClass();
+            Class c = interceptorFab.createClass();
 
             // There's only ever the one constructor.
 
@@ -321,7 +322,7 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
             Object interceptor = cc.newInstance(parameters);
 
-            return _serviceInterface.cast(interceptor);
+            return serviceInterface.cast(interceptor);
         }
         catch (Exception ex)
         {
@@ -333,14 +334,14 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
     {
         // Time to add the constructor.
 
-        Class[] parameterTypes = new Class[_injections.size()];
-        Object[] parameters = new Object[_injections.size()];
+        Class[] parameterTypes = new Class[injections.size()];
+        Object[] parameters = new Object[injections.size()];
 
         BodyBuilder builder = new BodyBuilder().begin();
 
-        for (int i = 0; i < _injections.size(); i++)
+        for (int i = 0; i < injections.size(); i++)
         {
-            Injection injection = _injections.get(i);
+            Injection injection = injections.get(i);
 
             builder.addln("%s = $%d;", injection._fieldName, i + 1);
 
@@ -350,39 +351,39 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
 
         builder.end();
 
-        _interceptorFab.addConstructor(parameterTypes, null, builder.toString());
+        interceptorFab.addConstructor(parameterTypes, null, builder.toString());
 
         return parameters;
     }
 
     private void addPassthruMethods()
     {
-        for (Method m : _remainingMethods)
+        for (Method m : remainingMethods)
         {
-            _sawToString |= ClassFabUtils.isToString(m);
+            sawToString |= ClassFabUtils.isToString(m);
 
             MethodSignature sig = new MethodSignature(m);
 
-            String body = String.format("return ($r) %s.%s($$);", _delegateFieldName, m.getName());
+            String body = String.format("return ($r) %s.%s($$);", delegateFieldName, m.getName());
 
-            _interceptorFab.addMethod(Modifier.PUBLIC, sig, body);
+            interceptorFab.addMethod(Modifier.PUBLIC, sig, body);
         }
     }
 
     private <T> String inject(Class<T> fieldType, T injectedValue)
     {
-        Injection injection = _objectToInjection.get(injectedValue);
+        Injection injection = objectToInjection.get(injectedValue);
 
         if (injection == null)
         {
-            String name = "_" + fieldType.getSimpleName().toLowerCase() + "_" + _injections.size();
+            String name = "_" + fieldType.getSimpleName().toLowerCase() + "_" + injections.size();
 
-            _interceptorFab.addField(name, PRIVATE_FINAL, fieldType);
+            interceptorFab.addField(name, PRIVATE_FINAL, fieldType);
 
             injection = new Injection(name, fieldType, injectedValue);
 
-            _injections.add(injection);
-            _objectToInjection.put(injectedValue, injection);
+            injections.add(injection);
+            objectToInjection.put(injectedValue, injection);
         }
 
         return injection._fieldName;

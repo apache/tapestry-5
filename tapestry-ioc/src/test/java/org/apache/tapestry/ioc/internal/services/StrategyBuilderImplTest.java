@@ -28,16 +28,16 @@ public class StrategyBuilderImplTest extends IOCInternalTestCase
 {
     private static class KindOfImpl implements KindOf
     {
-        private final String _value;
+        private final String value;
 
         public KindOfImpl(final String value)
         {
-            _value = value;
+            this.value = value;
         }
 
         public String kindOf(Object value)
         {
-            return _value;
+            return this.value;
         }
 
     }

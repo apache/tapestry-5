@@ -22,19 +22,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
 /**
- * A service creator based on an implementation class' constructor, rather than a service builder
- * method.
+ * A service creator based on an implementation class' constructor, rather than a service builder method.
  */
 public class ConstructorServiceCreator extends AbstractServiceCreator
 {
-    private final Constructor _constructor;
+    private final Constructor constructor;
 
     public ConstructorServiceCreator(ServiceBuilderResources resources, String creatorDescription,
                                      Constructor constructor)
     {
         super(resources, creatorDescription);
 
-        _constructor = constructor;
+        this.constructor = constructor;
     }
 
     public Object createObject()
@@ -43,12 +42,12 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
 
         try
         {
-            Object[] parameters = InternalUtils.calculateParametersForConstructor(_constructor, _resources,
+            Object[] parameters = InternalUtils.calculateParametersForConstructor(constructor, resources,
                                                                                   getParameterDefaultsWithConfigurations());
 
-            if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.invokingConstructor(_creatorDescription));
+            if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingConstructor(creatorDescription));
 
-            return _constructor.newInstance(parameters);
+            return constructor.newInstance(parameters);
         }
         catch (InvocationTargetException ite)
         {
@@ -59,16 +58,16 @@ public class ConstructorServiceCreator extends AbstractServiceCreator
             failure = ex;
         }
 
-        throw new RuntimeException(IOCMessages.constructorError(_creatorDescription, _serviceId, failure), failure);
+        throw new RuntimeException(IOCMessages.constructorError(creatorDescription, serviceId, failure), failure);
     }
 
     /**
-     * Returns a map that includes (possibly) an additional mapping containing the collected
-     * configuration data. This involves scanning the constructor's parameters.
+     * Returns a map that includes (possibly) an additional mapping containing the collected configuration data. This
+     * involves scanning the constructor's parameters.
      */
     private Map<Class, Object> getParameterDefaultsWithConfigurations()
     {
-        return getParameterDefaultsWithConfiguration(_constructor.getParameterTypes(), _constructor
+        return getParameterDefaultsWithConfiguration(constructor.getParameterTypes(), constructor
                 .getGenericParameterTypes());
     }
 }

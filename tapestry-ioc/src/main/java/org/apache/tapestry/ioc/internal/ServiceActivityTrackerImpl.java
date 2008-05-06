@@ -25,52 +25,52 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
-                                                   ServiceActivityTracker
+        ServiceActivityTracker
 {
     public static class MutableServiceActivity implements ServiceActivity
     {
-        private final ServiceDef _serviceDef;
+        private final ServiceDef serviceDef;
 
-        private Status _status;
+        private Status status;
 
         public MutableServiceActivity(ServiceDef serviceDef, Status status)
         {
-            _serviceDef = serviceDef;
-            _status = status;
+            this.serviceDef = serviceDef;
+            this.status = status;
         }
 
         public String getServiceId()
         {
-            return _serviceDef.getServiceId();
+            return serviceDef.getServiceId();
         }
 
         public Class getServiceInterface()
         {
-            return _serviceDef.getServiceInterface();
+            return serviceDef.getServiceInterface();
         }
 
         public String getScope()
         {
-            return _serviceDef.getServiceScope();
+            return serviceDef.getServiceScope();
         }
 
         // Mutable properties must be synchronized
 
         public synchronized Status getStatus()
         {
-            return _status;
+            return status;
         }
 
         synchronized void setStatus(Status status)
         {
-            _status = status;
+            this.status = status;
         }
     }
 
     /**
      * Tree map keeps everything in order by key (serviceId).
      */
-    private final Map<String, MutableServiceActivity> _serviceIdToServiceStatus = new TreeMap<String, MutableServiceActivity>();
+    private final Map<String, MutableServiceActivity> serviceIdToServiceStatus = new TreeMap<String, MutableServiceActivity>();
 
     public synchronized List<ServiceActivity> getServiceActivity()
     {
@@ -83,7 +83,7 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
 
         List<ServiceActivity> result = CollectionFactory.newList();
 
-        result.addAll(_serviceIdToServiceStatus.values());
+        result.addAll(serviceIdToServiceStatus.values());
 
         return result;
     }
@@ -100,13 +100,13 @@ public class ServiceActivityTrackerImpl implements ServiceActivityScoreboard,
 
     public synchronized void define(ServiceDef serviceDef, Status initialStatus)
     {
-        _serviceIdToServiceStatus.put(serviceDef.getServiceId(), new MutableServiceActivity(
+        serviceIdToServiceStatus.put(serviceDef.getServiceId(), new MutableServiceActivity(
                 serviceDef, initialStatus));
     }
 
     public synchronized void setStatus(String serviceId, Status status)
     {
-        _serviceIdToServiceStatus.get(serviceId).setStatus(status);
+        serviceIdToServiceStatus.get(serviceId).setStatus(status);
     }
 
 }

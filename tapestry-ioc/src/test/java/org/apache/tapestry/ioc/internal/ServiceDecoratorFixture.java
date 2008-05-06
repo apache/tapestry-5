@@ -21,30 +21,30 @@ import org.testng.Assert;
  */
 public class ServiceDecoratorFixture extends Assert
 {
-    Object _expectedDelegate;
+    Object expectedDelegate;
 
-    Object _interceptorToReturn;
+    Object interceptorToReturn;
 
-    RuntimeException _exception;
+    RuntimeException exception;
 
     public <T> T decoratorReturnsInterceptor(Class<T> serviceInterface, T delegate)
     {
         assertSame(serviceInterface, FieService.class);
-        assertSame(delegate, _expectedDelegate);
+        assertSame(delegate, expectedDelegate);
 
-        return serviceInterface.cast(_interceptorToReturn);
+        return serviceInterface.cast(interceptorToReturn);
     }
 
     public Object decoratorUntyped(Object delegate)
     {
-        assertSame(delegate, _expectedDelegate);
+        assertSame(delegate, expectedDelegate);
 
-        return _interceptorToReturn;
+        return interceptorToReturn;
     }
 
     public Object decoratorThrowsException(Object delegate)
     {
-        throw _exception;
+        throw exception;
     }
 
     public Object decorateReturnNull(Object delegate)

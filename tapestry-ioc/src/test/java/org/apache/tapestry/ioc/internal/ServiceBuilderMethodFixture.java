@@ -30,34 +30,34 @@ import java.util.List;
  */
 public class ServiceBuilderMethodFixture extends Assert
 {
-    FieService _fie;
+    FieService fie;
 
-    String _expectedServiceId;
+    String expectedServiceId;
 
-    ServiceResources _expectedServiceResources;
+    ServiceResources expectedServiceResources;
 
-    Class _expectedServiceInterface;
+    Class expectedServiceInterface;
 
-    Logger _expectedLogger;
+    Logger expectedLogger;
 
-    FoeService _expectedFoe;
+    FoeService expectedFoe;
 
-    Object _expectedConfiguration;
+    Object expectedConfiguration;
 
-    String _expectedString;
+    String expectedString;
 
     public FieService buildWithUnorderedConfiguration(Collection<Runnable> configuration)
     {
-        assertSame(configuration, _expectedConfiguration);
+        assertSame(configuration, expectedConfiguration);
 
-        return _fie;
+        return fie;
     }
 
     public FieService buildWithOrderedConfiguration(List<Runnable> configuration)
     {
-        assertSame(configuration, _expectedConfiguration);
+        assertSame(configuration, expectedConfiguration);
 
-        return _fie;
+        return fie;
     }
 
     public void methodWithParameterizedList(List<Runnable> list)
@@ -75,22 +75,22 @@ public class ServiceBuilderMethodFixture extends Assert
 
     public FieService build_noargs()
     {
-        return _fie;
+        return fie;
     }
 
     public FieService build_injected(@InjectService("Foe")
     FoeService foe)
     {
-        assertSame(_expectedFoe, foe);
+        assertSame(expectedFoe, foe);
 
-        return _fie;
+        return fie;
     }
 
     public FieService build_auto(FoeService foe)
     {
-        assertSame(_expectedFoe, foe);
+        assertSame(expectedFoe, foe);
 
-        return _fie;
+        return fie;
     }
 
     public FieService build_fail()
@@ -101,21 +101,21 @@ public class ServiceBuilderMethodFixture extends Assert
     public FieService build_args(String serviceId, ServiceResources resources,
                                  Class serviceInterface, Logger log)
     {
-        assertEquals(serviceId, _expectedServiceId);
-        assertSame(resources, _expectedServiceResources);
-        assertSame(serviceInterface, _expectedServiceInterface);
-        assertSame(log, _expectedLogger);
+        assertEquals(serviceId, expectedServiceId);
+        assertSame(resources, expectedServiceResources);
+        assertSame(serviceInterface, expectedServiceInterface);
+        assertSame(log, expectedLogger);
 
-        return _fie;
+        return fie;
     }
 
     public FieService build_with_forced_injection(@Inject
     @Value("Injected")
     String string)
     {
-        assertEquals(string, _expectedString);
+        assertEquals(string, expectedString);
 
-        return _fie;
+        return fie;
     }
 
 }

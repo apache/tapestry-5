@@ -16,11 +16,11 @@ package org.apache.tapestry.ioc;
 
 public class CountingGreeterImpl implements Greeter
 {
-    public static int _instantiationCount;
+    public static int instantiationCount;
 
     public CountingGreeterImpl()
     {
-        _instantiationCount++;
+        instantiationCount++;
     }
 
     public String getGreeting()

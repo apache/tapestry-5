@@ -19,47 +19,46 @@ import org.apache.tapestry.ioc.def.ContributionDef;
 import org.slf4j.Logger;
 
 /**
- * Implements validation of values provided to an
- * {@link org.apache.tapestry.ioc.OrderedConfiguration}. If you provide an incorrect value type,
- * the value is converted to null but added anyway. This ensures that incorrect values contributed
- * in don't screw up the {@link org.apache.tapestry.ioc.internal.util.Orderer} (and generate a bunch
- * of error messages there).
+ * Implements validation of values provided to an {@link org.apache.tapestry.ioc.OrderedConfiguration}. If you provide
+ * an incorrect value type, the value is converted to null but added anyway. This ensures that incorrect values
+ * contributed in don't screw up the {@link org.apache.tapestry.ioc.internal.util.Orderer} (and generate a bunch of
+ * error messages there).
  *
  * @param <T>
  */
 public class ValidatingOrderedConfigurationWrapper<T> implements OrderedConfiguration<T>
 {
-    private final String _serviceId;
+    private final String serviceId;
 
-    private final ContributionDef _contributionDef;
+    private final ContributionDef contributionDef;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Class _expectedType;
+    private final Class expectedType;
 
-    private final OrderedConfiguration<T> _delegate;
+    private final OrderedConfiguration<T> delegate;
 
     public ValidatingOrderedConfigurationWrapper(String serviceId, ContributionDef contributionDef,
                                                  Logger logger, Class expectedType, OrderedConfiguration<T> delegate)
     {
-        _serviceId = serviceId;
-        _contributionDef = contributionDef;
-        _logger = logger;
-        _expectedType = expectedType;
-        _delegate = delegate;
+        this.serviceId = serviceId;
+        this.contributionDef = contributionDef;
+        this.logger = logger;
+        this.expectedType = expectedType;
+        this.delegate = delegate;
     }
 
     public void add(String id, T object, String... constraints)
     {
-        _delegate.add(id, validVersionOf(object), constraints);
+        delegate.add(id, validVersionOf(object), constraints);
     }
 
     private T validVersionOf(T object)
     {
-        if (object == null || _expectedType.isInstance(object)) return object;
+        if (object == null || expectedType.isInstance(object)) return object;
 
-        _logger.warn(IOCMessages.contributionWrongValueType(_serviceId, _contributionDef, object
-                .getClass(), _expectedType));
+        logger.warn(IOCMessages.contributionWrongValueType(serviceId, contributionDef, object
+                .getClass(), expectedType));
 
         return null;
     }

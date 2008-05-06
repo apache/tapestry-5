@@ -50,8 +50,8 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
         ServiceResources resources = mockServiceResources();
         Logger logger = mockLogger();
-        fixture._expectedDelegate = mockFieService();
-        fixture._interceptorToReturn = mockFieService();
+        fixture.expectedDelegate = mockFieService();
+        fixture.interceptorToReturn = mockFieService();
         ModuleBuilderSource source = newSource(fixture);
 
         trainForConstructor(resources, logger);
@@ -68,9 +68,9 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
                                                                   getClassFactory());
 
-        Object interceptor = decorator.createInterceptor(fixture._expectedDelegate);
+        Object interceptor = decorator.createInterceptor(fixture.expectedDelegate);
 
-        assertSame(interceptor, fixture._interceptorToReturn);
+        assertSame(interceptor, fixture.interceptorToReturn);
 
         verify();
     }
@@ -109,8 +109,8 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ModuleBuilderSource source = newSource(fixture);
         ServiceResources resources = mockServiceResources();
         Logger logger = mockLogger();
-        fixture._expectedDelegate = mockFieService();
-        fixture._interceptorToReturn = newMock(FoeService.class);
+        fixture.expectedDelegate = mockFieService();
+        fixture.interceptorToReturn = newMock(FoeService.class);
 
         Method m = findMethod(fixture, "decoratorUntyped");
 
@@ -121,7 +121,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         logger.warn(IOCMessages.decoratorReturnedWrongType(
                 m,
                 SERVICE_ID,
-                fixture._interceptorToReturn,
+                fixture.interceptorToReturn,
                 FieService.class));
 
         replay();
@@ -129,7 +129,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceDecoratorImpl decorator = new ServiceDecoratorImpl(m, source, resources,
                                                                   getClassFactory());
 
-        Object interceptor = decorator.createInterceptor(fixture._expectedDelegate);
+        Object interceptor = decorator.createInterceptor(fixture.expectedDelegate);
 
         assertNull(interceptor);
 
@@ -144,7 +144,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
         ServiceResources resources = mockServiceResources();
         Logger logger = mockLogger();
         Object delegate = mockFieService();
-        fixture._exception = new RuntimeException("Ouch!");
+        fixture.exception = new RuntimeException("Ouch!");
 
         trainForConstructor(resources, logger);
 
@@ -169,7 +169,7 @@ public class ServiceDecoratorImplTest extends IOCInternalTestCase
 
             Throwable cause = ex.getCause();
 
-            assertSame(cause, fixture._exception);
+            assertSame(cause, fixture.exception);
         }
 
         verify();

@@ -22,40 +22,37 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * A representation of a {@link java.lang.reflect.Method}, identifying the name, return type,
- * parameter types and exception types. Actual Method objects are tied to a particular class, and
- * don't compare well with other otherwise identical Methods from other classes or interface;
- * MethodSignatures are distinct from classes and compare well.
+ * A representation of a {@link java.lang.reflect.Method}, identifying the name, return type, parameter types and
+ * exception types. Actual Method objects are tied to a particular class, and don't compare well with other otherwise
+ * identical Methods from other classes or interface; MethodSignatures are distinct from classes and compare well.
  * <p/>
- * Because the intended purpose is to compare methods from interfaces (which are always public and
- * abstract) we don't bother to actually track the modifiers. In addition, at this time,
- * MethodSignature <em>does not distinguish between instance and static
- * methods</em>.
+ * Because the intended purpose is to compare methods from interfaces (which are always public and abstract) we don't
+ * bother to actually track the modifiers. In addition, at this time, MethodSignature <em>does not distinguish between
+ * instance and static methods</em>.
  * <p/>
- * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the
- * context of {@link org.apache.tapestry.ioc.services.ClassFab} to create new classes and
- * subclasses.
+ * This version of MethodSignature works with <em>loaded</em> classes, and it usually used in the context of {@link
+ * org.apache.tapestry.ioc.services.ClassFab} to create new classes and subclasses.
  */
 public class MethodSignature
 {
-    private int _hashCode = -1;
+    private int hashCode = -1;
 
-    private final Class _returnType;
+    private final Class returnType;
 
-    private final String _name;
+    private final String name;
 
-    private final Class[] _parameterTypes;
+    private final Class[] parameterTypes;
 
-    private final Class[] _exceptionTypes;
+    private final Class[] exceptionTypes;
 
     public MethodSignature(Class returnType, String name, Class[] parameterTypes, Class[] exceptionTypes)
     {
-        _returnType = notNull(returnType, "returnType");
-        _name = notBlank(name, "name");
+        this.returnType = notNull(returnType, "returnType");
+        this.name = notBlank(name, "name");
 
         // Can be null!
-        _parameterTypes = parameterTypes;
-        _exceptionTypes = exceptionTypes;
+        this.parameterTypes = parameterTypes;
+        this.exceptionTypes = exceptionTypes;
     }
 
     public MethodSignature(Method m)
@@ -64,60 +61,58 @@ public class MethodSignature
     }
 
     /**
-     * Returns the exceptions for this method. Caution: do not modify the returned array. May return
-     * null.
+     * Returns the exceptions for this method. Caution: do not modify the returned array. May return null.
      */
     public Class[] getExceptionTypes()
     {
-        return _exceptionTypes;
+        return exceptionTypes;
     }
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     /**
-     * Returns the parameter types for this method. May return null. Caution: do not modify the
-     * returned array.
+     * Returns the parameter types for this method. May return null. Caution: do not modify the returned array.
      */
     public Class[] getParameterTypes()
     {
-        return _parameterTypes;
+        return parameterTypes;
     }
 
     public Class getReturnType()
     {
-        return _returnType;
+        return returnType;
     }
 
     @Override
     public int hashCode()
     {
-        if (_hashCode == -1)
+        if (hashCode == -1)
         {
 
-            _hashCode = _returnType.hashCode();
+            hashCode = returnType.hashCode();
 
-            _hashCode = 31 * _hashCode + _name.hashCode();
+            hashCode = 31 * hashCode + name.hashCode();
 
-            int count = size(_parameterTypes);
-
-            for (int i = 0; i < count; i++)
-                _hashCode = 31 * _hashCode + _parameterTypes[i].hashCode();
-
-            count = size(_exceptionTypes);
+            int count = size(parameterTypes);
 
             for (int i = 0; i < count; i++)
-                _hashCode = 31 * _hashCode + _exceptionTypes[i].hashCode();
+                hashCode = 31 * hashCode + parameterTypes[i].hashCode();
+
+            count = size(exceptionTypes);
+
+            for (int i = 0; i < count; i++)
+                hashCode = 31 * hashCode + exceptionTypes[i].hashCode();
         }
 
-        return _hashCode;
+        return hashCode;
     }
 
     /**
-     * Returns true if the other object is an instance of MethodSignature with <em>identical</em>
-     * values for return type, name, parameter types and exception types.
+     * Returns true if the other object is an instance of MethodSignature with <em>identical</em> values for return
+     * type, name, parameter types and exception types.
      *
      * @see #isOverridingSignatureOf(MethodSignature)
      */
@@ -128,13 +123,13 @@ public class MethodSignature
 
         MethodSignature ms = (MethodSignature) o;
 
-        if (_returnType != ms._returnType) return false;
+        if (returnType != ms.returnType) return false;
 
-        if (!_name.equals(ms._name)) return false;
+        if (!name.equals(ms.name)) return false;
 
-        if (mismatch(_parameterTypes, ms._parameterTypes)) return false;
+        if (mismatch(parameterTypes, ms.parameterTypes)) return false;
 
-        return !mismatch(_exceptionTypes, ms._exceptionTypes);
+        return !mismatch(exceptionTypes, ms.exceptionTypes);
     }
 
     private boolean mismatch(Class[] a1, Class[] a2)
@@ -160,25 +155,25 @@ public class MethodSignature
     {
         StringBuilder buffer = new StringBuilder();
 
-        buffer.append(ClassFabUtils.toJavaClassName(_returnType));
+        buffer.append(ClassFabUtils.toJavaClassName(returnType));
         buffer.append(" ");
-        buffer.append(_name);
+        buffer.append(name);
         buffer.append("(");
 
-        for (int i = 0; i < size(_parameterTypes); i++)
+        for (int i = 0; i < size(parameterTypes); i++)
         {
             if (i > 0) buffer.append(", ");
 
-            buffer.append(ClassFabUtils.toJavaClassName(_parameterTypes[i]));
+            buffer.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
         }
 
         buffer.append(")");
 
-        int _exceptionCount = size(_exceptionTypes);
+        int _exceptionCount = size(exceptionTypes);
         String _exceptionNames[] = new String[_exceptionCount];
         for (int i = 0; i < _exceptionCount; i++)
         {
-            _exceptionNames[i] = _exceptionTypes[i].getName();
+            _exceptionNames[i] = exceptionTypes[i].getName();
         }
 
         Arrays.sort(_exceptionNames);
@@ -195,23 +190,23 @@ public class MethodSignature
     }
 
     /**
-     * Returns a string consisting of the name of the method and its parameter values. This is
-     * similar to {@link #toString()}, but omits the return type and information about thrown
-     * exceptions. A unique id is used by {@link MethodIterator} to identify overlapping methods
-     * (methods with the same name and parameter types but with different thrown exceptions).
+     * Returns a string consisting of the name of the method and its parameter values. This is similar to {@link
+     * #toString()}, but omits the return type and information about thrown exceptions. A unique id is used by {@link
+     * MethodIterator} to identify overlapping methods (methods with the same name and parameter types but with
+     * different thrown exceptions).
      *
      * @see #isOverridingSignatureOf(MethodSignature)
      */
     public String getUniqueId()
     {
-        StringBuilder buffer = new StringBuilder(_name);
+        StringBuilder buffer = new StringBuilder(name);
         buffer.append("(");
 
-        for (int i = 0; i < size(_parameterTypes); i++)
+        for (int i = 0; i < size(parameterTypes); i++)
         {
             if (i > 0) buffer.append(",");
 
-            buffer.append(ClassFabUtils.toJavaClassName(_parameterTypes[i]));
+            buffer.append(ClassFabUtils.toJavaClassName(parameterTypes[i]));
         }
 
         buffer.append(")");
@@ -220,31 +215,30 @@ public class MethodSignature
     }
 
     /**
-     * Returns true if this signature has the same return type, name and parameters types as the
-     * method signature passed in, and this signature's exceptions "trump" (are the same as, or
-     * super-implementations of, all exceptions thrown by the other method signature).
+     * Returns true if this signature has the same return type, name and parameters types as the method signature passed
+     * in, and this signature's exceptions "trump" (are the same as, or super-implementations of, all exceptions thrown
+     * by the other method signature).
      */
 
     public boolean isOverridingSignatureOf(MethodSignature ms)
     {
-        if (_returnType != ms._returnType) return false;
+        if (returnType != ms.returnType) return false;
 
-        if (!_name.equals(ms._name)) return false;
+        if (!name.equals(ms.name)) return false;
 
-        if (mismatch(_parameterTypes, ms._parameterTypes)) return false;
+        if (mismatch(parameterTypes, ms.parameterTypes)) return false;
 
-        return exceptionsEncompass(ms._exceptionTypes);
+        return exceptionsEncompass(ms.exceptionTypes);
     }
 
     /**
-     * The nuts and bolts of checking that another method signature's exceptions are a subset of
-     * this signature's.
+     * The nuts and bolts of checking that another method signature's exceptions are a subset of this signature's.
      */
 
     @SuppressWarnings("unchecked")
     private boolean exceptionsEncompass(Class[] otherExceptions)
     {
-        int ourCount = size(_exceptionTypes);
+        int ourCount = size(exceptionTypes);
         int otherCount = size(otherExceptions);
 
         // If we have no exceptions, then ours encompass theirs only if they
@@ -266,7 +260,7 @@ public class MethodSignature
                 // When one of our exceptions is a super-class of one of their exceptions,
                 // then their exceptions is matched.
 
-                if (_exceptionTypes[i].isAssignableFrom(otherExceptions[j]))
+                if (exceptionTypes[i].isAssignableFrom(otherExceptions[j]))
                 {
                     matched[j] = true;
                     unmatched--;

@@ -23,7 +23,7 @@ import java.util.Locale;
 
 public class ThreadLocaleImplTest extends IOCInternalTestCase
 {
-    private ThreadLocale _threadLocale;
+    private ThreadLocale threadLocale;
 
     private static final Locale FAKE_LOCALE1 = new Locale("klingon");
 
@@ -32,23 +32,23 @@ public class ThreadLocaleImplTest extends IOCInternalTestCase
     @BeforeClass
     public void setup()
     {
-        _threadLocale = getService(ThreadLocale.class);
+        threadLocale = getService(ThreadLocale.class);
     }
 
     @Test
     public void different_threads_track_different_values() throws InterruptedException
     {
-        final Locale initial = _threadLocale.getLocale();
+        final Locale initial = threadLocale.getLocale();
 
-        _threadLocale.setLocale(FAKE_LOCALE1);
+        threadLocale.setLocale(FAKE_LOCALE1);
 
-        assertSame(_threadLocale.getLocale(), FAKE_LOCALE1);
+        assertSame(threadLocale.getLocale(), FAKE_LOCALE1);
 
         Runnable r = new Runnable()
         {
             public void run()
             {
-                assertSame(_threadLocale.getLocale(), initial);
+                assertSame(threadLocale.getLocale(), initial);
             }
         };
 
@@ -62,12 +62,12 @@ public class ThreadLocaleImplTest extends IOCInternalTestCase
 
     public void thread_locale_reverts_after_cleanup()
     {
-        Locale initial = _threadLocale.getLocale();
+        Locale initial = threadLocale.getLocale();
 
-        _threadLocale.setLocale(FAKE_LOCALE2);
+        threadLocale.setLocale(FAKE_LOCALE2);
 
         cleanupThread();
 
-        assertSame(_threadLocale.getLocale(), initial);
+        assertSame(threadLocale.getLocale(), initial);
     }
 }

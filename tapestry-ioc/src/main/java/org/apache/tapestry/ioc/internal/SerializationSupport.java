@@ -29,7 +29,7 @@ class SerializationSupport
     // We use a weak reference so that the underlying Registry can be reclaimed by the garbage collector
     // even if it is not explicitly shut down.
 
-    private static WeakReference<ServiceProxyProvider> _providerRef;
+    private static WeakReference<ServiceProxyProvider> providerRef;
 
     static synchronized void setProvider(ServiceProxyProvider proxyProvider)
     {
@@ -37,12 +37,12 @@ class SerializationSupport
 
         if (existing != null) LOGGER.error(IOCMessages.overlappingServiceProxyProviders());
 
-        _providerRef = new WeakReference<ServiceProxyProvider>(proxyProvider);
+        providerRef = new WeakReference<ServiceProxyProvider>(proxyProvider);
     }
 
     private static ServiceProxyProvider currentProvider()
     {
-        return _providerRef == null ? null : _providerRef.get();
+        return providerRef == null ? null : providerRef.get();
     }
 
     static synchronized void clearProvider(ServiceProxyProvider proxyProvider)
@@ -61,7 +61,7 @@ class SerializationSupport
         // Good. It's all the expected simple case, without duelling registries. Kill the reference
         // to the registry.
 
-        _providerRef = null;
+        providerRef = null;
     }
 
     static synchronized Object readResolve(String serviceId)

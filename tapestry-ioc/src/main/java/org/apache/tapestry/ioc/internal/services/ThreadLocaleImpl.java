@@ -24,17 +24,17 @@ import java.util.Locale;
 @Scope(PERTHREAD_SCOPE)
 public class ThreadLocaleImpl implements ThreadLocale
 {
-    private Locale _locale = Locale.getDefault();
+    private Locale locale = Locale.getDefault();
 
     public Locale getLocale()
     {
-        return _locale;
+        return locale;
     }
 
     public void setLocale(Locale locale)
     {
         notNull(locale, "locale");
 
-        _locale = locale;
+        this.locale = locale;
     }
 }

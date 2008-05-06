@@ -25,53 +25,53 @@ import java.lang.reflect.Method;
  */
 public abstract class AbstractInvocation implements Invocation
 {
-    private final Method _method;
+    private final Method method;
 
-    private Throwable _thrown;
+    private Throwable thrown;
 
-    private Object _result;
+    private Object result;
 
     @Override
     public String toString()
     {
-        return String.format("Invocation[%s]", _method);
+        return String.format("Invocation[%s]", method);
     }
 
     protected AbstractInvocation(Method method)
     {
-        _method = method;
+        this.method = method;
     }
 
     public String getMethodName()
     {
-        return _method.getName();
+        return method.getName();
     }
 
     public Class getResultType()
     {
-        return _method.getReturnType();
+        return method.getReturnType();
     }
 
     public int getParameterCount()
     {
-        return _method.getParameterTypes().length;
+        return method.getParameterTypes().length;
     }
 
     public Class getParameterType(int index)
     {
-        return _method.getParameterTypes()[index];
+        return method.getParameterTypes()[index];
     }
 
     public boolean isFail()
     {
-        return _thrown != null;
+        return thrown != null;
     }
 
     public <T extends Throwable> T getThrown(Class<T> throwableClass)
     {
         Defense.notNull(throwableClass, "throwableClass");
 
-        if (throwableClass.isInstance(_thrown)) return throwableClass.cast(_thrown);
+        if (throwableClass.isInstance(thrown)) return throwableClass.cast(thrown);
 
         return null;
     }
@@ -80,27 +80,27 @@ public abstract class AbstractInvocation implements Invocation
     {
         Defense.notNull(thrown, "thrown");
 
-        for (Class t : _method.getExceptionTypes())
+        for (Class t : method.getExceptionTypes())
         {
             if (t.isInstance(thrown))
             {
-                _thrown = thrown;
+                this.thrown = thrown;
                 return;
             }
         }
 
         throw new IllegalArgumentException(String.format("Exception %s is not a declared exception of method %s.",
-                                                         thrown.getClass().getName(), _method));
+                                                         thrown.getClass().getName(), method));
     }
 
     public Object getResult()
     {
-        return _result;
+        return result;
     }
 
     public void overrideResult(Object newResult)
     {
-        _result = newResult;
-        _thrown = null;
+        result = newResult;
+        thrown = null;
     }
 }

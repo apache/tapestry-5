@@ -18,16 +18,16 @@ import org.apache.tapestry.ioc.StringHolder;
 
 public class ToUpperCaseStringHolder implements StringHolder
 {
-    private String _value;
+    private String value;
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(String value)
     {
-        _value = value.toUpperCase();
+        this.value = value.toUpperCase();
     }
 
 }
