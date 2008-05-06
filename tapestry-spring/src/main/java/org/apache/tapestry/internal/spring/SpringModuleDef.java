@@ -1,4 +1,4 @@
-// Copyright 2007 The Apache Software Foundation
+// Copyright 2007, 2008 The Apache Software Foundation
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,26 +38,22 @@ public class SpringModuleDef implements ModuleDef
 {
     private static final String CONTEXT_SERVICE_ID = WebApplicationContext.class.getSimpleName();
 
-    private final ApplicationContext context;
-
     private final Map<String, ServiceDef> serviceDefs = newCaseInsensitiveMap();
 
     public SpringModuleDef(final ApplicationContext context)
     {
-        this.context = context;
-
-        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(this.context))
+        for (final String beanName : BeanFactoryUtils.beanNamesIncludingAncestors(context))
         {
             ServiceDef serviceDef = new ServiceDef()
             {
                 private Object getBean()
                 {
-                    return this.context.getBean(beanName);
+                    return context.getBean(beanName);
                 }
 
                 private Class getBeanType()
                 {
-                    return this.context.getType(beanName);
+                    return context.getType(beanName);
                 }
 
                 public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
@@ -106,14 +102,13 @@ public class SpringModuleDef implements ModuleDef
 
         ServiceDef serviceDef = new ServiceDef()
         {
-
             public ObjectCreator createServiceCreator(ServiceBuilderResources resources)
             {
                 return new ObjectCreator()
                 {
                     public Object createObject()
                     {
-                        return this.context;
+                        return context;
                     }
                 };
             }
