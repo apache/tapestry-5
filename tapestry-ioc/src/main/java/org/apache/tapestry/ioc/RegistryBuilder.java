@@ -22,7 +22,6 @@ import org.apache.tapestry.ioc.internal.RegistryImpl;
 import org.apache.tapestry.ioc.internal.RegistryWrapper;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.ioc.internal.util.OneShotLock;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.ioc.services.TapestryIOCModule;
@@ -44,7 +43,7 @@ public final class RegistryBuilder
     /**
      * Module defs, keyed on module id.
      */
-    final List<ModuleDef> modules = newList();
+    final List<ModuleDef> modules = CollectionFactory.newList();
 
     private final ClassLoader classLoader;
 
@@ -97,7 +96,7 @@ public final class RegistryBuilder
     {
         lock.check();
 
-        List<Class> queue = newList(Arrays.asList(moduleBuilderClasses));
+        List<Class> queue = CollectionFactory.newList(Arrays.asList(moduleBuilderClasses));
 
         while (!queue.isEmpty())
         {

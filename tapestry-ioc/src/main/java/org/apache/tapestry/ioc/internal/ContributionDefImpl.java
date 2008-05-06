@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
@@ -71,7 +71,7 @@ public class ContributionDefImpl implements ContributionDef
     private <T> void invokeMethod(ModuleBuilderSource source, ObjectLocator locator,
                                   Class<T> parameterType, T parameterValue)
     {
-        Map<Class, Object> parameterDefaults = newMap();
+        Map<Class, Object> parameterDefaults = CollectionFactory.newMap();
 
         // The way it works is: the method will take Configuration, OrderedConfiguration or
         // MappedConfiguration. So, if the method is for one type and the service is for a different

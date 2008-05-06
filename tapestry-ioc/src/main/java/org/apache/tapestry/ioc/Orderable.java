@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.Defense;
 
 /**
  * A wrapper that allows objects of a target type to be ordered. Each Orderable object is given a unique id and a set of
@@ -38,7 +38,7 @@ public class Orderable<T>
 
     public Orderable(String id, T target, String... constraints)
     {
-        this.id = notBlank(id, "id");
+        this.id = Defense.notBlank(id, "id");
         this.target = target;
         this.constraints = constraints;
     }
