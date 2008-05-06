@@ -27,9 +27,9 @@ import java.lang.reflect.Method;
 
 public class HibernateTransactionDecoratorImpl implements HibernateTransactionDecorator
 {
-    private final AspectDecorator _aspectDecorator;
+    private final AspectDecorator aspectDecorator;
 
-    private final HibernateSessionManager _manager;
+    private final HibernateSessionManager manager;
 
     /**
      * The rules for advice are the same for any method: commit on success or checked exception, abort on thrown
@@ -45,22 +45,22 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
             }
             catch (RuntimeException ex)
             {
-                _manager.abort();
+                manager.abort();
 
                 throw ex;
             }
 
             // For success or checked exception, commit the transaction.
 
-            _manager.commit();
+            manager.commit();
         }
     };
 
     public HibernateTransactionDecoratorImpl(AspectDecorator aspectDecorator, HibernateSessionManager manager)
     {
-        _aspectDecorator = aspectDecorator;
+        this.aspectDecorator = aspectDecorator;
 
-        _manager = manager;
+        this.manager = manager;
     }
 
     public <T> T build(Class<T> serviceInterface, T delegate, String serviceId)
@@ -73,7 +73,7 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
                                            serviceId,
                                            serviceInterface.getName());
 
-        AspectInterceptorBuilder<T> builder = _aspectDecorator.createBuilder(serviceInterface, delegate, description);
+        AspectInterceptorBuilder<T> builder = aspectDecorator.createBuilder(serviceInterface, delegate, description);
 
         for (Method m : serviceInterface.getMethods())
         {

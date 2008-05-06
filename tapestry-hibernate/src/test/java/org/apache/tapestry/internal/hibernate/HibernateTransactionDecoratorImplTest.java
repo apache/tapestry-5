@@ -30,25 +30,26 @@ import java.sql.SQLException;
 @SuppressWarnings({ "ThrowableInstanceNeverThrown" })
 public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
 {
-    private Registry _registry;
+    private Registry registry;
 
-    private AspectDecorator _aspectDecorator;
+    private AspectDecorator aspectDecorator;
 
     @BeforeClass
     public void setup()
     {
-        _registry = IOCUtilities.buildDefaultRegistry();
+        registry = IOCUtilities.buildDefaultRegistry();
 
-        _aspectDecorator = _registry.getService(AspectDecorator.class);
+        aspectDecorator = registry.getService(AspectDecorator.class);
     }
 
 
     @AfterClass
     public void shutdown()
     {
-        _aspectDecorator = null;
-        _registry.shutdown();
-        _registry = null;
+        registry.shutdown();
+
+        aspectDecorator = null;
+        registry = null;
     }
 
     @Test
@@ -203,7 +204,7 @@ public class HibernateTransactionDecoratorImplTest extends TapestryTestCase
 
     private HibernateTransactionDecorator newHibernateSessionManagerDecorator(HibernateSessionManager manager)
     {
-        return new HibernateTransactionDecoratorImpl(_aspectDecorator, manager);
+        return new HibernateTransactionDecoratorImpl(aspectDecorator, manager);
     }
 
     private void assertToString(VoidService interceptor)

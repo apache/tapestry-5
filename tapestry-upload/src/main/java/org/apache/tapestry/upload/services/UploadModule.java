@@ -30,7 +30,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class UploadModule
 {
-    private static final AtomicBoolean _needToAddShutdownListener = new AtomicBoolean(true);
+    private static final AtomicBoolean needToAddShutdownListener = new AtomicBoolean(true);
+    private static final String NO_LIMIT = "-1";
 
     public static void contributeComponentClassResolver(Configuration<LibraryMapping> configuration)
     {
@@ -52,7 +53,7 @@ public class UploadModule
         // be safe.
         perthreadManager.addThreadCleanupListener(multipartDecoder);
 
-        if (_needToAddShutdownListener.getAndSet(false))
+        if (needToAddShutdownListener.getAndSet(false))
         {
             shutdownHub.addRegistryShutdownListener(new RegistryShutdownListener()
             {
@@ -80,9 +81,7 @@ public class UploadModule
         configuration.add(UploadSymbols.REPOSITORY_THRESHOLD, Integer
                 .toString(DiskFileItemFactory.DEFAULT_SIZE_THRESHOLD));
         configuration.add(UploadSymbols.REPOSITORY_LOCATION, System.getProperty("java.io.tmpdir"));
-        // No limit
-        configuration.add(UploadSymbols.REQUESTSIZE_MAX, "-1");
-        // No limit
-        configuration.add(UploadSymbols.FILESIZE_MAX, "-1");
+        configuration.add(UploadSymbols.REQUESTSIZE_MAX, NO_LIMIT);
+        configuration.add(UploadSymbols.FILESIZE_MAX, NO_LIMIT);
     }
 }

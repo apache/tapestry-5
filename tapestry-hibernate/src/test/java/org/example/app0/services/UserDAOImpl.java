@@ -21,26 +21,26 @@ import java.util.List;
 
 public class UserDAOImpl implements UserDAO
 {
-    private final Session _session;
+    private final Session session;
 
     public UserDAOImpl(Session session)
     {
-        _session = session;
+        this.session = session;
     }
 
     public void add(User user)
     {
-        _session.save(user);
+        session.save(user);
     }
 
     @SuppressWarnings({ "unchecked" })
     public List<User> findAll()
     {
-        return (List<User>) _session.createQuery("from User").list();
+        return (List<User>) session.createQuery("from User").list();
     }
 
     public void delete(User... users)
     {
-        for (User user : users) _session.delete(user);
+        for (User user : users) session.delete(user);
     }
 }

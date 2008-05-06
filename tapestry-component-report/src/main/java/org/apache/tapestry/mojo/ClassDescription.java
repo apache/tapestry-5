@@ -20,39 +20,39 @@ import java.util.Map;
 
 public class ClassDescription
 {
-    private final String _superClassName;
+    private final String superClassName;
 
-    private final String _className;
+    private final String className;
 
-    private final String _description;
+    private final String description;
 
-    private final Map<String, ParameterDescription> _parameters = newMap();
+    private final Map<String, ParameterDescription> parameters = newMap();
 
     public ClassDescription(String className, String superClassName, String description)
     {
-        _className = className;
-        _superClassName = superClassName;
-        _description = description;
+        this.className = className;
+        this.superClassName = superClassName;
+        this.description = description;
     }
 
     public String getClassName()
     {
-        return _className;
+        return className;
     }
 
     public String getDescription()
     {
-        return _description;
+        return description;
     }
 
     public Map<String, ParameterDescription> getParameters()
     {
-        return _parameters;
+        return parameters;
     }
 
     public String getSuperClassName()
     {
-        return _superClassName;
+        return superClassName;
     }
 
 }

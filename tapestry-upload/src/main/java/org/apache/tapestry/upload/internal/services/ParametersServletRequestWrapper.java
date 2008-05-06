@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
 {
-    private final Map<String, ParameterValue> _parameters = newMap();
+    private final Map<String, ParameterValue> parameters = newMap();
 
     public ParametersServletRequestWrapper(HttpServletRequest httpServletRequest)
     {
@@ -48,7 +48,7 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
     {
         Map<String, Object> paramMap = newMap();
 
-        for (Map.Entry<String, ParameterValue> e : _parameters.entrySet())
+        for (Map.Entry<String, ParameterValue> e : parameters.entrySet())
         {
             ParameterValue value = e.getValue();
 
@@ -61,7 +61,7 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
     @Override
     public Enumeration getParameterNames()
     {
-        return Collections.enumeration(_parameters.keySet());
+        return Collections.enumeration(parameters.keySet());
     }
 
     @Override
@@ -72,11 +72,11 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
 
     public void addParameter(String name, String value)
     {
-        ParameterValue pv = _parameters.get(name);
+        ParameterValue pv = parameters.get(name);
         if (pv == null)
         {
             pv = new ParameterValue(value);
-            _parameters.put(name, pv);
+            parameters.put(name, pv);
         }
         else
         {
@@ -86,7 +86,7 @@ public class ParametersServletRequestWrapper extends HttpServletRequestWrapper
 
     ParameterValue getValueFor(String name)
     {
-        ParameterValue value = _parameters.get(name);
+        ParameterValue value = parameters.get(name);
 
         return value == null ? ParameterValue.NULL : value;
     }

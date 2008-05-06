@@ -22,32 +22,32 @@ import org.hibernate.Transaction;
 
 public class HibernateSessionManagerImpl implements HibernateSessionManager, ThreadCleanupListener
 {
-    private final Session _session;
+    private final Session session;
 
-    private Transaction _transaction;
+    private Transaction transaction;
 
     public HibernateSessionManagerImpl(HibernateSessionSource source)
     {
-        _session = source.create();
+        session = source.create();
 
-        _transaction = _session.beginTransaction();
+        transaction = session.beginTransaction();
     }
 
     public void abort()
     {
-        _transaction.rollback();
-        _transaction.begin();
+        transaction.rollback();
+        transaction.begin();
     }
 
     public void commit()
     {
-        _transaction.commit();
-        _transaction.begin();
+        transaction.commit();
+        transaction.begin();
     }
 
     public Session getSession()
     {
-        return _session;
+        return session;
     }
 
     /**
@@ -57,9 +57,9 @@ public class HibernateSessionManagerImpl implements HibernateSessionManager, Thr
      */
     public void threadDidCleanup()
     {
-        _transaction.rollback();
+        transaction.rollback();
 
-        _session.close();
+        session.close();
     }
 
 }

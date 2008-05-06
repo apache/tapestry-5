@@ -27,35 +27,35 @@ import java.util.List;
 public class CachedForm
 {
     @Property
-    private String _name;
+    private String name;
 
     @Property
-    private User _user;
+    private User user;
 
     @Property
-    private int _index;
+    private int index;
 
     @Inject
-    private Session _session;
+    private Session session;
 
     @Inject
-    private HibernateSessionManager _manager;
+    private HibernateSessionManager manager;
 
     void onSuccess()
     {
         User user = new User();
-        user.setFirstName(_name);
+        user.setFirstName(name);
 
-        _session.save(user);
+        session.save(user);
 
-        _manager.commit();
+        manager.commit();
     }
 
     @SuppressWarnings("unchecked")
     @Cached
     public List<User> getUsers()
     {
-        return _session.createQuery("from User").list();
+        return session.createQuery("from User").list();
     }
 
 

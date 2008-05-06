@@ -10,39 +10,39 @@ import java.sql.SQLException;
  */
 public class CommitAfterDemo
 {
-    private User _user;
+    private User user;
 
     void onActivate(User user)
     {
-        _user = user;
+        this.user = user;
     }
 
     Object onPassivate()
     {
-        return _user;
+        return user;
     }
 
     public User getUser()
     {
-        return _user;
+        return user;
     }
 
     public void setUser(User user)
     {
-        _user = user;
+        this.user = user;
     }
 
 
     @CommitAfter
     void onChangeName()
     {
-        _user.setFirstName("Frank");
+        user.setFirstName("Frank");
     }
 
     @CommitAfter
     void doChangeNameWithRuntimeException()
     {
-        _user.setFirstName("Bill");
+        user.setFirstName("Bill");
 
         throw new RuntimeException("To avoid commit.");
     }
@@ -63,7 +63,7 @@ public class CommitAfterDemo
     void doChangeNameWithCheckedException() throws SQLException
 
     {
-        _user.setFirstName("Troy");
+        user.setFirstName("Troy");
 
         throw new SQLException("Doesn't matter.");
     }

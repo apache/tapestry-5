@@ -12,16 +12,16 @@ Entity value encoding
 public class ViewPerson
 {
   @Property
-  private Person _person;
+  private Person person;
   
   void onActivate(Person person)
   {
-    _person = person;
+    this.person = person;
   }
   
   Person onPassivate()
   {
-    return _person;
+    return person;
   }
 }
 +----+   
@@ -45,11 +45,11 @@ public class ViewPerson
 {
   @Persist("entity")
   @Property
-  private Person _person;
+  private Person person;
   
   void onActivate(Person person)
   {
-    _person = person;
+    this.person = person;
   }
   
 }
@@ -70,22 +70,22 @@ public class EditPerson
 {
   @Persist("entity")
   @Property
-  private Person _person;
+  private Person person;
 
   @InjectPage
-  private PersonIndex _personIndex;
+  private PersonIndex personIndex;
 
   void onActivate(Person person)
   {
-    _person = person;
+    this.person = person;
   }
 
-  Object onPassivate() { return _person; }
+  Object onPassivate() { return person; }
 
   @CommitAfter
   Object onSuccess()
   {
-    return _personIndex;
+    return personIndex;
   }
 }
 +----+

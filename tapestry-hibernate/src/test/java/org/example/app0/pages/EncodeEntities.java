@@ -15,7 +15,7 @@
 package org.example.app0.pages;
 
 import org.apache.tapestry.annotations.Property;
-import org.apache.tapestry.hibernate.HibernateSessionManager;
+import org.apache.tapestry.hibernate.annotations.CommitAfter;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.example.app0.entities.User;
 import org.hibernate.Session;
@@ -25,29 +25,25 @@ import java.util.List;
 public class EncodeEntities
 {
     @Inject
-    private Session _session;
+    private Session session;
 
     @SuppressWarnings("unused")
     @Property
-    private User _user;
+    private User user;
 
-    @Inject
-    private HibernateSessionManager _manager;
-
+    @CommitAfter
     void onCreate()
     {
         User user = new User();
         user.setFirstName("name");
 
-        _session.save(user);
-
-        _manager.commit();
+        session.save(user);
     }
 
     @SuppressWarnings("unchecked")
     User onPassivate()
     {
-        List<User> users = _session.createQuery("from User").list();
+        List<User> users = session.createQuery("from User").list();
         if (users.isEmpty())
             return null;
 
@@ -56,6 +52,6 @@ public class EncodeEntities
 
     void onActivate(User user)
     {
-        _user = user;
+        this.user = user;
     }
 }

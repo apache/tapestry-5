@@ -27,8 +27,9 @@ import java.util.List;
 
 public class HibernateSessionSourceImpl implements HibernateSessionSource, RegistryShutdownListener
 {
-    private final SessionFactory _sessionFactory;
-    private final Configuration _configuration;
+    private final SessionFactory sessionFactory;
+
+    private final Configuration configuration;
 
     public HibernateSessionSourceImpl(Logger logger, List<HibernateConfigurer> hibernateConfigurers)
     {
@@ -41,8 +42,8 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
 
         long configurationComplete = System.currentTimeMillis();
 
-        _sessionFactory = configuration.buildSessionFactory();
-        _configuration = new ImmutableConfiguration(configuration);
+        sessionFactory = configuration.buildSessionFactory();
+        this.configuration = new ImmutableConfiguration(configuration);
 
         long factoryCreated = System.currentTimeMillis();
 
@@ -51,29 +52,29 @@ public class HibernateSessionSourceImpl implements HibernateSessionSource, Regis
                 factoryCreated - startTime));
 
         logger
-                .info(HibernateMessages.entityCatalog(_sessionFactory.getAllClassMetadata()
+                .info(HibernateMessages.entityCatalog(sessionFactory.getAllClassMetadata()
                         .keySet()));
 
     }
 
     public Session create()
     {
-        return _sessionFactory.openSession();
+        return sessionFactory.openSession();
     }
 
     public SessionFactory getSessionFactory()
     {
-        return _sessionFactory;
+        return sessionFactory;
     }
 
     public Configuration getConfiguration()
     {
-        return _configuration;
+        return configuration;
     }
 
     public void registryDidShutdown()
     {
-        _sessionFactory.close();
+        sessionFactory.close();
     }
 
 }

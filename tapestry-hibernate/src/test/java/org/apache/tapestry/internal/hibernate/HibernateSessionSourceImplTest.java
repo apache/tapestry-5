@@ -34,7 +34,7 @@ import java.util.List;
 
 public class HibernateSessionSourceImplTest extends TapestryTestCase
 {
-    private final Logger _log = LoggerFactory
+    private final Logger log = LoggerFactory
             .getLogger("tapestry.hibernate.HibernateSessionSourceTest");
 
     @Test
@@ -51,7 +51,7 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
                 new PackageNameHibernateConfigurer(packageManager, new ClassNameLocatorImpl()));
 
         replay();
-        HibernateSessionSource source = new HibernateSessionSourceImpl(_log, filters);
+        HibernateSessionSource source = new HibernateSessionSourceImpl(log, filters);
 
         Session session = source.create();
         assertNotNull(session);
@@ -74,7 +74,7 @@ public class HibernateSessionSourceImplTest extends TapestryTestCase
                 configuration.configure();
             }
         };
-        HibernateSessionSource source = new HibernateSessionSourceImpl(_log, Arrays
+        HibernateSessionSource source = new HibernateSessionSourceImpl(log, Arrays
                 .asList(configurer));
 
         Configuration config = source.getConfiguration();

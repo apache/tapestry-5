@@ -73,7 +73,7 @@ Usage
   
 +----+
   @Inject
-  private UserDAO _userDAO;
+  private UserDAO userDAO;
 +----+
 
   If you have multiple beans that implement the same interface (for instance, if you have wrapped your bean using a transaction interceptor), you must disambiguate.  The easiest way
@@ -85,7 +85,7 @@ Usage
 +----+
   @Inject
   @Service("UserDAO")
-  private UserDAO _userDAO;
+  private UserDAO userDAO;
 +----+  
   
   Injection of Spring beans via service builder methods or autobuilding occurs just the same: the Spring beans masquerade as Tapestry IoC services and all is well.

@@ -28,13 +28,13 @@ public class PersistEntity
 {
     @Persist("entity")
     @Property
-    private User _user;
+    private User user;
 
     @Inject
-    private UserDAO _userDAO;
+    private UserDAO userDAO;
 
     @Inject
-    private Session _session;
+    private Session session;
 
     @Inject
     private HibernateSessionManager _manager;
@@ -44,32 +44,32 @@ public class PersistEntity
         User user = new User();
         user.setFirstName("name");
 
-        _userDAO.add(user);
+        userDAO.add(user);
 
-        _user = user;
+        this.user = user;
     }
 
     void onChangeName()
     {
-        _user.setFirstName("name2");
+        user.setFirstName("name2");
 
         // No commit, so no real change.
     }
 
     void onSetToTransient()
     {
-        _user = new User();
+        user = new User();
     }
 
     void onSetToNull()
     {
-        _user = null;
+        user = null;
     }
 
     void onDelete()
     {
-        List<User> users = _userDAO.findAll();
+        List<User> users = userDAO.findAll();
 
-        _userDAO.delete(users.toArray(new User[0]));
+        userDAO.delete(users.toArray(new User[0]));
     }
 }

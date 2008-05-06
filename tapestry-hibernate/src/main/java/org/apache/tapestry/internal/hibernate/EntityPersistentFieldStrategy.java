@@ -14,11 +14,6 @@
 
 package org.apache.tapestry.internal.hibernate;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.tapestry.internal.services.AbstractSessionPersistentFieldStrategy;
 import org.apache.tapestry.internal.services.PersistentFieldChangeImpl;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
@@ -31,81 +26,108 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.metadata.ClassMetadata;
 
-/** Persists Hibernate entities by storing their id in the session. */
-public class EntityPersistentFieldStrategy implements PersistentFieldStrategy {
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * Persists Hibernate entities by storing their id in the session.
+ */
+public class EntityPersistentFieldStrategy implements PersistentFieldStrategy
+{
     private static final Pattern KEY_PATTERN = Pattern.compile("^([^:]+):([^:]+):(.+)$");
-    
-	private final PersistentFieldStrategy _strategy;
-    private final Session _session;
-    private final TypeCoercer _typeCoercer;
-    
-	public EntityPersistentFieldStrategy(Session session, TypeCoercer typeCoercer, Request request) {
-		super();
-		_strategy = new EntityStrategy(request);
-		_session = session;
-		_typeCoercer = typeCoercer;
-	}
 
-	public void discardChanges(String pageName) {
-		_strategy.discardChanges(pageName);
-	}
+    private final PersistentFieldStrategy strategy;
+    private final Session session;
+    private final TypeCoercer typeCoercer;
 
-	public Collection<PersistentFieldChange> gatherFieldChanges(String pageName) {
-		Collection<PersistentFieldChange> changes = CollectionFactory.newList();
-		for(PersistentFieldChange change : _strategy.gatherFieldChanges(pageName)) {
-			if (change.getValue() == null) {
-				changes.add(change);
-				continue;
-			}
-			
-			String key = change.getValue().toString();
-			Matcher matcher = KEY_PATTERN.matcher(key);
-			matcher.matches();
-			
-			String entityName = matcher.group(1);
-			String idClassName = matcher.group(2);
-			String stringId = matcher.group(3);
-				
-			try {
-				Class<?> idClass = Class.forName(idClassName);
-				Object idObj = _typeCoercer.coerce(stringId, idClass);
-				
-				Serializable id = Defense.cast(idObj, Serializable.class, "id");
-				Object entity = _session.get(entityName, id);
-				changes.add(new PersistentFieldChangeImpl(change.getComponentId(), change.getFieldName(), entity));
-			} catch (ClassNotFoundException e) {
-				throw new RuntimeException(HibernateMessages.badEntityIdType(entityName, idClassName, stringId), e);
-			}
-		}
-		
-		return changes;
-	}
+    public EntityPersistentFieldStrategy(Session session, TypeCoercer typeCoercer, Request request)
+    {
+        strategy = new EntityStrategy(request);
+        this.session = session;
+        this.typeCoercer = typeCoercer;
+    }
 
-	/** Stores the entity id's as values in the form: entityName:idClass:id */
-	public void postChange(String pageName, String componentId, String fieldName, Object newValue) {
-		if (newValue != null) {
-			try {
-				String entityName = _session.getEntityName(newValue);
-				ClassMetadata metadata = _session.getSessionFactory().getClassMetadata(newValue.getClass());
-				Serializable id = metadata.getIdentifier(newValue, _session.getEntityMode());
-				newValue = entityName + ":" + id.getClass().getCanonicalName() + ":" + _typeCoercer.coerce(id, String.class);
-				
-			} catch (HibernateException e) {
-				throw new IllegalArgumentException(HibernateMessages.entityNotAttached(newValue), e);
-			}
-		}
-		
-		_strategy.postChange(pageName, componentId, fieldName, newValue);
-	}
+    public void discardChanges(String pageName)
+    {
+        strategy.discardChanges(pageName);
+    }
 
-	/** We want to store the data in the session normally, we just need to control the values.
-	 * We also need a separate instance so that we know it's using the right prefix for the values.
-	*/
-	private static final class EntityStrategy extends AbstractSessionPersistentFieldStrategy {
+    public Collection<PersistentFieldChange> gatherFieldChanges(String pageName)
+    {
+        Collection<PersistentFieldChange> changes = CollectionFactory.newList();
 
-		public EntityStrategy(Request request) {
-			super("entity:", request);
-		}
-		
-	}
+        for (PersistentFieldChange change : strategy.gatherFieldChanges(pageName))
+        {
+            if (change.getValue() == null)
+            {
+                changes.add(change);
+                continue;
+            }
+
+            String key = change.getValue().toString();
+            Matcher matcher = KEY_PATTERN.matcher(key);
+            matcher.matches();
+
+            String entityName = matcher.group(1);
+            String idClassName = matcher.group(2);
+            String stringId = matcher.group(3);
+
+            try
+            {
+                Class<?> idClass = Class.forName(idClassName);
+                Object idObj = typeCoercer.coerce(stringId, idClass);
+
+                Serializable id = Defense.cast(idObj, Serializable.class, "id");
+                Object entity = session.get(entityName, id);
+                changes.add(new PersistentFieldChangeImpl(change.getComponentId(), change.getFieldName(), entity));
+            }
+            catch (ClassNotFoundException e)
+            {
+                throw new RuntimeException(HibernateMessages.badEntityIdType(entityName, idClassName, stringId), e);
+            }
+        }
+
+        return changes;
+    }
+
+    /**
+     * Stores the entity id's as values in the form: entityName:idClass:id
+     */
+    public void postChange(String pageName, String componentId, String fieldName, Object newValue)
+    {
+        if (newValue != null)
+        {
+            try
+            {
+                String entityName = session.getEntityName(newValue);
+                ClassMetadata metadata = session.getSessionFactory().getClassMetadata(newValue.getClass());
+                Serializable id = metadata.getIdentifier(newValue, session.getEntityMode());
+                newValue = entityName + ":" + id.getClass().getCanonicalName() + ":" + typeCoercer.coerce(id,
+                                                                                                          String.class);
+
+            }
+            catch (HibernateException e)
+            {
+                throw new IllegalArgumentException(HibernateMessages.entityNotAttached(newValue), e);
+            }
+        }
+
+        strategy.postChange(pageName, componentId, fieldName, newValue);
+    }
+
+    /**
+     * We want to store the data in the session normally, we just need to control the values. We also need a separate
+     * instance so that we know it's using the right prefix for the values.
+     */
+    private static final class EntityStrategy extends AbstractSessionPersistentFieldStrategy
+    {
+
+        public EntityStrategy(Request request)
+        {
+            super("entity:", request);
+        }
+
+    }
 }

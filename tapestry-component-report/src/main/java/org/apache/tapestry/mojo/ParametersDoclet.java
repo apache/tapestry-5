@@ -33,11 +33,11 @@ public class ParametersDoclet extends Doclet
 {
     static String OUTPUT_PATH_OPTION = "-o";
 
-    static String _outputPath;
+    static String outputPath;
 
     static class Worker
     {
-        private PrintWriter _out;
+        private PrintWriter out;
 
         private final Pattern _stripper = Pattern.compile("(<.*?>|&.*?;)", Pattern.DOTALL);
 
@@ -45,7 +45,7 @@ public class ParametersDoclet extends Doclet
         {
             File output = new File(outputPath);
 
-            _out = new PrintWriter(output);
+            out = new PrintWriter(output);
 
             println("<component-parameters>");
 
@@ -54,7 +54,7 @@ public class ParametersDoclet extends Doclet
 
             println("</component-parameters>");
 
-            _out.close();
+            out.close();
         }
 
         private void emitClass(ClassDoc classDoc)
@@ -142,14 +142,14 @@ public class ParametersDoclet extends Doclet
         {
             String line = String.format(format, arguments);
 
-            _out.print(line);
+            out.print(line);
         }
 
         private void println(String format, Object... arguments)
         {
             print(format, arguments);
 
-            _out.println();
+            out.println();
         }
 
         private void printDescription(Doc holder)
@@ -193,7 +193,7 @@ public class ParametersDoclet extends Doclet
 
             String stripped = _stripper.matcher(text).replaceAll("");
 
-            _out.print(stripped);
+            out.print(stripped);
         }
     }
 
@@ -216,13 +216,13 @@ public class ParametersDoclet extends Doclet
     {
         for (String[] group : options)
         {
-            if (group[0].equals(OUTPUT_PATH_OPTION)) _outputPath = group[1];
+            if (group[0].equals(OUTPUT_PATH_OPTION)) outputPath = group[1];
 
             // Do we need to check for other unexpected options?
             // TODO: Check for duplicate -o?
         }
 
-        if (_outputPath == null) reporter.printError(String.format("Usage: javadoc %s path", OUTPUT_PATH_OPTION));
+        if (outputPath == null) reporter.printError(String.format("Usage: javadoc %s path", OUTPUT_PATH_OPTION));
 
         return true;
     }
@@ -233,7 +233,7 @@ public class ParametersDoclet extends Doclet
 
         try
         {
-            new Worker().run(_outputPath, root);
+            new Worker().run(outputPath, root);
         }
         catch (Exception ex)
         {

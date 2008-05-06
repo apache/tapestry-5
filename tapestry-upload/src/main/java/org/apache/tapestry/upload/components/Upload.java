@@ -31,6 +31,7 @@ import java.util.Locale;
 /**
  * A component to upload a file.
  */
+@SuppressWarnings({ "UnusedDeclaration" })
 public class Upload extends AbstractField
 {
     public static final String MULTIPART_ENCTYPE = "multipart/form-data";
@@ -40,7 +41,7 @@ public class Upload extends AbstractField
      * the content may have been cleaned up.
      */
     @Parameter(required = true, principal = true)
-    private UploadedFile _value;
+    private UploadedFile value;
 
     /**
      * The object that will perform input validation. The "validate:" binding prefix is generally used to provide this
@@ -48,45 +49,45 @@ public class Upload extends AbstractField
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> _validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> validate = NOOP_VALIDATOR;
 
     @Environmental
-    private ValidationTracker _tracker;
+    private ValidationTracker tracker;
 
     @Inject
-    private MultipartDecoder _decoder;
+    private MultipartDecoder decoder;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
+    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
     @Inject
-    private FieldValidationSupport _fieldValidationSupport;
+    private FieldValidationSupport fieldValidationSupport;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderDisabled _renderDisabled;
+    private RenderDisabled renderDisabled;
 
     /**
      * Computes a default value for the "validate" parameter using {@link FieldValidatorDefaultSource}.
      */
     final FieldValidator defaultValidate()
     {
-        Class type = _resources.getBoundType("value");
+        Class type = resources.getBoundType("value");
 
         if (type == null) return null;
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
-                                                                   _resources.getContainerMessages(), _locale, type,
-                                                                   _resources.getAnnotationProvider("value"));
+        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
+                                                                  resources.getContainerMessages(), locale, type,
+                                                                  resources.getAnnotationProvider("value"));
     }
 
     public Upload()
@@ -97,19 +98,19 @@ public class Upload extends AbstractField
     Upload(UploadedFile value, FieldValidator<Object> validate, MultipartDecoder decoder, ValidationTracker tracker,
            ComponentResources resources, FieldValidationSupport fieldValidationSupport)
     {
-        _value = value;
-        if (validate != null) _validate = validate;
-        _decoder = decoder;
-        _tracker = tracker;
-        _resources = resources;
-        _fieldValidationSupport = fieldValidationSupport;
+        this.value = value;
+        if (validate != null) this.validate = validate;
+        this.decoder = decoder;
+        this.tracker = tracker;
+        this.resources = resources;
+        this.fieldValidationSupport = fieldValidationSupport;
     }
 
-    @SuppressWarnings({"unchecked"})
+    @SuppressWarnings({ "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {
-        UploadedFile uploaded = _decoder.getFileUpload(elementName);
+        UploadedFile uploaded = decoder.getFileUpload(elementName);
 
         if (uploaded != null)
         {
@@ -118,14 +119,14 @@ public class Upload extends AbstractField
 
         try
         {
-            _fieldValidationSupport.validate(uploaded, _resources, _validate);
+            fieldValidationSupport.validate(uploaded, resources, validate);
         }
         catch (ValidationException ex)
         {
-            _tracker.recordError(this, ex.getMessage());
+            tracker.recordError(this, ex.getMessage());
         }
 
-        _value = uploaded;
+        value = uploaded;
     }
 
     /**
@@ -135,13 +136,13 @@ public class Upload extends AbstractField
      */
     protected void beginRender(MarkupWriter writer)
     {
-        _formSupport.setEncodingType(MULTIPART_ENCTYPE);
+        formSupport.setEncodingType(MULTIPART_ENCTYPE);
 
         writer.element("input", "type", "file", "name", getControlName(), "id", getClientId());
 
-        _validate.render(writer);
+        validate.render(writer);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         decorateInsideField();
     }
@@ -153,7 +154,7 @@ public class Upload extends AbstractField
 
     public UploadedFile getValue()
     {
-        return _value;
+        return value;
     }
 
     Binding defaultValue()
@@ -169,7 +170,7 @@ public class Upload extends AbstractField
     void injectFormSupport(FormSupport formSupport)
     {
         // We have our copy ...
-        _formSupport = formSupport;
+        this.formSupport = formSupport;
 
         // As does AbstractField
         setFormSupport(formSupport);

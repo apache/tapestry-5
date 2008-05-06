@@ -35,23 +35,23 @@ Usage
 +---+
     public class UploadExample
     {
-        private UploadedFile _file;
+        private UploadedFile file;
 
         public UploadedFile getFile()
         {
-            return _file;
+            return file;
         }
 
         public void setFile(UploadedFile file)
         {
-            _file = file;
+            this.file = file;
         }
 
         public void onSuccess()
         {
-            File copied = new File("/my/file/location/" + _file.getFileName());
+            File copied = new File("/my/file/location/" + file.getFileName());
             
-            _file.write(copied);
+            file.write(copied);
         }
     }
 +---+
@@ -67,7 +67,7 @@ Potential Issues
    to terminate this thread prematurely and cause errors for the other applications.
    (see the {{{http://jakarta.apache.org/commons/fileupload/using.html}Resource Cleanup}} section in  for more discussion)
 
-   Technically the file cleanup service is not need by Tapestry Upload (which deletes temporary files at the end
-   of request processing).  However it is currently not possible to disable it (enhancment request has been filed
+   Technically the file cleanup service is not needed by Tapestry Upload (which deletes temporary files at the end
+   of request processing).  However it is currently not possible to disable it (enhancement request has been filed
     as {{{https://issues.apache.org/jira/browse/FILEUPLOAD-133}FILEUPLOAD-133}}).
 

@@ -27,16 +27,16 @@ import java.io.InputStream;
  */
 public class UploadedFileItem implements UploadedFile
 {
-    private final FileItem _item;
+    private final FileItem item;
 
     public UploadedFileItem(FileItem item)
     {
-        _item = item;
+        this.item = item;
     }
 
     public String getContentType()
     {
-        return _item.getContentType();
+        return item.getContentType();
     }
 
     public String getFileName()
@@ -46,19 +46,19 @@ public class UploadedFileItem implements UploadedFile
 
     public String getFilePath()
     {
-        return _item.getName();
+        return item.getName();
     }
 
     public long getSize()
     {
-        return _item.getSize();
+        return item.getSize();
     }
 
     public InputStream getStream()
     {
         try
         {
-            return _item.getInputStream();
+            return item.getInputStream();
         }
         catch (IOException e)
         {
@@ -68,14 +68,14 @@ public class UploadedFileItem implements UploadedFile
 
     public boolean isInMemory()
     {
-        return _item.isInMemory();
+        return item.isInMemory();
     }
 
     public void write(File file)
     {
         try
         {
-            _item.write(file);
+            item.write(file);
         }
         catch (Exception e)
         {
@@ -85,6 +85,6 @@ public class UploadedFileItem implements UploadedFile
 
     public void cleanup()
     {
-        _item.delete();
+        item.delete();
     }
 }
