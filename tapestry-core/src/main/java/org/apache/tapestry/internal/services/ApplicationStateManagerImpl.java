@@ -26,33 +26,33 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
 
     static class ApplicationStateAdapter<T>
     {
-        private final Class<T> _asoClass;
+        private final Class<T> asoClass;
 
-        private final ApplicationStatePersistenceStrategy _strategy;
+        private final ApplicationStatePersistenceStrategy strategy;
 
-        private final ApplicationStateCreator<T> _creator;
+        private final ApplicationStateCreator<T> creator;
 
         ApplicationStateAdapter(Class<T> asoClass, ApplicationStatePersistenceStrategy strategy,
                                 ApplicationStateCreator<T> creator)
         {
-            _asoClass = asoClass;
-            _strategy = strategy;
-            _creator = creator;
+            this.asoClass = asoClass;
+            this.strategy = strategy;
+            this.creator = creator;
         }
 
         T getOrCreate()
         {
-            return _strategy.get(_asoClass, _creator);
+            return strategy.get(asoClass, creator);
         }
 
         void set(T aso)
         {
-            _strategy.set(_asoClass, aso);
+            strategy.set(asoClass, aso);
         }
 
         boolean exists()
         {
-            return _strategy.exists(_asoClass);
+            return strategy.exists(asoClass);
         }
     }
 
@@ -60,18 +60,18 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
      * The map will be extended periodically as new ASOs, not in the configuration, are encountered. Thut is is thread
      * safe.
      */
-    private final Map<Class, ApplicationStateAdapter> _classToAdapter = newConcurrentMap();
+    private final Map<Class, ApplicationStateAdapter> classToAdapter = newConcurrentMap();
 
-    private final ApplicationStatePersistenceStrategySource _source;
+    private final ApplicationStatePersistenceStrategySource source;
 
-    private final ObjectLocator _locator;
+    private final ObjectLocator locator;
 
     @SuppressWarnings("unchecked")
     public ApplicationStateManagerImpl(Map<Class, ApplicationStateContribution> configuration,
                                        ApplicationStatePersistenceStrategySource source, ObjectLocator locator)
     {
-        _source = source;
-        _locator = locator;
+        this.source = source;
+        this.locator = locator;
 
         for (Class asoClass : configuration.keySet())
         {
@@ -80,7 +80,7 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
             ApplicationStateAdapter adapter = newAdapter(asoClass, contribution.getStrategy(),
                                                          contribution.getCreator());
 
-            _classToAdapter.put(asoClass, adapter);
+            classToAdapter.put(asoClass, adapter);
         }
 
     }
@@ -95,12 +95,12 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
             {
                 public T create()
                 {
-                    return _locator.autobuild(asoClass);
+                    return locator.autobuild(asoClass);
                 }
             };
         }
 
-        ApplicationStatePersistenceStrategy strategy = _source.get(strategyName);
+        ApplicationStatePersistenceStrategy strategy = source.get(strategyName);
 
         return new ApplicationStateAdapter(asoClass, strategy, creator);
     }
@@ -108,14 +108,14 @@ public class ApplicationStateManagerImpl implements ApplicationStateManager
     @SuppressWarnings("unchecked")
     private <T> ApplicationStateAdapter<T> getAdapter(Class<T> asoClass)
     {
-        ApplicationStateAdapter<T> result = _classToAdapter.get(asoClass);
+        ApplicationStateAdapter<T> result = classToAdapter.get(asoClass);
 
         // Not found is completely OK, we'll define it on the fly.
 
         if (result == null)
         {
             result = newAdapter(asoClass, DEFAULT_STRATEGY, null);
-            _classToAdapter.put(asoClass, result);
+            classToAdapter.put(asoClass, result);
         }
 
         return result;

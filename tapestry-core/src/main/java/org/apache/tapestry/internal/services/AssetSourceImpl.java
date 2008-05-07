@@ -16,9 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.ioc.Resource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.services.AssetFactory;
@@ -31,21 +30,21 @@ public class AssetSourceImpl implements AssetSource
 {
     private static final String CLASSPATH = "classpath";
 
-    private final StrategyRegistry<AssetFactory> _registry;
+    private final StrategyRegistry<AssetFactory> registry;
 
-    private final ThreadLocale _threadLocale;
+    private final ThreadLocale threadLocale;
 
-    private final Map<String, Resource> _prefixToRootResource = newMap();
+    private final Map<String, Resource> prefixToRootResource = CollectionFactory.newMap();
 
-    private final Map<Resource, Asset> _cache = newConcurrentMap();
+    private final Map<Resource, Asset> cache = CollectionFactory.newConcurrentMap();
 
     public AssetSourceImpl(ThreadLocale threadLocale,
 
                            Map<String, AssetFactory> configuration)
     {
-        _threadLocale = threadLocale;
+        this.threadLocale = threadLocale;
 
-        Map<Class, AssetFactory> byResourceClass = newMap();
+        Map<Class, AssetFactory> byResourceClass = CollectionFactory.newMap();
 
         for (Map.Entry<String, AssetFactory> e : configuration.entrySet())
         {
@@ -56,10 +55,10 @@ public class AssetSourceImpl implements AssetSource
 
             byResourceClass.put(rootResource.getClass(), factory);
 
-            _prefixToRootResource.put(prefix, rootResource);
+            prefixToRootResource.put(prefix, rootResource);
         }
 
-        _registry = StrategyRegistry.newInstance(AssetFactory.class, byResourceClass);
+        registry = StrategyRegistry.newInstance(AssetFactory.class, byResourceClass);
     }
 
     public Asset getClasspathAsset(String path)
@@ -74,11 +73,11 @@ public class AssetSourceImpl implements AssetSource
 
     public Asset getAsset(Resource baseResource, String path, Locale locale)
     {
-        notBlank(path, "path");
+        Defense.notBlank(path, "path");
 
-        if (baseResource == null) baseResource = _prefixToRootResource.get(CLASSPATH);
+        if (baseResource == null) baseResource = prefixToRootResource.get(CLASSPATH);
 
-        if (locale == null) locale = _threadLocale.getLocale();
+        if (locale == null) locale = threadLocale.getLocale();
 
         int colonx = path.indexOf(':');
 
@@ -86,7 +85,7 @@ public class AssetSourceImpl implements AssetSource
 
         String prefix = path.substring(0, colonx);
 
-        Resource rootResource = _prefixToRootResource.get(prefix);
+        Resource rootResource = prefixToRootResource.get(prefix);
 
         if (rootResource == null)
             throw new IllegalArgumentException(ServicesMessages.unknownAssetPrefix(path));
@@ -107,12 +106,12 @@ public class AssetSourceImpl implements AssetSource
 
     private Asset getAssetForResource(Resource resource)
     {
-        Asset result = _cache.get(resource);
+        Asset result = cache.get(resource);
 
         if (result == null)
         {
             result = createAssetFromResource(resource);
-            _cache.put(resource, result);
+            cache.put(resource, result);
         }
 
         return result;
@@ -126,7 +125,7 @@ public class AssetSourceImpl implements AssetSource
 
         Class resourceClass = resource.getClass();
 
-        AssetFactory factory = _registry.get(resourceClass);
+        AssetFactory factory = registry.get(resourceClass);
 
         return factory.createAsset(resource);
     }

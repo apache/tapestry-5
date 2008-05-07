@@ -15,8 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.TapestryConstants;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
 import org.apache.tapestry.services.Request;
 
@@ -27,23 +26,23 @@ import java.util.Map;
 
 public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManager
 {
-    private final Request _request;
+    private final Request request;
 
-    private final RequestPathOptimizer _optimizer;
+    private final RequestPathOptimizer optimizer;
 
     /**
      * Map from alias to path.
      */
-    private final Map<String, String> _aliasToPathPrefix = newMap();
+    private final Map<String, String> aliasToPathPrefix = CollectionFactory.newMap();
 
     /**
      * Map from path to alias.
      */
-    private final Map<String, String> _pathPrefixToAlias = newMap();
+    private final Map<String, String> pathPrefixToAlias = CollectionFactory.newMap();
 
-    private final List<String> _sortedAliases;
+    private final List<String> sortedAliases;
 
-    private final List<String> _sortedPathPrefixes;
+    private final List<String> sortedPathPrefixes;
 
     /**
      * Configuration is a map of aliases (short names) to complete names. Keys and values should end with a slash, but
@@ -55,16 +54,16 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
                                           Map<String, String> configuration)
     {
-        _request = request;
-        _optimizer = optimizer;
+        this.request = request;
+        this.optimizer = optimizer;
 
         for (Map.Entry<String, String> e : configuration.entrySet())
         {
             String alias = withSlash(e.getKey());
             String path = withSlash(e.getValue());
 
-            _aliasToPathPrefix.put(alias, path);
-            _pathPrefixToAlias.put(path, alias);
+            aliasToPathPrefix.put(alias, path);
+            pathPrefixToAlias.put(path, alias);
 
         }
 
@@ -76,11 +75,11 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
             }
         };
 
-        _sortedAliases = newList(_aliasToPathPrefix.keySet());
-        Collections.sort(_sortedAliases, sortDescendingByLength);
+        sortedAliases = CollectionFactory.newList(aliasToPathPrefix.keySet());
+        Collections.sort(sortedAliases, sortDescendingByLength);
 
-        _sortedPathPrefixes = newList(_aliasToPathPrefix.values());
-        Collections.sort(_sortedPathPrefixes, sortDescendingByLength);
+        sortedPathPrefixes = CollectionFactory.newList(aliasToPathPrefix.values());
+        Collections.sort(sortedPathPrefixes, sortDescendingByLength);
     }
 
     private String withSlash(String input)
@@ -94,19 +93,19 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     {
         String path = toCompleteClientURI(resourcePath);
 
-        return _optimizer.optimizePath(path);
+        return optimizer.optimizePath(path);
     }
 
     private String toCompleteClientURI(String resourcePath)
     {
-        StringBuilder builder = new StringBuilder(_request.getContextPath());
+        StringBuilder builder = new StringBuilder(request.getContextPath());
         builder.append(TapestryConstants.ASSET_PATH_PREFIX);
 
-        for (String pathPrefix : _sortedPathPrefixes)
+        for (String pathPrefix : sortedPathPrefixes)
         {
             if (resourcePath.startsWith(pathPrefix))
             {
-                String alias = _pathPrefixToAlias.get(pathPrefix);
+                String alias = pathPrefixToAlias.get(pathPrefix);
                 builder.append(alias);
                 builder.append(resourcePath.substring(pathPrefix.length()));
 
@@ -125,11 +124,11 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     {
         String basePath = clientURL.substring(TapestryConstants.ASSET_PATH_PREFIX.length());
 
-        for (String alias : _sortedAliases)
+        for (String alias : sortedAliases)
         {
             if (basePath.startsWith(alias))
             {
-                return _aliasToPathPrefix.get(alias) + basePath.substring(alias.length());
+                return aliasToPathPrefix.get(alias) + basePath.substring(alias.length());
             }
         }
 

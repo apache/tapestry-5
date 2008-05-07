@@ -20,25 +20,25 @@ import org.apache.tapestry.runtime.Event;
 
 public class EventImpl implements Event
 {
-    private boolean _aborted;
+    private boolean aborted;
 
-    private String _methodDescription;
+    private String methodDescription;
 
-    private final ComponentEventCallback _handler;
+    private final ComponentEventCallback handler;
 
     public EventImpl(ComponentEventCallback handler)
     {
-        _handler = notNull(handler, "handler");
+        this.handler = notNull(handler, "handler");
     }
 
     public boolean isAborted()
     {
-        return _aborted;
+        return aborted;
     }
 
     public void setMethodDescription(String methodDescription)
     {
-        _methodDescription = methodDescription;
+        this.methodDescription = methodDescription;
     }
 
     @SuppressWarnings("unchecked")
@@ -49,17 +49,17 @@ public class EventImpl implements Event
         // this should never, ever happen. But what the hell,
         // let's check anyway.
 
-        if (_aborted) throw new IllegalStateException(ServicesMessages
-                .componentEventIsAborted(_methodDescription));
+        if (aborted) throw new IllegalStateException(ServicesMessages
+                .componentEventIsAborted(methodDescription));
 
 
-        if (result != null) _aborted |= _handler.handleResult(result);
+        if (result != null) aborted |= handler.handleResult(result);
 
-        return _aborted;
+        return aborted;
     }
 
     protected String getMethodDescription()
     {
-        return _methodDescription;
+        return methodDescription;
     }
 }

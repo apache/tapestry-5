@@ -26,11 +26,11 @@ import java.lang.annotation.Annotation;
  */
 public abstract class BasePropertyConduit implements PropertyConduit
 {
-    private final Class _propertyType;
+    private final Class propertyType;
 
-    private final AnnotationProvider _annotationProvider;
+    private final AnnotationProvider annotationProvider;
 
-    private final String _description;
+    private final String description;
 
     public BasePropertyConduit(Class propertyType, AnnotationProvider annotationProvider, String description)
     {
@@ -38,24 +38,24 @@ public abstract class BasePropertyConduit implements PropertyConduit
         Defense.notNull(annotationProvider, "annotationProvider");
         Defense.notBlank(description, "description");
 
-        _propertyType = propertyType;
-        _annotationProvider = annotationProvider;
-        _description = description;
+        this.propertyType = propertyType;
+        this.annotationProvider = annotationProvider;
+        this.description = description;
     }
 
     @Override
     public String toString()
     {
-        return _description;
+        return description;
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        return _annotationProvider.getAnnotation(annotationClass);
+        return annotationProvider.getAnnotation(annotationClass);
     }
 
     public Class getPropertyType()
     {
-        return _propertyType;
+        return propertyType;
     }
 }

@@ -20,45 +20,45 @@ import org.apache.tapestry.services.FormSupport;
 
 public class FieldValidatorImpl implements FieldValidator
 {
-    private final Field _field;
+    private final Field field;
 
-    private final Object _constraintValue;
+    private final Object constraintValue;
 
-    private final MessageFormatter _messageFormatter;
+    private final MessageFormatter messageFormatter;
 
-    private final Validator _validator;
+    private final Validator validator;
 
-    private final FormSupport _formSupport;
+    private final FormSupport formSupport;
 
     public FieldValidatorImpl(Field field, Object constraintValue, MessageFormatter messageFormatter,
                               Validator validator, FormSupport formSupport)
     {
-        _field = field;
-        _constraintValue = constraintValue;
-        _messageFormatter = messageFormatter;
-        _validator = validator;
-        _formSupport = formSupport;
+        this.field = field;
+        this.constraintValue = constraintValue;
+        this.messageFormatter = messageFormatter;
+        this.validator = validator;
+        this.formSupport = formSupport;
     }
 
     @SuppressWarnings("unchecked")
     public void validate(Object value) throws ValidationException
     {
-        if (!_validator.isRequired() && isBlank(value)) return;
+        if (!validator.isRequired() && isBlank(value)) return;
 
-        if (value != null && !_validator.getValueType().isInstance(value)) return;
+        if (value != null && !validator.getValueType().isInstance(value)) return;
 
-        _validator.validate(_field, _constraintValue, _messageFormatter, value);
+        validator.validate(field, constraintValue, messageFormatter, value);
     }
 
     @SuppressWarnings("unchecked")
     public void render(MarkupWriter writer)
     {
-        _validator.render(_field, _constraintValue, _messageFormatter, writer, _formSupport);
+        validator.render(field, constraintValue, messageFormatter, writer, formSupport);
     }
 
     public boolean isRequired()
     {
-        return _validator.isRequired();
+        return validator.isRequired();
     }
 
     private boolean isBlank(Object value)

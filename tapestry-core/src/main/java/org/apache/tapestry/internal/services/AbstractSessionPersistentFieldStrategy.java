@@ -31,25 +31,25 @@ import java.util.List;
  */
 public abstract class AbstractSessionPersistentFieldStrategy implements PersistentFieldStrategy
 {
-    private final String _prefix;
+    private final String prefix;
 
-    private final Request _request;
+    private final Request request;
 
     protected AbstractSessionPersistentFieldStrategy(String prefix, Request request)
     {
-        _prefix = prefix;
-        _request = request;
+        this.prefix = prefix;
+        this.request = request;
     }
 
     public final Collection<PersistentFieldChange> gatherFieldChanges(String pageName)
     {
-        Session session = _request.getSession(false);
+        Session session = request.getSession(false);
 
         if (session == null) return Collections.emptyList();
 
         List<PersistentFieldChange> result = newList();
 
-        String fullPrefix = _prefix + pageName + ":";
+        String fullPrefix = prefix + pageName + ":";
 
         for (String name : session.getAttributeNames(fullPrefix))
         {
@@ -65,11 +65,11 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
 
     public void discardChanges(String pageName)
     {
-        Session session = _request.getSession(false);
+        Session session = request.getSession(false);
 
         if (session == null) return;
 
-        String fullPrefix = _prefix + pageName + ":";
+        String fullPrefix = prefix + pageName + ":";
 
         for (String name : session.getAttributeNames(fullPrefix))
         {
@@ -108,7 +108,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
         notBlank(pageName, "pageName");
         notBlank(fieldName, "fieldName");
 
-        StringBuilder builder = new StringBuilder(_prefix);
+        StringBuilder builder = new StringBuilder(prefix);
         builder.append(pageName);
         builder.append(':');
 
@@ -117,7 +117,7 @@ public abstract class AbstractSessionPersistentFieldStrategy implements Persiste
         builder.append(':');
         builder.append(fieldName);
 
-        Session session = _request.getSession(newValue != null);
+        Session session = request.getSession(newValue != null);
 
         // TAPESTRY-2308: The session will be false when newValue is null and the session
         // does not already exist.

@@ -17,8 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ioc.Location;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.BindingFactory;
@@ -28,11 +27,11 @@ import java.util.Map;
 
 public class BindingSourceImpl implements BindingSource
 {
-    private final Map<String, BindingFactory> _factories;
+    private final Map<String, BindingFactory> factories;
 
     public BindingSourceImpl(Map<String, BindingFactory> factories)
     {
-        _factories = factories;
+        this.factories = factories;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -44,10 +43,10 @@ public class BindingSourceImpl implements BindingSource
     public Binding newBinding(String description, ComponentResources container,
                               ComponentResources component, String defaultPrefix, String expression, Location location)
     {
-        notBlank(description, "description");
-        notNull(container, "container");
-        notNull(component, "component");
-        notBlank(defaultPrefix, "defaultPrefix");
+        Defense.notBlank(description, "description");
+        Defense.notNull(container, "container");
+        Defense.notNull(component, "component");
+        Defense.notBlank(defaultPrefix, "defaultPrefix");
 
         if (InternalUtils.isBlank(expression))
             throw new TapestryException(ServicesMessages.emptyBinding(description), location, null);
@@ -63,13 +62,13 @@ public class BindingSourceImpl implements BindingSource
         {
             String prefix = expression.substring(0, colonx);
 
-            factory = _factories.get(prefix);
+            factory = factories.get(prefix);
             if (factory != null)
                 subexpression = expression.substring(colonx + 1);
         }
 
         if (factory == null)
-            factory = _factories.get(defaultPrefix);
+            factory = factories.get(defaultPrefix);
 
         // And if that's null, what then? We assume that the default prefix is a valid prefix,
         // or we'll get an NPE below and report it like any other error.

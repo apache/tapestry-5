@@ -131,6 +131,29 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                                                                                       null);
 
     /**
+     * Stores transformation type data about one argument to a class constructor.
+     */
+    static class ConstructorArg
+    {
+        private final CtClass type;
+
+        private final Object value;
+
+        /**
+         * Constructs new instance.
+         *
+         * @param type  type of the parameter to be created (may not be null)
+         * @param value value to be injected via the constructor (may be null)
+         */
+        ConstructorArg(CtClass type, Object value)
+        {
+            this.type = Defense.notNull(type, "type");
+            this.value = value;
+        }
+
+    }
+
+    /**
      * This is a constructor for a base class.
      */
     public InternalClassTransformationImpl(ClassFactory classFactory, CtClass ctClass,
@@ -1302,7 +1325,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             ConstructorArg arg = _constructorArgs.get(i);
 
-            types[i] = arg.getType();
+            types[i] = arg.type;
         }
 
         // Add a call to the initializer; the method converted fromt the classes default
@@ -1380,7 +1403,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             ConstructorArg arg = _constructorArgs.get(i);
 
-            CtClass argCtType = arg.getType();
+            CtClass argCtType = arg.type;
             Class argType = toClass(argCtType.getName());
 
             boolean primitive = argCtType.isPrimitive();
@@ -1390,7 +1413,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             String fieldName = "_param_" + i;
 
             constructorParameterTypes[i + 1] = argType;
-            constructorParameterValues[i + 1] = arg.getValue();
+            constructorParameterValues[i + 1] = arg.value;
 
             cf.addField(fieldName, fieldType);
 
@@ -1720,4 +1743,5 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         return _parentTransformation == null;
     }
+
 }

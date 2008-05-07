@@ -33,14 +33,14 @@ import java.lang.annotation.Annotation;
  */
 public class DefaultInjectionProvider implements InjectionProvider
 {
-    private final MasterObjectProvider _masterObjectProvider;
+    private final MasterObjectProvider masterObjectProvider;
 
-    private final ObjectLocator _locator;
+    private final ObjectLocator locator;
 
     public DefaultInjectionProvider(MasterObjectProvider masterObjectProvider, ObjectLocator locator)
     {
-        _masterObjectProvider = masterObjectProvider;
-        _locator = locator;
+        this.masterObjectProvider = masterObjectProvider;
+        this.locator = locator;
     }
 
     @SuppressWarnings("unchecked")
@@ -55,7 +55,7 @@ public class DefaultInjectionProvider implements InjectionProvider
             }
         };
 
-        Object inject = _masterObjectProvider.provide(fieldType, annotationProvider, _locator, false);
+        Object inject = masterObjectProvider.provide(fieldType, annotationProvider, this.locator, false);
 
         // Null means that no ObjectProvider could provide the value. We have set up the chain of
         // command so that InjectResources can give it a try next. Later, we'll try to match against

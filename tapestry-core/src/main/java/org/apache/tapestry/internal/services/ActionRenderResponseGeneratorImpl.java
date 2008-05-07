@@ -26,20 +26,20 @@ import java.io.IOException;
  */
 public class ActionRenderResponseGeneratorImpl implements ActionRenderResponseGenerator
 {
-    private final LinkFactory _linkFactory;
+    private final LinkFactory linkFactory;
 
-    private final Response _response;
+    private final Response response;
 
     public ActionRenderResponseGeneratorImpl(LinkFactory linkFactory, Response response)
     {
-        _linkFactory = linkFactory;
-        _response = response;
+        this.linkFactory = linkFactory;
+        this.response = response;
     }
 
     public void generateResponse(Page page) throws IOException
     {
-        Link link = _linkFactory.createPageLink(page, false);
+        Link link = linkFactory.createPageLink(page, false);
 
-        _response.sendRedirect(link);
+        response.sendRedirect(link);
     }
 }

@@ -22,17 +22,17 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
  */
 public class ActionLinkTarget implements InvocationTarget
 {
-    private final String _eventType;
+    private final String eventType;
 
-    private final String _pageName;
+    private final String pageName;
 
-    private final String _componentNestedId;
+    private final String componentNestedId;
 
     public ActionLinkTarget(String eventType, String pageName, String componentNestedId)
     {
-        _eventType = eventType;
-        _pageName = pageName;
-        _componentNestedId = componentNestedId;
+        this.eventType = eventType;
+        this.pageName = pageName;
+        this.componentNestedId = componentNestedId;
 
     }
 
@@ -40,25 +40,25 @@ public class ActionLinkTarget implements InvocationTarget
     {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(_pageName.toLowerCase());
+        builder.append(pageName.toLowerCase());
 
-        boolean hasComponentId = InternalUtils.isNonBlank(_componentNestedId);
+        boolean hasComponentId = InternalUtils.isNonBlank(componentNestedId);
 
         if (hasComponentId)
         {
 
             builder.append(".");
             // Already lower case by design.
-            builder.append(_componentNestedId);
+            builder.append(componentNestedId);
         }
 
         // If no nested component id, then must append the action; the ':' and the action become the
         // delimiter between the page name and the event context.
 
-        if (!hasComponentId || !_eventType.equals(TapestryConstants.ACTION_EVENT))
+        if (!hasComponentId || !eventType.equals(TapestryConstants.ACTION_EVENT))
         {
             builder.append(":");
-            builder.append(_eventType);
+            builder.append(eventType);
         }
 
         return builder.toString();
@@ -66,17 +66,17 @@ public class ActionLinkTarget implements InvocationTarget
 
     public String getEventType()
     {
-        return _eventType;
+        return eventType;
     }
 
     public String getComponentNestedId()
     {
-        return _componentNestedId;
+        return componentNestedId;
     }
 
     public String getPageName()
     {
-        return _pageName;
+        return pageName;
     }
 
 }

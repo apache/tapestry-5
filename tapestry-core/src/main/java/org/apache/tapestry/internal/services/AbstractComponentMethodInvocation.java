@@ -20,45 +20,45 @@ import org.apache.tapestry.services.ComponentMethodInvocation;
 
 public abstract class AbstractComponentMethodInvocation implements ComponentMethodInvocation
 {
-    private final MethodInvocationInfo _info;
+    private final MethodInvocationInfo info;
 
-    private final ComponentResources _resources;
+    private final ComponentResources resources;
 
-    private int _adviceIndex = 0;
+    private int adviceIndex = 0;
 
-    private Throwable _thrown;
+    private Throwable thrown;
 
-    private Object _result;
+    private Object result;
 
     public AbstractComponentMethodInvocation(MethodInvocationInfo info, ComponentResources resources)
     {
-        _info = info;
-        _resources = resources;
+        this.info = info;
+        this.resources = resources;
     }
 
     public ComponentResources getComponentResources()
     {
-        return _resources;
+        return resources;
     }
 
     public String getMethodName()
     {
-        return _info.getMethodName();
+        return info.getMethodName();
     }
 
     public Class getResultType()
     {
-        return _info.getResultType();
+        return info.getResultType();
     }
 
     public int getParameterCount()
     {
-        return _info.getParameterCount();
+        return info.getParameterCount();
     }
 
     public Class getParameterType(int index)
     {
-        return _info.getParameterType(index);
+        return info.getParameterType(index);
     }
 
     /**
@@ -66,13 +66,13 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
      */
     public void proceed()
     {
-        if (_adviceIndex >= _info.getAdviceCount())
+        if (adviceIndex >= info.getAdviceCount())
         {
             invokeAdvisedMethod();
             return;
         }
 
-        ComponentMethodAdvice advice = _info.getAdvice(_adviceIndex++);
+        ComponentMethodAdvice advice = info.getAdvice(adviceIndex++);
 
         // When this advice invokes proceed(), we can advance to the next advice,
         // and then ultimately to the advised method.
@@ -87,24 +87,24 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
 
     public boolean isFail()
     {
-        return _thrown != null;
+        return thrown != null;
     }
 
     public <T extends Throwable> T getThrown(Class<T> throwableClass)
     {
-        if (throwableClass.isInstance(_thrown))
-            return throwableClass.cast(_thrown);
+        if (throwableClass.isInstance(thrown))
+            return throwableClass.cast(thrown);
 
         return null;
     }
 
     public void overrideThrown(Exception thrown)
     {
-        for (Class type : _info.getExceptionTypes())
+        for (Class type : info.getExceptionTypes())
         {
             if (type.isInstance(thrown))
             {
-                _thrown = thrown;
+                this.thrown = thrown;
                 return;
             }
         }
@@ -112,19 +112,19 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
         throw new IllegalArgumentException(
                 String.format("Exception class %s is not a declared exception type for method %s().",
                               thrown.getClass(),
-                              _info.getMethodName()));
+                              info.getMethodName()));
     }
 
     public Object getResult()
     {
-        return _result;
+        return result;
     }
 
     public void overrideResult(Object newResult)
     {
         if (newResult != null)
         {
-            Class expectedType = _info.getEffectiveResultType();
+            Class expectedType = info.getEffectiveResultType();
 
             if (!expectedType.isInstance(newResult))
             {
@@ -132,12 +132,12 @@ public abstract class AbstractComponentMethodInvocation implements ComponentMeth
                         String.format("Invalid result value (%s) does not match return type %s for method %s.",
                                       newResult,
                                       expectedType.getName(),
-                                      _info.getMethodName()));
+                                      info.getMethodName()));
             }
         }
 
-        _result = newResult;
-        _thrown = null;
+        result = newResult;
+        thrown = null;
     }
 
 

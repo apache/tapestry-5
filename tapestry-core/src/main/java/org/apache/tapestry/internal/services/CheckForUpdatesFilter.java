@@ -32,35 +32,35 @@ import java.util.concurrent.TimeUnit;
  */
 public class CheckForUpdatesFilter implements RequestFilter
 {
-    private long _lastCheck = 0;
+    private final long checkInterval;
 
-    private final long _checkInterval;
+    private final long updateTimeout;
 
-    private final long _updateTimeout;
+    private final UpdateListenerHub updateListenerHub;
 
-    private final UpdateListenerHub _updateListenerHub;
+    private final ConcurrentBarrier barrier = new ConcurrentBarrier();
 
-    private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
-
-    private final Runnable _checker = new Runnable()
+    private final Runnable checker = new Runnable()
     {
         public void run()
         {
             // On a race condition, multiple threads may hit this method briefly. If we've
             // already done a check, don't run it again.
 
-            if (System.currentTimeMillis() - _lastCheck >= _checkInterval)
+            if (System.currentTimeMillis() - lastCheck >= checkInterval)
             {
 
                 // Fire the update event which will force a number of checks and then
                 // corresponding invalidation events.
 
-                _updateListenerHub.fireUpdateEvent();
+                updateListenerHub.fireUpdateEvent();
 
-                _lastCheck = System.currentTimeMillis();
+                lastCheck = System.currentTimeMillis();
             }
         }
     };
+
+    private long lastCheck = 0;
 
     /**
      * @param updateListenerHub invoked, at intervals, to spur the process of detecting changes
@@ -69,9 +69,9 @@ public class CheckForUpdatesFilter implements RequestFilter
      */
     public CheckForUpdatesFilter(UpdateListenerHub updateListenerHub, long checkInterval, long updateTimeout)
     {
-        _updateListenerHub = updateListenerHub;
-        _checkInterval = checkInterval;
-        _updateTimeout = updateTimeout;
+        this.updateListenerHub = updateListenerHub;
+        this.checkInterval = checkInterval;
+        this.updateTimeout = updateTimeout;
     }
 
     public boolean service(final Request request, final Response response, final RequestHandler handler)
@@ -83,8 +83,8 @@ public class CheckForUpdatesFilter implements RequestFilter
         {
             public Boolean invoke()
             {
-                if (System.currentTimeMillis() - _lastCheck >= _checkInterval)
-                    _barrier.tryWithWrite(_checker, _updateTimeout, TimeUnit.MILLISECONDS);
+                if (System.currentTimeMillis() - lastCheck >= checkInterval)
+                    barrier.tryWithWrite(checker, updateTimeout, TimeUnit.MILLISECONDS);
 
                 // And, now, back to code within the read lock.
 
@@ -103,7 +103,7 @@ public class CheckForUpdatesFilter implements RequestFilter
         // Obtain a read lock while handling the request. This will not impair parallel operations, except when a file check
         // is needed (the exclusive write lock will block threads attempting to get a read lock).
 
-        boolean result = _barrier.withRead(invokable);
+        boolean result = barrier.withRead(invokable);
 
         if (exceptionHolder.hasValue()) throw exceptionHolder.get();
 

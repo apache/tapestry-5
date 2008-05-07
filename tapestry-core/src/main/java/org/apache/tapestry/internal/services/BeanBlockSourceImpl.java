@@ -23,31 +23,29 @@ import java.util.Collection;
 
 public class BeanBlockSourceImpl implements BeanBlockSource
 {
-    // This is checked before _masterSource
+    // This is checked before masterSource
+    private final BeanBlockOverrideSource overrideSource;
 
-    private final BeanBlockOverrideSource _overrideSource;
-
-    private final BeanBlockOverrideSource _masterSource;
-
+    private final BeanBlockOverrideSource masterSource;
 
     public BeanBlockSourceImpl(RequestPageCache pageCache,
                                BeanBlockOverrideSource overrideSource, Collection<BeanBlockContribution> configuration)
     {
-        _overrideSource = overrideSource;
-        _masterSource = new BeanBlockOverrideSourceImpl(pageCache, configuration);
+        this.overrideSource = overrideSource;
+        masterSource = new BeanBlockOverrideSourceImpl(pageCache, configuration);
     }
 
     public boolean hasDisplayBlock(String datatype)
     {
-        return _overrideSource.hasDisplayBlock(datatype) || _masterSource.hasDisplayBlock(datatype);
+        return overrideSource.hasDisplayBlock(datatype) || masterSource.hasDisplayBlock(datatype);
     }
 
     public Block getDisplayBlock(String datatype)
     {
-        Block result = _overrideSource.getDisplayBlock(datatype);
+        Block result = overrideSource.getDisplayBlock(datatype);
 
         if (result == null)
-            result = _masterSource.getDisplayBlock(datatype);
+            result = masterSource.getDisplayBlock(datatype);
 
         if (result == null)
             throw new RuntimeException(ServicesMessages.noDisplayForDataType(datatype));
@@ -57,10 +55,10 @@ public class BeanBlockSourceImpl implements BeanBlockSource
 
     public Block getEditBlock(String datatype)
     {
-        Block result = _overrideSource.getEditBlock(datatype);
+        Block result = overrideSource.getEditBlock(datatype);
 
         if (result == null)
-            result = _masterSource.getEditBlock(datatype);
+            result = masterSource.getEditBlock(datatype);
 
         if (result == null)
             throw new RuntimeException(ServicesMessages.noEditForDataType(datatype));

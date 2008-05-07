@@ -19,15 +19,15 @@ import org.apache.tapestry.services.Request;
 
 public class BaseURLSourceImpl implements BaseURLSource
 {
-    private final Request _request;
+    private final Request request;
 
     public BaseURLSourceImpl(Request request)
     {
-        _request = request;
+        this.request = request;
     }
 
     public String getBaseURL(boolean secure)
     {
-        return String.format("%s://%s", secure ? "https" : "http", _request.getServerName());
+        return String.format("%s://%s", secure ? "https" : "http", request.getServerName());
     }
 }

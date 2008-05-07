@@ -36,21 +36,21 @@ import java.util.Map;
 
 public class FieldValidatorSourceImpl implements FieldValidatorSource
 {
-    private final ValidationMessagesSource _messagesSource;
+    private final ValidationMessagesSource messagesSource;
 
-    private final Map<String, Validator> _validators;
+    private final Map<String, Validator> validators;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final FormSupport _formSupport;
+    private final FormSupport formSupport;
 
     public FieldValidatorSourceImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer,
                                     FormSupport formSupport, Map<String, Validator> validators)
     {
-        _messagesSource = messagesSource;
-        _typeCoercer = typeCoercer;
-        _formSupport = formSupport;
-        _validators = validators;
+        this.messagesSource = messagesSource;
+        this.typeCoercer = typeCoercer;
+        this.formSupport = formSupport;
+        this.validators = validators;
     }
 
     public FieldValidator createValidator(Field field, String validatorType, String constraintValue)
@@ -75,10 +75,10 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     {
         notBlank(validatorType, "validatorType");
 
-        Validator validator = _validators.get(validatorType);
+        Validator validator = validators.get(validatorType);
 
         if (validator == null) throw new IllegalArgumentException(
-                ServicesMessages.unknownValidatorType(validatorType, InternalUtils.sortedKeys(_validators)));
+                ServicesMessages.unknownValidatorType(validatorType, InternalUtils.sortedKeys(validators)));
 
         // I just have this thing about always treating parameters as finals, so
         // we introduce a second variable to treat a mutable.
@@ -103,7 +103,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
         MessageFormatter formatter = findMessageFormatter(overrideId, overrideMessages, locale, validatorType,
                                                           validator);
 
-        return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator, _formSupport);
+        return new FieldValidatorImpl(field, coercedConstraintValue, formatter, validator, formSupport);
     }
 
     private MessageFormatter findMessageFormatter(String overrideId, Messages overrideMessages, Locale locale,
@@ -114,7 +114,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
 
         if (overrideMessages.contains(overrideKey)) return overrideMessages.getFormatter(overrideKey);
 
-        Messages messages = _messagesSource.getValidationMessages(locale);
+        Messages messages = messagesSource.getValidationMessages(locale);
 
         String key = validator.getMessageKey();
 
@@ -143,7 +143,7 @@ public class FieldValidatorSourceImpl implements FieldValidatorSource
     {
         if (constraintType == null) return null;
 
-        return _typeCoercer.coerce(constraintValue, constraintType);
+        return typeCoercer.coerce(constraintValue, constraintType);
     }
 
     /**

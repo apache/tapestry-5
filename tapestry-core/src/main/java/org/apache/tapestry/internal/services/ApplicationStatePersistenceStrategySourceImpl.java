@@ -22,22 +22,21 @@ import java.util.Map;
 public class ApplicationStatePersistenceStrategySourceImpl implements
         ApplicationStatePersistenceStrategySource
 {
-    private final Map<String, ApplicationStatePersistenceStrategy> _configuration;
+    private final Map<String, ApplicationStatePersistenceStrategy> configuration;
 
-    public ApplicationStatePersistenceStrategySourceImpl(
-            Map<String, ApplicationStatePersistenceStrategy> configuration)
+    public ApplicationStatePersistenceStrategySourceImpl(Map<String, ApplicationStatePersistenceStrategy> configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public ApplicationStatePersistenceStrategy get(String name)
     {
-        ApplicationStatePersistenceStrategy result = _configuration.get(name);
+        ApplicationStatePersistenceStrategy result = configuration.get(name);
 
         if (result == null)
             throw new RuntimeException(ServicesMessages.missingApplicationStatePersistenceStrategy(
                     name,
-                    _configuration.keySet()));
+                    configuration.keySet()));
 
         return result;
     }

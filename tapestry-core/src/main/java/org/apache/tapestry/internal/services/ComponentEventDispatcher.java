@@ -45,13 +45,13 @@ import java.util.regex.Pattern;
  */
 public class ComponentEventDispatcher implements Dispatcher
 {
-    private final ComponentClassResolver _componentClassResolver;
+    private final ComponentClassResolver componentClassResolver;
 
-    private final ComponentEventRequestHandler _componentEventRequestHandler;
+    private final ComponentEventRequestHandler componentEventRequestHandler;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
-    private final RequestEncodingInitializer _requestEncodingInitializer;
+    private final RequestEncodingInitializer requestEncodingInitializer;
 
     private final EventContext _emptyContext = new EmptyEventContext();
 
@@ -60,10 +60,10 @@ public class ComponentEventDispatcher implements Dispatcher
                                     ContextValueEncoder contextValueEncoder,
                                     RequestEncodingInitializer requestEncodingInitializer)
     {
-        _componentEventRequestHandler = componentEventRequestHandler;
-        _componentClassResolver = componentClassResolver;
-        _contextValueEncoder = contextValueEncoder;
-        _requestEncodingInitializer = requestEncodingInitializer;
+        this.componentEventRequestHandler = componentEventRequestHandler;
+        this.componentClassResolver = componentClassResolver;
+        this.contextValueEncoder = contextValueEncoder;
+        this.requestEncodingInitializer = requestEncodingInitializer;
     }
 
     // A beast that recognizes all the elements of a path in a single go.
@@ -105,14 +105,14 @@ public class ComponentEventDispatcher implements Dispatcher
 
         if (nestedComponentId == null && eventType == null) return false;
 
-        if (!_componentClassResolver.isPageName(activePageName)) return false;
+        if (!componentClassResolver.isPageName(activePageName)) return false;
 
         EventContext eventContext = decodeContext(matcher.group(CONTEXT));
 
         // Initialize the request encoding BEFORE accessing any query parameters
         // (TAPESTRY-1605)
 
-        _requestEncodingInitializer.initializeRequestEncoding(activePageName);
+        requestEncodingInitializer.initializeRequestEncoding(activePageName);
 
         EventContext activationContext = decodeContext(request.getParameter(InternalConstants.PAGE_CONTEXT_NAME));
 
@@ -132,7 +132,7 @@ public class ComponentEventDispatcher implements Dispatcher
                                                                                          activationContext,
                                                                                          eventContext);
 
-        _componentEventRequestHandler.handle(parameters);
+        componentEventRequestHandler.handle(parameters);
 
         return true;
     }
@@ -149,7 +149,7 @@ public class ComponentEventDispatcher implements Dispatcher
             values[i] = TapestryInternalUtils.unescapePercentAndSlash(values[i]);
         }
 
-        return new URLEventContext(_contextValueEncoder, values);
+        return new URLEventContext(contextValueEncoder, values);
     }
 
 }

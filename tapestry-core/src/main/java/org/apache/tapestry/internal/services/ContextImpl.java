@@ -14,8 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.util.Stack;
 import org.apache.tapestry.services.Context;
 
@@ -29,18 +28,18 @@ import java.util.Set;
 
 public class ContextImpl implements Context
 {
-    private final ServletContext _servletContext;
+    private final ServletContext servletContext;
 
     public ContextImpl(ServletContext servletContext)
     {
-        _servletContext = servletContext;
+        this.servletContext = servletContext;
     }
 
     public URL getResource(String path)
     {
         try
         {
-            return _servletContext.getResource(path);
+            return servletContext.getResource(path);
         }
         catch (MalformedURLException ex)
         {
@@ -50,21 +49,21 @@ public class ContextImpl implements Context
 
     public File getRealFile(String path)
     {
-        String realPath = _servletContext.getRealPath(path);
+        String realPath = servletContext.getRealPath(path);
 
         return realPath == null ? null : new File(realPath);
     }
 
     public String getInitParameter(String name)
     {
-        return _servletContext.getInitParameter(name);
+        return servletContext.getInitParameter(name);
     }
 
     @SuppressWarnings("unchecked")
     public List<String> getResourcePaths(String path)
     {
-        List<String> result = newList();
-        Stack<String> queue = newStack();
+        List<String> result = CollectionFactory.newList();
+        Stack<String> queue = CollectionFactory.newStack();
 
         queue.push(path);
 
@@ -72,7 +71,7 @@ public class ContextImpl implements Context
         {
             String current = queue.pop();
 
-            Set<String> matches = _servletContext.getResourcePaths(current);
+            Set<String> matches = servletContext.getResourcePaths(current);
 
             // Tomcat 5.5.20 inside JBoss 4.0.2 has been observed to do this!
             // Perhaps other servers do as well.
@@ -96,7 +95,7 @@ public class ContextImpl implements Context
 
     public Object getAttribute(String name)
     {
-        return _servletContext.getAttribute(name);
+        return servletContext.getAttribute(name);
     }
 
 }

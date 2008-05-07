@@ -42,19 +42,19 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 final class PagePoolCache
 {
-    private final String _pageName;
+    private final String pageName;
 
-    private final Locale _locale;
+    private final Locale locale;
 
-    private final int _softLimit;
+    private final int softLimit;
 
-    private final long _softWait;
+    private final long softWait;
 
-    private final int _hardLimit;
+    private final int hardLimit;
 
-    private final long _activeWindow;
+    private final long activeWindow;
 
-    private final PageLoader _pageLoader;
+    private final PageLoader pageLoader;
 
     /**
      * Pages that are available for use.
@@ -78,6 +78,28 @@ final class PagePoolCache
     private final Condition _pageAvailable = _lock.newCondition();
 
     /**
+     * Tracks the usage of a page instance, allowing a last access property to be associated with the page. CachedPage
+     * instances are only accessed from within a {@link org.apache.tapestry.internal.services.PagePoolCache}, which
+     * handles synchronization concerns.
+     * <p/>
+     * An earlier version of this code used <em>soft references</em>, but those seem to be problematic (the test suite
+     * started behaving erratically and response time suffered).  Perhaps that could be addressed via tuning of the VM,
+     * but for the meantime, we use hard references and rely more on the soft and hard limits and the culling of unused
+     * pages periodically.
+     */
+    static class CachedPage
+    {
+        private final Page page;
+
+        private long lastAccess;
+
+        CachedPage(Page page)
+        {
+            this.page = page;
+        }
+    }
+
+    /**
      * @param pageName     logical name of page, needed when creating a fresh instance
      * @param locale       locale of the page, needed when creating a fresh instance
      * @param pageLoader   used to create a fresh page instance, if necessary
@@ -90,13 +112,13 @@ final class PagePoolCache
     public PagePoolCache(String pageName, Locale locale, PageLoader pageLoader, int softLimit, long softWait,
                          int hardLimit, long activeWindow)
     {
-        _pageName = pageName;
-        _locale = locale;
-        _pageLoader = pageLoader;
-        _softLimit = softLimit;
-        _softWait = softWait;
-        _hardLimit = hardLimit;
-        _activeWindow = activeWindow;
+        this.pageName = pageName;
+        this.locale = locale;
+        this.pageLoader = pageLoader;
+        this.softLimit = softLimit;
+        this.softWait = softWait;
+        this.hardLimit = hardLimit;
+        this.activeWindow = activeWindow;
     }
 
     /**
@@ -139,12 +161,12 @@ final class PagePoolCache
                 // which is largely accurate as long as there haven't been a lot
                 // of request exceptions.  We'll take the count at face value.
 
-                if (_inUse.size() < _softLimit) break;
+                if (_inUse.size() < softLimit) break;
 
                 // We'll wait for pages to be available, but careful that the
                 // total wait period is less than the soft wait limit.
 
-                long waitMillis = (start + _softWait) - System.currentTimeMillis();
+                long waitMillis = (start + softWait) - System.currentTimeMillis();
 
                 // We've run out of time to wait.
 
@@ -173,8 +195,8 @@ final class PagePoolCache
 
             // If past the hard limit, we don't try to create the page fresh.
 
-            if (_inUse.size() >= _hardLimit)
-                throw new RuntimeException(ServicesMessages.pagePoolExausted(_pageName, _locale, _hardLimit));
+            if (_inUse.size() >= hardLimit)
+                throw new RuntimeException(ServicesMessages.pagePoolExausted(pageName, locale, hardLimit));
         }
         finally
         {
@@ -185,7 +207,7 @@ final class PagePoolCache
         // That does mean that we may slip over a hard or soft limit momentarily, if
         // just the right race condition occurs.
 
-        Page page = _pageLoader.loadPage(_pageName, _locale);
+        Page page = pageLoader.loadPage(pageName, locale);
 
         _lock.lock();
 
@@ -204,8 +226,8 @@ final class PagePoolCache
     /**
      * Finds and returns the first available page.
      * <p/>
-     * Side effect: removes the {@link org.apache.tapestry.internal.services.CachedPage} from the available list and
-     * moves it to the in use list.
+     * Side effect: removes the {@link org.apache.tapestry.internal.services.PagePoolCache.CachedPage} from the
+     * available list and moves it to the in use list.
      *
      * @return the page, if any found, or null if no page is available
      */
@@ -218,7 +240,7 @@ final class PagePoolCache
 
         _inUse.addFirst(cachedPage);
 
-        return cachedPage.get();
+        return cachedPage.page;
     }
 
     /**
@@ -238,7 +260,7 @@ final class PagePoolCache
             {
                 cached = i.next();
 
-                if (cached.get() == page)
+                if (cached.page == page)
                 {
                     i.remove();
                     break;
@@ -256,7 +278,7 @@ final class PagePoolCache
 
             if (cached == null) return;
 
-            cached.setLastAccess(System.currentTimeMillis());
+            cached.lastAccess = System.currentTimeMillis();
 
             _available.addFirst(cached);
 
@@ -285,7 +307,7 @@ final class PagePoolCache
             {
                 CachedPage cached = i.next();
 
-                if (cached.get() == page)
+                if (cached.page == page)
                 {
                     i.remove();
 
@@ -305,7 +327,7 @@ final class PagePoolCache
      */
     void cleanup()
     {
-        long cutoff = System.currentTimeMillis() - _activeWindow;
+        long cutoff = System.currentTimeMillis() - activeWindow;
 
         _lock.lock();
 
@@ -318,7 +340,7 @@ final class PagePoolCache
             {
                 CachedPage cached = i.next();
 
-                if (cached.getLastAccess() < cutoff) i.remove();
+                if (cached.lastAccess < cutoff) i.remove();
             }
         }
         finally
@@ -326,5 +348,6 @@ final class PagePoolCache
             _lock.unlock();
         }
     }
+
 
 }

@@ -24,13 +24,13 @@ import org.apache.tapestry.json.JSONObject;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
-    private final PageRenderSupport _pageRenderSupport;
+    private final PageRenderSupport pageRenderSupport;
 
     private final JSONObject _validations = new JSONObject();
 
     public ClientBehaviorSupportImpl(PageRenderSupport pageRenderSupport)
     {
-        _pageRenderSupport = pageRenderSupport;
+        this.pageRenderSupport = pageRenderSupport;
     }
 
     public void addZone(String clientId, String showFunctionName, String updateFunctionName)
@@ -49,13 +49,13 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         if (spec.length() == 0)
         {
-            _pageRenderSupport.addInit(functionName, clientId);
+            pageRenderSupport.addInit(functionName, clientId);
             return;
         }
 
         spec.put("element", clientId);
 
-        _pageRenderSupport.addInit(functionName, spec);
+        pageRenderSupport.addInit(functionName, spec);
     }
 
 
@@ -70,7 +70,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         spec.put(linkId);
         spec.put(elementId);
 
-        _pageRenderSupport.addInit("linkZone", spec);
+        pageRenderSupport.addInit("linkZone", spec);
     }
 
     public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
@@ -97,7 +97,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         // Always has at least two properties.
 
-        _pageRenderSupport.addInit("formInjector", spec);
+        pageRenderSupport.addInit("formInjector", spec);
     }
 
 
@@ -138,7 +138,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
             parameters.put(field);
             parameters.put(specs);
 
-            _pageRenderSupport.addInit("validate", parameters);
+            pageRenderSupport.addInit("validate", parameters);
         }
     }
 }

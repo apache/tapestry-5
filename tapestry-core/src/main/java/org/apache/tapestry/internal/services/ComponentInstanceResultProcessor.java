@@ -24,18 +24,18 @@ import java.io.IOException;
 
 public class ComponentInstanceResultProcessor implements ComponentEventResultProcessor<Component>
 {
-    private final RequestPageCache _requestPageCache;
+    private final RequestPageCache requestPageCache;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final ActionRenderResponseGenerator _generator;
+    private final ActionRenderResponseGenerator generator;
 
     public ComponentInstanceResultProcessor(Logger logger, RequestPageCache requestPageCache,
                                             ActionRenderResponseGenerator generator)
     {
-        _requestPageCache = requestPageCache;
-        _logger = logger;
-        _generator = generator;
+        this.requestPageCache = requestPageCache;
+        this.logger = logger;
+        this.generator = generator;
     }
 
     public void processResultValue(Component value) throws IOException
@@ -43,13 +43,13 @@ public class ComponentInstanceResultProcessor implements ComponentEventResultPro
         ComponentResources resources = value.getComponentResources();
 
         if (resources.getContainer() != null)
-            _logger.warn(ServicesMessages.componentInstanceIsNotAPage(value));
+            logger.warn(ServicesMessages.componentInstanceIsNotAPage(value));
 
         // We have all these layers and layers between us and the page instance, but its easy to
         // extract the page class name and quickly re-resolve that to the page instance.
 
-        Page page = _requestPageCache.get(resources.getPageName());
+        Page page = requestPageCache.get(resources.getPageName());
 
-        _generator.generateResponse(page);
+        generator.generateResponse(page);
     }
 }

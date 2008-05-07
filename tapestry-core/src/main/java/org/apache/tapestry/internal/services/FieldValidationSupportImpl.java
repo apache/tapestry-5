@@ -30,13 +30,13 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
     static final String TO_CLIENT_EVENT = "toClient";
     static final String VALIDATE_EVENT = "validate";
 
-    private final ValidationMessagesSource _messagesSource;
+    private final ValidationMessagesSource messagesSource;
 
     private final TypeCoercer _typeCoercer;
 
     public FieldValidationSupportImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer)
     {
-        _messagesSource = messagesSource;
+        this.messagesSource = messagesSource;
         _typeCoercer = typeCoercer;
     }
 
@@ -131,7 +131,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
         // Otherwise, let the normal translator do the job.
 
-        Messages messages = _messagesSource.getValidationMessages(componentResources.getLocale());
+        Messages messages = messagesSource.getValidationMessages(componentResources.getLocale());
 
         return translator.parseClient(effectiveValue, messages);
     }

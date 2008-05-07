@@ -16,8 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.dom.Document;
 import org.apache.tapestry.dom.Element;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 import java.util.List;
@@ -25,19 +24,19 @@ import java.util.Set;
 
 public class DocumentLinkerImpl implements DocumentLinker
 {
-    private final List<String> _scripts = newList();
+    private final List<String> scripts = CollectionFactory.newList();
 
-    private final StringBuilder _scriptBlock = new StringBuilder();
+    private final StringBuilder scriptBlock = new StringBuilder();
 
-    private final Set<String> _stylesheets = newSet();
+    private final Set<String> stylesheets = CollectionFactory.newSet();
 
-    private final List<IncludedStylesheet> _includedStylesheets = newList();
+    private final List<IncludedStylesheet> includedStylesheets = CollectionFactory.newList();
 
-    private final boolean _developmentMode;
+    private final boolean developmentMode;
 
     public DocumentLinkerImpl(boolean productionMode)
     {
-        _developmentMode = !productionMode;
+        developmentMode = !productionMode;
     }
 
     private class IncludedStylesheet
@@ -68,26 +67,26 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     public void addStylesheetLink(String styleURL, String media)
     {
-        if (_stylesheets.contains(styleURL)) return;
+        if (stylesheets.contains(styleURL)) return;
 
-        _includedStylesheets.add(new IncludedStylesheet(styleURL, media));
+        includedStylesheets.add(new IncludedStylesheet(styleURL, media));
 
-        _stylesheets.add(styleURL);
+        stylesheets.add(styleURL);
     }
 
     public void addScriptLink(String scriptURL)
     {
-        if (_scripts.contains(scriptURL)) return;
+        if (scripts.contains(scriptURL)) return;
 
-        _scripts.add(scriptURL);
+        scripts.add(scriptURL);
     }
 
     public void addScript(String script)
     {
         if (InternalUtils.isBlank(script)) return;
 
-        _scriptBlock.append(script);
-        _scriptBlock.append("\n");
+        scriptBlock.append(script);
+        scriptBlock.append("\n");
     }
 
     /**
@@ -109,7 +108,7 @@ public class DocumentLinkerImpl implements DocumentLinker
 
         if (!root.getName().equals("html")) return;
 
-        int stylesheets = _includedStylesheets.size();
+        int stylesheets = includedStylesheets.size();
 
         if (stylesheets > 0)
         {
@@ -118,7 +117,7 @@ public class DocumentLinkerImpl implements DocumentLinker
             if (head == null) head = root.elementAt(0, "head");
 
             for (int i = 0; i < stylesheets; i++)
-                _includedStylesheets.get(i).add(head, i);
+                includedStylesheets.get(i).add(head, i);
         }
 
         Element body = root.find("body");
@@ -128,24 +127,24 @@ public class DocumentLinkerImpl implements DocumentLinker
         // TAPESTRY-2364
 
 
-        for (String scriptURL : _scripts)
+        for (String scriptURL : scripts)
         {
             body.element("script", "src", scriptURL, "type", "text/javascript");
         }
 
-        boolean blockNeeded = (_developmentMode && !_scripts.isEmpty()) || _scriptBlock.length() > 0;
+        boolean blockNeeded = (developmentMode && !scripts.isEmpty()) || scriptBlock.length() > 0;
 
         if (blockNeeded)
         {
             Element e = body.element("script", "type", "text/javascript");
             e.raw("\n<!--\n");
 
-            if (_developmentMode)
+            if (developmentMode)
                 e.text("Tapestry.DEBUG_ENABLED = true;\n");
 
             e.text("Tapestry.onDOMLoaded(function() {\n");
 
-            e.text(_scriptBlock.toString());
+            e.text(scriptBlock.toString());
 
             e.text("});\n");
 

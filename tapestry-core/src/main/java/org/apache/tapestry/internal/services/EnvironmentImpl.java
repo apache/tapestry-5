@@ -18,7 +18,6 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newLinkedList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.services.Environment;
 
 import java.util.LinkedList;
@@ -34,17 +33,17 @@ public class EnvironmentImpl implements Environment
     // My generics mojo breaks down when we talk about the key and the value being related
     // types.
 
-    private final Map<Class, LinkedList> _stacks = newMap();
+    private final Map<Class, LinkedList> stacks = CollectionFactory.newMap();
 
     @SuppressWarnings("unchecked")
     private <T> LinkedList<T> stackFor(Class<T> type)
     {
-        LinkedList<T> result = _stacks.get(type);
+        LinkedList<T> result = stacks.get(type);
 
         if (result == null)
         {
             result = newLinkedList();
-            _stacks.put(type, result);
+            stacks.put(type, result);
         }
 
         return result;
@@ -64,7 +63,7 @@ public class EnvironmentImpl implements Environment
         if (result == null)
         {
             List<Class> types = CollectionFactory.newList();
-            for (Map.Entry<Class, LinkedList> e : _stacks.entrySet())
+            for (Map.Entry<Class, LinkedList> e : stacks.entrySet())
             {
                 LinkedList list = e.getValue();
 
@@ -97,6 +96,6 @@ public class EnvironmentImpl implements Environment
 
     public void clear()
     {
-        _stacks.clear();
+        stacks.clear();
     }
 }

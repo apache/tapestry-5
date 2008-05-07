@@ -21,37 +21,37 @@ import java.lang.annotation.Annotation;
 
 public class CoercingPropertyConduitWrapper implements PropertyConduit
 {
-    private final PropertyConduit _conduit;
+    private final PropertyConduit conduit;
 
-    private final TypeCoercer _coercer;
+    private final TypeCoercer coercer;
 
     public CoercingPropertyConduitWrapper(final PropertyConduit conduit, final TypeCoercer coercer)
     {
-        _conduit = conduit;
-        _coercer = coercer;
+        this.conduit = conduit;
+        this.coercer = coercer;
     }
 
     public Object get(Object instance)
     {
-        return _conduit.get(instance);
+        return conduit.get(instance);
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        return _conduit.getAnnotation(annotationClass);
+        return conduit.getAnnotation(annotationClass);
     }
 
     public Class getPropertyType()
     {
-        return _conduit.getPropertyType();
+        return conduit.getPropertyType();
     }
 
     @SuppressWarnings("unchecked")
     public void set(Object instance, Object value)
     {
-        Object coerced = _coercer.coerce(value, getPropertyType());
+        Object coerced = coercer.coerce(value, getPropertyType());
 
-        _conduit.set(instance, coerced);
+        conduit.set(instance, coerced);
     }
 
 }

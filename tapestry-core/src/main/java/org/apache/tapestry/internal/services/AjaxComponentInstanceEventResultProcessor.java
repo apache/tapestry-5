@@ -27,14 +27,14 @@ import java.io.IOException;
  */
 public class AjaxComponentInstanceEventResultProcessor implements ComponentEventResultProcessor<Component>
 {
-    private final RequestPageCache _cache;
+    private final RequestPageCache cache;
 
-    private final PageRenderQueue _pageRenderQueue;
+    private final PageRenderQueue pageRenderQueue;
 
     public AjaxComponentInstanceEventResultProcessor(RequestPageCache cache, PageRenderQueue pageRenderQueue)
     {
-        _cache = cache;
-        _pageRenderQueue = pageRenderQueue;
+        this.cache = cache;
+        this.pageRenderQueue = pageRenderQueue;
     }
 
     public void processResultValue(Component value) throws IOException
@@ -43,7 +43,7 @@ public class AjaxComponentInstanceEventResultProcessor implements ComponentEvent
 
         String pageName = resources.getPageName();
 
-        Page page = _cache.get(pageName);
+        Page page = cache.get(pageName);
 
         String nestedId = resources.getNestedId();
 
@@ -52,6 +52,6 @@ public class AjaxComponentInstanceEventResultProcessor implements ComponentEvent
 
         RenderCommand command = nestedId == null ? page.getRootElement() : page.getComponentElementByNestedId(nestedId);
 
-        _pageRenderQueue.initializeForPartialPageRender(command);
+        pageRenderQueue.initializeForPartialPageRender(command);
     }
 }

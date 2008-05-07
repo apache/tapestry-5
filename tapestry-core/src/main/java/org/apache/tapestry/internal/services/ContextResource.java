@@ -30,7 +30,7 @@ public class ContextResource extends AbstractResource
 {
     private static final int PRIME = 37;
 
-    private final Context _context;
+    private final Context context;
 
     public ContextResource(Context context, String path)
     {
@@ -38,7 +38,7 @@ public class ContextResource extends AbstractResource
 
         notNull(context, "context");
 
-        _context = context;
+        this.context = context;
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ContextResource extends AbstractResource
     @Override
     protected Resource newResource(String path)
     {
-        return new ContextResource(_context, path);
+        return new ContextResource(context, path);
     }
 
     public URL toURL()
@@ -64,7 +64,7 @@ public class ContextResource extends AbstractResource
         // Always prefer the actual file to the URL.  This is critical for templates to
         // reload inside Tomcat.
 
-        File file = _context.getRealFile(contextPath);
+        File file = context.getRealFile(contextPath);
 
         if (file != null && file.exists())
         {
@@ -81,13 +81,13 @@ public class ContextResource extends AbstractResource
         // But, when packaged inside a WAR or JAR, the File will not be available, so use whatever
         // URL we get ... but reloading won't work.
 
-        return _context.getResource(contextPath);
+        return context.getResource(contextPath);
     }
 
     @Override
     public int hashCode()
     {
-        return PRIME * _context.hashCode() + getPath().hashCode();
+        return PRIME * context.hashCode() + getPath().hashCode();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class ContextResource extends AbstractResource
 
         final ContextResource other = (ContextResource) obj;
 
-        return _context == other._context && getPath().equals(other.getPath());
+        return context == other.context && getPath().equals(other.getPath());
     }
 
 }

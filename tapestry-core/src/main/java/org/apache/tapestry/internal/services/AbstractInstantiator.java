@@ -21,24 +21,24 @@ import org.apache.tapestry.model.ComponentModel;
  */
 public abstract class AbstractInstantiator implements Instantiator
 {
-    private final ComponentModel _model;
+    private final ComponentModel model;
 
-    private final String _description;
+    private final String description;
 
     public AbstractInstantiator(ComponentModel model, String description)
     {
-        _model = model;
-        _description = description;
+        this.model = model;
+        this.description = description;
     }
 
     @Override
     public String toString()
     {
-        return _description;
+        return description;
     }
 
     public ComponentModel getModel()
     {
-        return _model;
+        return model;
     }
 }

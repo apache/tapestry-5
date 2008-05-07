@@ -22,11 +22,11 @@ import org.apache.tapestry.services.ComponentSource;
 
 public class ComponentSourceImpl implements ComponentSource
 {
-    private final RequestPageCache _pageCache;
+    private final RequestPageCache pageCache;
 
     public ComponentSourceImpl(RequestPageCache pageCache)
     {
-        _pageCache = pageCache;
+        this.pageCache = pageCache;
     }
 
     public Component getComponent(String completeId)
@@ -35,14 +35,14 @@ public class ComponentSourceImpl implements ComponentSource
 
         if (colonx < 0)
         {
-            Page page = _pageCache.get(completeId);
+            Page page = pageCache.get(completeId);
 
             return page.getRootComponent();
         }
 
         String pageName = completeId.substring(0, colonx);
 
-        Page page = _pageCache.get(pageName);
+        Page page = pageCache.get(pageName);
         String nestedId = completeId.substring(colonx + 1);
         String mixinId = null;
 
@@ -67,7 +67,7 @@ public class ComponentSourceImpl implements ComponentSource
 
     public Component getPage(String pageName)
     {
-        Page page = _pageCache.get(pageName);
+        Page page = pageCache.get(pageName);
 
         return page.getRootComponent();
     }
