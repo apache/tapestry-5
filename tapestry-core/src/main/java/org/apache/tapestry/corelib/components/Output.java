@@ -36,58 +36,58 @@ public class Output
      * The value to be output (before formatting). If the formatted value is blank, no output is produced.
      */
     @Parameter(required = true)
-    private Object _value;
+    private Object value;
 
     /**
      * The format to be applied to the object.
      */
     @Parameter(required = true)
-    private Format _format;
+    private Format format;
 
     /**
      * If true, the default, then output is filtered, escaping any reserved characters. If false, the output is written
      * raw.
      */
     @Parameter
-    private boolean _filter = true;
+    private boolean filter = true;
 
     /**
      * The element name, derived from the component template. This can even be overridden manually if desired (for
      * example, to sometimes render a surrounding element and other times not).
      */
     @Parameter("componentResources.elementName")
-    private String _elementName;
+    private String elementName;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     Binding defaultValue()
     {
-        return _defaultProvider.defaultBinding("value", _resources);
+        return defaultProvider.defaultBinding("value", resources);
     }
 
     boolean beginRender(MarkupWriter writer)
     {
-        if (_value == null) return false;
+        if (value == null) return false;
 
-        String formatted = _format.format(_value);
+        String formatted = format.format(value);
 
         if (InternalUtils.isNonBlank(formatted))
         {
-            if (_elementName != null)
+            if (elementName != null)
             {
-                writer.element(_elementName);
+                writer.element(elementName);
 
-                _resources.renderInformalParameters(writer);
+                resources.renderInformalParameters(writer);
             }
 
-            if (_filter) writer.write(formatted);
+            if (filter) writer.write(formatted);
             else writer.writeRaw(formatted);
 
-            if (_elementName != null) writer.end();
+            if (elementName != null) writer.end();
         }
 
         return false;
@@ -97,10 +97,10 @@ public class Output
 
     void setup(Object value, Format format, boolean filter, String elementName, ComponentResources resources)
     {
-        _value = value;
-        _format = format;
-        _filter = filter;
-        _elementName = elementName;
-        _resources = resources;
+        this.value = value;
+        this.format = format;
+        this.filter = filter;
+        this.elementName = elementName;
+        this.resources = resources;
     }
 }

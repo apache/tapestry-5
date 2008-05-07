@@ -47,13 +47,13 @@ import java.util.List;
  */
 public class TapestryFilter implements Filter
 {
-    private final Logger _logger = LoggerFactory.getLogger(TapestryFilter.class);
+    private final Logger logger = LoggerFactory.getLogger(TapestryFilter.class);
 
-    private FilterConfig _config;
+    private FilterConfig config;
 
-    private Registry _registry;
+    private Registry registry;
 
-    private HttpServletRequestHandler _handler;
+    private HttpServletRequestHandler handler;
 
     /**
      * Initializes the filter using the {@link TapestryAppInitializer}. The application name is the capitalization of
@@ -61,11 +61,11 @@ public class TapestryFilter implements Filter
      */
     public final void init(FilterConfig filterConfig) throws ServletException
     {
-        _config = filterConfig;
+        config = filterConfig;
 
-        ServletContext context = _config.getServletContext();
+        ServletContext context = config.getServletContext();
 
-        String filterName = _config.getFilterName();
+        String filterName = config.getFilterName();
 
         SymbolProvider provider = new ServletContextSymbolProvider(context);
 
@@ -73,22 +73,22 @@ public class TapestryFilter implements Filter
 
         appInitializer.addModules(provideExtraModuleDefs(context));
 
-        _registry = appInitializer.getRegistry();
+        registry = appInitializer.getRegistry();
 
         long start = appInitializer.getStartTime();
 
         long toRegistry = appInitializer.getRegistryCreatedTime();
 
-        ServletApplicationInitializer ai = _registry.getService("ServletApplicationInitializer",
-                                                                ServletApplicationInitializer.class);
+        ServletApplicationInitializer ai = registry.getService("ServletApplicationInitializer",
+                                                               ServletApplicationInitializer.class);
 
         ai.initializeApplication(filterConfig.getServletContext());
 
-        _registry.performRegistryStartup();
+        registry.performRegistryStartup();
 
-        _handler = _registry.getService("HttpServletRequestHandler", HttpServletRequestHandler.class);
+        handler = registry.getService("HttpServletRequestHandler", HttpServletRequestHandler.class);
 
-        init(_registry);
+        init(registry);
 
         long toFinish = System.currentTimeMillis();
 
@@ -100,7 +100,7 @@ public class TapestryFilter implements Filter
 
         int unrealized = 0;
 
-        ServiceActivityScoreboard scoreboard = _registry
+        ServiceActivityScoreboard scoreboard = registry
                 .getService(ServiceActivityScoreboard.class);
 
         List<ServiceActivity> serviceActivity = scoreboard.getServiceActivity();
@@ -131,12 +131,12 @@ public class TapestryFilter implements Filter
         f.format("\n%4.2f%% unrealized services (%d/%d)\n", 100. * unrealized / serviceActivity.size(), unrealized,
                  serviceActivity.size());
 
-        _logger.info(buffer.toString());
+        logger.info(buffer.toString());
     }
 
     protected final FilterConfig getFilterConfig()
     {
-        return _config;
+        return config;
     }
 
     /**
@@ -165,13 +165,13 @@ public class TapestryFilter implements Filter
     {
         try
         {
-            boolean handled = _handler.service((HttpServletRequest) request, (HttpServletResponse) response);
+            boolean handled = handler.service((HttpServletRequest) request, (HttpServletResponse) response);
 
             if (!handled) chain.doFilter(request, response);
         }
         finally
         {
-            _registry.cleanupThread();
+            registry.cleanupThread();
         }
     }
 
@@ -180,13 +180,13 @@ public class TapestryFilter implements Filter
      */
     public final void destroy()
     {
-        destroy(_registry);
+        destroy(registry);
 
-        _registry.shutdown();
+        registry.shutdown();
 
-        _registry = null;
-        _config = null;
-        _handler = null;
+        registry = null;
+        config = null;
+        handler = null;
     }
 
     /**

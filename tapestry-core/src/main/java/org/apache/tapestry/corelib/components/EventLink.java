@@ -39,20 +39,20 @@ public class EventLink extends AbstractComponentEventLink
      * triggers any arbitrary event on <em>its container</em>.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _event;
+    private String event;
+
+    @Inject
+    private ComponentResources resources;
 
     String defaultEvent()
     {
-        return _resources.getId();
+        return resources.getId();
     }
-
-    @Inject
-    private ComponentResources _resources;
 
     protected Link createLink(Object[] eventContext)
     {
-        ComponentResources containerResources = _resources.getContainerResources();
+        ComponentResources containerResources = resources.getContainerResources();
 
-        return containerResources.createActionLink(_event, false, eventContext);
+        return containerResources.createActionLink(event, false, eventContext);
     }
 }

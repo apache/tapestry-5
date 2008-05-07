@@ -48,7 +48,7 @@ public class Zone implements ClientElement
      * &lt;div&gt; visible before being updated.  If not specified, then the basic "show" method is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _show;
+    private String show;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked after the Zone's content has
@@ -56,44 +56,44 @@ public class Zone implements ClientElement
      * to indicate to the user that and update has taken place.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _update;
+    private String update;
 
-    private String _clientId;
-
-    @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private String clientId;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private PageRenderSupport pageRenderSupport;
+
+    @Environmental
+    private ClientBehaviorSupport clientBehaviorSupport;
 
     /**
      * If true (the default) then the zone will render normally.  If false, then the "t-invisible" CSS class is added,
      * which will make the zone initially invisible.
      */
     @Parameter
-    private boolean _visible = true;
+    private boolean visible = true;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     void beginRender(MarkupWriter writer)
     {
-        _clientId = _pageRenderSupport.allocateClientId(_resources);
+        clientId = pageRenderSupport.allocateClientId(resources);
 
-        Element e = writer.element("div", "id", _clientId);
+        Element e = writer.element("div", "id", clientId);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         e.addClassName("t-zone");
 
-        if (!_visible) e.addClassName("t-invisible");
+        if (!visible) e.addClassName("t-invisible");
 
         // And continue on to render the body
 
         JSONObject spec = new JSONObject();
-        spec.put("div", _clientId);
+        spec.put("div", clientId);
 
-        _clientBehaviorSupport.addZone(_clientId, _show, _update);
+        clientBehaviorSupport.addZone(clientId, show, update);
     }
 
     void afterRender(MarkupWriter writer)
@@ -103,6 +103,6 @@ public class Zone implements ClientElement
 
     public String getClientId()
     {
-        return _clientId;
+        return clientId;
     }
 }

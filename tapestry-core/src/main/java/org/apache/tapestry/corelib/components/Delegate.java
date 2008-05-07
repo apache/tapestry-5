@@ -28,10 +28,10 @@ public class Delegate
      * instance, or a {@link Block}.
      */
     @Parameter(required = true)
-    private Object _to;
+    private Object to;
 
     Object beginRender()
     {
-        return _to;
+        return to;
     }
 }

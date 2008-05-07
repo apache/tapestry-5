@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
@@ -37,49 +37,49 @@ public class ExceptionDisplay
      * Exception to report.
      */
     @Parameter(required = true)
-    private Throwable _exception;
+    private Throwable exception;
 
     @Inject
-    private ExceptionAnalyzer _analyzer;
+    private ExceptionAnalyzer analyzer;
 
     @Inject
     @Symbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM)
-    private String _appPackage;
+    private String appPackage;
 
     @Property
-    private ExceptionInfo _info;
+    private ExceptionInfo info;
 
     @Property
-    private String _propertyName;
+    private String propertyName;
 
     @Property
-    private StackTraceElement _frame;
+    private StackTraceElement frame;
 
     @Property
-    private List<ExceptionInfo> _stack;
+    private List<ExceptionInfo> stack;
 
     void setupRender()
     {
-        ExceptionAnalysis analysis = _analyzer.analyze(_exception);
+        ExceptionAnalysis analysis = analyzer.analyze(exception);
 
-        _stack = analysis.getExceptionInfos();
+        stack = analysis.getExceptionInfos();
     }
 
     public boolean getShowPropertyList()
     {
         // True if either is non-empty
 
-        return !(_info.getPropertyNames().isEmpty() && _info.getStackTrace().isEmpty());
+        return !(info.getPropertyNames().isEmpty() && info.getStackTrace().isEmpty());
     }
 
     public Object getPropertyValue()
     {
-        return _info.getProperty(_propertyName);
+        return info.getProperty(propertyName);
     }
 
     public String getFrameClass()
     {
-        if (_frame.getClassName().startsWith(_appPackage) && _frame.getLineNumber() > 0) return "t-usercode-frame";
+        if (frame.getClassName().startsWith(appPackage) && frame.getLineNumber() > 0) return "t-usercode-frame";
 
         return null;
     }

@@ -26,11 +26,11 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class ActionLink extends AbstractComponentEventLink
 {
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     protected Link createLink(Object[] contextArray)
     {
-        return _resources.createActionLink(ACTION_EVENT, false, contextArray);
+        return resources.createActionLink(ACTION_EVENT, false, contextArray);
     }
 
 }

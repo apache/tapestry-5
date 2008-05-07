@@ -49,7 +49,7 @@ public final class Select extends AbstractField
 
         public Renderer(MarkupWriter writer)
         {
-            super(writer, _encoder);
+            super(writer, encoder);
         }
 
         @Override
@@ -66,16 +66,16 @@ public final class Select extends AbstractField
      * @see ValueEncoderSource
      */
     @Parameter
-    private ValueEncoder _encoder;
+    private ValueEncoder encoder;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
+    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
     // Maybe this should default to property "<componentId>Model"?
     /**
@@ -83,7 +83,7 @@ public final class Select extends AbstractField
      * automatically for Enum types.
      */
     @Parameter(required = true)
-    private SelectModel _model;
+    private SelectModel model;
 
     /**
      * Controls whether an additional blank option is provided. The blank option precedes all other options and is never
@@ -91,72 +91,72 @@ public final class Select extends AbstractField
      * label is from the blankLabel parameter (and is often also the empty string).
      */
     @Parameter(value = "auto", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private BlankOption _blankOption;
+    private BlankOption blankOption;
 
     /**
      * The label to use for the blank option, if rendered.  If not specified, the container's message catalog is
      * searched for a key, <code><em>id</em>-blanklabel</code>.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _blankLabel;
+    private String blankLabel;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private ValidationTracker _tracker;
+    private ValidationTracker tracker;
 
     /**
      * Performs input validation on the value supplied by the user in the form submission.
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> _validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> validate = NOOP_VALIDATOR;
 
     /**
      * The value to read or update.
      */
     @Parameter(required = true, principal = true)
-    private Object _value;
+    private Object value;
 
     @Inject
-    private FieldValidationSupport _fieldValidationSupport;
+    private FieldValidationSupport fieldValidationSupport;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderDisabled _renderDisabled;
+    private RenderDisabled renderDisabled;
 
-    private String _selectedClientValue;
+    private String selectedClientValue;
 
     private boolean isSelected(String clientValue)
     {
-        return TapestryInternalUtils.isEqual(clientValue, _selectedClientValue);
+        return TapestryInternalUtils.isEqual(clientValue, selectedClientValue);
     }
 
     @SuppressWarnings({ "unchecked" })
     @Override
     protected void processSubmission(String elementName)
     {
-        String submittedValue = _request.getParameter(elementName);
+        String submittedValue = request.getParameter(elementName);
 
-        _tracker.recordInput(this, submittedValue);
+        tracker.recordInput(this, submittedValue);
 
         Object selectedValue = InternalUtils.isBlank(submittedValue)
                                ? null :
-                               _encoder.toValue(submittedValue);
+                               encoder.toValue(submittedValue);
 
         try
         {
-            _fieldValidationSupport.validate(selectedValue, _resources, _validate);
+            fieldValidationSupport.validate(selectedValue, resources, validate);
 
-            _value = selectedValue;
+            value = selectedValue;
         }
         catch (ValidationException ex)
         {
-            _tracker.recordError(this, ex.getMessage());
+            tracker.recordError(this, ex.getMessage());
         }
     }
 
@@ -169,9 +169,9 @@ public final class Select extends AbstractField
     {
         writer.element("select", "name", getControlName(), "id", getClientId());
 
-        _validate.render(writer);
+        validate.render(writer);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         // Disabled is via a mixin
     }
@@ -179,18 +179,18 @@ public final class Select extends AbstractField
     @SuppressWarnings("unchecked")
     ValueEncoder defaultEncoder()
     {
-        return _defaultProvider.defaultValueEncoder("value", _resources);
+        return defaultProvider.defaultValueEncoder("value", resources);
     }
 
     @SuppressWarnings("unchecked")
     SelectModel defaultModel()
     {
-        Class valueType = _resources.getBoundType("value");
+        Class valueType = resources.getBoundType("value");
 
         if (valueType == null) return null;
 
         if (Enum.class.isAssignableFrom(valueType))
-            return new EnumSelectModel(valueType, _resources.getContainerMessages());
+            return new EnumSelectModel(valueType, resources.getContainerMessages());
 
         return null;
     }
@@ -200,13 +200,13 @@ public final class Select extends AbstractField
      */
     FieldValidator defaultValidate()
     {
-        Class type = _resources.getBoundType("value");
+        Class type = resources.getBoundType("value");
 
         if (type == null) return null;
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
-                                                                   _resources.getContainerMessages(), _locale, type,
-                                                                   _resources.getAnnotationProvider("value"));
+        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
+                                                                  resources.getContainerMessages(), locale, type,
+                                                                  resources.getAnnotationProvider("value"));
     }
 
     Binding defaultValue()
@@ -216,9 +216,9 @@ public final class Select extends AbstractField
 
     Object defaultBlankLabel()
     {
-        Messages containerMessages = _resources.getContainerMessages();
+        Messages containerMessages = resources.getContainerMessages();
 
-        String key = _resources.getId() + "-blanklabel";
+        String key = resources.getId() + "-blanklabel";
 
         if (containerMessages.contains(key)) return containerMessages.get(key);
 
@@ -231,44 +231,44 @@ public final class Select extends AbstractField
     @BeforeRenderTemplate
     void options(MarkupWriter writer)
     {
-        _selectedClientValue = _tracker.getInput(this);
+        selectedClientValue = tracker.getInput(this);
 
         // Use the value passed up in the form submission, if available.
         // Failing that, see if there is a current value (via the value parameter), and
         // convert that to a client value for later comparison.
 
-        if (_selectedClientValue == null) _selectedClientValue = _value == null ? null : _encoder.toClient(_value);
+        if (selectedClientValue == null) selectedClientValue = value == null ? null : encoder.toClient(value);
 
         if (showBlankOption())
         {
             writer.element("option", "value", "");
-            writer.write(_blankLabel);
+            writer.write(blankLabel);
             writer.end();
         }
 
 
         SelectModelVisitor renderer = new Renderer(writer);
 
-        _model.visit(renderer);
+        model.visit(renderer);
     }
 
     @Override
     public boolean isRequired()
     {
-        return _validate.isRequired();
+        return validate.isRequired();
     }
 
     private boolean showBlankOption()
     {
-        switch (_blankOption)
+        switch (blankOption)
         {
             case ALWAYS:
                 return true;
+
             case NEVER:
                 return false;
 
             default:
-
                 return !isRequired();
         }
     }
@@ -277,29 +277,29 @@ public final class Select extends AbstractField
 
     void setModel(SelectModel model)
     {
-        _model = model;
-        _blankOption = BlankOption.NEVER;
+        this.model = model;
+        blankOption = BlankOption.NEVER;
     }
 
     void setValue(Object value)
     {
-        _value = value;
+        this.value = value;
     }
 
     void setValueEncoder(ValueEncoder encoder)
     {
-        _encoder = encoder;
+        this.encoder = encoder;
     }
 
     void setValidationTracker(ValidationTracker tracker)
     {
-        _tracker = tracker;
+        this.tracker = tracker;
     }
 
     void setBlankOption(BlankOption option, String label)
     {
-        _blankOption = option;
-        _blankLabel = label;
+        blankOption = option;
+        blankLabel = label;
     }
 
 

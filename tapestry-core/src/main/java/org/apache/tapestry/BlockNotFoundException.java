@@ -24,17 +24,17 @@ public class BlockNotFoundException extends RuntimeException implements Locatabl
 {
     private static final long serialVersionUID = 81221040659940576L;
 
-    private final Location _location;
+    private final Location location;
 
     public BlockNotFoundException(String message, Location location)
     {
         super(message);
 
-        _location = location;
+        this.location = location;
     }
 
     public Location getLocation()
     {
-        return _location;
+        return location;
     }
 }

@@ -29,15 +29,15 @@ import org.apache.tapestry.services.ObjectRenderer;
 public class RenderObject
 {
     @Parameter(required = true)
-    private Object _object;
+    private Object object;
 
     @Inject
     @Primary
-    private ObjectRenderer<Object> _renderer;
+    private ObjectRenderer<Object> renderer;
 
     boolean beginRender(MarkupWriter writer)
     {
-        _renderer.render(_object, writer);
+        renderer.render(object, writer);
 
         return false;
     }

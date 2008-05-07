@@ -50,70 +50,70 @@ public class FormFragment implements ClientElement
      * the fragment should be processed (or ignored if still invisible).
      */
     @Parameter
-    private boolean _visible;
+    private boolean visible;
 
 
     /**
-     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the fragment
-     * visible.  If not specified, then the default "slidedown" function is used.
+     * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the fragment visible.
+     * If not specified, then the default "slidedown" function is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _show;
+    private String show;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked when the fragment is to be
      * hidden. If not specified, the default "slideup" function is used.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _hide;
+    private String hide;
 
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
 
     @Inject
-    private ComponentSource _componentSource;
+    private ComponentSource componentSource;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private ClientBehaviorSupport clientBehaviorSupport;
 
-    private String _clientId;
+    private String clientId;
 
-    private String _controlName;
+    private String controlName;
 
-    private List<WrappedComponentAction> _componentActions;
+    private List<WrappedComponentAction> componentActions;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     static class HandleSubmission implements ComponentAction<FormFragment>
     {
-        private final String _controlName;
+        private final String controlName;
 
-        private final List<WrappedComponentAction> _actions;
+        private final List<WrappedComponentAction> actions;
 
         public HandleSubmission(String controlName, List<WrappedComponentAction> actions)
         {
-            _controlName = controlName;
-            _actions = actions;
+            this.controlName = controlName;
+            this.actions = actions;
         }
 
         public void execute(FormFragment component)
         {
-            component.handleSubmission(_controlName, _actions);
+            component.handleSubmission(controlName, actions);
         }
     }
 
 
     private void handleSubmission(String elementName, List<WrappedComponentAction> actions)
     {
-        String value = _request.getParameter(elementName);
+        String value = request.getParameter(elementName);
 
         boolean visible = Boolean.parseBoolean(value);
 
@@ -123,7 +123,7 @@ public class FormFragment implements ClientElement
 
         for (WrappedComponentAction action : actions)
         {
-            action.execute(_componentSource);
+            action.execute(componentSource);
         }
     }
 
@@ -133,18 +133,18 @@ public class FormFragment implements ClientElement
      */
     void beginRender(MarkupWriter writer)
     {
-        FormSupport formSupport = _environment.peekRequired(FormSupport.class);
+        FormSupport formSupport = environment.peekRequired(FormSupport.class);
 
-        String id = _resources.getId();
+        String id = resources.getId();
 
-        _controlName = formSupport.allocateControlName(id);
-        _clientId = _pageRenderSupport.allocateClientId(id);
+        controlName = formSupport.allocateControlName(id);
+        clientId = pageRenderSupport.allocateClientId(id);
 
-        Element element = writer.element("div", "id", _clientId);
+        Element element = writer.element("div", "id", clientId);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
-        if (!_visible)
+        if (!visible)
             element.addClassName(TapestryConstants.INVISIBLE_CLASS);
 
 
@@ -152,17 +152,17 @@ public class FormFragment implements ClientElement
 
                        "type", "hidden",
 
-                       "name", _controlName,
+                       "name", controlName,
 
-                       "id", _clientId + ":hidden",
+                       "id", clientId + ":hidden",
 
-                       "value", String.valueOf(_visible));
+                       "value", String.valueOf(visible));
         writer.end();
 
 
-        _clientBehaviorSupport.addFormFragment(_clientId, _show, _hide);
+        clientBehaviorSupport.addFormFragment(clientId, show, hide);
 
-        _componentActions = CollectionFactory.newList();
+        componentActions = CollectionFactory.newList();
 
         // Here's the magic of environmentals ... we can create a wrapper around
         // the normal FormSupport environmental that intercepts some of the behavior.
@@ -176,7 +176,7 @@ public class FormFragment implements ClientElement
             {
                 Component asComponent = Defense.cast(component, Component.class, "component");
 
-                _componentActions.add(new WrappedComponentAction(asComponent, action));
+                componentActions.add(new WrappedComponentAction(asComponent, action));
             }
 
             @Override
@@ -191,7 +191,7 @@ public class FormFragment implements ClientElement
         // Tada!  Now all the enclosed components will use our override of FormSupport,
         // until we pop it off.
 
-        _environment.push(FormSupport.class, override);
+        environment.push(FormSupport.class, override);
 
     }
 
@@ -205,13 +205,13 @@ public class FormFragment implements ClientElement
     {
         writer.end(); // div
 
-        _environment.pop(FormSupport.class);
+        environment.pop(FormSupport.class);
 
-        _environment.peek(FormSupport.class).store(this, new HandleSubmission(_controlName, _componentActions));
+        environment.peek(FormSupport.class).store(this, new HandleSubmission(controlName, componentActions));
     }
 
     public String getClientId()
     {
-        return _clientId;
+        return clientId;
     }
 }

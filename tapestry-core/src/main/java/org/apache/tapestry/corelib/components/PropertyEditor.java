@@ -40,16 +40,16 @@ public class PropertyEditor
     {
         private static final long serialVersionUID = 5337049721509981997L;
 
-        private final String _property;
+        private final String property;
 
         public SetupEnvironment(String property)
         {
-            _property = property;
+            this.property = property;
         }
 
         public void execute(PropertyEditor component)
         {
-            component.setupEnvironment(_property);
+            component.setupEnvironment(property);
         }
     }
 
@@ -69,7 +69,7 @@ public class PropertyEditor
      * that a non-null value is ready to be read or updated.
      */
     @Parameter(required = true)
-    private Object _object;
+    private Object object;
 
     /**
      * Where to search for local overrides of property editing blocks as block parameters. This is normally the
@@ -77,45 +77,45 @@ public class PropertyEditor
      * BeanEditForm's block parameters that will be searched.
      */
     @Parameter(value = "componentResources")
-    private ComponentResources _overrides;
+    private ComponentResources overrides;
 
     /**
      * Identifies the property to be edited by the editor.
      */
     @Parameter(required = true)
-    private String _property;
+    private String property;
 
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect.
      */
     @Parameter(required = true)
-    private BeanModel _model;
+    private BeanModel model;
 
     @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
+    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
 
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
     @Inject
-    private BeanBlockSource _beanBlockSource;
+    private BeanBlockSource beanBlockSource;
 
     @Inject
-    private Messages _messages;
+    private Messages messages;
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
-    private PropertyModel _propertyModel;
+    private PropertyModel propertyModel;
 
     @Inject
-    private TranslatorSource _translatorSource;
+    private TranslatorSource translatorSource;
 
     /**
      * Creates a {@link org.apache.tapestry.services.PropertyEditContext} and pushes it onto the {@link
@@ -123,60 +123,60 @@ public class PropertyEditor
      */
     void setupEnvironment(final String propertyName)
     {
-        _propertyModel = _model.get(propertyName);
+        propertyModel = model.get(propertyName);
 
         PropertyEditContext context = new PropertyEditContext()
         {
             public Messages getContainerMessages()
             {
-                return _overrides.getContainerMessages();
+                return overrides.getContainerMessages();
             }
 
             public String getLabel()
             {
-                return _propertyModel.getLabel();
+                return propertyModel.getLabel();
             }
 
             public String getPropertyId()
             {
-                return _propertyModel.getId();
+                return propertyModel.getId();
             }
 
             public Class getPropertyType()
             {
-                return _propertyModel.getPropertyType();
+                return propertyModel.getPropertyType();
             }
 
             public Object getPropertyValue()
             {
-                return _propertyModel.getConduit().get(_object);
+                return propertyModel.getConduit().get(object);
             }
 
             public Translator getTranslator()
             {
-                return _translatorSource.getByType(_propertyModel.getPropertyType());
+                return translatorSource.getByType(propertyModel.getPropertyType());
             }
 
             public FieldValidator getValidator(Field field)
             {
-                return _fieldValidatorDefaultSource.createDefaultValidator(field, propertyName,
-                                                                           _overrides.getContainerMessages(), _locale,
-                                                                           _propertyModel.getPropertyType(),
-                                                                           _propertyModel.getConduit());
+                return fieldValidatorDefaultSource.createDefaultValidator(field, propertyName,
+                                                                          overrides.getContainerMessages(), locale,
+                                                                          propertyModel.getPropertyType(),
+                                                                          propertyModel.getConduit());
             }
 
             public void setPropertyValue(Object value)
             {
-                _propertyModel.getConduit().set(_object, value);
+                propertyModel.getConduit().set(object, value);
             }
 
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
-                return _propertyModel.getAnnotation(annotationClass);
+                return propertyModel.getAnnotation(annotationClass);
             }
         };
 
-        _environment.push(PropertyEditContext.class, context);
+        environment.push(PropertyEditContext.class, context);
     }
 
     /**
@@ -185,7 +185,7 @@ public class PropertyEditor
      */
     void cleanupEnvironment()
     {
-        _environment.pop(PropertyEditContext.class);
+        environment.pop(PropertyEditContext.class);
     }
 
     /**
@@ -196,7 +196,7 @@ public class PropertyEditor
         // Sets up the PropertyEditContext for the duration of the render of this component
         // (which will include the duration of the editor block).
 
-        _formSupport.storeAndExecute(this, new SetupEnvironment(_property));
+        formSupport.storeAndExecute(this, new SetupEnvironment(property));
     }
 
     /**
@@ -207,7 +207,7 @@ public class PropertyEditor
         // Removes the PropertyEditContext after this component (including the editor block)
         // has rendered.
 
-        _formSupport.storeAndExecute(this, new CleanupEnvironment());
+        formSupport.storeAndExecute(this, new CleanupEnvironment());
     }
 
     /**
@@ -216,24 +216,24 @@ public class PropertyEditor
      */
     Block beginRender()
     {
-        Block override = _overrides.getBlockParameter(_propertyModel.getId());
+        Block override = overrides.getBlockParameter(propertyModel.getId());
 
         if (override != null)
         {
             return override;
         }
 
-        String dataType = _propertyModel.getDataType();
+        String dataType = propertyModel.getDataType();
 
         try
         {
-            return _beanBlockSource.getEditBlock(dataType);
+            return beanBlockSource.getEditBlock(dataType);
         }
         catch (RuntimeException ex)
         {
-            String message = _messages.format("block-error", _propertyModel.getPropertyName(), dataType, _object, ex);
+            String message = messages.format("block-error", propertyModel.getPropertyName(), dataType, object, ex);
 
-            throw new TapestryException(message, _resources.getLocation(), ex);
+            throw new TapestryException(message, resources.getLocation(), ex);
         }
 
     }
@@ -252,11 +252,11 @@ public class PropertyEditor
     void inject(ComponentResources resources, ComponentResources overrides, PropertyModel propertyModel,
                 BeanBlockSource beanBlockSource, Messages messages, Object object)
     {
-        _resources = resources;
-        _overrides = overrides;
-        _propertyModel = propertyModel;
-        _beanBlockSource = beanBlockSource;
-        _messages = messages;
-        _object = object;
+        this.resources = resources;
+        this.overrides = overrides;
+        this.propertyModel = propertyModel;
+        this.beanBlockSource = beanBlockSource;
+        this.messages = messages;
+        this.object = object;
     }
 }

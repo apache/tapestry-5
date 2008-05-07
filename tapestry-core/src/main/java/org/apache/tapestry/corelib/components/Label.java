@@ -40,29 +40,29 @@ public class Label
      * results in the for attribute of the label element).
      */
     @Parameter(name = "for", required = true, defaultPrefix = "component")
-    private Field _field;
+    private Field field;
 
     @Environmental
-    private Heartbeat _heartbeat;
+    private Heartbeat heartbeat;
 
     @Environmental
-    private ValidationDecorator _decorator;
+    private ValidationDecorator decorator;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
-    private Element _labelElement;
+    private Element labelElement;
 
     @BeginRender
     void begin(MarkupWriter writer)
     {
-        final Field field = _field;
+        final Field field = this.field;
 
-        _decorator.beforeLabel(field);
+        decorator.beforeLabel(field);
 
-        _labelElement = writer.element("label");
+        labelElement = writer.element("label");
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         // Since we don't know if the field has rendered yet, we need to defer writing the for and id
         // attributes until we know the field has rendered (and set its clientId property). That's
@@ -74,13 +74,13 @@ public class Label
             {
                 String fieldId = field.getClientId();
 
-                _labelElement.forceAttributes("for", fieldId, "id", fieldId + ":label");
+                labelElement.forceAttributes("for", fieldId, "id", fieldId + ":label");
 
-                _decorator.insideLabel(field, _labelElement);
+                decorator.insideLabel(field, labelElement);
             }
         };
 
-        _heartbeat.defer(command);
+        heartbeat.defer(command);
     }
 
     @AfterRender
@@ -89,12 +89,12 @@ public class Label
         // If the Label element has a body that renders some non-blank output, that takes precendence
         // over the label string provided by the field.
 
-        boolean bodyIsBlank = InternalUtils.isBlank(_labelElement.getChildMarkup());
+        boolean bodyIsBlank = InternalUtils.isBlank(labelElement.getChildMarkup());
 
-        if (bodyIsBlank) writer.write(_field.getLabel());
+        if (bodyIsBlank) writer.write(field.getLabel());
 
         writer.end(); // label
 
-        _decorator.afterLabel(_field);
+        decorator.afterLabel(field);
     }
 }

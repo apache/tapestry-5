@@ -28,18 +28,18 @@ import java.util.regex.Pattern;
 public class TextOutput
 {
     @Parameter(required = true)
-    private String _value;
+    private String value;
 
     @Mixin
-    private DiscardBody _discardBody;
+    private DiscardBody discardBody;
 
     private static final Pattern SPLIT_PATTERN = Pattern.compile("((\\r\\n)|\\r|\\n)", Pattern.MULTILINE);
 
     void beginRender(MarkupWriter writer)
     {
-        if (_value == null) return;
+        if (value == null) return;
 
-        String[] lines = SPLIT_PATTERN.split(_value);
+        String[] lines = SPLIT_PATTERN.split(value);
 
         for (String line : lines)
         {
@@ -53,6 +53,6 @@ public class TextOutput
 
     void injectValue(String value)
     {
-        _value = value;
+        this.value = value;
     }
 }

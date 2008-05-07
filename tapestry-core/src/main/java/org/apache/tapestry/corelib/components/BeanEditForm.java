@@ -15,7 +15,10 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotations.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -46,7 +49,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @Parameter(value = "message:submit-label", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
     @Property
-    private String _submitLabel;
+    private String submitLabel;
 
     /**
      * The object to be edited. This will be read when the component renders and updated when the form for the component
@@ -57,7 +60,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @SuppressWarnings("unused")
     @Parameter(required = true)
     @Property
-    private Object _object;
+    private Object object;
 
     /**
      * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
@@ -66,7 +69,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _include;
+    private String include;
 
     /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
@@ -74,7 +77,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _exclude;
+    private String exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
@@ -83,27 +86,23 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _reorder;
+    private String reorder;
 
     /**
      * If true, the default, then the embedded Form component will use client-side validation.
      */
-    @SuppressWarnings("unused")
     @Parameter
-    private boolean _clientValidation = true;
+    private boolean clientValidation = true;
 
     /**
      * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
      * indicated zone.  Often a BeanEditForm will update the same zone that contains it.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _zone;
+    private String zone;
 
     @Component(parameters = { "clientValidation=inherit:clientValidation", "zone=inherit:zone" })
-    private Form _form;
-
-    @InjectComponent
-    private BeanEditor _editor;
+    private Form form;
 
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
@@ -112,38 +111,38 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     @SuppressWarnings("unused")
     @Parameter
     @Property
-    private BeanModel _model;
+    private BeanModel model;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private BeanModelSource _beanModelSource;
+    private BeanModelSource beanModelSource;
 
     /**
      * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
      */
     Binding defaultObject()
     {
-        return _defaultProvider.defaultBinding("object", _resources);
+        return defaultProvider.defaultBinding("object", resources);
     }
 
 
     void onPrepareFromForm()
     {
-        _resources.triggerEvent(Form.PREPARE, null, null);
+        resources.triggerEvent(Form.PREPARE, null, null);
 
-        if (_model == null)
+        if (model == null)
         {
-            Class beanType = _resources.getBoundType("object");
+            Class beanType = resources.getBoundType("object");
 
-            _model = _beanModelSource.create(beanType, true, _resources.getContainerResources());
+            model = beanModelSource.create(beanType, true, resources.getContainerResources());
         }
 
-        BeanModelUtils.modify(_model, null, _include, _exclude, _reorder);
+        BeanModelUtils.modify(model, null, include, exclude, reorder);
     }
 
 
@@ -152,32 +151,32 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      */
     public String getClientId()
     {
-        return _form.getClientId();
+        return form.getClientId();
     }
 
     public void clearErrors()
     {
-        _form.clearErrors();
+        form.clearErrors();
     }
 
     public boolean getHasErrors()
     {
-        return _form.getHasErrors();
+        return form.getHasErrors();
     }
 
     public boolean isValid()
     {
-        return _form.isValid();
+        return form.isValid();
     }
 
     public void recordError(Field field, String errorMessage)
     {
-        _form.recordError(field, errorMessage);
+        form.recordError(field, errorMessage);
     }
 
     public void recordError(String errorMessage)
     {
-        _form.recordError(errorMessage);
+        form.recordError(errorMessage);
     }
 
 }

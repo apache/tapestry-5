@@ -45,14 +45,14 @@ public class BeanDisplay
      */
     @Parameter(required = true)
     @Property(write = false)
-    private Object _object;
+    private Object object;
 
     /**
      * If true, then &lt;span&gt; tags around each output property will be omitted. If false, then a span tag (to
      * identify the id of each property as the CSS class attribute) will be included.
      */
     @Parameter(value = "false")
-    private boolean _lean;
+    private boolean lean;
 
     /**
      * The model that identifies the parameters to be displayed, their order, and every other aspect. If not specified,
@@ -60,7 +60,7 @@ public class BeanDisplay
      */
     @Parameter
     @Property(write = false)
-    private BeanModel _model;
+    private BeanModel model;
 
     /**
      * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
@@ -69,14 +69,14 @@ public class BeanDisplay
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _include;
+    private String include;
 
     /**
      * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
      * case-insensitive.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _exclude;
+    private String exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
@@ -84,7 +84,7 @@ public class BeanDisplay
      * order.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _reorder;
+    private String reorder;
 
     /**
      * Where to search for local overrides of property display blocks as block parameters. Further, the container of the
@@ -94,34 +94,34 @@ public class BeanDisplay
      */
     @Parameter(value = "componentResources")
     @Property(write = false)
-    private ComponentResources _overrides;
+    private ComponentResources overrides;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private BeanModelSource _modelSource;
+    private BeanModelSource modelSource;
 
     @Property
-    private String _propertyName;
+    private String propertyName;
 
     /**
      * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
      */
     Binding defaultObject()
     {
-        return _defaultProvider.defaultBinding("object", _resources);
+        return defaultProvider.defaultBinding("object", resources);
     }
 
     void setupRender()
     {
-        if (_model == null) _model = _modelSource.create(_object.getClass(), false, _overrides
+        if (model == null) model = modelSource.create(object.getClass(), false, overrides
                 .getContainerResources());
 
-        BeanModelUtils.modify(_model, null, _include, _exclude, _reorder);
+        BeanModelUtils.modify(model, null, include, exclude, reorder);
     }
 
     /**
@@ -129,7 +129,7 @@ public class BeanDisplay
      */
     public PropertyModel getPropertyModel()
     {
-        return _model.get(_propertyName);
+        return model.get(propertyName);
     }
 
     public String getLabelClass()
@@ -139,7 +139,7 @@ public class BeanDisplay
 
     private String generateClassValue(String className)
     {
-        if (_lean) return className;
+        if (lean) return className;
 
         return className + " " + getPropertyModel().getId();
     }

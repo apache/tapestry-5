@@ -37,17 +37,17 @@ public class PageLink extends AbstractLink
      * The logical name of the page to link to.
      */
     @Parameter(required = true, defaultPrefix = "literal")
-    private String _page;
+    private String page;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     /**
      * If provided, this is the activation context for the target page (the information will be encoded into the URL).
      * If not provided, then the target page will provide its own activation context.
      */
     @Parameter
-    private List _context;
+    private List context;
 
     private final Object[] _emptyContext = new Object[0];
 
@@ -55,9 +55,9 @@ public class PageLink extends AbstractLink
     {
         if (isDisabled()) return;
 
-        Object[] activationContext = _context != null ? _context.toArray() : _emptyContext;
+        Object[] activationContext = context != null ? context.toArray() : _emptyContext;
 
-        Link link = _resources.createPageLink(_page, _resources.isBound("context"), activationContext);
+        Link link = resources.createPageLink(page, resources.isBound("context"), activationContext);
 
         writeLink(writer, link);
     }

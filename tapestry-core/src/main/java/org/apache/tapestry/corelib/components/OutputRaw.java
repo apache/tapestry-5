@@ -35,22 +35,22 @@ public class OutputRaw
      * property will be the source of the value.
      */
     @Parameter(required = true)
-    private String _value;
+    private String value;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     Binding defaultValue()
     {
-        return _defaultProvider.defaultBinding("value", _resources);
+        return defaultProvider.defaultBinding("value", resources);
     }
 
     boolean beginRender(MarkupWriter writer)
     {
-        if (_value != null && _value.length() > 0) writer.writeRaw(_value);
+        if (value != null && value.length() > 0) writer.writeRaw(value);
 
         // Abort the rest of the render.
 
@@ -61,7 +61,7 @@ public class OutputRaw
 
     void setValue(String value)
     {
-        _value = value;
+        this.value = value;
     }
 
 }

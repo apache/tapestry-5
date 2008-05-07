@@ -27,14 +27,14 @@ public class Unless
      * If true, then the body of the If component is rendered. If false, the body is omitted.
      */
     @Parameter(required = true)
-    private boolean _test;
+    private boolean test;
 
     /**
-     * An alternate {@link Block} to render if the test parameter is false. The default, null, means render nothing in
-     * that situation.
+     * An alternate {@link org.apache.tapestry.Block} to render if the test parameter is false. The default, null, means
+     * render nothing in that situation.
      */
-    @Parameter
-    private Block _else;
+    @Parameter(name = "else")
+    private Block elseBlock;
 
     /**
      * Returns null if the test parameter is true, which allows normal rendering (of the body). If the test parameter is
@@ -42,7 +42,7 @@ public class Unless
      */
     Object beginRender()
     {
-        return !_test ? null : _else;
+        return !test ? null : elseBlock;
     }
 
     /**
@@ -51,12 +51,12 @@ public class Unless
      */
     boolean beforeRenderBody()
     {
-        return !_test;
+        return !test;
     }
 
     void setup(boolean test, Block elseBlock)
     {
-        _test = test;
-        _else = elseBlock;
+        this.test = test;
+        this.elseBlock = elseBlock;
     }
 }

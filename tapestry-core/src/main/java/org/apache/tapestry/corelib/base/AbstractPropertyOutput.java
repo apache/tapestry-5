@@ -43,33 +43,33 @@ public abstract class AbstractPropertyOutput
      * Model for property displayed by the cell.
      */
     @Parameter(required = true)
-    private PropertyModel _model;
+    private PropertyModel model;
 
     /**
      * Resources used to search for block parameter overrides (this is normally the enclosing Grid component's
      * resources).
      */
     @Parameter(required = true)
-    private ComponentResources _overrides;
+    private ComponentResources overrides;
 
     /**
      * Identifies the object being rendered. The component will extract a property from the object and render its value
-     * (or delegate to a {@link Block} that will do so).
+     * (or delegate to a {@link org.apache.tapestry.Block} that will do so).
      */
     @Parameter(required = true)
-    private Object _object;
+    private Object object;
 
     @Inject
-    private BeanBlockSource _beanBlockSource;
+    private BeanBlockSource beanBlockSource;
 
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
-    private boolean _mustPopEnvironment;
+    private boolean mustPopEnvironment;
 
     protected PropertyModel getPropertyModel()
     {
-        return _model;
+        return model;
     }
 
     /**
@@ -78,13 +78,13 @@ public abstract class AbstractPropertyOutput
      */
     protected Object renderPropertyValue(MarkupWriter writer, String overrideBlockId)
     {
-        Block override = _overrides.getBlockParameter(overrideBlockId);
+        Block override = overrides.getBlockParameter(overrideBlockId);
 
         if (override != null) return override;
 
-        String datatype = _model.getDataType();
+        String datatype = model.getDataType();
 
-        if (_beanBlockSource.hasDisplayBlock(datatype))
+        if (beanBlockSource.hasDisplayBlock(datatype))
         {
             PropertyOutputContext context = new PropertyOutputContext()
             {
@@ -100,19 +100,19 @@ public abstract class AbstractPropertyOutput
 
                 public String getPropertyId()
                 {
-                    return _model.getId();
+                    return model.getId();
                 }
 
                 public String getPropertyName()
                 {
-                    return _model.getPropertyName();
+                    return model.getPropertyName();
                 }
             };
 
-            _environment.push(PropertyOutputContext.class, context);
-            _mustPopEnvironment = true;
+            environment.push(PropertyOutputContext.class, context);
+            mustPopEnvironment = true;
 
-            return _beanBlockSource.getDisplayBlock(datatype);
+            return beanBlockSource.getDisplayBlock(datatype);
         }
 
         Object value = readPropertyForObject();
@@ -132,21 +132,21 @@ public abstract class AbstractPropertyOutput
 
     Object readPropertyForObject()
     {
-        PropertyConduit conduit = _model.getConduit();
+        PropertyConduit conduit = model.getConduit();
 
         try
         {
-            return conduit == null ? null : conduit.get(_object);
+            return conduit == null ? null : conduit.get(object);
         }
         catch (final NullPointerException ex)
         {
-            throw new NullPointerException(BaseMessages.nullValueInPath(_model.getPropertyName()));
+            throw new NullPointerException(BaseMessages.nullValueInPath(model.getPropertyName()));
         }
     }
 
     private Messages getOverrideMessages()
     {
-        return _overrides.getContainerMessages();
+        return overrides.getContainerMessages();
     }
 
     /**
@@ -159,17 +159,17 @@ public abstract class AbstractPropertyOutput
 
     void afterRender()
     {
-        if (_mustPopEnvironment)
+        if (mustPopEnvironment)
         {
-            _environment.pop(PropertyOutputContext.class);
-            _mustPopEnvironment = false;
+            environment.pop(PropertyOutputContext.class);
+            mustPopEnvironment = false;
         }
     }
 
     // Used for testing.
     void inject(final PropertyModel model, final Object object)
     {
-        _model = model;
-        _object = object;
+        this.model = model;
+        this.object = object;
     }
 }

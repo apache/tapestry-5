@@ -52,14 +52,14 @@ public abstract class AbstractTextField extends AbstractField
      * the unbound value parameter.
      */
     @Parameter(required = true, principal = true)
-    private Object _value;
+    private Object value;
 
     /**
      * The object which will perform translation between server-side and client-side representations. If not specified,
      * a value will usually be generated based on the type of the value parameter.
      */
     @Parameter(required = true)
-    private Translator<Object> _translate;
+    private Translator<Object> translate;
 
     /**
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
@@ -67,7 +67,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     @Parameter(defaultPrefix = TapestryConstants.VALIDATE_BINDING_PREFIX)
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> _validate;
+    private FieldValidator<Object> validate;
 
     /**
      * Provider of annotations used for some defaults.  Annotation are usually provided in terms of the value parameter
@@ -76,7 +76,7 @@ public abstract class AbstractTextField extends AbstractField
      * @see org.apache.tapestry.beaneditor.Width
      */
     @Parameter
-    private AnnotationProvider _annotationProvider;
+    private AnnotationProvider annotationProvider;
 
     /**
      * Defines how nulls on the server side, or sent from the client side, are treated. The selected strategy may
@@ -84,32 +84,32 @@ public abstract class AbstractTextField extends AbstractField
      * zero, replaces nulls with the value 0.
      */
     @Parameter(defaultPrefix = TapestryConstants.NULLFIELDSTRATEGY_BINDING_PREFIX, value = "default")
-    private NullFieldStrategy _nulls;
+    private NullFieldStrategy nulls;
 
     @Environmental
-    private ValidationTracker _tracker;
+    private ValidationTracker tracker;
 
     @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
+    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
-    private FieldValidationSupport _fieldValidationSupport;
+    private FieldValidationSupport fieldValidationSupport;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderDisabled _renderDisabled;
+    private RenderDisabled renderDisabled;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     /**
      * Computes a default value for the "translate" parameter using {@link org.apache.tapestry.services.ComponentDefaultProvider#defaultTranslator(String,
@@ -117,7 +117,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     final Translator defaultTranslate()
     {
-        return _defaultProvider.defaultTranslator("value", _resources);
+        return defaultProvider.defaultTranslator("value", resources);
     }
 
     final AnnotationProvider defaultAnnotationProvider()
@@ -126,7 +126,7 @@ public abstract class AbstractTextField extends AbstractField
         {
             public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
             {
-                return _resources.getParameterAnnotation("value", annotationClass);
+                return resources.getParameterAnnotation("value", annotationClass);
             }
         };
     }
@@ -136,13 +136,13 @@ public abstract class AbstractTextField extends AbstractField
      */
     final FieldValidator defaultValidate()
     {
-        Class type = _resources.getBoundType("value");
+        Class type = resources.getBoundType("value");
 
         if (type == null) return NOOP_VALIDATOR;
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
-                                                                   _resources.getContainerMessages(), _locale, type,
-                                                                   _resources.getAnnotationProvider("value"));
+        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
+                                                                  resources.getContainerMessages(), locale, type,
+                                                                  resources.getAnnotationProvider("value"));
     }
 
     /**
@@ -158,7 +158,7 @@ public abstract class AbstractTextField extends AbstractField
     @BeginRender
     final void begin(MarkupWriter writer)
     {
-        String value = _tracker.getInput(this);
+        String value = tracker.getInput(this);
 
         // If this is a response to a form submission, and the user provided a value.
         // then send that exact value back at them.
@@ -169,14 +169,14 @@ public abstract class AbstractTextField extends AbstractField
             // Then let the translator and or various triggered events get it into
             // a format ready to be sent to the client.
 
-            value = _fieldValidationSupport.toClient(_value, _resources, _translate, _nulls);
+            value = fieldValidationSupport.toClient(this.value, resources, translate, nulls);
         }
 
         writeFieldTag(writer, value);
 
-        _validate.render(writer);
+        validate.render(writer);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         decorateInsideField();
     }
@@ -198,28 +198,28 @@ public abstract class AbstractTextField extends AbstractField
     @Override
     protected final void processSubmission(String elementName)
     {
-        String rawValue = _request.getParameter(elementName);
+        String rawValue = request.getParameter(elementName);
 
-        _tracker.recordInput(this, rawValue);
+        tracker.recordInput(this, rawValue);
 
         try
         {
-            Object translated = _fieldValidationSupport.parseClient(rawValue, _resources, _translate, _nulls);
+            Object translated = fieldValidationSupport.parseClient(rawValue, resources, translate, nulls);
 
-            _fieldValidationSupport.validate(translated, _resources, _validate);
+            fieldValidationSupport.validate(translated, resources, validate);
 
-            _value = translated;
+            value = translated;
         }
         catch (ValidationException ex)
         {
-            _tracker.recordError(this, ex.getMessage());
+            tracker.recordError(this, ex.getMessage());
         }
     }
 
     @Override
     public boolean isRequired()
     {
-        return _validate.isRequired();
+        return validate.isRequired();
     }
 
     /**
@@ -230,7 +230,7 @@ public abstract class AbstractTextField extends AbstractField
      */
     protected final String getWidth()
     {
-        Width width = _annotationProvider.getAnnotation(Width.class);
+        Width width = annotationProvider.getAnnotation(Width.class);
 
         if (width == null) return null;
 

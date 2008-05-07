@@ -54,7 +54,7 @@ public class BeanEditor
      * that a non-null value is ready to be read or updated.
      */
     @Parameter
-    private Object _object;
+    private Object object;
 
     /**
      * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
@@ -63,14 +63,14 @@ public class BeanEditor
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _include;
+    private String include;
 
     /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
      * The names are case-insensitive.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _exclude;
+    private String exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
@@ -78,7 +78,7 @@ public class BeanEditor
      * order.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _reorder;
+    private String reorder;
 
     /**
      * The model that identifies the parameters to be edited, their order, and every other aspect. If not specified, a
@@ -86,7 +86,7 @@ public class BeanEditor
      */
     @Parameter
     @Property(write = false)
-    private BeanModel _model;
+    private BeanModel model;
 
     /**
      * Where to search for local overrides of property editing blocks as block parameters. Further, the container of the
@@ -96,71 +96,71 @@ public class BeanEditor
      */
     @Parameter(value = "componentResources")
     @Property(write = false)
-    private ComponentResources _overrides;
+    private ComponentResources overrides;
 
     @Inject
-    private BeanModelSource _modelSource;
+    private BeanModelSource modelSource;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     // Value that change with each change to the current property:
 
     @Property
-    private String _propertyName;
+    private String propertyName;
 
     /**
      * Defaults the object parameter to a property of the container matching the BeanEditForm's id.
      */
     Binding defaultObject()
     {
-        return _defaultProvider.defaultBinding("object", _resources);
+        return defaultProvider.defaultBinding("object", resources);
     }
 
     // Needed for testing as well
 
     public Object getObject()
     {
-        return _object;
+        return object;
     }
 
     void setupRender()
     {
-        _formSupport.storeAndExecute(this, new Prepare());
+        formSupport.storeAndExecute(this, new Prepare());
     }
 
     void doPrepare()
     {
-        if (_model == null)
+        if (model == null)
         {
-            Class type = _resources.getBoundType("object");
-            _model = _modelSource.create(type, true, _overrides.getContainerResources());
+            Class type = resources.getBoundType("object");
+            model = modelSource.create(type, true, overrides.getContainerResources());
         }
 
-        BeanModelUtils.modify(_model, null, _include, _exclude, _reorder);
+        BeanModelUtils.modify(model, null, include, exclude, reorder);
 
         // The only problem here is that if the bound property is backed by a persistent field, it
         // is assigned (and stored to the session, and propagated around the cluster) first,
         // before values are assigned.
 
-        if (_object == null)
+        if (object == null)
         {
             try
             {
-                _object = _model.newInstance();
+                object = model.newInstance();
             }
             catch (Exception ex)
             {
-                String message = InternalMessages.failureInstantiatingObject(_model.getBeanType(),
-                                                                             _resources.getCompleteId(),
+                String message = InternalMessages.failureInstantiatingObject(model.getBeanType(),
+                                                                             resources.getCompleteId(),
                                                                              ex);
-                throw new TapestryException(message, _resources.getLocation(), ex);
+                throw new TapestryException(message, resources.getLocation(), ex);
             }
         }
 
@@ -169,8 +169,8 @@ public class BeanEditor
     // For testing
     void inject(ComponentResources resources, ComponentResources overrides, BeanModelSource source)
     {
-        _resources = resources;
-        _overrides = overrides;
-        _modelSource = source;
+        this.resources = resources;
+        this.overrides = overrides;
+        modelSource = source;
     }
 }

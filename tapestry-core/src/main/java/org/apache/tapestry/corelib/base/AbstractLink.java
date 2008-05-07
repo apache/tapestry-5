@@ -30,48 +30,48 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public abstract class AbstractLink implements ClientElement
 {
     @Inject
-    private ComponentInvocationMap _componentInvocationMap;
+    private ComponentInvocationMap componentInvocationMap;
 
     /**
      * An anchor value to append to the generated URL (the hash separator will be added automatically).
      */
     @Parameter(defaultPrefix = LITERAL_BINDING_PREFIX)
-    private String _anchor;
+    private String anchor;
 
     /**
      * If true, then then no link element is rendered (and no informal parameters as well). The body is, however, still
      * rendered.
      */
     @Parameter("false")
-    private boolean _disabled;
+    private boolean disabled;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
-    private Link _link;
+    private Link link;
 
-    private Element _element;
+    private Element element;
 
-    private String _clientId;
+    private String clientId;
 
     private String buildHref(Link link)
     {
         String href = link.toURI();
 
-        if (_anchor == null) return href;
+        if (anchor == null) return href;
 
-        return href + "#" + _anchor;
+        return href + "#" + anchor;
     }
 
 
     @SetupRender
     void resetElementAndClientId()
     {
-        _element = null;
-        _clientId = null;
+        element = null;
+        clientId = null;
     }
 
     /**
@@ -85,15 +85,15 @@ public abstract class AbstractLink implements ClientElement
      */
     protected final void writeLink(MarkupWriter writer, Link link, Object... namesAndValues)
     {
-        _element = writer.element("a", "href", buildHref(link));
+        element = writer.element("a", "href", buildHref(link));
 
         writer.attributes(namesAndValues);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
-        _componentInvocationMap.store(_element, link);
+        componentInvocationMap.store(element, link);
 
-        _link = link;
+        this.link = link;
     }
 
     /**
@@ -105,7 +105,7 @@ public abstract class AbstractLink implements ClientElement
      */
     public Link getLink()
     {
-        return _link;
+        return link;
     }
 
     /**
@@ -114,19 +114,19 @@ public abstract class AbstractLink implements ClientElement
      */
     public final String getClientId()
     {
-        if (_clientId == null)
+        if (clientId == null)
         {
-            if (_element == null)
+            if (element == null)
                 throw new IllegalStateException(
                         String.format("Client id for %s is not available as it did not render yet (or was disabled).",
-                                      _resources.getCompleteId()));
+                                      resources.getCompleteId()));
 
-            _clientId = _pageRenderSupport.allocateClientId(_resources);
+            clientId = pageRenderSupport.allocateClientId(resources);
 
-            _element.forceAttributes("id", _clientId);
+            element.forceAttributes("id", clientId);
         }
 
-        return _clientId;
+        return clientId;
     }
 
     /**
@@ -135,7 +135,7 @@ public abstract class AbstractLink implements ClientElement
      */
     public boolean isDisabled()
     {
-        return _disabled;
+        return disabled;
     }
 
     /**
@@ -143,8 +143,8 @@ public abstract class AbstractLink implements ClientElement
      */
     final void inject(String anchor, ComponentInvocationMap map, ComponentResources resources)
     {
-        _anchor = anchor;
-        _componentInvocationMap = map;
-        _resources = resources;
+        this.anchor = anchor;
+        componentInvocationMap = map;
+        this.resources = resources;
     }
 }

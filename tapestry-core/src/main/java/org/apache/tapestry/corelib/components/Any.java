@@ -28,21 +28,21 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class Any
 {
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _element;
+    private String element;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     String defaultElement()
     {
-        return _resources.getElementName("div");
+        return resources.getElementName("div");
     }
 
     void beginRender(MarkupWriter writer)
     {
-        writer.element(_element);
+        writer.element(element);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
     }
 
     void afterRender(MarkupWriter writer)

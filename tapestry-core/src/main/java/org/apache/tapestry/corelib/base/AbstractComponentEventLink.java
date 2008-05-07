@@ -35,28 +35,28 @@ public abstract class AbstractComponentEventLink extends AbstractLink
      * methods.
      */
     @Parameter
-    private List<?> _context;
+    private List<?> context;
 
     /**
      * Binding the zone parameter turns the link into a an Ajax control that causes the related zone to be updated.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _zone;
+    private String zone;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private ClientBehaviorSupport clientBehaviorSupport;
 
     void beginRender(MarkupWriter writer)
     {
         if (isDisabled()) return;
 
-        Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
+        Object[] contextArray = context == null ? new Object[0] : context.toArray();
 
         Link link = createLink(contextArray);
 
         writeLink(writer, link);
 
-        if (_zone != null) _clientBehaviorSupport.linkZone(getClientId(), _zone);
+        if (zone != null) clientBehaviorSupport.linkZone(getClientId(), zone);
     }
 
     /**

@@ -99,12 +99,17 @@ public class Form implements ClientElement, FormValidationControl
     public static final String FAILURE = "failure";
 
     /**
+     * Query parameter name storing form data (the serialized commands needed to process a form submission).
+     */
+    public static final String FORM_DATA = "t:formdata";
+
+    /**
      * The context for the link (optional parameter). This list of values will be converted into strings and included in
      * the URI. The strings will be coerced back to whatever their values are and made available to event handler
      * methods.
      */
     @Parameter
-    private List<?> _context;
+    private List<?> context;
 
     /**
      * The object which will record user input and validation errors. The object must be persistent between requests
@@ -113,12 +118,7 @@ public class Form implements ClientElement, FormValidationControl
      * nearly all purposes (except when a Form is rendered inside a loop).
      */
     @Parameter("defaultTracker")
-    private ValidationTracker _tracker;
-
-    /**
-     * Query parameter name storing form data (the serialized commands needed to process a form submission).
-     */
-    public static final String FORM_DATA = "t:formdata";
+    private ValidationTracker tracker;
 
     /**
      * If true (the default) then client validation is enabled for the form, and the default set of JavaScript libraries
@@ -127,72 +127,72 @@ public class Form implements ClientElement, FormValidationControl
      * many validations are used that do not operate on the client side at all.
      */
     @Parameter("true")
-    private boolean _clientValidation;
+    private boolean clientValidation;
 
     /**
      * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
      * indicated zone.  Often a Form will update the same zone that contains it.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _zone;
+    private String zone;
 
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
-    private ComponentSource _source;
+    private ComponentSource source;
 
     @Persist(TapestryConstants.FLASH_PERSISTENCE_STRATEGY)
-    private ValidationTracker _defaultTracker;
+    private ValidationTracker defaultTracker;
 
     @Inject
-    private ComponentInvocationMap _componentInvocationMap;
+    private ComponentInvocationMap componentInvocationMap;
 
-    private FormSupportImpl _formSupport;
+    private FormSupportImpl formSupport;
 
-    private Element _form;
+    private Element form;
 
-    private Element _div;
+    private Element div;
 
     // Collects a stream of component actions. Each action goes in as a UTF string (the component
     // component id), followed by a ComponentAction
 
-    private Base64ObjectOutputStream _actions;
+    private Base64ObjectOutputStream actions;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderInformals _renderInformals;
+    private RenderInformals renderInformals;
 
     /**
      * Set up via the traditional or Ajax component event request handler
      */
     @Environmental
-    private ComponentEventResultProcessor _componentEventResultProcessor;
+    private ComponentEventResultProcessor componentEventResultProcessor;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private ClientBehaviorSupport clientBehaviorSupport;
 
-    private String _name;
+    private String name;
 
     public ValidationTracker getDefaultTracker()
     {
-        if (_defaultTracker == null) _defaultTracker = new ValidationTrackerImpl();
+        if (defaultTracker == null) defaultTracker = new ValidationTrackerImpl();
 
-        return _defaultTracker;
+        return defaultTracker;
     }
 
     public void setDefaultTracker(ValidationTracker defaultTracker)
     {
-        _defaultTracker = defaultTracker;
+        this.defaultTracker = defaultTracker;
     }
 
     void beginRender(MarkupWriter writer)
@@ -200,46 +200,46 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-            _actions = new Base64ObjectOutputStream();
+            actions = new Base64ObjectOutputStream();
         }
         catch (IOException ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _name = _pageRenderSupport.allocateClientId(_resources);
+        name = pageRenderSupport.allocateClientId(resources);
 
-        _formSupport = new FormSupportImpl(_name, _actions, _clientBehaviorSupport, _clientValidation);
+        formSupport = new FormSupportImpl(name, actions, clientBehaviorSupport, clientValidation);
 
-        if (_zone != null) _clientBehaviorSupport.linkZone(_name, _zone);
+        if (zone != null) clientBehaviorSupport.linkZone(name, zone);
 
         // TODO: Forms should not allow to nest. Perhaps a set() method instead of a push() method
         // for this kind of check?  
 
-        _environment.push(FormSupport.class, _formSupport);
-        _environment.push(ValidationTracker.class, _tracker);
+        environment.push(FormSupport.class, formSupport);
+        environment.push(ValidationTracker.class, tracker);
 
         // Now that the environment is setup, inform the component or other listeners that the form
         // is about to render.  
 
-        Object[] contextArray = _context == null ? new Object[0] : _context.toArray();
+        Object[] contextArray = context == null ? new Object[0] : context.toArray();
 
-        _resources.triggerEvent(PREPARE_FOR_RENDER, contextArray, null);
+        resources.triggerEvent(PREPARE_FOR_RENDER, contextArray, null);
 
-        _resources.triggerEvent(PREPARE, contextArray, null);
+        resources.triggerEvent(PREPARE, contextArray, null);
 
-        Link link = _resources.createActionLink(TapestryConstants.ACTION_EVENT, true, contextArray);
+        Link link = resources.createActionLink(TapestryConstants.ACTION_EVENT, true, contextArray);
 
         // Save the form element for later, in case we want to write an encoding type attribute.
 
-        _form = writer
-                .element("form", "name", _name, "id", _name, "method", "post", "action", link);
+        form = writer
+                .element("form", "name", name, "id", name, "method", "post", "action", link);
 
-        _componentInvocationMap.store(_form, link);
+        componentInvocationMap.store(form, link);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
-        _div = writer.element("div", "class", TapestryConstants.INVISIBLE_CLASS);
+        div = writer.element("div", "class", TapestryConstants.INVISIBLE_CLASS);
 
         for (String parameterName : link.getParameterNames())
         {
@@ -251,19 +251,19 @@ public class Form implements ClientElement, FormValidationControl
 
         writer.end(); // div
 
-        _environment.peek(Heartbeat.class).begin();
+        environment.peek(Heartbeat.class).begin();
 
     }
 
     void afterRender(MarkupWriter writer)
     {
-        _environment.peek(Heartbeat.class).end();
+        environment.peek(Heartbeat.class).end();
 
-        _formSupport.executeDeferred();
+        formSupport.executeDeferred();
 
-        String encodingType = _formSupport.getEncodingType();
+        String encodingType = formSupport.getEncodingType();
 
-        if (encodingType != null) _form.forceAttributes("enctype", encodingType);
+        if (encodingType != null) form.forceAttributes("enctype", encodingType);
 
         writer.end(); // form
 
@@ -271,46 +271,46 @@ public class Form implements ClientElement, FormValidationControl
 
         try
         {
-            _actions.close();
+            actions.close();
         }
         catch (IOException ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _div.element("input",
+        div.element("input",
 
-                     "type", "hidden",
+                    "type", "hidden",
 
-                     "name", FORM_DATA,
+                    "name", FORM_DATA,
 
-                     "value", _actions.toBase64());
+                    "value", actions.toBase64());
     }
 
     void cleanupRender()
     {
-        _environment.pop(FormSupport.class);
+        environment.pop(FormSupport.class);
 
-        _formSupport = null;
+        formSupport = null;
 
         // This forces a change to the tracker, which is nice because its internal state has
         // changed.
-        _tracker = _environment.pop(ValidationTracker.class);
+        tracker = environment.pop(ValidationTracker.class);
     }
 
     @SuppressWarnings({ "unchecked", "InfiniteLoopStatement" })
     Object onAction(EventContext context) throws IOException
     {
-        _tracker.clear();
+        tracker.clear();
 
-        _formSupport = new FormSupportImpl();
+        formSupport = new FormSupportImpl();
 
-        _environment.push(ValidationTracker.class, _tracker);
-        _environment.push(FormSupport.class, _formSupport);
+        environment.push(ValidationTracker.class, tracker);
+        environment.push(FormSupport.class, formSupport);
 
         Heartbeat heartbeat = new HeartbeatImpl();
 
-        _environment.push(Heartbeat.class, heartbeat);
+        environment.push(Heartbeat.class, heartbeat);
 
         heartbeat.begin();
 
@@ -318,13 +318,13 @@ public class Form implements ClientElement, FormValidationControl
         {
 
             ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
-                    _componentEventResultProcessor);
+                    componentEventResultProcessor);
 
-            _resources.triggerContextEvent(PREPARE_FOR_SUBMIT, context, callback);
+            resources.triggerContextEvent(PREPARE_FOR_SUBMIT, context, callback);
 
             if (callback.isAborted()) return true;
 
-            _resources.triggerContextEvent(PREPARE, context, callback);
+            resources.triggerContextEvent(PREPARE, context, callback);
 
             if (callback.isAborted()) return true;
 
@@ -332,20 +332,20 @@ public class Form implements ClientElement, FormValidationControl
 
             heartbeat.end();
 
-            ValidationTracker tracker = _environment.peek(ValidationTracker.class);
+            ValidationTracker tracker = environment.peek(ValidationTracker.class);
 
             // Let the listeners peform any final validations
 
             // Update through the parameter because the tracker has almost certainly changed
             // internal state.
 
-            _tracker = tracker;
+            this.tracker = tracker;
 
-            _resources.triggerContextEvent(VALIDATE_FORM, context, callback);
+            resources.triggerContextEvent(VALIDATE_FORM, context, callback);
 
             if (callback.isAborted()) return true;
 
-            _formSupport.executeDeferred();
+            formSupport.executeDeferred();
 
             // Let the listeners know about overall success or failure. Most listeners fall into
             // one of those two camps.
@@ -354,22 +354,22 @@ public class Form implements ClientElement, FormValidationControl
             // as well, so that the next page render will be "clean" and show
             // true persistent data, not value from the previous form submission.
 
-            if (!_tracker.getHasErrors()) _tracker.clear();
+            if (!this.tracker.getHasErrors()) this.tracker.clear();
 
-            _resources.triggerContextEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, callback);
+            resources.triggerContextEvent(tracker.getHasErrors() ? FAILURE : SUCCESS, context, callback);
 
             // Lastly, tell anyone whose interested that the form is completely submitted.
 
             if (callback.isAborted()) return true;
 
-            _resources.triggerContextEvent(SUBMIT, context, callback);
+            resources.triggerContextEvent(SUBMIT, context, callback);
 
             return callback.isAborted();
         }
         finally
         {
-            _environment.pop(Heartbeat.class);
-            _environment.pop(FormSupport.class);
+            environment.pop(Heartbeat.class);
+            environment.pop(FormSupport.class);
         }
     }
 
@@ -379,7 +379,7 @@ public class Form implements ClientElement, FormValidationControl
      */
     private void executeStoredActions()
     {
-        String[] values = _request.getParameters(FORM_DATA);
+        String[] values = request.getParameters(FORM_DATA);
 
         if (values == null) return;
 
@@ -400,7 +400,7 @@ public class Form implements ClientElement, FormValidationControl
                     String componentId = ois.readUTF();
                     ComponentAction action = (ComponentAction) ois.readObject();
 
-                    component = _source.getComponent(componentId);
+                    component = source.getComponent(componentId);
 
                     action.execute(component);
 
@@ -426,42 +426,42 @@ public class Form implements ClientElement, FormValidationControl
 
     public void recordError(String errorMessage)
     {
-        ValidationTracker tracker = _tracker;
+        ValidationTracker tracker = this.tracker;
 
         tracker.recordError(errorMessage);
 
-        _tracker = tracker;
+        this.tracker = tracker;
     }
 
     public void recordError(Field field, String errorMessage)
     {
-        ValidationTracker tracker = _tracker;
+        ValidationTracker tracker = this.tracker;
 
         tracker.recordError(field, errorMessage);
 
-        _tracker = tracker;
+        this.tracker = tracker;
     }
 
     public boolean getHasErrors()
     {
-        return _tracker.getHasErrors();
+        return tracker.getHasErrors();
     }
 
     public boolean isValid()
     {
-        return !_tracker.getHasErrors();
+        return !tracker.getHasErrors();
     }
 
     // For testing:
 
     void setTracker(ValidationTracker tracker)
     {
-        _tracker = tracker;
+        this.tracker = tracker;
     }
 
     public void clearErrors()
     {
-        _tracker.clear();
+        tracker.clear();
     }
 
     /**
@@ -469,6 +469,6 @@ public class Form implements ClientElement, FormValidationControl
      */
     public String getClientId()
     {
-        return _name;
+        return name;
     }
 }

@@ -27,14 +27,14 @@ public class RadioGroup implements Field
      * The property read and updated by the group as a whole.
      */
     @Parameter(required = true, principal = true)
-    private Object _value;
+    private Object value;
 
     /**
      * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
      * disabled field ignores any value in the request when the form is submitted.
      */
     @Parameter("false")
-    private boolean _disabled;
+    private boolean disabled;
 
     /**
      * The user presentable label for the field. If not provided, a reasonable label is generated from the component's
@@ -42,7 +42,7 @@ public class RadioGroup implements Field
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _label;
+    private String label;
 
     /**
      * Allows a specific implementation of {@link ValueEncoder} to be supplied. This is used to create client-side
@@ -51,57 +51,57 @@ public class RadioGroup implements Field
      * @see ValueEncoderSource
      */
     @Parameter(required = true)
-    private ValueEncoder _encoder;
+    private ValueEncoder encoder;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Environmental
-    private ValidationTracker _tracker;
+    private ValidationTracker tracker;
 
-    private String _controlName;
+    private String controlName;
 
     final Binding defaultValue()
     {
-        return _defaultProvider.defaultBinding("value", _resources);
+        return defaultProvider.defaultBinding("value", resources);
     }
 
     String defaultLabel()
     {
-        return _defaultProvider.defaultLabel(_resources);
+        return defaultProvider.defaultLabel(resources);
     }
 
     final ValueEncoder defaultEncoder()
     {
-        return _defaultProvider.defaultValueEncoder("value", _resources);
+        return defaultProvider.defaultValueEncoder("value", resources);
     }
 
     private static class Setup implements ComponentAction<RadioGroup>
     {
         private static final long serialVersionUID = -7984673040135949374L;
 
-        private final String _controlName;
+        private final String controlName;
 
         Setup(String controlName)
         {
-            _controlName = controlName;
+            this.controlName = controlName;
         }
 
         public void execute(RadioGroup component)
         {
-            component.setup(_controlName);
+            component.setup(controlName);
         }
     }
 
@@ -117,16 +117,16 @@ public class RadioGroup implements Field
 
     private void setup(String elementName)
     {
-        _controlName = elementName;
+        controlName = elementName;
     }
 
     private void processSubmission()
     {
-        String clientValue = _request.getParameter(_controlName);
+        String clientValue = request.getParameter(controlName);
 
-        _tracker.recordInput(this, clientValue);
+        tracker.recordInput(this, clientValue);
 
-        _value = _encoder.toValue(clientValue);
+        value = encoder.toValue(clientValue);
     }
 
     /**
@@ -135,27 +135,27 @@ public class RadioGroup implements Field
      */
     final void setupRender()
     {
-        String name = _formSupport.allocateControlName(_resources.getId());
+        String name = formSupport.allocateControlName(resources.getId());
 
         ComponentAction<RadioGroup> action = new Setup(name);
 
-        _formSupport.storeAndExecute(this, action);
+        formSupport.storeAndExecute(this, action);
 
-        String submittedValue = _tracker.getInput(this);
+        String submittedValue = tracker.getInput(this);
 
-        final String selectedValue = submittedValue != null ? submittedValue : _encoder.toClient(_value);
+        final String selectedValue = submittedValue != null ? submittedValue : encoder.toClient(value);
 
 
-        _environment.push(RadioContainer.class, new RadioContainer()
+        environment.push(RadioContainer.class, new RadioContainer()
         {
             public String getElementName()
             {
-                return _controlName;
+                return controlName;
             }
 
             public boolean isDisabled()
             {
-                return _disabled;
+                return disabled;
             }
 
             @SuppressWarnings("unchecked")
@@ -163,17 +163,17 @@ public class RadioGroup implements Field
             {
                 // TODO: Ensure that value is of the expected type?
 
-                return _encoder.toClient(value);
+                return encoder.toClient(value);
             }
 
             public boolean isSelected(Object value)
             {
-                return TapestryInternalUtils.isEqual(_encoder.toClient(value), selectedValue);
+                return TapestryInternalUtils.isEqual(encoder.toClient(value), selectedValue);
             }
 
         });
 
-        _formSupport.store(this, PROCESS_SUBMISSION);
+        formSupport.store(this, PROCESS_SUBMISSION);
     }
 
     /**
@@ -181,22 +181,22 @@ public class RadioGroup implements Field
      */
     final void afterRender()
     {
-        _environment.pop(RadioContainer.class);
+        environment.pop(RadioContainer.class);
     }
 
     public String getControlName()
     {
-        return _controlName;
+        return controlName;
     }
 
     public String getLabel()
     {
-        return _label;
+        return label;
     }
 
     public boolean isDisabled()
     {
-        return _disabled;
+        return disabled;
     }
 
     /**

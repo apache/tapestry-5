@@ -30,38 +30,38 @@ public class SubmitNotifier
 {
     private static final class TriggerEvent implements ComponentAction<SubmitNotifier>
     {
-        private final String _eventType;
+        private final String eventType;
 
         public TriggerEvent(String eventType)
         {
-            _eventType = eventType;
+            this.eventType = eventType;
         }
 
         public void execute(SubmitNotifier component)
         {
-            component.trigger(_eventType);
+            component.trigger(eventType);
         }
     }
 
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     void beginRender()
     {
-        _formSupport.store(this, new TriggerEvent("BeginSubmit"));
+        formSupport.store(this, new TriggerEvent("BeginSubmit"));
     }
 
     void afterRender()
     {
-        _formSupport.store(this, new TriggerEvent("AfterSubmit"));
+        formSupport.store(this, new TriggerEvent("AfterSubmit"));
     }
 
     private void trigger(String eventType)
     {
-        _resources.triggerEvent(eventType, null, null);
+        resources.triggerEvent(eventType, null, null);
     }
 }

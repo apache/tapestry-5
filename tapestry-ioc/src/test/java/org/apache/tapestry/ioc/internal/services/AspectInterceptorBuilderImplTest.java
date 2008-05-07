@@ -134,6 +134,43 @@ public class AspectInterceptorBuilderImplTest extends IOCInternalTestCase
         verify();
     }
 
+    @Test
+    public void arrays_as_parameters_and_result()
+    {
+        ArraysSubject delegate = new ArraysSubjectImpl();
+
+        MethodAdvice advice = new MethodAdvice()
+        {
+            public void advise(Invocation invocation)
+            {
+                String[] param = (String[]) invocation.getParameter(0);
+
+                for (int i = 0; i < param.length; i++)
+                {
+                    param[i] = param[i].toUpperCase();
+                }
+
+                invocation.proceed();
+
+                String[] result = (String[]) invocation.getResult();
+
+                for (int i = 0; i < result.length; i++)
+                {
+                    result[i] = i + ":" + result[i];
+                }
+            }
+        };
+
+        ArraysSubject advised = decorator.build(ArraysSubject.class, delegate, advice, "whatever");
+
+        String[] inputs = { "Fred", "Barney" };
+
+        String[] result = advised.operation(inputs);
+
+        assertEquals(result[0], "0:FRED");
+        assertEquals(result[1], "1:BARNEY");
+    }
+
     protected final MethodAdvice mockAdvice()
     {
         return newMock(MethodAdvice.class);
