@@ -34,7 +34,7 @@ import org.apache.tapestry.services.ComponentDefaultProvider;
 public class Radio implements Field
 {
     @Environmental
-    private RadioContainer _container;
+    private RadioContainer container;
 
     /**
      * The user presentable label for the field. If not provided, a reasonable label is generated from the component's
@@ -42,55 +42,55 @@ public class Radio implements Field
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _label;
+    private String label;
 
     /**
      * The value associated with this radio button. This is used to determine which radio button will be selected when
      * the page is rendered, and also becomes the value assigned when the form is submitted.
      */
     @Parameter(required = true, principal = true)
-    private Object _value;
+    private Object value;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderInformals _renderInformals;
+    private RenderInformals renderInformals;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderDisabled _renderDisabled;
+    private RenderDisabled renderDisabled;
 
     @SuppressWarnings("unused")
     @Mixin
-    private DiscardBody _discardBody;
+    private DiscardBody discardBody;
 
     @Inject
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
-    private String _clientId;
+    private String clientId;
 
-    private String _controlName;
+    private String controlName;
 
     /**
      * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
      * disabled field ignores any value in the request when the form is submitted.
      */
     @Parameter("false")
-    private boolean _disabled;
+    private boolean disabled;
 
     String defaultLabel()
     {
-        return _defaultProvider.defaultLabel(_resources);
+        return defaultProvider.defaultLabel(resources);
     }
 
     Binding defaultValue()
     {
-        return _defaultProvider.defaultBinding("value", _resources);
+        return defaultProvider.defaultBinding("value", resources);
     }
 
     /**
@@ -98,12 +98,12 @@ public class Radio implements Field
      */
     public String getControlName()
     {
-        return _controlName;
+        return controlName;
     }
 
     public String getLabel()
     {
-        return _label;
+        return label;
     }
 
     /**
@@ -112,24 +112,24 @@ public class Radio implements Field
      */
     public boolean isDisabled()
     {
-        return _disabled || _container.isDisabled();
+        return disabled || container.isDisabled();
     }
 
     public String getClientId()
     {
-        return _clientId;
+        return clientId;
     }
 
     void beginRender(MarkupWriter writer)
     {
-        String value = _container.toClient(_value);
+        String value = container.toClient(this.value);
 
-        _clientId = _pageRenderSupport.allocateClientId(_resources);
-        _controlName = _container.getElementName();
+        clientId = pageRenderSupport.allocateClientId(resources);
+        controlName = container.getElementName();
 
-        writer.element("input", "type", "radio", "id", _clientId, "name", _controlName, "value", value);
+        writer.element("input", "type", "radio", "id", clientId, "name", controlName, "value", value);
 
-        if (_container.isSelected(_value)) writer.attributes("checked", "checked");
+        if (container.isSelected(this.value)) writer.attributes("checked", "checked");
     }
 
     void afterRender(MarkupWriter writer)

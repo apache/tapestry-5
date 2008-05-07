@@ -29,25 +29,25 @@ import org.apache.tapestry.services.Request;
  */
 public class Checkbox extends AbstractField
 {
-    @Inject
-    private Request _request;
-
-    @SuppressWarnings("unused")
-    @Mixin
-    private RenderDisabled _renderDisabled;
-
     /**
      * The value to be read or updated. If not bound, the Checkbox will attempt to edit a property of its container
      * whose name matches the component's id.
      */
     @Parameter(required = true)
-    private boolean _value;
+    private boolean value;
 
     @Inject
-    private ComponentResources _resources;
+    private Request request;
+
+    @SuppressWarnings("unused")
+    @Mixin
+    private RenderDisabled renderDisabled;
+
+    @Inject
+    private ComponentResources resources;
 
     @Environmental
-    private ValidationTracker _tracker;
+    private ValidationTracker tracker;
 
     Binding defaultValue()
     {
@@ -57,9 +57,9 @@ public class Checkbox extends AbstractField
     @BeginRender
     void begin(MarkupWriter writer)
     {
-        String asSubmitted = _tracker.getInput(this);
+        String asSubmitted = tracker.getInput(this);
 
-        boolean checked = asSubmitted != null ? Boolean.parseBoolean(asSubmitted) : _value;
+        boolean checked = asSubmitted != null ? Boolean.parseBoolean(asSubmitted) : value;
 
         writer.element("input", "type", "checkbox",
 
@@ -69,7 +69,7 @@ public class Checkbox extends AbstractField
 
                        "checked", checked ? "checked" : null);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         decorateInsideField();
     }
@@ -83,13 +83,13 @@ public class Checkbox extends AbstractField
     @Override
     protected void processSubmission(String elementName)
     {
-        String postedValue = _request.getParameter(elementName);
+        String postedValue = request.getParameter(elementName);
 
         // record as "true" or "false"
 
-        _tracker.recordInput(this, Boolean.toString(postedValue != null));
+        tracker.recordInput(this, Boolean.toString(postedValue != null));
 
-        _value = postedValue != null;
+        value = postedValue != null;
     }
 
 }

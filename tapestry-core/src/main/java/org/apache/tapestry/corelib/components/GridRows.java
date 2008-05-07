@@ -44,16 +44,16 @@ public class GridRows
     {
         private static final long serialVersionUID = -3216282071752371975L;
 
-        private final int _rowIndex;
+        private final int rowIndex;
 
         public SetupForRow(int rowIndex)
         {
-            _rowIndex = rowIndex;
+            this.rowIndex = rowIndex;
         }
 
         public void execute(GridRows component)
         {
-            component.setupForRow(_rowIndex);
+            component.setupForRow(rowIndex);
         }
     }
 
@@ -62,33 +62,33 @@ public class GridRows
      * cached, so it will be recomputed for each row.
      */
     @Parameter(cache = false)
-    private String _rowClass;
+    private String rowClass;
 
     /**
      * Object that provides access to the bean and data models used to render the Grid.
      */
     @Parameter(value = "componentResources.container")
-    private GridModel _gridModel;
+    private GridModel gridModel;
 
     /**
      * Number of rows displayed on each page. Long result sets are split across multiple pages.
      */
     @Parameter(required = true)
-    private int _rowsPerPage;
+    private int rowsPerPage;
 
     /**
      * The current page number within the available pages (indexed from 1).
      */
     @Parameter(required = true)
-    private int _currentPage;
+    private int currentPage;
 
     /**
      * The current row being rendered, this is primarily an output parameter used to allow the Grid, and the Grid's
      * container, to know what object is being rendered.
      */
     @Parameter(required = true)
-    @Property(write=false)
-    private Object _row;
+    @Property(write = false)
+    private Object row;
 
     /**
      * If true, then the CSS class on each &lt;TD&gt; cell will be omitted, which can reduce the amount of output from
@@ -96,29 +96,28 @@ public class GridRows
      * to customize the look and feel of particular columns.
      */
     @Parameter
-    private boolean _lean;
+    private boolean lean;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
      * enabling state saving logic within Forms.
      */
-    @SuppressWarnings("unused")
-    @Parameter
-    private boolean _volatile;
+    @Parameter(name = "volatile")
+    private boolean volatileState;
 
     @Environmental(false)
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
-    private boolean _recordingStateInsideForm;
+    private boolean recordingStateInsideForm;
 
-    private int _endRow;
+    private int endRow;
 
-    private int _rowIndex;
+    private int rowIndex;
 
-    private String _propertyName;
+    private String propertyName;
 
-    @Property(write=false)
-    private PropertyModel _columnModel;
+    @Property(write = false)
+    private PropertyModel columnModel;
 
     public String getRowClass()
     {
@@ -126,13 +125,13 @@ public class GridRows
 
         // Not a cached parameter, so careful to only access it once.
 
-        String rc = _rowClass;
+        String rc = rowClass;
 
         if (rc != null) classes.add(rc);
 
-        if (_rowIndex == _startRow) classes.add(GridConstants.FIRST_CLASS);
+        if (rowIndex == _startRow) classes.add(GridConstants.FIRST_CLASS);
 
-        if (_rowIndex == _endRow) classes.add(GridConstants.LAST_CLASS);
+        if (rowIndex == endRow) classes.add(GridConstants.LAST_CLASS);
 
         return TapestryInternalUtils.toClassAttributeValue(classes);
     }
@@ -141,13 +140,13 @@ public class GridRows
     {
         List<String> classes = CollectionFactory.newList();
 
-        String id = _gridModel.getDataModel().get(_propertyName).getId();
+        String id = gridModel.getDataModel().get(propertyName).getId();
 
-        if (!_lean)
+        if (!lean)
         {
             classes.add(id);
 
-            switch (_gridModel.getSortModel().getColumnSort(id))
+            switch (gridModel.getSortModel().getColumnSort(id))
             {
                 case ASCENDING:
                     classes.add(GridConstants.SORT_ASCENDING_CLASS);
@@ -167,22 +166,22 @@ public class GridRows
 
     void setupRender()
     {
-        GridDataSource dataSource = _gridModel.getDataSource();
+        GridDataSource dataSource = gridModel.getDataSource();
 
         int availableRows = dataSource.getAvailableRows();
 
-        int maxPages = ((availableRows - 1) / _rowsPerPage) + 1;
+        int maxPages = ((availableRows - 1) / rowsPerPage) + 1;
 
         // This can sometimes happen when the number of items shifts between requests.
 
-        if (_currentPage > maxPages) _currentPage = maxPages;
+        if (currentPage > maxPages) currentPage = maxPages;
 
-        _startRow = (_currentPage - 1) * _rowsPerPage;
-        _endRow = Math.min(availableRows - 1, _startRow + _rowsPerPage - 1);
+        _startRow = (currentPage - 1) * rowsPerPage;
+        endRow = Math.min(availableRows - 1, _startRow + rowsPerPage - 1);
 
-        _rowIndex = _startRow;
+        rowIndex = _startRow;
 
-        _recordingStateInsideForm = !_volatile && _formSupport != null;
+        recordingStateInsideForm = !volatileState && formSupport != null;
     }
 
     /**
@@ -190,7 +189,7 @@ public class GridRows
      */
     void setupForRow(int rowIndex)
     {
-        _row = _gridModel.getDataSource().getRowValue(rowIndex);
+        row = gridModel.getDataSource().getRowValue(rowIndex);
 
     }
 
@@ -198,34 +197,34 @@ public class GridRows
     {
         // When needed, store a callback used when the form is submitted.
 
-        if (_recordingStateInsideForm) _formSupport.store(this, new SetupForRow(_rowIndex));
+        if (recordingStateInsideForm) formSupport.store(this, new SetupForRow(rowIndex));
 
         // And do it now for the render.
 
-        setupForRow(_rowIndex);
+        setupForRow(rowIndex);
     }
 
     boolean afterRender()
     {
-        _rowIndex++;
+        rowIndex++;
 
-        return _rowIndex > _endRow;
+        return rowIndex > endRow;
     }
 
     public List<String> getPropertyNames()
     {
-        return _gridModel.getDataModel().getPropertyNames();
+        return gridModel.getDataModel().getPropertyNames();
     }
 
     public String getPropertyName()
     {
-        return _propertyName;
+        return propertyName;
     }
 
     public void setPropertyName(String propertyName)
     {
-        _propertyName = propertyName;
+        this.propertyName = propertyName;
 
-        _columnModel = _gridModel.getDataModel().get(propertyName);
+        columnModel = gridModel.getDataModel().get(propertyName);
     }
 }

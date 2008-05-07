@@ -14,7 +14,7 @@
 
 package org.apache.tapestry;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
@@ -29,11 +29,11 @@ import java.util.StringTokenizer;
  */
 public final class ContentType
 {
-    private String _baseType = "";
+    private String baseType = "";
 
-    private String _subType = "";
+    private String subType = "";
 
-    private final Map<String, String> _parameters = newCaseInsensitiveMap();
+    private final Map<String, String> _parameters = CollectionFactory.newCaseInsensitiveMap();
 
     /**
      * Creates a new empty content type.
@@ -49,7 +49,6 @@ public final class ContentType
      */
     public ContentType(String contentType)
     {
-        this();
         parse(contentType);
     }
 
@@ -66,7 +65,7 @@ public final class ContentType
 
         ContentType ct = (ContentType) o;
 
-        return _baseType.equals(ct._baseType) && _subType.equals(ct._subType) && _parameters.equals(ct._parameters);
+        return baseType.equals(ct.baseType) && subType.equals(ct.subType) && _parameters.equals(ct._parameters);
     }
 
     /**
@@ -74,7 +73,7 @@ public final class ContentType
      */
     public String getBaseType()
     {
-        return _baseType;
+        return baseType;
     }
 
     /**
@@ -84,7 +83,7 @@ public final class ContentType
     {
         Defense.notNull(baseType, "baseType");
 
-        _baseType = baseType;
+        this.baseType = baseType;
     }
 
     /**
@@ -92,7 +91,7 @@ public final class ContentType
      */
     public String getSubType()
     {
-        return _subType;
+        return subType;
     }
 
     /**
@@ -102,7 +101,7 @@ public final class ContentType
     {
         Defense.notNull(subType, "subType");
 
-        _subType = subType;
+        this.subType = subType;
     }
 
     /**
@@ -110,7 +109,7 @@ public final class ContentType
      */
     public String getMimeType()
     {
-        return _baseType + "/" + _subType;
+        return baseType + "/" + subType;
     }
 
     /**
@@ -152,8 +151,8 @@ public final class ContentType
      */
     public void parse(String contentType)
     {
-        _baseType = "";
-        _subType = "";
+        baseType = "";
+        subType = "";
         _parameters.clear();
 
         StringTokenizer tokens = new StringTokenizer(contentType, ";");

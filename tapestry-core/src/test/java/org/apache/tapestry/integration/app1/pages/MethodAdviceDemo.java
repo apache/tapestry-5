@@ -49,6 +49,28 @@ public class MethodAdviceDemo
     }
 
     @ReverseStrings
+    public int[] getIntArray()
+    {
+        return null;
+    }
+
+    @ReverseStrings
+    public void setIntArray(int[] array)
+    {
+    }
+
+    @ReverseStrings
+    public String[] getStringArray()
+    {
+        return null;
+    }
+
+    @ReverseStrings
+    public void setStringArray(String[] array)
+    {
+    }
+
+    @ReverseStrings
     public String getCranky() throws DearGodWhyMeException
     {
         throw new DearGodWhyMeException();

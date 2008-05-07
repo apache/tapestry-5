@@ -26,7 +26,7 @@ public class If
      * If true, then the body of the If component is rendered. If false, the body is omitted.
      */
     @Parameter(required = true)
-    private boolean _test;
+    private boolean test;
 
     /**
      * Optional parameter to invert the test. If true, then the body is rendered when the test parameter is false (not
@@ -35,14 +35,14 @@ public class If
      * @see Unless
      */
     @Parameter
-    private boolean _negate;
+    private boolean negate;
 
     /**
-     * An alternate {@link Block} to render if the test parameter is false. The default, null, means render nothing in
-     * that situation.
+     * An alternate {@link org.apache.tapestry.Block} to render if the test parameter is false. The default, null, means
+     * render nothing in that situation.
      */
-    @Parameter
-    private Block _else;
+    @Parameter(name = "else")
+    private Block elseBlock;
 
     /**
      * Returns null if the test parameter is true, which allows normal rendering (of the body). If the test parameter is
@@ -50,7 +50,7 @@ public class If
      */
     Object beginRender()
     {
-        return _test != _negate ? null : _else;
+        return test != negate ? null : elseBlock;
     }
 
     /**
@@ -59,13 +59,13 @@ public class If
      */
     boolean beforeRenderBody()
     {
-        return _test != _negate;
+        return test != negate;
     }
 
     void setup(boolean test, boolean negate, Block elseBlock)
     {
-        _test = test;
-        _negate = negate;
-        _else = elseBlock;
+        this.test = test;
+        this.negate = negate;
+        this.elseBlock = elseBlock;
     }
 }

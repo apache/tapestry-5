@@ -40,23 +40,23 @@ public final class Submit extends AbstractField
      * submission (this is usually desirable).
      */
     @Parameter
-    private boolean _defer = true;
+    private boolean defer = true;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     @Environmental
-    private Heartbeat _heartbeat;
+    private Heartbeat heartbeat;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @SuppressWarnings("unused")
     @Mixin
-    private RenderDisabled _renderDisabled;
+    private RenderDisabled renderDisabled;
 
     public Submit()
     {
@@ -64,14 +64,14 @@ public final class Submit extends AbstractField
 
     Submit(Request request)
     {
-        _request = request;
+        this.request = request;
     }
 
     void beginRender(MarkupWriter writer)
     {
         writer.element("input", "type", "submit", "name", getControlName(), "id", getClientId());
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
     }
 
     void afterRender(MarkupWriter writer)
@@ -82,7 +82,7 @@ public final class Submit extends AbstractField
     @Override
     protected void processSubmission(String elementName)
     {
-        String value = _request.getParameter(elementName);
+        String value = request.getParameter(elementName);
 
         if (value == null) return;
 
@@ -90,7 +90,7 @@ public final class Submit extends AbstractField
         {
             public void run()
             {
-                _resources.triggerEvent(SELECTED_EVENT, null, null);
+                resources.triggerEvent(SELECTED_EVENT, null, null);
             }
         };
 
@@ -98,8 +98,8 @@ public final class Submit extends AbstractField
         // heartbeat). This is most likely because the Submit is inside a Loop and some contextual
         // information will change if we defer.
 
-        if (_defer) _formSupport.defer(sendNotification);
-        else _heartbeat.defer(sendNotification);
+        if (defer) formSupport.defer(sendNotification);
+        else heartbeat.defer(sendNotification);
 
     }
 
@@ -107,13 +107,13 @@ public final class Submit extends AbstractField
 
     void setDefer(boolean defer)
     {
-        _defer = defer;
+        this.defer = defer;
     }
 
     void setup(ComponentResources resources, FormSupport support, Heartbeat heartbeat)
     {
-        _resources = resources;
-        _formSupport = support;
-        _heartbeat = heartbeat;
+        this.resources = resources;
+        formSupport = support;
+        this.heartbeat = heartbeat;
     }
 }

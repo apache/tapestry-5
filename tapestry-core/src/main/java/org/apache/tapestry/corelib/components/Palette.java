@@ -77,7 +77,7 @@ public class Palette extends AbstractField
 
             writeDisabled(writer, isDisabled());
 
-            for (Runnable r : _availableOptions)
+            for (Runnable r : availableOptions)
                 r.run();
 
             writer.end();
@@ -86,46 +86,46 @@ public class Palette extends AbstractField
 
     private final class OptionGroupEnd implements Runnable
     {
-        private final OptionGroupModel _model;
+        private final OptionGroupModel model;
 
         private OptionGroupEnd(OptionGroupModel model)
         {
-            _model = model;
+            this.model = model;
         }
 
         public void run()
         {
-            _renderer.endOptionGroup(_model);
+            renderer.endOptionGroup(model);
         }
     }
 
     private final class OptionGroupStart implements Runnable
     {
-        private final OptionGroupModel _model;
+        private final OptionGroupModel model;
 
         private OptionGroupStart(OptionGroupModel model)
         {
-            _model = model;
+            this.model = model;
         }
 
         public void run()
         {
-            _renderer.beginOptionGroup(_model);
+            renderer.beginOptionGroup(model);
         }
     }
 
     private final class RenderOption implements Runnable
     {
-        private final OptionModel _model;
+        private final OptionModel model;
 
         private RenderOption(OptionModel model)
         {
-            _model = model;
+            this.model = model;
         }
 
         public void run()
         {
-            _renderer.option(_model);
+            renderer.option(model);
         }
     }
 
@@ -140,9 +140,9 @@ public class Palette extends AbstractField
 
             for (Object value : getSelected())
             {
-                OptionModel model = _valueToOptionModel.get(value);
+                OptionModel model = valueToOptionModel.get(value);
 
-                _renderer.option(model);
+                renderer.option(model);
             }
 
             writer.end();
@@ -152,61 +152,61 @@ public class Palette extends AbstractField
     /**
      * List of Runnable commands to render the available options.
      */
-    private List<Runnable> _availableOptions;
+    private List<Runnable> availableOptions;
 
     /**
      * The image to use for the deselect button (the default is a left pointing arrow).
      */
     @Parameter(value = "asset:deselect.png")
-    @Property(write=false)
-    private Asset _deselect;
+    @Property(write = false)
+    private Asset deselect;
 
     /**
      * Encoder used to translate between server-side objects and client-side strings.
      */
     @Parameter(required = true)
-    private ValueEncoder<Object> _encoder;
+    private ValueEncoder<Object> encoder;
 
     /**
      * Model used to define the values and labels used when rendering.
      */
     @Parameter(required = true)
-    private SelectModel _model;
+    private SelectModel model;
 
     /**
      * The image to use for the move down button (the default is a downward pointing arrow).
      */
     @Parameter(value = "asset:move_down.png")
-    @Property(write=false)
-    private Asset _moveDown;
+    @Property(write = false)
+    private Asset moveDown;
 
     /**
      * The image to use for the move up button (the default is an upward pointing arrow).
      */
     @Parameter(value = "asset:move_up.png")
-    @Property(write=false)
-    private Asset _moveUp;
+    @Property(write = false)
+    private Asset moveUp;
 
     /**
      * Used to include scripting code in the rendered page.
      */
     @Environmental
-    private PageRenderSupport _renderSupport;
+    private PageRenderSupport renderSupport;
 
     /**
      * Needed to access query parameters when processing form submission.
      */
     @Inject
-    private Request _request;
+    private Request request;
 
-    private SelectModelRenderer _renderer;
+    private SelectModelRenderer renderer;
 
     /**
      * The image to use for the select button (the default is a right pointing arrow).
      */
     @Parameter(value = "asset:select.png")
-    @Property(write=false)
-    private Asset _select;
+    @Property(write = false)
+    private Asset select;
 
     /**
      * The list of selected values from the {@link SelectModel}. This will be updated when the form is submitted. If the
@@ -214,28 +214,28 @@ public class Palette extends AbstractField
      * unbound, defaults to a property of the container matching this component's id.
      */
     @Parameter(required = true)
-    private List<Object> _selected;
+    private List<Object> selected;
 
     /**
      * If true, then additional buttons are provided on the client-side to allow for re-ordering of the values.
      */
     @Parameter("false")
-    @Property(write=false)
-    private boolean _reorder;
+    @Property(write = false)
+    private boolean reorder;
 
     /**
      * Used during rendering to identify the options corresponding to selected values (from the selected parameter), in
      * the order they should be displayed on the page.
      */
-    private List<OptionModel> _selectedOptions;
+    private List<OptionModel> selectedOptions;
 
-    private Map<Object, OptionModel> _valueToOptionModel;
+    private Map<Object, OptionModel> valueToOptionModel;
 
     /**
      * Number of rows to display.
      */
     @Parameter(value = "10")
-    private int _size;
+    private int size;
 
     /**
      * Defaults the selected parameter to a container property whose name matches this component's id.
@@ -249,7 +249,7 @@ public class Palette extends AbstractField
     {
         return new AvailableRenderer();
     }
- 
+
     public Renderable getSelectedRenderer()
     {
         return new SelectedRenderer();
@@ -258,17 +258,17 @@ public class Palette extends AbstractField
     @Override
     protected void processSubmission(String elementName)
     {
-        String parameterValue = _request.getParameter(elementName + ":values");
+        String parameterValue = request.getParameter(elementName + ":values");
         JSONArray values = new JSONArray(parameterValue);
 
         // Use a couple of local variables to cut down on access via bindings
 
-        List<Object> selected = _selected;
+        List<Object> selected = this.selected;
 
         if (selected == null) selected = newList();
         else selected.clear();
 
-        ValueEncoder encoder = _encoder;
+        ValueEncoder encoder = this.encoder;
 
 
         int count = values.length();
@@ -281,7 +281,7 @@ public class Palette extends AbstractField
             selected.add(objectValue);
         }
 
-        _selected = selected;
+        this.selected = selected;
     }
 
     private void writeDisabled(MarkupWriter writer, boolean disabled)
@@ -293,11 +293,11 @@ public class Palette extends AbstractField
     {
         JSONArray selectedValues = new JSONArray();
 
-        for (OptionModel selected : _selectedOptions)
+        for (OptionModel selected : selectedOptions)
         {
 
             Object value = selected.getValue();
-            String clientValue = _encoder.toClient(value);
+            String clientValue = encoder.toClient(value);
 
             selectedValues.put(clientValue);
         }
@@ -311,7 +311,7 @@ public class Palette extends AbstractField
 
         String clientId = getClientId();
 
-        _renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, _reorder, naturalOrder);
+        renderSupport.addScript("new Tapestry.Palette('%s', %s, %s);", clientId, reorder, naturalOrder);
 
         writer.element("input", "type", "hidden", "id", clientId + ":values", "name", getControlName() + ":values",
                        "value", selectedValues);
@@ -334,11 +334,11 @@ public class Palette extends AbstractField
     @SuppressWarnings("unchecked")
     void setupRender(MarkupWriter writer)
     {
-        _valueToOptionModel = newMap();
-        _availableOptions = newList();
-        _selectedOptions = newList();
+        valueToOptionModel = newMap();
+        availableOptions = newList();
+        selectedOptions = newList();
         _naturalOrder = newList();
-        _renderer = new SelectModelRenderer(writer, _encoder);
+        renderer = new SelectModelRenderer(writer, encoder);
 
         final Set selectedSet = newSet(getSelected());
 
@@ -346,12 +346,12 @@ public class Palette extends AbstractField
         {
             public void beginOptionGroup(OptionGroupModel groupModel)
             {
-                _availableOptions.add(new OptionGroupStart(groupModel));
+                availableOptions.add(new OptionGroupStart(groupModel));
             }
 
             public void endOptionGroup(OptionGroupModel groupModel)
             {
-                _availableOptions.add(new OptionGroupEnd(groupModel));
+                availableOptions.add(new OptionGroupEnd(groupModel));
             }
 
             public void option(OptionModel optionModel)
@@ -366,34 +366,34 @@ public class Palette extends AbstractField
 
                 if (isSelected)
                 {
-                    _selectedOptions.add(optionModel);
-                    _valueToOptionModel.put(value, optionModel);
+                    selectedOptions.add(optionModel);
+                    valueToOptionModel.put(value, optionModel);
                     return;
                 }
 
-                _availableOptions.add(new RenderOption(optionModel));
+                availableOptions.add(new RenderOption(optionModel));
             }
 
         };
 
-        _model.visit(visitor);
+        model.visit(visitor);
     }
 
     // Avoids a strange Javassist bytecode error, c'est lavie!
     int getSize()
     {
-        return _size;
+        return size;
     }
 
     String toClient(Object value)
     {
-        return _encoder.toClient(value);
+        return encoder.toClient(value);
     }
 
     List<Object> getSelected()
     {
-        if (_selected == null) return Collections.emptyList();
+        if (selected == null) return Collections.emptyList();
 
-        return _selected;
+        return selected;
     }
 }

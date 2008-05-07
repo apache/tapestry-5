@@ -46,7 +46,7 @@ public class DateField extends AbstractField
      * The value parameter of a DateField must be a {@link Date}.
      */
     @Parameter(required = true, principal = true)
-    private Date _value;
+    private Date value;
 
     /**
      * The object that will perform input validation (which occurs after translation). The translate binding prefix is
@@ -54,45 +54,45 @@ public class DateField extends AbstractField
      */
     @Parameter(defaultPrefix = "validate")
     @SuppressWarnings("unchecked")
-    private FieldValidator<Object> _validate = NOOP_VALIDATOR;
+    private FieldValidator<Object> validate = NOOP_VALIDATOR;
 
-    @Parameter(defaultPrefix = "asset", value = "datefield.gif")
-    private Asset _icon;
-
-    @Environmental
-    private PageRenderSupport _support;
+    @Parameter(defaultPrefix = TapestryConstants.ASSET_BINDING_PREFIX, value = "datefield.gif")
+    private Asset icon;
 
     @Environmental
-    private ValidationTracker _tracker;
+    private PageRenderSupport support;
+
+    @Environmental
+    private ValidationTracker tracker;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private Messages _messages;
+    private Messages messages;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
     @Inject
-    private FieldValidatorDefaultSource _fieldValidatorDefaultSource;
+    private FieldValidatorDefaultSource fieldValidatorDefaultSource;
 
     @Inject
-    private FieldValidationSupport _fieldValidationSupport;
+    private FieldValidationSupport fieldValidationSupport;
 
     /**
      * For output, format nicely and unambiguously as four digits.
      */
-    private final DateFormat _outputFormat = new SimpleDateFormat("MM/dd/yyyy");
+    private final DateFormat outputFormat = new SimpleDateFormat("MM/dd/yyyy");
 
     /**
      * When the user types a value, they may only type two digits for the year; SimpleDateFormat will do something
      * reasonable.  If they use the popup, it will be unambiguously 4 digits.
      */
-    private final DateFormat _inputFormat = new SimpleDateFormat("MM/dd/yy");
+    private final DateFormat inputFormat = new SimpleDateFormat("MM/dd/yy");
 
     /**
      * The default value is a property of the container whose name matches the component's id. May return null if the
@@ -109,15 +109,15 @@ public class DateField extends AbstractField
     final FieldValidator defaultValidate()
     {
 
-        return _fieldValidatorDefaultSource.createDefaultValidator(this, _resources.getId(),
-                                                                   _resources.getContainerMessages(), _locale,
-                                                                   Date.class,
-                                                                   _resources.getAnnotationProvider("value"));
+        return fieldValidatorDefaultSource.createDefaultValidator(this, resources.getId(),
+                                                                  resources.getContainerMessages(), locale,
+                                                                  Date.class,
+                                                                  resources.getAnnotationProvider("value"));
     }
 
     void beginRender(MarkupWriter writer)
     {
-        String value = _tracker.getInput(this);
+        String value = tracker.getInput(this);
 
         if (value == null) value = formatCurrentValue();
 
@@ -136,9 +136,9 @@ public class DateField extends AbstractField
 
         writeDisabled(writer);
 
-        _validate.render(writer);
+        validate.render(writer);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         decorateInsideField();
 
@@ -152,7 +152,7 @@ public class DateField extends AbstractField
 
                        "class", "t-calendar-trigger",
 
-                       "src", _icon.toClientURL(),
+                       "src", icon.toClientURL(),
 
                        "alt", "[Show]");
         writer.end(); // img
@@ -165,7 +165,7 @@ public class DateField extends AbstractField
 
         // TODO: consolodate DatePicker initialization across the page.
 
-        _support.addScript("new Tapestry.DateField(%s);", setup);
+        support.addScript("new Tapestry.DateField(%s);", setup);
     }
 
     private void writeDisabled(MarkupWriter writer)
@@ -176,17 +176,17 @@ public class DateField extends AbstractField
 
     private String formatCurrentValue()
     {
-        if (_value == null) return "";
+        if (value == null) return "";
 
-        return _outputFormat.format(_value);
+        return outputFormat.format(value);
     }
 
     @Override
     protected void processSubmission(String elementName)
     {
-        String value = _request.getParameter(elementName);
+        String value = request.getParameter(elementName);
 
-        _tracker.recordInput(this, value);
+        tracker.recordInput(this, value);
 
         Date parsedValue = null;
 
@@ -194,40 +194,40 @@ public class DateField extends AbstractField
         {
             if (InternalUtils.isNonBlank(value))
                 parsedValue =
-                        _inputFormat.parse(value);
+                        inputFormat.parse(value);
 
         }
         catch (ParseException ex)
         {
-            _tracker.recordError(this, "Date value is not parseable.");
+            tracker.recordError(this, "Date value is not parseable.");
             return;
         }
 
         try
         {
-            _fieldValidationSupport.validate(parsedValue, _resources, _validate);
+            fieldValidationSupport.validate(parsedValue, resources, validate);
 
-            _value = parsedValue;
+            this.value = parsedValue;
         }
         catch (ValidationException ex)
         {
-            _tracker.recordError(this, ex.getMessage());
+            tracker.recordError(this, ex.getMessage());
         }
     }
 
     void injectResources(ComponentResources resources)
     {
-        _resources = resources;
+        this.resources = resources;
     }
 
     void injectMessages(Messages messages)
     {
-        _messages = messages;
+        this.messages = messages;
     }
 
     @Override
     public boolean isRequired()
     {
-        return _validate.isRequired();
+        return validate.isRequired();
     }
 }

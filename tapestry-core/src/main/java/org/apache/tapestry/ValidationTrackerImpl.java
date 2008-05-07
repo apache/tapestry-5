@@ -33,64 +33,38 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
     {
         private static final long serialVersionUID = -3653306147088451811L;
 
-        private final String _fieldName;
+        private final String fieldName;
 
-        private String _input;
+        private String input;
 
-        private String _errorMessage;
+        private String errorMessage;
 
         FieldTracker(String fieldName)
         {
-            _fieldName = fieldName;
+            this.fieldName = fieldName;
         }
-
-        public String getFieldName()
-        {
-            return _fieldName;
-        }
-
-        public void setErrorMessage(String errorMessage)
-        {
-            _errorMessage = errorMessage;
-        }
-
-        public String getErrorMessage()
-        {
-            return _errorMessage;
-        }
-
-        public String getInput()
-        {
-            return _input;
-        }
-
-        public void setInput(String input)
-        {
-            _input = input;
-        }
-
     }
 
-    private List<String> _extraErrors;
+    private List<String> extraErrors;
 
-    private List<FieldTracker> _fieldTrackers;
+    private List<FieldTracker> fieldTrackers;
 
     // Rebuilt on-demand
 
-    private transient Map<String, FieldTracker> _fieldToTracker;
+    private transient Map<String, FieldTracker> fieldToTracker;
 
     private void refreshFieldToTracker()
     {
-        if (_fieldToTracker != null)
+        if (fieldToTracker != null)
             return;
 
-        if (_fieldTrackers == null)
+        if (fieldTrackers == null)
             return;
 
-        _fieldToTracker = CollectionFactory.newMap();
+        fieldToTracker = CollectionFactory.newMap();
 
-        for (FieldTracker ft : _fieldTrackers)
-            _fieldToTracker.put(ft.getFieldName(), ft);
+        for (FieldTracker ft : fieldTrackers)
+            fieldToTracker.put(ft.fieldName, ft);
     }
 
     private FieldTracker get(Field field)
@@ -99,7 +73,7 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
         refreshFieldToTracker();
 
-        FieldTracker result = InternalUtils.get(_fieldToTracker, key);
+        FieldTracker result = InternalUtils.get(fieldToTracker, key);
 
         if (result == null)
             result = new FieldTracker(key);
@@ -109,44 +83,44 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
     private void store(FieldTracker fieldTracker)
     {
-        if (_fieldTrackers == null)
-            _fieldTrackers = CollectionFactory.newList();
+        if (fieldTrackers == null)
+            fieldTrackers = CollectionFactory.newList();
 
         refreshFieldToTracker();
 
-        String key = fieldTracker.getFieldName();
+        String key = fieldTracker.fieldName;
 
-        if (!_fieldToTracker.containsKey(key))
+        if (!fieldToTracker.containsKey(key))
         {
-            _fieldTrackers.add(fieldTracker);
-            _fieldToTracker.put(key, fieldTracker);
+            fieldTrackers.add(fieldTracker);
+            fieldToTracker.put(key, fieldTracker);
         }
     }
 
     public void clear()
     {
-        _extraErrors = null;
-        _fieldTrackers = null;
-        _fieldToTracker = null;
+        extraErrors = null;
+        fieldTrackers = null;
+        fieldToTracker = null;
     }
 
     public String getError(Field field)
     {
-        return get(field).getErrorMessage();
+        return get(field).errorMessage;
     }
 
     public List<String> getErrors()
     {
         List<String> result = CollectionFactory.newList();
 
-        if (_extraErrors != null)
-            result.addAll(_extraErrors);
+        if (extraErrors != null)
+            result.addAll(extraErrors);
 
-        if (_fieldTrackers != null)
+        if (fieldTrackers != null)
         {
-            for (FieldTracker ft : _fieldTrackers)
+            for (FieldTracker ft : fieldTrackers)
             {
-                String errorMessage = ft.getErrorMessage();
+                String errorMessage = ft.errorMessage;
 
                 if (errorMessage != null)
                     result.add(errorMessage);
@@ -163,36 +137,36 @@ public final class ValidationTrackerImpl implements ValidationTracker, Serializa
 
     public String getInput(Field field)
     {
-        return get(field).getInput();
+        return get(field).input;
     }
 
     public boolean inError(Field field)
     {
-        return InternalUtils.isNonBlank(get(field).getErrorMessage());
+        return InternalUtils.isNonBlank(get(field).errorMessage);
     }
 
     public void recordError(Field field, String errorMessage)
     {
         FieldTracker ft = get(field);
 
-        ft.setErrorMessage(errorMessage);
+        ft.errorMessage = errorMessage;
 
         store(ft);
     }
 
     public void recordError(String errorMessage)
     {
-        if (_extraErrors == null)
-            _extraErrors = CollectionFactory.newList();
+        if (extraErrors == null)
+            extraErrors = CollectionFactory.newList();
 
-        _extraErrors.add(errorMessage);
+        extraErrors.add(errorMessage);
     }
 
     public void recordInput(Field field, String input)
     {
         FieldTracker ft = get(field);
 
-        ft.setInput(input);
+        ft.input = input;
 
         store(ft);
     }

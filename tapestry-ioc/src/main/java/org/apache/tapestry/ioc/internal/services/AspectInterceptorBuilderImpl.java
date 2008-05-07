@@ -211,7 +211,7 @@ public class AspectInterceptorBuilderImpl<T> implements AspectInterceptorBuilder
         if (hasChecked) builder.addln("try").begin();
 
         if (isNonVoid)
-            builder.add("%s result = ", returnType.getName());
+            builder.add("%s result = ", ClassFabUtils.toJavaClassName(returnType));
 
         builder.add("_delegate.%s(", method.getName());
 

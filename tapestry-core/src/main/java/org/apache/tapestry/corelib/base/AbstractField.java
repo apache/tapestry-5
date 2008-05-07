@@ -37,22 +37,22 @@ public abstract class AbstractField implements Field
      * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
-    @Parameter(defaultPrefix = "literal")
-    private String _label;
+    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    private String label;
 
     /**
      * If true, then the field will render out with a disabled attribute (to turn off client-side behavior). Further, a
      * disabled field ignores any value in the request when the form is submitted.
      */
     @Parameter("false")
-    private boolean _disabled;
+    private boolean disabled;
 
     @SuppressWarnings("unused")
     @Mixin
-    private DiscardBody _discardBody;
+    private DiscardBody discardBody;
 
     @Environmental
-    private ValidationDecorator _decorator;
+    private ValidationDecorator decorator;
 
     protected static final FieldValidator NOOP_VALIDATOR = new FieldValidator()
     {
@@ -109,32 +109,32 @@ public abstract class AbstractField implements Field
      * {@link #getClientId() clientId property}.
      */
     @Parameter(value = "prop:componentResources.id", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _clientId;
+    private String clientId;
 
-    private String _assignedClientId;
+    private String assignedClientId;
 
-    private String _controlName;
-
-    @Environmental
-    private FormSupport _formSupport;
+    private String controlName;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private FormSupport formSupport;
+
+    @Environmental
+    private PageRenderSupport pageRenderSupport;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private ComponentDefaultProvider _defaultProvider;
+    private ComponentDefaultProvider defaultProvider;
 
     final String defaultLabel()
     {
-        return _defaultProvider.defaultLabel(_resources);
+        return defaultProvider.defaultLabel(resources);
     }
 
     public final String getLabel()
     {
-        return _label;
+        return label;
     }
 
     @SetupRender
@@ -143,32 +143,32 @@ public abstract class AbstractField implements Field
         // By default, use the component id as the (base) client id. If the clientid
         // parameter is bound, then that is the value to use.
 
-        String id = _clientId;
+        String id = clientId;
 
-        // Often, these controlName and _clientId will end up as the same value. There are many
+        // Often, these controlName and clientId will end up as the same value. There are many
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
 
-        _assignedClientId = _pageRenderSupport.allocateClientId(id);
-        String controlName = _formSupport.allocateControlName(id);
+        assignedClientId = pageRenderSupport.allocateClientId(id);
+        String controlName = formSupport.allocateControlName(id);
 
-        _formSupport.storeAndExecute(this, new SetupAction(controlName));
-        _formSupport.store(this, PROCESS_SUBMISSION_ACTION);
+        formSupport.storeAndExecute(this, new SetupAction(controlName));
+        formSupport.store(this, PROCESS_SUBMISSION_ACTION);
     }
 
     public final String getClientId()
     {
-        return _assignedClientId;
+        return assignedClientId;
     }
 
     public final String getControlName()
     {
-        return _controlName;
+        return controlName;
     }
 
     public final boolean isDisabled()
     {
-        return _disabled;
+        return disabled;
     }
 
     /**
@@ -176,12 +176,12 @@ public abstract class AbstractField implements Field
      */
     private void setupControlName(String controlName)
     {
-        _controlName = controlName;
+        this.controlName = controlName;
     }
 
     private void processSubmission()
     {
-        if (!_disabled) processSubmission(_controlName);
+        if (!disabled) processSubmission(controlName);
     }
 
     /**
@@ -191,7 +191,7 @@ public abstract class AbstractField implements Field
      */
     protected final Binding createDefaultParameterBinding(String parameterName)
     {
-        return _defaultProvider.defaultBinding(parameterName, _resources);
+        return defaultProvider.defaultBinding(parameterName, resources);
     }
 
     /**
@@ -209,7 +209,7 @@ public abstract class AbstractField implements Field
     @BeginRender
     final void beforeDecorator()
     {
-        _decorator.beforeField(this);
+        decorator.beforeField(this);
     }
 
     /**
@@ -218,7 +218,7 @@ public abstract class AbstractField implements Field
     @AfterRender
     final void afterDecorator()
     {
-        _decorator.afterField(this);
+        decorator.afterField(this);
     }
 
     /**
@@ -227,17 +227,17 @@ public abstract class AbstractField implements Field
      */
     protected final void decorateInsideField()
     {
-        _decorator.insideField(this);
+        decorator.insideField(this);
     }
 
     protected final void setDecorator(ValidationDecorator decorator)
     {
-        _decorator = decorator;
+        this.decorator = decorator;
     }
 
     protected final void setFormSupport(FormSupport formSupport)
     {
-        _formSupport = formSupport;
+        this.formSupport = formSupport;
     }
 
     /**

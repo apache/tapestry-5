@@ -34,85 +34,85 @@ public class GridPager
      * how many rows are available}, which in turn determines the page count).
      */
     @Parameter(required = true)
-    private GridDataSource _source;
+    private GridDataSource source;
 
     /**
      * The number of rows displayed per page.
      */
     @Parameter(required = true)
-    private int _rowsPerPage;
+    private int rowsPerPage;
 
     /**
      * The current page number (indexed from 1).
      */
     @Parameter(required = true)
-    private int _currentPage;
+    private int currentPage;
 
     /**
      * Number of pages before and after the current page in the range. The pager always displays links for 2 * range + 1
      * pages, unless that's more than the total number of available pages.
      */
     @Parameter("5")
-    private int _range;
+    private int range;
 
     /**
      * If not null, then each link is output as a link to update the specified zone.
      */
     @Parameter
-    private String _zone;
+    private String zone;
 
-    private int _lastIndex;
+    private int lastIndex;
 
-    private int _maxPages;
-
-    @Inject
-    private ComponentResources _resources;
+    private int maxPages;
 
     @Inject
-    private Messages _messages;
+    private ComponentResources resources;
+
+    @Inject
+    private Messages messages;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private ClientBehaviorSupport clientBehaviorSupport;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
     void beginRender(MarkupWriter writer)
     {
-        int availableRows = _source.getAvailableRows();
+        int availableRows = source.getAvailableRows();
 
-        _maxPages = ((availableRows - 1) / _rowsPerPage) + 1;
+        maxPages = ((availableRows - 1) / rowsPerPage) + 1;
 
-        if (_maxPages < 2) return;
+        if (maxPages < 2) return;
 
         writer.element("div", "class", "t-data-grid-pager");
 
-        _lastIndex = 0;
+        lastIndex = 0;
 
         for (int i = 1; i <= 2; i++)
             writePageLink(writer, i);
 
-        int low = _currentPage - _range;
-        int high = _currentPage + _range;
+        int low = currentPage - range;
+        int high = currentPage + range;
 
         if (low < 1)
         {
             low = 1;
-            high = 2 * _range + 1;
+            high = 2 * range + 1;
         }
         else
         {
-            if (high > _maxPages)
+            if (high > maxPages)
             {
-                high = _maxPages;
-                low = high - 2 * _range;
+                high = maxPages;
+                low = high - 2 * range;
             }
         }
 
         for (int i = low; i <= high; i++)
             writePageLink(writer, i);
 
-        for (int i = _maxPages - 1; i <= _maxPages; i++)
+        for (int i = maxPages - 1; i <= maxPages; i++)
             writePageLink(writer, i);
 
         writer.end();
@@ -120,15 +120,15 @@ public class GridPager
 
     private void writePageLink(MarkupWriter writer, int pageIndex)
     {
-        if (pageIndex < 1 || pageIndex > _maxPages) return;
+        if (pageIndex < 1 || pageIndex > maxPages) return;
 
-        if (pageIndex <= _lastIndex) return;
+        if (pageIndex <= lastIndex) return;
 
-        if (pageIndex != _lastIndex + 1) writer.write(" ... ");
+        if (pageIndex != lastIndex + 1) writer.write(" ... ");
 
-        _lastIndex = pageIndex;
+        lastIndex = pageIndex;
 
-        if (pageIndex == _currentPage)
+        if (pageIndex == currentPage)
         {
             writer.element("span", "class", "current");
             writer.write(Integer.toString(pageIndex));
@@ -136,24 +136,24 @@ public class GridPager
             return;
         }
 
-        Object[] context = _zone == null
+        Object[] context = zone == null
                            ? new Object[] { pageIndex }
-                           : new Object[] { pageIndex, _zone };
+                           : new Object[] { pageIndex, zone };
 
-        Link link = _resources.createActionLink(TapestryConstants.ACTION_EVENT, false, context);
+        Link link = resources.createActionLink(TapestryConstants.ACTION_EVENT, false, context);
 
-        Element element = writer.element("a", "href", link, "title", _messages.format("goto-page", pageIndex));
+        Element element = writer.element("a", "href", link, "title", messages.format("goto-page", pageIndex));
 
         writer.write(Integer.toString(pageIndex));
         writer.end();
 
-        if (_zone != null)
+        if (zone != null)
         {
-            String id = _pageRenderSupport.allocateClientId(_resources);
+            String id = pageRenderSupport.allocateClientId(resources);
 
             element.attribute("id", id);
 
-            _clientBehaviorSupport.linkZone(id, _zone);
+            clientBehaviorSupport.linkZone(id, zone);
         }
     }
 
@@ -164,7 +164,7 @@ public class GridPager
     {
         // TODO: Validate newPage in range
 
-        _currentPage = newPage;
+        currentPage = newPage;
     }
 
     /**
@@ -174,7 +174,7 @@ public class GridPager
     {
         onAction(newPage);
 
-        _resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
+        resources.triggerEvent(InternalConstants.GRID_INPLACE_UPDATE, new Object[] { zone }, null);
 
         return true; // abort event
     }

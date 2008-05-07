@@ -36,35 +36,35 @@ public class Errors
      * you may continue.".
      */
     @Parameter("message:default-banner")
-    private String _banner;
+    private String banner;
 
     /**
      * The CSS class for the div element rendered by the component. The default value is "t-error".
      */
-    @Parameter
-    private String _class = TapestryConstants.ERROR_CLASS;
+    @Parameter(name = "class")
+    private String className = TapestryConstants.ERROR_CLASS;
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)
-    private ValidationTracker _tracker;
+    private ValidationTracker tracker;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     void beginRender(MarkupWriter writer)
     {
-        if (_tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
+        if (tracker == null) throw new RuntimeException(InternalMessages.encloseErrorsInForm());
 
-        if (!_tracker.getHasErrors()) return;
+        if (!tracker.getHasErrors()) return;
 
-        writer.element("div", "class", _class);
+        writer.element("div", "class", className);
 
         // Inner div for the banner text
         writer.element("div");
-        writer.write(_banner);
+        writer.write(banner);
         writer.end();
 
-        List<String> errors = _tracker.getErrors();
+        List<String> errors = tracker.getErrors();
 
         if (!errors.isEmpty())
         {

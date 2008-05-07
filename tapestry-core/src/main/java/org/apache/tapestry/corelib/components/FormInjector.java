@@ -51,77 +51,77 @@ public class FormInjector implements ClientElement
      * methods.
      */
     @Parameter
-    private List<?> _context;
+    private List<?> context;
 
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX, value = "above")
-    private InsertPosition _position;
+    private InsertPosition position;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
      * visible. Leaving as null uses the default function, "highlight".
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _show;
+    private String show;
 
     /**
      * The element name to render, which is normally the element name used to represent the FormInjector component in
      * the template, or "div".
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _element;
+    private String element;
 
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
     @Environmental
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private ClientBehaviorSupport clientBehaviorSupport;
 
     @Inject
     @Ajax
-    private ComponentEventResultProcessor _componentEventResultProcessor;
+    private ComponentEventResultProcessor componentEventResultProcessor;
 
 
     @Inject
-    private PageRenderQueue _pageRenderQueue;
+    private PageRenderQueue pageRenderQueue;
 
-    private String _clientId;
-
-    @Inject
-    private ComponentResources _resources;
+    private String clientId;
 
     @Inject
-    private Request _request;
+    private ComponentResources resources;
 
     @Inject
-    private Environment _environment;
+    private Request request;
+
+    @Inject
+    private Environment environment;
 
     String defaultElement()
     {
-        return _resources.getElementName("div");
+        return resources.getElementName("div");
     }
 
     void beginRender(MarkupWriter writer)
     {
-        _clientId = _pageRenderSupport.allocateClientId(_resources);
+        clientId = pageRenderSupport.allocateClientId(resources);
 
-        writer.element(_element,
+        writer.element(element,
 
-                       "id", _clientId);
+                       "id", clientId);
 
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
 
         // Now work on the JavaScript side of things.
 
-        Link link = _resources.createActionLink(INJECT_EVENT, false,
-                                                _context == null ? new Object[0] : _context.toArray());
+        Link link = resources.createActionLink(INJECT_EVENT, false,
+                                               context == null ? new Object[0] : context.toArray());
 
-        link.addParameter(FORMID_PARAMETER, _formSupport.getClientId());
+        link.addParameter(FORMID_PARAMETER, formSupport.getClientId());
 
-        _clientBehaviorSupport.addFormInjector(_clientId, link, _position, _show);
+        clientBehaviorSupport.addFormInjector(clientId, link, position, show);
     }
 
     void afterRender(MarkupWriter writer)
@@ -135,7 +135,7 @@ public class FormInjector implements ClientElement
      */
     public String getClientId()
     {
-        return _clientId;
+        return clientId;
     }
 
     /**
@@ -146,17 +146,17 @@ public class FormInjector implements ClientElement
     Object onInject(EventContext context) throws IOException
     {
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
-                _componentEventResultProcessor);
+                componentEventResultProcessor);
 
-        _resources.triggerContextEvent(TapestryConstants.ACTION_EVENT, context, callback);
+        resources.triggerContextEvent(TapestryConstants.ACTION_EVENT, context, callback);
 
         if (!callback.isAborted()) return null;
 
         // Here's where it gets very, very tricky.
 
-        final RenderCommand rootRenderCommand = _pageRenderQueue.getRootRenderCommand();
+        final RenderCommand rootRenderCommand = pageRenderQueue.getRootRenderCommand();
 
-        final String formId = _request.getParameter(FORMID_PARAMETER);
+        final String formId = request.getParameter(FORMID_PARAMETER);
 
         final Base64ObjectOutputStream actions = new Base64ObjectOutputStream();
 
@@ -173,9 +173,9 @@ public class FormInjector implements ClientElement
                     throw new RuntimeException(ex);
                 }
 
-                _environment.pop(ValidationTracker.class);
+                environment.pop(ValidationTracker.class);
 
-                FormSupportImpl formSupport = (FormSupportImpl) _environment.pop(FormSupport.class);
+                FormSupportImpl formSupport = (FormSupportImpl) environment.pop(FormSupport.class);
 
                 formSupport.executeDeferred();
 
@@ -202,12 +202,12 @@ public class FormInjector implements ClientElement
 
                 IdAllocator idAllocator = new IdAllocator(":" + uid);
 
-                FormSupportImpl formSupport = new FormSupportImpl(formId, actions, _clientBehaviorSupport, true,
+                FormSupportImpl formSupport = new FormSupportImpl(formId, actions, clientBehaviorSupport, true,
                                                                   idAllocator);
-                _environment.push(FormSupport.class, formSupport);
+                environment.push(FormSupport.class, formSupport);
 
 
-                _environment.push(ValidationTracker.class, new ValidationTrackerImpl());
+                environment.push(ValidationTracker.class, new ValidationTrackerImpl());
 
                 // Queue up the root render command to execute first, and the cleanup
                 // to execute after it is done.

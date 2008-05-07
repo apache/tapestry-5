@@ -28,7 +28,7 @@ import org.apache.tapestry.corelib.base.AbstractTextField;
  */
 public final class TextArea extends AbstractTextField
 {
-    private String _value;
+    private String value;
 
     @Override
     protected final void writeFieldTag(MarkupWriter writer, String value)
@@ -43,14 +43,14 @@ public final class TextArea extends AbstractTextField
 
         // Save until needed in after()
 
-        _value = value;
+        this.value = value;
     }
 
     final void afterRender(MarkupWriter writer)
     {
         // TextArea will not have a template.
 
-        if (_value != null) writer.write(_value);
+        if (value != null) writer.write(value);
 
         writer.end(); // textarea
     }

@@ -101,16 +101,16 @@ public class Loop
     {
         private static final long serialVersionUID = -3926831611368720764L;
 
-        private final Object _storedValue;
+        private final Object storedValue;
 
         public RestoreState(final Object storedValue)
         {
-            _storedValue = storedValue;
+            this.storedValue = storedValue;
         }
 
         public void execute(Loop component)
         {
-            component.restoreState(_storedValue);
+            component.restoreState(storedValue);
         }
     }
 
@@ -121,16 +121,16 @@ public class Loop
     {
         private static final long serialVersionUID = -2422790241589517336L;
 
-        private final Serializable _primaryKey;
+        private final Serializable primaryKey;
 
         public RestoreStateViaEncodedPrimaryKey(final Serializable primaryKey)
         {
-            _primaryKey = primaryKey;
+            this.primaryKey = primaryKey;
         }
 
         public void execute(Loop component)
         {
-            component.restoreStateViaEncodedPrimaryKey(_primaryKey);
+            component.restoreStateViaEncodedPrimaryKey(primaryKey);
         }
     }
 
@@ -144,16 +144,16 @@ public class Loop
         /**
          * The variable is final, the contents are mutable while the Loop renders.
          */
-        private final List<Serializable> _keys;
+        private final List<Serializable> keys;
 
         public PrepareForKeys(final List<Serializable> keys)
         {
-            _keys = keys;
+            this.keys = keys;
         }
 
         public void execute(Loop component)
         {
-            component.prepareForKeys(_keys);
+            component.prepareForKeys(keys);
         }
     }
 
@@ -162,90 +162,90 @@ public class Loop
      * container whose name
      */
     @Parameter(required = true, principal = true)
-    private Iterable<?> _source;
+    private Iterable<?> source;
 
     /**
      * Optional primary key converter; if provided and inside a form and not volatile, then each iterated value is
      * converted and stored into the form.
      */
     @Parameter
-    private PrimaryKeyEncoder<Serializable, Object> _encoder;
+    private PrimaryKeyEncoder<Serializable, Object> encoder;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state saving logic is turned off. Defaults to false,
      * enabling state saving logic within Forms.
      */
-    @Parameter
-    private boolean _volatile;
+    @Parameter(name = "volatile")
+    private boolean volatileState;
 
     @Environmental(false)
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     /**
      * The element to render. If not null, then the loop will render the indicated element around its body (on each pass
      * through the loop). The default is derived from the component template.
      */
     @Parameter(value = "prop:componentResources.elementName", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _element;
+    private String element;
 
     /**
      * The current value, set before the component renders its body.
      */
     @Parameter
-    private Object _value;
+    private Object value;
 
     /**
      * The index into the source items.
      */
     @Parameter
-    private int _index;
+    private int index;
 
-    private Iterator<?> _iterator;
+    private Iterator<?> iterator;
 
     @Environmental
-    private Heartbeat _heartbeat;
+    private Heartbeat heartbeat;
 
-    private boolean _storeRenderStateInForm;
-
-    @Inject
-    private ComponentResources _resources;
+    private boolean storeRenderStateInForm;
 
     @Inject
-    private ComponentDefaultProvider _componentDefaultProvider;
+    private ComponentResources resources;
+
+    @Inject
+    private ComponentDefaultProvider componentDefaultProvider;
 
     Binding defaultSource()
     {
-        return _componentDefaultProvider.defaultBinding("source", _resources);
+        return componentDefaultProvider.defaultBinding("source", resources);
     }
 
     @SetupRender
     boolean setup()
     {
-        _index = 0;
+        index = 0;
 
-        if (_source == null) return false;
+        if (source == null) return false;
 
-        _iterator = _source.iterator();
+        iterator = source.iterator();
 
-        _storeRenderStateInForm = _formSupport != null && !_volatile;
+        storeRenderStateInForm = formSupport != null && !volatileState;
 
         // Only render the body if there is something to iterate over
 
-        boolean result = _iterator.hasNext();
+        boolean result = iterator.hasNext();
 
-        if (_formSupport != null && result)
+        if (formSupport != null && result)
         {
 
-            _formSupport.store(this, _volatile ? SETUP_FOR_VOLATILE : RESET_INDEX);
+            formSupport.store(this, volatileState ? SETUP_FOR_VOLATILE : RESET_INDEX);
 
-            if (_encoder != null)
+            if (encoder != null)
             {
                 List<Serializable> keyList = newList();
 
                 // We'll keep updating the _keyList while the Loop renders, the values will "lock
                 // down" when the Form serializes all the data.
 
-                _formSupport.store(this, new PrepareForKeys(keyList));
+                formSupport.store(this, new PrepareForKeys(keyList));
             }
         }
 
@@ -257,18 +257,18 @@ public class Loop
         // Again, the encoder existed when we rendered, we better have another available
         // when the enclosing Form is submitted.
 
-        _encoder.prepareForKeys(keys);
+        encoder.prepareForKeys(keys);
     }
 
     private void setupForVolatile()
     {
-        _index = 0;
-        _iterator = _source.iterator();
+        index = 0;
+        iterator = source.iterator();
     }
 
     private void advanceVolatile()
     {
-        _value = _iterator.next();
+        value = iterator.next();
 
         startHeartbeat();
     }
@@ -279,43 +279,43 @@ public class Loop
     @BeginRender
     void begin()
     {
-        _value = _iterator.next();
+        value = iterator.next();
 
-        if (_storeRenderStateInForm)
+        if (storeRenderStateInForm)
         {
-            if (_encoder == null)
+            if (encoder == null)
             {
-                _formSupport.store(this, new RestoreState(_value));
+                formSupport.store(this, new RestoreState(value));
             }
             else
             {
-                Serializable primaryKey = _encoder.toKey(_value);
-                _formSupport.store(this, new RestoreStateViaEncodedPrimaryKey(primaryKey));
+                Serializable primaryKey = encoder.toKey(value);
+                formSupport.store(this, new RestoreStateViaEncodedPrimaryKey(primaryKey));
             }
         }
 
-        if (_formSupport != null && _volatile) _formSupport.store(this, ADVANCE_VOLATILE);
+        if (formSupport != null && volatileState) formSupport.store(this, ADVANCE_VOLATILE);
 
         startHeartbeat();
     }
 
     private void startHeartbeat()
     {
-        _heartbeat.begin();
+        heartbeat.begin();
     }
 
     void beforeRenderBody(MarkupWriter writer)
     {
-        if (_element != null)
+        if (element != null)
         {
-            writer.element(_element);
-            _resources.renderInformalParameters(writer);
+            writer.element(element);
+            resources.renderInformalParameters(writer);
         }
     }
 
     void afterRenderBody(MarkupWriter writer)
     {
-        if (_element != null) writer.end();
+        if (element != null) writer.end();
     }
 
     /**
@@ -326,21 +326,21 @@ public class Loop
     {
         endHeartbeat();
 
-        if (_formSupport != null) _formSupport.store(this, END_HEARTBEAT);
+        if (formSupport != null) formSupport.store(this, END_HEARTBEAT);
 
-        return !_iterator.hasNext();
+        return !iterator.hasNext();
     }
 
     private void endHeartbeat()
     {
-        _heartbeat.end();
+        heartbeat.end();
 
-        _index++;
+        index++;
     }
 
     private void resetIndex()
     {
-        _index = 0;
+        index = 0;
     }
 
     /**
@@ -348,7 +348,7 @@ public class Loop
      */
     private void restoreState(Object storedValue)
     {
-        _value = storedValue;
+        value = storedValue;
 
         startHeartbeat();
     }
@@ -361,7 +361,7 @@ public class Loop
         // We assume that if a encoder is available when we rendered, that one will be available
         // when the form is submitted. TODO: Check for this.
 
-        Object restoredValue = _encoder.toValue(primaryKey);
+        Object restoredValue = encoder.toValue(primaryKey);
 
         restoreState(restoredValue);
     }
@@ -370,21 +370,21 @@ public class Loop
 
     int getIndex()
     {
-        return _index;
+        return index;
     }
 
     Object getValue()
     {
-        return _value;
+        return value;
     }
 
     void setSource(Iterable<?> source)
     {
-        _source = source;
+        this.source = source;
     }
 
     void setHeartbeat(Heartbeat heartbeat)
     {
-        _heartbeat = heartbeat;
+        this.heartbeat = heartbeat;
     }
 }

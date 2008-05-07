@@ -58,13 +58,13 @@ public class Grid implements GridModel
      * around the underlying List.
      */
     @Parameter(required = true)
-    private GridDataSource _source;
+    private GridDataSource source;
 
     /**
      * A wrapper around the provided GridDataSource that caches access to the availableRows property. This is the source
      * provided to sub-components.
      */
-    private GridDataSource _cachingSource;
+    private GridDataSource cachingSource;
 
     /**
      * The number of rows of data displayed on each page. If there are more rows than will fit, the Grid will divide up
@@ -72,14 +72,14 @@ public class Grid implements GridModel
      * set.
      */
     @Parameter("25")
-    private int _rowsPerPage;
+    private int rowsPerPage;
 
     /**
      * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
      * "both" or "none".
      */
     @Parameter(value = "top", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private GridPagerPosition _pagerPosition;
+    private GridPagerPosition pagerPosition;
 
     /**
      * Used to store the current object being rendered (for the current row). This is used when parameter blocks are
@@ -87,7 +87,7 @@ public class Grid implements GridModel
      * use the property bound to the row parameter to know what they should render.
      */
     @Parameter
-    private Object _row;
+    private Object row;
 
     /**
      * The model used to identify the properties to be presented and the order of presentation. The model may be
@@ -96,7 +96,7 @@ public class Grid implements GridModel
      * behavior, say to reorder or rename columns or add additional columns.
      */
     @Parameter
-    private BeanModel _model;
+    private BeanModel model;
 
     /**
      * The model used to handle sorting of the Grid. This is generally not specified, and the built-in model supports
@@ -104,14 +104,14 @@ public class Grid implements GridModel
      * stored as persistent fields of the Grid component.
      */
     @Parameter
-    private GridSortModel _sortModel;
+    private GridSortModel sortModel;
 
     /**
      * A comma-seperated list of property names to be added to the {@link org.apache.tapestry.beaneditor.BeanModel}.
      * Cells for added columns will be blank unless a cell override is provided.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _add;
+    private String add;
 
     /**
      * A comma-separated list of property names to be retained from the {@link org.apache.tapestry.beaneditor.BeanModel}.
@@ -120,15 +120,14 @@ public class Grid implements GridModel
      */
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _include;
-
+    private String include;
 
     /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
      * The names are case-insensitive.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _exclude;
+    private String exclude;
 
     /**
      * A comma-separated list of property names indicating the order in which the properties should be presented. The
@@ -136,7 +135,7 @@ public class Grid implements GridModel
      * order.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _reorder;
+    private String reorder;
 
     /**
      * A Block to render instead of the table (and pager, etc.) when the source is empty. The default is simply the text
@@ -144,7 +143,7 @@ public class Grid implements GridModel
      * allow the user to create new objects.
      */
     @Parameter(value = "block:empty")
-    private Block _empty;
+    private Block empty;
 
 
     /**
@@ -153,7 +152,7 @@ public class Grid implements GridModel
      * leveraging the CSS to customize the look and feel of particular columns.
      */
     @Parameter
-    private boolean _lean;
+    private boolean lean;
 
     /**
      * If true and the Loop is enclosed by a Form, then the normal state persisting logic is turned off. Defaults to
@@ -161,8 +160,8 @@ public class Grid implements GridModel
      * contain any form control components (such as {@link TextField}), then binding volatile to false will reduce the
      * amount of client-side state that must be persisted.
      */
-    @Parameter
-    private boolean _volatile;
+    @Parameter(name = "volatile")
+    private boolean volatileState;
 
     /**
      * The CSS class for the tr element for each data row. This can be used to highlight particular rows, or cycle
@@ -170,7 +169,7 @@ public class Grid implements GridModel
      */
     @Parameter(cache = false)
     @Property(write = false)
-    private String _rowClass;
+    private String rowClass;
 
     /**
      * CSS class for the &lt;table&gt; element.  In addition, informal parameters to the Grid are rendered in the table
@@ -178,45 +177,45 @@ public class Grid implements GridModel
      */
     @Parameter(name = "class", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX, value = "t-data-grid")
     @Property(write = false)
-    private String _tableClass;
+    private String tableClass;
 
     /**
      * If true, then the Grid will be wrapped in an element that acts like a {@link
      * org.apache.tapestry.corelib.components.Zone}; all the paging and sorting links will
      */
     @Parameter
-    private boolean _inPlace;
+    private boolean inPlace;
 
     /**
      * The name of the psuedo-zone that encloses the Grid.
      */
     @Property(write = false)
-    private String _zone;
+    private String zone;
 
-    private boolean _didRenderZoneDiv;
-
-    @Persist
-    private int _currentPage = 1;
+    private boolean didRenderZoneDiv;
 
     @Persist
-    private String _sortColumnId;
+    private int currentPage = 1;
 
     @Persist
-    private boolean _sortAscending = true;
+    private String sortColumnId;
+
+    @Persist
+    private boolean sortAscending = true;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private BeanModelSource _modelSource;
+    private BeanModelSource modelSource;
 
     @Environmental
-    private ClientBehaviorSupport _clientBehaviorSupport;
+    private ClientBehaviorSupport clientBehaviorSupport;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = { "lean=inherit:lean", "overrides=componentResources", "zone=zone" })
-    private GridColumns _columns;
+    private GridColumns columns;
 
     @SuppressWarnings("unused")
     @Component(
@@ -224,68 +223,68 @@ public class Grid implements GridModel
     private GridRows _rows;
 
     @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
-    private GridPager _pager;
+    private GridPager pager;
 
     @SuppressWarnings("unused")
     @Component(parameters = "to=pagerTop")
-    private Delegate _pagerTop;
+    private Delegate pagerTop;
 
     @SuppressWarnings("unused")
     @Component(parameters = "to=pagerBottom")
-    private Delegate _pagerBottom;
+    private Delegate pagerBottom;
 
     @SuppressWarnings("unused")
     @Component(parameters = "class=tableClass", inheritInformalParameters = true)
-    private Any _table;
+    private Any table;
 
     @Environmental(false)
-    private FormSupport _formSupport;
+    private FormSupport formSupport;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
     /**
      * Set up via the traditional or Ajax component event request handler
      */
     @Environmental
-    private ComponentEventResultProcessor _componentEventResultProcessor;
+    private ComponentEventResultProcessor componentEventResultProcessor;
 
     /**
      * A version of GridDataSource that caches the availableRows property. This addresses TAPESTRY-2245.
      */
     class CachingDataSource implements GridDataSource
     {
-        private boolean _availableRowsCached;
+        private boolean availableRowsCached;
 
-        private int _availableRows;
+        private int availableRows;
 
         public int getAvailableRows()
         {
-            if (!_availableRowsCached)
+            if (!availableRowsCached)
             {
-                _availableRows = _source.getAvailableRows();
-                _availableRowsCached = true;
+                availableRows = source.getAvailableRows();
+                availableRowsCached = true;
             }
 
-            return _availableRows;
+            return availableRows;
         }
 
         public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
         {
-            _source.prepare(startIndex, endIndex, sortConstraints);
+            source.prepare(startIndex, endIndex, sortConstraints);
         }
 
         public Object getRowValue(int index)
         {
-            return _source.getRowValue(index);
+            return source.getRowValue(index);
         }
 
         public Class getRowType()
         {
-            return _source.getRowType();
+            return source.getRowType();
         }
     }
 
@@ -297,7 +296,7 @@ public class Grid implements GridModel
     {
         public ColumnSort getColumnSort(String columnId)
         {
-            if (!TapestryInternalUtils.isEqual(columnId, _sortColumnId))
+            if (!TapestryInternalUtils.isEqual(columnId, sortColumnId))
                 return ColumnSort.UNSORTED;
 
             return getColumnSort();
@@ -305,7 +304,7 @@ public class Grid implements GridModel
 
         private ColumnSort getColumnSort()
         {
-            return _sortAscending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING;
+            return sortAscending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING;
         }
 
 
@@ -313,22 +312,22 @@ public class Grid implements GridModel
         {
             Defense.notBlank(columnId, "columnId");
 
-            if (columnId.equals(_sortColumnId))
+            if (columnId.equals(sortColumnId))
             {
-                _sortAscending = !_sortAscending;
+                sortAscending = !sortAscending;
                 return;
             }
 
-            _sortColumnId = columnId;
-            _sortAscending = true;
+            sortColumnId = columnId;
+            sortAscending = true;
         }
 
         public List<SortConstraint> getSortContraints()
         {
-            if (_sortColumnId == null)
+            if (sortColumnId == null)
                 return Collections.emptyList();
 
-            PropertyModel sortModel = _model.getById(_sortColumnId);
+            PropertyModel sortModel = model.getById(sortColumnId);
 
             SortConstraint constraint = new SortConstraint(sortModel, getColumnSort());
 
@@ -337,7 +336,7 @@ public class Grid implements GridModel
 
         public void clear()
         {
-            _sortColumnId = null;
+            sortColumnId = null;
         }
     }
 
@@ -348,7 +347,7 @@ public class Grid implements GridModel
 
     Binding defaultModel()
     {
-        final ComponentResources containerResources = _resources.getContainerResources();
+        final ComponentResources containerResources = resources.getContainerResources();
 
         return new AbstractBinding()
         {
@@ -357,14 +356,14 @@ public class Grid implements GridModel
             {
                 // Get the default row type from the data source
 
-                Class rowType = _source.getRowType();
+                Class rowType = source.getRowType();
 
                 if (rowType == null) throw new RuntimeException(
                         "Unable to determine the bean type for rows from the GridDataSource. You should bind the model parameter explicitly.");
 
                 // Properties do not have to be read/write
 
-                return _modelSource.create(rowType, false, containerResources);
+                return modelSource.create(rowType, false, containerResources);
             }
 
             /**
@@ -393,37 +392,37 @@ public class Grid implements GridModel
 
     Object setupRender()
     {
-        if (!_volatile && _formSupport != null) _formSupport.store(this, SETUP_DATA_SOURCE);
+        if (!volatileState && formSupport != null) formSupport.store(this, SETUP_DATA_SOURCE);
 
         setupDataSource();
 
-        return _cachingSource.getAvailableRows() == 0 ? _empty : null;
+        return cachingSource.getAvailableRows() == 0 ? empty : null;
     }
 
     void setupDataSource()
     {
         // If there's no rows, display the empty block placeholder.
 
-        _cachingSource = new CachingDataSource();
+        cachingSource = new CachingDataSource();
 
-        int availableRows = _cachingSource.getAvailableRows();
+        int availableRows = cachingSource.getAvailableRows();
 
         if (availableRows == 0) return;
 
-        BeanModelUtils.modify(_model, _add, _include, _exclude, _reorder);
+        BeanModelUtils.modify(model, add, include, exclude, reorder);
 
-        int maxPage = ((availableRows - 1) / _rowsPerPage) + 1;
+        int maxPage = ((availableRows - 1) / rowsPerPage) + 1;
 
         // This captures when the number of rows has decreased, typically due to deletions.
 
-        if (_currentPage > maxPage)
-            _currentPage = maxPage;
+        if (currentPage > maxPage)
+            currentPage = maxPage;
 
-        int startIndex = (_currentPage - 1) * _rowsPerPage;
+        int startIndex = (currentPage - 1) * rowsPerPage;
 
-        int endIndex = Math.min(startIndex + _rowsPerPage - 1, availableRows - 1);
+        int endIndex = Math.min(startIndex + rowsPerPage - 1, availableRows - 1);
 
-        _cachingSource.prepare(startIndex, endIndex, _sortModel.getSortContraints());
+        cachingSource.prepare(startIndex, endIndex, sortModel.getSortContraints());
 
     }
 
@@ -432,17 +431,17 @@ public class Grid implements GridModel
         // Skip rendering of component (template, body, etc.) when there's nothing to display.
         // The empty placeholder will already have rendered.
 
-        if (_cachingSource.getAvailableRows() == 0) return false;
+        if (cachingSource.getAvailableRows() == 0) return false;
 
-        if (_inPlace && _zone == null)
+        if (inPlace && zone == null)
         {
-            _zone = _pageRenderSupport.allocateClientId(_resources);
+            zone = pageRenderSupport.allocateClientId(resources);
 
-            writer.element("div", "id", _zone);
+            writer.element("div", "id", zone);
 
-            _clientBehaviorSupport.addZone(_zone, null, "show");
+            clientBehaviorSupport.addZone(zone, null, "show");
 
-            _didRenderZoneDiv = true;
+            didRenderZoneDiv = true;
         }
 
         return null;
@@ -450,61 +449,61 @@ public class Grid implements GridModel
 
     void afterRender(MarkupWriter writer)
     {
-        if (_didRenderZoneDiv)
+        if (didRenderZoneDiv)
         {
             writer.end(); // div
-            _didRenderZoneDiv = false;
+            didRenderZoneDiv = false;
         }
     }
 
     public BeanModel getDataModel()
     {
-        return _model;
+        return model;
     }
 
     public GridDataSource getDataSource()
     {
-        return _cachingSource;
+        return cachingSource;
     }
 
     public GridSortModel getSortModel()
     {
-        return _sortModel;
+        return sortModel;
     }
 
     public Object getPagerTop()
     {
-        return _pagerPosition.isMatchTop() ? _pager : null;
+        return pagerPosition.isMatchTop() ? pager : null;
     }
 
     public Object getPagerBottom()
     {
-        return _pagerPosition.isMatchBottom() ? _pager : null;
+        return pagerPosition.isMatchBottom() ? pager : null;
     }
 
     public int getCurrentPage()
     {
-        return _currentPage;
+        return currentPage;
     }
 
     public void setCurrentPage(int currentPage)
     {
-        _currentPage = currentPage;
+        this.currentPage = currentPage;
     }
 
     public int getRowsPerPage()
     {
-        return _rowsPerPage;
+        return rowsPerPage;
     }
 
     public Object getRow()
     {
-        return _row;
+        return row;
     }
 
     public void setRow(Object row)
     {
-        _row = row;
+        this.row = row;
     }
 
     /**
@@ -513,8 +512,8 @@ public class Grid implements GridModel
      */
     public void reset()
     {
-        _currentPage = 1;
-        _sortModel.clear();
+        currentPage = 1;
+        sortModel.clear();
     }
 
     /**
@@ -525,8 +524,8 @@ public class Grid implements GridModel
      */
     void onInPlaceUpdate(String zone) throws IOException
     {
-        _zone = zone;
+        this.zone = zone;
 
-        _componentEventResultProcessor.processResultValue(this);
+        componentEventResultProcessor.processResultValue(this);
     }
 }
