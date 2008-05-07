@@ -18,8 +18,8 @@ import org.apache.tapestry.PropertyConduit;
 import org.apache.tapestry.grid.ColumnSort;
 import org.apache.tapestry.grid.GridDataSource;
 import org.apache.tapestry.grid.SortConstraint;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -28,21 +28,21 @@ import java.util.List;
 
 public class CollectionGridDataSource implements GridDataSource
 {
-    private final List _list;
+    private final List list;
 
     @SuppressWarnings("unchecked")
     public CollectionGridDataSource(final Collection collection)
     {
-        notNull(collection, "collection");
+        Defense.notNull(collection, "collection");
 
         // Copy the collection so that we can sort it without disturbing the original
 
-        _list = newList(collection);
+        list = CollectionFactory.newList(collection);
     }
 
     public int getAvailableRows()
     {
-        return _list.size();
+        return list.size();
     }
 
     public void prepare(int startIndex, int endIndex, List<SortConstraint> sortConstraints)
@@ -94,7 +94,7 @@ public class CollectionGridDataSource implements GridDataSource
 
             // We can freely sort this list because its just a copy.
 
-            Collections.sort(_list, reverseComparator);
+            Collections.sort(list, reverseComparator);
         }
     }
 
@@ -103,12 +103,12 @@ public class CollectionGridDataSource implements GridDataSource
      */
     public Class getRowType()
     {
-        return _list.isEmpty() ? null : _list.get(0).getClass();
+        return list.isEmpty() ? null : list.get(0).getClass();
     }
 
     public Object getRowValue(int index)
     {
-        return _list.get(index);
+        return list.get(index);
     }
 
 }

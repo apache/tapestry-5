@@ -29,11 +29,11 @@ import org.apache.tapestry.services.FieldValidatorSource;
  */
 public class ValidateBindingFactory implements BindingFactory
 {
-    private final FieldValidatorSource _fieldValidatorSource;
+    private final FieldValidatorSource fieldValidatorSource;
 
     public ValidateBindingFactory(FieldValidatorSource fieldValidatorSource)
     {
-        _fieldValidatorSource = fieldValidatorSource;
+        this.fieldValidatorSource = fieldValidatorSource;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -52,7 +52,7 @@ public class ValidateBindingFactory implements BindingFactory
         // component whose parameter is to be bound) rather than the containing component, the way
         // most factories work.
 
-        FieldValidator validator = _fieldValidatorSource.createValidators(field, expression);
+        FieldValidator validator = fieldValidatorSource.createValidators(field, expression);
 
         return new LiteralBinding(description, validator, location);
     }

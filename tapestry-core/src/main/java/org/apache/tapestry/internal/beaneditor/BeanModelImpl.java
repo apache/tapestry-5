@@ -22,10 +22,7 @@ import org.apache.tapestry.internal.services.CoercingPropertyConduitWrapper;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.PropertyConduitSource;
@@ -35,21 +32,21 @@ import java.util.Map;
 
 public class BeanModelImpl<T> implements BeanModel<T>
 {
-    private final Class<T> _beanType;
+    private final Class<T> beanType;
 
-    private final PropertyConduitSource _propertyConduitSource;
+    private final PropertyConduitSource propertyConduitSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final Messages _messages;
+    private final Messages messages;
 
-    private final ObjectLocator _locator;
+    private final ObjectLocator locator;
 
-    private final Map<String, PropertyModel> _properties = newCaseInsensitiveMap();
+    private final Map<String, PropertyModel> properties = CollectionFactory.newCaseInsensitiveMap();
 
     // The list of property names, in desired order (generally not alphabetical order).
 
-    private final List<String> _propertyNames = CollectionFactory.newList();
+    private final List<String> propertyNames = CollectionFactory.newList();
 
     public BeanModelImpl(
             Class<T> beanType, PropertyConduitSource
@@ -58,21 +55,21 @@ public class BeanModelImpl<T> implements BeanModel<T>
             messages, ObjectLocator locator)
 
     {
-        _beanType = beanType;
-        _propertyConduitSource = propertyConduitSource;
-        _typeCoercer = typeCoercer;
-        _messages = messages;
-        _locator = locator;
+        this.beanType = beanType;
+        this.propertyConduitSource = propertyConduitSource;
+        this.typeCoercer = typeCoercer;
+        this.messages = messages;
+        this.locator = locator;
     }
 
     public Class<T> getBeanType()
     {
-        return _beanType;
+        return beanType;
     }
 
     public T newInstance()
     {
-        return _locator.autobuild(_beanType);
+        return locator.autobuild(beanType);
     }
 
     public PropertyModel add(String propertyName)
@@ -84,18 +81,18 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     private void validateNewPropertyName(String propertyName)
     {
-        notBlank(propertyName, "propertyName");
+        Defense.notBlank(propertyName, "propertyName");
 
-        if (_properties.containsKey(propertyName))
+        if (properties.containsKey(propertyName))
             throw new RuntimeException(BeanEditorMessages.duplicatePropertyName(
-                    _beanType,
+                    beanType,
                     propertyName));
     }
 
     public PropertyModel add(RelativePosition position, String existingPropertyName,
                              String propertyName, PropertyConduit conduit)
     {
-        notNull(position, "position");
+        Defense.notNull(position, "position");
 
         validateNewPropertyName(propertyName);
 
@@ -105,15 +102,15 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
         // Use the case normalized property name.
 
-        int pos = _propertyNames.indexOf(existing.getPropertyName());
+        int pos = propertyNames.indexOf(existing.getPropertyName());
 
-        PropertyModel newModel = new PropertyModelImpl(this, propertyName, conduit, _messages);
+        PropertyModel newModel = new PropertyModelImpl(this, propertyName, conduit, messages);
 
-        _properties.put(propertyName, newModel);
+        properties.put(propertyName, newModel);
 
         int offset = position == RelativePosition.AFTER ? 1 : 0;
 
-        _propertyNames.add(pos + offset, propertyName);
+        propertyNames.add(pos + offset, propertyName);
 
         return newModel;
     }
@@ -130,38 +127,38 @@ public class BeanModelImpl<T> implements BeanModel<T>
     {
         validateNewPropertyName(propertyName);
 
-        PropertyModel propertyModel = new PropertyModelImpl(this, propertyName, conduit, _messages);
+        PropertyModel propertyModel = new PropertyModelImpl(this, propertyName, conduit, messages);
 
-        _properties.put(propertyName, propertyModel);
+        properties.put(propertyName, propertyModel);
 
         // Remember the order in which the properties were added.
 
-        _propertyNames.add(propertyName);
+        propertyNames.add(propertyName);
 
         return propertyModel;
     }
 
     private CoercingPropertyConduitWrapper createConduit(String propertyName)
     {
-        return new CoercingPropertyConduitWrapper(_propertyConduitSource.create(_beanType,
-                                                                                propertyName), _typeCoercer);
+        return new CoercingPropertyConduitWrapper(propertyConduitSource.create(beanType,
+                                                                               propertyName), typeCoercer);
     }
 
     public PropertyModel get(String propertyName)
     {
-        PropertyModel propertyModel = _properties.get(propertyName);
+        PropertyModel propertyModel = properties.get(propertyName);
 
         if (propertyModel == null)
-            throw new RuntimeException(BeanEditorMessages.unknownProperty(_beanType,
+            throw new RuntimeException(BeanEditorMessages.unknownProperty(beanType,
                                                                           propertyName,
-                                                                          _properties.keySet()));
+                                                                          properties.keySet()));
 
         return propertyModel;
     }
 
     public PropertyModel getById(String propertyId)
     {
-        for (PropertyModel model : _properties.values())
+        for (PropertyModel model : properties.values())
         {
             if (model.getId().equalsIgnoreCase(propertyId)) return model;
         }
@@ -171,36 +168,36 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
         List<String> ids = CollectionFactory.newList();
 
-        for (PropertyModel model : _properties.values())
+        for (PropertyModel model : properties.values())
         {
             ids.add(model.getId());
         }
 
-        throw new RuntimeException(BeanEditorMessages.unknownPropertyId(_beanType,
+        throw new RuntimeException(BeanEditorMessages.unknownPropertyId(beanType,
                                                                         propertyId, ids));
 
     }
 
     public List<String> getPropertyNames()
     {
-        return CollectionFactory.newList(_propertyNames);
+        return CollectionFactory.newList(propertyNames);
     }
 
     public BeanModel exclude(String... propertyNames)
     {
         for (String propertyName : propertyNames)
         {
-            PropertyModel model = _properties.get(propertyName);
+            PropertyModel model = properties.get(propertyName);
 
             if (model == null) continue;
 
             // De-referencing from the model is needed because the name provided may not be a
             // case-exact match, so we get the normalized or canonical name from the model because
-            // that's the one in _propertyNames.
+            // that's the one in propertyNames.
 
-            _propertyNames.remove(model.getPropertyName());
+            this.propertyNames.remove(model.getPropertyName());
 
-            _properties.remove(propertyName);
+            properties.remove(propertyName);
         }
 
         return this;
@@ -208,8 +205,8 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
     public BeanModel reorder(String... propertyNames)
     {
-        List<String> remainingPropertyNames = newList(_propertyNames);
-        List<String> reorderedPropertyNames = newList();
+        List<String> remainingPropertyNames = CollectionFactory.newList(this.propertyNames);
+        List<String> reorderedPropertyNames = CollectionFactory.newList();
 
         for (String name : propertyNames)
         {
@@ -223,18 +220,18 @@ public class BeanModelImpl<T> implements BeanModel<T>
             remainingPropertyNames.remove(canonical);
         }
 
-        _propertyNames.clear();
-        _propertyNames.addAll(reorderedPropertyNames);
+        this.propertyNames.clear();
+        this.propertyNames.addAll(reorderedPropertyNames);
 
         // Any unspecified names are ordered to the end. Don't want them? Remove them instead.
-        _propertyNames.addAll(remainingPropertyNames);
+        this.propertyNames.addAll(remainingPropertyNames);
 
         return this;
     }
 
     public BeanModel include(String... propertyNames)
     {
-        List<String> reorderedPropertyNames = newList();
+        List<String> reorderedPropertyNames = CollectionFactory.newList();
         Map<String, PropertyModel> reduced = CollectionFactory.newCaseInsensitiveMap();
 
 
@@ -250,11 +247,11 @@ public class BeanModelImpl<T> implements BeanModel<T>
 
         }
 
-        _propertyNames.clear();
-        _propertyNames.addAll(reorderedPropertyNames);
+        this.propertyNames.clear();
+        this.propertyNames.addAll(reorderedPropertyNames);
 
-        _properties.clear();
-        _properties.putAll(reduced);
+        properties.clear();
+        properties.putAll(reduced);
 
         return this;
     }
@@ -263,12 +260,12 @@ public class BeanModelImpl<T> implements BeanModel<T>
     public String toString()
     {
         StringBuilder builder = new StringBuilder("BeanModel[");
-        builder.append(ClassFabUtils.toJavaClassName(_beanType));
+        builder.append(ClassFabUtils.toJavaClassName(beanType));
 
         builder.append(" properties:");
         String sep = "";
 
-        for (String name : _propertyNames)
+        for (String name : propertyNames)
         {
             builder.append(sep);
             builder.append(name);

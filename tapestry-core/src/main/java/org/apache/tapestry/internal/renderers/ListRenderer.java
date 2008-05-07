@@ -25,11 +25,11 @@ import java.util.List;
  */
 public class ListRenderer implements ObjectRenderer<List>
 {
-    private final ObjectRenderer _primaryObjectRenderer;
+    private final ObjectRenderer masterRenderer;
 
-    public ListRenderer(@Primary ObjectRenderer primaryObjectRenderer)
+    public ListRenderer(@Primary ObjectRenderer masterRenderer)
     {
-        _primaryObjectRenderer = primaryObjectRenderer;
+        this.masterRenderer = masterRenderer;
     }
 
     public void render(List list, MarkupWriter writer)
@@ -48,7 +48,7 @@ public class ListRenderer implements ObjectRenderer<List>
         {
             writer.element("li");
 
-            _primaryObjectRenderer.render(element, writer);
+            masterRenderer.render(element, writer);
 
             writer.end();
         }

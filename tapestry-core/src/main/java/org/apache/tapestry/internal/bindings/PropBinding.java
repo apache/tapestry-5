@@ -26,20 +26,20 @@ import java.lang.annotation.Annotation;
  */
 public class PropBinding extends AbstractBinding
 {
-    private final Object _root;
+    private final Object root;
 
-    private final PropertyConduit _conduit;
+    private final PropertyConduit conduit;
 
-    private final String _toString;
+    private final String toString;
 
     public PropBinding(final Object root, final PropertyConduit conduit, final String toString,
                        final Location location)
     {
         super(location);
 
-        _root = root;
-        _conduit = conduit;
-        _toString = toString;
+        this.root = root;
+        this.conduit = conduit;
+        this.toString = toString;
     }
 
     /**
@@ -50,7 +50,7 @@ public class PropBinding extends AbstractBinding
     {
         try
         {
-            return _conduit.get(_root);
+            return conduit.get(root);
         }
         catch (Exception ex)
         {
@@ -63,7 +63,7 @@ public class PropBinding extends AbstractBinding
     {
         try
         {
-            _conduit.set(_root, value);
+            conduit.set(root, value);
         }
         catch (Exception ex)
         {
@@ -74,7 +74,7 @@ public class PropBinding extends AbstractBinding
     @Override
     public String toString()
     {
-        return _toString;
+        return toString;
     }
 
     /**
@@ -89,13 +89,13 @@ public class PropBinding extends AbstractBinding
     @Override
     public Class getBindingType()
     {
-        return _conduit.getPropertyType();
+        return conduit.getPropertyType();
     }
 
     @Override
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        return _conduit.getAnnotation(annotationClass);
+        return conduit.getAnnotation(annotationClass);
     }
 
 }

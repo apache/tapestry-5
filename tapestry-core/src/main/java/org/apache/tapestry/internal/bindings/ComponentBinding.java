@@ -19,30 +19,30 @@ import org.apache.tapestry.ioc.Location;
 
 public class ComponentBinding extends AbstractBinding
 {
-    private final String _description;
+    private final String description;
 
-    private final ComponentResources _resources;
+    private final ComponentResources resources;
 
-    private final String _componentId;
+    private final String componentId;
 
     public ComponentBinding(String description, ComponentResources resources, String componentId,
                             Location location)
     {
         super(location);
 
-        _description = description;
-        _resources = resources;
-        _componentId = componentId;
+        this.description = description;
+        this.resources = resources;
+        this.componentId = componentId;
     }
 
     public Object get()
     {
-        return _resources.getEmbeddedComponent(_componentId);
+        return resources.getEmbeddedComponent(componentId);
     }
 
     @Override
     public String toString()
     {
-        return String.format("ComponentResources[%s %s]", _description, _componentId);
+        return String.format("ComponentResources[%s %s]", description, componentId);
     }
 }

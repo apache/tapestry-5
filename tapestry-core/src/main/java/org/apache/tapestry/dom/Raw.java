@@ -21,13 +21,13 @@ import java.io.PrintWriter;
  */
 public final class Raw extends Node
 {
-    private final String _text;
+    private final String text;
 
     Raw(Node container, String text)
     {
         super(container);
 
-        _text = text;
+        this.text = text;
     }
 
     /**
@@ -36,7 +36,7 @@ public final class Raw extends Node
     @Override
     public void toMarkup(PrintWriter writer)
     {
-        writer.print(_text);
+        writer.print(text);
     }
 
 }

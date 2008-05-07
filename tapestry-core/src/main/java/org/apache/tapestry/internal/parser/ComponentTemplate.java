@@ -40,8 +40,8 @@ public interface ComponentTemplate
     List<TemplateToken> getTokens();
 
     /**
-     * Returns a set of strings corresponding to {@link StartComponentToken}s within the template that have a non-blank
-     * id attribute.
+     * Returns a set of strings corresponding to {@link org.apache.tapestry.internal.parser.StartComponentToken}s within
+     * the template that have a non-blank id attribute.
      */
     Set<String> getComponentIds();
 }

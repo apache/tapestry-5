@@ -26,11 +26,11 @@ import org.apache.tapestry.services.ObjectRenderer;
  */
 public class ComponentResourcesRenderer implements ObjectRenderer<ComponentResources>
 {
-    private final ObjectRenderer _masterRenderer;
+    private final ObjectRenderer masterRenderer;
 
     public ComponentResourcesRenderer(@Primary ObjectRenderer masterRenderer)
     {
-        _masterRenderer = masterRenderer;
+        this.masterRenderer = masterRenderer;
     }
 
     public void render(ComponentResources object, MarkupWriter writer)
@@ -44,7 +44,7 @@ public class ComponentResourcesRenderer implements ObjectRenderer<ComponentResou
             writer.element("br");
             writer.end();
 
-            _masterRenderer.render(location, writer);
+            masterRenderer.render(location, writer);
         }
     }
 }

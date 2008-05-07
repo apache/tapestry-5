@@ -17,7 +17,6 @@ package org.apache.tapestry.internal.model;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.MutableEmbeddedComponentModel;
 
@@ -27,100 +26,100 @@ import java.util.Map;
 
 public class MutableEmbeddedComponentModelImpl extends BaseLocatable implements MutableEmbeddedComponentModel
 {
-    private final String _id;
+    private final String id;
 
-    private final String _componentType;
+    private final String componentType;
 
-    private final String _componentClassName;
+    private final String componentClassName;
 
-    private final String _declaredClass;
+    private final String declaredClass;
 
-    private final boolean _inheritInformalParameters;
+    private final boolean inheritInformalParameters;
 
-    private Map<String, String> _parameters;
+    private Map<String, String> parameters;
 
     /**
      * List of mixin class names.
      */
-    private List<String> _mixinClassNames;
+    private List<String> mixinClassNames;
 
     public MutableEmbeddedComponentModelImpl(String id, String componentType, String componentClassName,
                                              String declaredClass, boolean inheritInformalParameters, Location location)
     {
         super(location);
 
-        _id = id;
-        _componentType = componentType;
-        _componentClassName = componentClassName;
-        _inheritInformalParameters = inheritInformalParameters;
-        _declaredClass = declaredClass;
+        this.id = id;
+        this.componentType = componentType;
+        this.componentClassName = componentClassName;
+        this.inheritInformalParameters = inheritInformalParameters;
+        this.declaredClass = declaredClass;
     }
 
     public String getComponentClassName()
     {
-        return _componentClassName;
+        return componentClassName;
     }
 
     @Override
     public String toString()
     {
-        return String.format("EmbeddedComponentModel[id=%s type=%s class=%s inheritInformals=%s]", _id, _componentType,
-                             _componentClassName, _inheritInformalParameters);
+        return String.format("EmbeddedComponentModel[id=%s type=%s class=%s inheritInformals=%s]", id, componentType,
+                             componentClassName, inheritInformalParameters);
     }
 
     public void addParameter(String name, String value)
     {
-        if (_parameters == null) _parameters = newMap();
-        else if (_parameters.containsKey(name))
-            throw new IllegalArgumentException(ModelMessages.duplicateParameterValue(name, _id, _declaredClass));
+        if (parameters == null) parameters = CollectionFactory.newMap();
+        else if (parameters.containsKey(name))
+            throw new IllegalArgumentException(ModelMessages.duplicateParameterValue(name, id, declaredClass));
 
-        _parameters.put(name, value);
+        parameters.put(name, value);
     }
 
     public String getId()
     {
-        return _id;
+        return id;
     }
 
     public String getComponentType()
     {
-        return _componentType;
+        return componentType;
     }
 
     public List<String> getParameterNames()
     {
-        return InternalUtils.sortedKeys(_parameters);
+        return InternalUtils.sortedKeys(parameters);
     }
 
     public String getParameterValue(String parameterName)
     {
-        return InternalUtils.get(_parameters, parameterName);
+        return InternalUtils.get(parameters, parameterName);
     }
 
     public List<String> getMixinClassNames()
     {
-        if (_mixinClassNames == null) return Collections.emptyList();
+        if (mixinClassNames == null) return Collections.emptyList();
 
-        return Collections.unmodifiableList(_mixinClassNames);
+        return Collections.unmodifiableList(mixinClassNames);
     }
 
     public void addMixin(String mixinClassName)
     {
-        if (_mixinClassNames == null)
+        if (mixinClassNames == null)
         {
-            _mixinClassNames = CollectionFactory.newList();
+            mixinClassNames = CollectionFactory.newList();
         }
         else
         {
-            if (_mixinClassNames.contains(mixinClassName)) throw new IllegalArgumentException(ModelMessages
-                    .duplicateMixin(mixinClassName, _id));
+            if (mixinClassNames.contains(mixinClassName)) throw new IllegalArgumentException(ModelMessages
+                    .duplicateMixin(mixinClassName, id));
         }
 
-        _mixinClassNames.add(mixinClassName);
+        mixinClassNames.add(mixinClassName);
     }
 
     public boolean getInheritInformalParameters()
     {
-        return _inheritInformalParameters;
+        return inheritInformalParameters;
     }
 }

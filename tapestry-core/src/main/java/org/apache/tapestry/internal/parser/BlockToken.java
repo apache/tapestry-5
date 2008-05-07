@@ -21,7 +21,7 @@ import org.apache.tapestry.ioc.Location;
  */
 public class BlockToken extends TemplateToken
 {
-    private final String _id;
+    private final String id;
 
     /**
      * @param id       the id of the block, or null for an anonymous block
@@ -31,7 +31,7 @@ public class BlockToken extends TemplateToken
     {
         super(TokenType.BLOCK, location);
 
-        _id = id;
+        this.id = id;
     }
 
     /**
@@ -39,12 +39,12 @@ public class BlockToken extends TemplateToken
      */
     public String getId()
     {
-        return _id;
+        return id;
     }
 
     @Override
     public String toString()
     {
-        return String.format("Block[%s]", _id == null ? "" : _id);
+        return String.format("Block[%s]", id == null ? "" : id);
     }
 }

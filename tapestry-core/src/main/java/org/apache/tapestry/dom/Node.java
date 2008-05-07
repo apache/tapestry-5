@@ -26,9 +26,9 @@ import java.util.List;
  */
 public abstract class Node
 {
-    private Node _container;
+    private Node container;
 
-    private List<Node> _children;
+    private List<Node> children;
 
     /**
      * Creates a new node, setting its container to the provided value. Container may also be null, but that is only
@@ -38,12 +38,12 @@ public abstract class Node
      */
     protected Node(Node container)
     {
-        _container = container;
+        this.container = container;
     }
 
     public Node getContainer()
     {
-        return _container;
+        return container;
     }
 
     /**
@@ -56,28 +56,28 @@ public abstract class Node
 
     void addChild(Node child)
     {
-        if (_children == null) _children = newList();
+        if (children == null) children = newList();
 
-        _children.add(child);
+        children.add(child);
     }
 
     void insertChildAt(int index, Node child)
     {
-        if (_children == null) _children = newList();
+        if (children == null) children = newList();
 
-        _children.add(index, child);
+        children.add(index, child);
     }
 
     boolean hasChildren()
     {
-        return _children != null && !_children.isEmpty();
+        return children != null && !children.isEmpty();
     }
 
     void writeChildMarkup(PrintWriter writer)
     {
-        if (_children == null) return;
+        if (children == null) return;
 
-        for (Node child : _children)
+        for (Node child : children)
             child.toMarkup(writer);
     }
 
@@ -107,7 +107,7 @@ public abstract class Node
     @SuppressWarnings("unchecked")
     public List<Node> getChildren()
     {
-        return _children == null ? Collections.EMPTY_LIST : _children;
+        return children == null ? Collections.EMPTY_LIST : children;
     }
 
     /**

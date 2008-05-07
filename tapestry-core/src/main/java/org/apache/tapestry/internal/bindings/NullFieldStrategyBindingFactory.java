@@ -27,17 +27,17 @@ import org.apache.tapestry.services.NullFieldStrategySource;
  */
 public class NullFieldStrategyBindingFactory implements BindingFactory
 {
-    private NullFieldStrategySource _strategySource;
+    private NullFieldStrategySource strategySource;
 
     public NullFieldStrategyBindingFactory(NullFieldStrategySource strategySource)
     {
-        _strategySource = strategySource;
+        this.strategySource = strategySource;
     }
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                               String expression, Location location)
     {
-        NullFieldStrategy strategy = _strategySource.get(expression);
+        NullFieldStrategy strategy = strategySource.get(expression);
 
         return new LiteralBinding(description, strategy, location);
     }

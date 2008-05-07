@@ -22,27 +22,27 @@ import org.apache.tapestry.ioc.internal.util.Defense;
  */
 public class SortConstraint
 {
-    private final PropertyModel _propertyModel;
+    private final PropertyModel propertyModel;
 
-    private final ColumnSort _columnSort;
+    private final ColumnSort columnSort;
 
     public SortConstraint(PropertyModel propertyModel, ColumnSort columnSort)
     {
         Defense.notNull(propertyModel, "propertyModel");
         Defense.notNull(columnSort, "columnSort");
 
-        _propertyModel = propertyModel;
-        _columnSort = columnSort;
+        this.propertyModel = propertyModel;
+        this.columnSort = columnSort;
     }
 
     public PropertyModel getPropertyModel()
     {
-        return _propertyModel;
+        return propertyModel;
     }
 
     public ColumnSort getColumnSort()
     {
-        return _columnSort;
+        return columnSort;
     }
 
     // equals() is useful for testing
@@ -56,8 +56,8 @@ public class SortConstraint
 
         SortConstraint that = (SortConstraint) o;
 
-        if (_columnSort != that._columnSort) return false;
+        if (columnSort != that.columnSort) return false;
 
-        return _propertyModel.equals(that._propertyModel);
+        return propertyModel.equals(that.propertyModel);
     }
 }

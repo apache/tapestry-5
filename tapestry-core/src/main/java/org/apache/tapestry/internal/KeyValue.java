@@ -19,24 +19,24 @@ package org.apache.tapestry.internal;
  */
 public class KeyValue
 {
-    private final String _key;
+    private final String key;
 
-    private final String _value;
+    private final String value;
 
     public KeyValue(final String key, final String value)
     {
-        _key = key;
-        _value = value;
+        this.key = key;
+        this.value = value;
     }
 
     public String getKey()
     {
-        return _key;
+        return key;
     }
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
 }

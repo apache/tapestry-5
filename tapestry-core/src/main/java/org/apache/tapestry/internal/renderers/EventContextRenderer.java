@@ -24,11 +24,11 @@ import org.apache.tapestry.services.ObjectRenderer;
  */
 public class EventContextRenderer implements ObjectRenderer<EventContext>
 {
-    private final ObjectRenderer _masterRenderer;
+    private final ObjectRenderer masterRenderer;
 
     public EventContextRenderer(@Primary ObjectRenderer masterRenderer)
     {
-        _masterRenderer = masterRenderer;
+        this.masterRenderer = masterRenderer;
     }
 
 
@@ -44,7 +44,7 @@ public class EventContextRenderer implements ObjectRenderer<EventContext>
         {
             writer.element("li");
 
-            _masterRenderer.render(object.get(Object.class, i), writer);
+            masterRenderer.render(object.get(Object.class, i), writer);
 
             writer.end();
         }

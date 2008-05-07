@@ -30,11 +30,11 @@ import org.apache.tapestry.services.PropertyConduitSource;
  */
 public class PropBindingFactory implements BindingFactory
 {
-    private final PropertyConduitSource _source;
+    private final PropertyConduitSource source;
 
     public PropBindingFactory(PropertyConduitSource propertyConduitSource)
     {
-        _source = propertyConduitSource;
+        source = propertyConduitSource;
     }
 
     public Binding newBinding(String description, ComponentResources container,
@@ -45,7 +45,7 @@ public class PropBindingFactory implements BindingFactory
 
         try
         {
-            PropertyConduit conduit = _source.create(targetClass, expression);
+            PropertyConduit conduit = source.create(targetClass, expression);
 
             String toString = String.format("PropBinding[%s %s(%s)]", description, container
                     .getCompleteId(), expression);

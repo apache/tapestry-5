@@ -24,13 +24,13 @@ import org.apache.tapestry.services.Environment;
  */
 public final class DefaultValidationDecorator extends BaseValidationDecorator
 {
-    private final Environment _environment;
+    private final Environment environment;
 
-    private final Asset _iconAsset;
+    private final Asset iconAsset;
 
-    private final Messages _validationMessages;
+    private final Messages validationMessages;
 
-    private final MarkupWriter _markupWriter;
+    private final MarkupWriter markupWriter;
 
     /**
      * @param environment        used to locate objects and services during the render
@@ -42,10 +42,10 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     public DefaultValidationDecorator(Environment environment, Messages validationMessages, Asset iconAsset,
                                       MarkupWriter markupWriter)
     {
-        _environment = environment;
-        _validationMessages = validationMessages;
-        _iconAsset = iconAsset;
-        _markupWriter = markupWriter;
+        this.environment = environment;
+        this.validationMessages = validationMessages;
+        this.iconAsset = iconAsset;
+        this.markupWriter = markupWriter;
     }
 
     @Override
@@ -69,27 +69,27 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
         String cssClass = inError(field) ? "t-error-icon" : "t-error-icon t-invisible";
 
-        _markupWriter.element("img",
+        markupWriter.element("img",
 
-                              "src", _iconAsset.toClientURL(),
+                             "src", iconAsset.toClientURL(),
 
-                              "alt", _validationMessages.get("icon-label"),
+                             "alt", validationMessages.get("icon-label"),
 
-                              "class", cssClass,
+                             "class", cssClass,
 
-                              "id", iconId);
-        _markupWriter.end();
+                             "id", iconId);
+        markupWriter.end();
     }
 
     private boolean inError(Field field)
     {
-        ValidationTracker tracker = _environment.peekRequired(ValidationTracker.class);
+        ValidationTracker tracker = environment.peekRequired(ValidationTracker.class);
 
         return tracker.inError(field);
     }
 
     private void addErrorClassToCurrentElement()
     {
-        _markupWriter.getElement().addClassName(TapestryConstants.ERROR_CLASS);
+        markupWriter.getElement().addClassName(TapestryConstants.ERROR_CLASS);
     }
 }

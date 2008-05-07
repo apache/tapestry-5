@@ -67,16 +67,19 @@ public final class InternalConstants
     public static final String OBJECT_RENDER_DIV_SECTION = "t-env-data-section";
 
     public static final String MIXINS_SUBPACKAGE = "mixins";
-    public static final String COMPONENTS_SUBPACKAGE = "components";
-    public static final String PAGES_SUBPACKAGE = "pages";
-    public static final String BASE_SUBPACKAGE = "base";
 
+    public static final String COMPONENTS_SUBPACKAGE = "components";
+
+    public static final String PAGES_SUBPACKAGE = "pages";
+
+    public static final String BASE_SUBPACKAGE = "base";
 
     /**
      * Used in some Ajax scenarios to set the content type for the response early, when the Page instance (the authority
      * on content types) is known. The value is of type {@link org.apache.tapestry.ContentType}.
      */
     public static final String CONTENT_TYPE_ATTRIBUTE_NAME = "content-type";
+
     public static final String CHARSET_CONTENT_TYPE_PARAMETER = "charset";
 
     /**
@@ -91,8 +94,4 @@ public final class InternalConstants
      * recognize the response as JSON, and the Ajax.Response.responseJSON property will be null.
      */
     public static final String JSON_MIME_TYPE = "application/json";
-
-    private InternalConstants()
-    {
-    }
 }

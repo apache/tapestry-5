@@ -19,23 +19,23 @@ import org.apache.tapestry.ioc.Location;
 
 public class RenderVariableBinding extends AbstractBinding
 {
-    private final String _description;
-    private final ComponentResources _resources;
-    private final String _name;
+    private final String description;
+    private final ComponentResources resources;
+    private final String name;
 
     public RenderVariableBinding(String description, ComponentResources resources, String name, Location location)
     {
         super(location);
 
-        _description = description;
-        _resources = resources;
-        _name = name;
+        this.description = description;
+        this.resources = resources;
+        this.name = name;
     }
 
     @Override
     public void set(Object value)
     {
-        _resources.storeRenderVariable(_name, value);
+        resources.storeRenderVariable(name, value);
     }
 
     /**
@@ -50,13 +50,13 @@ public class RenderVariableBinding extends AbstractBinding
     @Override
     public String toString()
     {
-        return String.format("RenderVariable[%s %s]", _description, _name);
+        return String.format("RenderVariable[%s %s]", description, name);
     }
 
 
     public Object get()
     {
-        return _resources.getRenderVariable(_name);
+        return resources.getRenderVariable(name);
     }
 
     /**

@@ -21,19 +21,19 @@ import org.apache.tapestry.ioc.services.SymbolProvider;
  */
 public class SingleKeySymbolProvider implements SymbolProvider
 {
-    private final String _symbolName;
+    private final String symbolName;
 
-    private final String _value;
+    private final String value;
 
     public SingleKeySymbolProvider(final String symbolName, final String value)
     {
-        _symbolName = symbolName;
-        _value = value;
+        this.symbolName = symbolName;
+        this.value = value;
     }
 
     public String valueForSymbol(String symbolName)
     {
-        if (_symbolName.equalsIgnoreCase(symbolName)) return _value;
+        if (this.symbolName.equalsIgnoreCase(symbolName)) return value;
 
         return null;
     }

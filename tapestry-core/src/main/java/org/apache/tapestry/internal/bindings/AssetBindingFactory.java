@@ -31,27 +31,27 @@ import org.apache.tapestry.services.BindingFactory;
  */
 public class AssetBindingFactory implements BindingFactory
 {
-    private final AssetSource _source;
+    private final AssetSource source;
 
-    private final boolean _forceAbsoluteURIs;
+    private final boolean forceAbsoluteURIs;
 
     public class AssetBinding extends AbstractBinding
     {
-        private final String _description;
+        private final String description;
 
-        private final Asset _asset;
+        private final Asset asset;
 
         protected AssetBinding(String description, Asset asset, Location location)
         {
             super(location);
 
-            _description = description;
-            _asset = asset;
+            this.description = description;
+            this.asset = asset;
         }
 
         public Object get()
         {
-            return _asset;
+            return asset;
         }
 
         /**
@@ -66,13 +66,13 @@ public class AssetBindingFactory implements BindingFactory
         @Override
         public boolean isInvariant()
         {
-            return _forceAbsoluteURIs;
+            return forceAbsoluteURIs;
         }
 
         @Override
         public String toString()
         {
-            return String.format("AssetBinding[%s: %s]", _description, _asset);
+            return String.format("AssetBinding[%s: %s]", description, asset);
         }
     }
 
@@ -81,8 +81,8 @@ public class AssetBindingFactory implements BindingFactory
                                @Symbol(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL)
                                boolean forceAbsoluteURIs)
     {
-        _source = source;
-        _forceAbsoluteURIs = forceAbsoluteURIs;
+        this.source = source;
+        this.forceAbsoluteURIs = forceAbsoluteURIs;
     }
 
     public Binding newBinding(String description, ComponentResources container, ComponentResources component,
@@ -90,7 +90,7 @@ public class AssetBindingFactory implements BindingFactory
     {
         Resource baseResource = container.getBaseResource();
 
-        Asset asset = _source.getAsset(baseResource, expression, container.getLocale());
+        Asset asset = source.getAsset(baseResource, expression, container.getLocale());
 
         return new AssetBinding(description, asset, location);
     }

@@ -62,35 +62,35 @@ public class Autocomplete
      * The field component to which this mixin is attached.
      */
     @InjectContainer
-    private Field _field;
+    private Field field;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
-    private TypeCoercer _coercer;
+    private TypeCoercer coercer;
 
     @Inject
-    private MarkupWriterFactory _factory;
+    private MarkupWriterFactory factory;
 
     @Inject
     @Path("classpath:org/apache/tapestry/ajax-loader.gif")
-    private Asset _loader;
+    private Asset loader;
 
     /**
      * Overwrites the default minimum characters to trigger a server round trip (the default is 1).
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private int _minChars;
+    private int minChars;
 
     @Inject
-    private ResponseRenderer _responseRenderer;
+    private ResponseRenderer responseRenderer;
 
 
     /**
@@ -98,14 +98,14 @@ public class Autocomplete
      * seconds.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private double _frequency;
+    private double frequency;
 
     /**
      * If given, then the autocompleter will support multiple input values, seperated by any of the individual
      * characters in the string.
      */
     @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
-    private String _tokens;
+    private String tokens;
 
     /**
      * Mixin afterRender phrase occurs after the component itself. This is where we write the &lt;div&gt; element and
@@ -115,7 +115,7 @@ public class Autocomplete
      */
     void afterRender(MarkupWriter writer)
     {
-        String id = _field.getClientId();
+        String id = field.getClientId();
 
         String menuId = id + ":menu";
         String loaderId = id + ":loader";
@@ -126,7 +126,7 @@ public class Autocomplete
 
         writer.element("img",
 
-                       "src", _loader.toClientURL(),
+                       "src", loader.toClientURL(),
 
                        "class", TapestryConstants.INVISIBLE_CLASS,
 
@@ -140,35 +140,35 @@ public class Autocomplete
                        "class", "t-autocomplete-menu");
         writer.end();
 
-        Link link = _resources.createActionLink(EVENT_NAME, false);
+        Link link = resources.createActionLink(EVENT_NAME, false);
 
 
         JSONObject config = new JSONObject();
         config.put("paramName", PARAM_NAME);
         config.put("indicator", loaderId);
 
-        if (_resources.isBound("minChars")) config.put("minChars", _minChars);
+        if (resources.isBound("minChars")) config.put("minChars", minChars);
 
-        if (_resources.isBound("frequency")) config.put("frequency", _frequency);
+        if (resources.isBound("frequency")) config.put("frequency", frequency);
 
-        if (_resources.isBound("tokens"))
+        if (resources.isBound("tokens"))
         {
-            for (int i = 0; i < _tokens.length(); i++)
+            for (int i = 0; i < tokens.length(); i++)
             {
-                config.accumulate("tokens", _tokens.substring(i, i + 1));
+                config.accumulate("tokens", tokens.substring(i, i + 1));
             }
         }
 
         // Let subclasses do more.
         configure(config);
 
-        _pageRenderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toAbsoluteURI(),
-                                     config);
+        pageRenderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toAbsoluteURI(),
+                                    config);
     }
 
     Object onAutocomplete()
     {
-        String input = _request.getParameter(PARAM_NAME);
+        String input = request.getParameter(PARAM_NAME);
 
         final Holder<List> matchesHolder = Holder.create();
 
@@ -180,7 +180,7 @@ public class Autocomplete
         {
             public boolean handleResult(Object result)
             {
-                List matches = _coercer.coerce(result, List.class);
+                List matches = coercer.coerce(result, List.class);
 
                 matchesHolder.put(matches);
 
@@ -188,11 +188,11 @@ public class Autocomplete
             }
         };
 
-        _resources.triggerEvent("providecompletions", new Object[] { input }, callback);
+        resources.triggerEvent("providecompletions", new Object[] { input }, callback);
 
-        ContentType contentType = _responseRenderer.findContentType(this);
+        ContentType contentType = responseRenderer.findContentType(this);
 
-        MarkupWriter writer = _factory.newMarkupWriter(contentType);
+        MarkupWriter writer = factory.newMarkupWriter(contentType);
 
         generateResponseMarkup(writer, matchesHolder.get());
 

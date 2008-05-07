@@ -26,11 +26,11 @@ import java.util.List;
  */
 public class ObjectArrayRenderer implements ObjectRenderer<Object[]>
 {
-    private final ObjectRenderer _masterObjectRenderer;
+    private final ObjectRenderer masterRenderer;
 
-    public ObjectArrayRenderer(@Primary ObjectRenderer masterObjectRenderer)
+    public ObjectArrayRenderer(@Primary ObjectRenderer masterRenderer)
     {
-        _masterObjectRenderer = masterObjectRenderer;
+        this.masterRenderer = masterRenderer;
     }
 
     public void render(Object[] array, MarkupWriter writer)
@@ -45,6 +45,6 @@ public class ObjectArrayRenderer implements ObjectRenderer<Object[]>
 
         List list = Arrays.asList(array);
 
-        _masterObjectRenderer.render(list, writer);
+        masterRenderer.render(list, writer);
     }
 }

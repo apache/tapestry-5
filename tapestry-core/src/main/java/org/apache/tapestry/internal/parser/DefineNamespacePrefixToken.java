@@ -26,30 +26,30 @@ import org.apache.tapestry.ioc.Location;
  */
 public class DefineNamespacePrefixToken extends TemplateToken
 {
-    private final String _namespaceURI;
-    private final String _namespacePrefix;
+    private final String namespaceURI;
+    private final String namespacePrefix;
 
     public DefineNamespacePrefixToken(String namespaceURI, String namespacePrefix, Location location)
     {
         super(TokenType.DEFINE_NAMESPACE_PREFIX, location);
 
-        _namespacePrefix = namespacePrefix;
-        _namespaceURI = namespaceURI;
+        this.namespacePrefix = namespacePrefix;
+        this.namespaceURI = namespaceURI;
     }
 
     public String getNamespacePrefix()
     {
-        return _namespacePrefix;
+        return namespacePrefix;
     }
 
     public String getNamespaceURI()
     {
-        return _namespaceURI;
+        return namespaceURI;
     }
 
     @Override
     public String toString()
     {
-        return String.format("DefineNamespacePrefix[%s=%s]", _namespacePrefix, _namespaceURI);
+        return String.format("DefineNamespacePrefix[%s=%s]", namespacePrefix, namespaceURI);
     }
 }

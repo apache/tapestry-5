@@ -25,14 +25,14 @@ import java.util.List;
  */
 public class InvalidationEventHubImpl implements InvalidationEventHub
 {
-    private final List<InvalidationListener> _listeners = newThreadSafeList();
+    private final List<InvalidationListener> listeners = newThreadSafeList();
 
     /**
      * Notifies all {@link InvalidationListener listener}s.
      */
     protected final void fireInvalidationEvent()
     {
-        for (InvalidationListener listener : _listeners)
+        for (InvalidationListener listener : listeners)
         {
             listener.objectWasInvalidated();
         }
@@ -40,6 +40,6 @@ public class InvalidationEventHubImpl implements InvalidationEventHub
 
     public final void addInvalidationListener(InvalidationListener listener)
     {
-        _listeners.add(listener);
+        listeners.add(listener);
     }
 }

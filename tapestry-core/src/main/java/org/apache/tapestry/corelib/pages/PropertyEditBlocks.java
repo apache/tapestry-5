@@ -36,76 +36,76 @@ import org.apache.tapestry.util.EnumValueEncoder;
 public class PropertyEditBlocks
 {
     @Environmental
-    private PropertyEditContext _context;
+    private PropertyEditContext context;
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextField _textField;
+    private TextField textField;
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:numberFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextField _numberField;
+    private TextField numberField;
 
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "encoder=valueEncoderForProperty", "model=selectModelForProperty", "validate=prop:selectValidator", "clientId=prop:context.propertyId" })
-    private Select _select;
+    private Select select;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyId" })
-    private Checkbox _checkboxField;
+    private Checkbox checkboxField;
 
     @SuppressWarnings("unused")
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "clientId=prop:context.propertyid", "validate=prop:dateFieldValidator" })
-    private DateField _dateField;
+    private DateField dateField;
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:passwordFieldValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private PasswordField _passwordField;
+    private PasswordField passwordField;
 
     @Component(
             parameters = { "value=context.propertyValue", "label=prop:context.label", "translate=prop:context.translator", "validate=prop:textAreaValidator", "clientId=prop:context.propertyId", "annotationProvider=context" })
-    private TextArea _textArea;
+    private TextArea textArea;
 
 
     public PropertyEditContext getContext()
     {
-        return _context;
+        return context;
     }
 
 
     public FieldValidator getTextFieldValidator()
     {
-        return _context.getValidator(_textField);
+        return context.getValidator(textField);
     }
 
     public FieldValidator getNumberFieldValidator()
     {
-        return _context.getValidator(_numberField);
+        return context.getValidator(numberField);
     }
 
     public FieldValidator getPasswordFieldValidator()
     {
-        return _context.getValidator(_passwordField);
+        return context.getValidator(passwordField);
     }
 
 
     public FieldValidator getTextAreaValidator()
     {
-        return _context.getValidator(_textArea);
+        return context.getValidator(textArea);
     }
 
 
     public FieldValidator getDateFieldValidator()
     {
-        return _context.getValidator(_dateField);
+        return context.getValidator(dateField);
     }
 
     public FieldValidator getSelectValidator()
     {
-        return _context.getValidator(_select);
+        return context.getValidator(select);
     }
 
     /**
@@ -114,7 +114,7 @@ public class PropertyEditBlocks
     @SuppressWarnings("unchecked")
     public ValueEncoder getValueEncoderForProperty()
     {
-        return new EnumValueEncoder(_context.getPropertyType());
+        return new EnumValueEncoder(context.getPropertyType());
     }
 
     /**
@@ -123,6 +123,6 @@ public class PropertyEditBlocks
     @SuppressWarnings("unchecked")
     public SelectModel getSelectModelForProperty()
     {
-        return new EnumSelectModel(_context.getPropertyType(), _context.getContainerMessages());
+        return new EnumSelectModel(context.getPropertyType(), context.getContainerMessages());
     }
 }

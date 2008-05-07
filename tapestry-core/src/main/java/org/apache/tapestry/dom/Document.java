@@ -23,13 +23,13 @@ import java.io.PrintWriter;
  */
 public final class Document extends Node
 {
-    private Element _rootElement;
+    private Element rootElement;
 
-    private DTD _dtd;
+    private DTD dtd;
 
-    private final MarkupModel _model;
+    private final MarkupModel model;
 
-    private final String _encoding;
+    private final String encoding;
 
     public Document(MarkupModel model)
     {
@@ -40,8 +40,8 @@ public final class Document extends Node
     {
         super(null);
 
-        _model = model;
-        _encoding = encoding;
+        this.model = model;
+        this.encoding = encoding;
     }
 
     Document getDocument()
@@ -60,15 +60,15 @@ public final class Document extends Node
     {
         Defense.notBlank(path, "path");
 
-        if (_rootElement == null) return null;
+        if (rootElement == null) return null;
 
         int slashx = path.indexOf("/");
 
         String rootElementName = slashx < 0 ? path : path.substring(0, slashx);
 
-        if (!_rootElement.getName().equals(rootElementName)) return null;
+        if (!rootElement.getName().equals(rootElementName)) return null;
 
-        return slashx < 0 ? _rootElement : _rootElement.find(path.substring(slashx + 1));
+        return slashx < 0 ? rootElement : rootElement.find(path.substring(slashx + 1));
     }
 
     /**
@@ -81,7 +81,7 @@ public final class Document extends Node
 
     public MarkupModel getMarkupModel()
     {
-        return _model;
+        return model;
     }
 
     /**
@@ -89,9 +89,9 @@ public final class Document extends Node
      */
     public Element newRootElement(String name)
     {
-        _rootElement = new Element(this, null, name);
+        rootElement = new Element(this, null, name);
 
-        return _rootElement;
+        return rootElement;
     }
 
     /**
@@ -103,46 +103,46 @@ public final class Document extends Node
      */
     public Element newRootElement(String namespace, String name)
     {
-        _rootElement = new Element(this, namespace, name);
+        rootElement = new Element(this, namespace, name);
 
-        return _rootElement;
+        return rootElement;
     }
 
     @Override
     public void toMarkup(PrintWriter writer)
     {
-        if (_rootElement == null) throw new IllegalStateException(DomMessages.noRootElement());
+        if (rootElement == null) throw new IllegalStateException(DomMessages.noRootElement());
 
 
-        if (_model.isXML())
+        if (model.isXML())
         {
             writer.print("<?xml version=\"1.0\"");
 
-            if (_encoding != null) writer.printf(" encoding=\"%s\"", _encoding);
+            if (encoding != null) writer.printf(" encoding=\"%s\"", encoding);
 
             writer.print("?>\n");
         }
 
         // TODO: lead-in comments, directives.
-        if (_dtd != null)
+        if (dtd != null)
         {
-            _dtd.toMarkup(writer);
+            dtd.toMarkup(writer);
         }
 
-        _rootElement.toMarkup(writer);
+        rootElement.toMarkup(writer);
     }
 
     @Override
     public String toString()
     {
-        if (_rootElement == null) return "[empty Document]";
+        if (rootElement == null) return "[empty Document]";
 
         return super.toString();
     }
 
     public Element getRootElement()
     {
-        return _rootElement;
+        return rootElement;
     }
 
     /**
@@ -153,11 +153,11 @@ public final class Document extends Node
      */
     public Element getElementById(String id)
     {
-        return _rootElement.getElementById(id);
+        return rootElement.getElementById(id);
     }
 
     public void dtd(String name, String publicId, String systemId)
     {
-        _dtd = new DTD(name, publicId, systemId);
+        dtd = new DTD(name, publicId, systemId);
     }
 }

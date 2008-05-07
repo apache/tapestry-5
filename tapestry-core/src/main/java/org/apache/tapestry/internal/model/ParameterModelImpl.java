@@ -18,31 +18,31 @@ import org.apache.tapestry.model.ParameterModel;
 
 public class ParameterModelImpl implements ParameterModel
 {
-    private final String _name;
+    private final String name;
 
-    private final boolean _required;
+    private final boolean required;
 
-    private final String _defaultBindingPrefix;
+    private final String defaultBindingPrefix;
 
     public ParameterModelImpl(String name, boolean required, String defaultBindingPrefix)
     {
-        _name = name;
-        _required = required;
-        _defaultBindingPrefix = defaultBindingPrefix;
+        this.name = name;
+        this.required = required;
+        this.defaultBindingPrefix = defaultBindingPrefix;
     }
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     public boolean isRequired()
     {
-        return _required;
+        return required;
     }
 
     public String getDefaultBindingPrefix()
     {
-        return _defaultBindingPrefix;
+        return defaultBindingPrefix;
     }
 }

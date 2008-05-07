@@ -38,47 +38,48 @@ public class ExceptionReport implements ExceptionReporter
     private static final String PATH_SEPARATOR_PROPERTY = "path.separator";
 
     @Property
-    private String _attributeName;
+    private String attributeName;
 
     @Inject
     @Property
-    private Request _request;
+    private Request request;
 
     @Inject
     @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
     @Property(write = false)
-    private boolean _productionMode;
+    private boolean productionMode;
 
     @Inject
     @Symbol(TapestryConstants.TAPESTRY_VERSION_SYMBOL)
     @Property(write = false)
-    private String _tapestryVersion;
+    private String tapestryVersion;
 
     @Property(write = false)
-    private Throwable _rootException;
+    private Throwable rootException;
 
     @Property
-    private String _propertyName;
-    private final String _pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
+    private String propertyName;
+
+    private final String pathSeparator = System.getProperty(PATH_SEPARATOR_PROPERTY);
 
     public void reportException(Throwable exception)
     {
-        _rootException = exception;
+        rootException = exception;
     }
 
     public boolean getHasSession()
     {
-        return _request.getSession(false) != null;
+        return request.getSession(false) != null;
     }
 
     public Session getSession()
     {
-        return _request.getSession(false);
+        return request.getSession(false);
     }
 
     public Object getAttributeValue()
     {
-        return getSession().getAttribute(_attributeName);
+        return getSession().getAttribute(attributeName);
     }
 
     /**
@@ -91,21 +92,21 @@ public class ExceptionReport implements ExceptionReporter
 
     public String getPropertyValue()
     {
-        return System.getProperty(_propertyName);
+        return System.getProperty(propertyName);
     }
 
     public boolean isSimpleProperty()
     {
-        if (_propertyName.equals(PATH_SEPARATOR_PROPERTY)) return true;
+        if (propertyName.equals(PATH_SEPARATOR_PROPERTY)) return true;
 
-        return !getPropertyValue().contains(_pathSeparator);
+        return !getPropertyValue().contains(pathSeparator);
     }
 
     public String[] getComplexPropertyValue()
     {
         // Neither : nor ; is a regexp character.
 
-        return getPropertyValue().split(_pathSeparator);
+        return getPropertyValue().split(pathSeparator);
     }
 
 }

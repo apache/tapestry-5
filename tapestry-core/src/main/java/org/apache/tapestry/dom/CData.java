@@ -22,26 +22,27 @@ import java.io.PrintWriter;
  */
 public class CData extends Node
 {
-    private final String _content;
-    private final Document _document;
+    private final String content;
+
+    private final Document document;
 
     public CData(Node container, Document document, String content)
     {
         super(container);
 
-        _document = document;
-        _content = content;
+        this.document = document;
+        this.content = content;
     }
 
 
     public void toMarkup(PrintWriter writer)
     {
-        MarkupModel model = _document.getMarkupModel();
+        MarkupModel model = document.getMarkupModel();
 
         if (model.isXML())
         {
             writer.print("<![CDATA[");
-            writer.print(_content);
+            writer.print(content);
             writer.print("]]>");
             return;
         }
@@ -49,9 +50,9 @@ public class CData extends Node
         // CDATA not supported, so write it normally, with entities escaped.  Create a working
         // buffer that's plenty big even if a lot of characters need escaping.
 
-        StringBuilder builder = new StringBuilder(2 * _content.length());
+        StringBuilder builder = new StringBuilder(2 * content.length());
 
-        model.encode(_content, builder);
+        model.encode(content, builder);
 
         writer.print(builder.toString());
     }

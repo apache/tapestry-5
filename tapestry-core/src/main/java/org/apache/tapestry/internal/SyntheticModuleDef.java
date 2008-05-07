@@ -28,11 +28,11 @@ import java.util.Set;
  */
 public class SyntheticModuleDef implements ModuleDef
 {
-    private final Set<ContributionDef> _contributionDefs;
+    private final Set<ContributionDef> contributionDefs;
 
     public SyntheticModuleDef(ContributionDef... contributionDefs)
     {
-        _contributionDefs = CollectionFactory.newSet(contributionDefs);
+        this.contributionDefs = CollectionFactory.newSet(contributionDefs);
     }
 
     /**
@@ -48,7 +48,7 @@ public class SyntheticModuleDef implements ModuleDef
      */
     public Set<ContributionDef> getContributionDefs()
     {
-        return _contributionDefs;
+        return contributionDefs;
     }
 
     /**

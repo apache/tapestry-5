@@ -20,7 +20,7 @@ import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Scope;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.ObjectRenderer;
 
@@ -37,16 +37,16 @@ public class LocationRenderer implements ObjectRenderer<Location>
 {
     private static final int RANGE = 5;
 
-    private final Set<Location> _rendered = newSet();
+    private final Set<Location> rendered = CollectionFactory.newSet();
 
     public void render(Location location, MarkupWriter writer)
     {
         writer.write(location.toString());
 
         /** If the full details were already rendered this request, then skip the rest. */
-        if (_rendered.contains(location)) return;
+        if (rendered.contains(location)) return;
 
-        _rendered.add(location);
+        rendered.add(location);
 
         Resource r = location.getResource();
         int line = location.getLine();

@@ -26,25 +26,25 @@ import org.apache.tapestry.ioc.Location;
  */
 public class LiteralBinding extends AbstractBinding
 {
-    private final String _description;
+    private final String description;
 
-    private final Object _value;
+    private final Object value;
 
     public LiteralBinding(String description, Object value, Location location)
     {
         super(location);
-        _description = description;
-        _value = value;
+        this.description = description;
+        this.value = value;
     }
 
     public Object get()
     {
-        return _value;
+        return value;
     }
 
     @Override
     public String toString()
     {
-        return String.format("LiteralBinding[%s: %s]", _description, _value);
+        return String.format("LiteralBinding[%s: %s]", description, value);
     }
 }

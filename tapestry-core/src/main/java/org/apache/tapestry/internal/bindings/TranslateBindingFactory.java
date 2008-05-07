@@ -26,17 +26,17 @@ import org.apache.tapestry.services.TranslatorSource;
  */
 public class TranslateBindingFactory implements BindingFactory
 {
-    private final TranslatorSource _source;
+    private final TranslatorSource source;
 
     public TranslateBindingFactory(TranslatorSource source)
     {
-        _source = source;
+        this.source = source;
     }
 
     public Binding newBinding(String description, ComponentResources container,
                               ComponentResources component, String expression, Location location)
     {
-        Translator translator = _source.get(expression);
+        Translator translator = source.get(expression);
 
         return new LiteralBinding(description, translator, location);
     }
