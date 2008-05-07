@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.AliasContribution;
 import org.apache.tapestry.services.AliasManager;
 import org.slf4j.Logger;
@@ -24,14 +24,14 @@ import java.util.Map;
 
 public class AliasManagerImpl implements AliasManager
 {
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Collection<AliasContribution> _contributions;
+    private final Collection<AliasContribution> contributions;
 
     public AliasManagerImpl(Logger logger, Collection<AliasContribution> contributions)
     {
-        _logger = logger;
-        _contributions = contributions;
+        this.logger = logger;
+        this.contributions = contributions;
     }
 
     public Map<Class, Object> getAliasesForMode(String mode)
@@ -48,9 +48,9 @@ public class AliasManagerImpl implements AliasManager
 
     private Map<Class, Object> buildMapForMode(String mode)
     {
-        Map<Class, Object> result = newMap();
+        Map<Class, Object> result = CollectionFactory.newMap();
 
-        for (AliasContribution ic : _contributions)
+        for (AliasContribution ic : contributions)
         {
             if (!ic.getMode().equalsIgnoreCase(mode)) continue;
 
@@ -60,7 +60,7 @@ public class AliasManagerImpl implements AliasManager
 
             if (existing != null)
             {
-                _logger.error(ServicesMessages.duplicateContribution(
+                logger.error(ServicesMessages.duplicateContribution(
                         ic.getObject(),
                         contributionType,
                         existing));

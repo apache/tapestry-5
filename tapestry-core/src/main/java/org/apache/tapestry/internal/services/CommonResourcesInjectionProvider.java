@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.ObjectLocator;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.InjectionProvider;
@@ -30,25 +30,19 @@ import java.util.Map;
  */
 public class CommonResourcesInjectionProvider implements InjectionProvider
 {
-    private static final Map<Class, String> _configuration = newMap();
+    private static final Map<Class, String> configuration = CollectionFactory.newMap();
 
-    public CommonResourcesInjectionProvider()
     {
-        add(Messages.class, "getMessages");
-        add(Locale.class, "getLocale");
-        add(Logger.class, "getLogger");
-        add(String.class, "getCompleteId");
-    }
-
-    private void add(Class fieldType, String methodName)
-    {
-        _configuration.put(fieldType, methodName);
+        configuration.put(Messages.class, "getMessages");
+        configuration.put(Locale.class, "getLocale");
+        configuration.put(Logger.class, "getLogger");
+        configuration.put(String.class, "getCompleteId");
     }
 
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
                                     ClassTransformation transformation, MutableComponentModel componentModel)
     {
-        String implementationMethodName = _configuration.get(fieldType);
+        String implementationMethodName = configuration.get(fieldType);
 
         if (implementationMethodName == null) return false;
 

@@ -24,7 +24,7 @@ import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.model.ComponentModel;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -43,19 +43,19 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
     /**
      * Map from class name to class transformation.
      */
-    private final Map<String, InternalClassTransformation> _nameToClassTransformation = newConcurrentMap();
+    private final Map<String, InternalClassTransformation> nameToClassTransformation = CollectionFactory.newConcurrentMap();
 
-    private final Map<String, ComponentModel> _nameToComponentModel = newConcurrentMap();
+    private final Map<String, ComponentModel> nameToComponentModel = CollectionFactory.newConcurrentMap();
 
-    private final ComponentClassTransformWorker _workerChain;
+    private final ComponentClassTransformWorker workerChain;
 
-    private final LoggerSource _loggerSource;
+    private final LoggerSource loggerSource;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final CtClassSource _classSource;
+    private final CtClassSource classSource;
 
-    private final ComponentClassCache _componentClassCache;
+    private final ComponentClassCache componentClassCache;
 
     private final String[] SUBPACKAGES = { "." + InternalConstants.PAGES_SUBPACKAGE + ".",
             "." + InternalConstants.COMPONENTS_SUBPACKAGE + ".",
@@ -73,11 +73,11 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
                                          @ComponentLayer CtClassSource classSource,
                                          ComponentClassCache componentClassCache)
     {
-        _workerChain = workerChain;
-        _loggerSource = loggerSource;
-        _classFactory = classFactory;
-        _componentClassCache = componentClassCache;
-        _classSource = classSource;
+        this.workerChain = workerChain;
+        this.loggerSource = loggerSource;
+        this.classFactory = classFactory;
+        this.componentClassCache = componentClassCache;
+        this.classSource = classSource;
     }
 
     /**
@@ -85,8 +85,8 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
      */
     public void objectWasInvalidated()
     {
-        _nameToClassTransformation.clear();
-        _nameToComponentModel.clear();
+        nameToClassTransformation.clear();
+        nameToComponentModel.clear();
     }
 
     public void transformComponentClass(CtClass ctClass, ClassLoader classLoader)
@@ -123,12 +123,12 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         String classname = ctClass.getName();
 
-        Logger logger = _loggerSource.getLogger(classname);
+        Logger logger = loggerSource.getLogger(classname);
 
         // If the parent class is in a controlled package, it will already have been loaded and
         // transformed (that is driven by the ComponentInstantiatorSource).
 
-        InternalClassTransformation parentTransformation = _nameToClassTransformation
+        InternalClassTransformation parentTransformation = nameToClassTransformation
                 .get(parentClassname);
 
         if (parentTransformation == null && !parentClassname.equals(Object.class.getName()))
@@ -144,18 +144,18 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         Resource baseResource = new ClasspathResource(classname.replace(".", "/") + ".class");
 
-        ComponentModel parentModel = _nameToComponentModel.get(parentClassname);
+        ComponentModel parentModel = nameToComponentModel.get(parentClassname);
 
         MutableComponentModel model = new MutableComponentModelImpl(classname, logger, baseResource, parentModel);
 
         InternalClassTransformation transformation =
                 parentTransformation == null
-                ? new InternalClassTransformationImpl(_classFactory, ctClass, _componentClassCache, model, _classSource)
+                ? new InternalClassTransformationImpl(classFactory, ctClass, componentClassCache, model, classSource)
                 : parentTransformation.createChildTransformation(ctClass, model);
 
         try
         {
-            _workerChain.transform(transformation, model);
+            workerChain.transform(transformation, model);
 
             transformation.finish();
         }
@@ -166,13 +166,13 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
 
         if (logger.isDebugEnabled()) logger.debug("Finished class transformation: " + transformation);
 
-        _nameToClassTransformation.put(classname, transformation);
-        _nameToComponentModel.put(classname, model);
+        nameToClassTransformation.put(classname, transformation);
+        nameToComponentModel.put(classname, model);
     }
 
     public Instantiator createInstantiator(String componentClassName)
     {
-        InternalClassTransformation ct = _nameToClassTransformation.get(componentClassName);
+        InternalClassTransformation ct = nameToClassTransformation.get(componentClassName);
 
         if (ct == null) throw new RuntimeException(ServicesMessages.classNotTransformed(componentClassName));
 
@@ -192,7 +192,7 @@ public class ComponentClassTransformerImpl implements ComponentClassTransformer,
         {
             int pos = className.indexOf(subpackage);
 
-// Keep the leading '.' in the subpackage name and tack on "base".
+            // Keep the leading '.' in the subpackage name and tack on "base".
 
             if (pos > 0) return className.substring(0, pos + 1) + InternalConstants.BASE_SUBPACKAGE;
         }

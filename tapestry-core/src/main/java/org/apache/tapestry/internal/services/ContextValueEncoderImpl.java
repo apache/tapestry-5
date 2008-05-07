@@ -21,18 +21,18 @@ import org.apache.tapestry.services.ValueEncoderSource;
 
 public class ContextValueEncoderImpl implements ContextValueEncoder
 {
-    private final ValueEncoderSource _valueEncoderSource;
+    private final ValueEncoderSource valueEncoderSource;
 
     public ContextValueEncoderImpl(ValueEncoderSource valueEncoderSource)
     {
-        _valueEncoderSource = valueEncoderSource;
+        this.valueEncoderSource = valueEncoderSource;
     }
 
     public String toClient(Object value)
     {
         Defense.notNull(value, "value");
 
-        ValueEncoder encoder = _valueEncoderSource.getValueEncoder(value.getClass());
+        ValueEncoder encoder = valueEncoderSource.getValueEncoder(value.getClass());
 
         return encoder.toClient(value);
     }
@@ -42,7 +42,7 @@ public class ContextValueEncoderImpl implements ContextValueEncoder
     {
         Defense.notNull(requiredType, "requiredType");
 
-        ValueEncoder<T> encoder = _valueEncoderSource.getValueEncoder(requiredType);
+        ValueEncoder<T> encoder = valueEncoderSource.getValueEncoder(requiredType);
 
         return encoder.toValue(clientValue);
     }

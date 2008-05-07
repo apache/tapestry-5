@@ -26,41 +26,41 @@ import java.util.Locale;
 
 public class ComponentMessagesSourceImpl implements ComponentMessagesSource, UpdateListener
 {
-    private final MessagesSource _messagesSource;
+    private final MessagesSource messagesSource;
 
-    private final Resource _rootResource;
+    private final Resource rootResource;
 
-    private final String _appCatalog;
+    private final String appCatalog;
 
     private static class ComponentModelBundle implements MessagesBundle
     {
-        private final ComponentModel _model;
+        private final ComponentModel model;
 
-        private final MessagesBundle _rootBundle;
+        private final MessagesBundle rootBundle;
 
         public ComponentModelBundle(ComponentModel model, MessagesBundle rootBundle)
         {
-            _model = model;
-            _rootBundle = rootBundle;
+            this.model = model;
+            this.rootBundle = rootBundle;
         }
 
         public Resource getBaseResource()
         {
-            return _model.getBaseResource();
+            return model.getBaseResource();
         }
 
         public Object getId()
         {
-            return _model.getComponentClassName();
+            return model.getComponentClassName();
         }
 
         public MessagesBundle getParent()
         {
-            ComponentModel parentModel = _model.getParentModel();
+            ComponentModel parentModel = model.getParentModel();
 
-            if (parentModel == null) return _rootBundle;
+            if (parentModel == null) return rootBundle;
 
-            return new ComponentModelBundle(parentModel, _rootBundle);
+            return new ComponentModelBundle(parentModel, rootBundle);
         }
     }
 
@@ -71,20 +71,20 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
     ComponentMessagesSourceImpl(Resource rootResource, String appCatalog, URLChangeTracker tracker)
     {
-        _rootResource = rootResource;
-        _appCatalog = appCatalog;
+        this.rootResource = rootResource;
+        this.appCatalog = appCatalog;
 
-        _messagesSource = new MessagesSourceImpl(tracker);
+        messagesSource = new MessagesSourceImpl(tracker);
     }
 
     public void checkForUpdates()
     {
-        _messagesSource.checkForUpdates();
+        messagesSource.checkForUpdates();
     }
 
     public Messages getMessages(ComponentModel componentModel, Locale locale)
     {
-        final Resource appCatalogResource = _rootResource.forFile(_appCatalog);
+        final Resource appCatalogResource = rootResource.forFile(appCatalog);
 
         // If the application catalog exists, set it up as the root, otherwise use null.
 
@@ -98,7 +98,7 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
             public Object getId()
             {
-                return _appCatalog;
+                return appCatalog;
             }
 
             public MessagesBundle getParent()
@@ -109,11 +109,11 @@ public class ComponentMessagesSourceImpl implements ComponentMessagesSource, Upd
 
         MessagesBundle bundle = new ComponentModelBundle(componentModel, appCatalogBundle);
 
-        return _messagesSource.getMessages(bundle, locale);
+        return messagesSource.getMessages(bundle, locale);
     }
 
     public void addInvalidationListener(InvalidationListener listener)
     {
-        _messagesSource.addInvalidationListener(listener);
+        messagesSource.addInvalidationListener(listener);
     }
 }

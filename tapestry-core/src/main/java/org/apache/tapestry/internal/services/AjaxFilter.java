@@ -24,20 +24,20 @@ import java.io.IOException;
  */
 public class AjaxFilter implements ComponentEventRequestFilter
 {
-    private final Request _request;
+    private final Request request;
 
-    private final ComponentEventRequestHandler _ajaxHandler;
+    private final ComponentEventRequestHandler ajaxHandler;
 
     public AjaxFilter(Request request, @Ajax ComponentEventRequestHandler ajaxHandler)
     {
-        _request = request;
-        _ajaxHandler = ajaxHandler;
+        this.request = request;
+        this.ajaxHandler = ajaxHandler;
     }
 
     public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
             throws IOException
     {
-        ComponentEventRequestHandler next = _request.isXHR() ? _ajaxHandler : handler;
+        ComponentEventRequestHandler next = request.isXHR() ? ajaxHandler : handler;
 
         next.handle(parameters);
     }

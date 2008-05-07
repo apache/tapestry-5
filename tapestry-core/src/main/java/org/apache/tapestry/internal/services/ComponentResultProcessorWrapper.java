@@ -24,29 +24,29 @@ import java.io.IOException;
  */
 public class ComponentResultProcessorWrapper implements ComponentEventCallback
 {
-    private boolean _aborted;
+    private boolean aborted;
 
-    private IOException _exception;
+    private IOException exception;
 
-    private final ComponentEventResultProcessor _processor;
+    private final ComponentEventResultProcessor processor;
 
     public ComponentResultProcessorWrapper(ComponentEventResultProcessor processor)
     {
-        _processor = processor;
+        this.processor = processor;
     }
 
     public boolean handleResult(Object result)
     {
         try
         {
-            _processor.processResultValue(result);
+            processor.processResultValue(result);
         }
         catch (IOException ex)
         {
-            _exception = ex;
+            exception = ex;
         }
 
-        _aborted = true;
+        aborted = true;
 
         return true;
     }
@@ -60,8 +60,8 @@ public class ComponentResultProcessorWrapper implements ComponentEventCallback
      */
     public boolean isAborted() throws IOException
     {
-        if (_exception != null) throw _exception;
+        if (exception != null) throw exception;
 
-        return _aborted;
+        return aborted;
     }
 }

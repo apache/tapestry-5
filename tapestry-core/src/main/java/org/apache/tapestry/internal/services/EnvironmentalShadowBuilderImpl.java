@@ -21,15 +21,14 @@ import org.apache.tapestry.ioc.services.MethodSignature;
 import org.apache.tapestry.services.Environment;
 import org.apache.tapestry.services.EnvironmentalShadowBuilder;
 
-import static java.lang.String.format;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
 public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilder
 {
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Environment _environment;
+    private final Environment environment;
 
     /**
      * Construct using the default builtin factory, not the component layer version.
@@ -38,8 +37,8 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
 
                                           Environment environment)
     {
-        _classFactory = classFactory;
-        _environment = environment;
+        this.classFactory = classFactory;
+        this.environment = environment;
     }
 
     public <T> T build(Class<T> serviceType)
@@ -52,7 +51,7 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
         {
             Constructor cons = proxyClass.getConstructors()[0];
 
-            Object raw = cons.newInstance(_environment, serviceType);
+            Object raw = cons.newInstance(environment, serviceType);
 
             return serviceType.cast(raw);
         }
@@ -64,19 +63,19 @@ public class EnvironmentalShadowBuilderImpl implements EnvironmentalShadowBuilde
 
     private Class buildProxyClass(Class serviceType)
     {
-        ClassFab classFab = _classFactory.newClass(serviceType);
+        ClassFab classFab = classFactory.newClass(serviceType);
 
-        classFab.addField("_environment", Environment.class);
+        classFab.addField("environment", Environment.class);
         classFab.addField("_serviceType", Class.class);
 
         classFab.addConstructor(new Class[] { Environment.class, Class.class }, null,
-                                "{ _environment = $1; _serviceType = $2; }");
+                                "{ environment = $1; _serviceType = $2; }");
 
         classFab.addMethod(Modifier.PRIVATE, new MethodSignature(serviceType, "_delegate", null, null),
-                           "return ($r) _environment.peekRequired(_serviceType); ");
+                           "return ($r) environment.peekRequired(_serviceType); ");
 
         classFab.proxyMethodsToDelegate(serviceType, "_delegate()",
-                                        format("<EnvironmentalProxy for %s>", serviceType.getName()));
+                                        String.format("<EnvironmentalProxy for %s>", serviceType.getName()));
 
         return classFab.createClass();
     }

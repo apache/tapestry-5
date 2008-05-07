@@ -28,16 +28,16 @@ import java.util.Locale;
 
 public class FieldValidatorDefaultSourceImpl implements FieldValidatorDefaultSource
 {
-    private final ValidationConstraintGenerator _validationConstraintGenerator;
+    private final ValidationConstraintGenerator validationConstraintGenerator;
 
-    private final FieldValidatorSource _fieldValidatorSource;
+    private final FieldValidatorSource fieldValidatorSource;
 
     public FieldValidatorDefaultSourceImpl(
             ValidationConstraintGenerator validationConstraintGenerator,
             FieldValidatorSource fieldValidatorSource)
     {
-        _validationConstraintGenerator = validationConstraintGenerator;
-        _fieldValidatorSource = fieldValidatorSource;
+        this.validationConstraintGenerator = validationConstraintGenerator;
+        this.fieldValidatorSource = fieldValidatorSource;
     }
 
     public FieldValidator createDefaultValidator(Field field, String overrideId,
@@ -46,7 +46,7 @@ public class FieldValidatorDefaultSourceImpl implements FieldValidatorDefaultSou
     {
         List<FieldValidator> validators = newList();
 
-        for (String constraint : _validationConstraintGenerator.buildConstraints(
+        for (String constraint : validationConstraintGenerator.buildConstraints(
                 propertyType,
                 propertyAnnotations))
         {
@@ -55,7 +55,7 @@ public class FieldValidatorDefaultSourceImpl implements FieldValidatorDefaultSou
             String validatorType = equalsx > 0 ? constraint.substring(0, equalsx) : constraint;
             String constraintValue = equalsx > 0 ? constraint.substring(equalsx + 1) : null;
 
-            FieldValidator validator = _fieldValidatorSource.createValidator(
+            FieldValidator validator = fieldValidatorSource.createValidator(
                     field,
                     validatorType,
                     constraintValue,

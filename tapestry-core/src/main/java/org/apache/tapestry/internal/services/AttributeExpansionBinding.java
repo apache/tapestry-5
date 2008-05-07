@@ -23,18 +23,18 @@ import org.apache.tapestry.ioc.Location;
  */
 public class AttributeExpansionBinding extends AbstractBinding
 {
-    private final StringProvider _provider;
+    private final StringProvider provider;
 
     public AttributeExpansionBinding(StringProvider provider, Location location)
     {
         super(location);
 
-        _provider = provider;
+        this.provider = provider;
     }
 
     public Object get()
     {
-        return _provider.provideString();
+        return provider.provideString();
     }
 
     /**

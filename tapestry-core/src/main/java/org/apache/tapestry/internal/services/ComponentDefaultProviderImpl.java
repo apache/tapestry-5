@@ -28,21 +28,21 @@ import org.apache.tapestry.services.ValueEncoderSource;
 
 public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 {
-    private final PropertyAccess _propertyAccess;
+    private final PropertyAccess propertyAccess;
 
-    private final BindingSource _bindingSource;
+    private final BindingSource bindingSource;
 
-    private final ValueEncoderSource _valueEncoderSource;
+    private final ValueEncoderSource valueEncoderSource;
 
-    private final TranslatorSource _translatorSource;
+    private final TranslatorSource translatorSource;
 
     public ComponentDefaultProviderImpl(PropertyAccess propertyAccess, BindingSource bindingSource,
                                         ValueEncoderSource valueEncoderSource, TranslatorSource translatorSource)
     {
-        _propertyAccess = propertyAccess;
-        _bindingSource = bindingSource;
-        _valueEncoderSource = valueEncoderSource;
-        _translatorSource = translatorSource;
+        this.propertyAccess = propertyAccess;
+        this.bindingSource = bindingSource;
+        this.valueEncoderSource = valueEncoderSource;
+        this.translatorSource = translatorSource;
     }
 
     public String defaultLabel(ComponentResources resources)
@@ -72,12 +72,12 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         // This sets up an error condition for when the parameter is not bound, and
         // the binding can't be deduced.
 
-        if (_propertyAccess.getAdapter(container).getPropertyAdapter(componentId) == null)
+        if (propertyAccess.getAdapter(container).getPropertyAdapter(componentId) == null)
             return null;
 
         ComponentResources containerResources = resources.getContainerResources();
 
-        return _bindingSource.newBinding(
+        return bindingSource.newBinding(
                 "default " + parameterName,
                 containerResources,
                 TapestryConstants.PROP_BINDING_PREFIX,
@@ -93,7 +93,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
         if (parameterType == null) return null;
 
-        return _valueEncoderSource.getValueEncoder(parameterType);
+        return valueEncoderSource.getValueEncoder(parameterType);
     }
 
     public Translator defaultTranslator(String parameterName, ComponentResources resources)
@@ -105,6 +105,6 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
 
         if (type == null) return null;
 
-        return _translatorSource.findByType(type);
+        return translatorSource.findByType(type);
     }
 }

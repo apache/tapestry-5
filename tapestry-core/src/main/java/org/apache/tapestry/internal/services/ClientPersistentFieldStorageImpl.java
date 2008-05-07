@@ -45,28 +45,28 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
     {
         private static final long serialVersionUID = -2741540370081645945L;
 
-        private final String _pageName;
+        private final String pageName;
 
-        private final String _componentId;
+        private final String componentId;
 
-        private final String _fieldName;
+        private final String fieldName;
 
-        Key(final String pageName, final String componentId, final String fieldName)
+        Key(String pageName, String componentId, String fieldName)
         {
-            _pageName = pageName;
-            _componentId = componentId;
-            _fieldName = fieldName;
+            this.pageName = pageName;
+            this.componentId = componentId;
+            this.fieldName = fieldName;
         }
 
         public boolean matches(String pageName)
         {
-            return _pageName.equals(pageName);
+            return this.pageName.equals(pageName);
         }
 
         public PersistentFieldChange toChange(Object value)
         {
-            return new PersistentFieldChangeImpl(_componentId == null ? "" : _componentId,
-                                                 _fieldName, value);
+            return new PersistentFieldChangeImpl(componentId == null ? "" : componentId,
+                                                 fieldName, value);
         }
 
         @Override
@@ -76,12 +76,12 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
             int result = 1;
 
-            result = PRIME * result + ((_componentId == null) ? 0 : _componentId.hashCode());
+            result = PRIME * result + ((componentId == null) ? 0 : componentId.hashCode());
 
-            // _fieldName and _pageName are never null
+            // fieldName and pageName are never null
 
-            result = PRIME * result + _fieldName.hashCode();
-            result = PRIME * result + _pageName.hashCode();
+            result = PRIME * result + fieldName.hashCode();
+            result = PRIME * result + pageName.hashCode();
 
             return result;
         }
@@ -94,26 +94,26 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
             if (getClass() != obj.getClass()) return false;
             final Key other = (Key) obj;
 
-            // _fieldName and _pageName are never null
+            // fieldName and pageName are never null
 
-            if (!_fieldName.equals(other._fieldName)) return false;
-            if (!_pageName.equals(other._pageName)) return false;
+            if (!fieldName.equals(other.fieldName)) return false;
+            if (!pageName.equals(other.pageName)) return false;
 
-            if (_componentId == null)
+            if (componentId == null)
             {
-                if (other._componentId != null) return false;
+                if (other.componentId != null) return false;
             }
-            else if (!_componentId.equals(other._componentId)) return false;
+            else if (!componentId.equals(other.componentId)) return false;
 
             return true;
         }
     }
 
-    private final Map<Key, Object> _persistedValues = newMap();
+    private final Map<Key, Object> persistedValues = newMap();
 
-    private String _clientData;
+    private String clientData;
 
-    private boolean _mapUptoDate = false;
+    private boolean mapUptoDate = false;
 
     public ClientPersistentFieldStorageImpl(Request request)
     {
@@ -122,25 +122,25 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         // MIME can encode to a '+' character; the browser converts that to a space; we convert it
         // back.
 
-        _clientData = value == null ? null : value.replace(' ', '+');
+        clientData = value == null ? null : value.replace(' ', '+');
     }
 
     public void updateLink(Link link)
     {
         refreshClientData();
 
-        if (_clientData != null) link.addParameter(PARAMETER_NAME, _clientData);
+        if (clientData != null) link.addParameter(PARAMETER_NAME, clientData);
     }
 
     public Collection<PersistentFieldChange> gatherFieldChanges(String pageName)
     {
         refreshMap();
 
-        if (_persistedValues.isEmpty()) return Collections.emptyList();
+        if (persistedValues.isEmpty()) return Collections.emptyList();
 
         Collection<PersistentFieldChange> result = CollectionFactory.newList();
 
-        for (Map.Entry<Key, Object> e : _persistedValues.entrySet())
+        for (Map.Entry<Key, Object> e : persistedValues.entrySet())
         {
             Key key = e.getKey();
 
@@ -156,15 +156,15 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
 
         Collection<Key> removedKeys = CollectionFactory.newList();
 
-        for (Key key : _persistedValues.keySet())
+        for (Key key : persistedValues.keySet())
         {
-            if (key._pageName.equals(pageName)) removedKeys.add(key);
+            if (key.pageName.equals(pageName)) removedKeys.add(key);
         }
 
         for (Key key : removedKeys)
         {
-            _persistedValues.remove(key);
-            _clientData = null;
+            persistedValues.remove(key);
+            clientData = null;
         }
     }
 
@@ -175,17 +175,17 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         Key key = new Key(pageName, componentId, fieldName);
 
         if (newValue == null)
-            _persistedValues.remove(key);
+            persistedValues.remove(key);
         else
         {
             if (!Serializable.class.isInstance(newValue))
                 throw new IllegalArgumentException(ServicesMessages
                         .clientStateMustBeSerializable(newValue));
 
-            _persistedValues.put(key, newValue);
+            persistedValues.put(key, newValue);
         }
 
-        _clientData = null;
+        clientData = null;
     }
 
     /**
@@ -194,13 +194,13 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
     @SuppressWarnings("unchecked")
     private void refreshMap()
     {
-        if (_mapUptoDate) return;
+        if (mapUptoDate) return;
 
         // Parse the client data to form the map.
 
         restoreMapFromClientData();
 
-        _mapUptoDate = true;
+        mapUptoDate = true;
     }
 
     /**
@@ -208,15 +208,15 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
      */
     private void restoreMapFromClientData()
     {
-        _persistedValues.clear();
+        persistedValues.clear();
 
-        if (_clientData == null) return;
+        if (clientData == null) return;
 
         ObjectInputStream in = null;
 
         try
         {
-            in = new Base64ObjectInputStream(_clientData);
+            in = new Base64ObjectInputStream(clientData);
 
             int count = in.readInt();
 
@@ -225,7 +225,7 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
                 Key key = (Key) in.readObject();
                 Object value = in.readObject();
 
-                _persistedValues.put(key, value);
+                persistedValues.put(key, value);
             }
         }
         catch (Exception ex)
@@ -244,18 +244,18 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         // request. In any other case where the client data is non-null, it is by definition
         // up-to date (since it is reset to null any time there's a change to the map).
 
-        if (_clientData != null) return;
+        if (clientData != null) return;
 
         // Very typical: we're refreshing the client data but haven't created the map yet, and there
         // was no value in the request. Leave it as null.
 
-        if (!_mapUptoDate) return;
+        if (!mapUptoDate) return;
 
         // Null is also appropriate when the persisted values are empty.
 
-        if (_persistedValues.isEmpty()) return;
+        if (persistedValues.isEmpty()) return;
 
-        // Otherwise, time to update _clientData from _persistedValues
+        // Otherwise, time to update clientData from persistedValues
 
         Base64ObjectOutputStream os = null;
 
@@ -263,9 +263,9 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
         {
             os = new Base64ObjectOutputStream();
 
-            os.writeInt(_persistedValues.size());
+            os.writeInt(persistedValues.size());
 
-            for (Map.Entry<Key, Object> e : _persistedValues.entrySet())
+            for (Map.Entry<Key, Object> e : persistedValues.entrySet())
             {
                 os.writeObject(e.getKey());
                 os.writeObject(e.getValue());
@@ -281,6 +281,6 @@ public class ClientPersistentFieldStorageImpl implements ClientPersistentFieldSt
             InternalUtils.close(os);
         }
 
-        _clientData = os.toBase64();
+        clientData = os.toBase64();
     }
 }

@@ -30,13 +30,13 @@ import java.util.Map;
  */
 public class ComponentInvocationImpl implements ComponentInvocation
 {
-    private final String[] _context;
+    private final String[] context;
 
-    private final InvocationTarget _target;
+    private final InvocationTarget target;
 
-    private final String[] _activationContext;
+    private final String[] activationContext;
 
-    private Map<String, String> _parameters;
+    private Map<String, String> parameters;
 
     /**
      * @param target            identifies the target of the event: a component with a page
@@ -49,16 +49,16 @@ public class ComponentInvocationImpl implements ComponentInvocation
      */
     public ComponentInvocationImpl(InvocationTarget target, String[] context, String[] activationContext)
     {
-        _target = target;
-        _context = context;
-        _activationContext = activationContext;
+        this.target = target;
+        this.context = context;
+        this.activationContext = activationContext;
     }
 
 
     public String buildURI(boolean isForm)
     {
         String path = getPath();
-        if (isForm || _parameters == null) return path;
+        if (isForm || parameters == null) return path;
 
         StringBuilder builder = new StringBuilder();
 
@@ -68,7 +68,7 @@ public class ComponentInvocationImpl implements ComponentInvocation
 
         for (String name : getParameterNames())
         {
-            String value = _parameters.get(name);
+            String value = parameters.get(name);
 
             builder.append(sep);
 
@@ -91,9 +91,9 @@ public class ComponentInvocationImpl implements ComponentInvocation
     private String getPath()
     {
         StringBuilder builder = new StringBuilder();
-        builder.append(_target.getPath());
+        builder.append(target.getPath());
 
-        for (String id : _context)
+        for (String id : context)
         {
             if (builder.length() > 0) builder.append("/");
 
@@ -105,12 +105,12 @@ public class ComponentInvocationImpl implements ComponentInvocation
 
     public String[] getContext()
     {
-        return _context;
+        return context;
     }
 
     public String[] getActivationContext()
     {
-        return _activationContext;
+        return activationContext;
     }
 
     public void addParameter(String parameterName, String value)
@@ -118,26 +118,26 @@ public class ComponentInvocationImpl implements ComponentInvocation
         notBlank(parameterName, "parameterName");
         notBlank(value, "value");
 
-        if (_parameters == null) _parameters = newMap();
+        if (parameters == null) parameters = newMap();
 
-        if (_parameters.containsKey(parameterName)) throw new IllegalArgumentException(
-                ServicesMessages.parameterNameMustBeUnique(parameterName, _parameters.get(parameterName)));
+        if (parameters.containsKey(parameterName)) throw new IllegalArgumentException(
+                ServicesMessages.parameterNameMustBeUnique(parameterName, parameters.get(parameterName)));
 
-        _parameters.put(parameterName, value);
+        parameters.put(parameterName, value);
     }
 
     public List<String> getParameterNames()
     {
-        return InternalUtils.sortedKeys(_parameters);
+        return InternalUtils.sortedKeys(parameters);
     }
 
     public String getParameterValue(String name)
     {
-        return InternalUtils.get(_parameters, name);
+        return InternalUtils.get(parameters, name);
     }
 
     public InvocationTarget getTarget()
     {
-        return _target;
+        return target;
     }
 }

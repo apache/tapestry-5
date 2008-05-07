@@ -26,28 +26,28 @@ import java.io.IOException;
  */
 public class ClassResultProcessor implements ComponentEventResultProcessor<Class>
 {
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
-    private final RequestPageCache _requestPageCache;
+    private final RequestPageCache requestPageCache;
 
-    private final ActionRenderResponseGenerator _generator;
+    private final ActionRenderResponseGenerator generator;
 
     public ClassResultProcessor(ComponentClassResolver resolver, RequestPageCache requestPageCache,
                                 ActionRenderResponseGenerator generator)
     {
-        _resolver = resolver;
-        _requestPageCache = requestPageCache;
-        _generator = generator;
+        this.resolver = resolver;
+        this.requestPageCache = requestPageCache;
+        this.generator = generator;
     }
 
     public void processResultValue(Class value) throws IOException
     {
         String className = value.getName();
-        String pageName = _resolver.resolvePageClassNameToPageName(className);
+        String pageName = resolver.resolvePageClassNameToPageName(className);
 
-        Page page = _requestPageCache.get(pageName);
+        Page page = requestPageCache.get(pageName);
 
-        _generator.generateResponse(page);
+        generator.generateResponse(page);
     }
 
 }

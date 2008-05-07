@@ -35,20 +35,20 @@ import java.io.IOException;
  */
 public class AssetDispatcher implements Dispatcher
 {
-    private final ResourceStreamer _streamer;
+    private final ResourceStreamer streamer;
 
-    private final ClasspathAssetAliasManager _aliasManager;
+    private final ClasspathAssetAliasManager aliasManager;
 
-    private final ResourceCache _resourceCache;
+    private final ResourceCache resourceCache;
 
     static final String IF_MODIFIED_SINCE_HEADER = "If-Modified-Since";
 
     public AssetDispatcher(ResourceStreamer streamer, ClasspathAssetAliasManager aliasManager,
                            ResourceCache resourceCache)
     {
-        _streamer = streamer;
-        _aliasManager = aliasManager;
-        _resourceCache = resourceCache;
+        this.streamer = streamer;
+        this.aliasManager = aliasManager;
+        this.resourceCache = resourceCache;
     }
 
     public boolean dispatch(Request request, Response response) throws IOException
@@ -62,7 +62,7 @@ public class AssetDispatcher implements Dispatcher
 
         // ClassLoaders like their paths to start with a leading slash.
 
-        String resourcePath = _aliasManager.toResourcePath(path);
+        String resourcePath = aliasManager.toResourcePath(path);
 
         Resource resource = findResourceAndValidateDigest(response, resourcePath);
 
@@ -90,7 +90,7 @@ public class AssetDispatcher implements Dispatcher
 
         if (ifModifiedSince > 0)
         {
-            long modified = _resourceCache.getTimeModified(resource);
+            long modified = resourceCache.getTimeModified(resource);
 
             if (ifModifiedSince >= modified)
             {
@@ -99,7 +99,7 @@ public class AssetDispatcher implements Dispatcher
             }
         }
 
-        _streamer.streamResource(resource);
+        streamer.streamResource(resource);
 
         return true;
     }
@@ -115,7 +115,7 @@ public class AssetDispatcher implements Dispatcher
     {
         Resource resource = new ClasspathResource(resourcePath);
 
-        if (!_resourceCache.requiresDigest(resource)) return resource;
+        if (!resourceCache.requiresDigest(resource)) return resource;
 
         String file = resource.getFile();
 
@@ -142,7 +142,7 @@ public class AssetDispatcher implements Dispatcher
 
                 result = resource.forFile(realFile);
 
-                String actualDigest = _resourceCache.getDigest(result);
+                String actualDigest = resourceCache.getDigest(result);
 
                 valid = requestDigest.equals(actualDigest);
             }

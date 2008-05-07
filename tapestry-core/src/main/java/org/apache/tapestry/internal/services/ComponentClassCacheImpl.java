@@ -23,31 +23,31 @@ import java.util.Map;
 
 public class ComponentClassCacheImpl implements ComponentClassCache, InvalidationListener
 {
-    private final Map<String, Class> _cache = CollectionFactory.newConcurrentMap();
+    private final Map<String, Class> cache = CollectionFactory.newConcurrentMap();
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
     public ComponentClassCacheImpl(ClassFactory classFactory)
     {
-        _classFactory = classFactory;
+        this.classFactory = classFactory;
     }
 
     public void objectWasInvalidated()
     {
-        _cache.clear();
+        cache.clear();
     }
 
 
     public Class forName(final String className)
     {
-        Class result = _cache.get(className);
+        Class result = cache.get(className);
 
         if (result == null)
         {
             result = lookupClassForType(className);
 
 
-            _cache.put(className, result);
+            cache.put(className, result);
         }
 
         return result;
@@ -64,7 +64,7 @@ public class ComponentClassCacheImpl implements ComponentClassCache, Invalidatio
 
         String jvmName = ClassFabUtils.toJVMBinaryName(className);
 
-        ClassLoader componentLoader = _classFactory.getClassLoader();
+        ClassLoader componentLoader = classFactory.getClassLoader();
 
         try
         {

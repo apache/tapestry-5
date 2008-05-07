@@ -25,29 +25,29 @@ import java.util.List;
  */
 public final class CompositeFieldValidator implements FieldValidator
 {
-    private final FieldValidator[] _validators;
+    private final FieldValidator[] validators;
 
     public CompositeFieldValidator(List<FieldValidator> validators)
     {
-        _validators = validators.toArray(new FieldValidator[validators.size()]);
+        this.validators = validators.toArray(new FieldValidator[validators.size()]);
     }
 
     @SuppressWarnings("unchecked")
     public void validate(Object value) throws ValidationException
     {
-        for (FieldValidator fv : _validators)
+        for (FieldValidator fv : validators)
             fv.validate(value);
     }
 
     public void render(MarkupWriter writer)
     {
-        for (FieldValidator fv : _validators)
+        for (FieldValidator fv : validators)
             fv.render(writer);
     }
 
     public boolean isRequired()
     {
-        for (FieldValidator fv : _validators)
+        for (FieldValidator fv : validators)
         {
             if (fv.isRequired()) return true;
         }

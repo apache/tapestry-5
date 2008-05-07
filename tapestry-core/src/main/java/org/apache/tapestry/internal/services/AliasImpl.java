@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.ObjectProvider;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.Alias;
 import org.apache.tapestry.services.AliasManager;
 
@@ -27,21 +27,21 @@ public class AliasImpl implements Alias, ObjectProvider
 {
     // Derived from the managers when first needed
 
-    private final Map<Class, Object> _properties = newMap();
+    private final Map<Class, Object> properties = CollectionFactory.newMap();
 
-    private final String _mode;
+    private final String mode;
 
-    private boolean _initialized = false;
+    private boolean initialized = false;
 
-    private AliasManager _masterManager;
+    private AliasManager masterManager;
 
-    private AliasManager _overridesManager;
+    private AliasManager overridesManager;
 
     public AliasImpl(AliasManager masterManager, String mode, AliasManager overridesManager)
     {
-        _masterManager = masterManager;
-        _mode = mode;
-        _overridesManager = overridesManager;
+        this.masterManager = masterManager;
+        this.mode = mode;
+        this.overridesManager = overridesManager;
     }
 
     public ObjectProvider getObjectProvider()
@@ -51,15 +51,15 @@ public class AliasImpl implements Alias, ObjectProvider
 
     private synchronized void initialize()
     {
-        if (_initialized) return;
+        if (initialized) return;
 
-        _properties.putAll(_masterManager.getAliasesForMode(_mode));
-        _properties.putAll(_overridesManager.getAliasesForMode(_mode));
+        properties.putAll(masterManager.getAliasesForMode(mode));
+        properties.putAll(overridesManager.getAliasesForMode(mode));
 
-        _masterManager = null;
-        _overridesManager = null;
+        masterManager = null;
+        overridesManager = null;
 
-        _initialized = true;
+        initialized = true;
     }
 
     public <T> T provide(Class<T> objectType, AnnotationProvider annotationProvider,
@@ -67,7 +67,7 @@ public class AliasImpl implements Alias, ObjectProvider
     {
         initialize();
 
-        Object object = _properties.get(objectType);
+        Object object = properties.get(objectType);
 
         // Let another provider handle this (probably the default object provider)
         if (object == null) return null;

@@ -21,27 +21,27 @@ import javax.servlet.ServletContext;
 
 public class ApplicationGlobalsImpl implements ApplicationGlobals
 {
-    private ServletContext _servletContext;
+    private ServletContext servletContext;
 
-    private Context _context;
+    private Context context;
 
     public void storeServletContext(ServletContext context)
     {
-        _servletContext = context;
+        servletContext = context;
     }
 
     public ServletContext getServletContext()
     {
-        return _servletContext;
+        return servletContext;
     }
 
     public Context getContext()
     {
-        return _context;
+        return context;
     }
 
     public void storeContext(Context context)
     {
-        _context = context;
+        this.context = context;
     }
 }

@@ -27,35 +27,35 @@ import java.util.Collection;
  */
 public class ClientPersistentFieldStrategy implements PersistentFieldStrategy, LinkFactoryListener
 {
-    private final ClientPersistentFieldStorage _storage;
+    private final ClientPersistentFieldStorage storage;
 
     public ClientPersistentFieldStrategy(ClientPersistentFieldStorage storage)
     {
-        _storage = storage;
+        this.storage = storage;
     }
 
     public Collection<PersistentFieldChange> gatherFieldChanges(String pageName)
     {
-        return _storage.gatherFieldChanges(pageName);
+        return storage.gatherFieldChanges(pageName);
     }
 
     public void postChange(String pageName, String componentId, String fieldName, Object newValue)
     {
-        _storage.postChange(pageName, componentId, fieldName, newValue);
+        storage.postChange(pageName, componentId, fieldName, newValue);
     }
 
     public void createdActionLink(Link link)
     {
-        _storage.updateLink(link);
+        storage.updateLink(link);
     }
 
     public void createdPageLink(Link link)
     {
-        _storage.updateLink(link);
+        storage.updateLink(link);
     }
 
     public void discardChanges(String pageName)
     {
-        _storage.discardChanges(pageName);
+        storage.discardChanges(pageName);
     }
 }

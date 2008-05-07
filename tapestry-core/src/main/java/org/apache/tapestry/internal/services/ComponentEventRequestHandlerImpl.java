@@ -23,32 +23,32 @@ import java.io.IOException;
 
 public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHandler
 {
-    private final ComponentEventResultProcessor _resultProcessor;
+    private final ComponentEventResultProcessor resultProcessor;
 
-    private final RequestPageCache _cache;
+    private final RequestPageCache cache;
 
-    private final Response _response;
+    private final Response response;
 
-    private final ActionRenderResponseGenerator _generator;
+    private final ActionRenderResponseGenerator generator;
 
-    private final Environment _environment;
+    private final Environment environment;
 
     public ComponentEventRequestHandlerImpl(@Traditional ComponentEventResultProcessor resultProcessor,
                                             RequestPageCache cache, Response response,
                                             ActionRenderResponseGenerator generator, Environment environment)
     {
-        _resultProcessor = resultProcessor;
-        _cache = cache;
-        _response = response;
-        _generator = generator;
-        _environment = environment;
+        this.resultProcessor = resultProcessor;
+        this.cache = cache;
+        this.response = response;
+        this.generator = generator;
+        this.environment = environment;
     }
 
     public void handle(ComponentEventRequestParameters parameters) throws IOException
     {
-        Page activePage = _cache.get(parameters.getActivePageName());
+        Page activePage = cache.get(parameters.getActivePageName());
 
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
         // If activating the page returns a "navigational result", then don't trigger the action
         // on the component.
@@ -58,18 +58,18 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
 
         if (callback.isAborted()) return;
 
-        Page containerPage = _cache.get(parameters.getContainingPageName());
+        Page containerPage = cache.get(parameters.getContainingPageName());
 
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
-        _environment.push(ComponentEventResultProcessor.class, _resultProcessor);
+        environment.push(ComponentEventResultProcessor.class, resultProcessor);
 
         element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
-        _environment.pop(ComponentEventResultProcessor.class);
+        environment.pop(ComponentEventResultProcessor.class);
 
         if (callback.isAborted()) return;
 
-        if (!_response.isCommitted()) _generator.generateResponse(activePage);
+        if (!response.isCommitted()) generator.generateResponse(activePage);
     }
 }

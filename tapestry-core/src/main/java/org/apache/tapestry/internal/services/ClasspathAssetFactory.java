@@ -32,42 +32,42 @@ import java.util.Map;
  */
 public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 {
-    private final ResourceCache _cache;
+    private final ResourceCache cache;
 
-    private final ClasspathAssetAliasManager _aliasManager;
+    private final ClasspathAssetAliasManager aliasManager;
 
-    private final Map<Resource, String> _resourceToClientURL = newConcurrentMap();
+    private final Map<Resource, String> resourceToClientURL = newConcurrentMap();
 
     public ClasspathAssetFactory(final ResourceCache cache, final ClasspathAssetAliasManager aliasManager)
     {
-        _cache = cache;
-        _aliasManager = aliasManager;
+        this.cache = cache;
+        this.aliasManager = aliasManager;
     }
 
     public void objectWasInvalidated()
     {
-        _resourceToClientURL.clear();
+        resourceToClientURL.clear();
     }
 
     private String clientURL(Resource resource)
     {
-        String clientURL = _resourceToClientURL.get(resource);
+        String clientURL = resourceToClientURL.get(resource);
 
         if (clientURL == null)
         {
             clientURL = buildClientURL(resource);
-            _resourceToClientURL.put(resource, clientURL);
+            resourceToClientURL.put(resource, clientURL);
         }
 
         // The path generated is partially request-dependent and therefore can't be cached, it will even
         // vary from request to the next.
 
-        return _aliasManager.toClientURL(clientURL);
+        return aliasManager.toClientURL(clientURL);
     }
 
     private String buildClientURL(Resource resource)
     {
-        boolean requiresDigest = _cache.requiresDigest(resource);
+        boolean requiresDigest = cache.requiresDigest(resource);
 
         String path = resource.getPath();
 
@@ -77,7 +77,7 @@ public class ClasspathAssetFactory implements AssetFactory, InvalidationListener
 
             int lastdotx = path.lastIndexOf('.');
 
-            path = path.substring(0, lastdotx + 1) + _cache.getDigest(resource) + path.substring(lastdotx);
+            path = path.substring(0, lastdotx + 1) + cache.getDigest(resource) + path.substring(lastdotx);
         }
 
         return path;

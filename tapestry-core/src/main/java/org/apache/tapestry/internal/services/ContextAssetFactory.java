@@ -27,22 +27,22 @@ import org.apache.tapestry.services.Request;
  */
 public class ContextAssetFactory implements AssetFactory
 {
-    private final Request _request;
+    private final Request request;
 
-    private final Context _context;
+    private final Context context;
 
-    private final RequestPathOptimizer _optimizer;
+    private final RequestPathOptimizer optimizer;
 
     public ContextAssetFactory(Request request, Context context, RequestPathOptimizer optimizer)
     {
-        _request = request;
-        _context = context;
-        _optimizer = optimizer;
+        this.request = request;
+        this.context = context;
+        this.optimizer = optimizer;
     }
 
     public Asset createAsset(final Resource resource)
     {
-        final String contextPath = _request.getContextPath() + "/" + resource.getPath();
+        final String contextPath = request.getContextPath() + "/" + resource.getPath();
 
         return new Asset()
         {
@@ -53,7 +53,7 @@ public class ContextAssetFactory implements AssetFactory
 
             public String toClientURL()
             {
-                return _optimizer.optimizePath(contextPath);
+                return optimizer.optimizePath(contextPath);
             }
 
             /**
@@ -73,7 +73,7 @@ public class ContextAssetFactory implements AssetFactory
      */
     public Resource getRootResource()
     {
-        return new ContextResource(_context, "/");
+        return new ContextResource(context, "/");
     }
 
 }

@@ -28,11 +28,11 @@ import java.util.Map;
  */
 public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationListener
 {
-    private final StrategyRegistry<String> _registry;
+    private final StrategyRegistry<String> registry;
 
     public DefaultDataTypeAnalyzer(Map<Class, String> configuration)
     {
-        _registry = StrategyRegistry.newInstance(String.class, configuration);
+        registry = StrategyRegistry.newInstance(String.class, configuration);
     }
 
     /**
@@ -41,14 +41,14 @@ public class DefaultDataTypeAnalyzer implements DataTypeAnalyzer, InvalidationLi
      */
     public void objectWasInvalidated()
     {
-        _registry.clearCache();
+        registry.clearCache();
     }
 
     public String identifyDataType(PropertyAdapter adapter)
     {
         Class propertyType = adapter.getType();
 
-        String dataType = _registry.get(propertyType);
+        String dataType = registry.get(propertyType);
 
         // To avoid "no strategy" exceptions, we expect a contribution of Object.class to the empty
         // string. We convert that back to a null.

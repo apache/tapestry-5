@@ -21,13 +21,13 @@ import org.apache.tapestry.runtime.ComponentEvent;
 
 public class ComponentEventImpl extends EventImpl implements ComponentEvent
 {
-    private final String _eventType;
+    private final String eventType;
 
-    private final String _originatingComponentId;
+    private final String originatingComponentId;
 
-    private final EventContext _context;
+    private final EventContext context;
 
-    private final PageResources _pageResources;
+    private final PageResources pageResources;
 
     /**
      * @param eventType              non blank string used to identify the type of event that was triggered
@@ -42,29 +42,29 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
     {
         super(handler);
 
-        _eventType = eventType;
-        _originatingComponentId = originatingComponentId;
-        _pageResources = pageResources;
-        _context = context;
+        this.eventType = eventType;
+        this.originatingComponentId = originatingComponentId;
+        this.pageResources = pageResources;
+        this.context = context;
     }
 
     public boolean matches(String eventType, String componentId, int parameterCount)
     {
-        return _eventType.equalsIgnoreCase(
-                eventType) && _context.getCount() >= parameterCount && (_originatingComponentId.equalsIgnoreCase(
+        return this.eventType.equalsIgnoreCase(
+                eventType) && context.getCount() >= parameterCount && (originatingComponentId.equalsIgnoreCase(
                 componentId) || componentId.equals(""));
     }
 
     @SuppressWarnings("unchecked")
     public Object coerceContext(int index, String desiredTypeName)
     {
-        if (index >= _context.getCount()) throw new IllegalArgumentException(ServicesMessages
+        if (index >= context.getCount()) throw new IllegalArgumentException(ServicesMessages
                 .contextIndexOutOfRange(getMethodDescription()));
         try
         {
-            Class desiredType = _pageResources.toClass(desiredTypeName);
+            Class desiredType = pageResources.toClass(desiredTypeName);
 
-            return _context.get(desiredType, index);
+            return context.get(desiredType, index);
 
         }
         catch (Exception ex)
@@ -76,18 +76,18 @@ public class ComponentEventImpl extends EventImpl implements ComponentEvent
 
     public Object[] getContext()
     {
-        int count = _context.getCount();
+        int count = context.getCount();
 
         Object[] result = new Object[count];
 
         for (int i = 0; i < count; i++)
-            result[i] = _context.get(Object.class, i);
+            result[i] = context.get(Object.class, i);
 
         return result;
     }
 
     public EventContext getEventContext()
     {
-        return _context;
+        return context;
     }
 }

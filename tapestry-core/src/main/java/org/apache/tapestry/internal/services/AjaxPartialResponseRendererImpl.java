@@ -28,21 +28,21 @@ import java.io.PrintWriter;
 
 public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRenderer
 {
-    private final MarkupWriterFactory _factory;
+    private final MarkupWriterFactory factory;
 
-    private final Request _request;
+    private final Request request;
 
-    private final Response _response;
+    private final Response response;
 
-    private final PartialMarkupRenderer _partialMarkupRenderer;
+    private final PartialMarkupRenderer partialMarkupRenderer;
 
     public AjaxPartialResponseRendererImpl(MarkupWriterFactory factory, Request request,
                                            Response response, PartialMarkupRenderer partialMarkupRenderer)
     {
-        _factory = factory;
-        _request = request;
-        _response = response;
-        _partialMarkupRenderer = partialMarkupRenderer;
+        this.factory = factory;
+        this.request = request;
+        this.response = response;
+        this.partialMarkupRenderer = partialMarkupRenderer;
     }
 
     public void renderPartialPageMarkup() throws IOException
@@ -51,22 +51,22 @@ public class AjaxPartialResponseRendererImpl implements AjaxPartialResponseRende
         // seperated, and trying to keep stateless and stateful (i.e., perthread scope) services
         // seperated. So we inform the stateful queue service what it needs to do here ...
 
-        ContentType pageContentType = (ContentType) _request.getAttribute(
+        ContentType pageContentType = (ContentType) request.getAttribute(
                 InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME);
         String charset = pageContentType.getParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER);
 
         ContentType contentType = new ContentType(InternalConstants.JSON_MIME_TYPE);
         contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, charset);
 
-        MarkupWriter writer = _factory.newMarkupWriter(pageContentType);
+        MarkupWriter writer = factory.newMarkupWriter(pageContentType);
 
         JSONObject reply = new JSONObject();
 
         // ... and here, the pipeline eventually reaches the PRQ to let it render the root render command.
 
-        _partialMarkupRenderer.renderMarkup(writer, reply);
+        partialMarkupRenderer.renderMarkup(writer, reply);
 
-        PrintWriter pw = _response.getPrintWriter(contentType.toString());
+        PrintWriter pw = response.getPrintWriter(contentType.toString());
 
         pw.print(reply);
 

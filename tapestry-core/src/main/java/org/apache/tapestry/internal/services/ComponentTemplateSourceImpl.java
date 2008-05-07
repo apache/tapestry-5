@@ -22,7 +22,7 @@ import org.apache.tapestry.internal.parser.TemplateToken;
 import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Resource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.model.ComponentModel;
 
 import java.util.List;
@@ -36,25 +36,25 @@ import java.util.Set;
 public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl implements ComponentTemplateSource, UpdateListener
 {
 
-    private final TemplateParser _parser;
+    private final TemplateParser parser;
 
-    private final PageTemplateLocator _locator;
+    private final PageTemplateLocator locator;
 
-    private final URLChangeTracker _tracker;
+    private final URLChangeTracker tracker;
 
     /**
      * Caches from a key (combining component name and locale) to a resource. Often, many different keys will point to
      * the same resource (i.e., "foo:en_US", "foo:en_UK", and "foo:en" may all be parsed from the same "foo.tml"
      * resource). The resource may end up being null, meaning the template does not exist in any locale.
      */
-    private final Map<MultiKey, Resource> _templateResources = newConcurrentMap();
+    private final Map<MultiKey, Resource> templateResources = CollectionFactory.newConcurrentMap();
 
     /**
      * Cache of parsed templates, keyed on resource.
      */
-    private final Map<Resource, ComponentTemplate> _templates = newConcurrentMap();
+    private final Map<Resource, ComponentTemplate> templates = CollectionFactory.newConcurrentMap();
 
-    private final ComponentTemplate _missingTemplate = new ComponentTemplate()
+    private final ComponentTemplate missingTemplate = new ComponentTemplate()
     {
         public Set<String> getComponentIds()
         {
@@ -84,9 +84,9 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
     ComponentTemplateSourceImpl(TemplateParser parser, PageTemplateLocator locator, URLChangeTracker tracker)
     {
-        _parser = parser;
-        _locator = locator;
-        _tracker = tracker;
+        this.parser = parser;
+        this.locator = locator;
+        this.tracker = tracker;
     }
 
     /**
@@ -104,22 +104,22 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
 
         // First cache is key to resource.
 
-        Resource resource = _templateResources.get(key);
+        Resource resource = templateResources.get(key);
 
         if (resource == null)
         {
             resource = locateTemplateResource(componentModel, locale);
-            _templateResources.put(key, resource);
+            templateResources.put(key, resource);
         }
 
         // If we haven't yet parsed the template into the cache, do so now.
 
-        ComponentTemplate result = _templates.get(resource);
+        ComponentTemplate result = templates.get(resource);
 
         if (result == null)
         {
             result = parseTemplate(resource);
-            _templates.put(resource, result);
+            templates.put(resource, result);
         }
 
         return result;
@@ -130,11 +130,11 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
         // In a race condition, we may parse the same template more than once. This will likely add
         // the resource to the tracker multiple times. Not likely this will cause a big issue.
 
-        if (!r.exists()) return _missingTemplate;
+        if (!r.exists()) return missingTemplate;
 
-        _tracker.add(r.toURL());
+        tracker.add(r.toURL());
 
-        return _parser.parseTemplate(r);
+        return parser.parseTemplate(r);
     }
 
     private Resource locateTemplateResource(ComponentModel initialModel, Locale locale)
@@ -158,7 +158,7 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
             // Not on the classpath, the the locator see if its a) a page and b) a resource inside
             // the context
 
-            localized = _locator.findPageTemplateResource(model, locale);
+            localized = locator.findPageTemplateResource(model, locale);
 
             if (localized != null) return localized;
 
@@ -186,11 +186,11 @@ public final class ComponentTemplateSourceImpl extends InvalidationEventHubImpl 
      */
     public void checkForUpdates()
     {
-        if (_tracker.containsChanges())
+        if (tracker.containsChanges())
         {
-            _tracker.clear();
-            _templateResources.clear();
-            _templates.clear();
+            tracker.clear();
+            templateResources.clear();
+            templates.clear();
             fireInvalidationEvent();
         }
     }

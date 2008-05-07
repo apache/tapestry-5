@@ -23,9 +23,8 @@ import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.annotations.Primary;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentLayer;
@@ -37,48 +36,48 @@ import java.util.Map;
 
 public class BeanModelSourceImpl implements BeanModelSource
 {
-    private final LoggerSource _loggerSource;
+    private final LoggerSource loggerSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final PropertyAccess _propertyAccess;
+    private final PropertyAccess propertyAccess;
 
-    private final PropertyConduitSource _propertyConduitSource;
+    private final PropertyConduitSource propertyConduitSource;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final DataTypeAnalyzer _dataTypeAnalyzer;
+    private final DataTypeAnalyzer dataTypeAnalyzer;
 
-    private final ObjectLocator _locator;
+    private final ObjectLocator locator;
 
     public BeanModelSourceImpl(LoggerSource loggerSource, TypeCoercer typeCoercer, PropertyAccess propertyAccess,
                                PropertyConduitSource propertyConduitSource, @ComponentLayer ClassFactory classFactory,
                                @Primary DataTypeAnalyzer dataTypeAnalyzer, ObjectLocator locator)
     {
-        _loggerSource = loggerSource;
-        _typeCoercer = typeCoercer;
-        _propertyAccess = propertyAccess;
-        _propertyConduitSource = propertyConduitSource;
-        _classFactory = classFactory;
-        _dataTypeAnalyzer = dataTypeAnalyzer;
-        _locator = locator;
+        this.loggerSource = loggerSource;
+        this.typeCoercer = typeCoercer;
+        this.propertyAccess = propertyAccess;
+        this.propertyConduitSource = propertyConduitSource;
+        this.classFactory = classFactory;
+        this.dataTypeAnalyzer = dataTypeAnalyzer;
+        this.locator = locator;
     }
 
     public <T> BeanModel<T> create(Class<T> beanClass, boolean filterReadOnlyProperties, ComponentResources resources)
     {
-        notNull(beanClass, "beanClass");
-        notNull(resources, "resources");
+        Defense.notNull(beanClass, "beanClass");
+        Defense.notNull(resources, "resources");
 
         Messages messages = resources.getMessages();
 
-        ClassPropertyAdapter adapter = _propertyAccess.getAdapter(beanClass);
+        ClassPropertyAdapter adapter = propertyAccess.getAdapter(beanClass);
 
-        final BeanModel<T> model = new BeanModelImpl<T>(beanClass, _propertyConduitSource, _typeCoercer, messages,
-                                                        _locator);
+        final BeanModel<T> model = new BeanModelImpl<T>(beanClass, propertyConduitSource, typeCoercer, messages,
+                                                        locator);
 
-        List<String> propertyNames = newList();
+        List<String> propertyNames = CollectionFactory.newList();
 
-        Map<String, Runnable> worksheet = newMap();
+        Map<String, Runnable> worksheet = CollectionFactory.newMap();
 
         for (final String propertyName : adapter.getPropertyNames())
         {
@@ -90,7 +89,7 @@ public class BeanModelSourceImpl implements BeanModelSource
 
             if (filterReadOnlyProperties && !pa.isUpdate()) continue;
 
-            final String dataType = _dataTypeAnalyzer.identifyDataType(pa);
+            final String dataType = dataTypeAnalyzer.identifyDataType(pa);
 
             // If an unregistered type, then ignore the property.
 
@@ -114,8 +113,8 @@ public class BeanModelSourceImpl implements BeanModelSource
 
         // Determine the correct order to add the properties.
 
-        List<String> orderedNames = TapestryInternalUtils.orderProperties(_loggerSource
-                .getLogger(beanClass), adapter, _classFactory, propertyNames);
+        List<String> orderedNames = TapestryInternalUtils.orderProperties(loggerSource
+                .getLogger(beanClass), adapter, classFactory, propertyNames);
 
         for (String propertyName : orderedNames)
         {

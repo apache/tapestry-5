@@ -31,11 +31,11 @@ import org.apache.tapestry.services.Core;
  */
 public class AssetObjectProvider implements ObjectProvider
 {
-    private final AssetSource _source;
+    private final AssetSource source;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final SymbolSource _symbolSource;
+    private final SymbolSource symbolSource;
 
     public AssetObjectProvider(@Core AssetSource source,
 
@@ -43,9 +43,9 @@ public class AssetObjectProvider implements ObjectProvider
 
                                @Builtin SymbolSource symbolSource)
     {
-        _source = source;
-        _typeCoercer = typeCoercer;
-        _symbolSource = symbolSource;
+        this.source = source;
+        this.typeCoercer = typeCoercer;
+        this.symbolSource = symbolSource;
     }
 
     /**
@@ -61,10 +61,10 @@ public class AssetObjectProvider implements ObjectProvider
 
         if (path == null) return null;
 
-        String expanded = _symbolSource.expandSymbols(path.value());
+        String expanded = symbolSource.expandSymbols(path.value());
 
-        Asset asset = _source.getAsset(null, expanded, null);
+        Asset asset = source.getAsset(null, expanded, null);
 
-        return _typeCoercer.coerce(asset, objectType);
+        return typeCoercer.coerce(asset, objectType);
     }
 }

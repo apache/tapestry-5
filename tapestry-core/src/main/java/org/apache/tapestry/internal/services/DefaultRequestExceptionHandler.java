@@ -27,24 +27,24 @@ import java.io.IOException;
  */
 public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 {
-    private final RequestPageCache _pageCache;
+    private final RequestPageCache pageCache;
 
-    private final PageResponseRenderer _renderer;
+    private final PageResponseRenderer renderer;
 
-    private final Logger _logger;
+    private final Logger logger;
 
     public DefaultRequestExceptionHandler(RequestPageCache pageCache, PageResponseRenderer renderer, Logger logger)
     {
-        _pageCache = pageCache;
-        _renderer = renderer;
-        _logger = logger;
+        this.pageCache = pageCache;
+        this.renderer = renderer;
+        this.logger = logger;
     }
 
     public void handleRequestException(Throwable exception) throws IOException
     {
-        _logger.error(ServicesMessages.requestException(exception), exception);
+        logger.error(ServicesMessages.requestException(exception), exception);
 
-        Page page = _pageCache.get("ExceptionReport");
+        Page page = pageCache.get("ExceptionReport");
 
         ExceptionReporter rootComponent = (ExceptionReporter) page.getRootComponent();
 
@@ -52,6 +52,6 @@ public class DefaultRequestExceptionHandler implements RequestExceptionHandler
 
         rootComponent.reportException(exception);
 
-        _renderer.renderPageResponse(page);
+        renderer.renderPageResponse(page);
     }
 }

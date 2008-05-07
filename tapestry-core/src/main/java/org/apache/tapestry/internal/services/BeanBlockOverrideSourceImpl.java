@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Block;
 import org.apache.tapestry.internal.structure.Page;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.BeanBlockContribution;
 import org.apache.tapestry.services.BeanBlockOverrideSource;
 
@@ -25,20 +25,20 @@ import java.util.Map;
 
 public class BeanBlockOverrideSourceImpl implements BeanBlockOverrideSource
 {
-    private final RequestPageCache _pageCache;
+    private final RequestPageCache pageCache;
 
-    private final Map<String, BeanBlockContribution> _display = newCaseInsensitiveMap();
+    private final Map<String, BeanBlockContribution> display = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, BeanBlockContribution> _edit = newCaseInsensitiveMap();
+    private final Map<String, BeanBlockContribution> edit = CollectionFactory.newCaseInsensitiveMap();
 
     public BeanBlockOverrideSourceImpl(RequestPageCache pageCache,
                                        Collection<BeanBlockContribution> configuration)
     {
-        _pageCache = pageCache;
+        this.pageCache = pageCache;
 
         for (BeanBlockContribution contribution : configuration)
         {
-            Map<String, BeanBlockContribution> map = contribution.isEdit() ? _edit : _display;
+            Map<String, BeanBlockContribution> map = contribution.isEdit() ? edit : display;
 
             map.put(contribution.getDataType(), contribution);
         }
@@ -46,26 +46,26 @@ public class BeanBlockOverrideSourceImpl implements BeanBlockOverrideSource
 
     public boolean hasDisplayBlock(String datatype)
     {
-        return _display.containsKey(datatype);
+        return display.containsKey(datatype);
     }
 
     public Block getDisplayBlock(String datatype)
     {
-        return toBlock(_display.get(datatype));
+        return toBlock(display.get(datatype));
     }
 
     private Block toBlock(BeanBlockContribution contribution)
     {
         if (contribution == null) return null;
 
-        Page page = _pageCache.get(contribution.getPageName());
+        Page page = pageCache.get(contribution.getPageName());
 
         return page.getRootElement().getBlock(contribution.getBlockId());
     }
 
     public Block getEditBlock(String datatype)
     {
-        return toBlock(_edit.get(datatype));
+        return toBlock(edit.get(datatype));
     }
 
 }

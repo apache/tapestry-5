@@ -22,8 +22,7 @@ import org.apache.tapestry.ioc.internal.services.ClassFactoryClassPool;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.internal.services.CtClassSource;
 import org.apache.tapestry.ioc.internal.services.CtClassSourceImpl;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.slf4j.Logger;
@@ -43,27 +42,28 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private static final String JAVASSIST_WRITE_DIR = System.getProperty("javassist-write-dir");
 
-    private final Set<String> _controlledPackageNames = newSet();
+    private final Set<String> controlledPackageNames = CollectionFactory.newSet();
 
-    private final URLChangeTracker _changeTracker = new URLChangeTracker();
+    private final URLChangeTracker changeTracker = new URLChangeTracker();
 
-    private final ClassLoader _parent;
+    private final ClassLoader parent;
 
-    private final InternalRequestGlobals _internalRequestGlobals;
+    private final InternalRequestGlobals internalRequestGlobals;
 
-    private Loader _loader;
+    private Loader loader;
 
-    private final ComponentClassTransformer _transformer;
+    private final ComponentClassTransformer transformer;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private ClassFactory _classFactory;
+    private ClassFactory classFactory;
 
     /**
      * Map from class name to Instantiator.
      */
-    private final Map<String, Instantiator> _instantiatorMap = newMap();
-    private CtClassSource _classSource;
+    private final Map<String, Instantiator> classNameToInstantiator = CollectionFactory.newMap();
+
+    private CtClassSource classSource;
 
     private class PackageAwareLoader extends Loader
     {
@@ -87,20 +87,20 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     public ComponentInstantiatorSourceImpl(Logger logger, ClassLoader parent, ComponentClassTransformer transformer,
                                            InternalRequestGlobals internalRequestGlobals)
     {
-        _parent = parent;
-        _transformer = transformer;
-        _logger = logger;
-        _internalRequestGlobals = internalRequestGlobals;
+        this.parent = parent;
+        this.transformer = transformer;
+        this.logger = logger;
+        this.internalRequestGlobals = internalRequestGlobals;
 
         initializeService();
     }
 
     public synchronized void checkForUpdates()
     {
-        if (!_changeTracker.containsChanges()) return;
+        if (!changeTracker.containsChanges()) return;
 
-        _changeTracker.clear();
-        _instantiatorMap.clear();
+        changeTracker.clear();
+        classNameToInstantiator.clear();
 
         // Release the existing class pool, loader and so forth.
         // Create a new one.
@@ -119,32 +119,32 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
      */
     private void initializeService()
     {
-        ClassFactoryClassPool classPool = new ClassFactoryClassPool(_parent);
+        ClassFactoryClassPool classPool = new ClassFactoryClassPool(parent);
 
-        _loader = new PackageAwareLoader(_parent, classPool);
+        loader = new PackageAwareLoader(parent, classPool);
 
-        ClassPath path = new LoaderClassPath(_loader);
+        ClassPath path = new LoaderClassPath(loader);
 
         classPool.appendClassPath(path);
 
-        _classSource = new CtClassSourceImpl(classPool, _loader);
+        classSource = new CtClassSourceImpl(classPool, loader);
 
         try
         {
-            _loader.addTranslator(classPool, this);
+            loader.addTranslator(classPool, this);
         }
         catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _classFactory = new ClassFactoryImpl(_loader, classPool, _classSource, _logger);
+        classFactory = new ClassFactoryImpl(loader, classPool, classSource, logger);
     }
 
     // This is called from well within a synchronized block.
     public void onLoad(ClassPool pool, String classname) throws NotFoundException, CannotCompileException
     {
-        _logger.debug("BEGIN onLoad " + classname);
+        logger.debug("BEGIN onLoad " + classname);
 
         // This is our chance to make changes to the CtClass before it is loaded into memory.
 
@@ -168,7 +168,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
             // Do the transformations here
 
-            _transformer.transformComponentClass(ctClass, _loader);
+            transformer.transformComponentClass(ctClass, loader);
 
             writeClassToFileSystemForHardCoreDebuggingPurposesOnly(ctClass);
 
@@ -176,13 +176,13 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
         }
         catch (RuntimeException classLoaderException)
         {
-            _internalRequestGlobals.storeClassLoaderException(classLoaderException);
+            internalRequestGlobals.storeClassLoaderException(classLoaderException);
 
             throw classLoaderException;
         }
         finally
         {
-            _logger.debug(String.format("%5s onLoad %s", diag, classname));
+            logger.debug(String.format("%5s onLoad %s", diag, classname));
         }
     }
 
@@ -208,9 +208,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         String path = classname.replace('.', '/') + ".class";
 
-        URL url = _loader.getResource(path);
+        URL url = loader.getResource(path);
 
-        _changeTracker.add(url);
+        changeTracker.add(url);
     }
 
     private void forceSuperclassTransform(CtClass ctClass) throws NotFoundException
@@ -229,7 +229,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
     public synchronized Instantiator findInstantiator(String className)
     {
-        Instantiator result = _instantiatorMap.get(className);
+        Instantiator result = classNameToInstantiator.get(className);
 
         if (result == null)
         {
@@ -237,9 +237,9 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
             findClass(className);
 
-            result = _transformer.createInstantiator(className);
+            result = transformer.createInstantiator(className);
 
-            _instantiatorMap.put(className, result);
+            classNameToInstantiator.put(className, result);
         }
 
         return result;
@@ -249,7 +249,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
     {
         try
         {
-            return _loader.loadClass(classname);
+            return loader.loadClass(classname);
         }
         catch (ClassNotFoundException ex)
         {
@@ -268,7 +268,7 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         while (packageName != null)
         {
-            if (_controlledPackageNames.contains(packageName)) return true;
+            if (controlledPackageNames.contains(packageName)) return true;
 
             packageName = stripTail(packageName);
         }
@@ -292,23 +292,23 @@ public final class ComponentInstantiatorSourceImpl extends InvalidationEventHubI
 
         // TODO: Should we check that packages are not nested?
 
-        _controlledPackageNames.add(packageName);
+        controlledPackageNames.add(packageName);
     }
 
     public boolean exists(String className)
     {
         String path = className.replace(".", "/") + ".class";
 
-        return _parent.getResource(path) != null;
+        return parent.getResource(path) != null;
     }
 
     public ClassFactory getClassFactory()
     {
-        return _classFactory;
+        return classFactory;
     }
 
     public CtClassSource getClassSource()
     {
-        return _classSource;
+        return classSource;
     }
 }

@@ -27,13 +27,13 @@ import javax.servlet.http.Cookie;
  */
 public class CookiesImpl implements Cookies
 {
-    private final Request _request;
+    private final Request request;
 
-    private final CookieSource _cookieSource;
+    private final CookieSource cookieSource;
 
-    private final CookieSink _cookieSink;
+    private final CookieSink cookieSink;
 
-    private final int _defaultMaxAge;
+    private final int defaultMaxAge;
 
     /**
      * @param request
@@ -50,15 +50,15 @@ public class CookiesImpl implements Cookies
                        @Symbol("tapestry.default-cookie-max-age") @IntermediateType(TimeInterval.class)
                        long defaultMaxAge)
     {
-        _request = request;
-        _cookieSource = cookieSource;
-        _cookieSink = cookieSink;
-        _defaultMaxAge = (int) (defaultMaxAge / 1000l);
+        this.request = request;
+        this.cookieSource = cookieSource;
+        this.cookieSink = cookieSink;
+        this.defaultMaxAge = (int) (defaultMaxAge / 1000l);
     }
 
     public String readCookieValue(String name)
     {
-        Cookie[] cookies = _cookieSource.getCookies();
+        Cookie[] cookies = cookieSource.getCookies();
 
         if (cookies == null) return null;
 
@@ -72,16 +72,16 @@ public class CookiesImpl implements Cookies
 
     public void writeCookieValue(String name, String value)
     {
-        writeCookieValue(name, value, _defaultMaxAge);
+        writeCookieValue(name, value, defaultMaxAge);
     }
 
     public void writeCookieValue(String name, String value, int maxAge)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(_request.getContextPath() + "/");
+        cookie.setPath(request.getContextPath() + "/");
         cookie.setMaxAge(maxAge);
 
-        _cookieSink.addCookie(cookie);
+        cookieSink.addCookie(cookie);
     }
 
     public void writeCookieValue(String name, String value, String path)
@@ -89,26 +89,26 @@ public class CookiesImpl implements Cookies
         Cookie cookie = new Cookie(name, value);
         cookie.setPath(path);
 
-        _cookieSink.addCookie(cookie);
+        cookieSink.addCookie(cookie);
     }
 
     public void writeDomainCookieValue(String name, String value, String domain)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(_request.getContextPath() + "/");
+        cookie.setPath(request.getContextPath() + "/");
         cookie.setDomain(domain);
 
-        _cookieSink.addCookie(cookie);
+        cookieSink.addCookie(cookie);
     }
 
     public void writeDomainCookieValue(String name, String value, String domain, int maxAge)
     {
         Cookie cookie = new Cookie(name, value);
-        cookie.setPath(_request.getContextPath() + "/");
+        cookie.setPath(request.getContextPath() + "/");
         cookie.setDomain(domain);
         cookie.setMaxAge(maxAge);
 
-        _cookieSink.addCookie(cookie);
+        cookieSink.addCookie(cookie);
     }
 
     public void writeCookieValue(String name, String value, String path, String domain)
@@ -117,16 +117,16 @@ public class CookiesImpl implements Cookies
         cookie.setPath(path);
         cookie.setDomain(domain);
 
-        _cookieSink.addCookie(cookie);
+        cookieSink.addCookie(cookie);
     }
 
     public void removeCookieValue(String name)
     {
         Cookie cookie = new Cookie(name, null);
-        cookie.setPath(_request.getContextPath() + "/");
+        cookie.setPath(request.getContextPath() + "/");
         cookie.setMaxAge(0);
 
-        _cookieSink.addCookie(cookie);
+        cookieSink.addCookie(cookie);
     }
 
 }

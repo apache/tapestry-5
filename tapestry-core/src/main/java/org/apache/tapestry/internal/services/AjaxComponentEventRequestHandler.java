@@ -30,39 +30,39 @@ import java.io.IOException;
  */
 public class AjaxComponentEventRequestHandler implements ComponentEventRequestHandler
 {
-    private final RequestPageCache _cache;
+    private final RequestPageCache cache;
 
-    private final Request _request;
+    private final Request request;
 
-    private final PageRenderQueue _queue;
+    private final PageRenderQueue queue;
 
-    private final ComponentEventResultProcessor _resultProcessor;
+    private final ComponentEventResultProcessor resultProcessor;
 
-    private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
+    private final PageContentTypeAnalyzer pageContentTypeAnalyzer;
 
-    private final Environment _environment;
+    private final Environment environment;
 
-    private final AjaxPartialResponseRenderer _partialRenderer;
+    private final AjaxPartialResponseRenderer partialRenderer;
 
     public AjaxComponentEventRequestHandler(RequestPageCache cache, Request request, PageRenderQueue queue,
                                             @Ajax ComponentEventResultProcessor resultProcessor,
                                             PageContentTypeAnalyzer pageContentTypeAnalyzer, Environment environment,
                                             AjaxPartialResponseRenderer partialRenderer)
     {
-        _cache = cache;
-        _queue = queue;
-        _resultProcessor = resultProcessor;
-        _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
-        _request = request;
-        _environment = environment;
-        _partialRenderer = partialRenderer;
+        this.cache = cache;
+        this.queue = queue;
+        this.resultProcessor = resultProcessor;
+        this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
+        this.request = request;
+        this.environment = environment;
+        this.partialRenderer = partialRenderer;
     }
 
     public void handle(ComponentEventRequestParameters parameters) throws IOException
     {
-        Page activePage = _cache.get(parameters.getActivePageName());
+        Page activePage = cache.get(parameters.getActivePageName());
 
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
 
         activePage.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT,
@@ -74,28 +74,28 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         // If we end up doing a partial render, the page render queue service needs to know the
         // page that will be rendered (for logging purposes, if nothing else).
 
-        _queue.setRenderingPage(activePage);
+        queue.setRenderingPage(activePage);
 
-        ContentType contentType = _pageContentTypeAnalyzer.findContentType(activePage);
+        ContentType contentType = pageContentTypeAnalyzer.findContentType(activePage);
 
-        _request.setAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME, contentType);
+        request.setAttribute(InternalConstants.CONTENT_TYPE_ATTRIBUTE_NAME, contentType);
 
-        Page containerPage = _cache.get(parameters.getContainingPageName());
+        Page containerPage = cache.get(parameters.getContainingPageName());
 
         ComponentPageElement element = containerPage.getComponentElementByNestedId(parameters.getNestedComponentId());
 
         // In many cases, the triggered element is a Form that needs to be able to
         // pass its event handler return values to the correct result processor.
 
-        _environment.push(ComponentEventResultProcessor.class, _resultProcessor);
+        environment.push(ComponentEventResultProcessor.class, resultProcessor);
 
         element.triggerContextEvent(parameters.getEventType(), parameters.getEventContext(), callback);
 
-        _environment.pop(ComponentEventResultProcessor.class);
+        environment.pop(ComponentEventResultProcessor.class);
 
-        if (_queue.isPartialRenderInitialized())
+        if (queue.isPartialRenderInitialized())
         {
-            _partialRenderer.renderPartialPageMarkup();
+            partialRenderer.renderPartialPageMarkup();
             return;
         }
 
@@ -105,7 +105,7 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
 
         JSONObject reply = new JSONObject();
 
-        _resultProcessor.processResultValue(reply);
+        resultProcessor.processResultValue(reply);
 
     }
 }

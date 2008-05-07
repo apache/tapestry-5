@@ -31,14 +31,14 @@ import static java.lang.String.format;
  */
 public class AssetInjectionProvider implements InjectionProvider
 {
-    private final SymbolSource _symbolSource;
+    private final SymbolSource symbolSource;
 
-    private final AssetSource _assetSource;
+    private final AssetSource assetSource;
 
     public AssetInjectionProvider(SymbolSource symbolSource, AssetSource assetSource)
     {
-        _symbolSource = symbolSource;
-        _assetSource = assetSource;
+        this.symbolSource = symbolSource;
+        this.assetSource = assetSource;
     }
 
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
@@ -48,9 +48,9 @@ public class AssetInjectionProvider implements InjectionProvider
 
         if (path == null) return false;
 
-        String expanded = _symbolSource.expandSymbols(path.value());
+        String expanded = symbolSource.expandSymbols(path.value());
 
-        String sourceFieldName = transformation.addInjectedField(AssetSource.class, "assetSource", _assetSource);
+        String sourceFieldName = transformation.addInjectedField(AssetSource.class, "assetSource", assetSource);
 
         String baseResourceFieldName = transformation.addInjectedField(Resource.class, "baseResource",
                                                                        componentModel.getBaseResource());
