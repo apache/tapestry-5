@@ -27,20 +27,20 @@ import java.util.Locale;
 public class PropertyDisplayBlocks
 {
     @Environmental
-    private PropertyOutputContext _context;
+    private PropertyOutputContext context;
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
-    private final DateFormat _dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, _locale);
+    private final DateFormat _dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
     public String getConvertedEnumValue()
     {
-        Enum value = (Enum) _context.getPropertyValue();
+        Enum value = (Enum) context.getPropertyValue();
 
         if (value == null) return null;
 
-        return TapestryInternalUtils.getLabelForEnum(_context.getMessages(), value);
+        return TapestryInternalUtils.getLabelForEnum(context.getMessages(), value);
     }
 
     public DateFormat getDateFormat()
@@ -50,7 +50,7 @@ public class PropertyDisplayBlocks
 
     public PropertyOutputContext getContext()
     {
-        return _context;
+        return context;
     }
 
     public Renderable getPasswordRenderer()
@@ -60,7 +60,7 @@ public class PropertyDisplayBlocks
             public void render(MarkupWriter writer)
             {
 
-                Object value = _context.getPropertyValue();
+                Object value = context.getPropertyValue();
 
                 int length = value == null ? 0 : value.toString().length();
 

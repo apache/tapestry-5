@@ -41,24 +41,24 @@ public enum GridPagerPosition
      */
     NONE(false, false);
 
-    private final boolean _matchTop;
+    private final boolean matchTop;
 
-    private final boolean _matchBottom;
+    private final boolean matchBottom;
 
     private GridPagerPosition(boolean matchTop, boolean matchBottom)
     {
-        _matchTop = matchTop;
-        _matchBottom = matchBottom;
+        this.matchTop = matchTop;
+        this.matchBottom = matchBottom;
     }
 
     public boolean isMatchBottom()
     {
-        return _matchBottom;
+        return matchBottom;
     }
 
     public boolean isMatchTop()
     {
-        return _matchTop;
+        return matchTop;
     }
 
 }

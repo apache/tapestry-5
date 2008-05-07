@@ -15,8 +15,8 @@
 package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.Meta;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.ioc.Registry;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -37,37 +37,36 @@ import java.util.List;
 public class ServiceStatus
 {
     @Inject
-    private ServiceActivityScoreboard _scoreboard;
+    private ServiceActivityScoreboard scoreboard;
 
     @Property
-    private List<ServiceActivity> _activity;
+    private List<ServiceActivity> activity;
 
     @Property
-    private ServiceActivity _row;
+    private ServiceActivity row;
 
     @Inject
-    private BeanModelSource _source;
+    private BeanModelSource source;
 
     @Property
-    private final BeanModel _model;
+    private final BeanModel model;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
-    public ServiceStatus()
     {
-        _model = _source.create(ServiceActivity.class, false, _resources);
+        model = source.create(ServiceActivity.class, false, resources);
 
-        _model.add("serviceInterface", null);
+        model.add("serviceInterface", null);
 
         // There's no line number information for interfaces, so we'll reorder the
         // propreties manually.
 
-        _model.reorder("serviceId", "serviceInterface", "scope", "status");
+        model.reorder("serviceId", "serviceInterface", "scope", "status");
     }
 
     void setupRender()
     {
-        _activity = _scoreboard.getServiceActivity();
+        activity = scoreboard.getServiceActivity();
     }
 }

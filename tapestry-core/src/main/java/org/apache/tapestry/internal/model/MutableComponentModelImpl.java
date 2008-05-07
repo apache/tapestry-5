@@ -16,8 +16,8 @@ package org.apache.tapestry.internal.model;
 
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.*;
@@ -32,48 +32,48 @@ import java.util.Map;
  */
 public final class MutableComponentModelImpl implements MutableComponentModel
 {
-    private final ComponentModel _parentModel;
+    private final ComponentModel parentModel;
 
-    private final Resource _baseResource;
+    private final Resource baseResource;
 
-    private final String _componentClassName;
+    private final String componentClassName;
 
-    private final IdAllocator _persistentFieldNameAllocator = new IdAllocator();
+    private final IdAllocator persistentFieldNameAllocator = new IdAllocator();
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private Map<String, ParameterModel> _parameters;
+    private Map<String, ParameterModel> parameters;
 
-    private Map<String, EmbeddedComponentModel> _embeddedComponents;
+    private Map<String, EmbeddedComponentModel> embeddedComponents;
 
     /**
      * Maps from field name to strategy.
      */
-    private Map<String, String> _persistentFields;
+    private Map<String, String> persistentFields;
 
-    private List<String> _mixinClassNames;
+    private List<String> mixinClassNames;
 
-    private boolean _informalParametersSupported;
+    private boolean informalParametersSupported;
 
-    private boolean _mixinAfter;
+    private boolean mixinAfter;
 
-    private Map<String, String> _metaData;
+    private Map<String, String> metaData;
 
     public MutableComponentModelImpl(String componentClassName, Logger logger, Resource baseResource,
                                      ComponentModel parentModel)
     {
-        _componentClassName = componentClassName;
-        _logger = logger;
-        _baseResource = baseResource;
-        _parentModel = parentModel;
+        this.componentClassName = componentClassName;
+        this.logger = logger;
+        this.baseResource = baseResource;
+        this.parentModel = parentModel;
 
         // Pre-allocate names from the parent, to avoid name collisions.
 
-        if (_parentModel != null)
+        if (this.parentModel != null)
         {
-            for (String name : _parentModel.getPersistentFieldNames())
+            for (String name : this.parentModel.getPersistentFieldNames())
             {
-                _persistentFieldNameAllocator.allocateId(name);
+                persistentFieldNameAllocator.allocateId(name);
             }
         }
     }
@@ -81,57 +81,57 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     @Override
     public String toString()
     {
-        return String.format("ComponentModel[%s]", _componentClassName);
+        return String.format("ComponentModel[%s]", componentClassName);
     }
 
     public Logger getLogger()
     {
-        return _logger;
+        return logger;
     }
 
     public Resource getBaseResource()
     {
-        return _baseResource;
+        return baseResource;
     }
 
     public String getComponentClassName()
     {
-        return _componentClassName;
+        return componentClassName;
     }
 
     public void addParameter(String name, boolean required, String defaultBindingPrefix)
     {
-        notBlank(name, "name");
-        notBlank(defaultBindingPrefix, "defaultBindingPrefix");
+        Defense.notBlank(name, "name");
+        Defense.notBlank(defaultBindingPrefix, "defaultBindingPrefix");
 
         // TODO: Check for conflict with base model
 
-        if (_parameters == null) _parameters = newCaseInsensitiveMap();
+        if (parameters == null) parameters = CollectionFactory.newCaseInsensitiveMap();
         else
         {
-            if (_parameters.containsKey(name))
-                throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, _componentClassName));
+            if (parameters.containsKey(name))
+                throw new IllegalArgumentException(ModelMessages.duplicateParameter(name, componentClassName));
         }
 
-        _parameters.put(name, new ParameterModelImpl(name, required, defaultBindingPrefix));
+        parameters.put(name, new ParameterModelImpl(name, required, defaultBindingPrefix));
     }
 
     public ParameterModel getParameterModel(String parameterName)
     {
-        ParameterModel result = InternalUtils.get(_parameters, parameterName.toLowerCase());
+        ParameterModel result = InternalUtils.get(parameters, parameterName.toLowerCase());
 
-        if (result == null && _parentModel != null) result = _parentModel.getParameterModel(parameterName);
+        if (result == null && parentModel != null) result = parentModel.getParameterModel(parameterName);
 
         return result;
     }
 
     public List<String> getParameterNames()
     {
-        List<String> names = newList();
+        List<String> names = CollectionFactory.newList();
 
-        if (_parameters != null) names.addAll(_parameters.keySet());
+        if (parameters != null) names.addAll(parameters.keySet());
 
-        if (_parentModel != null) names.addAll(_parentModel.getParameterNames());
+        if (parentModel != null) names.addAll(parentModel.getParameterNames());
 
         Collections.sort(names);
 
@@ -140,7 +140,7 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public List<String> getDeclaredParameterNames()
     {
-        return InternalUtils.sortedKeys(_parameters);
+        return InternalUtils.sortedKeys(parameters);
     }
 
     public MutableEmbeddedComponentModel addEmbeddedComponent(String id, String type, String componentClassName,
@@ -148,27 +148,27 @@ public final class MutableComponentModelImpl implements MutableComponentModel
     {
         // TODO: Parent compent model? Or would we simply override the parent?
 
-        if (_embeddedComponents == null) _embeddedComponents = newCaseInsensitiveMap();
-        else if (_embeddedComponents.containsKey(id))
-            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id, _componentClassName));
+        if (embeddedComponents == null) embeddedComponents = CollectionFactory.newCaseInsensitiveMap();
+        else if (embeddedComponents.containsKey(id))
+            throw new IllegalArgumentException(ModelMessages.duplicateComponentId(id, this.componentClassName));
 
         MutableEmbeddedComponentModel embedded = new MutableEmbeddedComponentModelImpl(id, type, componentClassName,
-                                                                                       _componentClassName,
+                                                                                       this.componentClassName,
                                                                                        inheritInformalParameters,
                                                                                        location);
 
-        _embeddedComponents.put(id, embedded);
+        embeddedComponents.put(id, embedded);
 
         return embedded; // So that parameters can be filled in
     }
 
     public List<String> getEmbeddedComponentIds()
     {
-        List<String> result = newList();
+        List<String> result = CollectionFactory.newList();
 
-        if (_embeddedComponents != null) result.addAll(_embeddedComponents.keySet());
+        if (embeddedComponents != null) result.addAll(embeddedComponents.keySet());
 
-        if (_parentModel != null) result.addAll(_parentModel.getEmbeddedComponentIds());
+        if (parentModel != null) result.addAll(parentModel.getEmbeddedComponentIds());
 
         Collections.sort(result);
 
@@ -177,18 +177,18 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public EmbeddedComponentModel getEmbeddedComponentModel(String componentId)
     {
-        EmbeddedComponentModel result = InternalUtils.get(_embeddedComponents, componentId);
+        EmbeddedComponentModel result = InternalUtils.get(embeddedComponents, componentId);
 
-        if (result == null && _parentModel != null) result = _parentModel.getEmbeddedComponentModel(componentId);
+        if (result == null && parentModel != null) result = parentModel.getEmbeddedComponentModel(componentId);
 
         return result;
     }
 
     public String getFieldPersistenceStrategy(String fieldName)
     {
-        String result = InternalUtils.get(_persistentFields, fieldName);
+        String result = InternalUtils.get(persistentFields, fieldName);
 
-        if (result == null && _parentModel != null) result = _parentModel.getFieldPersistenceStrategy(fieldName);
+        if (result == null && parentModel != null) result = parentModel.getFieldPersistenceStrategy(fieldName);
 
         if (result == null) throw new IllegalArgumentException(ModelMessages.missingPersistentField(fieldName));
 
@@ -197,39 +197,39 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public List<String> getPersistentFieldNames()
     {
-        return _persistentFieldNameAllocator.getAllocatedIds();
+        return persistentFieldNameAllocator.getAllocatedIds();
     }
 
     public String setFieldPersistenceStrategy(String fieldName, String strategy)
     {
-        String logicalFieldName = _persistentFieldNameAllocator.allocateId(fieldName);
+        String logicalFieldName = persistentFieldNameAllocator.allocateId(fieldName);
 
-        if (_persistentFields == null) _persistentFields = newMap();
+        if (persistentFields == null) persistentFields = CollectionFactory.newMap();
 
-        _persistentFields.put(logicalFieldName, strategy);
+        persistentFields.put(logicalFieldName, strategy);
 
         return logicalFieldName;
     }
 
     public boolean isRootClass()
     {
-        return _parentModel == null;
+        return parentModel == null;
     }
 
     public void addMixinClassName(String mixinClassName)
     {
-        if (_mixinClassNames == null) _mixinClassNames = newList();
+        if (mixinClassNames == null) mixinClassNames = CollectionFactory.newList();
 
-        _mixinClassNames.add(mixinClassName);
+        mixinClassNames.add(mixinClassName);
     }
 
     public List<String> getMixinClassNames()
     {
-        List<String> result = newList();
+        List<String> result = CollectionFactory.newList();
 
-        if (_mixinClassNames != null) result.addAll(_mixinClassNames);
+        if (mixinClassNames != null) result.addAll(mixinClassNames);
 
-        if (_parentModel != null) result.addAll(_parentModel.getMixinClassNames());
+        if (parentModel != null) result.addAll(parentModel.getMixinClassNames());
 
         Collections.sort(result);
 
@@ -238,46 +238,46 @@ public final class MutableComponentModelImpl implements MutableComponentModel
 
     public void enableSupportsInformalParameters()
     {
-        _informalParametersSupported = true;
+        informalParametersSupported = true;
     }
 
     public boolean getSupportsInformalParameters()
     {
-        return _informalParametersSupported;
+        return informalParametersSupported;
     }
 
     public ComponentModel getParentModel()
     {
-        return _parentModel;
+        return parentModel;
     }
 
     public boolean isMixinAfter()
     {
-        return _mixinAfter;
+        return mixinAfter;
     }
 
     public void setMixinAfter(boolean mixinAfter)
     {
-        _mixinAfter = mixinAfter;
+        this.mixinAfter = mixinAfter;
     }
 
     public void setMeta(String key, String value)
     {
-        notBlank(key, "key");
-        notBlank(value, "value");
+        Defense.notBlank(key, "key");
+        Defense.notBlank(value, "value");
 
-        if (_metaData == null) _metaData = newCaseInsensitiveMap();
+        if (metaData == null) metaData = CollectionFactory.newCaseInsensitiveMap();
 
         // TODO: Error if duplicate?
 
-        _metaData.put(key, value);
+        metaData.put(key, value);
     }
 
     public String getMeta(String key)
     {
-        String result = InternalUtils.get(_metaData, key);
+        String result = InternalUtils.get(metaData, key);
 
-        if (result == null && _parentModel != null) result = _parentModel.getMeta(key);
+        if (result == null && parentModel != null) result = parentModel.getMeta(key);
 
         return result;
     }

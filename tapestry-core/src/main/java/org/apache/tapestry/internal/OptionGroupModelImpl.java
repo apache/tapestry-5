@@ -22,13 +22,13 @@ import java.util.Map;
 
 public final class OptionGroupModelImpl implements OptionGroupModel
 {
-    private final String _label;
+    private final String label;
 
-    private final boolean _disabled;
+    private final boolean disabled;
 
-    private final List<OptionModel> _options;
+    private final List<OptionModel> options;
 
-    private final Map<String, String> _attributes;
+    private final Map<String, String> attributes;
 
     public OptionGroupModelImpl(String label, boolean disabled, List<OptionModel> options,
                                 String... attributeKeysAndValues)
@@ -40,36 +40,36 @@ public final class OptionGroupModelImpl implements OptionGroupModel
     public OptionGroupModelImpl(String label, boolean disabled, List<OptionModel> options,
                                 Map<String, String> attributes)
     {
-        _label = label;
-        _disabled = disabled;
-        _options = options;
-        _attributes = attributes;
+        this.label = label;
+        this.disabled = disabled;
+        this.options = options;
+        this.attributes = attributes;
     }
 
     public Map<String, String> getAttributes()
     {
-        return _attributes;
+        return attributes;
     }
 
     public String getLabel()
     {
-        return _label;
+        return label;
     }
 
     public List<OptionModel> getOptions()
     {
-        return _options;
+        return options;
     }
 
     public boolean isDisabled()
     {
-        return _disabled;
+        return disabled;
     }
 
     @Override
     public String toString()
     {
-        return String.format("OptionGroupModel[%s]", _label);
+        return String.format("OptionGroupModel[%s]", label);
     }
 
 }

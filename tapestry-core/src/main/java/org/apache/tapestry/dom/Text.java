@@ -21,17 +21,17 @@ import java.io.PrintWriter;
  */
 public final class Text extends Node
 {
-    private final StringBuilder _buffer;
+    private final StringBuilder buffer;
 
-    private final Document _document;
+    private final Document document;
 
     Text(Node container, Document document, String text)
     {
         super(container);
 
-        _document = document;
+        this.document = document;
 
-        _buffer = new StringBuilder();
+        buffer = new StringBuilder(text.length());
 
         write(text);
     }
@@ -41,7 +41,7 @@ public final class Text extends Node
      */
     public void write(String text)
     {
-        _document.getMarkupModel().encode(text, _buffer);
+        document.getMarkupModel().encode(text, buffer);
     }
 
     public void writef(String format, Object... args)
@@ -52,7 +52,7 @@ public final class Text extends Node
     @Override
     public void toMarkup(PrintWriter writer)
     {
-        writer.print(_buffer.toString());
+        writer.print(buffer.toString());
     }
 
 }

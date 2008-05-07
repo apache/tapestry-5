@@ -22,35 +22,35 @@ import java.io.PrintWriter;
  */
 public class DTD
 {
-    private final String _name;
+    private final String name;
 
-    private final String _publicId;
+    private final String publicId;
 
-    private final String _systemId;
+    private final String systemId;
 
     public DTD(String name, String publicId, String systemId)
     {
-        _name = name;
-        _publicId = publicId;
-        _systemId = systemId;
+        this.name = name;
+        this.publicId = publicId;
+        this.systemId = systemId;
     }
 
     public void toMarkup(PrintWriter writer)
     {
-        if (_publicId != null)
+        if (publicId != null)
         {
-            if (_systemId != null)
+            if (systemId != null)
             {
-                writer.printf("<!DOCTYPE %s PUBLIC \"%s\" \"%s\">", _name, _publicId, _systemId);
+                writer.printf("<!DOCTYPE %s PUBLIC \"%s\" \"%s\">", name, publicId, systemId);
             }
             else
             {
-                writer.printf("<!DOCTYPE %s PUBLIC \"%s\">", _name, _publicId);
+                writer.printf("<!DOCTYPE %s PUBLIC \"%s\">", name, publicId);
             }
         }
-        else if (_systemId != null)
+        else if (systemId != null)
         {
-            writer.printf("<!DOCTYPE %s SYSTEM \"%s\">", _name, _systemId);
+            writer.printf("<!DOCTYPE %s SYSTEM \"%s\">", name, systemId);
         }
     }
 }

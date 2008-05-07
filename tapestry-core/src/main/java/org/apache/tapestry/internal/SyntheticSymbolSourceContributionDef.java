@@ -23,18 +23,18 @@ import org.apache.tapestry.ioc.services.SymbolProvider;
  */
 public class SyntheticSymbolSourceContributionDef implements ContributionDef
 {
-    private final String _contributionName;
+    private final String contributionName;
 
-    private final SymbolProvider _provider;
+    private final SymbolProvider provider;
 
-    private final String[] _constraints;
+    private final String[] constraints;
 
     public SyntheticSymbolSourceContributionDef(String contributionName, SymbolProvider provider,
                                                 String... constraints)
     {
-        _contributionName = contributionName;
-        _provider = provider;
-        _constraints = constraints;
+        this.contributionName = contributionName;
+        this.provider = provider;
+        this.constraints = constraints;
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
@@ -46,7 +46,7 @@ public class SyntheticSymbolSourceContributionDef implements ContributionDef
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,
                            OrderedConfiguration configuration)
     {
-        configuration.add(_contributionName, _provider, _constraints);
+        configuration.add(contributionName, provider, constraints);
     }
 
     public void contribute(ModuleBuilderSource moduleBuilderSource, ObjectLocator locator,

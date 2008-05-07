@@ -160,7 +160,7 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
         // And exception message:
 
         assertTextPresent(
-                "Component InjectContainerMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled._field (of type org.apache.tapestry.Field).");
+                "Component InjectContainerMismatch is not assignable to field org.apache.tapestry.corelib.mixins.RenderDisabled.field (of type org.apache.tapestry.Field).");
     }
 
     @Test

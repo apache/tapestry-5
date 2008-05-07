@@ -21,23 +21,23 @@ import org.apache.tapestry.ioc.Location;
  */
 public class CommentToken extends TemplateToken
 {
-    private final String _comment;
+    private final String comment;
 
     public CommentToken(String comment, Location location)
     {
         super(TokenType.COMMENT, location);
 
-        _comment = comment;
+        this.comment = comment;
     }
 
     public String getComment()
     {
-        return _comment;
+        return comment;
     }
 
     @Override
     public String toString()
     {
-        return String.format("Comment[%s]", _comment);
+        return String.format("Comment[%s]", comment);
     }
 }

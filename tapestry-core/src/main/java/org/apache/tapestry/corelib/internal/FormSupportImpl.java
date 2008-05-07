@@ -17,8 +17,8 @@ package org.apache.tapestry.corelib.internal;
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.Defense.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.services.FormSupport;
@@ -35,19 +35,19 @@ import java.util.List;
  */
 public class FormSupportImpl implements FormSupport
 {
-    private final ClientBehaviorSupport _clientBehaviorSupport;
+    private final ClientBehaviorSupport clientBehaviorSupport;
 
-    private final boolean _clientValidationEnabled;
+    private final boolean clientValidationEnabled;
 
-    private final IdAllocator _idAllocator;
+    private final IdAllocator idAllocator;
 
-    private final String _clientId;
+    private final String clientId;
 
-    private final ObjectOutputStream _actions;
+    private final ObjectOutputStream actions;
 
-    private List<Runnable> _commands;
+    private List<Runnable> commands;
 
-    private String _encodingType;
+    private String encodingType;
 
     /**
      * Constructor used when processing a form submission.
@@ -72,27 +72,27 @@ public class FormSupportImpl implements FormSupport
     public FormSupportImpl(String clientId, ObjectOutputStream actions, ClientBehaviorSupport clientBehaviorSupport,
                            boolean clientValidationEnabled, IdAllocator idAllocator)
     {
-        _clientId = clientId;
-        _actions = actions;
-        _clientBehaviorSupport = clientBehaviorSupport;
-        _clientValidationEnabled = clientValidationEnabled;
-        _idAllocator = idAllocator;
+        this.clientId = clientId;
+        this.actions = actions;
+        this.clientBehaviorSupport = clientBehaviorSupport;
+        this.clientValidationEnabled = clientValidationEnabled;
+        this.idAllocator = idAllocator;
     }
 
     public String getFormId()
     {
-        return _clientId;
+        return clientId;
     }
 
     public String allocateControlName(String id)
     {
-        return _idAllocator.allocateId(id);
+        return idAllocator.allocateId(id);
     }
 
     public <T> void store(T component, ComponentAction<T> action)
     {
-        Component castComponent = cast(component, Component.class, "component");
-        notNull(action, "action");
+        Component castComponent = Defense.cast(component, Component.class, "component");
+        Defense.notNull(action, "action");
 
         String completeId = castComponent.getComponentResources().getCompleteId();
 
@@ -100,8 +100,8 @@ public class FormSupportImpl implements FormSupport
         {
             // Writing the complete id is not very efficient, but the GZip filter
             // should help out there.
-            _actions.writeUTF(completeId);
-            _actions.writeObject(action);
+            actions.writeUTF(completeId);
+            actions.writeObject(action);
         }
         catch (IOException ex)
         {
@@ -118,45 +118,45 @@ public class FormSupportImpl implements FormSupport
 
     public void defer(Runnable command)
     {
-        if (_commands == null) _commands = newList();
+        if (commands == null) commands = CollectionFactory.newList();
 
-        _commands.add(notNull(command, "command"));
+        commands.add(Defense.notNull(command, "command"));
     }
 
     public void executeDeferred()
     {
-        if (_commands == null) return;
+        if (commands == null) return;
 
-        for (Runnable r : _commands)
+        for (Runnable r : commands)
             r.run();
 
-        _commands.clear();
+        commands.clear();
     }
 
     public String getClientId()
     {
-        return _clientId;
+        return clientId;
     }
 
     public String getEncodingType()
     {
-        return _encodingType;
+        return encodingType;
     }
 
     public void setEncodingType(String encodingType)
     {
-        notBlank(encodingType, "encodingType");
+        Defense.notBlank(encodingType, "encodingType");
 
-        if (_encodingType != null && !_encodingType.equals(encodingType))
-            throw new IllegalStateException(InternalMessages.conflictingEncodingType(_encodingType, encodingType));
+        if (this.encodingType != null && !this.encodingType.equals(encodingType))
+            throw new IllegalStateException(InternalMessages.conflictingEncodingType(this.encodingType, encodingType));
 
-        _encodingType = encodingType;
+        this.encodingType = encodingType;
     }
 
     public void addValidation(Field field, String validationName, String message, Object constraint)
     {
-        if (_clientValidationEnabled)
-            _clientBehaviorSupport.addValidation(field, validationName, message, constraint);
+        if (clientValidationEnabled)
+            clientBehaviorSupport.addValidation(field, validationName, message, constraint);
     }
 
 

@@ -23,38 +23,38 @@ import java.util.Set;
 
 public class ComponentTemplateImpl implements ComponentTemplate
 {
-    private final Resource _resource;
+    private final Resource resource;
 
-    private final List<TemplateToken> _tokens;
+    private final List<TemplateToken> tokens;
 
-    private final Set<String> _componentIds;
+    private final Set<String> componentIds;
 
     /**
      * @param resource     the resource from which the template was parsed
      * @param tokens       the tokens of the template, a copy of this list will be made
-     * @param componentIds TODO
+     * @param componentIds ids of components defined in the template
      */
     public ComponentTemplateImpl(Resource resource, List<TemplateToken> tokens,
                                  Set<String> componentIds)
     {
-        _resource = resource;
-        _tokens = newList(tokens);
-        _componentIds = newSet(componentIds);
+        this.resource = resource;
+        this.tokens = newList(tokens);
+        this.componentIds = newSet(componentIds);
     }
 
     public Resource getResource()
     {
-        return _resource;
+        return resource;
     }
 
     public List<TemplateToken> getTokens()
     {
-        return _tokens;
+        return tokens;
     }
 
     public Set<String> getComponentIds()
     {
-        return _componentIds;
+        return componentIds;
     }
 
     /**

@@ -23,15 +23,15 @@ import java.util.List;
 
 public final class SelectModelImpl extends AbstractSelectModel
 {
-    private final List<OptionGroupModel> _optionGroups;
+    private final List<OptionGroupModel> optionGroups;
 
-    private final List<OptionModel> _optionModels;
+    private final List<OptionModel> optionModels;
 
     public SelectModelImpl(final List<OptionGroupModel> optionGroups,
                            final List<OptionModel> optionModels)
     {
-        _optionGroups = optionGroups;
-        _optionModels = optionModels;
+        this.optionGroups = optionGroups;
+        this.optionModels = optionModels;
     }
 
     public SelectModelImpl(OptionModel... optionModels)
@@ -46,12 +46,12 @@ public final class SelectModelImpl extends AbstractSelectModel
 
     public List<OptionGroupModel> getOptionGroups()
     {
-        return _optionGroups;
+        return optionGroups;
     }
 
     public List<OptionModel> getOptions()
     {
-        return _optionModels;
+        return optionModels;
     }
 
 }

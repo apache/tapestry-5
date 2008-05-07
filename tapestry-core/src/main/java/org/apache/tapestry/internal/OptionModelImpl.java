@@ -18,9 +18,9 @@ import org.apache.tapestry.AbstractOptionModel;
 
 public class OptionModelImpl extends AbstractOptionModel
 {
-    private final String _label;
+    private final String label;
 
-    private final Object _value;
+    private final Object value;
 
     /**
      * Constructor for when the value and the label are the same.
@@ -32,23 +32,23 @@ public class OptionModelImpl extends AbstractOptionModel
 
     public OptionModelImpl(String label, Object value)
     {
-        _label = label;
-        _value = value;
+        this.label = label;
+        this.value = value;
     }
 
     public String getLabel()
     {
-        return _label;
+        return label;
     }
 
     public Object getValue()
     {
-        return _value;
+        return value;
     }
 
     @Override
     public String toString()
     {
-        return String.format("OptionModel[%s %s]", _label, _value);
+        return String.format("OptionModel[%s %s]", label, value);
     }
 }

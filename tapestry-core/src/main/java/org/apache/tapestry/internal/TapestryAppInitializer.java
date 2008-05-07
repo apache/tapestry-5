@@ -35,17 +35,17 @@ import org.apache.tapestry.services.TapestryModule;
  */
 public class TapestryAppInitializer
 {
-    private final SymbolProvider _appProvider;
+    private final SymbolProvider appProvider;
 
-    private final String _appName;
+    private final String appName;
 
-    private final String _aliasMode;
+    private final String aliasMode;
 
-    private final long _startTime;
+    private final long startTime;
 
-    private long _registryCreatedTime;
+    private final RegistryBuilder builder = new RegistryBuilder();
 
-    private final RegistryBuilder _builder = new RegistryBuilder();
+    private long registryCreatedTime;
 
     public TapestryAppInitializer(String appPackage, String appName, String aliasMode)
     {
@@ -59,27 +59,27 @@ public class TapestryAppInitializer
      */
     public TapestryAppInitializer(SymbolProvider appProvider, String appName, String aliasMode)
     {
-        _appProvider = appProvider;
+        this.appProvider = appProvider;
 
-        String appPackage = _appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
+        String appPackage = appProvider.valueForSymbol(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM);
 
 
-        _appName = appName;
-        _aliasMode = aliasMode;
+        this.appName = appName;
+        this.aliasMode = aliasMode;
 
-        _startTime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
 
 
         if (!Boolean.parseBoolean(appProvider.valueForSymbol(InternalConstants.DISABLE_DEFAULT_MODULES_PARAM)))
         {
-            IOCUtilities.addDefaultModules(_builder);
+            IOCUtilities.addDefaultModules(builder);
         }
 
         // This gets added automatically.
 
         addModules(TapestryModule.class);
 
-        String className = appPackage + ".services." + InternalUtils.capitalize(_appName) + "Module";
+        String className = appPackage + ".services." + InternalUtils.capitalize(this.appName) + "Module";
 
         try
         {
@@ -89,7 +89,7 @@ public class TapestryAppInitializer
 
             Class moduleClass = Thread.currentThread().getContextClassLoader().loadClass(className);
 
-            _builder.add(moduleClass);
+            builder.add(moduleClass);
         }
         catch (ClassNotFoundException ex)
         {
@@ -110,40 +110,40 @@ public class TapestryAppInitializer
     public void addModules(ModuleDef... moduleDefs)
     {
         for (ModuleDef def : moduleDefs)
-            _builder.add(def);
+            builder.add(def);
     }
 
     public void addModules(Class... moduleBuilderClasses)
     {
-        _builder.add(moduleBuilderClasses);
+        builder.add(moduleBuilderClasses);
     }
 
     private void addSyntheticSymbolSourceModule()
     {
         ContributionDef symbolSourceContribution = new SyntheticSymbolSourceContributionDef("ServletContext",
-                                                                                            _appProvider,
+                                                                                            appProvider,
                                                                                             "before:ApplicationDefaults");
 
         ContributionDef aliasModeContribution = new SyntheticSymbolSourceContributionDef("AliasMode",
                                                                                          new SingleKeySymbolProvider(
                                                                                                  InternalConstants.TAPESTRY_ALIAS_MODE_SYMBOL,
-                                                                                                 _aliasMode),
+                                                                                                 aliasMode),
                                                                                          "before:ServletContext");
 
         ContributionDef appNameContribution = new SyntheticSymbolSourceContributionDef("AppName",
                                                                                        new SingleKeySymbolProvider(
                                                                                                InternalConstants.TAPESTRY_APP_NAME_SYMBOL,
-                                                                                               _appName),
+                                                                                               appName),
                                                                                        "before:ServletContext");
 
-        _builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution));
+        builder.add(new SyntheticModuleDef(symbolSourceContribution, aliasModeContribution, appNameContribution));
     }
 
     public Registry getRegistry()
     {
-        _registryCreatedTime = System.currentTimeMillis();
+        registryCreatedTime = System.currentTimeMillis();
 
-        return _builder.build();
+        return builder.build();
     }
 
     /**
@@ -151,7 +151,7 @@ public class TapestryAppInitializer
      */
     public long getRegistryCreatedTime()
     {
-        return _registryCreatedTime;
+        return registryCreatedTime;
     }
 
     /**
@@ -159,6 +159,6 @@ public class TapestryAppInitializer
      */
     public long getStartTime()
     {
-        return _startTime;
+        return startTime;
     }
 }

@@ -19,30 +19,29 @@ import org.apache.tapestry.ioc.Location;
 
 public class BlockBinding extends AbstractBinding
 {
-    private final String _description;
+    private final String description;
 
-    private final ComponentResources _component;
+    private final ComponentResources component;
 
-    private final String _blockId;
+    private final String blockId;
 
-    public BlockBinding(final String description, final ComponentResources component,
-                        final String blockId, Location location)
+    public BlockBinding(String description, ComponentResources component, String blockId, Location location)
     {
         super(location);
 
-        _description = description;
-        _component = component;
-        _blockId = blockId;
+        this.description = description;
+        this.component = component;
+        this.blockId = blockId;
     }
 
     public Object get()
     {
-        return _component.getBlock(_blockId);
+        return component.getBlock(blockId);
     }
 
     @Override
     public String toString()
     {
-        return String.format("BlockBinding[%s: %s]", _description, _blockId);
+        return String.format("BlockBinding[%s: %s]", description, blockId);
     }
 }

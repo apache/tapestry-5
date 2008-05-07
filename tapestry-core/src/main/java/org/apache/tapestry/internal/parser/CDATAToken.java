@@ -21,23 +21,23 @@ import org.apache.tapestry.ioc.Location;
  */
 public class CDATAToken extends TemplateToken
 {
-    private final String _content;
+    private final String content;
 
     public CDATAToken(String content, Location location)
     {
         super(TokenType.CDATA, location);
 
-        _content = content;
+        this.content = content;
     }
 
     public String getContent()
     {
-        return _content;
+        return content;
     }
 
     @Override
     public String toString()
     {
-        return String.format("CDATA[%s]", _content);
+        return String.format("CDATA[%s]", content);
     }
 }

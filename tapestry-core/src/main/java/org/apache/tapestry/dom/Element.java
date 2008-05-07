@@ -37,39 +37,39 @@ public final class Element extends Node
 {
     class Attribute
     {
-        private final String _namespace;
-        private final String _name;
-        private final String _value;
+        private final String namespace;
+        private final String name;
+        private final String value;
 
         public Attribute(String namespace, String name, String value)
         {
-            _namespace = namespace;
-            _name = name;
-            _value = value;
+            this.namespace = namespace;
+            this.name = name;
+            this.value = value;
         }
 
         public String getValue()
         {
-            return _value;
+            return value;
         }
 
         void render(MarkupModel model, StringBuilder builder)
         {
             builder.append(" ");
-            builder.append(toPrefixedName(_namespace, _name));
+            builder.append(toPrefixedName(namespace, name));
             builder.append("=\"");
-            model.encodeQuoted(_value, builder);
+            model.encodeQuoted(value, builder);
             builder.append('"');
         }
     }
 
-    private final String _name;
+    private final String name;
 
-    private Map<String, Attribute> _attributes;
+    private Map<String, Attribute> attributes;
 
-    private Element _parent;
+    private Element parent;
 
-    private final Document _document;
+    private final Document document;
 
     private static final String CLASS_ATTRIBUTE = "class";
 
@@ -78,9 +78,9 @@ public final class Element extends Node
      * defines itself, so resolving the namespace to a prefix must wait until render time (since the Element is created
      * before the namespaces for it are defined).
      */
-    private final String _namespace;
+    private final String namespace;
 
-    private Map<String, String> _namespaceToPrefix;
+    private Map<String, String> namespaceToPrefix;
 
     /**
      * Constructor for a root element.
@@ -89,9 +89,9 @@ public final class Element extends Node
     {
         super(container);
 
-        _document = container;
-        _namespace = namespace;
-        _name = name;
+        document = container;
+        this.namespace = namespace;
+        this.name = name;
     }
 
     /**
@@ -101,16 +101,16 @@ public final class Element extends Node
     {
         super(parent);
 
-        _parent = parent;
-        _namespace = namespace;
-        _name = name;
+        this.parent = parent;
+        this.namespace = namespace;
+        this.name = name;
 
-        _document = parent.getDocument();
+        document = parent.getDocument();
     }
 
     public Document getDocument()
     {
-        return _document;
+        return document;
     }
 
     /**
@@ -118,7 +118,7 @@ public final class Element extends Node
      */
     public Element getParent()
     {
-        return _parent;
+        return parent;
     }
 
     /**
@@ -147,9 +147,9 @@ public final class Element extends Node
 
         if (value == null) return;
 
-        if (_attributes == null) _attributes = newMap();
+        if (attributes == null) attributes = newMap();
 
-        if (!_attributes.containsKey(name)) _attributes.put(name, new Attribute(namespace, name, value));
+        if (!attributes.containsKey(name)) attributes.put(name, new Attribute(namespace, name, value));
     }
 
 
@@ -175,7 +175,7 @@ public final class Element extends Node
      */
     public void forceAttributes(String... namesAndValues)
     {
-        if (_attributes == null) _attributes = newMap();
+        if (attributes == null) attributes = newMap();
 
         int i = 0;
 
@@ -186,11 +186,11 @@ public final class Element extends Node
 
             if (value == null)
             {
-                _attributes.remove(name);
+                attributes.remove(name);
                 continue;
             }
 
-            _attributes.put(name, new Attribute(null, name, value));
+            attributes.put(name, new Attribute(null, name, value));
         }
     }
 
@@ -266,7 +266,7 @@ public final class Element extends Node
      */
     public Text text(String text)
     {
-        return newChild(new Text(this, _document, text));
+        return newChild(new Text(this, document, text));
     }
 
     /**
@@ -277,7 +277,7 @@ public final class Element extends Node
      */
     public CData cdata(String content)
     {
-        return newChild(new CData(this, _document, content));
+        return newChild(new CData(this, document, content));
     }
 
 
@@ -293,19 +293,19 @@ public final class Element extends Node
     {
         StringBuilder builder = new StringBuilder();
 
-        String prefixedElementName = toPrefixedName(_namespace, _name);
+        String prefixedElementName = toPrefixedName(namespace, name);
 
         builder.append("<").append(prefixedElementName);
 
-        MarkupModel markupModel = _document.getMarkupModel();
+        MarkupModel markupModel = document.getMarkupModel();
 
-        if (_attributes != null)
+        if (attributes != null)
         {
-            List<String> keys = InternalUtils.sortedKeys(_attributes);
+            List<String> keys = InternalUtils.sortedKeys(attributes);
 
             for (String key : keys)
             {
-                Attribute attribute = _attributes.get(key);
+                Attribute attribute = attributes.get(key);
 
                 attribute.render(markupModel, builder);
             }
@@ -313,13 +313,13 @@ public final class Element extends Node
 
         // Next, emit namespace declarations for each namespace.
 
-        if (_namespaceToPrefix != null)
+        if (namespaceToPrefix != null)
         {
-            List<String> namespaces = InternalUtils.sortedKeys(_namespaceToPrefix);
+            List<String> namespaces = InternalUtils.sortedKeys(namespaceToPrefix);
 
             for (String namespace : namespaces)
             {
-                String prefix = _namespaceToPrefix.get(namespace);
+                String prefix = namespaceToPrefix.get(namespace);
 
                 builder.append(" xmlns");
 
@@ -336,7 +336,7 @@ public final class Element extends Node
             }
         }
 
-        EndTagStyle style = markupModel.getEndTagStyle(_name);
+        EndTagStyle style = markupModel.getEndTagStyle(name);
 
         boolean hasChildren = hasChildren();
 
@@ -444,14 +444,14 @@ public final class Element extends Node
 
     public String getAttribute(String attributeName)
     {
-        Attribute attribute = InternalUtils.get(_attributes, attributeName);
+        Attribute attribute = InternalUtils.get(attributes, attributeName);
 
         return attribute == null ? null : attribute.getValue();
     }
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     /**
@@ -492,13 +492,13 @@ public final class Element extends Node
 
     String toNamespacePrefix(String namespaceURI)
     {
-        String prefix = InternalUtils.get(_namespaceToPrefix, namespaceURI);
+        String prefix = InternalUtils.get(namespaceToPrefix, namespaceURI);
 
         if (prefix != null) return prefix;
 
-        if (_parent == null) throw new RuntimeException(DomMessages.namespaceURINotMappedToPrefix(namespaceURI));
+        if (parent == null) throw new RuntimeException(DomMessages.namespaceURINotMappedToPrefix(namespaceURI));
 
-        return _parent.toNamespacePrefix(namespaceURI);
+        return parent.toNamespacePrefix(namespaceURI);
     }
 
     /**
@@ -515,9 +515,9 @@ public final class Element extends Node
         Defense.notNull(namespace, "namespace");
         Defense.notNull(namespacePrefix, "namespacePrefix");
 
-        if (_namespaceToPrefix == null) _namespaceToPrefix = CollectionFactory.newMap();
+        if (namespaceToPrefix == null) namespaceToPrefix = CollectionFactory.newMap();
 
-        _namespaceToPrefix.put(namespace, namespacePrefix);
+        namespaceToPrefix.put(namespace, namespacePrefix);
 
         return this;
     }
@@ -527,6 +527,6 @@ public final class Element extends Node
      */
     public String getNamespace()
     {
-        return _namespace;
+        return namespace;
     }
 }

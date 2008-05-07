@@ -24,45 +24,45 @@ import org.apache.tapestry.services.FormSupport;
  */
 public class FormSupportAdapter implements FormSupport
 {
-    private final FormSupport _delegate;
+    private final FormSupport delegate;
 
     public FormSupportAdapter(FormSupport delegate)
     {
-        _delegate = delegate;
+        this.delegate = delegate;
     }
 
     public String allocateControlName(String id)
     {
-        return _delegate.allocateControlName(id);
+        return delegate.allocateControlName(id);
     }
 
     public <T> void store(T component, ComponentAction<T> action)
     {
-        _delegate.store(component, action);
+        delegate.store(component, action);
     }
 
     public <T> void storeAndExecute(T component, ComponentAction<T> action)
     {
-        _delegate.storeAndExecute(component, action);
+        delegate.storeAndExecute(component, action);
     }
 
     public void defer(Runnable command)
     {
-        _delegate.defer(command);
+        delegate.defer(command);
     }
 
     public void setEncodingType(String encodingType)
     {
-        _delegate.setEncodingType(encodingType);
+        delegate.setEncodingType(encodingType);
     }
 
     public void addValidation(Field field, String validationName, String message, Object constraint)
     {
-        _delegate.addValidation(field, validationName, message, constraint);
+        delegate.addValidation(field, validationName, message, constraint);
     }
 
     public String getClientId()
     {
-        return _delegate.getClientId();
+        return delegate.getClientId();
     }
 }

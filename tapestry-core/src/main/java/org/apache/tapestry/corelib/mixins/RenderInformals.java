@@ -38,10 +38,10 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class RenderInformals
 {
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     void beginRender(MarkupWriter writer)
     {
-        _resources.renderInformalParameters(writer);
+        resources.renderInformalParameters(writer);
     }
 }

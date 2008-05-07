@@ -23,16 +23,16 @@ import org.apache.tapestry.ioc.Location;
  */
 public abstract class TemplateToken extends BaseLocatable
 {
-    private final TokenType _tokenType;
+    private final TokenType tokenType;
 
     protected TemplateToken(TokenType tokenType, Location location)
     {
         super(location);
-        _tokenType = tokenType;
+        this.tokenType = tokenType;
     }
 
     public TokenType getTokenType()
     {
-        return _tokenType;
+        return tokenType;
     }
 }

@@ -344,26 +344,26 @@ public class TapestryInternalUtils
 
     private static class PropertyOrder implements Comparable<PropertyOrder>
     {
-        final String _propertyName;
+        final String propertyName;
 
-        final int _classDepth;
+        final int classDepth;
 
-        final int _sortKey;
+        final int sortKey;
 
         public PropertyOrder(final String propertyName, int classDepth, int sortKey)
         {
-            _propertyName = propertyName;
-            _classDepth = classDepth;
-            _sortKey = sortKey;
+            this.propertyName = propertyName;
+            this.classDepth = classDepth;
+            this.sortKey = sortKey;
         }
 
         public int compareTo(PropertyOrder o)
         {
-            int result = _classDepth - o._classDepth;
+            int result = classDepth - o.classDepth;
 
-            if (result == 0) result = _sortKey - o._sortKey;
+            if (result == 0) result = sortKey - o.sortKey;
 
-            if (result == 0) result = _propertyName.compareTo(o._propertyName);
+            if (result == 0) result = propertyName.compareTo(o.propertyName);
 
             return result;
         }
@@ -418,7 +418,7 @@ public class TapestryInternalUtils
 
         for (PropertyOrder po : properties)
         {
-            String name = po._propertyName;
+            String name = po.propertyName;
 
             List<String> propertyConstraints = constraints.get(name);
 

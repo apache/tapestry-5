@@ -23,13 +23,13 @@ import org.apache.tapestry.ioc.Location;
  */
 public class StartComponentToken extends TemplateToken
 {
-    private final String _elementName;
+    private final String elementName;
 
-    private final String _id;
+    private final String id;
 
-    private final String _componentType;
+    private final String componentType;
 
-    private final String _mixins;
+    private final String mixins;
 
     /**
      * @param elementName the name of the element from which this component was parsed, or null if the element was the
@@ -46,10 +46,10 @@ public class StartComponentToken extends TemplateToken
 
         // TODO: id or type may be null, but not both!
 
-        _elementName = elementName;
-        _id = id;
-        _componentType = type;
-        _mixins = mixins;
+        this.elementName = elementName;
+        this.id = id;
+        componentType = type;
+        this.mixins = mixins;
     }
 
     /**
@@ -61,7 +61,7 @@ public class StartComponentToken extends TemplateToken
      */
     public String getElementName()
     {
-        return _elementName;
+        return elementName;
     }
 
     /**
@@ -70,7 +70,7 @@ public class StartComponentToken extends TemplateToken
      */
     public String getId()
     {
-        return _id;
+        return id;
     }
 
     /**
@@ -79,7 +79,7 @@ public class StartComponentToken extends TemplateToken
      */
     public String getComponentType()
     {
-        return _componentType;
+        return componentType;
     }
 
     @Override
@@ -87,10 +87,10 @@ public class StartComponentToken extends TemplateToken
     {
         StringBuilder builder = new StringBuilder();
 
-        add(builder, "element", _elementName);
-        add(builder, "id", _id);
-        add(builder, "type", _componentType);
-        add(builder, "mixins", _mixins);
+        add(builder, "element", elementName);
+        add(builder, "id", id);
+        add(builder, "type", componentType);
+        add(builder, "mixins", mixins);
 
         builder.insert(0, "StartComponentToken[");
         builder.append("]");
@@ -116,7 +116,7 @@ public class StartComponentToken extends TemplateToken
      */
     public String getMixins()
     {
-        return _mixins;
+        return mixins;
     }
 
 }

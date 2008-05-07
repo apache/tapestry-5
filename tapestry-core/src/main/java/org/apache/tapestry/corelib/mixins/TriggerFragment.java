@@ -17,6 +17,7 @@ package org.apache.tapestry.corelib.mixins;
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.InjectContainer;
 import org.apache.tapestry.annotations.Parameter;
@@ -37,14 +38,14 @@ public class TriggerFragment
     /**
      * The {@link org.apache.tapestry.corelib.components.FormFragment} instance to make dynamically visible or hidden.
      */
-    @Parameter(required = true, defaultPrefix = "component")
-    private ClientElement _fragment;
+    @Parameter(required = true, defaultPrefix = TapestryConstants.COMPONENT_BINDING_PREFIX)
+    private ClientElement fragment;
 
     @Environmental
-    private PageRenderSupport _pageRenderSupport;
+    private PageRenderSupport pageRenderSupport;
 
     @Environmental
-    private Heartbeat _heartbeat;
+    private Heartbeat heartbeat;
 
     void beginRender()
     {
@@ -54,15 +55,15 @@ public class TriggerFragment
             {
                 JSONArray spec = new JSONArray();
                 spec.put(_container.getClientId());
-                spec.put(_fragment.getClientId());
+                spec.put(fragment.getClientId());
 
-                _pageRenderSupport.addInit("linkTriggerToFormFragment", spec);
+                pageRenderSupport.addInit("linkTriggerToFormFragment", spec);
             }
         };
 
         // Defer generating the script to ensure that the FormFragment has rendered
         // and generated its client id.
 
-        _heartbeat.defer(r);
+        heartbeat.defer(r);
     }
 }

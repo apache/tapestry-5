@@ -21,20 +21,20 @@ import java.io.PrintWriter;
  */
 public final class Comment extends Node
 {
-    private final String _comment;
+    private final String comment;
 
     Comment(Node container, String comment)
     {
         super(container);
 
-        _comment = comment;
+        this.comment = comment;
     }
 
     @Override
     public void toMarkup(PrintWriter writer)
     {
         writer.print("<!-- ");
-        writer.print(_comment);
+        writer.print(comment);
         writer.print(" -->");
     }
 

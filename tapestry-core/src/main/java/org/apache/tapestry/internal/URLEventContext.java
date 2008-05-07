@@ -23,23 +23,23 @@ import org.apache.tapestry.services.ContextValueEncoder;
  */
 public class URLEventContext implements EventContext
 {
-    private final ContextValueEncoder _valueEncoder;
+    private final ContextValueEncoder valueEncoder;
 
-    private final String[] _values;
+    private final String[] values;
 
     public URLEventContext(ContextValueEncoder valueEncoder, String[] values)
     {
-        _valueEncoder = valueEncoder;
-        _values = values;
+        this.valueEncoder = valueEncoder;
+        this.values = values;
     }
 
     public int getCount()
     {
-        return _values.length;
+        return values.length;
     }
 
     public <T> T get(Class<T> desiredType, int index)
     {
-        return _valueEncoder.toValue(desiredType, _values[index]);
+        return valueEncoder.toValue(desiredType, values[index]);
     }
 }

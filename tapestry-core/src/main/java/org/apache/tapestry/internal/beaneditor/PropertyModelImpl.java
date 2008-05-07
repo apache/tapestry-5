@@ -19,110 +19,110 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
+import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.ClassFabUtils;
 
 import java.lang.annotation.Annotation;
 
 public class PropertyModelImpl implements PropertyModel
 {
-    private final BeanModel _model;
+    private final BeanModel model;
 
-    private final String _name;
+    private final String name;
 
-    private final PropertyConduit _conduit;
+    private final PropertyConduit conduit;
 
-    private final String _id;
+    private final String id;
 
-    private String _label;
+    private String label;
 
-    private String _dataType;
+    private String dataType;
 
-    private boolean _sortable;
+    private boolean sortable;
 
     public PropertyModelImpl(BeanModel model, String name, PropertyConduit conduit, Messages messages)
     {
-        _model = model;
-        _name = name;
-        _conduit = conduit;
+        this.model = model;
+        this.name = name;
+        this.conduit = conduit;
 
-        _id = TapestryInternalUtils.extractIdFromPropertyExpression(name);
+        id = TapestryInternalUtils.extractIdFromPropertyExpression(name);
 
-        _label = TapestryInternalUtils.defaultLabel(_id, messages, name);
+        label = TapestryInternalUtils.defaultLabel(id, messages, name);
 
         // Primitive types need to be converted to wrapper types before checking to see
         // if they are sortable.
 
         Class wrapperType = ClassFabUtils.getWrapperType(getPropertyType());
 
-        _sortable = Comparable.class.isAssignableFrom(wrapperType);
+        sortable = Comparable.class.isAssignableFrom(wrapperType);
     }
 
     public String getId()
     {
-        return _id;
+        return id;
     }
 
     public Class getPropertyType()
     {
-        return _conduit == null ? Object.class : _conduit.getPropertyType();
+        return conduit == null ? Object.class : conduit.getPropertyType();
     }
 
     public PropertyConduit getConduit()
     {
-        return _conduit;
+        return conduit;
     }
 
     public PropertyModel label(String label)
     {
-        notBlank(label, "label");
+        Defense.notBlank(label, "label");
 
-        _label = label;
+        this.label = label;
 
         return this;
     }
 
     public String getLabel()
     {
-        return _label;
+        return label;
     }
 
     public String getPropertyName()
     {
-        return _name;
+        return name;
     }
 
     public BeanModel model()
     {
-        return _model;
+        return model;
     }
 
     public PropertyModel dataType(String dataType)
     {
-        _dataType = dataType;
+        this.dataType = dataType;
 
         return this;
     }
 
     public String getDataType()
     {
-        return _dataType;
+        return dataType;
     }
 
     public boolean isSortable()
     {
-        return _sortable;
+        return sortable;
     }
 
     public PropertyModel sortable(boolean sortable)
     {
-        _sortable = sortable;
+        this.sortable = sortable;
 
         return this;
     }
 
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass)
     {
-        return _conduit == null ? null : _conduit.getAnnotation(annotationClass);
+        return conduit == null ? null : conduit.getAnnotation(annotationClass);
     }
 }

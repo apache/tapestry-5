@@ -23,23 +23,23 @@ import org.apache.tapestry.ioc.Location;
  */
 public class ExpansionToken extends TemplateToken
 {
-    private final String _expression;
+    private final String expression;
 
     public ExpansionToken(String expression, Location location)
     {
         super(TokenType.EXPANSION, location);
 
-        _expression = expression;
+        this.expression = expression;
     }
 
     public String getExpression()
     {
-        return _expression;
+        return expression;
     }
 
     @Override
     public String toString()
     {
-        return String.format("Expression[%s]", _expression);
+        return String.format("Expression[%s]", expression);
     }
 }

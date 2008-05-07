@@ -27,9 +27,9 @@ import java.io.Serializable;
  */
 public class WrappedComponentAction implements Serializable
 {
-    private final String _componentId;
+    private final String componentId;
 
-    private final ComponentAction _action;
+    private final ComponentAction action;
 
     public WrappedComponentAction(Component component, ComponentAction action)
     {
@@ -42,8 +42,8 @@ public class WrappedComponentAction implements Serializable
      */
     public WrappedComponentAction(String componentId, ComponentAction action)
     {
-        _componentId = componentId;
-        _action = action;
+        this.componentId = componentId;
+        this.action = action;
     }
 
     /**
@@ -53,8 +53,8 @@ public class WrappedComponentAction implements Serializable
      */
     public void execute(ComponentSource source)
     {
-        Component component = source.getComponent(_componentId);
+        Component component = source.getComponent(componentId);
 
-        _action.execute(component);
+        action.execute(component);
     }
 }

@@ -26,19 +26,19 @@ import java.util.Map;
  */
 public class ServletContextSymbolProvider implements SymbolProvider
 {
-    private final Map<String, String> _properties = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, String> properties = CollectionFactory.newCaseInsensitiveMap();
 
     public ServletContextSymbolProvider(ServletContext context)
     {
         for (String name : InternalUtils.toList(context.getInitParameterNames()))
         {
-            _properties.put(name, context.getInitParameter(name));
+            properties.put(name, context.getInitParameter(name));
         }
     }
 
     public String valueForSymbol(String symbolName)
     {
-        return _properties.get(symbolName);
+        return properties.get(symbolName);
     }
 
 }

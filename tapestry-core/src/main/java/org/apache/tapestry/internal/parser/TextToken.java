@@ -21,13 +21,13 @@ import org.apache.tapestry.ioc.Location;
  */
 public class TextToken extends TemplateToken
 {
-    private final String _text;
+    private final String text;
 
     public TextToken(String text, Location location)
     {
         super(TokenType.TEXT, location);
 
-        _text = text;
+        this.text = text;
     }
 
     /**
@@ -35,12 +35,12 @@ public class TextToken extends TemplateToken
      */
     public String getText()
     {
-        return _text;
+        return text;
     }
 
     @Override
     public String toString()
     {
-        return String.format("Text[%s]", _text);
+        return String.format("Text[%s]", text);
     }
 }

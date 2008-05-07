@@ -23,19 +23,19 @@ import org.apache.tapestry.ioc.Location;
  */
 public class DTDToken extends TemplateToken
 {
-    private final String _name;
+    private final String name;
 
-    private final String _publicId;
+    private final String publicId;
 
-    private final String _systemId;
+    private final String systemId;
 
     public DTDToken(String name, String publicId, String systemId, Location location)
     {
         super(TokenType.DTD, location);
 
-        _name = name;
-        _publicId = publicId;
-        _systemId = systemId;
+        this.name = name;
+        this.publicId = publicId;
+        this.systemId = systemId;
     }
 
     /**
@@ -43,7 +43,7 @@ public class DTDToken extends TemplateToken
      */
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     /**
@@ -51,7 +51,7 @@ public class DTDToken extends TemplateToken
      */
     public String getPublicId()
     {
-        return _publicId;
+        return publicId;
     }
 
     /**
@@ -59,12 +59,12 @@ public class DTDToken extends TemplateToken
      */
     public String getSystemId()
     {
-        return _systemId;
+        return systemId;
     }
 
     @Override
     public String toString()
     {
-        return String.format("DTD[name=%s; publicId=%s; systemId=%s]", _name, _publicId, _systemId);
+        return String.format("DTD[name=%s; publicId=%s; systemId=%s]", name, publicId, systemId);
     }
 }

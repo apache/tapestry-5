@@ -26,11 +26,11 @@ import org.apache.tapestry.annotations.MixinAfter;
 public class RenderDisabled
 {
     @InjectContainer
-    private Field _field;
+    private Field field;
 
     void beginRender(MarkupWriter writer)
     {
-        if (_field.isDisabled())
+        if (field.isDisabled())
             writer.attributes("disabled", "disabled");
     }
 }
