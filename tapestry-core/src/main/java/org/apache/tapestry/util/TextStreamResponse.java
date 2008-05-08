@@ -25,27 +25,25 @@ import java.io.InputStream;
 
 public class TextStreamResponse implements StreamResponse
 {
-    private final String _contentType;
+    private final String contentType, text;
 
-    private final String _text;
-
-    public TextStreamResponse(final String contentType, final String text)
+    public TextStreamResponse(String contentType, String text)
     {
         notBlank(contentType, "contentType");
         notNull(text, "text");
 
-        _contentType = contentType;
-        _text = text;
+        this.contentType = contentType;
+        this.text = text;
     }
 
     public String getContentType()
     {
-        return _contentType;
+        return contentType;
     }
 
     public InputStream getStream() throws IOException
     {
-        return new ByteArrayInputStream(_text.getBytes());
+        return new ByteArrayInputStream(text.getBytes());
     }
 
     public void prepareResponse(Response response)

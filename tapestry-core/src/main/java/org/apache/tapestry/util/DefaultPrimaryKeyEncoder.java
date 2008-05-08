@@ -15,7 +15,7 @@
 package org.apache.tapestry.util;
 
 import org.apache.tapestry.PrimaryKeyEncoder;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 
 import java.io.Serializable;
@@ -35,13 +35,13 @@ import java.util.Set;
  */
 public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements PrimaryKeyEncoder<K, V>
 {
-    private final Map<K, V> _keyToValue = new LinkedHashMap<K, V>();
+    private final Map<K, V> keyToValue = new LinkedHashMap<K, V>();
 
-    private final Map<V, K> _valueToKey = newMap();
+    private final Map<V, K> valueToKey = CollectionFactory.newMap();
 
-    private Set<K> _deletedKeys;
+    private Set<K> deletedKeys;
 
-    private K _currentKey;
+    private K currentKey;
 
     /**
      * Adds a new key/value pair to the encoder.
@@ -51,14 +51,14 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
         Defense.notNull(key, "key");
         Defense.notNull(value, "value");
 
-        V existing = _keyToValue.get(key);
+        V existing = keyToValue.get(key);
         if (existing != null) throw new IllegalArgumentException(UtilMessages.duplicateKey(key, value, existing));
 
-        _keyToValue.put(key, value);
+        keyToValue.put(key, value);
 
         // TODO: Ensure that the value is unique?
 
-        _valueToKey.put(value, key);
+        valueToKey.put(value, key);
     }
 
     /**
@@ -69,7 +69,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      */
     public final List<V> getValues()
     {
-        return valuesNotInKeySet(_deletedKeys);
+        return valuesNotInKeySet(deletedKeys);
     }
 
     /**
@@ -83,9 +83,9 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     {
         if (keySet == null || keySet.isEmpty()) return getAllValues();
 
-        List<V> result = newList();
+        List<V> result = CollectionFactory.newList();
 
-        for (Map.Entry<K, V> entry : _keyToValue.entrySet())
+        for (Map.Entry<K, V> entry : keyToValue.entrySet())
         {
 
             if (keySet.contains(entry.getKey())) continue;
@@ -98,9 +98,9 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
     public final List<V> getAllValues()
     {
-        List<V> result = newList();
+        List<V> result = CollectionFactory.newList();
 
-        for (Map.Entry<K, V> entry : _keyToValue.entrySet())
+        for (Map.Entry<K, V> entry : keyToValue.entrySet())
         {
             result.add(entry.getValue());
         }
@@ -116,27 +116,27 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     {
         Defense.notNull(value, "value");
 
-        _currentKey = _valueToKey.get(value);
+        currentKey = valueToKey.get(value);
 
-        if (_currentKey == null) throw new IllegalArgumentException(UtilMessages.missingValue(value, _valueToKey
+        if (currentKey == null) throw new IllegalArgumentException(UtilMessages.missingValue(value, valueToKey
                 .keySet()));
 
-        return _currentKey;
+        return currentKey;
     }
 
     public final V toValue(K key)
     {
-        V result = _keyToValue.get(key);
+        V result = keyToValue.get(key);
 
         if (result == null)
         {
             result = provideMissingObject(key);
 
-            _currentKey = key;
+            currentKey = key;
         }
         else
         {
-            _currentKey = key;
+            currentKey = key;
         }
 
         return result;
@@ -160,12 +160,12 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
     public final boolean isDeleted()
     {
-        return inKeySet(_deletedKeys);
+        return inKeySet(deletedKeys);
     }
 
     public final void setDeleted(boolean value)
     {
-        _deletedKeys = modifyKeySet(_deletedKeys, value);
+        deletedKeys = modifyKeySet(deletedKeys, value);
     }
 
     /**
@@ -176,7 +176,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
      */
     protected final boolean inKeySet(Set<K> keySet)
     {
-        return keySet != null && keySet.contains(_currentKey);
+        return keySet != null && keySet.contains(currentKey);
     }
 
     /**
@@ -196,11 +196,11 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
         {
             if (!value) return null;
 
-            keySet = newSet();
+            keySet = CollectionFactory.newSet();
         }
 
-        if (value) keySet.add(_currentKey);
-        else keySet.remove(_currentKey);
+        if (value) keySet.add(currentKey);
+        else keySet.remove(currentKey);
 
         return keySet;
     }

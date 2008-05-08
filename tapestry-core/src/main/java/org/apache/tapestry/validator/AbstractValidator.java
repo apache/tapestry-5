@@ -16,34 +16,37 @@ package org.apache.tapestry.validator;
 
 import org.apache.tapestry.Validator;
 
+/**
+ * Base class for constructing a {@link org.apache.tapestry.Validator}.
+ */
 public abstract class AbstractValidator<C, T> implements Validator<C, T>
 {
-    private final Class<C> _constraintType;
+    private final Class<C> constraintType;
 
-    private final Class<T> _valueType;
+    private final Class<T> valueType;
 
-    private final String _messageKey;
+    private final String messageKey;
 
     protected AbstractValidator(Class<C> constraintType, Class<T> valueType, String messageKey)
     {
-        _constraintType = constraintType;
-        _valueType = valueType;
-        _messageKey = messageKey;
+        this.constraintType = constraintType;
+        this.valueType = valueType;
+        this.messageKey = messageKey;
     }
 
     public final Class<C> getConstraintType()
     {
-        return _constraintType;
+        return constraintType;
     }
 
     public final Class<T> getValueType()
     {
-        return _valueType;
+        return valueType;
     }
 
     public String getMessageKey()
     {
-        return _messageKey;
+        return messageKey;
     }
 
     public boolean isRequired()

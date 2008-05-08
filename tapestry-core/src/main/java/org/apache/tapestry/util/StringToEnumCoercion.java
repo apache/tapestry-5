@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.services.Coercion;
 
@@ -29,9 +29,9 @@ import java.util.Map;
  */
 public final class StringToEnumCoercion<T extends Enum> implements Coercion<String, T>
 {
-    private final Class<T> _enumClass;
+    private final Class<T> enumClass;
 
-    private final Map<String, T> _stringToEnum = newCaseInsensitiveMap();
+    private final Map<String, T> stringToEnum = CollectionFactory.newCaseInsensitiveMap();
 
     public StringToEnumCoercion(Class<T> enumClass)
     {
@@ -40,10 +40,10 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
 
     public StringToEnumCoercion(Class<T> enumClass, T... values)
     {
-        _enumClass = enumClass;
+        this.enumClass = enumClass;
 
         for (T value : values)
-            _stringToEnum.put(value.name(), value);
+            stringToEnum.put(value.name(), value);
     }
 
     public T coerce(String input)
@@ -51,13 +51,13 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
         if (InternalUtils.isBlank(input))
             return null;
 
-        T result = _stringToEnum.get(input);
+        T result = stringToEnum.get(input);
 
         if (result == null)
             throw new RuntimeException(UtilMessages.missingEnumValue(
                     input,
-                    _enumClass,
-                    _stringToEnum.keySet()));
+                    enumClass,
+                    stringToEnum.keySet()));
 
         return result;
     }

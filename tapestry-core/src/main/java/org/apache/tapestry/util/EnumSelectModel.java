@@ -19,7 +19,7 @@ import org.apache.tapestry.OptionModel;
 import org.apache.tapestry.internal.OptionModelImpl;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 
 import java.io.Serializable;
@@ -35,7 +35,7 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
 {
     private static final long serialVersionUID = -3590412082766899684L;
 
-    private final List<OptionModel> _options = newList();
+    private final List<OptionModel> options = CollectionFactory.newList();
 
     public <T extends Enum> EnumSelectModel(Class<T> enumClass, Messages messages)
     {
@@ -53,7 +53,7 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
         {
             String label = TapestryInternalUtils.getLabelForEnum(messages, prefix, value);
 
-            _options.add(new OptionModelImpl(label, value));
+            options.add(new OptionModelImpl(label, value));
         }
     }
 
@@ -70,7 +70,7 @@ public final class EnumSelectModel extends AbstractSelectModel implements Serial
      */
     public List<OptionModel> getOptions()
     {
-        return _options;
+        return options;
     }
 
 }

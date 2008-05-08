@@ -64,7 +64,7 @@ Instance Mixins
 +----+
 
   @Component(parameters=. . .) @Mixins({"Autocomplete", "DefaultFromCookie"})
-  private TextField _userId;
+  private TextField userId;
 +----+
 
   This example defines a component of type TextField and mixes in the <hypothetical> Autocomplete
@@ -81,7 +81,7 @@ Implementation Mixins
 public class AutocompleteField extendes TextField
 {
   @Mixin
-  private Autocomplete _autocompleteMixin;
+  private Autocomplete autocompleteMixin;
   
   . . .
 }
@@ -96,7 +96,7 @@ public class AutocompleteField extendes TextField
 public class AutocompleteField extendes TextField
 {
   @Mixin("Autocomplete")
-  private Object _autocompleteMixin;
+  private Object autocompleteMixin;
   
   . . .
 }
@@ -120,7 +120,7 @@ Mixin Parameters
   
 +-----+
   @Component(parameters={"Autocomplete.id=auto", . . . }) @Mixins("Autocomplete", "DefaultFromCookie"})
-  private TextField _userId;
+  private TextField userId;
 +-----+
 
   

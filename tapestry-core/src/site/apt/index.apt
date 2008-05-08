@@ -118,22 +118,22 @@ public class Login
 {
   @Persist
   @Property
-  private String _userId;
+  private String userId;
   
   @Property
-  private String _password;
+  private String password;
   
   @Component
-  private Form _form;
+  private Form form;
   
   @Inject
-  private LoginAuthenticator _authenticator;
+  private LoginAuthenticator authenticator;
   
   void onValidateForm()
   {
-    if (! _authenticator.isValidLogin(_userId, _password))
+    if (! authenticator.isValidLogin(userId, password))
     {
-      _form.recordError("Invalid user name or password.");
+      form.recordError("Invalid user name or password.");
     }
   }
 

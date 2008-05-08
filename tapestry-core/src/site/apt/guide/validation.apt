@@ -86,24 +86,24 @@ Storing Data Between Requests
 public class Login
 {
     @Persist
-    private String _userName;
+    private String userName;
 
-    private String _password;
+    private String password;
 
     @Inject
-    private UserAuthenticator _authenticator;
+    private UserAuthenticator authenticator;
 
     @Component(id = "password")
-    private PasswordField _passwordField;
+    private PasswordField passwordField;
 
     @Component
-    private Form _form;
+    private Form form;
 
     String onSuccess()
     {
-        if (!_authenticator.isValid(_userName, _password))
+        if (!authenticator.isValid(userName, password))
         {
-            _form.recordError(_passwordField, "Invalid user name or password.");
+            form.recordError(passwordField, "Invalid user name or password.");
             return null;
         }
 
@@ -112,22 +112,22 @@ public class Login
 
     public String getPassword()
     {
-        return _password;
+        return password;
     }
 
     public void setPassword(String password)
     {
-        _password = password;
+        password = password;
     }
 
     public String getUserName()
     {
-        return _userName;
+        return userName;
     }
 
     public void setUserName(String userName)
     {
-        _userName = userName;
+        userName = userName;
     }
 }
 +---+  
@@ -263,11 +263,11 @@ Overriding the Translator with Events
 
   . . .
 
-  private int _quantity;
+  private int quantity;
 
   String onToClientFromQuantity()
   {
-    if (_quantity == 0) return "";
+    if (quantity == 0) return "";
 
     return null;
   }

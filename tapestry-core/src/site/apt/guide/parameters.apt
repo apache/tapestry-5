@@ -33,41 +33,41 @@ public class Count
     private int _start = 1;
 
     @Parameter(required = true)
-    private int _end;
+    private int end;
 
     @Parameter
-    private int _value;
+    private int value;
 
-    private boolean _increment;
+    private boolean increment;
 
     @SetupRender
     void initializeValue()
     {
-        _value = _start;
+        value = start;
 
-        _increment = _start < _end;
+        increment = start < end;
     }
 
     @AfterRender
     boolean next()
     {
-        if (_increment)
+        if (increment)
         {
-            int newValue = _value + 1;
+            int newValue = value + 1;
 
-            if (newValue <= _end)
+            if (newValue <= end)
             {
-                _value = newValue;
+                value = newValue;
                 return false; 
             }
         }
         else
         {
-            int newValue = _value - 1;
+            int newValue = value - 1;
 
-            if (newValue >= _end)
+            if (newValue >= end)
             {
-                _value = newValue;
+                value = newValue;
                 return false; 
             }
         }
@@ -152,12 +152,13 @@ Render Variables
   <ul>
     <li t:type="loop" source="1..10" value="index">${index}</li>
   </ul>
+---
 
-  private int _index;
+  And in the Java code:
 
-  public int getIndex() { return _index; }
-
-  public void setIndex(int index) { _index = index; }
+---
+  @Property
+  private int index;
 ---
 
   ... could be rewritten as just:
@@ -168,7 +169,7 @@ Render Variables
   </ul>
 ---
 
-  In other words, you don't have to define a property in the Java code.  This disadvantage is that
+  In other words, you don't have to define a property in the Java code.  The disadvantage is that
   render variables don't work with the property expression syntax, so you can pass around a
   render variables <value> but you can't reference any of the value's properties.
 
@@ -350,10 +351,10 @@ Parameter Binding Defaults
   
 +----+
   @Parameter("defaultMessage")
-  private String _message;
+  private String message;
   
   @Parameter(required=true)
-  private int _maxLength;
+  private int maxLength;
   
   public String getDefaultMessage()
   {
@@ -377,25 +378,25 @@ Computed Parameter Binding Defaults
     
 +----+
   @Parameter
-  private String _message;
+  private String message;
   
   @Parameter(required=true)
-  private int _maxLength;
+  private int maxLength;
   
   @Inject
-  private ComponentResources _resources;
+  private ComponentResources resources;
   
   @Inject
-  private BindingSource _bindingSource;
+  private BindingSource bindingSource;
   
   Binding defaultMessage()
   {
-    return _bindingSource.newBinding("default value", _resources, "defaultMessage");
+    return bindingSource.newBinding("default value", resources, "defaultMessage");
   }
   
   public String getDefaultMessage()
   {
-    return String.format("Maximum field length is %d.", _maxLength);
+    return String.format("Maximum field length is %d.", maxLength);
   }
 +---+  
   
@@ -405,13 +406,13 @@ Computed Parameter Binding Defaults
   
 +----+
   @Parameter
-  private String _message;
+  private String message;
   
   @Parameter(required=true)
-  private int _maxLength;
+  private int maxLength;
   
   @Inject
-  private ComponentResources _resources;
+  private ComponentResources resources;
   
   String defaultMessage()
   {
@@ -474,15 +475,15 @@ Determining if Bound
 public class MyComponent
 {
   @Parameter
-  private int _myParam;
+  private int myParam;
   
   @Inject
-  private ComponentResources _resources;
+  private ComponentResources resources;
   
   @BeginRender
   void setup()
   {
-      if (_resources.isBound("myParam"))
+      if (resources.isBound("myParam"))
       {
         . . .
       }

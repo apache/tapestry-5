@@ -24,7 +24,7 @@ Injecting Assets
 +----+
   @Inject
   @Path("context:images/tapestry_banner.gif")
-  private Asset _banner;
+  private Asset banner;
 +----+
 
   Assets are located within <domains>; these domains are identified by the prefix on the Inject annotation's value.
@@ -45,7 +45,7 @@ Relative Assets
 +----+
   @Inject
   @Path("../edit.png")
-  private Asset _icon;
+  private Asset icon;
 +----+  
 
   Since you must omit the prefix, this only makes sense for components packaged in a library for reuse.
@@ -59,7 +59,7 @@ Symbols For Assets
 +----+
   @Inject
   @Path("${skin.root}/style.css")
-  private Asset _style;
+  private Asset style;
 +----+
 
   An override of the skin.root symbol would affect all references to the named asset.

@@ -41,17 +41,17 @@ import java.util.Map;
  */
 public class PageTester implements ComponentInvoker
 {
-    private final Registry _registry;
+    private final Registry registry;
 
-    private final ComponentInvocationMap _invocationMap;
+    private final ComponentInvocationMap invocationMap;
 
-    private final TestableRequest _request;
+    private final TestableRequest request;
 
-    private final StrategyRegistry<ComponentInvoker> _invokerRegistry;
+    private final StrategyRegistry<ComponentInvoker> invokerRegistry;
 
-    private Locale _preferedLanguage;
+    private Locale preferedLanguage;
 
-    private final LocalizationSetter _localizationSetter;
+    private final LocalizationSetter localizationSetter;
 
     public static final String DEFAULT_CONTEXT_PATH = "src/main/webapp";
 
@@ -81,7 +81,7 @@ public class PageTester implements ComponentInvoker
      */
     public PageTester(String appPackage, String appName, String contextPath, Class... moduleClasses)
     {
-        _preferedLanguage = Locale.ENGLISH;
+        preferedLanguage = Locale.ENGLISH;
 
         SymbolProvider provider = new SingleKeySymbolProvider(InternalConstants.TAPESTRY_APP_PACKAGE_PARAM, appPackage);
 
@@ -91,23 +91,23 @@ public class PageTester implements ComponentInvoker
         initializer.addModules(moduleClasses);
         initializer.addModules(provideExtraModuleDefs());
 
-        _registry = initializer.getRegistry();
+        registry = initializer.getRegistry();
 
-        _request = _registry.getObject(TestableRequest.class, null);
+        request = registry.getObject(TestableRequest.class, null);
 
-        _localizationSetter = _registry.getService("LocalizationSetter", LocalizationSetter.class);
+        localizationSetter = registry.getService("LocalizationSetter", LocalizationSetter.class);
 
-        _invocationMap = _registry.getObject(ComponentInvocationMap.class, null);
+        invocationMap = registry.getObject(ComponentInvocationMap.class, null);
 
-        ApplicationGlobals globals = _registry.getObject(ApplicationGlobals.class, null);
+        ApplicationGlobals globals = registry.getObject(ApplicationGlobals.class, null);
 
         globals.storeContext(new PageTesterContext(contextPath));
 
         Map<Class, ComponentInvoker> map = newMap();
-        map.put(PageLinkTarget.class, new PageLinkInvoker(_registry));
-        map.put(ActionLinkTarget.class, new ActionLinkInvoker(_registry, this, _invocationMap));
+        map.put(PageLinkTarget.class, new PageLinkInvoker(registry));
+        map.put(ActionLinkTarget.class, new ActionLinkInvoker(registry, this, invocationMap));
 
-        _invokerRegistry = StrategyRegistry.newInstance(ComponentInvoker.class, map);
+        invokerRegistry = StrategyRegistry.newInstance(ComponentInvoker.class, map);
     }
 
     /**
@@ -125,7 +125,7 @@ public class PageTester implements ComponentInvoker
      */
     public void shutdown()
     {
-        _registry.shutdown();
+        registry.shutdown();
     }
 
 
@@ -134,7 +134,7 @@ public class PageTester implements ComponentInvoker
      */
     public Registry getRegistry()
     {
-        return _registry;
+        return registry;
     }
 
     /**
@@ -145,7 +145,7 @@ public class PageTester implements ComponentInvoker
      */
     public <T> T getService(Class<T> serviceInterface)
     {
-        return _registry.getService(serviceInterface);
+        return registry.getService(serviceInterface);
     }
 
     /**
@@ -176,7 +176,7 @@ public class PageTester implements ComponentInvoker
 
     private ComponentInvocation getInvocation(Element element)
     {
-        ComponentInvocation invocation = _invocationMap.get(element);
+        ComponentInvocation invocation = invocationMap.get(element);
 
         if (invocation == null)
             throw new IllegalArgumentException("No component invocation object is associated with the Element.");
@@ -188,18 +188,18 @@ public class PageTester implements ComponentInvoker
     {
         // It is critical to clear the map before invoking an invocation (render a page or click a
         // link).
-        _invocationMap.clear();
+        invocationMap.clear();
 
         setThreadLocale();
 
-        ComponentInvoker invoker = _invokerRegistry.getByInstance(invocation.getTarget());
+        ComponentInvoker invoker = invokerRegistry.getByInstance(invocation.getTarget());
 
         return invoker.invoke(invocation);
     }
 
     private void setThreadLocale()
     {
-        _localizationSetter.setThreadLocale(_preferedLanguage);
+        localizationSetter.setThreadLocale(preferedLanguage);
     }
 
     /**
@@ -213,9 +213,9 @@ public class PageTester implements ComponentInvoker
     {
         notNull(form, "form");
 
-        _request.clear();
+        request.clear();
 
-        _request.loadParameters(parameters);
+        request.loadParameters(parameters);
 
         addHiddenFormFields(form);
 
@@ -275,7 +275,7 @@ public class PageTester implements ComponentInvoker
     private void addHiddenFormFields(Element element)
     {
         if (isHiddenFormField(element))
-            _request.loadParameter(element.getAttribute("name"), element.getAttribute("value"));
+            request.loadParameter(element.getAttribute("name"), element.getAttribute("value"));
 
         for (Node child : element.getChildren())
         {
@@ -293,6 +293,6 @@ public class PageTester implements ComponentInvoker
 
     public void setPreferedLanguage(Locale preferedLanguage)
     {
-        _preferedLanguage = preferedLanguage;
+        this.preferedLanguage = preferedLanguage;
     }
 }
