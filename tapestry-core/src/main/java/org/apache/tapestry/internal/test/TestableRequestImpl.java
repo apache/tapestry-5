@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.test;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.Session;
 
@@ -24,13 +24,13 @@ import java.util.Map;
 
 public class TestableRequestImpl implements TestableRequest
 {
-    private final String _contextPath;
+    private final String contextPath;
 
-    private final Map<String, String> _parameters = newMap();
+    private final Map<String, String> parameters = CollectionFactory.newMap();
 
-    private final Map<String, Object> _attributes = newMap();
+    private final Map<String, Object> attributes = CollectionFactory.newMap();
 
-    private Session _session;
+    private Session session;
 
     public TestableRequestImpl()
     {
@@ -39,7 +39,7 @@ public class TestableRequestImpl implements TestableRequest
 
     public TestableRequestImpl(String contextPath)
     {
-        _contextPath = contextPath;
+        this.contextPath = contextPath;
     }
 
     private <T> T nyi(String methodName)
@@ -50,17 +50,17 @@ public class TestableRequestImpl implements TestableRequest
 
     public void clear()
     {
-        _parameters.clear();
+        parameters.clear();
     }
 
     public void loadParameter(String parameterName, String parameterValue)
     {
-        _parameters.put(parameterName, parameterValue);
+        parameters.put(parameterName, parameterValue);
     }
 
     public void loadParameters(Map<String, String> parameterValues)
     {
-        _parameters.putAll(parameterValues);
+        parameters.putAll(parameterValues);
     }
 
     public long getDateHeader(String name)
@@ -86,7 +86,7 @@ public class TestableRequestImpl implements TestableRequest
 
     public List<String> getParameterNames()
     {
-        return InternalUtils.sortedKeys(_parameters);
+        return InternalUtils.sortedKeys(parameters);
     }
 
     public String[] getParameters(String name)
@@ -103,21 +103,21 @@ public class TestableRequestImpl implements TestableRequest
 
     public String getContextPath()
     {
-        return _contextPath;
+        return contextPath;
     }
 
     public String getParameter(String name)
     {
-        return _parameters.get(name);
+        return parameters.get(name);
     }
 
     public Session getSession(boolean create)
     {
-        if (!create) return _session;
+        if (!create) return session;
 
-        if (_session == null) _session = new PageTesterSession();
+        if (session == null) session = new PageTesterSession();
 
-        return _session;
+        return session;
     }
 
     public void setEncoding(String requestEncoding)
@@ -147,12 +147,12 @@ public class TestableRequestImpl implements TestableRequest
 
     public Object getAttribute(String name)
     {
-        return _attributes.get(name);
+        return attributes.get(name);
     }
 
     public void setAttribute(String name, Object value)
     {
-        _attributes.put(name, value);
+        attributes.put(name, value);
     }
 
     public String getServerName()

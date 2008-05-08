@@ -31,11 +31,11 @@ import java.util.List;
  */
 public class MixinWorker implements ComponentClassTransformWorker
 {
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
     public MixinWorker(final ComponentClassResolver resolver)
     {
-        _resolver = resolver;
+        this.resolver = resolver;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -50,7 +50,7 @@ public class MixinWorker implements ComponentClassTransformWorker
 
             String fieldType = transformation.getFieldType(fieldName);
 
-            String mixinClassName = InternalUtils.isBlank(mixinType) ? fieldType : _resolver
+            String mixinClassName = InternalUtils.isBlank(mixinType) ? fieldType : resolver
                     .resolveMixinTypeToClassName(mixinType);
 
             model.addMixinClassName(mixinClassName);

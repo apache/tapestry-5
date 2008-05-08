@@ -24,11 +24,11 @@ import java.util.List;
 
 public class PageTesterContext implements Context
 {
-    private final File _contextRoot;
+    private final File contextRoot;
 
     public PageTesterContext(String contextRoot)
     {
-        _contextRoot = new File(TapestryTestConstants.MODULE_BASE_DIR, contextRoot);
+        this.contextRoot = new File(TapestryTestConstants.MODULE_BASE_DIR, contextRoot);
     }
 
     public String getInitParameter(String name)
@@ -38,7 +38,7 @@ public class PageTesterContext implements Context
 
     public URL getResource(String path)
     {
-        File f = new File(_contextRoot + path);
+        File f = new File(contextRoot + path);
 
         if (!f.exists() || !f.isFile())
         {

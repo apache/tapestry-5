@@ -25,9 +25,9 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
  */
 public class ComponentEventException extends TapestryException
 {
-    private final String _eventType;
+    private final String eventType;
 
-    private final EventContext _context;
+    private final EventContext context;
 
     /**
      * @param message   exception message
@@ -41,17 +41,17 @@ public class ComponentEventException extends TapestryException
     {
         super(message, location, cause);
 
-        _eventType = eventType;
-        _context = context;
+        this.eventType = eventType;
+        this.context = context;
     }
 
     public String getEventType()
     {
-        return _eventType;
+        return eventType;
     }
 
     public EventContext getContext()
     {
-        return _context;
+        return context;
     }
 }

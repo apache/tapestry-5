@@ -24,9 +24,9 @@ public final class MultiKey
 {
     private static final int PRIME = 31;
 
-    private final Object[] _values;
+    private final Object[] values;
 
-    private final int _hashCode;
+    private final int hashCode;
 
     /**
      * Creates a new instance from the provided values. It is assumed that the values provided are good map keys
@@ -36,15 +36,15 @@ public final class MultiKey
      */
     public MultiKey(Object... values)
     {
-        _values = values;
+        this.values = values;
 
-        _hashCode = PRIME * Arrays.hashCode(_values);
+        hashCode = PRIME * Arrays.hashCode(this.values);
     }
 
     @Override
     public int hashCode()
     {
-        return _hashCode;
+        return hashCode;
     }
 
     @Override
@@ -58,7 +58,7 @@ public final class MultiKey
             return false;
         final MultiKey other = (MultiKey) obj;
 
-        return Arrays.equals(_values, other._values);
+        return Arrays.equals(values, other.values);
     }
 
     @Override
@@ -68,7 +68,7 @@ public final class MultiKey
 
         boolean first = true;
 
-        for (Object o : _values)
+        for (Object o : values)
         {
             if (!first)
                 builder.append(", ");

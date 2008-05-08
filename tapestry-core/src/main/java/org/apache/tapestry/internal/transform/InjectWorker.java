@@ -30,16 +30,16 @@ import org.apache.tapestry.services.InjectionProvider;
  */
 public class InjectWorker implements ComponentClassTransformWorker
 {
-    private final ObjectLocator _locator;
+    private final ObjectLocator locator;
 
     // Really, a chain of command
 
-    private final InjectionProvider _injectionProvider;
+    private final InjectionProvider injectionProvider;
 
     public InjectWorker(ObjectLocator locator, InjectionProvider injectionProvider)
     {
-        _locator = locator;
-        _injectionProvider = injectionProvider;
+        this.locator = locator;
+        this.injectionProvider = injectionProvider;
     }
 
     public final void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -54,10 +54,10 @@ public class InjectWorker implements ComponentClassTransformWorker
 
                 Class type = transformation.toClass(fieldType);
 
-                boolean success = _injectionProvider.provideInjection(
+                boolean success = injectionProvider.provideInjection(
                         fieldName,
                         type,
-                        _locator,
+                        locator,
                         transformation,
                         model);
 

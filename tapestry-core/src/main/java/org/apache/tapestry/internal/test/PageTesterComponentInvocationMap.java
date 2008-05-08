@@ -19,7 +19,7 @@ import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocation;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.NoOpComponentInvocationMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.test.PageTester;
 
 import java.util.Map;
@@ -30,36 +30,36 @@ import java.util.Map;
  */
 public class PageTesterComponentInvocationMap implements ComponentInvocationMap
 {
-    private final Map<Element, Link> _elementToLink = newMap();
+    private final Map<Element, Link> elementToLink = CollectionFactory.newMap();
 
-    private final Map<Link, ComponentInvocation> _linkToInvocation = newMap();
+    private final Map<Link, ComponentInvocation> linkToInvocation = CollectionFactory.newMap();
 
     public void store(Element element, Link link)
     {
-        _elementToLink.put(element, link);
+        elementToLink.put(element, link);
     }
 
     public void store(Link link, ComponentInvocation invocation)
     {
-        _linkToInvocation.put(link, invocation);
+        linkToInvocation.put(link, invocation);
     }
 
     public void clear()
     {
-        _elementToLink.clear();
-        _linkToInvocation.clear();
+        elementToLink.clear();
+        linkToInvocation.clear();
     }
 
     public ComponentInvocation get(Element element)
     {
-        Link link = _elementToLink.get(element);
+        Link link = elementToLink.get(element);
 
         return get(link);
     }
 
     public ComponentInvocation get(Link link)
     {
-        return _linkToInvocation.get(link);
+        return linkToInvocation.get(link);
     }
 
 }

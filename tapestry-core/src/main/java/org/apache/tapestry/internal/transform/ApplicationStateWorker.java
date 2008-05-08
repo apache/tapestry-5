@@ -32,15 +32,15 @@ import java.util.List;
  */
 public class ApplicationStateWorker implements ComponentClassTransformWorker
 {
-    private final ApplicationStateManager _applicationStateManager;
+    private final ApplicationStateManager applicationStateManager;
 
-    private final ComponentClassCache _componentClassCache;
+    private final ComponentClassCache componentClassCache;
 
     public ApplicationStateWorker(ApplicationStateManager applicationStateManager,
                                   ComponentClassCache componentClassCache)
     {
-        _applicationStateManager = applicationStateManager;
-        _componentClassCache = componentClassCache;
+        this.applicationStateManager = applicationStateManager;
+        this.componentClassCache = componentClassCache;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -50,7 +50,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
         if (names.isEmpty()) return;
 
         String managerFieldName = transformation.addInjectedField(ApplicationStateManager.class,
-                                                                  "applicationStateManager", _applicationStateManager);
+                                                                  "applicationStateManager", applicationStateManager);
 
         for (String fieldName : names)
         {
@@ -62,7 +62,7 @@ public class ApplicationStateWorker implements ComponentClassTransformWorker
     {
         String fieldType = transformation.getFieldType(fieldName);
 
-        Class fieldClass = _componentClassCache.forName(fieldType);
+        Class fieldClass = componentClassCache.forName(fieldType);
 
         String typeFieldName = transformation.addInjectedField(Class.class, fieldName + "_type", fieldClass);
 

@@ -122,10 +122,6 @@ public final class TransformConstants
      */
     public static final TransformMethodSignature CLEANUP_RENDER_SIGNATURE = renderPhaseSignature("cleanupRender");
 
-    private TransformConstants()
-    {
-    }
-
     private static TransformMethodSignature renderPhaseSignature(String name)
     {
         return new TransformMethodSignature(Modifier.PUBLIC, "void", name, RENDER_PHASE_METHOD_PARAMETERS, null);

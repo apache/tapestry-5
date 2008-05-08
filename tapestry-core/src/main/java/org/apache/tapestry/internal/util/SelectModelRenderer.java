@@ -20,19 +20,19 @@ import java.util.Map;
 
 public class SelectModelRenderer implements SelectModelVisitor
 {
-    private final MarkupWriter _writer;
+    private final MarkupWriter writer;
 
-    private final ValueEncoder _encoder;
+    private final ValueEncoder encoder;
 
     public SelectModelRenderer(final MarkupWriter writer, ValueEncoder encoder)
     {
-        _writer = writer;
-        _encoder = encoder;
+        this.writer = writer;
+        this.encoder = encoder;
     }
 
     public void beginOptionGroup(OptionGroupModel groupModel)
     {
-        _writer.element("optgroup", "label", groupModel.getLabel());
+        writer.element("optgroup", "label", groupModel.getLabel());
 
         writeDisabled(groupModel.isDisabled());
         writeAttributes(groupModel.getAttributes());
@@ -40,7 +40,7 @@ public class SelectModelRenderer implements SelectModelVisitor
 
     public void endOptionGroup(OptionGroupModel groupModel)
     {
-        _writer.end(); // select
+        writer.end(); // select
     }
 
     @SuppressWarnings("unchecked")
@@ -48,23 +48,23 @@ public class SelectModelRenderer implements SelectModelVisitor
     {
         Object optionValue = optionModel.getValue();
 
-        String clientValue = _encoder.toClient(optionValue);
+        String clientValue = encoder.toClient(optionValue);
 
-        _writer.element("option", "value", clientValue);
+        writer.element("option", "value", clientValue);
 
-        if (isOptionSelected(optionModel, clientValue)) _writer.attributes("selected", "selected");
+        if (isOptionSelected(optionModel, clientValue)) writer.attributes("selected", "selected");
 
         writeDisabled(optionModel.isDisabled());
         writeAttributes(optionModel.getAttributes());
 
-        _writer.write(optionModel.getLabel());
+        writer.write(optionModel.getLabel());
 
-        _writer.end();
+        writer.end();
     }
 
     private void writeDisabled(boolean disabled)
     {
-        if (disabled) _writer.attributes("disabled", "disabled");
+        if (disabled) writer.attributes("disabled", "disabled");
     }
 
     private void writeAttributes(Map<String, String> attributes)
@@ -72,7 +72,7 @@ public class SelectModelRenderer implements SelectModelVisitor
         if (attributes == null) return;
 
         for (Map.Entry<String, String> e : attributes.entrySet())
-            _writer.attributes(e.getKey(), e.getValue());
+            writer.attributes(e.getKey(), e.getValue());
     }
 
     /**

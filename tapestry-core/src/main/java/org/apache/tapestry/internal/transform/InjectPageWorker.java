@@ -18,11 +18,7 @@ import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
-import org.apache.tapestry.services.ClassTransformation;
-import org.apache.tapestry.services.ComponentClassResolver;
-import org.apache.tapestry.services.ComponentClassTransformWorker;
-import org.apache.tapestry.services.ComponentSource;
-import org.apache.tapestry.services.TransformMethodSignature;
+import org.apache.tapestry.services.*;
 
 import java.lang.reflect.Modifier;
 import java.util.List;
@@ -34,14 +30,14 @@ import java.util.List;
  */
 public class InjectPageWorker implements ComponentClassTransformWorker
 {
-    private final ComponentSource _componentSource;
+    private final ComponentSource componentSource;
 
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
     public InjectPageWorker(ComponentSource componentSource, ComponentClassResolver resolver)
     {
-        _componentSource = componentSource;
-        _resolver = resolver;
+        this.componentSource = componentSource;
+        this.resolver = resolver;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -50,10 +46,10 @@ public class InjectPageWorker implements ComponentClassTransformWorker
 
         if (names.isEmpty()) return;
 
-        String componentSource = transformation.addInjectedField(ComponentSource.class, "_componentSource",
-                                                                _componentSource);
-        
-        
+        String componentSource = transformation.addInjectedField(ComponentSource.class, "componentSource",
+                                                                 this.componentSource);
+
+
         for (String name : names)
             addInjectedPage(transformation, name, componentSource);
 
@@ -68,7 +64,7 @@ public class InjectPageWorker implements ComponentClassTransformWorker
         String fieldType = transformation.getFieldType(fieldName);
         String methodName = transformation.newMemberName("read_inject_page", fieldName);
 
-        String injectedPageName = InternalUtils.isBlank(pageName) ? _resolver
+        String injectedPageName = InternalUtils.isBlank(pageName) ? resolver
                 .resolvePageClassNameToPageName(fieldType) : pageName;
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, fieldType, methodName, null,

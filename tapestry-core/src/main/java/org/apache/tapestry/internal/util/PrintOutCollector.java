@@ -18,23 +18,23 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
- * Utility for collecting the output of a {@link PrintWriter}.
+ * Utility for collecting the output of a {@link java.io.PrintWriter}.
  */
 public class PrintOutCollector
 {
-    private final StringWriter _stringWriter;
+    private final StringWriter stringWriter;
 
-    private PrintWriter _printWriter;
+    private PrintWriter printWriter;
 
     public PrintOutCollector()
     {
-        _stringWriter = new StringWriter();
-        _printWriter = new PrintWriter(_stringWriter);
+        stringWriter = new StringWriter();
+        printWriter = new PrintWriter(stringWriter);
     }
 
     public PrintWriter getPrintWriter()
     {
-        return _printWriter;
+        return printWriter;
     }
 
     /**
@@ -42,8 +42,8 @@ public class PrintOutCollector
      */
     public String getPrintOut()
     {
-        _printWriter.close();
-        return _stringWriter.toString();
+        printWriter.close();
+        return stringWriter.toString();
 
     }
 

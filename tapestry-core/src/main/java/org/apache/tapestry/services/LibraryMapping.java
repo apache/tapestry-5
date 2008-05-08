@@ -28,29 +28,27 @@ package org.apache.tapestry.services;
  */
 public final class LibraryMapping
 {
-    private final String _pathPrefix;
-
-    private final String _rootPackage;
+    private final String pathPrefix, rootPackage;
 
     public LibraryMapping(String pathPrefix, String rootPackage)
     {
-        _pathPrefix = pathPrefix;
-        _rootPackage = rootPackage;
+        this.pathPrefix = pathPrefix;
+        this.rootPackage = rootPackage;
     }
 
     public String getPathPrefix()
     {
-        return _pathPrefix;
+        return pathPrefix;
     }
 
     public String getRootPackage()
     {
-        return _rootPackage;
+        return rootPackage;
     }
 
     @Override
     public String toString()
     {
-        return String.format("LibraryMapping[%s, %s]", _pathPrefix, _rootPackage);
+        return String.format("LibraryMapping[%s, %s]", pathPrefix, rootPackage);
     }
 }

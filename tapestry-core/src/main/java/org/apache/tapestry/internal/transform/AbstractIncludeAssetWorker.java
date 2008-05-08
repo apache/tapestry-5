@@ -35,13 +35,14 @@ import java.util.Locale;
  */
 public abstract class AbstractIncludeAssetWorker implements ComponentClassTransformWorker
 {
-    private final AssetSource _assetSource;
-    private final SymbolSource _symbolSource;
+    private final AssetSource assetSource;
+
+    private final SymbolSource symbolSource;
 
     public AbstractIncludeAssetWorker(AssetSource assetSource, SymbolSource symbolSource)
     {
-        _assetSource = assetSource;
-        _symbolSource = symbolSource;
+        this.assetSource = assetSource;
+        this.symbolSource = symbolSource;
     }
 
     /**
@@ -59,7 +60,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
         for (String value : assetPaths)
         {
-            String expanded = _symbolSource.expandSymbols(value);
+            String expanded = symbolSource.expandSymbols(value);
 
             paths.add(expanded);
         }
@@ -76,7 +77,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
                 for (String assetPath : paths)
                 {
-                    Asset asset = _assetSource.getAsset(model.getBaseResource(), assetPath, locale);
+                    Asset asset = assetSource.getAsset(model.getBaseResource(), assetPath, locale);
 
                     handleAsset(asset);
                 }

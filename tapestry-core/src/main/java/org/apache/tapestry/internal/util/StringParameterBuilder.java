@@ -24,21 +24,21 @@ import static java.lang.String.format;
  */
 public final class StringParameterBuilder implements ParameterBuilder
 {
-    private final String _expression;
+    private final String expression;
 
     public StringParameterBuilder(String expression)
     {
-        _expression = expression;
+        this.expression = expression;
     }
 
     public String buildParameter(ClassTransformation transformation)
     {
-        return _expression;
+        return expression;
     }
 
     @Override
     public String toString()
     {
-        return format("StringParameterBuilder[%s]", _expression);
+        return format("StringParameterBuilder[%s]", expression);
     }
 }

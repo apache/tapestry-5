@@ -25,21 +25,21 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class Holder<T>
 {
-    private T _held;
+    private T held;
 
     public void put(T object)
     {
-        _held = object;
+        held = object;
     }
 
     public T get()
     {
-        return _held;
+        return held;
     }
 
     public boolean hasValue()
     {
-        return _held != null;
+        return held != null;
     }
 
     public static <T> Holder<T> create()

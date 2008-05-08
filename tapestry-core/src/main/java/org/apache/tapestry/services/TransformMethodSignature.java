@@ -27,17 +27,13 @@ import java.lang.reflect.Modifier;
  */
 public class TransformMethodSignature implements Comparable<TransformMethodSignature>
 {
-    private int _hashCode = -1;
+    private int hashCode = -1;
 
-    private final int _modifiers;
+    private final int modifiers;
 
-    private final String _returnType;
+    private final String returnType, methodName;
 
-    private final String _methodName;
-
-    private final String[] _parameterTypes;
-
-    private final String[] _exceptionTypes;
+    private final String[] parameterTypes, exceptionTypes;
 
     private static final String[] EMPTY_STRINGS = new String[0];
 
@@ -53,16 +49,16 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
     public TransformMethodSignature(int modifiers, String type, String name,
                                     String[] parameterTypes, String[] exceptionTypes)
     {
-        _modifiers = modifiers;
+        this.modifiers = modifiers;
 
-        _returnType = notBlank(type, "type");
-        _methodName = notBlank(name, "name");
+        returnType = notBlank(type, "type");
+        methodName = notBlank(name, "name");
 
         // TODO: Checks that no element within the two arrays
         // is null or blank.
 
-        _parameterTypes = typeNamesOrEmpty(parameterTypes);
-        _exceptionTypes = typeNamesOrEmpty(exceptionTypes);
+        this.parameterTypes = typeNamesOrEmpty(parameterTypes);
+        this.exceptionTypes = typeNamesOrEmpty(exceptionTypes);
     }
 
     private String[] typeNamesOrEmpty(String[] types)
@@ -76,7 +72,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      */
     public String[] getExceptionTypes()
     {
-        return _exceptionTypes;
+        return exceptionTypes;
     }
 
     /**
@@ -84,7 +80,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      */
     public String getMethodName()
     {
-        return _methodName;
+        return methodName;
     }
 
     /**
@@ -94,7 +90,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      */
     public int getModifiers()
     {
-        return _modifiers;
+        return modifiers;
     }
 
     /**
@@ -102,7 +98,7 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      */
     public String[] getParameterTypes()
     {
-        return _parameterTypes;
+        return parameterTypes;
     }
 
     /**
@@ -110,30 +106,30 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      */
     public String getReturnType()
     {
-        return _returnType;
+        return returnType;
     }
 
     @Override
     public int hashCode()
     {
-        if (_hashCode == -1)
+        if (hashCode == -1)
         {
-            _hashCode = 17 * _modifiers;
-            _hashCode += 31 * _returnType.hashCode();
-            _hashCode += 31 * _methodName.hashCode();
+            hashCode = 17 * modifiers;
+            hashCode += 31 * returnType.hashCode();
+            hashCode += 31 * methodName.hashCode();
 
-            for (String parameterType : _parameterTypes)
+            for (String parameterType : parameterTypes)
             {
-                _hashCode += 31 * parameterType.hashCode();
+                hashCode += 31 * parameterType.hashCode();
             }
 
-            for (String exceptionType : _exceptionTypes)
+            for (String exceptionType : exceptionTypes)
             {
-                _hashCode += 31 * exceptionType.hashCode();
+                hashCode += 31 * exceptionType.hashCode();
             }
         }
 
-        return _hashCode;
+        return hashCode;
     }
 
     @Override
@@ -143,10 +139,10 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
         TransformMethodSignature ms = (TransformMethodSignature) other;
 
-        return _modifiers == ms._modifiers && _returnType.equals(ms._returnType)
-                && _methodName.equals(ms._methodName)
-                && matches(_parameterTypes, ms._parameterTypes)
-                && matches(_exceptionTypes, ms._exceptionTypes);
+        return modifiers == ms.modifiers && returnType.equals(ms.returnType)
+                && methodName.equals(ms.methodName)
+                && matches(parameterTypes, ms.parameterTypes)
+                && matches(exceptionTypes, ms.exceptionTypes);
     }
 
     private boolean matches(String[] values, String[] otherValues)
@@ -173,25 +169,25 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
         // Package private is simply omitted.
 
-        if (_modifiers != 0)
+        if (modifiers != 0)
         {
-            builder.append(Modifier.toString(_modifiers));
+            builder.append(Modifier.toString(modifiers));
             builder.append(' ');
         }
 
-        builder.append(_returnType);
+        builder.append(returnType);
         builder.append(' ');
 
         addMethodNameAndParameters(builder);
 
-        for (int i = 0; i < _exceptionTypes.length; i++)
+        for (int i = 0; i < exceptionTypes.length; i++)
         {
             if (i == 0)
                 builder.append(" throws ");
             else
                 builder.append(", ");
 
-            builder.append(_exceptionTypes[i]);
+            builder.append(exceptionTypes[i]);
         }
 
         return builder.toString();
@@ -199,14 +195,14 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
 
     private void addMethodNameAndParameters(StringBuilder builder)
     {
-        builder.append(_methodName);
+        builder.append(methodName);
         builder.append('(');
 
-        for (int i = 0; i < _parameterTypes.length; i++)
+        for (int i = 0; i < parameterTypes.length; i++)
         {
             if (i > 0) builder.append(", ");
 
-            builder.append(_parameterTypes[i]);
+            builder.append(parameterTypes[i]);
         }
 
         builder.append(')');
@@ -218,10 +214,10 @@ public class TransformMethodSignature implements Comparable<TransformMethodSigna
      */
     public int compareTo(TransformMethodSignature o)
     {
-        int result = _methodName.compareTo(o._methodName);
+        int result = methodName.compareTo(o.methodName);
 
         // Sort descending
-        if (result == 0) result = o._parameterTypes.length - _parameterTypes.length;
+        if (result == 0) result = o.parameterTypes.length - parameterTypes.length;
 
         return result;
     }

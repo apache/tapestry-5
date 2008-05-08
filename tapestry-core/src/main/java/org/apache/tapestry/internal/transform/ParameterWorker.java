@@ -34,11 +34,11 @@ public class ParameterWorker implements ComponentClassTransformWorker
 {
     private static final String BIND_METHOD_NAME = ParameterWorker.class.getName() + ".bind";
 
-    private final BindingSource _bindingSource;
+    private final BindingSource bindingSource;
 
     public ParameterWorker(BindingSource bindingSource)
     {
-        _bindingSource = bindingSource;
+        this.bindingSource = bindingSource;
     }
 
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
@@ -159,7 +159,7 @@ public class ParameterWorker implements ComponentClassTransformWorker
             builder.addln("if (! %s.isBound(\"%s\"))", resourcesFieldName, parameterName);
 
             String bindingFactoryFieldName = transformation.addInjectedField(BindingSource.class, "bindingSource",
-                                                                             _bindingSource);
+                                                                             bindingSource);
 
             builder
                     .addln("  %s.bindParameter(\"%s\", %s.newBinding(\"default %2$s\", %1$s, \"%s\", \"%s\"));",

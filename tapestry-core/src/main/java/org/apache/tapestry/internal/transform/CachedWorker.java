@@ -29,11 +29,11 @@ import java.util.List;
  */
 public class CachedWorker implements ComponentClassTransformWorker
 {
-    private final BindingSource _bindingSource;
+    private final BindingSource bindingSource;
 
     public CachedWorker(BindingSource bindingSource)
     {
-        _bindingSource = bindingSource;
+        this.bindingSource = bindingSource;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -70,7 +70,7 @@ public class CachedWorker implements ComponentClassTransformWorker
 
                 String bindingSourceField = transformation.addInjectedField(BindingSource.class,
                                                                             fieldName + "$bindingsource",
-                                                                            _bindingSource);
+                                                                            bindingSource);
 
                 String body = String.format("%s = %s.newBinding(\"Watch expression\", %s, \"%s\", \"%s\");",
                                             bindingField,

@@ -32,24 +32,24 @@ import java.io.IOException;
  */
 public class PageLinkInvoker implements ComponentInvoker
 {
-    private final Registry _registry;
+    private final Registry registry;
 
-    private final PageRenderRequestHandler _pageRenderRequestHandler;
+    private final PageRenderRequestHandler pageRenderRequestHandler;
 
-    private final TestableMarkupWriterFactory _markupWriterFactory;
+    private final TestableMarkupWriterFactory markupWriterFactory;
 
-    private final TestableResponse _response;
+    private final TestableResponse response;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
     public PageLinkInvoker(Registry registry)
     {
-        _registry = registry;
+        this.registry = registry;
 
-        _pageRenderRequestHandler = _registry.getService(PageRenderRequestHandler.class);
-        _markupWriterFactory = _registry.getService(TestableMarkupWriterFactory.class);
-        _response = _registry.getService(TestableResponse.class);
-        _contextValueEncoder = _registry.getService(ContextValueEncoder.class);
+        pageRenderRequestHandler = this.registry.getService(PageRenderRequestHandler.class);
+        markupWriterFactory = this.registry.getService(TestableMarkupWriterFactory.class);
+        response = this.registry.getService(TestableResponse.class);
+        contextValueEncoder = this.registry.getService(ContextValueEncoder.class);
     }
 
     /**
@@ -67,13 +67,13 @@ public class PageLinkInvoker implements ComponentInvoker
             PageLinkTarget pageLinkTarget = (PageLinkTarget) target;
 
             EventContext activationContext
-                    = new URLEventContext(_contextValueEncoder, invocation.getContext());
+                    = new URLEventContext(contextValueEncoder, invocation.getContext());
             PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageLinkTarget.getPageName(),
                                                                                      activationContext);
 
-            _pageRenderRequestHandler.handle(parameters);
+            pageRenderRequestHandler.handle(parameters);
 
-            return _markupWriterFactory.getLatestMarkupWriter().getDocument();
+            return markupWriterFactory.getLatestMarkupWriter().getDocument();
         }
         catch (IOException ex)
         {
@@ -81,9 +81,9 @@ public class PageLinkInvoker implements ComponentInvoker
         }
         finally
         {
-            _response.clear();
+            response.clear();
 
-            _registry.cleanupThread();
+            registry.cleanupThread();
         }
 
     }

@@ -23,9 +23,9 @@ import java.io.PrintWriter;
 
 public class TestableResponseImpl implements TestableResponse
 {
-    private Link _link;
+    private Link link;
 
-    private boolean _committed;
+    private boolean committed;
 
     private void nyi(String methodName)
     {
@@ -41,7 +41,7 @@ public class TestableResponseImpl implements TestableResponse
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
-        _committed = true;
+        committed = true;
 
         // Well, the output isn't accessible, but I guess we see that it could be generated from
         // the DOM.
@@ -80,9 +80,9 @@ public class TestableResponseImpl implements TestableResponse
 
     public void sendRedirect(Link link) throws IOException
     {
-        _committed = true;
+        committed = true;
 
-        _link = link;
+        this.link = link;
     }
 
     public String encodeRedirectURL(String URL)
@@ -97,17 +97,17 @@ public class TestableResponseImpl implements TestableResponse
 
     public Link getRedirectLink()
     {
-        return _link;
+        return link;
     }
 
     public boolean isCommitted()
     {
-        return _committed;
+        return committed;
     }
 
     public void clear()
     {
-        _committed = false;
-        _link = null;
+        committed = false;
+        link = null;
     }
 }

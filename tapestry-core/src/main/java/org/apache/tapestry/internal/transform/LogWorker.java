@@ -30,11 +30,11 @@ import java.util.List;
  */
 public class LogWorker implements ComponentClassTransformWorker
 {
-    private final ExceptionTracker _exceptionTracker;
+    private final ExceptionTracker exceptionTracker;
 
     public LogWorker(ExceptionTracker exceptionTracker)
     {
-        _exceptionTracker = exceptionTracker;
+        this.exceptionTracker = exceptionTracker;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -44,7 +44,7 @@ public class LogWorker implements ComponentClassTransformWorker
         if (signatures.isEmpty()) return;
 
         // Re-use the logging advice from LoggingDecorator
-        final MethodAdvice loggingAdvice = new LoggingAdvice(model.getLogger(), _exceptionTracker);
+        final MethodAdvice loggingAdvice = new LoggingAdvice(model.getLogger(), exceptionTracker);
 
         // ... but wrap it for use at the component level.
         ComponentMethodAdvice advice = new ComponentMethodAdvice()

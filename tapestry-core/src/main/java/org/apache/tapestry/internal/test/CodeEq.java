@@ -24,11 +24,11 @@ import org.easymock.IArgumentMatcher;
  */
 public class CodeEq implements IArgumentMatcher
 {
-    private final String _code;
+    private final String code;
 
     public CodeEq(String input)
     {
-        _code = strip(input);
+        code = strip(input);
     }
 
     public boolean matches(Object argument)
@@ -36,13 +36,13 @@ public class CodeEq implements IArgumentMatcher
         String string = (String) argument;
         String stripped = strip(string);
 
-        return _code.equals(stripped);
+        return code.equals(stripped);
     }
 
     public void appendTo(StringBuffer buffer)
     {
         buffer.append("codeEq(");
-        buffer.append(_code);
+        buffer.append(code);
         buffer.append(")");
     }
 
