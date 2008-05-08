@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.util;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,9 +33,9 @@ public class URLChangeTracker
 {
     private static final long FILE_DOES_NOT_EXIST_TIMESTAMP = -1L;
 
-    private final Map<File, Long> _fileToTimestamp = newConcurrentMap();
+    private final Map<File, Long> fileToTimestamp = CollectionFactory.newConcurrentMap();
 
-    private final boolean _granularitySeconds;
+    private final boolean granularitySeconds;
 
     /**
      * Creates a new URL change tracker with millisecond-level granularity.
@@ -52,7 +52,7 @@ public class URLChangeTracker
      */
     public URLChangeTracker(boolean granularitySeconds)
     {
-        _granularitySeconds = granularitySeconds;
+        this.granularitySeconds = granularitySeconds;
     }
 
     /**
@@ -71,21 +71,21 @@ public class URLChangeTracker
 
         File resourceFile = toFile(url);
 
-        if (_fileToTimestamp.containsKey(resourceFile)) return _fileToTimestamp.get(resourceFile);
+        if (fileToTimestamp.containsKey(resourceFile)) return fileToTimestamp.get(resourceFile);
 
         long timestamp = readTimestamp(resourceFile);
 
         // A quick and imperfect fix for TAPESTRY-1918.  When a file
         // is added, add the directory containing the file as well.
 
-        _fileToTimestamp.put(resourceFile, timestamp);
+        fileToTimestamp.put(resourceFile, timestamp);
 
         File dir = resourceFile.getParentFile();
 
-        if (!_fileToTimestamp.containsKey(dir))
+        if (!fileToTimestamp.containsKey(dir))
         {
             long dirTimestamp = readTimestamp(dir);
-            _fileToTimestamp.put(dir, dirTimestamp);
+            fileToTimestamp.put(dir, dirTimestamp);
         }
 
 
@@ -127,7 +127,7 @@ public class URLChangeTracker
      */
     public void clear()
     {
-        _fileToTimestamp.clear();
+        fileToTimestamp.clear();
     }
 
     /**
@@ -141,7 +141,7 @@ public class URLChangeTracker
         // concurrently, but CheckForUpdatesFilter ensures that it will be invoked
         // synchronously.
 
-        for (Map.Entry<File, Long> entry : _fileToTimestamp.entrySet())
+        for (Map.Entry<File, Long> entry : fileToTimestamp.entrySet())
         {
             long newTimestamp = readTimestamp(entry.getKey());
             long current = entry.getValue();
@@ -172,7 +172,7 @@ public class URLChangeTracker
         // are only accurate to one second. The extra level of detail creates false positives
         // for changes, and undermines HTTP response caching in the client.
 
-        if (_granularitySeconds) return timestamp - (timestamp % 1000);
+        if (granularitySeconds) return timestamp - (timestamp % 1000);
 
         return timestamp;
     }
@@ -182,7 +182,7 @@ public class URLChangeTracker
      */
     public void forceChange()
     {
-        for (Map.Entry<File, Long> e : _fileToTimestamp.entrySet())
+        for (Map.Entry<File, Long> e : fileToTimestamp.entrySet())
         {
             e.setValue(0l);
         }
@@ -193,7 +193,7 @@ public class URLChangeTracker
      */
     int trackedFileCount()
     {
-        return _fileToTimestamp.size();
+        return fileToTimestamp.size();
     }
 
 }

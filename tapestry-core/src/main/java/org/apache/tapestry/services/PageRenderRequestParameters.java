@@ -24,26 +24,26 @@ import org.apache.tapestry.ioc.internal.util.Defense;
  */
 public class PageRenderRequestParameters
 {
-    private final String _logicalPageName;
+    private final String logicalPageName;
 
-    private final EventContext _activationContext;
+    private final EventContext activationContext;
 
     public PageRenderRequestParameters(String logicalPageName, EventContext activationContext)
     {
         Defense.notNull(logicalPageName, "logicalPageName");
         Defense.notNull(activationContext, "activationContext");
 
-        _logicalPageName = logicalPageName;
-        _activationContext = activationContext;
+        this.logicalPageName = logicalPageName;
+        this.activationContext = activationContext;
     }
 
     public String getLogicalPageName()
     {
-        return _logicalPageName;
+        return logicalPageName;
     }
 
     public EventContext getActivationContext()
     {
-        return _activationContext;
+        return activationContext;
     }
 }

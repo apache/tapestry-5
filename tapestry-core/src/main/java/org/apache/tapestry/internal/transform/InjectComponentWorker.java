@@ -28,7 +28,6 @@ import org.apache.tapestry.services.TransformConstants;
  */
 public class InjectComponentWorker implements ComponentClassTransformWorker
 {
-
     public void transform(ClassTransformation transformation,
                           MutableComponentModel model)
     {
@@ -55,6 +54,5 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
 
             transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);
         }
-
     }
 }

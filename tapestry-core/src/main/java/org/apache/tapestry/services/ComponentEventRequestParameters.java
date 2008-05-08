@@ -22,12 +22,8 @@ import org.apache.tapestry.ioc.internal.util.Defense;
  */
 public final class ComponentEventRequestParameters
 {
-    private final String _activePageName;
-    private final String _containingPageName;
-    private final String _nestedComponentId;
-    private final String _eventType;
-    private final EventContext _pageActivationContext;
-    private final EventContext _eventContext;
+    private final String activePageName, containingPageName, nestedComponentId, eventType;
+    private final EventContext pageActivationContext, eventContext;
 
     public ComponentEventRequestParameters(String activePageName, String containingPageName, String nestedComponentId,
                                            String eventType, EventContext pageActivationContext,
@@ -40,12 +36,12 @@ public final class ComponentEventRequestParameters
         Defense.notNull(pageActivationContext, "pageActivationContext");
         Defense.notNull(eventContext, "eventContext");
 
-        _activePageName = activePageName;
-        _containingPageName = containingPageName;
-        _nestedComponentId = nestedComponentId;
-        _eventType = eventType;
-        _pageActivationContext = pageActivationContext;
-        _eventContext = eventContext;
+        this.activePageName = activePageName;
+        this.containingPageName = containingPageName;
+        this.nestedComponentId = nestedComponentId;
+        this.eventType = eventType;
+        this.pageActivationContext = pageActivationContext;
+        this.eventContext = eventContext;
     }
 
     // Implements equals() as a convienience for testing.
@@ -57,14 +53,14 @@ public final class ComponentEventRequestParameters
 
         ComponentEventRequestParameters that = (ComponentEventRequestParameters) o;
 
-        if (!_activePageName.equals(that._activePageName)) return false;
-        if (!_containingPageName.equals(that._containingPageName)) return false;
-        if (!_eventType.equals(that._eventType)) return false;
-        if (!_nestedComponentId.equals(that._nestedComponentId)) return false;
+        if (!activePageName.equals(that.activePageName)) return false;
+        if (!containingPageName.equals(that.containingPageName)) return false;
+        if (!eventType.equals(that.eventType)) return false;
+        if (!nestedComponentId.equals(that.nestedComponentId)) return false;
 
-        if (!isEqual(_eventContext, that._eventContext)) return false;
+        if (!isEqual(eventContext, that.eventContext)) return false;
 
-        return isEqual(_pageActivationContext, that._pageActivationContext);
+        return isEqual(pageActivationContext, that.pageActivationContext);
     }
 
     private boolean isEqual(EventContext left, EventContext right)
@@ -91,7 +87,7 @@ public final class ComponentEventRequestParameters
      */
     public String getActivePageName()
     {
-        return _activePageName;
+        return activePageName;
     }
 
     /**
@@ -101,7 +97,7 @@ public final class ComponentEventRequestParameters
      */
     public String getContainingPageName()
     {
-        return _containingPageName;
+        return containingPageName;
     }
 
     /**
@@ -110,7 +106,7 @@ public final class ComponentEventRequestParameters
      */
     public String getNestedComponentId()
     {
-        return _nestedComponentId;
+        return nestedComponentId;
     }
 
     /**
@@ -119,7 +115,7 @@ public final class ComponentEventRequestParameters
      */
     public String getEventType()
     {
-        return _eventType;
+        return eventType;
     }
 
     /**
@@ -130,7 +126,7 @@ public final class ComponentEventRequestParameters
      */
     public EventContext getPageActivationContext()
     {
-        return _pageActivationContext;
+        return pageActivationContext;
     }
 
     /**
@@ -141,6 +137,6 @@ public final class ComponentEventRequestParameters
      */
     public EventContext getEventContext()
     {
-        return _eventContext;
+        return eventContext;
     }
 }

@@ -36,11 +36,11 @@ import org.apache.tapestry.services.TransformConstants;
  */
 public class ComponentWorker implements ComponentClassTransformWorker
 {
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
     public ComponentWorker(final ComponentClassResolver resolver)
     {
-        _resolver = resolver;
+        this.resolver = resolver;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -98,7 +98,7 @@ public class ComponentWorker implements ComponentClassTransformWorker
 
         for (String typeName : annotation.value())
         {
-            String mixinClassName = _resolver.resolveMixinTypeToClassName(typeName);
+            String mixinClassName = resolver.resolveMixinTypeToClassName(typeName);
             model.addMixin(mixinClassName);
         }
     }

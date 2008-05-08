@@ -36,7 +36,6 @@ import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.*;
 import org.apache.tapestry.ioc.annotations.*;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
@@ -67,35 +66,35 @@ import java.util.regex.Pattern;
 @SubModule(InternalModule.class)
 public final class TapestryModule
 {
-    private final PipelineBuilder _pipelineBuilder;
+    private final PipelineBuilder pipelineBuilder;
 
-    private final ApplicationGlobals _applicationGlobals;
+    private final ApplicationGlobals applicationGlobals;
 
-    private final PropertyShadowBuilder _shadowBuilder;
+    private final PropertyShadowBuilder shadowBuilder;
 
-    private final Environment _environment;
+    private final Environment environment;
 
-    private final StrategyBuilder _strategyBuilder;
+    private final StrategyBuilder strategyBuilder;
 
-    private final PropertyAccess _propertyAccess;
+    private final PropertyAccess propertyAccess;
 
-    private final ComponentInstantiatorSource _componentInstantiatorSource;
+    private final ComponentInstantiatorSource componentInstantiatorSource;
 
-    private final UpdateListenerHub _updateListenerHub;
+    private final UpdateListenerHub updateListenerHub;
 
-    private final ChainBuilder _chainBuilder;
+    private final ChainBuilder chainBuilder;
 
-    private final Request _request;
+    private final Request request;
 
-    private final Response _response;
+    private final Response response;
 
-    private final ThreadLocale _threadLocale;
+    private final ThreadLocale threadLocale;
 
-    private final RequestGlobals _requestGlobals;
+    private final RequestGlobals requestGlobals;
 
-    private final ActionRenderResponseGenerator _actionRenderResponseGenerator;
+    private final ActionRenderResponseGenerator actionRenderResponseGenerator;
 
-    private final EnvironmentalShadowBuilder _environmentalBuilder;
+    private final EnvironmentalShadowBuilder environmentalBuilder;
 
 
     /**
@@ -134,21 +133,21 @@ public final class TapestryModule
 
                           EnvironmentalShadowBuilder environmentalBuilder)
     {
-        _pipelineBuilder = pipelineBuilder;
-        _shadowBuilder = shadowBuilder;
-        _requestGlobals = requestGlobals;
-        _applicationGlobals = applicationGlobals;
-        _chainBuilder = chainBuilder;
-        _environment = environment;
-        _strategyBuilder = strategyBuilder;
-        _componentInstantiatorSource = componentInstantiatorSource;
-        _propertyAccess = propertyAccess;
-        _updateListenerHub = updateListenerHub;
-        _request = request;
-        _response = response;
-        _threadLocale = threadLocale;
-        _actionRenderResponseGenerator = actionRenderResponseGenerator;
-        _environmentalBuilder = environmentalBuilder;
+        this.pipelineBuilder = pipelineBuilder;
+        this.shadowBuilder = shadowBuilder;
+        this.requestGlobals = requestGlobals;
+        this.applicationGlobals = applicationGlobals;
+        this.chainBuilder = chainBuilder;
+        this.environment = environment;
+        this.strategyBuilder = strategyBuilder;
+        this.componentInstantiatorSource = componentInstantiatorSource;
+        this.propertyAccess = propertyAccess;
+        this.updateListenerHub = updateListenerHub;
+        this.request = request;
+        this.response = response;
+        this.threadLocale = threadLocale;
+        this.actionRenderResponseGenerator = actionRenderResponseGenerator;
+        this.environmentalBuilder = environmentalBuilder;
     }
 
     public static void bind(ServiceBinder binder)
@@ -584,14 +583,14 @@ public final class TapestryModule
         {
             public boolean service(Request request, Response response, RequestHandler handler) throws IOException
             {
-                _requestGlobals.storeRequestResponse(request, response);
+                requestGlobals.storeRequestResponse(request, response);
 
                 return handler.service(request, response);
             }
         };
 
         configuration.add("CheckForUpdates",
-                          new CheckForUpdatesFilter(_updateListenerHub, checkInterval, updateTimeout), "before:*");
+                          new CheckForUpdatesFilter(updateListenerHub, checkInterval, updateTimeout), "before:*");
 
         configuration.add("StaticFiles", staticFilesFilter);
 
@@ -747,7 +746,7 @@ public final class TapestryModule
 
     public Context buildContext(ApplicationGlobals globals)
     {
-        return _shadowBuilder.build(globals, "context", Context.class);
+        return shadowBuilder.build(globals, "context", Context.class);
     }
 
     public ComponentClassResolver buildComponentClassResolver(ServiceResources resources)
@@ -756,7 +755,7 @@ public final class TapestryModule
 
         // Allow the resolver to clean its cache when the source is invalidated
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -774,7 +773,7 @@ public final class TapestryModule
     @Marker(ContextProvider.class)
     public AssetFactory buildContextAssetFactory(ApplicationGlobals globals, RequestPathOptimizer optimizer)
     {
-        return new ContextAssetFactory(_request, globals.getContext(), optimizer);
+        return new ContextAssetFactory(request, globals.getContext(), optimizer);
     }
 
     /**
@@ -792,7 +791,7 @@ public final class TapestryModule
 
         configuration.add(service);
 
-        return _chainBuilder.build(BindingFactory.class, configuration);
+        return chainBuilder.build(BindingFactory.class, configuration);
     }
 
     /**
@@ -806,7 +805,7 @@ public final class TapestryModule
         ValidationMessagesSourceImpl service = new ValidationMessagesSourceImpl(configuration,
                                                                                 classpathAssetFactory.getRootResource());
 
-        _updateListenerHub.addUpdateListener(service);
+        updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -815,7 +814,7 @@ public final class TapestryModule
     {
         MetaDataLocatorImpl service = resources.autobuild(MetaDataLocatorImpl.class);
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -836,7 +835,7 @@ public final class TapestryModule
      */
     public PageRenderSupport buildPageRenderSupport()
     {
-        return _environmentalBuilder.build(PageRenderSupport.class);
+        return environmentalBuilder.build(PageRenderSupport.class);
     }
 
     /**
@@ -845,7 +844,7 @@ public final class TapestryModule
      */
     public FormSupport buildFormSupport()
     {
-        return _environmentalBuilder.build(FormSupport.class);
+        return environmentalBuilder.build(FormSupport.class);
     }
 
     /**
@@ -854,7 +853,7 @@ public final class TapestryModule
     public ComponentClassTransformWorker buildComponentClassTransformWorker(
             List<ComponentClassTransformWorker> configuration)
     {
-        return _chainBuilder.build(ComponentClassTransformWorker.class, configuration);
+        return chainBuilder.build(ComponentClassTransformWorker.class, configuration);
     }
 
     /**
@@ -865,7 +864,7 @@ public final class TapestryModule
     @Marker(Primary.class)
     public DataTypeAnalyzer buildDataTypeAnalyzer(List<DataTypeAnalyzer> configuration)
     {
-        return _chainBuilder.build(DataTypeAnalyzer.class, configuration);
+        return chainBuilder.build(DataTypeAnalyzer.class, configuration);
     }
 
     /**
@@ -876,7 +875,7 @@ public final class TapestryModule
 
     public InjectionProvider buildInjectionProvider(List<InjectionProvider> configuration)
     {
-        return _chainBuilder.build(InjectionProvider.class, configuration);
+        return chainBuilder.build(InjectionProvider.class, configuration);
     }
 
 
@@ -891,12 +890,12 @@ public final class TapestryModule
         {
             public void initializeApplication(Context context)
             {
-                _applicationGlobals.storeContext(context);
+                applicationGlobals.storeContext(context);
             }
         };
 
-        return _pipelineBuilder.build(logger, ApplicationInitializer.class, ApplicationInitializerFilter.class,
-                                      configuration, terminator);
+        return pipelineBuilder.build(logger, ApplicationInitializer.class, ApplicationInitializerFilter.class,
+                                     configuration, terminator);
     }
 
     public HttpServletRequestHandler buildHttpServletRequestHandler(Logger logger,
@@ -910,7 +909,7 @@ public final class TapestryModule
             public boolean service(HttpServletRequest servletRequest, HttpServletResponse servletResponse)
                     throws IOException
             {
-                _requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
+                requestGlobals.storeServletRequestResponse(servletRequest, servletResponse);
 
                 Request request = new RequestImpl(servletRequest);
                 Response response = new ResponseImpl(servletResponse);
@@ -921,8 +920,8 @@ public final class TapestryModule
             }
         };
 
-        return _pipelineBuilder.build(logger, HttpServletRequestHandler.class, HttpServletRequestFilter.class,
-                                      configuration, terminator);
+        return pipelineBuilder.build(logger, HttpServletRequestHandler.class, HttpServletRequestFilter.class,
+                                     configuration, terminator);
     }
 
     @Marker(Primary.class)
@@ -935,13 +934,13 @@ public final class TapestryModule
         {
             public boolean service(Request request, Response response) throws IOException
             {
-                _requestGlobals.storeRequestResponse(request, response);
+                requestGlobals.storeRequestResponse(request, response);
 
                 return masterDispatcher.dispatch(request, response);
             }
         };
 
-        return _pipelineBuilder.build(logger, RequestHandler.class, RequestFilter.class, configuration, terminator);
+        return pipelineBuilder.build(logger, RequestHandler.class, RequestFilter.class, configuration, terminator);
     }
 
     public ServletApplicationInitializer buildServletApplicationInitializer(Logger logger,
@@ -954,7 +953,7 @@ public final class TapestryModule
         {
             public void initializeApplication(ServletContext context)
             {
-                _applicationGlobals.storeServletContext(context);
+                applicationGlobals.storeServletContext(context);
 
                 // And now, down the (Web) ApplicationInitializer pipeline ...
 
@@ -962,8 +961,8 @@ public final class TapestryModule
             }
         };
 
-        return _pipelineBuilder.build(logger, ServletApplicationInitializer.class,
-                                      ServletApplicationInitializerFilter.class, configuration, terminator);
+        return pipelineBuilder.build(logger, ServletApplicationInitializer.class,
+                                     ServletApplicationInitializerFilter.class, configuration, terminator);
     }
 
     /**
@@ -999,7 +998,7 @@ public final class TapestryModule
         StrategyRegistry<ComponentEventResultProcessor> registry = StrategyRegistry.newInstance(
                 ComponentEventResultProcessor.class, configuration);
 
-        return _strategyBuilder.build(registry);
+        return strategyBuilder.build(registry);
     }
 
     /**
@@ -1010,7 +1009,7 @@ public final class TapestryModule
     {
         DefaultDataTypeAnalyzer service = resources.autobuild(DefaultDataTypeAnalyzer.class);
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -1019,7 +1018,7 @@ public final class TapestryModule
     {
         TranslatorSourceImpl service = resources.autobuild(TranslatorSourceImpl.class);
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -1029,7 +1028,7 @@ public final class TapestryModule
     {
         StrategyRegistry<ObjectRenderer> registry = StrategyRegistry.newInstance(ObjectRenderer.class, configuration);
 
-        return _strategyBuilder.build(registry);
+        return strategyBuilder.build(registry);
     }
 
     public ComponentMessagesSource buildComponentMessagesSource(
@@ -1043,7 +1042,7 @@ public final class TapestryModule
         ComponentMessagesSourceImpl service = new ComponentMessagesSourceImpl(contextAssetFactory
                 .getRootResource(), appCatalog);
 
-        _updateListenerHub.addUpdateListener(service);
+        updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -1058,7 +1057,7 @@ public final class TapestryModule
     @Marker(ComponentLayer.class)
     public ClassFactory buildComponentClassFactory()
     {
-        return _shadowBuilder.build(_componentInstantiatorSource, "classFactory", ClassFactory.class);
+        return shadowBuilder.build(componentInstantiatorSource, "classFactory", ClassFactory.class);
     }
 
 
@@ -1068,14 +1067,14 @@ public final class TapestryModule
     @Marker(Primary.class)
     public Dispatcher buildMasterDispatcher(List<Dispatcher> configuration)
     {
-        return _chainBuilder.build(Dispatcher.class, configuration);
+        return chainBuilder.build(Dispatcher.class, configuration);
     }
 
     public PropertyConduitSource buildPropertyConduitSource(@ComponentLayer ClassFactory componentClassFactory)
     {
-        PropertyConduitSourceImpl service = new PropertyConduitSourceImpl(_propertyAccess, componentClassFactory);
+        PropertyConduitSourceImpl service = new PropertyConduitSourceImpl(propertyAccess, componentClassFactory);
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -1086,7 +1085,7 @@ public final class TapestryModule
      */
     public Request buildRequest()
     {
-        return _shadowBuilder.build(_requestGlobals, "request", Request.class);
+        return shadowBuilder.build(requestGlobals, "request", Request.class);
     }
 
     /**
@@ -1095,7 +1094,7 @@ public final class TapestryModule
      */
     public HttpServletRequest buildHttpServletRequest()
     {
-        return _shadowBuilder.build(_requestGlobals, "HTTPServletRequest", HttpServletRequest.class);
+        return shadowBuilder.build(requestGlobals, "HTTPServletRequest", HttpServletRequest.class);
     }
 
     /**
@@ -1104,7 +1103,7 @@ public final class TapestryModule
      */
     public Response buildResponse()
     {
-        return _shadowBuilder.build(_requestGlobals, "response", Response.class);
+        return shadowBuilder.build(requestGlobals, "response", Response.class);
     }
 
 
@@ -1131,8 +1130,8 @@ public final class TapestryModule
             }
         };
 
-        return _pipelineBuilder.build(logger, MarkupRenderer.class, MarkupRendererFilter.class, configuration,
-                                      terminator);
+        return pipelineBuilder.build(logger, MarkupRenderer.class, MarkupRendererFilter.class, configuration,
+                                     terminator);
     }
 
     /**
@@ -1159,15 +1158,15 @@ public final class TapestryModule
             }
         };
 
-        return _pipelineBuilder.build(logger, PartialMarkupRenderer.class, PartialMarkupRendererFilter.class,
-                                      configuration, terminator);
+        return pipelineBuilder.build(logger, PartialMarkupRenderer.class, PartialMarkupRendererFilter.class,
+                                     configuration, terminator);
     }
 
     public PageRenderRequestHandler buildPageRenderRequestHandler(List<PageRenderRequestFilter> configuration,
                                                                   Logger logger, ServiceResources resources)
     {
-        return _pipelineBuilder.build(logger, PageRenderRequestHandler.class, PageRenderRequestFilter.class,
-                                      configuration, resources.autobuild(PageRenderRequestHandlerImpl.class));
+        return pipelineBuilder.build(logger, PageRenderRequestHandler.class, PageRenderRequestFilter.class,
+                                     configuration, resources.autobuild(PageRenderRequestHandlerImpl.class));
     }
 
 
@@ -1181,8 +1180,8 @@ public final class TapestryModule
     public ComponentEventRequestHandler buildComponentEventRequestHandler(
             List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
-        return _pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
-                                      configuration, resources.autobuild(ComponentEventRequestHandlerImpl.class));
+        return pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
+                                     configuration, resources.autobuild(ComponentEventRequestHandlerImpl.class));
     }
 
     /**
@@ -1193,8 +1192,8 @@ public final class TapestryModule
     public ComponentEventRequestHandler buildAjaxComponentEventRequestHandler(
             List<ComponentEventRequestFilter> configuration, Logger logger, ServiceResources resources)
     {
-        return _pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
-                                      configuration, resources.autobuild(AjaxComponentEventRequestHandler.class));
+        return pipelineBuilder.build(logger, ComponentEventRequestHandler.class, ComponentEventRequestFilter.class,
+                                     configuration, resources.autobuild(AjaxComponentEventRequestHandler.class));
     }
 
     // ========================================================================
@@ -1248,7 +1247,7 @@ public final class TapestryModule
         {
             public void processResultValue(Link value) throws IOException
             {
-                _response.sendRedirect(value);
+                response.sendRedirect(value);
             }
         });
 
@@ -1256,18 +1255,18 @@ public final class TapestryModule
         {
             public void processResultValue(URL value) throws IOException
             {
-                _response.sendRedirect(value.toExternalForm());
+                response.sendRedirect(value.toExternalForm());
             }
         });
 
-        configuration.add(String.class, new StringResultProcessor(requestPageCache, _actionRenderResponseGenerator));
+        configuration.add(String.class, new StringResultProcessor(requestPageCache, actionRenderResponseGenerator));
 
         configuration.add(Class.class, new ClassResultProcessor(componentClassResolver, requestPageCache,
-                                                                _actionRenderResponseGenerator));
+                                                                actionRenderResponseGenerator));
 
         configuration.add(Component.class, componentInstanceProcessor);
 
-        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(_response));
+        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
     }
 
 
@@ -1285,8 +1284,8 @@ public final class TapestryModule
     {
         configuration.add(RenderCommand.class, locator.autobuild(RenderCommandComponentEventResultProcessor.class));
         configuration.add(Component.class, locator.autobuild(AjaxComponentInstanceEventResultProcessor.class));
-        configuration.add(JSONObject.class, new JSONObjectEventResultProcessor(_response));
-        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(_response));
+        configuration.add(JSONObject.class, new JSONObjectEventResultProcessor(response));
+        configuration.add(StreamResponse.class, new StreamResponseResultProcessor(response));
     }
 
     /**
@@ -1412,7 +1411,7 @@ public final class TapestryModule
 
                 support.addStylesheetLink(stylesheetAsset, null);
 
-                _environment.push(PageRenderSupport.class, support);
+                environment.push(PageRenderSupport.class, support);
 
                 renderer.renderMarkup(writer);
 
@@ -1420,7 +1419,7 @@ public final class TapestryModule
 
                 linker.updateDocument(writer.getDocument());
 
-                _environment.pop(PageRenderSupport.class);
+                environment.pop(PageRenderSupport.class);
             }
         };
 
@@ -1428,15 +1427,15 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                PageRenderSupport pageRenderSupport = _environment.peekRequired(PageRenderSupport.class);
+                PageRenderSupport pageRenderSupport = environment.peekRequired(PageRenderSupport.class);
 
                 ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(pageRenderSupport);
 
-                _environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
+                environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
 
                 renderer.renderMarkup(writer);
 
-                _environment.pop(ClientBehaviorSupport.class);
+                environment.pop(ClientBehaviorSupport.class);
 
                 clientBehaviorSupport.commit();
             }
@@ -1450,11 +1449,11 @@ public final class TapestryModule
 
                 heartbeat.begin();
 
-                _environment.push(Heartbeat.class, heartbeat);
+                environment.push(Heartbeat.class, heartbeat);
 
                 renderer.renderMarkup(writer);
 
-                _environment.pop(Heartbeat.class);
+                environment.pop(Heartbeat.class);
 
                 heartbeat.end();
             }
@@ -1464,16 +1463,16 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                Messages messages = validationMessagesSource.getValidationMessages(_threadLocale.getLocale());
+                Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
 
-                ValidationDecorator decorator = new DefaultValidationDecorator(_environment, messages, fieldErrorIcon,
+                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, fieldErrorIcon,
                                                                                writer);
 
-                _environment.push(ValidationDecorator.class, decorator);
+                environment.push(ValidationDecorator.class, decorator);
 
                 renderer.renderMarkup(writer);
 
-                _environment.pop(ValidationDecorator.class);
+                environment.pop(ValidationDecorator.class);
             }
         };
 
@@ -1540,13 +1539,13 @@ public final class TapestryModule
                 PageRenderSupportImpl support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
                                                                           idAllocator);
 
-                _environment.push(PageRenderSupport.class, support);
+                environment.push(PageRenderSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
 
                 support.commit();
 
-                _environment.pop(PageRenderSupport.class);
+                environment.pop(PageRenderSupport.class);
 
                 if (buffer.length() > 0)
                     reply.put("script", buffer.toString());
@@ -1557,15 +1556,15 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                PageRenderSupport pageRenderSupport = _environment.peekRequired(PageRenderSupport.class);
+                PageRenderSupport pageRenderSupport = environment.peekRequired(PageRenderSupport.class);
 
                 ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(pageRenderSupport);
 
-                _environment.push(ClientBehaviorSupport.class, support);
+                environment.push(ClientBehaviorSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
 
-                _environment.pop(ClientBehaviorSupport.class);
+                environment.pop(ClientBehaviorSupport.class);
 
                 support.commit();
             }
@@ -1579,11 +1578,11 @@ public final class TapestryModule
 
                 heartbeat.begin();
 
-                _environment.push(Heartbeat.class, heartbeat);
+                environment.push(Heartbeat.class, heartbeat);
 
                 renderer.renderMarkup(writer, reply);
 
-                _environment.pop(Heartbeat.class);
+                environment.pop(Heartbeat.class);
 
                 heartbeat.end();
             }
@@ -1593,16 +1592,16 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                Messages messages = validationMessagesSource.getValidationMessages(_threadLocale.getLocale());
+                Messages messages = validationMessagesSource.getValidationMessages(threadLocale.getLocale());
 
-                ValidationDecorator decorator = new DefaultValidationDecorator(_environment, messages, fieldErrorIcon,
+                ValidationDecorator decorator = new DefaultValidationDecorator(environment, messages, fieldErrorIcon,
                                                                                writer);
 
-                _environment.push(ValidationDecorator.class, decorator);
+                environment.push(ValidationDecorator.class, decorator);
 
                 renderer.renderMarkup(writer, reply);
 
-                _environment.pop(ValidationDecorator.class);
+                environment.pop(ValidationDecorator.class);
             }
         };
 
@@ -1639,7 +1638,7 @@ public final class TapestryModule
     {
         ValueEncoderSourceImpl service = new ValueEncoderSourceImpl(configuration);
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -1806,7 +1805,7 @@ public final class TapestryModule
         {
             public void objectWasInvalidated()
             {
-                _propertyAccess.clearCache();
+                propertyAccess.clearCache();
 
                 typeCoercer.clearCache();
             }
@@ -1819,7 +1818,7 @@ public final class TapestryModule
                 // Snuck in here is the logic to clear the PropertyAccess service's cache whenever
                 // the component class loader is invalidated.
 
-                _componentInstantiatorSource.addInvalidationListener(listener);
+                componentInstantiatorSource.addInvalidationListener(listener);
 
                 initializer.initializeApplication(context);
 
@@ -1837,12 +1836,12 @@ public final class TapestryModule
     {
         BindingFactory keywordFactory = new BindingFactory()
         {
-            private final Map<String, Object> _keywords = newCaseInsensitiveMap();
+            private final Map<String, Object> keywords = CollectionFactory.newCaseInsensitiveMap();
 
             {
-                _keywords.put("true", Boolean.TRUE);
-                _keywords.put("false", Boolean.FALSE);
-                _keywords.put("null", null);
+                keywords.put("true", Boolean.TRUE);
+                keywords.put("false", Boolean.FALSE);
+                keywords.put("null", null);
             }
 
             public Binding newBinding(String description, ComponentResources container, ComponentResources component,
@@ -1850,7 +1849,7 @@ public final class TapestryModule
             {
                 String key = expression.trim();
 
-                if (_keywords.containsKey(key)) return new LiteralBinding(description, _keywords.get(key), location);
+                if (keywords.containsKey(key)) return new LiteralBinding(description, keywords.get(key), location);
 
                 return null;
             }
@@ -1871,12 +1870,12 @@ public final class TapestryModule
 
         BindingFactory longFactory = new BindingFactory()
         {
-            private final Pattern _pattern = Pattern.compile("^\\s*(-?\\d+)\\s*$");
+            private final Pattern pattern = Pattern.compile("^\\s*(-?\\d+)\\s*$");
 
             public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                                       String expression, Location location)
             {
-                Matcher matcher = _pattern.matcher(expression);
+                Matcher matcher = pattern.matcher(expression);
 
                 if (matcher.matches())
                 {
@@ -1891,13 +1890,13 @@ public final class TapestryModule
 
         BindingFactory intRangeFactory = new BindingFactory()
         {
-            private final Pattern _pattern = Pattern
+            private final Pattern pattern = Pattern
                     .compile("^\\s*(-?\\d+)\\s*\\.\\.\\s*(-?\\d+)\\s*$");
 
             public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                                       String expression, Location location)
             {
-                Matcher matcher = _pattern.matcher(expression);
+                Matcher matcher = pattern.matcher(expression);
 
                 if (matcher.matches())
                 {
@@ -1916,13 +1915,13 @@ public final class TapestryModule
         BindingFactory doubleFactory = new BindingFactory()
         {
             // So, either 1234. or 1234.56 or .78
-            private final Pattern _pattern = Pattern
+            private final Pattern pattern = Pattern
                     .compile("^\\s*(\\-?((\\d+\\.)|(\\d*\\.\\d+)))\\s*$");
 
             public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                                       String expression, Location location)
             {
-                Matcher matcher = _pattern.matcher(expression);
+                Matcher matcher = pattern.matcher(expression);
 
                 if (matcher.matches())
                 {
@@ -1939,12 +1938,12 @@ public final class TapestryModule
         {
             // This will match embedded single quotes as-is, no escaping necessary.
 
-            private final Pattern _pattern = Pattern.compile("^\\s*'(.*)'\\s*$");
+            private final Pattern pattern = Pattern.compile("^\\s*'(.*)'\\s*$");
 
             public Binding newBinding(String description, ComponentResources container, ComponentResources component,
                                       String expression, Location location)
             {
-                Matcher matcher = _pattern.matcher(expression);
+                Matcher matcher = pattern.matcher(expression);
 
                 if (matcher.matches())
                 {
@@ -1990,7 +1989,7 @@ public final class TapestryModule
             }
         };
 
-        configuration.add("Ajax", new AjaxFilter(_request, ajaxHandler));
+        configuration.add("Ajax", new AjaxFilter(request, ajaxHandler));
 
         configuration.add("ImmediateRender", locator.autobuild(ImmediateActionRenderResponseFilter.class));
 

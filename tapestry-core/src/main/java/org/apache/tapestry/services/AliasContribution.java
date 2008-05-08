@@ -24,11 +24,11 @@ import java.util.Formatter;
  */
 public final class AliasContribution<T>
 {
-    private final Class<T> _contributionType;
+    private final Class<T> contributionType;
 
-    private final String _mode;
+    private final String mode;
 
-    private final T _object;
+    private final T object;
 
     /**
      * Simplifies the creation of an AliasContribution around a known type and instance of that type.
@@ -56,9 +56,9 @@ public final class AliasContribution<T>
 
     public AliasContribution(Class<T> contributionType, String mode, T object)
     {
-        _contributionType = notNull(contributionType, "contributionClass");
-        _mode = notNull(mode, "mode");
-        _object = notNull(object, "object");
+        this.contributionType = notNull(contributionType, "contributionClass");
+        this.mode = notNull(mode, "mode");
+        this.object = notNull(object, "object");
     }
 
     /**
@@ -68,12 +68,12 @@ public final class AliasContribution<T>
      */
     public String getMode()
     {
-        return _mode;
+        return mode;
     }
 
     public Class<T> getContributionType()
     {
-        return _contributionType;
+        return contributionType;
     }
 
     /**
@@ -81,7 +81,7 @@ public final class AliasContribution<T>
      */
     public T getObject()
     {
-        return _object;
+        return object;
     }
 
     @Override
@@ -90,11 +90,11 @@ public final class AliasContribution<T>
         StringBuilder builder = new StringBuilder();
         Formatter formatter = new Formatter(builder);
 
-        formatter.format("<AliasContribution: %s", _contributionType.getName());
+        formatter.format("<AliasContribution: %s", contributionType.getName());
 
-        if (InternalUtils.isNonBlank(_mode)) formatter.format(" mode:%s", _mode);
+        if (InternalUtils.isNonBlank(mode)) formatter.format(" mode:%s", mode);
 
-        formatter.format(" %s>", _object);
+        formatter.format(" %s>", object);
 
         return builder.toString();
     }

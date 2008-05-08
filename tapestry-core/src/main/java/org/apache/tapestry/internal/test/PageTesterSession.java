@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.internal.test;
 
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.Session;
 
@@ -24,11 +24,11 @@ import java.util.Map;
 
 public class PageTesterSession implements Session
 {
-    private final Map<String, Object> _attributes = newMap();
+    private final Map<String, Object> attributes = CollectionFactory.newMap();
 
     public List<String> getAttributeNames()
     {
-        return InternalUtils.sortedKeys(_attributes);
+        return InternalUtils.sortedKeys(attributes);
     }
 
     public List<String> getAttributeNames(String prefix)
@@ -43,18 +43,18 @@ public class PageTesterSession implements Session
 
     public Object getAttribute(String name)
     {
-        return _attributes.get(name);
+        return attributes.get(name);
     }
 
     public void setAttribute(String name, Object value)
     {
         if (value == null)
         {
-            _attributes.remove(name);
+            attributes.remove(name);
         }
         else
         {
-            _attributes.put(name, value);
+            attributes.put(name, value);
         }
 
     }

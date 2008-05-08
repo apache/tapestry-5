@@ -22,9 +22,9 @@ import org.apache.tapestry.ioc.internal.util.Defense;
  */
 public final class ApplicationStateContribution
 {
-    private final String _strategy;
+    private final String strategy;
 
-    private final ApplicationStateCreator _creator;
+    private final ApplicationStateCreator creator;
 
     public ApplicationStateContribution(String strategy)
     {
@@ -35,8 +35,8 @@ public final class ApplicationStateContribution
     {
         Defense.notBlank(strategy, "strategy");
 
-        _strategy = strategy;
-        _creator = creator;
+        this.strategy = strategy;
+        this.creator = creator;
     }
 
     /**
@@ -45,7 +45,7 @@ public final class ApplicationStateContribution
      */
     public ApplicationStateCreator getCreator()
     {
-        return _creator;
+        return creator;
     }
 
     /**
@@ -53,7 +53,7 @@ public final class ApplicationStateContribution
      */
     public String getStrategy()
     {
-        return _strategy;
+        return strategy;
     }
 
 }

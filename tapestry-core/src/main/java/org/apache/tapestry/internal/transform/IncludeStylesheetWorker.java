@@ -28,15 +28,14 @@ import org.apache.tapestry.services.ClassTransformation;
  */
 public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
 {
-
-    private final PageRenderSupport _pageRenderSupport;
+    private final PageRenderSupport pageRenderSupport;
 
     public IncludeStylesheetWorker(AssetSource assetSource, PageRenderSupport pageRenderSupport,
                                    SymbolSource symbolSource)
     {
         super(assetSource, symbolSource);
 
-        _pageRenderSupport = pageRenderSupport;
+        this.pageRenderSupport = pageRenderSupport;
     }
 
     public void transform(ClassTransformation transformation, final MutableComponentModel model)
@@ -49,6 +48,6 @@ public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
 
     protected void handleAsset(Asset asset)
     {
-        _pageRenderSupport.addStylesheetLink(asset, null);
+        pageRenderSupport.addStylesheetLink(asset, null);
     }
 }

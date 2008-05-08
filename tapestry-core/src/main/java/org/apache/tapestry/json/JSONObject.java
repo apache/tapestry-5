@@ -135,7 +135,7 @@ public final class JSONObject
     /**
      * The map where the JSONObject's properties are kept.
      */
-    private final Map<String, Object> _properties = CollectionFactory.newMap();
+    private final Map<String, Object> properties = CollectionFactory.newMap();
 
     /**
      * It is sometimes more convenient and less ambiguous to have a <code>NULL</code> object than to use Java's
@@ -498,7 +498,7 @@ public final class JSONObject
      */
     public boolean has(String key)
     {
-        return _properties.containsKey(key);
+        return properties.containsKey(key);
     }
 
     /**
@@ -519,7 +519,7 @@ public final class JSONObject
      */
     public Set<String> keys()
     {
-        return _properties.keySet();
+        return properties.keySet();
     }
 
     /**
@@ -529,7 +529,7 @@ public final class JSONObject
      */
     public int length()
     {
-        return _properties.size();
+        return properties.size();
     }
 
     /**
@@ -587,7 +587,7 @@ public final class JSONObject
      */
     public Object opt(String key)
     {
-        return _properties.get(key);
+        return properties.get(key);
     }
 
     /**
@@ -607,7 +607,7 @@ public final class JSONObject
         if (value != null)
         {
             testValidity(value);
-            _properties.put(key, value);
+            properties.put(key, value);
         }
         else
         {
@@ -697,7 +697,7 @@ public final class JSONObject
      */
     public Object remove(String key)
     {
-        return _properties.remove(key);
+        return properties.remove(key);
     }
 
     private static final Class[] ALLOWED = new Class[] { String.class, Boolean.class, Number.class, JSONObject.class,
@@ -778,7 +778,7 @@ public final class JSONObject
 
             buffer.append(quote(key));
             buffer.append(':');
-            buffer.append(valueToString(_properties.get(key)));
+            buffer.append(valueToString(properties.get(key)));
 
             comma = true;
         }
@@ -849,6 +849,6 @@ public final class JSONObject
 
         JSONObject other = (JSONObject) obj;
 
-        return _properties.equals(other._properties);
+        return properties.equals(other.properties);
     }
 }

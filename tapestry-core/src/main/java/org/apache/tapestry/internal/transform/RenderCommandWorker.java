@@ -30,9 +30,9 @@ import java.lang.reflect.Modifier;
  */
 public class RenderCommandWorker implements ComponentClassTransformWorker
 {
-    private final TransformMethodSignature RENDER_SIGNATURE = new TransformMethodSignature(Modifier.PUBLIC, "void",
-                                                                                           "render", new String[] {
-            MarkupWriter.class.getName(), RenderQueue.class.getName() }, null);
+    private final TransformMethodSignature RENDER_SIGNATURE =
+            new TransformMethodSignature(Modifier.PUBLIC, "void", "render", new String[] {
+                    MarkupWriter.class.getName(), RenderQueue.class.getName() }, null);
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
     {

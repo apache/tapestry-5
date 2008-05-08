@@ -36,15 +36,15 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
 {
     private static final String CHECK_ABORT_FLAG = "if ($2.isAborted()) return;";
 
-    private final Class<? extends Annotation> _methodAnnotation;
+    private final Class<? extends Annotation> methodAnnotation;
 
-    private final TransformMethodSignature _lifecycleMethodSignature;
+    private final TransformMethodSignature lifecycleMethodSignature;
 
-    private final String _lifecycleMethodName;
+    private final String lifecycleMethodName;
 
-    private final boolean _reverse;
+    private final boolean reverse;
 
-    private final MethodInvocationBuilder _invocationBuilder = new MethodInvocationBuilder();
+    private final MethodInvocationBuilder invocationBuilder = new MethodInvocationBuilder();
 
     /**
      * Normal method invocation: parent class, then methods in ascending alphabetical order. Reverse order: method in
@@ -57,22 +57,22 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
     public ComponentLifecycleMethodWorker(TransformMethodSignature lifecycleMethodSignature,
                                           Class<? extends Annotation> methodAnnotation, boolean reverse)
     {
-        _lifecycleMethodSignature = lifecycleMethodSignature;
-        _methodAnnotation = methodAnnotation;
-        _reverse = reverse;
-        _lifecycleMethodName = lifecycleMethodSignature.getMethodName();
+        this.lifecycleMethodSignature = lifecycleMethodSignature;
+        this.methodAnnotation = methodAnnotation;
+        this.reverse = reverse;
+        lifecycleMethodName = lifecycleMethodSignature.getMethodName();
 
         // If we ever add more parameters to the methods, then we can add more to the invocation
         // builder.
         // *Never* expose the Event parameter ($2), it is for internal use only.
 
-        _invocationBuilder.addParameter(MarkupWriter.class.getName(), "$1");
+        invocationBuilder.addParameter(MarkupWriter.class.getName(), "$1");
     }
 
     @Override
     public String toString()
     {
-        return String.format("ComponentLifecycleMethodWorker[%s]", _methodAnnotation.getName());
+        return String.format("ComponentLifecycleMethodWorker[%s]", methodAnnotation.getName());
     }
 
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
@@ -85,14 +85,14 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
                 // we don't
                 // include this filter, then we get endless loops.
 
-                if (signature.equals(_lifecycleMethodSignature)) return false;
+                if (signature.equals(lifecycleMethodSignature)) return false;
 
                 // A degenerate case would be a method, say beginRender(), with an conflicting
                 // annotation, say @AfterRender. In that case, this code is broken, as the method
                 // will be invoked for both phases!
 
-                return signature.getMethodName().equals(_lifecycleMethodName)
-                        || transformation.getMethodAnnotation(signature, _methodAnnotation) != null;
+                return signature.getMethodName().equals(lifecycleMethodName)
+                        || transformation.getMethodAnnotation(signature, methodAnnotation) != null;
             }
         };
 
@@ -108,13 +108,13 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
 
         // If in a subclass, and in normal order mode, invoke the super class version first.
 
-        if (!(_reverse || model.isRootClass()))
+        if (!(reverse || model.isRootClass()))
         {
-            builder.addln("super.%s($$);", _lifecycleMethodName);
+            builder.addln("super.%s($$);", lifecycleMethodName);
             builder.addln(CHECK_ABORT_FLAG);
         }
 
-        Iterator<TransformMethodSignature> i = _reverse ? InternalUtils.reverseIterator(methods) : methods
+        Iterator<TransformMethodSignature> i = reverse ? InternalUtils.reverseIterator(methods) : methods
                 .iterator();
 
         builder.addln("try");
@@ -125,7 +125,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
 
         // In reverse order in a a subclass, invoke the super method last.
 
-        if (_reverse && !model.isRootClass()) builder.addln("super.%s($$);", _lifecycleMethodName);
+        if (reverse && !model.isRootClass()) builder.addln("super.%s($$);", lifecycleMethodName);
 
 
         builder.end(); // try
@@ -142,7 +142,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
         // non-empty
         // method "on top of it".
 
-        transformation.addMethod(_lifecycleMethodSignature, builder.toString());
+        transformation.addMethod(lifecycleMethodSignature, builder.toString());
     }
 
     private void addMethodCallToBody(BodyBuilder builder, TransformMethodSignature sig,
@@ -164,7 +164,7 @@ public class ComponentLifecycleMethodWorker implements ComponentClassTransformWo
         // like how javac enables access to private members for inner classes (by introducing
         // synthetic, static methods).
 
-        builder.add(_invocationBuilder.buildMethodInvocation(sig, transformation));
+        builder.add(invocationBuilder.buildMethodInvocation(sig, transformation));
 
         // Now, if non void ...
 

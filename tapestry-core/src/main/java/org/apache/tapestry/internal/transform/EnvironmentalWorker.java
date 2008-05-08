@@ -30,11 +30,11 @@ import java.util.List;
  */
 public class EnvironmentalWorker implements ComponentClassTransformWorker
 {
-    private final Environment _environment;
+    private final Environment environment;
 
     public EnvironmentalWorker(Environment environment)
     {
-        _environment = environment;
+        this.environment = environment;
     }
 
     public void transform(ClassTransformation transformation, MutableComponentModel model)
@@ -51,7 +51,7 @@ public class EnvironmentalWorker implements ComponentClassTransformWorker
         String envField = transformation.addInjectedField(
                 Environment.class,
                 "environment",
-                _environment);
+                environment);
 
         for (String name : names)
         {

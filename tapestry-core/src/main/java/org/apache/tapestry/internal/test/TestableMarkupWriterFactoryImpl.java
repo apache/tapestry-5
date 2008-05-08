@@ -24,28 +24,28 @@ import org.apache.tapestry.services.MarkupWriterFactory;
 @Scope(PERTHREAD_SCOPE)
 public class TestableMarkupWriterFactoryImpl implements TestableMarkupWriterFactory
 {
-    private final MarkupWriterFactory _delegate;
+    private final MarkupWriterFactory delegate;
 
-    private MarkupWriter _lastCreated;
+    private MarkupWriter lastCreated;
 
     /**
      * Using Core annotation to reference to framework-provided version, which this implementation wraps around.
      */
     public TestableMarkupWriterFactoryImpl(@Core MarkupWriterFactory delegate)
     {
-        _delegate = delegate;
+        this.delegate = delegate;
     }
 
     public MarkupWriter getLatestMarkupWriter()
     {
-        return _lastCreated;
+        return lastCreated;
     }
 
     public MarkupWriter newMarkupWriter(ContentType contentType)
     {
-        MarkupWriter result = _delegate.newMarkupWriter(contentType);
+        MarkupWriter result = delegate.newMarkupWriter(contentType);
 
-        _lastCreated = result;
+        lastCreated = result;
 
         return result;
     }

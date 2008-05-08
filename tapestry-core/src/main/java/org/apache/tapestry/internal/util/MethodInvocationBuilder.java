@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public final class MethodInvocationBuilder
 {
-    private final Map<String, ParameterBuilder> _builders = CollectionFactory.newMap();
+    private final Map<String, ParameterBuilder> builders = CollectionFactory.newMap();
 
     /**
      * Maps a parameter type to a {@link ParameterBuilder}.
@@ -36,7 +36,7 @@ public final class MethodInvocationBuilder
     {
         // TODO: Name conflicts
 
-        _builders.put(parameterType, builder);
+        builders.put(parameterType, builder);
     }
 
     /**
@@ -74,7 +74,7 @@ public final class MethodInvocationBuilder
 
             String type = parameterTypes[i];
 
-            ParameterBuilder parameterBuilder = _builders.get(type);
+            ParameterBuilder parameterBuilder = builders.get(type);
 
             if (parameterBuilder == null)
             {

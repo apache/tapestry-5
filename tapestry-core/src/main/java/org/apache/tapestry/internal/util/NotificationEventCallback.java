@@ -22,14 +22,14 @@ import org.apache.tapestry.ComponentEventCallback;
  */
 public class NotificationEventCallback implements ComponentEventCallback
 {
-    private final String _eventType;
+    private final String eventType;
 
-    private final String _completeId;
+    private final String completeId;
 
     public NotificationEventCallback(String eventType, String completeId)
     {
-        _eventType = eventType;
-        _completeId = completeId;
+        this.eventType = eventType;
+        this.completeId = completeId;
     }
 
     public boolean handleResult(Object result)
@@ -37,7 +37,7 @@ public class NotificationEventCallback implements ComponentEventCallback
         if (result instanceof Boolean) return ((Boolean) result);
 
         throw new IllegalArgumentException(
-                UtilMessages.noReturnValueAccepted(_eventType, _completeId, result));
+                UtilMessages.noReturnValueAccepted(eventType, completeId, result));
     }
 
 }

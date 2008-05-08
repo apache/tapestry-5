@@ -28,15 +28,14 @@ import org.apache.tapestry.services.ClassTransformation;
  */
 public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 {
-
-    private final PageRenderSupport _pageRenderSupport;
+    private final PageRenderSupport pageRenderSupport;
 
     public IncludeJavaScriptLibraryWorker(AssetSource assetSource, PageRenderSupport pageRenderSupport,
                                           SymbolSource symbolSource)
     {
         super(assetSource, symbolSource);
 
-        _pageRenderSupport = pageRenderSupport;
+        this.pageRenderSupport = pageRenderSupport;
     }
 
     public void transform(ClassTransformation transformation, final MutableComponentModel model)
@@ -48,6 +47,6 @@ public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 
     protected void handleAsset(Asset asset)
     {
-        _pageRenderSupport.addScriptLink(asset);
+        pageRenderSupport.addScriptLink(asset);
     }
 }

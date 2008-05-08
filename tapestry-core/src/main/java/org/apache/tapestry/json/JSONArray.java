@@ -79,7 +79,7 @@ public final class JSONArray
     /**
      * The arrayList where the JSONArray's properties are kept.
      */
-    private final List<Object> _list = CollectionFactory.newList();
+    private final List<Object> list = CollectionFactory.newList();
 
     /**
      * Construct an empty JSONArray.
@@ -128,12 +128,12 @@ public final class JSONArray
             if (tokenizer.nextClean() == ',')
             {
                 tokenizer.back();
-                _list.add(null);
+                list.add(null);
             }
             else
             {
                 tokenizer.back();
-                _list.add(tokenizer.nextValue());
+                list.add(tokenizer.nextValue());
             }
 
             switch (tokenizer.nextClean())
@@ -165,7 +165,7 @@ public final class JSONArray
      */
     public Object get(int index)
     {
-        return _list.get(index);
+        return list.get(index);
     }
 
     /**
@@ -322,7 +322,7 @@ public final class JSONArray
         {
             if (i > 0) buffer.append(separator);
 
-            buffer.append(JSONObject.valueToString(_list.get(i)));
+            buffer.append(JSONObject.valueToString(list.get(i)));
         }
 
         return buffer.toString();
@@ -335,7 +335,7 @@ public final class JSONArray
      */
     public int length()
     {
-        return _list.size();
+        return list.size();
     }
 
     /**
@@ -351,7 +351,7 @@ public final class JSONArray
 
         JSONObject.testValidity(value);
 
-        _list.add(value);
+        list.add(value);
 
         return this;
     }
@@ -379,13 +379,13 @@ public final class JSONArray
 
         if (index < length())
         {
-            _list.set(index, value);
+            list.set(index, value);
         }
         else
         {
-            while (index != length()) _list.add(JSONObject.NULL);
+            while (index != length()) list.add(JSONObject.NULL);
 
-            _list.add(value);
+            list.add(value);
 
         }
 
@@ -416,7 +416,7 @@ public final class JSONArray
 
     Object[] toArray()
     {
-        return _list.toArray();
+        return list.toArray();
     }
 
     @Override
@@ -428,6 +428,6 @@ public final class JSONArray
 
         JSONArray other = (JSONArray) obj;
 
-        return _list.equals(other._list);
+        return list.equals(other.list);
     }
 }

@@ -29,32 +29,17 @@ public final class TransformUtils
 
     static class PrimitiveTypeInfo
     {
-        private final Class _wrapperType;
+        private final Class wrapperType;
 
-        private final String _unwrapperMethodName;
+        private final String unwrapperMethodName;
 
-        private final String _defaultValue;
+        private final String defaultValue;
 
         public PrimitiveTypeInfo(Class wrapperType, String unwrapperMethodName, String defaultValue)
         {
-            _wrapperType = wrapperType;
-            _unwrapperMethodName = unwrapperMethodName;
-            _defaultValue = defaultValue;
-        }
-
-        public String getUnwrapperMethodName()
-        {
-            return _unwrapperMethodName;
-        }
-
-        public String getDefaultValue()
-        {
-            return _defaultValue;
-        }
-
-        public Class getWrapperType()
-        {
-            return _wrapperType;
+            this.wrapperType = wrapperType;
+            this.unwrapperMethodName = unwrapperMethodName;
+            this.defaultValue = defaultValue;
         }
     }
 
@@ -100,7 +85,7 @@ public final class TransformUtils
     {
         PrimitiveTypeInfo info = _nameToInfo.get(type);
 
-        return info == null ? type : info.getWrapperType().getName();
+        return info == null ? type : info.wrapperType.getName();
     }
 
     /**
@@ -113,7 +98,7 @@ public final class TransformUtils
     {
         PrimitiveTypeInfo info = _nameToInfo.get(type);
 
-        return info == null ? null : info.getUnwrapperMethodName();
+        return info == null ? null : info.unwrapperMethodName;
     }
 
     /**
@@ -126,7 +111,7 @@ public final class TransformUtils
     {
         PrimitiveTypeInfo info = _classToInfo.get(type);
 
-        return info == null ? type : info.getWrapperType();
+        return info == null ? type : info.wrapperType;
     }
 
     /**
@@ -137,6 +122,6 @@ public final class TransformUtils
     {
         PrimitiveTypeInfo info = _nameToInfo.get(type);
 
-        return info == null ? "null" : info.getDefaultValue();
+        return info == null ? "null" : info.defaultValue;
     }
 }

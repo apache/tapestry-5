@@ -27,13 +27,13 @@ import java.util.zip.GZIPOutputStream;
  */
 public class Base64ObjectOutputStream extends ObjectOutputStream
 {
-    private final Base64OutputStream _output;
+    private final Base64OutputStream output;
 
     private Base64ObjectOutputStream(Base64OutputStream output) throws IOException
     {
         super(new BufferedOutputStream(new GZIPOutputStream(output)));
 
-        _output = output;
+        this.output = output;
     }
 
     public Base64ObjectOutputStream() throws IOException
@@ -43,6 +43,6 @@ public class Base64ObjectOutputStream extends ObjectOutputStream
 
     public String toBase64()
     {
-        return _output.toBase64();
+        return output.toBase64();
     }
 }

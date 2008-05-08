@@ -22,21 +22,21 @@ import java.util.Iterator;
  */
 public final class IntegerRange implements Iterable<Integer>
 {
-    private final int _start;
+    private final int start;
 
-    private final int _finish;
+    private final int finish;
 
     private class RangeIterator implements Iterator<Integer>
     {
         private final int _increment;
 
-        private int _value = _start;
+        private int _value = start;
 
         private boolean _hasNext = true;
 
         RangeIterator()
         {
-            _increment = _start < _finish ? +1 : -1;
+            _increment = start < finish ? +1 : -1;
         }
 
         public boolean hasNext()
@@ -50,7 +50,7 @@ public final class IntegerRange implements Iterable<Integer>
 
             int result = _value;
 
-            _hasNext = _value != _finish;
+            _hasNext = _value != finish;
 
             _value += _increment;
 
@@ -66,24 +66,24 @@ public final class IntegerRange implements Iterable<Integer>
 
     public IntegerRange(final int start, final int finish)
     {
-        _start = start;
-        _finish = finish;
+        this.start = start;
+        this.finish = finish;
     }
 
     public int getFinish()
     {
-        return _finish;
+        return finish;
     }
 
     public int getStart()
     {
-        return _start;
+        return start;
     }
 
     @Override
     public String toString()
     {
-        return String.format("%d..%d", _start, _finish);
+        return String.format("%d..%d", start, finish);
     }
 
     /**
@@ -100,9 +100,9 @@ public final class IntegerRange implements Iterable<Integer>
     {
         final int PRIME = 31;
 
-        int result = PRIME + _finish;
+        int result = PRIME + finish;
 
-        result = PRIME * result + _start;
+        result = PRIME * result + start;
 
         return result;
     }
@@ -117,9 +117,9 @@ public final class IntegerRange implements Iterable<Integer>
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         final IntegerRange other = (IntegerRange) obj;
-        if (_finish != other._finish) return false;
+        if (finish != other.finish) return false;
 
-        return _start == other._start;
+        return start == other.start;
     }
 
 }

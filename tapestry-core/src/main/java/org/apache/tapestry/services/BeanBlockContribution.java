@@ -23,13 +23,13 @@ import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
  */
 public final class BeanBlockContribution
 {
-    private final String _dataType;
+    private final String dataType;
 
-    private final String _pageName;
+    private final String pageName;
 
-    private final String _blockId;
+    private final String blockId;
 
-    private final boolean _edit;
+    private final boolean edit;
 
     public BeanBlockContribution(String dataType, String pageName, String blockId, boolean edit)
     {
@@ -37,10 +37,10 @@ public final class BeanBlockContribution
         notBlank(pageName, "pageName");
         notBlank(blockId, "blockId");
 
-        _dataType = dataType;
-        _pageName = pageName;
-        _blockId = blockId;
-        _edit = edit;
+        this.dataType = dataType;
+        this.pageName = pageName;
+        this.blockId = blockId;
+        this.edit = edit;
     }
 
     /**
@@ -48,7 +48,7 @@ public final class BeanBlockContribution
      */
     public String getDataType()
     {
-        return _dataType;
+        return dataType;
     }
 
     /**
@@ -56,7 +56,7 @@ public final class BeanBlockContribution
      */
     public String getBlockId()
     {
-        return _blockId;
+        return blockId;
     }
 
     /**
@@ -66,7 +66,7 @@ public final class BeanBlockContribution
      */
     public boolean isEdit()
     {
-        return _edit;
+        return edit;
     }
 
     /**
@@ -74,7 +74,7 @@ public final class BeanBlockContribution
      */
     public String getPageName()
     {
-        return _pageName;
+        return pageName;
     }
 
 }

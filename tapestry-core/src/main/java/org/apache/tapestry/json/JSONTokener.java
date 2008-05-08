@@ -51,12 +51,12 @@ class JSONTokener
     /**
      * The index of the next character.
      */
-    private int _index;
+    private int index;
 
     /**
      * The source string being tokenized.
      */
-    private final String _source;
+    private final String source;
 
     /**
      * Construct a JSONTokener from a string.
@@ -67,8 +67,8 @@ class JSONTokener
     {
         assert source != null;
 
-        _index = 0;
-        _source = source;
+        index = 0;
+        this.source = source;
     }
 
     /**
@@ -77,9 +77,9 @@ class JSONTokener
      */
     public void back()
     {
-        if (_index > 0)
+        if (index > 0)
         {
-            _index -= 1;
+            index -= 1;
         }
     }
 
@@ -113,7 +113,7 @@ class JSONTokener
      */
     public boolean more()
     {
-        return _index < _source.length();
+        return index < source.length();
     }
 
     /**
@@ -125,7 +125,7 @@ class JSONTokener
     {
         if (more())
         {
-            return _source.charAt(_index++);
+            return source.charAt(index++);
         }
 
         return 0;
@@ -157,14 +157,14 @@ class JSONTokener
      */
     public String next(int n)
     {
-        int i = _index;
+        int i = index;
         int j = i + n;
-        if (j >= _source.length())
+        if (j >= source.length())
         {
             throw syntaxError("Substring bounds error");
         }
-        _index += n;
-        return _source.substring(i, j);
+        index += n;
+        return source.substring(i, j);
     }
 
     /**
@@ -472,13 +472,13 @@ class JSONTokener
     public char skipTo(char to)
     {
         char c;
-        int index = _index;
+        int index = this.index;
         do
         {
             c = next();
             if (c == 0)
             {
-                _index = index;
+                this.index = index;
                 return c;
             }
         } while (c != to);
@@ -493,13 +493,13 @@ class JSONTokener
      */
     public boolean skipPast(String to)
     {
-        _index = _source.indexOf(to, _index);
-        if (_index < 0)
+        index = source.indexOf(to, index);
+        if (index < 0)
         {
-            _index = _source.length();
+            index = source.length();
             return false;
         }
-        _index += to.length();
+        index += to.length();
         return true;
 
     }
@@ -523,6 +523,6 @@ class JSONTokener
     @Override
     public String toString()
     {
-        return " at character " + _index + " of " + _source;
+        return " at character " + index + " of " + source;
     }
 }

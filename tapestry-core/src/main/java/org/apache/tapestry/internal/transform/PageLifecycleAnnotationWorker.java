@@ -29,21 +29,21 @@ import java.lang.annotation.Annotation;
  */
 public class PageLifecycleAnnotationWorker implements ComponentClassTransformWorker
 {
-    private final Class<? extends Annotation> _methodAnnotationClass;
+    private final Class<? extends Annotation> methodAnnotationClass;
 
-    private final TransformMethodSignature _lifecycleMethodSignature;
+    private final TransformMethodSignature lifecycleMethodSignature;
 
-    private final String _methodAlias;
+    private final String methodAlias;
 
-    private final MethodInvocationBuilder _invocationBuilder = new MethodInvocationBuilder();
+    private final MethodInvocationBuilder invocationBuilder = new MethodInvocationBuilder();
 
     public PageLifecycleAnnotationWorker(final Class<? extends Annotation> methodAnnotationClass,
                                          final TransformMethodSignature lifecycleMethodSignature,
                                          final String methodAlias)
     {
-        _methodAnnotationClass = methodAnnotationClass;
-        _lifecycleMethodSignature = lifecycleMethodSignature;
-        _methodAlias = methodAlias;
+        this.methodAnnotationClass = methodAnnotationClass;
+        this.lifecycleMethodSignature = lifecycleMethodSignature;
+        this.methodAlias = methodAlias;
     }
 
     public void transform(final ClassTransformation transformation, MutableComponentModel model)
@@ -52,10 +52,10 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
         {
             public boolean accept(TransformMethodSignature signature)
             {
-                if (signature.getMethodName().equals(_methodAlias))
+                if (signature.getMethodName().equals(methodAlias))
                     return true;
 
-                return transformation.getMethodAnnotation(signature, _methodAnnotationClass) != null;
+                return transformation.getMethodAnnotation(signature, methodAnnotationClass) != null;
             }
         };
 
@@ -69,9 +69,9 @@ public class PageLifecycleAnnotationWorker implements ComponentClassTransformWor
             // moment, we just invoke the method anyway, and ignore the result. Also, MethodInvocationBuilder
             // is very forgiving (and silent) about unexpected parameters (passing null/0/false).
 
-            String body = _invocationBuilder.buildMethodInvocation(signature, transformation);
+            String body = invocationBuilder.buildMethodInvocation(signature, transformation);
 
-            transformation.extendMethod(_lifecycleMethodSignature, body + ";");
+            transformation.extendMethod(lifecycleMethodSignature, body + ";");
         }
     }
 
