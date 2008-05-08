@@ -112,15 +112,19 @@ Page Render Requests
 +---+
 public class ProductDetail
 {
-  private Product _product;
+  private Product product;
   
   . . .
   
-  long onPassivate() { return _product.getId(); }   
+  long onPassivate() { return product.getId(); }
 }
 +----+
 
   The activation context may consist of a series of values, in which case the return value of the method should be an array or a List.
+
+  <<Note: If you are using the {{{../tapestry-hibernate/}tapestry-hibernate}} integration library and your passivate context
+  is a Hibernate entity, then you can just use the entity itself, not its id.  Tapestry will automatically extract the entities' id into the URL,
+  and convert it back for the "activate" event handler method.>>
   
 * Page activation
 
@@ -183,11 +187,11 @@ Page Navigation Patterns
   
 +---+
   @InjectPage
-  private ProductDetails _details;
+  private ProductDetails details;
   
   Object onActionFromSelect(long productId)
   {
-    _details.setProductId(productId);
+    details.setProductId(productId);
     
     return _details;
   }
@@ -197,18 +201,18 @@ Page Navigation Patterns
 
 +----+
   @Inject
-  private ProductDAO _dao;
+  private ProductDAO dao;
   
-  private Product _product;
+  private Product product;
   
   @Persist
-  private long _productId;
+  private long productId;
   
-  public void setProductId(long productId) { _productId = productId; }
+  public void setProductId(long productId) { this.productId = productId; }
   
   void onActivate()
   {
-    _product = _dao.getById(_productId);
+    product = dao.getById(productId);
   }
 +----+
 
@@ -234,22 +238,22 @@ Page Navigation Patterns
 
 +----+
   @Inject
-  private ProductDAO _dao;
+  private ProductDAO dao;
   
-  private Product _product;
+  private Product product;
   
-  private long _productId;
+  private long productId;
   
-  public void setProductId(long productId) { _productId = productId; }
+  public void setProductId(long productId) { productId = productId; }
   
   void onActivate(long productId)
   {
-    _productId = productId;
+    this.productId = productId;
     
-    _product = _dao.getById(_productId);
+    product = dao.getById(productId);
   }
   
-  long onPassivate() { return _productId; }
+  long onPassivate() { return productId; }
 +----+   
 
   This change ensures that the render request URL will include the product id, i.e., "http://.../productdetails/99".
@@ -277,20 +281,20 @@ Page Navigation Patterns
 
 +----+
   @Inject
-  private ProductDAO _dao;
+  private ProductDAO dao;
   
-  private Product _product;
+  private Product product;
   
-  private long _productId;
+  private long productId;
    
   void onActivate(long productId)
   {
-    _productId = productId;
+    this.productId = productId;
     
-    _product = _dao.getById(_productId);
+    product = dao.getById(productId);
   }
   
-  long onPassivate() { return _productId; }
+  long onPassivate() { return productId; }
 +----+     
   
   The setProductId() method is no longer needed.

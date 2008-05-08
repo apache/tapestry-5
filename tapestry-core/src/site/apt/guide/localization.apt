@@ -95,7 +95,7 @@ greeting=Bienvenue en arriere
     
 +----+
   @Inject
-  private Messages _messages;
+  private Messages messages;
 +----+
 
   You could then <<<get()>>> messages, or <<<format()>>> them:
@@ -104,10 +104,10 @@ greeting=Bienvenue en arriere
 
   public String getCartSummary()     
   {
-    if (_items.isEmpty())
-      return _messages.get("no-items");
+    if (items.isEmpty())
+      return messages.get("no-items");
       
-    return _messages.format("item-summary", _items.size());
+    return messages.format("item-summary", _items.size());
   }
 +----+
 

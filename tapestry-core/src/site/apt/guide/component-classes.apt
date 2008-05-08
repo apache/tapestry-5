@@ -137,7 +137,8 @@ Instance Variables
   will log an error for each component class that contains fields that are neither static nor private.  
   
   Be aware that you will need to provide getter and setter methods to access your classes'
-  instance variables. Tapestry <does not> do this automatically.
+  instance variables. Tapestry <does not> do this automatically unless you provide
+  the {{{../../apidocs/org/apache/tapestry/annotations/Property.html}Property}} annotation on the field.
     
   
 Transient Instance Variables
@@ -195,26 +196,18 @@ Persistent Fields
 package org.example.app.pages;
 
 import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotations.Property;
 import org.example.app.components.Count;
 
 public class Countdown
 {
     @Component(parameters =
     { "start=5", "end=1", "value=countValue" })
-    private Count _count;  
-  
-    private int _countValue;
+    private Count count;
 
-    public int getCountValue()
-    {
-        return _countValue;
-    }
-
-    public void setCountValue(int countValue)
-    {
-        _countValue = countValue;
-    }
-}  
+    @Property
+    private int countValue;
+}
 +---+
 
   The above defines a component whose embedded id is "count" (this id is derived from the name of the field).  The type
@@ -222,11 +215,8 @@ public class Countdown
   The start and end parameters of the Count component are bound to literal values, and the value
   parameter of the Count component is bound to the countValue property of the Countdown component.
   
-  Note that inside the component class, the default binding prefix is always "prop:". 
-  In the example we could write <<<"value=prop:countValue">>> if we desired to be
-  fully explicit.
-  
-  However, certain literal values, such as the numeric literals in the example,
+  Technically, the start and end parameters should be bound to properties, just the the value parameter.  However,
+  certain literal values, such as the numeric literals in the example,
   are accepted by the prop: binding prefix even though they are not actually properties (this is largely as a convienience
   to the application developer).  We could also use the "literal:" prefix, <<<"start=literal:5">>> which accomplishes
   largely the same thing.

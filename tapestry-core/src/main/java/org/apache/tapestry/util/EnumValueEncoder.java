@@ -23,13 +23,13 @@ import org.apache.tapestry.ioc.internal.util.InternalUtils;
  */
 public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
 {
-    private final Class<E> _enumType;
+    private final Class<E> enumType;
 
     public EnumValueEncoder(final Class<E> enumType)
     {
         notNull(enumType, "enumType");
 
-        _enumType = enumType;
+        this.enumType = enumType;
     }
 
     public String toClient(E value)
@@ -44,7 +44,7 @@ public class EnumValueEncoder<E extends Enum<E>> implements ValueEncoder<E>
     {
         if (InternalUtils.isBlank(clientValue)) return null;
 
-        return Enum.valueOf(_enumType, clientValue);
+        return Enum.valueOf(enumType, clientValue);
     }
 
 }

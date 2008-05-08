@@ -30,21 +30,21 @@ Injecting Loggers
 public class MyPage
 {
   @Inject
-  private Logger _logger;
+  private Logger logger;
   
   . . .
 ---
 
 @Log annotation
 
-  You may mark a method with the {{{../../apidocs/org/apache/tapestry/annotations/Log.html}Log}} annotation.
+  You may mark any component method with the {{{../../apidocs/org/apache/tapestry/annotations/Log.html}Log}} annotation.
   Method entry, exit (and any thrown exceptions) will be logged at DEBUG level. This is very convienient for
   debugging, especially when placed on event handler methods.
 
 
 DEBUG Level
 
-  When a component's logger is configured at the DEBUG level, you will see added output when the class is first
+  When a component's logger is configured at the DEBUG level, you will also see added output when the class is first
   accessed identifying how Tapestry is modifying the bytecode of the class.  
   
   Example:
@@ -124,7 +124,7 @@ add constructor: org.apache.tapestry.integration.app1.pages.MerryChristmas(org.a
   
 TRACE Level
 
-  At the TRACE level <for pages> enables extremely verbose logging of every activity that drives the rendering of output, such as each component
+  Enabling the TRACE level <for pages> results in extremely verbose logging of every activity that drives the rendering of output, such as each component
   working its way through the {{{rendering.html}rendering stage machine}}.  Example:
   
 ----

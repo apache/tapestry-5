@@ -122,34 +122,31 @@ Providing the BeanModel
   are insufficient.  For example, if the the type of the property being edited is an interface type, it may be useful to provide
   an explicit BeanModel around an underlying implementation class.
   
-  The model can be created when the page is first loaded:
+  The model can be created when the page is first instantiated:
   
 +---+
 public class MyPage
 {
   @Inject
-  private BeanModelSource _beanModelSource;
+  private BeanModelSource beanModelSource;
   
   @Inject
-  private ComponentResources _resources;
+  private ComponentResources resources;
   
   @Retain
-  private BeanModel _model;
+  private BeanModel model;
 
-  private MyBean _bean;
+  @Property
+  private MyBean bean;
   
-  void pageLoaded()
   {
-     _model = _beanModelSource.create(MyBean.class, true, _resources);
+     model = beanModelSource.create(MyBean.class, true, resources);
      
-     // Make other changes to _model here.
+     // Make other changes to model here.
   }  
   
-  public MyBean getBean() { return _bean; }
-  
-  public void setBean(MyBean bean) { _bean = bean; }
-  
-  public BeanModel getModel() { return _model; }
+
+  public BeanModel getModel() { return model; }
 }
 +---+
 
@@ -187,19 +184,19 @@ public static void contributeDefaultDataTypeAnalyzer(MappedConfiguration<Class, 
 public class AppPropertyEditBlocks
 {
     @Environmental
-    private PropertyEditContext _context;
+    private PropertyEditContext context;
   
     @Component(parameters =
     { "value=context.propertyValue", "label=prop:context.label",
             "translate=prop:currencyTranslator", "validate=prop:currencyValidator",
             "clientId=prop:context.propertyId" })
-    private TextField _currency;
+    private TextField currency;
     
     public PropertyEditContext getContext() { return _context; }
     
     public FieldValidator getCurrencyValidator()
     {
-      return _context.getValidator(_currency);
+      return context.getValidator(_currency);
     }
     
     public Translator getCurrencyTranslator()

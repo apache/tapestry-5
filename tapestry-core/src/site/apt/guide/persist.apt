@@ -19,7 +19,7 @@ Persistent Page Data
     
 +----+
   @Persist
-  private int _value;
+  private int value;
 +----+
     
   Annotated fields will store their state between requests. Generally, speaking, this means

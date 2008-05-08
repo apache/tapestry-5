@@ -22,7 +22,7 @@ Application State
 public class MyPage
 {
   @ApplicationState
-  private MyState _myState;
+  private MyState myState;
   
   . . .
 }
@@ -51,7 +51,7 @@ Check for Creation
   Instead, create a second field:
   
 +---+
-  private boolean _myStateExists;
+  private boolean myStateExists;
 +---+
 
   This companion field is used to see if the ASO already exists. It is not annotated; it is located by name ("Exists" is appended to the name of the field
@@ -61,10 +61,10 @@ Check for Creation
 
 +---+
   @ApplicationState(create=false)
-  private MyState _myState;
+  private MyState myState;
 +---+
 
-  In this case, the _myState field will be null if the MyState ASO does not exist, but will be non-null if it has been
+  In this case, the myState field will be null if the MyState ASO does not exist, but will be non-null if it has been
   created (either by assigning a value to the field, or by a different ASO field where create is true).
 
 Persistence Strategies

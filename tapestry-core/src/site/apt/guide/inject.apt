@@ -43,16 +43,16 @@ Inject Annotation
 
   For field type {{{../../apidocs/org/apache/tapestry/Block.html}Block}}, the value of the Inject annotation is the
   id of the {{{templates.apt}\<block\> element}} within the component's template.  Normally, the id of the block is determined from the field name
-  (by stripping out leading "_" and "$" characters).  Where that is not appropriate, an
+  (after stripping out leading "_" and "$" characters).  Where that is not appropriate, an
   {{{../../apidocs/org/apache/tapestry/annotations/Id.html}Id}} annotation can be supplied:
   
 +---+
   @Inject
-  private Block _foo;
+  private Block foo;
   
   @Inject
   @Id("bar")
-  private Block _barBlock;
+  private Block barBlock;
 +---+
 
   The first injection will inject the Block with id "foo" (as always, case is ignored).  The second injection will inject the Block with id "bar".
@@ -69,7 +69,7 @@ Inject Annotation
   
 +----+
 @Inject
-private ComponentResources _resources;
+private ComponentResources resources;
 +----+
 
   Tapestry uses the type of the field, ComponentResources, to determine what to inject into this field.
@@ -104,8 +104,13 @@ Explicit Service Injection
 +----+
 @Inject
 @Service("Request")
-private Request _request;
+private Request request;
 +----+
+
+  This is generally not necessary; you should always be able to identify the service to be injected just by type, not
+  by explicit id.  Explicit ids have the disadvantage of not being refactoring-safe:  this won't happen with the Request service,
+  but perhaps in your own ... if you rename the service interface and rename the service id to  match, your existing
+  injections using the explicit service id will break.
   
 Default Injection
   
