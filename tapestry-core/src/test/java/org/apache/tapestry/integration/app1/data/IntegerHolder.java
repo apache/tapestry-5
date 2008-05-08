@@ -16,15 +16,15 @@ package org.apache.tapestry.integration.app1.data;
 
 public class IntegerHolder
 {
-    private Integer _value;
+    private Integer value;
 
     public Integer getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(Integer value)
     {
-        _value = value;
+        this.value = value;
     }
 }

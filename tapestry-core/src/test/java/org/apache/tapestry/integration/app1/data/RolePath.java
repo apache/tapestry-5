@@ -18,30 +18,30 @@ import org.apache.tapestry.beaneditor.Validate;
 
 public class RolePath
 {
-    private String _path;
+    private String path;
 
-    private RoleAccess _role = RoleAccess.GRANT;
+    private RoleAccess role = RoleAccess.GRANT;
 
     @Validate("required")
     public String getPath()
     {
-        return _path;
+        return path;
     }
 
     @Validate("required")
     public RoleAccess getRole()
     {
-        return _role;
+        return role;
     }
 
     public void setPath(String path)
     {
-        _path = path;
+        this.path = path;
     }
 
     public void setRole(RoleAccess role)
     {
-        _role = role;
+        this.role = role;
     }
 
 }

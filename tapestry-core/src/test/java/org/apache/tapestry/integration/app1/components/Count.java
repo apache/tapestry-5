@@ -22,50 +22,50 @@ import org.apache.tapestry.internal.util.IntegerRange;
 /**
  * A component that can count up or count down.
  * <p/>
- * This is useful as a demonstration; now that the prop binding supports
- * {@link IntegerRange integer ranges}, it's much less necessary.
+ * This is useful as a demonstration; now that the prop binding supports {@link IntegerRange integer ranges}, it's much
+ * less necessary.
  */
 public class Count
 {
     @Parameter
-    private int _start = 1;
+    private int start = 1;
 
     @Parameter(required = true)
-    private int _end;
+    private int end;
 
     @Parameter
-    private int _value;
+    private int value;
 
-    private boolean _increment;
+    private boolean increment;
 
     @SetupRender
     void initializeValue()
     {
-        _value = _start;
+        value = start;
 
-        _increment = _start < _end;
+        increment = start < end;
     }
 
     @AfterRender
     boolean next()
     {
-        if (_increment)
+        if (increment)
         {
-            int newValue = _value + 1;
+            int newValue = value + 1;
 
-            if (newValue <= _end)
+            if (newValue <= end)
             {
-                _value = newValue;
+                value = newValue;
                 return false; // re-render body
             }
         }
         else
         {
-            int newValue = _value - 1;
+            int newValue = value - 1;
 
-            if (newValue >= _end)
+            if (newValue >= end)
             {
-                _value = newValue;
+                value = newValue;
                 return false; // re-render body
             }
         }

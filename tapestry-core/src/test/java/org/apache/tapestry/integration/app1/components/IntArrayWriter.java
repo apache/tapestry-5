@@ -20,13 +20,13 @@ import org.apache.tapestry.annotations.Parameter;
 public class IntArrayWriter
 {
     @Parameter
-    private int[] _array;
+    private int[] array;
 
     boolean beginRender(MarkupWriter writer)
     {
         writer.element("ul");
 
-        for (int x : _array)
+        for (int x : array)
         {
             writer.element("li");
             writer.write(String.valueOf(x));

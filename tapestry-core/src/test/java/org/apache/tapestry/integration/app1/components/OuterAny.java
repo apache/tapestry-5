@@ -21,6 +21,9 @@ import org.apache.tapestry.corelib.components.Any;
 @SupportsInformalParameters
 public class OuterAny
 {
+    // Also, leave a few parameters here and there in the old naming style, with a
+    // leading underscore.
+
     @Component(inheritInformalParameters = true)
     private Any _innerAny;
 

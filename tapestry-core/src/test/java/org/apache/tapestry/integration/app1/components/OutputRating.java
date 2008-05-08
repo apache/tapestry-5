@@ -20,18 +20,18 @@ import org.apache.tapestry.annotations.Parameter;
 public class OutputRating
 {
     @Parameter
-    private int _rating;
+    private int rating;
 
     void beginRender(MarkupWriter writer)
     {
-        if (_rating <= 0)
+        if (rating <= 0)
         {
             writer.write("-");
             return;
         }
 
         // Want 1 - 5 stars
-        int stars = ((_rating - 1) / 20) + 1;
+        int stars = ((rating - 1) / 20) + 1;
 
         for (int i = 0; i < stars; i++)
             writer.write("*");

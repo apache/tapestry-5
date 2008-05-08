@@ -9,7 +9,7 @@ Chapter 5: Forms in Tapestry (Part Two)
 
   What happened is that we haven't told Tapestry what to do after the form is succesfully submitted (by succesful, we mean,
   with no validation errors).  Tapestry's default behavior is to redisplay the active page, and that occurs in a new
-  request, with a new instance of the Address object (because the _address field is not a peristent field).
+  request, with a new instance of the Address object (because the address field is not a peristent field).
 
   Well, since we're creating objects, we might as well store them somewhere ... in a database.  We're going to
   quickly integrate Tapestry with {{{http://hibernate.org}Hibernate}} as the object/relational mapping layer,

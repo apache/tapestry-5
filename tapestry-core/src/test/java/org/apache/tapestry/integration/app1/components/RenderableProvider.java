@@ -24,7 +24,7 @@ import org.apache.tapestry.services.Environment;
 public class RenderableProvider
 {
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
     @SetupRender
     void setup()
@@ -39,12 +39,12 @@ public class RenderableProvider
             }
         };
 
-        _environment.push(Renderable.class, r);
+        environment.push(Renderable.class, r);
     }
 
     @CleanupRender
     void cleanup()
     {
-        _environment.pop(Renderable.class);
+        environment.pop(Renderable.class);
     }
 }

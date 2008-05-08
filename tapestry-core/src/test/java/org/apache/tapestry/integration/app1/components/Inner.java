@@ -22,13 +22,13 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class Inner
 {
     @Parameter
-    private String _innerValue;
+    private String innerValue;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     void beginRender(MarkupWriter writer)
     {
-        writer.writef("[ value: %s, bound: %s ]", _innerValue, _resources.isBound("innerValue"));
+        writer.writef("[ value: %s, bound: %s ]", innerValue, resources.isBound("innerValue"));
     }
 }

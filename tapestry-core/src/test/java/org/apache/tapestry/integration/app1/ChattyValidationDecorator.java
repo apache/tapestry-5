@@ -21,49 +21,49 @@ import org.apache.tapestry.dom.Element;
 
 public class ChattyValidationDecorator implements ValidationDecorator
 {
-    private final MarkupWriter _writer;
+    private final MarkupWriter writer;
 
-    private final ValidationDecorator _delegate;
+    private final ValidationDecorator delegate;
 
     public ChattyValidationDecorator(MarkupWriter writer, ValidationDecorator delegate)
     {
-        _writer = writer;
-        _delegate = delegate;
+        this.writer = writer;
+        this.delegate = delegate;
     }
 
     public void beforeLabel(Field field)
     {
-        _writer.writef("[Before label for %s]", field.getLabel());
+        writer.writef("[Before label for %s]", field.getLabel());
     }
 
     public void afterLabel(Field field)
     {
-        _writer.writef("[After label for %s]", field.getLabel());
+        writer.writef("[After label for %s]", field.getLabel());
     }
 
     public void beforeField(Field field)
     {
-        _writer.writef("[Before field %s]", field.getLabel());
+        writer.writef("[Before field %s]", field.getLabel());
 
-        _delegate.beforeField(field);
+        delegate.beforeField(field);
     }
 
     public void insideField(Field field)
     {
-        _delegate.insideField(field);
+        delegate.insideField(field);
     }
 
     public void afterField(Field field)
     {
-        _delegate.afterField(field);
+        delegate.afterField(field);
 
-        _writer.writef("[After field %s (%s)]", field.getLabel(),
-                       field.isRequired() ? "required" : "optional"
+        writer.writef("[After field %s (%s)]", field.getLabel(),
+                      field.isRequired() ? "required" : "optional"
         );
     }
 
     public void insideLabel(Field field, Element labelElement)
     {
-        _delegate.insideLabel(field, labelElement);
+        delegate.insideLabel(field, labelElement);
     }
 }

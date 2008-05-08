@@ -28,17 +28,17 @@ import java.util.Locale;
 
 public class OutputTest extends TapestryTestCase
 {
-    private final Number _value = 22.7d;
+    private final Number value = 22.7d;
 
-    private final DecimalFormat _format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+    private final DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
 
-    private final DecimalFormat _filterFormat = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
+    private final DecimalFormat filterFormat = (DecimalFormat) DecimalFormat.getInstance(Locale.US);
 
     @BeforeClass
     public void setup()
     {
-        _format.applyPattern("0.00");
-        _filterFormat.applyPattern("<0.00>");
+        format.applyPattern("0.00");
+        filterFormat.applyPattern("<0.00>");
     }
 
     @Test
@@ -51,7 +51,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, _format, true, null, resources);
+        component.setup(value, format, true, null, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
@@ -72,7 +72,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, _filterFormat, true, null, resources);
+        component.setup(value, filterFormat, true, null, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
@@ -93,7 +93,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, _filterFormat, false, null, resources);
+        component.setup(value, filterFormat, false, null, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
@@ -116,7 +116,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(null, _format, true, null, resources);
+        component.setup(null, format, true, null, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));
@@ -142,7 +142,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, _format, true, elementName, resources);
+        component.setup(value, format, true, elementName, resources);
 
         assertFalse(component.beginRender(writer));
 
@@ -181,7 +181,7 @@ public class OutputTest extends TapestryTestCase
 
         Output component = new Output();
 
-        component.setup(_value, format, true, elementName, resources);
+        component.setup(value, format, true, elementName, resources);
 
         writer.element("root");
         assertFalse(component.beginRender(writer));

@@ -25,11 +25,11 @@ import org.apache.tapestry.annotations.Environmental;
 public class RenderableUser
 {
     @Environmental
-    private Renderable _renderable;
+    private Renderable renderable;
 
     @BeginRender
     void render(MarkupWriter writer)
     {
-        _renderable.render(writer);
+        renderable.render(writer);
     }
 }
