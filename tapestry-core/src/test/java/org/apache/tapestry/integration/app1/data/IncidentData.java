@@ -22,77 +22,77 @@ public class IncidentData implements Serializable
 {
     private static final long serialVersionUID = -321606932140181054L;
 
-    private String _email;
+    private String email;
 
-    private String _message;
+    private String message;
 
-    private boolean _urgent;
+    private boolean urgent;
 
-    private String _operatingSystem;
+    private String operatingSystem;
 
-    private int _hours;
+    private int hours;
 
-    private Department _department;
+    private Department department;
 
     public String getEmail()
     {
-        return _email;
+        return email;
     }
 
     public void setEmail(String email)
     {
-        _email = email;
+        this.email = email;
     }
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     @Validate("required")
     public void setMessage(String message)
     {
-        _message = message;
+        this.message = message;
     }
 
     public boolean isUrgent()
     {
-        return _urgent;
+        return urgent;
     }
 
     public void setUrgent(boolean urgent)
     {
-        _urgent = urgent;
+        this.urgent = urgent;
     }
 
     public String getOperatingSystem()
     {
-        return _operatingSystem;
+        return operatingSystem;
     }
 
     public void setOperatingSystem(String os)
     {
-        _operatingSystem = os;
+        operatingSystem = os;
     }
 
     public int getHours()
     {
-        return _hours;
+        return hours;
     }
 
     public void setHours(int hours)
     {
-        _hours = hours;
+        this.hours = hours;
     }
 
     public Department getDepartment()
     {
-        return _department;
+        return department;
     }
 
     public void setDepartment(Department department)
     {
-        _department = department;
+        this.department = department;
     }
 
 }

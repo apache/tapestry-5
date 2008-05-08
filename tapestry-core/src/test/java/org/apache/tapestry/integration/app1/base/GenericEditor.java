@@ -28,38 +28,38 @@ import org.apache.tapestry.services.PropertyConduitSource;
 public class GenericEditor<T>
 {
     @Persist
-    private T _bean;
+    private T bean;
 
-    @Component(parameters = {"object=bean"})
-    private BeanEditForm _form;
+    @Component(parameters = { "object=bean" })
+    private BeanEditForm form;
 
     @Inject
-    private PropertyConduitSource _conduit;
+    private PropertyConduitSource conduit;
 
     @Retain
-    private String _beanType;
+    private String beanType;
 
     {
         // Use getClass(), not GenericEditor.class, to determine the correct type for the bean.
         // Otherwise, it would be Object.
 
-        PropertyConduit conduit = _conduit.create(getClass(), "bean");
+        PropertyConduit conduit = this.conduit.create(getClass(), "bean");
 
-        _beanType = conduit.getPropertyType().getName();
+        beanType = conduit.getPropertyType().getName();
     }
 
     public String getBeanType()
     {
-        return _beanType;
+        return beanType;
     }
 
     public T getBean()
     {
-        return _bean;
+        return bean;
     }
 
     public void setBean(T bean)
     {
-        _bean = bean;
+        this.bean = bean;
     }
 }

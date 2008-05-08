@@ -21,5 +21,5 @@ public class Outer
 {
     @SuppressWarnings("unused")
     @Parameter(defaultPrefix = LITERAL_BINDING_PREFIX)
-    private String _outerValue;
+    private String outerValue;
 }

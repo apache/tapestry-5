@@ -18,42 +18,39 @@ import org.apache.tapestry.beaneditor.Validate;
 
 public class SubscribeData
 {
-    private String _name;
-    private String _email;
-
-    private String _code;
+    private String name, email, code;
 
     @Validate("required")
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     public void setName(String name)
     {
-        _name = name;
+        this.name = name;
     }
 
     // Only really required if visible!
     @Validate("required")
     public String getEmail()
     {
-        return _email;
+        return email;
     }
 
     public void setEmail(String email)
     {
-        _email = email;
+        this.email = email;
     }
 
     @Validate("required")
     public String getCode()
     {
-        return _code;
+        return code;
     }
 
     public void setCode(String code)
     {
-        _code = code;
+        this.code = code;
     }
 }

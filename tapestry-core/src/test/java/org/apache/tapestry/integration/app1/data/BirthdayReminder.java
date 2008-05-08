@@ -20,30 +20,30 @@ import java.util.Date;
 
 public class BirthdayReminder
 {
-    private String _name;
+    private String name;
 
-    private Date _date;
+    private Date date;
 
     @Validate("required")
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     @Validate("required")
     public Date getDate()
     {
-        return _date;
+        return date;
     }
 
     public void setName(String name)
     {
-        _name = name;
+        this.name = name;
     }
 
     public void setDate(Date date)
     {
-        _date = date;
+        this.date = date;
     }
 
 }

@@ -16,6 +16,7 @@ package org.apache.tapestry.integration.app1.base;
 
 import org.apache.tapestry.annotations.OnEvent;
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
@@ -23,27 +24,23 @@ import java.util.List;
 public abstract class BaseEventHandlerDemo
 {
     @Persist
-    private List<String> _methodNames;
+    @Property
+    private List<String> methodNames;
 
     protected final void addMethodName(String name)
     {
-        List<String> methodNames = _methodNames;
+        List<String> methodNames = this.methodNames;
 
         if (methodNames == null) methodNames = CollectionFactory.newList();
 
         methodNames.add(name);
 
-        _methodNames = methodNames;
+        this.methodNames = methodNames;
     }
 
     void onActivate(String placeholder)
     {
-        _methodNames = null;
-    }
-
-    public List<String> getMethodNames()
-    {
-        return _methodNames;
+        methodNames = null;
     }
 
     @SuppressWarnings("unused")

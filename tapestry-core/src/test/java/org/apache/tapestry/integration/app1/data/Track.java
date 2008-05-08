@@ -21,54 +21,46 @@ import org.apache.tapestry.beaneditor.NonVisual;
  */
 public class Track implements SimpleTrack
 {
-    private Long _id;
+    private Long id;
 
-    private String _album;
+    private String album, artist, genre, title;
 
-    private String _artist;
-
-    private String _genre;
-
-    private int _playCount;
-
-    private String _title;
-
-    private int _rating;
+    private int playCount, rating;
 
     @NonVisual
     public Long getId()
     {
-        return _id;
+        return id;
     }
 
     public void setId(Long id)
     {
-        _id = id;
+        this.id = id;
     }
 
     public String getTitle()
     {
-        return _title;
+        return title;
     }
 
     public String getAlbum()
     {
-        return _album;
+        return album;
     }
 
     public String getArtist()
     {
-        return _artist;
+        return artist;
     }
 
     public String getGenre()
     {
-        return _genre;
+        return genre;
     }
 
     public int getPlayCount()
     {
-        return _playCount;
+        return playCount;
     }
 
     /**
@@ -76,37 +68,37 @@ public class Track implements SimpleTrack
      */
     public int getRating()
     {
-        return _rating;
+        return rating;
     }
 
     public void setAlbum(String album)
     {
-        _album = album;
+        this.album = album;
     }
 
     public void setArtist(String artist)
     {
-        _artist = artist;
+        this.artist = artist;
     }
 
     public void setGenre(String genre)
     {
-        _genre = genre;
+        this.genre = genre;
     }
 
     public void setPlayCount(int playCount)
     {
-        _playCount = playCount;
+        this.playCount = playCount;
     }
 
     public void setRating(int rating)
     {
-        _rating = rating;
+        this.rating = rating;
     }
 
     public void setTitle(String title)
     {
-        _title = title;
+        this.title = title;
     }
 
 }

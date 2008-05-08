@@ -24,13 +24,13 @@ public class ActionLinkIndirect
      * The component to be rendered.
      */
     @Parameter(required = true, defaultPrefix = "component")
-    private ActionLink _component;
+    private ActionLink component;
 
     Object beginRender(MarkupWriter writer)
     {
         writer.element("p");
 
-        return _component;
+        return component;
     }
 
     void afterRender(MarkupWriter writer)

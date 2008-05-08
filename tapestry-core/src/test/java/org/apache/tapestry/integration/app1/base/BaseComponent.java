@@ -15,21 +15,12 @@
 package org.apache.tapestry.integration.app1.base;
 
 import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.integration.app1.data.IncidentData;
 
 public class BaseComponent
 {
     @ApplicationState
-    private IncidentData _incidentData;
-
-    public IncidentData getIncidentData()
-    {
-        return _incidentData;
-    }
-
-    public void setIncidentData(IncidentData incidentData)
-    {
-        _incidentData = incidentData;
-    }
-
+    @Property
+    private IncidentData incidentData;
 }

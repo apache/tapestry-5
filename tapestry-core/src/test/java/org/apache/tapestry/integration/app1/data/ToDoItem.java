@@ -23,18 +23,18 @@ public class ToDoItem implements Serializable, Cloneable
 {
     private static final long serialVersionUID = 329624498668043734L;
 
-    private long _id;
+    private long id;
 
-    private String _title;
+    private String title;
 
-    private int _order;
+    private int order;
 
-    private Urgency _urgency = Urgency.MEDIUM;
+    private Urgency urgency = Urgency.MEDIUM;
 
     @Override
     public String toString()
     {
-        return String.format("ToDoItem[%d %s]", _id, _title);
+        return String.format("ToDoItem[%d %s]", id, title);
     }
 
     @Override
@@ -53,44 +53,44 @@ public class ToDoItem implements Serializable, Cloneable
     @NonVisual
     public long getId()
     {
-        return _id;
+        return id;
     }
 
     public void setId(long id)
     {
-        _id = id;
+        this.id = id;
     }
 
     @Validate("required")
     public String getTitle()
     {
-        return _title;
+        return title;
     }
 
     public void setTitle(String title)
     {
-        _title = title;
+        this.title = title;
     }
 
     public Urgency getUrgency()
     {
-        return _urgency;
+        return urgency;
     }
 
     public void setUrgency(Urgency urgency)
     {
-        _urgency = urgency;
+        this.urgency = urgency;
     }
 
     @NonVisual
     public int getOrder()
     {
-        return _order;
+        return order;
     }
 
     public void setOrder(int order)
     {
-        _order = order;
+        this.order = order;
     }
 
 }

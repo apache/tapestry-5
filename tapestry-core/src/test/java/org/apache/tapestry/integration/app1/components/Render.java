@@ -19,16 +19,15 @@ import org.apache.tapestry.annotations.Parameter;
 public class Render
 {
     @Parameter(required = true)
-    private Object _value;
+    private Object value;
 
     /**
-     * Returns the value parameter, which allows another object (presumably, a component) to render
-     * first.
+     * Returns the value parameter, which allows another object (presumably, a component) to render first.
      *
      * @return
      */
     Object beginRender()
     {
-        return _value;
+        return value;
     }
 }

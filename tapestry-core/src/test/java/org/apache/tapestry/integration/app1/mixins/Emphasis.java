@@ -25,19 +25,19 @@ import org.apache.tapestry.annotations.Parameter;
 public class Emphasis
 {
     @Parameter(required = true)
-    private boolean _test;
+    private boolean test;
 
     @BeginRender
     void begin(MarkupWriter writer)
     {
-        if (_test)
+        if (test)
             writer.element("em");
     }
 
     @AfterRender
     void after(MarkupWriter writer)
     {
-        if (_test)
+        if (test)
             writer.end();
     }
 }

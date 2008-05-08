@@ -25,14 +25,14 @@ import java.text.Format;
 public class Output
 {
     @Parameter(required = true)
-    private Object _value;
+    private Object value;
 
     @Parameter(required = true)
-    private Format _format;
+    private Format format;
 
     void beginRender(MarkupWriter writer)
     {
-        String formatted = _format.format(_value);
+        String formatted = format.format(value);
 
         writer.write(formatted);
     }

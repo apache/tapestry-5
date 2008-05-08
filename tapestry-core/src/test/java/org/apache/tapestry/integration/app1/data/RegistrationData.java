@@ -18,98 +18,98 @@ import org.apache.tapestry.beaneditor.*;
 
 public class RegistrationData
 {
-    private String _lastName;
+    private String lastName;
 
-    private String _firstName;
+    private String firstName;
 
-    private int _birthYear;
+    private int birthYear;
 
-    private Sex _sex = Sex.MALE;
+    private Sex sex = Sex.MALE;
 
-    private boolean _citizen;
+    private boolean citizen;
 
-    private String _password;
+    private String password;
 
-    private String _notes;
+    private String notes;
 
     @OrderAfter("lastName")
     @Validate("min=1900,max=2007")
     @Width(4)
     public int getBirthYear()
     {
-        return _birthYear;
+        return birthYear;
     }
 
     @OrderAfter("lastname,birthyear")
     public Sex getSex()
     {
-        return _sex;
+        return sex;
     }
 
     @OrderBefore("lastname")
     public String getFirstName()
     {
-        return _firstName;
+        return firstName;
     }
 
     @Validate("required,minlength=5")
     public String getLastName()
     {
-        return _lastName;
+        return lastName;
     }
 
     @Validate("required,minlength=6")
     @DataType("password")
     public String getPassword()
     {
-        return _password;
+        return password;
     }
 
     public void setPassword(String password)
     {
-        _password = password;
+        this.password = password;
     }
 
     public boolean isCitizen()
     {
-        return _citizen;
+        return citizen;
     }
 
     public void setBirthYear(int birthYear)
     {
-        _birthYear = birthYear;
+        this.birthYear = birthYear;
     }
 
     @Validate("required,minlength=3")
     public void setFirstName(String firstName)
     {
-        _firstName = firstName;
+        this.firstName = firstName;
     }
 
     public void setLastName(String lastName)
     {
-        _lastName = lastName;
+        this.lastName = lastName;
     }
 
     public void setSex(Sex sex)
     {
-        _sex = sex;
+        this.sex = sex;
     }
 
     public void setCitizen(boolean citizen)
     {
-        _citizen = citizen;
+        this.citizen = citizen;
     }
 
     @DataType("longtext")
     @Width(50)
     public String getNotes()
     {
-        return _notes;
+        return notes;
     }
 
     public void setNotes(String notes)
     {
-        _notes = notes;
+        this.notes = notes;
     }
 }

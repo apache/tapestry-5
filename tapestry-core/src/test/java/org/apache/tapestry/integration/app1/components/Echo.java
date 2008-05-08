@@ -19,17 +19,17 @@ import org.apache.tapestry.annotations.BeginRender;
 import org.apache.tapestry.annotations.Parameter;
 
 /**
- * Echos out its value parameter. Uused to test parameter overrides between component annoation and
- * template. Also, used to test parameter defaulter methods.
+ * Echos out its value parameter. Uused to test parameter overrides between component annoation and template. Also, used
+ * to test parameter defaulter methods.
  */
 public class Echo
 {
     @Parameter("componentResources.completeId")
-    private String _value;
+    private String value;
 
     @BeginRender
     void render(MarkupWriter writer)
     {
-        writer.write(_value);
+        writer.write(value);
     }
 }

@@ -29,7 +29,7 @@ public class AbstractLinkTest extends InternalBaseTestCase
 {
     private final static String LINK_URI = "/foo/bar.baz";
 
-    private final AbstractLink _linkFixture = new AbstractLink()
+    private final AbstractLink linkFixture = new AbstractLink()
     {
     };
 
@@ -50,9 +50,9 @@ public class AbstractLinkTest extends InternalBaseTestCase
 
         replay();
 
-        _linkFixture.inject(null, map, resources);
+        linkFixture.inject(null, map, resources);
 
-        _linkFixture.writeLink(writer, link);
+        linkFixture.writeLink(writer, link);
 
         verify();
 
@@ -82,9 +82,9 @@ public class AbstractLinkTest extends InternalBaseTestCase
 
         replay();
 
-        _linkFixture.inject("wilma", map, resources);
+        linkFixture.inject("wilma", map, resources);
 
-        _linkFixture.writeLink(writer, link);
+        linkFixture.writeLink(writer, link);
 
         verify();
 

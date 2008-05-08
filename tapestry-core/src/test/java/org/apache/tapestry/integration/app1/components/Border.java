@@ -30,33 +30,33 @@ public class Border
 {
     @Inject
     @Builtin
-    private ClassFactory _iocClassFactory;
+    private ClassFactory iocClassFactory;
 
     @Inject
     @ComponentLayer
-    private ClassFactory _componentClassFactory;
+    private ClassFactory componentClassFactory;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     public ClassFactory getComponentClassFactory()
     {
-        return _componentClassFactory;
+        return componentClassFactory;
     }
 
     public ClassFactory getIocClassFactory()
     {
-        return _iocClassFactory;
+        return iocClassFactory;
     }
 
     public Request getRequest()
     {
-        return _request;
+        return request;
     }
 
     public String getSecure()
     {
-        return _request.isSecure() ? "secure" : "insecure";
+        return request.isSecure() ? "secure" : "insecure";
     }
 
 }
