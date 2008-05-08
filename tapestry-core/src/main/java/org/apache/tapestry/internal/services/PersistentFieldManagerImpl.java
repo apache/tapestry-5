@@ -32,26 +32,26 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
     public static final String DEFAULT_STRATEGY = "session";
 
-    private final MetaDataLocator _metaDataLocator;
+    private final MetaDataLocator metaDataLocator;
 
-    private final Map<String, PersistentFieldStrategy> _strategies;
+    private final Map<String, PersistentFieldStrategy> strategies;
 
     public PersistentFieldManagerImpl(MetaDataLocator locator,
                                       Map<String, PersistentFieldStrategy> strategies)
     {
-        _metaDataLocator = locator;
+        metaDataLocator = locator;
 
-        _strategies = strategies;
+        this.strategies = strategies;
     }
 
     private PersistentFieldStrategy getStrategy(String strategyName)
     {
-        PersistentFieldStrategy result = _strategies.get(strategyName);
+        PersistentFieldStrategy result = strategies.get(strategyName);
 
         if (result == null)
             throw new RuntimeException(ServicesMessages.unknownPersistentFieldStrategy(
                     strategyName,
-                    _strategies.keySet()));
+                    strategies.keySet()));
 
         return result;
     }
@@ -60,7 +60,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
     {
         Collection<PersistentFieldChange> allChanges = CollectionFactory.newList();
 
-        for (PersistentFieldStrategy strategy : _strategies.values())
+        for (PersistentFieldStrategy strategy : strategies.values())
         {
             allChanges.addAll(strategy.gatherFieldChanges(pageName));
         }
@@ -70,7 +70,7 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
     public void discardChanges(String pageName)
     {
-        for (PersistentFieldStrategy strategy : _strategies.values())
+        for (PersistentFieldStrategy strategy : strategies.values())
         {
             strategy.discardChanges(pageName);
         }
@@ -93,6 +93,6 @@ public class PersistentFieldManagerImpl implements PersistentFieldManager
 
         if (InternalUtils.isNonBlank(strategy)) return strategy;
 
-        return _metaDataLocator.findMeta(META_KEY, resources, String.class);
+        return metaDataLocator.findMeta(META_KEY, resources, String.class);
     }
 }

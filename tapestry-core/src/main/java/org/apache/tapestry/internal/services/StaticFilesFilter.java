@@ -27,11 +27,11 @@ import java.net.URL;
  */
 public class StaticFilesFilter implements RequestFilter
 {
-    private final Context _context;
+    private final Context context;
 
     public StaticFilesFilter(Context context)
     {
-        _context = context;
+        this.context = context;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler)
@@ -53,7 +53,7 @@ public class StaticFilesFilter implements RequestFilter
 
         if (dotx > 0)
         {
-            URL url = _context.getResource(path);
+            URL url = context.getResource(path);
 
             if (url != null)
             {

@@ -29,37 +29,37 @@ import java.io.PrintWriter;
  */
 public class ResponseImpl implements Response
 {
-    private final HttpServletResponse _response;
+    private final HttpServletResponse response;
 
     public ResponseImpl(HttpServletResponse response)
     {
         Defense.notNull(response, "response");
 
-        _response = response;
+        this.response = response;
     }
 
     public PrintWriter getPrintWriter(String contentType) throws IOException
     {
         notBlank(contentType, "contentType");
 
-        _response.setContentType(contentType);
+        response.setContentType(contentType);
 
-        return _response.getWriter();
+        return response.getWriter();
     }
 
     public String encodeURL(String URL)
     {
-        return _response.encodeURL(URL);
+        return response.encodeURL(URL);
     }
 
     public String encodeRedirectURL(String URL)
     {
-        return _response.encodeRedirectURL(URL);
+        return response.encodeRedirectURL(URL);
     }
 
     public void sendRedirect(String URL) throws IOException
     {
-        _response.sendRedirect(URL);
+        response.sendRedirect(URL);
     }
 
     public void sendRedirect(Link link) throws IOException
@@ -75,38 +75,38 @@ public class ResponseImpl implements Response
     {
         notBlank(contentType, "contentType");
 
-        _response.setContentType(contentType);
+        response.setContentType(contentType);
 
-        return _response.getOutputStream();
+        return response.getOutputStream();
     }
 
     public void sendError(int sc, String message) throws IOException
     {
-        _response.sendError(sc, message);
+        response.sendError(sc, message);
     }
 
     public void setContentLength(int length)
     {
-        _response.setContentLength(length);
+        response.setContentLength(length);
     }
 
     public void setDateHeader(String name, long date)
     {
-        _response.setDateHeader(name, date);
+        response.setDateHeader(name, date);
     }
 
     public void setHeader(String name, String value)
     {
-        _response.setHeader(name, value);
+        response.setHeader(name, value);
     }
 
     public void setIntHeader(String name, int value)
     {
-        _response.setIntHeader(name, value);
+        response.setIntHeader(name, value);
     }
 
     public boolean isCommitted()
     {
-        return _response.isCommitted();
+        return response.isCommitted();
     }
 }

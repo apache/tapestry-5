@@ -26,13 +26,13 @@ import java.util.Map;
 
 public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationListener
 {
-    private final StrategyRegistry<ValueEncoderFactory> _registry;
+    private final StrategyRegistry<ValueEncoderFactory> registry;
 
-    private final Map<Class, ValueEncoder> _cache = CollectionFactory.newConcurrentMap();
+    private final Map<Class, ValueEncoder> cache = CollectionFactory.newConcurrentMap();
 
     public ValueEncoderSourceImpl(Map<Class, ValueEncoderFactory> configuration)
     {
-        _registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
+        registry = StrategyRegistry.newInstance(ValueEncoderFactory.class, configuration);
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -40,15 +40,15 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
     {
         Defense.notNull(type, "type");
 
-        ValueEncoder<T> result = _cache.get(type);
+        ValueEncoder<T> result = cache.get(type);
 
         if (result == null)
         {
-            ValueEncoderFactory<T> factory = _registry.get(type);
+            ValueEncoderFactory<T> factory = registry.get(type);
 
             result = factory.create(type);
 
-            _cache.put(type, result);
+            cache.put(type, result);
         }
 
         return result;
@@ -56,7 +56,7 @@ public class ValueEncoderSourceImpl implements ValueEncoderSource, InvalidationL
 
     public void objectWasInvalidated()
     {
-        _registry.clearCache();
-        _cache.clear();
+        registry.clearCache();
+        cache.clear();
     }
 }

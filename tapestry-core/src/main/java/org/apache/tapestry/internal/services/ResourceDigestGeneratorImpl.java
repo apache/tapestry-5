@@ -34,11 +34,11 @@ public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
 {
     private static final int BUFFER_SIZE = 5000;
 
-    private final Set<String> _digestExtensions;
+    private final Set<String> digestExtensions;
 
     public ResourceDigestGeneratorImpl(Collection<String> configuration)
     {
-        _digestExtensions = CollectionFactory.newSet(configuration);
+        digestExtensions = CollectionFactory.newSet(configuration);
     }
 
     public String generateDigest(URL url)
@@ -93,7 +93,7 @@ public class ResourceDigestGeneratorImpl implements ResourceDigestGenerator
         int dotx = path.lastIndexOf('.');
         String extension = path.substring(dotx + 1).toLowerCase();
 
-        return _digestExtensions.contains(extension);
+        return digestExtensions.contains(extension);
     }
 
 }

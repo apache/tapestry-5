@@ -28,18 +28,18 @@ import java.io.IOException;
  */
 public class PageRenderDispatcher implements Dispatcher
 {
-    private final ComponentClassResolver _componentClassResolver;
+    private final ComponentClassResolver componentClassResolver;
 
-    private final PageRenderRequestHandler _handler;
+    private final PageRenderRequestHandler handler;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
     public PageRenderDispatcher(ComponentClassResolver componentClassResolver, PageRenderRequestHandler handler,
                                 ContextValueEncoder contextValueEncoder)
     {
-        _componentClassResolver = componentClassResolver;
-        _handler = handler;
-        _contextValueEncoder = contextValueEncoder;
+        this.componentClassResolver = componentClassResolver;
+        this.handler = handler;
+        this.contextValueEncoder = contextValueEncoder;
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
@@ -85,16 +85,16 @@ public class PageRenderDispatcher implements Dispatcher
 
     private boolean process(String pageName, String pageActivationContext) throws IOException
     {
-        if (!_componentClassResolver.isPageName(pageName)) return false;
+        if (!componentClassResolver.isPageName(pageName)) return false;
 
         String[] values = convertActivationContext(pageActivationContext);
 
         EventContext activationContext
-                = new URLEventContext(_contextValueEncoder, values);
+                = new URLEventContext(contextValueEncoder, values);
 
         PageRenderRequestParameters parameters = new PageRenderRequestParameters(pageName, activationContext);
 
-        _handler.handle(parameters);
+        handler.handle(parameters);
 
         return true;
     }
@@ -103,7 +103,6 @@ public class PageRenderDispatcher implements Dispatcher
      * Converts the "extra path", the portion after the page name (and after the slash seperating the page name from the
      * activation context) into an array of strings. LinkFactory and friends URL encode each value, so we URL decode the
      * value (we assume that page names are "URL safe").
-     *
      */
     private String[] convertActivationContext(String extraPath)
     {

@@ -15,14 +15,13 @@
 package org.apache.tapestry;
 
 import org.apache.commons.codec.net.URLCodec;
-import org.apache.tapestry.services.Dispatcher;
 
 import java.util.List;
 
 /**
  * A link is the Tapestry representation of a URL or URI that triggers dynamic behavior. This link is in three parts: a
  * path portion, an optional anchor, and a set of query parameters. A request for a link will ultimately be recognized
- * by a {@link Dispatcher}.
+ * by a {@link org.apache.tapestry.services.Dispatcher}.
  * <p/>
  * Query parameter values are kept separate from the path portion to support encoding those values into hidden form
  * fields (where appropriate).

@@ -34,30 +34,30 @@ import java.io.IOException;
  */
 public class ActionLinkInvoker implements ComponentInvoker
 {
-    private final Registry _registry;
+    private final Registry registry;
 
-    private final ComponentInvoker _followupInvoker;
+    private final ComponentInvoker followupInvoker;
 
-    private final ComponentEventRequestHandler _componentEventRequestHandler;
+    private final ComponentEventRequestHandler componentEventRequestHandler;
 
-    private final ComponentInvocationMap _componentInvocationMap;
+    private final ComponentInvocationMap componentInvocationMap;
 
-    private final TestableResponse _response;
+    private final TestableResponse response;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
     public ActionLinkInvoker(Registry registry, ComponentInvoker followupInvoker,
                              ComponentInvocationMap componentInvocationMap)
     {
-        _registry = registry;
-        _followupInvoker = followupInvoker;
-        _componentEventRequestHandler = _registry.getService("ComponentEventRequestHandler",
-                                                             ComponentEventRequestHandler.class);
+        this.registry = registry;
+        this.followupInvoker = followupInvoker;
+        componentEventRequestHandler = this.registry.getService("ComponentEventRequestHandler",
+                                                                ComponentEventRequestHandler.class);
 
-        _response = _registry.getObject(TestableResponse.class, null);
+        response = this.registry.getObject(TestableResponse.class, null);
 
-        _componentInvocationMap = componentInvocationMap;
-        _contextValueEncoder = _registry.getService(ContextValueEncoder.class);
+        this.componentInvocationMap = componentInvocationMap;
+        contextValueEncoder = this.registry.getService(ContextValueEncoder.class);
 
     }
 
@@ -72,16 +72,16 @@ public class ActionLinkInvoker implements ComponentInvoker
     {
         click(invocation);
 
-        Link link = _response.getRedirectLink();
+        Link link = response.getRedirectLink();
 
-        _response.clear();
+        response.clear();
 
         if (link == null) throw new RuntimeException("Action did not set a redirect link.");
 
 
-        ComponentInvocation followup = _componentInvocationMap.get(link);
+        ComponentInvocation followup = componentInvocationMap.get(link);
 
-        return _followupInvoker.invoke(followup);
+        return followupInvoker.invoke(followup);
     }
 
     private void click(ComponentInvocation invocation)
@@ -101,11 +101,11 @@ public class ActionLinkInvoker implements ComponentInvoker
 
                     actionLinkTarget.getEventType(),
 
-                    new URLEventContext(_contextValueEncoder, invocation.getActivationContext()),
+                    new URLEventContext(contextValueEncoder, invocation.getActivationContext()),
 
-                    new URLEventContext(_contextValueEncoder, invocation.getContext()));
+                    new URLEventContext(contextValueEncoder, invocation.getContext()));
 
-            _componentEventRequestHandler.handle(parameters);
+            componentEventRequestHandler.handle(parameters);
         }
         catch (IOException e)
         {
@@ -113,7 +113,7 @@ public class ActionLinkInvoker implements ComponentInvoker
         }
         finally
         {
-            _registry.cleanupThread();
+            registry.cleanupThread();
         }
     }
 }

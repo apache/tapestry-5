@@ -21,9 +21,9 @@ import org.apache.tapestry.internal.TapestryInternalUtils;
  */
 class ValidatorSpecification
 {
-    private final String _validatorType;
+    private final String validatorType;
 
-    private final String _constraintValue;
+    private final String constraintValue;
 
     public ValidatorSpecification(String validatorType)
     {
@@ -32,24 +32,24 @@ class ValidatorSpecification
 
     public ValidatorSpecification(String validatorType, String constraintValue)
     {
-        _validatorType = validatorType;
-        _constraintValue = constraintValue;
+        this.validatorType = validatorType;
+        this.constraintValue = constraintValue;
     }
 
     public String getConstraintValue()
     {
-        return _constraintValue;
+        return constraintValue;
     }
 
     public String getValidatorType()
     {
-        return _validatorType;
+        return validatorType;
     }
 
     @Override
     public String toString()
     {
-        return String.format("ValidatorSpecification[%s %s]", _validatorType, _constraintValue);
+        return String.format("ValidatorSpecification[%s %s]", validatorType, constraintValue);
     }
 
     @Override
@@ -59,8 +59,8 @@ class ValidatorSpecification
 
         ValidatorSpecification ov = (ValidatorSpecification) other;
 
-        if (!_validatorType.equals(ov._validatorType)) return false;
+        if (!validatorType.equals(ov.validatorType)) return false;
 
-        return TapestryInternalUtils.isEqual(_constraintValue, ov._constraintValue);
+        return TapestryInternalUtils.isEqual(constraintValue, ov.constraintValue);
     }
 }

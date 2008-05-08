@@ -27,9 +27,9 @@ public class RenderQueueImpl implements RenderQueue
 {
     private static final int INITIAL_QUEUE_DEPTH = 100;
 
-    private final Stack<RenderCommand> _queue = CollectionFactory.newStack(INITIAL_QUEUE_DEPTH);
+    private final Stack<RenderCommand> queue = CollectionFactory.newStack(INITIAL_QUEUE_DEPTH);
 
-    private final Stack<ComponentResources> _renderingComponents = CollectionFactory.newStack();
+    private final Stack<ComponentResources> renderingComponents = CollectionFactory.newStack();
 
     private final Logger _logger;
 
@@ -40,7 +40,7 @@ public class RenderQueueImpl implements RenderQueue
 
     public void push(RenderCommand command)
     {
-        _queue.push(command);
+        queue.push(command);
     }
 
     public void run(MarkupWriter writer)
@@ -57,9 +57,9 @@ public class RenderQueueImpl implements RenderQueue
 
         try
         {
-            while (!_queue.isEmpty())
+            while (!queue.isEmpty())
             {
-                command = _queue.pop();
+                command = queue.pop();
 
                 commandCount++;
 
@@ -77,7 +77,7 @@ public class RenderQueueImpl implements RenderQueue
 
             _logger.error(message, ex);
 
-            throw new RenderQueueException(message, _renderingComponents.getSnapshot(), ex);
+            throw new RenderQueueException(message, renderingComponents.getSnapshot(), ex);
         }
 
         long endNanos = System.nanoTime();
@@ -99,11 +99,11 @@ public class RenderQueueImpl implements RenderQueue
     {
         Defense.notNull(resources, "resources");
 
-        _renderingComponents.push(resources);
+        renderingComponents.push(resources);
     }
 
     public void endComponent()
     {
-        _renderingComponents.pop();
+        renderingComponents.pop();
     }
 }

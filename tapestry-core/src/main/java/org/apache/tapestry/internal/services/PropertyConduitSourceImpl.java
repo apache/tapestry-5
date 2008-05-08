@@ -78,16 +78,16 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private static final String PARENS = "()";
 
-    private final PropertyAccess _access;
+    private final PropertyAccess access;
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final Map<Class, Class> _classToEffectiveClass = newConcurrentMap();
+    private final Map<Class, Class> classToEffectiveClass = newConcurrentMap();
 
     /**
      * Keyed on combination of root class and expression.
      */
-    private final Map<MultiKey, PropertyConduit> _cache = newConcurrentMap();
+    private final Map<MultiKey, PropertyConduit> cache = newConcurrentMap();
 
     private static final MethodSignature GET_SIGNATURE = new MethodSignature(Object.class, "get",
                                                                              new Class[] { Object.class }, null);
@@ -100,8 +100,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     public PropertyConduitSourceImpl(PropertyAccess access, @ComponentLayer ClassFactory classFactory)
     {
-        _access = access;
-        _classFactory = classFactory;
+        this.access = access;
+        this.classFactory = classFactory;
     }
 
     public PropertyConduit create(Class rootClass, String expression)
@@ -113,12 +113,12 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         MultiKey key = new MultiKey(effectiveClass, expression);
 
-        PropertyConduit result = _cache.get(key);
+        PropertyConduit result = cache.get(key);
 
         if (result == null)
         {
             result = build(effectiveClass, expression);
-            _cache.put(key, result);
+            cache.put(key, result);
 
         }
 
@@ -127,13 +127,13 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
     private Class toEffectiveClass(Class rootClass)
     {
-        Class result = _classToEffectiveClass.get(rootClass);
+        Class result = classToEffectiveClass.get(rootClass);
 
         if (result == null)
         {
-            result = _classFactory.importClass(rootClass);
+            result = classFactory.importClass(rootClass);
 
-            _classToEffectiveClass.put(rootClass, result);
+            classToEffectiveClass.put(rootClass, result);
         }
 
         return result;
@@ -146,8 +146,8 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
      */
     public void objectWasInvalidated()
     {
-        _cache.clear();
-        _classToEffectiveClass.clear();
+        cache.clear();
+        classToEffectiveClass.clear();
     }
 
 
@@ -164,7 +164,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     {
         String name = ClassFabUtils.generateClassName("PropertyConduit");
 
-        ClassFab classFab = _classFactory.newClass(name, BasePropertyConduit.class);
+        ClassFab classFab = classFactory.newClass(name, BasePropertyConduit.class);
 
         classFab.addConstructor(new Class[] { Class.class, AnnotationProvider.class, String.class }, null,
                                 "super($$);");
@@ -398,7 +398,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
     {
         if (term.endsWith(PARENS)) return null;
 
-        ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
+        ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
         PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
         if (adapter == null) throw new RuntimeException(
@@ -456,7 +456,7 @@ public class PropertyConduitSourceImpl implements PropertyConduitSource, Invalid
 
         // Otherwise, just a property name.
 
-        ClassPropertyAdapter classAdapter = _access.getAdapter(activeType);
+        ClassPropertyAdapter classAdapter = access.getAdapter(activeType);
         final PropertyAdapter adapter = classAdapter.getPropertyAdapter(term);
 
         if (adapter == null) throw new RuntimeException(

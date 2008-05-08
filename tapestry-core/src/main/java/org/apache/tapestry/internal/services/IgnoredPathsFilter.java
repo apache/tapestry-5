@@ -25,11 +25,11 @@ import java.util.regex.Pattern;
 
 public class IgnoredPathsFilter implements HttpServletRequestFilter
 {
-    private final Pattern[] _ignoredPatterns;
+    private final Pattern[] ignoredPatterns;
 
     public IgnoredPathsFilter(Collection<String> configuration)
     {
-        _ignoredPatterns = new Pattern[configuration.size()];
+        ignoredPatterns = new Pattern[configuration.size()];
 
         int i = 0;
 
@@ -37,7 +37,7 @@ public class IgnoredPathsFilter implements HttpServletRequestFilter
         {
             Pattern p = Pattern.compile(regexp, Pattern.CASE_INSENSITIVE);
 
-            _ignoredPatterns[i++] = p;
+            ignoredPatterns[i++] = p;
         }
     }
 
@@ -52,7 +52,7 @@ public class IgnoredPathsFilter implements HttpServletRequestFilter
         if (pathInfo != null) path += pathInfo;
 
 
-        for (Pattern p : _ignoredPatterns)
+        for (Pattern p : ignoredPatterns)
         {
             if (p.matcher(path).matches()) return false;
         }

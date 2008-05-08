@@ -22,25 +22,25 @@ import org.apache.tapestry.runtime.RenderQueue;
  */
 public class StartElementPageElement implements PageElement
 {
-    private final String _namespaceURI;
+    private final String namespaceURI;
 
-    private final String _name;
+    private final String name;
 
     public StartElementPageElement(String namespaceURI, String name)
     {
-        _namespaceURI = namespaceURI;
+        this.namespaceURI = namespaceURI;
 
-        _name = name;
+        this.name = name;
     }
 
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        writer.elementNS(_namespaceURI, _name);
+        writer.elementNS(namespaceURI, name);
     }
 
     @Override
     public String toString()
     {
-        return String.format("Start[%s %s]", _namespaceURI, _name);
+        return String.format("Start[%s %s]", namespaceURI, name);
     }
 }

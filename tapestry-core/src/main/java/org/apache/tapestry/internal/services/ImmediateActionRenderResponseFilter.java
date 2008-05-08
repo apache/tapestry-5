@@ -23,17 +23,17 @@ import java.io.IOException;
 
 public class ImmediateActionRenderResponseFilter implements ComponentEventRequestFilter
 {
-    private final Request _request;
+    private final Request request;
 
-    private final Response _response;
+    private final Response response;
 
-    private final PageResponseRenderer _renderer;
+    private final PageResponseRenderer renderer;
 
     public ImmediateActionRenderResponseFilter(Request request, PageResponseRenderer renderer, Response response)
     {
-        _request = request;
-        _renderer = renderer;
-        _response = response;
+        this.request = request;
+        this.renderer = renderer;
+        this.response = response;
     }
 
     public void handle(ComponentEventRequestParameters parameters, ComponentEventRequestHandler handler)
@@ -43,12 +43,12 @@ public class ImmediateActionRenderResponseFilter implements ComponentEventReques
 
         // If markup or a redirect has already been generated, then we're good.
 
-        if (_response.isCommitted()) return;
+        if (response.isCommitted()) return;
 
         // Otherwise, we should be operating in immediate mode.  Figure out which page
         // was selected to render.
 
-        Page page = (Page) _request.getAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE);
+        Page page = (Page) request.getAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE);
 
         if (page != null)
         {
@@ -56,7 +56,7 @@ public class ImmediateActionRenderResponseFilter implements ComponentEventReques
 
             page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, new Object[0], null);
 
-            _renderer.renderPageResponse(page);
+            renderer.renderPageResponse(page);
             return;
         }
 

@@ -23,19 +23,19 @@ import org.apache.tapestry.services.MetaDataLocator;
 
 public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
 {
-    private final MetaDataLocator _metaDataLocator;
+    private final MetaDataLocator metaDataLocator;
 
     public PageContentTypeAnalyzerImpl(MetaDataLocator metaDataLocator)
     {
-        _metaDataLocator = metaDataLocator;
+        this.metaDataLocator = metaDataLocator;
     }
 
     public ContentType findContentType(Page page)
     {
         ComponentResources pageResources = page.getRootComponent().getComponentResources();
 
-        String contentTypeString = _metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
-                                                             String.class);
+        String contentTypeString = metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
+                                                            String.class);
         ContentType contentType = new ContentType(contentTypeString);
 
         // Make sure thre's always a charset specified.
@@ -44,7 +44,7 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
 
         if (encoding == null)
         {
-            encoding = _metaDataLocator
+            encoding = metaDataLocator
                     .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources, String.class);
             contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, encoding);
         }

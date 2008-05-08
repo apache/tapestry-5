@@ -24,26 +24,26 @@ import java.util.List;
 
 public class HeartbeatImpl implements Heartbeat
 {
-    private final Stack<List<Runnable>> _stack = newStack();
+    private final Stack<List<Runnable>> stack = newStack();
 
     public void begin()
     {
         List<Runnable> beat = CollectionFactory.newList();
 
-        _stack.push(beat);
+        stack.push(beat);
     }
 
     public void defer(Runnable command)
     {
         Defense.notNull(command, "command");
 
-        _stack.peek().add(command);
+        stack.peek().add(command);
 
     }
 
     public void end()
     {
-        List<Runnable> beat = _stack.pop();
+        List<Runnable> beat = stack.pop();
 
         for (Runnable r : beat)
             r.run();

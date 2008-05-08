@@ -24,11 +24,11 @@ import org.apache.tapestry.services.ValueEncoderFactory;
  */
 public class TypeCoercedValueEncoderFactory implements ValueEncoderFactory<Object>
 {
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
     public TypeCoercedValueEncoderFactory(TypeCoercer typeCoercer)
     {
-        _typeCoercer = typeCoercer;
+        this.typeCoercer = typeCoercer;
     }
 
     public ValueEncoder<Object> create(final Class<Object> type)
@@ -37,12 +37,12 @@ public class TypeCoercedValueEncoderFactory implements ValueEncoderFactory<Objec
         {
             public String toClient(Object value)
             {
-                return _typeCoercer.coerce(value, String.class);
+                return typeCoercer.coerce(value, String.class);
             }
 
             public Object toValue(String clientValue)
             {
-                return _typeCoercer.coerce(clientValue, type);
+                return typeCoercer.coerce(clientValue, type);
             }
         };
     }

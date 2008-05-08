@@ -547,4 +547,19 @@ public class InternalUtils
             // Ignore.
         }
     }
+
+    /**
+     * Extracts the message from an exception.  If the exception's message is null, returns the exceptions class name.
+     *
+     * @param exception to extract message from
+     * @return message or class name
+     */
+    public static String toMessage(Throwable exception)
+    {
+        String message = exception.getMessage();
+
+        if (message != null) return message;
+
+        return exception.getClass().getName();
+    }
 }

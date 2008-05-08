@@ -23,15 +23,15 @@ import org.apache.tapestry.services.MarkupWriterFactory;
 
 public class MarkupWriterFactoryImpl implements MarkupWriterFactory
 {
-    private final MarkupModel _htmlModel = new DefaultMarkupModel();
+    private final MarkupModel htmlModel = new DefaultMarkupModel();
 
-    private final MarkupModel _xmlModel = new XMLMarkupModel();
+    private final MarkupModel xmlModel = new XMLMarkupModel();
 
     public MarkupWriter newMarkupWriter(ContentType contentType)
     {
         boolean isHTML = contentType.getMimeType().equalsIgnoreCase("text/html");
 
-        MarkupModel model = isHTML ? _htmlModel : _xmlModel;
+        MarkupModel model = isHTML ? htmlModel : xmlModel;
 
         // The charset parameter sets the encoding attribute of the XML declaration, if
         // not null and if using the XML model.

@@ -23,11 +23,11 @@ import java.util.List;
 
 public class ValidationConstraintGeneratorImpl implements ValidationConstraintGenerator
 {
-    private final List<ValidationConstraintGenerator> _configuration;
+    private final List<ValidationConstraintGenerator> configuration;
 
     public ValidationConstraintGeneratorImpl(final List<ValidationConstraintGenerator> configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public List<String> buildConstraints(Class propertyType, AnnotationProvider annotationProvider)
@@ -37,7 +37,7 @@ public class ValidationConstraintGeneratorImpl implements ValidationConstraintGe
 
         List<String> result = CollectionFactory.newList();
 
-        for (ValidationConstraintGenerator g : _configuration)
+        for (ValidationConstraintGenerator g : configuration)
         {
             List<String> constraints = g.buildConstraints(propertyType, annotationProvider);
 

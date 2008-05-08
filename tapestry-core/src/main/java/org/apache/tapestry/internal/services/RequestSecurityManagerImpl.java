@@ -26,61 +26,61 @@ import java.io.IOException;
 
 public class RequestSecurityManagerImpl implements RequestSecurityManager
 {
-    private final Request _request;
+    private final Request request;
 
-    private final Response _response;
+    private final Response response;
 
-    private final LinkFactory _linkFactory;
+    private final LinkFactory linkFactory;
 
-    private final MetaDataLocator _locator;
+    private final MetaDataLocator locator;
 
-    private final BaseURLSource _baseURLSource;
+    private final BaseURLSource baseURLSource;
 
-    private final RequestPageCache _requestPageCache;
+    private final RequestPageCache requestPageCache;
 
     public RequestSecurityManagerImpl(Request request, Response response, LinkFactory linkFactory,
                                       MetaDataLocator locator, BaseURLSource baseURLSource,
                                       RequestPageCache requestPageCache)
     {
-        _request = request;
-        _response = response;
-        _linkFactory = linkFactory;
-        _locator = locator;
-        _baseURLSource = baseURLSource;
-        _requestPageCache = requestPageCache;
+        this.request = request;
+        this.response = response;
+        this.linkFactory = linkFactory;
+        this.locator = locator;
+        this.baseURLSource = baseURLSource;
+        this.requestPageCache = requestPageCache;
     }
 
     public boolean checkForInsecureRequest(String pageName) throws IOException
     {
         // We don't (at this time) redirect from secure to insecure, just form insecure to secure.
 
-        if (_request.isSecure()) return false;
+        if (request.isSecure()) return false;
 
-        Page page = _requestPageCache.get(pageName);
+        Page page = requestPageCache.get(pageName);
 
         if (!isSecure(page)) return false;
 
         // Page is secure but request is not, so redirect.
 
-        Link link = _linkFactory.createPageLink(page, false);
+        Link link = linkFactory.createPageLink(page, false);
 
-        _response.sendRedirect(link);
+        response.sendRedirect(link);
 
         return true;
     }
 
     private boolean isSecure(Page page)
     {
-        return _locator.findMeta(TapestryConstants.SECURE_PAGE,
-                                 page.getRootComponent().getComponentResources(), Boolean.class);
+        return locator.findMeta(TapestryConstants.SECURE_PAGE,
+                                page.getRootComponent().getComponentResources(), Boolean.class);
     }
 
     public String getBaseURL(Page page)
     {
         boolean securePage = isSecure(page);
 
-        if (securePage == _request.isSecure()) return null;
+        if (securePage == request.isSecure()) return null;
 
-        return _baseURLSource.getBaseURL(securePage);
+        return baseURLSource.getBaseURL(securePage);
     }
 }

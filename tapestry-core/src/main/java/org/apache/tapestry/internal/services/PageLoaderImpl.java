@@ -24,25 +24,25 @@ import java.util.Locale;
 public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoader,
         InvalidationListener
 {
-    private final ComponentTemplateSource _templateSource;
+    private final ComponentTemplateSource templateSource;
 
-    private final PageElementFactory _pageElementFactory;
+    private final PageElementFactory pageElementFactory;
 
-    private final LinkFactory _linkFactory;
+    private final LinkFactory linkFactory;
 
-    private final PersistentFieldManager _persistentFieldManager;
+    private final PersistentFieldManager persistentFieldManager;
 
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
     public PageLoaderImpl(ComponentTemplateSource templateSource,
                           PageElementFactory pageElementFactory, LinkFactory linkFactory,
                           PersistentFieldManager persistentFieldManager, ComponentClassResolver resolver)
     {
-        _templateSource = templateSource;
-        _pageElementFactory = pageElementFactory;
-        _linkFactory = linkFactory;
-        _persistentFieldManager = persistentFieldManager;
-        _resolver = resolver;
+        this.templateSource = templateSource;
+        this.pageElementFactory = pageElementFactory;
+        this.linkFactory = linkFactory;
+        this.persistentFieldManager = persistentFieldManager;
+        this.resolver = resolver;
     }
 
     public Page loadPage(String logicalPageName, Locale locale)
@@ -50,11 +50,11 @@ public class PageLoaderImpl extends InvalidationEventHubImpl implements PageLoad
         // For the moment, the processors are used once and discarded. Perhaps it is worth the
         // effort to pool them for reuse, but not too likely.
 
-        PageLoaderProcessor processor = new PageLoaderProcessor(_templateSource,
-                                                                _pageElementFactory, _linkFactory,
-                                                                _persistentFieldManager);
+        PageLoaderProcessor processor = new PageLoaderProcessor(templateSource,
+                                                                pageElementFactory, linkFactory,
+                                                                persistentFieldManager);
 
-        String pageClassName = _resolver.resolvePageNameToClassName(logicalPageName);
+        String pageClassName = resolver.resolvePageNameToClassName(logicalPageName);
 
         return processor.loadPage(logicalPageName, pageClassName, locale);
     }

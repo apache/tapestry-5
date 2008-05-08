@@ -23,18 +23,18 @@ import java.io.IOException;
 
 public class ResponseRendererImpl implements ResponseRenderer
 {
-    private final RequestPageCache _pageCache;
+    private final RequestPageCache pageCache;
 
-    private final PageContentTypeAnalyzer _pageContentAnalyzer;
+    private final PageContentTypeAnalyzer pageContentAnalyzer;
 
-    private final PageResponseRenderer _renderer;
+    private final PageResponseRenderer renderer;
 
     public ResponseRendererImpl(RequestPageCache pageCache, PageContentTypeAnalyzer pageContentAnalyzer,
                                 PageResponseRenderer renderer)
     {
-        _pageCache = pageCache;
-        _pageContentAnalyzer = pageContentAnalyzer;
-        _renderer = renderer;
+        this.pageCache = pageCache;
+        this.pageContentAnalyzer = pageContentAnalyzer;
+        this.renderer = renderer;
     }
 
     public ContentType findContentType(Object component)
@@ -43,15 +43,15 @@ public class ResponseRendererImpl implements ResponseRenderer
 
         String pageName = c.getComponentResources().getPageName();
 
-        Page page = _pageCache.get(pageName);
+        Page page = pageCache.get(pageName);
 
-        return _pageContentAnalyzer.findContentType(page);
+        return pageContentAnalyzer.findContentType(page);
     }
 
     public void renderPageMarkupResponse(String pageName) throws IOException
     {
-        Page page = _pageCache.get(pageName);
+        Page page = pageCache.get(pageName);
 
-        _renderer.renderPageResponse(page);
+        renderer.renderPageResponse(page);
     }
 }

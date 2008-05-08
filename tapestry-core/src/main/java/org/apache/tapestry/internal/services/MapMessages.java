@@ -30,7 +30,7 @@ import java.util.Map;
  */
 public class MapMessages extends AbstractMessages
 {
-    private final Map<String, String> _properties;
+    private final Map<String, String> properties;
 
 
     /**
@@ -39,13 +39,14 @@ public class MapMessages extends AbstractMessages
     public MapMessages(Locale locale, Map<String, String> properties)
     {
         super(locale);
-        _properties = properties;
+
+        this.properties = properties;
     }
 
 
     @Override
     protected String valueForKey(String key)
     {
-        return _properties.get(key);
+        return properties.get(key);
     }
 }

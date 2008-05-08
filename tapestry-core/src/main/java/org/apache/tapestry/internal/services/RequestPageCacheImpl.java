@@ -15,36 +15,36 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.structure.Page;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 
 import java.util.Map;
 
 public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupListener
 {
-    private final PagePool _pagePool;
+    private final PagePool pagePool;
 
     /**
      * Keyed on logical page name (case insensitive).
      */
-    private final Map<String, Page> _cache = newCaseInsensitiveMap();
+    private final Map<String, Page> cache = CollectionFactory.newCaseInsensitiveMap();
 
     public RequestPageCacheImpl(PagePool pagePool)
     {
-        _pagePool = pagePool;
+        this.pagePool = pagePool;
     }
 
     public Page get(String logicalPageName)
     {
-        Page page = _cache.get(logicalPageName);
+        Page page = cache.get(logicalPageName);
 
         if (page == null)
         {
-            page = _pagePool.checkout(logicalPageName);
+            page = pagePool.checkout(logicalPageName);
 
             page.attached();
 
-            _cache.put(logicalPageName, page);
+            cache.put(logicalPageName, page);
         }
 
         return page;
@@ -56,7 +56,7 @@ public class RequestPageCacheImpl implements RequestPageCache, ThreadCleanupList
      */
     public void threadDidCleanup()
     {
-        for (Page p : _cache.values())
-            _pagePool.release(p);
+        for (Page p : cache.values())
+            pagePool.release(p);
     }
 }

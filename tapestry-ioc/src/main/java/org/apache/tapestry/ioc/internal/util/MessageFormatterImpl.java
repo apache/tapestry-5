@@ -39,10 +39,7 @@ public class MessageFormatterImpl implements MessageFormatter
 
             if (Throwable.class.isInstance(arg))
             {
-                Throwable t = (Throwable) arg;
-                String message = t.getMessage();
-
-                args[i] = message != null ? message : t.getClass().getName();
+                args[i] = InternalUtils.toMessage((Throwable) arg);
             }
         }
 

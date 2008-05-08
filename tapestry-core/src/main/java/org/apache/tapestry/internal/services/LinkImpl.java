@@ -21,25 +21,25 @@ import org.apache.tapestry.services.Response;
 import java.util.List;
 
 /**
- * Default implementation of {@link Link}.
+ * Default implementation of {@link org.apache.tapestry.Link}.
  */
 public class LinkImpl implements Link
 {
     private static final int BUFFER_SIZE = 100;
 
-    private final String _baseURL;
+    private final String baseURL;
 
-    private final String _contextPath;
+    private final String contextPath;
 
-    private final Response _response;
+    private final Response response;
 
-    private final RequestPathOptimizer _optimizer;
+    private final RequestPathOptimizer optimizer;
 
-    private final ComponentInvocation _invocation;
+    private final ComponentInvocation invocation;
 
-    private final boolean _forForm;
+    private final boolean forForm;
 
-    private String _anchor;
+    private String anchor;
 
     LinkImpl(Response response, RequestPathOptimizer optimizer, String contextPath, String targetPath)
     {
@@ -66,75 +66,75 @@ public class LinkImpl implements Link
     public LinkImpl(Response response, RequestPathOptimizer optimizer, String baseURL, String contextPath,
                     ComponentInvocation invocation, boolean forForm)
     {
-        _response = response;
-        _optimizer = optimizer;
-        _baseURL = baseURL;
-        _contextPath = contextPath;
-        _invocation = invocation;
-        _forForm = forForm;
+        this.response = response;
+        this.optimizer = optimizer;
+        this.baseURL = baseURL;
+        this.contextPath = contextPath;
+        this.invocation = invocation;
+        this.forForm = forForm;
     }
 
     public void addParameter(String parameterName, String value)
     {
-        _invocation.addParameter(parameterName, value);
+        invocation.addParameter(parameterName, value);
     }
 
     public List<String> getParameterNames()
     {
-        return _invocation.getParameterNames();
+        return invocation.getParameterNames();
     }
 
     public String getParameterValue(String name)
     {
-        return _invocation.getParameterValue(name);
+        return invocation.getParameterValue(name);
     }
 
     public String toURI()
     {
-        return _response.encodeURL(buildURI(false));
+        return response.encodeURL(buildURI(false));
     }
 
     public String toAbsoluteURI()
     {
-        return _response.encodeURL(buildURI(true));
+        return response.encodeURL(buildURI(true));
     }
 
     private String buildURI(boolean full)
     {
-        boolean absolute = full | _baseURL != null;
+        boolean absolute = full | baseURL != null;
 
         StringBuilder builder = new StringBuilder(BUFFER_SIZE);
 
-        if (_baseURL != null) builder.append(_baseURL);
+        if (baseURL != null) builder.append(baseURL);
 
-        builder.append(_contextPath);
+        builder.append(contextPath);
         builder.append("/");
-        builder.append(_invocation.buildURI(_forForm));
+        builder.append(invocation.buildURI(forForm));
 
-        if (InternalUtils.isNonBlank(_anchor))
+        if (InternalUtils.isNonBlank(anchor))
         {
             builder.append("#");
-            builder.append(_anchor);
+            builder.append(anchor);
         }
 
         String fullURI = builder.toString();
 
-        return absolute ? fullURI : _optimizer.optimizePath(fullURI);
+        return absolute ? fullURI : optimizer.optimizePath(fullURI);
     }
 
     public String toRedirectURI()
     {
-        return _response.encodeRedirectURL(buildURI(true));
+        return response.encodeRedirectURL(buildURI(true));
     }
 
     public String getAnchor()
     {
-        return _anchor;
+        return anchor;
     }
 
     public void setAnchor(String anchor)
     {
-        _anchor = anchor;
+        this.anchor = anchor;
     }
 
     @Override

@@ -25,21 +25,21 @@ import java.io.IOException;
  */
 public class StringResultProcessor implements ComponentEventResultProcessor<String>
 {
-    private final RequestPageCache _requestPageCache;
+    private final RequestPageCache requestPageCache;
 
-    private final ActionRenderResponseGenerator _generator;
+    private final ActionRenderResponseGenerator generator;
 
     public StringResultProcessor(RequestPageCache requestPageCache, ActionRenderResponseGenerator generator)
     {
-        _requestPageCache = requestPageCache;
-        _generator = generator;
+        this.requestPageCache = requestPageCache;
+        this.generator = generator;
     }
 
     public void processResultValue(String value) throws IOException
     {
-        Page page = _requestPageCache.get(value);
+        Page page = requestPageCache.get(value);
 
-        _generator.generateResponse(page);
+        generator.generateResponse(page);
     }
 
 }

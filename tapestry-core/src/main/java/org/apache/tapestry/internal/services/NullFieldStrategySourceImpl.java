@@ -21,20 +21,20 @@ import java.util.Map;
 
 public class NullFieldStrategySourceImpl implements NullFieldStrategySource
 {
-    private final Map<String, NullFieldStrategy> _configuration;
+    private final Map<String, NullFieldStrategy> configuration;
 
     public NullFieldStrategySourceImpl(Map<String, NullFieldStrategy> configuration)
     {
-        _configuration = configuration;
+        this.configuration = configuration;
     }
 
     public NullFieldStrategy get(String name)
     {
-        NullFieldStrategy result = _configuration.get(name);
+        NullFieldStrategy result = configuration.get(name);
 
         if (result != null) return result;
 
         throw new IllegalArgumentException(
-                ServicesMessages.unknownNullFieldStrategyName(name, _configuration.keySet()));
+                ServicesMessages.unknownNullFieldStrategyName(name, configuration.keySet()));
     }
 }

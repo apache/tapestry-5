@@ -27,17 +27,17 @@ import java.io.IOException;
  */
 public class LocalizationFilter implements RequestFilter
 {
-    private final LocalizationSetter _setter;
+    private final LocalizationSetter setter;
 
     public LocalizationFilter(LocalizationSetter setter)
     {
-        _setter = setter;
+        this.setter = setter;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler)
             throws IOException
     {
-        _setter.setThreadLocale(request.getLocale());
+        setter.setThreadLocale(request.getLocale());
 
         return handler.service(request, response);
     }

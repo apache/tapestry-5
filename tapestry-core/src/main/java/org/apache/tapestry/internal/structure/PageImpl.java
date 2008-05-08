@@ -18,7 +18,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.services.LinkFactory;
 import org.apache.tapestry.internal.services.PersistentFieldManager;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.runtime.Component;
@@ -31,19 +31,19 @@ import java.util.Locale;
 
 public class PageImpl implements Page
 {
-    private final String _logicalPageName;
+    private final String logicalPageName;
 
-    private final Locale _locale;
+    private final Locale locale;
 
-    private final LinkFactory _linkFactory;
+    private final LinkFactory linkFactory;
 
-    private final PersistentFieldManager _persistentFieldManager;
+    private final PersistentFieldManager persistentFieldManager;
 
-    private ComponentPageElement _rootElement;
+    private ComponentPageElement rootElement;
 
-    private final List<PageLifecycleListener> _listeners = newList();
+    private final List<PageLifecycleListener> listeners = CollectionFactory.newList();
 
-    private int _dirtyCount;
+    private int dirtyCount;
 
     /**
      * Obtained from the {@link org.apache.tapestry.internal.services.PersistentFieldManager} when first needed,
@@ -54,16 +54,16 @@ public class PageImpl implements Page
     public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
                     PersistentFieldManager persistentFieldManager)
     {
-        _logicalPageName = logicalPageName;
-        _locale = locale;
-        _linkFactory = linkFactory;
-        _persistentFieldManager = persistentFieldManager;
+        this.logicalPageName = logicalPageName;
+        this.locale = locale;
+        this.linkFactory = linkFactory;
+        this.persistentFieldManager = persistentFieldManager;
     }
 
     @Override
     public String toString()
     {
-        return String.format("Page[%s %s]", _logicalPageName, _locale);
+        return String.format("Page[%s %s]", logicalPageName, locale);
     }
 
     public ComponentPageElement getComponentElementByNestedId(String nestedId)
@@ -74,7 +74,7 @@ public class PageImpl implements Page
         // forms are implemented, it may be worthwhile to cache the key to element mapping. I think
         // we're going to do it a lot!
 
-        ComponentPageElement element = _rootElement;
+        ComponentPageElement element = rootElement;
 
         if (InternalUtils.isNonBlank(nestedId))
         {
@@ -87,34 +87,34 @@ public class PageImpl implements Page
 
     public Locale getLocale()
     {
-        return _locale;
+        return locale;
     }
 
     public void setRootElement(ComponentPageElement component)
     {
-        _rootElement = component;
+        rootElement = component;
     }
 
     public ComponentPageElement getRootElement()
     {
-        return _rootElement;
+        return rootElement;
     }
 
     public Component getRootComponent()
     {
-        return _rootElement.getComponent();
+        return rootElement.getComponent();
     }
 
     public void addLifecycleListener(PageLifecycleListener listener)
     {
-        _listeners.add(listener);
+        listeners.add(listener);
     }
 
     public boolean detached()
     {
-        boolean result = _dirtyCount > 0;
+        boolean result = dirtyCount > 0;
 
-        for (PageLifecycleListener listener : _listeners)
+        for (PageLifecycleListener listener : listeners)
         {
             try
             {
@@ -134,62 +134,62 @@ public class PageImpl implements Page
 
     public void loaded()
     {
-        for (PageLifecycleListener listener : _listeners)
+        for (PageLifecycleListener listener : listeners)
             listener.containingPageDidLoad();
     }
 
     public void attached()
     {
-        if (_dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
+        if (dirtyCount != 0) throw new IllegalStateException(StructureMessages.pageIsDirty(this));
 
-        for (PageLifecycleListener listener : _listeners)
+        for (PageLifecycleListener listener : listeners)
             listener.containingPageDidAttach();
     }
 
     public Logger getLogger()
     {
-        return _rootElement.getLogger();
+        return rootElement.getLogger();
     }
 
     public Link createActionLink(String nestedId, String eventType, boolean forForm, Object... context)
     {
-        return _linkFactory.createActionLink(this, nestedId, eventType, forForm, context);
+        return linkFactory.createActionLink(this, nestedId, eventType, forForm, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return _linkFactory.createPageLink(pageName, override, context);
+        return linkFactory.createPageLink(pageName, override, context);
     }
 
     public void persistFieldChange(ComponentResources resources, String fieldName, Object newValue)
     {
-        _persistentFieldManager.postChange(_logicalPageName, resources, fieldName, newValue);
+        persistentFieldManager.postChange(logicalPageName, resources, fieldName, newValue);
     }
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (_fieldBundle == null) _fieldBundle = _persistentFieldManager.gatherChanges(_logicalPageName);
+        if (_fieldBundle == null) _fieldBundle = persistentFieldManager.gatherChanges(logicalPageName);
 
         return _fieldBundle.getValue(nestedId, fieldName);
     }
 
     public void decrementDirtyCount()
     {
-        _dirtyCount--;
+        dirtyCount--;
     }
 
     public void discardPersistentFieldChanges()
     {
-        _persistentFieldManager.discardChanges(_logicalPageName);
+        persistentFieldManager.discardChanges(logicalPageName);
     }
 
     public void incrementDirtyCount()
     {
-        _dirtyCount++;
+        dirtyCount++;
     }
 
     public String getLogicalName()
     {
-        return _logicalPageName;
+        return logicalPageName;
     }
 }

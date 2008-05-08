@@ -24,32 +24,32 @@ import org.apache.tapestry.runtime.RenderQueue;
  */
 public class ExpansionPageElement implements PageElement
 {
-    private final Binding _binding;
+    private final Binding binding;
 
-    private final boolean _invariant;
+    private final boolean invariant;
 
-    private final TypeCoercer _coercer;
+    private final TypeCoercer coercer;
 
-    private boolean _cached;
+    private boolean cached;
 
-    private String _cachedValue;
+    private String cachedValue;
 
     public ExpansionPageElement(Binding binding, TypeCoercer coercer)
     {
-        _binding = binding;
-        _coercer = coercer;
+        this.binding = binding;
+        this.coercer = coercer;
 
-        _invariant = _binding.isInvariant();
+        invariant = this.binding.isInvariant();
     }
 
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        String value = _cached ? _cachedValue : _coercer.coerce(_binding.get(), String.class);
+        String value = cached ? cachedValue : coercer.coerce(binding.get(), String.class);
 
-        if (_invariant && !_cached)
+        if (invariant && !cached)
         {
-            _cachedValue = value;
-            _cached = true;
+            cachedValue = value;
+            cached = true;
         }
 
         writer.write(value);
@@ -58,6 +58,6 @@ public class ExpansionPageElement implements PageElement
     @Override
     public String toString()
     {
-        return String.format("Expansion[%s]", _binding.toString());
+        return String.format("Expansion[%s]", binding.toString());
     }
 }

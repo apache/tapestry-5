@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.PersistentFieldBundle;
 import org.apache.tapestry.services.PersistentFieldChange;
 
@@ -26,7 +26,7 @@ public class PersistentFieldBundleImpl implements PersistentFieldBundle
     /**
      * Keyed on componentId + fieldName.
      */
-    private final Map<String, Object> _values = newMap();
+    private final Map<String, Object> values = CollectionFactory.newMap();
 
     public PersistentFieldBundleImpl(Collection<PersistentFieldChange> changes)
     {
@@ -34,7 +34,7 @@ public class PersistentFieldBundleImpl implements PersistentFieldBundle
         {
             String key = buildKey(change.getComponentId(), change.getFieldName());
 
-            _values.put(key, change.getValue());
+            values.put(key, change.getValue());
         }
     }
 
@@ -52,14 +52,14 @@ public class PersistentFieldBundleImpl implements PersistentFieldBundle
     {
         String key = buildKey(componentId, fieldName);
 
-        return _values.containsKey(key);
+        return values.containsKey(key);
     }
 
     public Object getValue(String componentId, String fieldName)
     {
         String key = buildKey(componentId, fieldName);
 
-        return _values.get(key);
+        return values.get(key);
     }
 
 }

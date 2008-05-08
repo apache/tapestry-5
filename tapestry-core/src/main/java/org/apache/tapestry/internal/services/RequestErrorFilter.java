@@ -9,13 +9,13 @@ import java.io.IOException;
  */
 public class RequestErrorFilter implements RequestFilter
 {
-    private final InternalRequestGlobals _internalRequestGlobals;
-    private final RequestExceptionHandler _exceptionHandler;
+    private final InternalRequestGlobals internalRequestGlobals;
+    private final RequestExceptionHandler exceptionHandler;
 
     public RequestErrorFilter(InternalRequestGlobals internalRequestGlobals, RequestExceptionHandler exceptionHandler)
     {
-        _internalRequestGlobals = internalRequestGlobals;
-        _exceptionHandler = exceptionHandler;
+        this.internalRequestGlobals = internalRequestGlobals;
+        this.exceptionHandler = exceptionHandler;
     }
 
     public boolean service(Request request, Response response, RequestHandler handler) throws IOException
@@ -36,9 +36,9 @@ public class RequestErrorFilter implements RequestFilter
             // a NoClassDefFoundError with no cause; here we're trying to link the cause back in.
             // TAPESTRY-2078
 
-            Throwable exceptionToReport = attachNewCause(ex, _internalRequestGlobals.getClassLoaderException());
+            Throwable exceptionToReport = attachNewCause(ex, internalRequestGlobals.getClassLoaderException());
 
-            _exceptionHandler.handleRequestException(exceptionToReport);
+            exceptionHandler.handleRequestException(exceptionToReport);
 
             // We assume a reponse has been sent and there's no need to handle the request
             // further.

@@ -21,16 +21,16 @@ import org.apache.tapestry.ioc.annotations.Scope;
 @Scope(PERTHREAD_SCOPE)
 public class InternalRequestGlobalsImpl implements InternalRequestGlobals
 {
-    private Throwable _classLoaderException;
+    private Throwable classLoaderException;
 
     public Throwable getClassLoaderException()
     {
-        return _classLoaderException;
+        return classLoaderException;
     }
 
     public void storeClassLoaderException(Throwable classLoaderException)
     {
-        if (_classLoaderException == null)
-            _classLoaderException = classLoaderException;
+        if (this.classLoaderException == null)
+            this.classLoaderException = classLoaderException;
     }
 }

@@ -26,40 +26,40 @@ import java.util.Map;
 
 public class PageResourcesSourceImpl implements PageResourcesSource
 {
-    private final Map<Locale, PageResources> _cache = CollectionFactory.newConcurrentMap();
+    private final Map<Locale, PageResources> cache = CollectionFactory.newConcurrentMap();
 
-    private final ComponentMessagesSource _componentMessagesSource;
+    private final ComponentMessagesSource componentMessagesSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final ComponentClassCache _componentClassCache;
+    private final ComponentClassCache componentClassCache;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
     public PageResourcesSourceImpl(ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
                                    ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder)
     {
-        _componentMessagesSource = componentMessagesSource;
-        _typeCoercer = typeCoercer;
-        _componentClassCache = componentClassCache;
-        _contextValueEncoder = contextValueEncoder;
+        this.componentMessagesSource = componentMessagesSource;
+        this.typeCoercer = typeCoercer;
+        this.componentClassCache = componentClassCache;
+        this.contextValueEncoder = contextValueEncoder;
     }
 
     public PageResources get(Locale locale)
     {
         Defense.notNull(locale, "locale");
 
-        PageResources result = _cache.get(locale);
+        PageResources result = cache.get(locale);
 
         if (result == null)
         {
-            result = new PageResourcesImpl(locale, _componentMessagesSource, _typeCoercer, _componentClassCache,
-                                           _contextValueEncoder);
+            result = new PageResourcesImpl(locale, componentMessagesSource, typeCoercer, componentClassCache,
+                                           contextValueEncoder);
 
             // Small race condition here, where we may create two instances of PRI for the same locale,
             // but that's not worth worrying about.
 
-            _cache.put(locale, result);
+            cache.put(locale, result);
         }
 
         return result;

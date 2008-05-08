@@ -41,18 +41,21 @@ import javax.servlet.http.Cookie;
 @Marker(Core.class)
 public class InternalModule
 {
-    private final UpdateListenerHub _updateListenerHub;
-    private final ComponentInstantiatorSource _componentInstantiatorSource;
-    private final ComponentTemplateSource _componentTemplateSource;
-    private final RequestGlobals _requestGlobals;
+    private final UpdateListenerHub updateListenerHub;
+
+    private final ComponentInstantiatorSource componentInstantiatorSource;
+
+    private final ComponentTemplateSource componentTemplateSource;
+
+    private final RequestGlobals requestGlobals;
 
     public InternalModule(UpdateListenerHub updateListenerHub, ComponentInstantiatorSource componentInstantiatorSource,
                           ComponentTemplateSource componentTemplateSource, RequestGlobals requestGlobals)
     {
-        _updateListenerHub = updateListenerHub;
-        _componentInstantiatorSource = componentInstantiatorSource;
-        _componentTemplateSource = componentTemplateSource;
-        _requestGlobals = requestGlobals;
+        this.updateListenerHub = updateListenerHub;
+        this.componentInstantiatorSource = componentInstantiatorSource;
+        this.componentTemplateSource = componentTemplateSource;
+        this.requestGlobals = requestGlobals;
     }
 
 
@@ -127,7 +130,7 @@ public class InternalModule
         ComponentInstantiatorSourceImpl source = new ComponentInstantiatorSourceImpl(logger, classFactory
                 .getClassLoader(), transformer, internalRequestGlobals);
 
-        _updateListenerHub.addUpdateListener(source);
+        updateListenerHub.addUpdateListener(source);
 
         return source;
     }
@@ -136,7 +139,7 @@ public class InternalModule
     {
         ComponentClassTransformerImpl transformer = resources.autobuild(ComponentClassTransformerImpl.class);
 
-        _componentInstantiatorSource.addInvalidationListener(transformer);
+        componentInstantiatorSource.addInvalidationListener(transformer);
 
         return transformer;
     }
@@ -156,11 +159,11 @@ public class InternalModule
 
         // ... and this covers invalidations due to changes to templates
 
-        _componentTemplateSource.addInvalidationListener(service);
+        componentTemplateSource.addInvalidationListener(service);
 
         // Give the service a chance to clean up its own cache periodically as well
 
-        _updateListenerHub.addUpdateListener(service);
+        updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -169,7 +172,7 @@ public class InternalModule
     {
         ComponentClassCacheImpl service = new ComponentClassCacheImpl(classFactory);
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -181,7 +184,7 @@ public class InternalModule
 
             public Cookie[] getCookies()
             {
-                return _requestGlobals.getHTTPServletRequest().getCookies();
+                return requestGlobals.getHTTPServletRequest().getCookies();
             }
         };
     }
@@ -194,7 +197,7 @@ public class InternalModule
 
             public void addCookie(Cookie cookie)
             {
-                _requestGlobals.getHTTPServletResponse().addCookie(cookie);
+                requestGlobals.getHTTPServletResponse().addCookie(cookie);
             }
 
         };
@@ -204,7 +207,7 @@ public class InternalModule
     {
         ResourceCacheImpl service = new ResourceCacheImpl(digestGenerator);
 
-        _updateListenerHub.addUpdateListener(service);
+        updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -214,7 +217,7 @@ public class InternalModule
     {
         ComponentTemplateSourceImpl service = new ComponentTemplateSourceImpl(parser, locator);
 
-        _updateListenerHub.addUpdateListener(service);
+        updateListenerHub.addUpdateListener(service);
 
         return service;
     }
@@ -226,7 +229,7 @@ public class InternalModule
         // Recieve invalidations when the class loader is discarded (due to a component class
         // change). The notification is forwarded to the page loader's listeners.
 
-        _componentInstantiatorSource.addInvalidationListener(service);
+        componentInstantiatorSource.addInvalidationListener(service);
 
         return service;
     }
@@ -234,7 +237,7 @@ public class InternalModule
     @Marker(ComponentLayer.class)
     public CtClassSource buildCtClassSource(PropertyShadowBuilder builder)
     {
-        return builder.build(_componentInstantiatorSource, "classSource", CtClassSource.class);
+        return builder.build(componentInstantiatorSource, "classSource", CtClassSource.class);
     }
 
 }

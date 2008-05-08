@@ -28,11 +28,11 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
 {
     private static final int BUFFER_SIZE = 5000;
 
-    private final Response _response;
+    private final Response response;
 
     public StreamResponseResultProcessor(Response response)
     {
-        _response = response;
+        this.response = response;
     }
 
     public void processResultValue(StreamResponse streamResponse)
@@ -41,13 +41,13 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
         OutputStream os = null;
         InputStream is = null;
 
-        streamResponse.prepareResponse(_response);
+        streamResponse.prepareResponse(response);
 
         try
         {
             is = new BufferedInputStream(streamResponse.getStream());
 
-            os = _response.getOutputStream(streamResponse.getContentType());
+            os = response.getOutputStream(streamResponse.getContentType());
 
             byte[] buffer = new byte[BUFFER_SIZE];
 

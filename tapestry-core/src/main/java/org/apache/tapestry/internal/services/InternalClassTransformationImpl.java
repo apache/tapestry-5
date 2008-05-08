@@ -49,78 +49,80 @@ import java.util.*;
  */
 public final class InternalClassTransformationImpl implements InternalClassTransformation
 {
-    private boolean _frozen;
+    private static final int INIT_BUFFER_SIZE = 100;
 
-    private final CtClass _ctClass;
+    private boolean frozen;
 
-    private final Logger _logger;
+    private final CtClass ctClass;
 
-    private final InternalClassTransformation _parentTransformation;
+    private final Logger logger;
 
-    private ClassPool _classPool;
+    private final InternalClassTransformation parentTransformation;
 
-    private final IdAllocator _idAllocator;
+    private final ClassPool classPool;
+
+    private final IdAllocator idAllocator;
 
     /**
      * Map, keyed on InjectKey, of field name.
      */
-    private final Map<MultiKey, String> _injectionCache = newMap();
+    private final Map<MultiKey, String> injectionCache = newMap();
 
     /**
      * Map from a field to the annotation objects for that field.
      */
-    private Map<String, List<Annotation>> _fieldAnnotations = newMap();
+    private Map<String, List<Annotation>> fieldAnnotations = newMap();
 
     /**
      * Used to identify fields that have been "claimed" by other annotations.
      */
-    private Map<String, Object> _claimedFields = newMap();
+    private Map<String, Object> claimedFields = newMap();
 
-    private Set<String> _addedFieldNames = newSet();
+    private Set<String> addedFieldNames = newSet();
 
-    private Set<CtBehavior> _addedMethods = newSet();
+    private Set<CtBehavior> addedMethods = newSet();
 
     // Cache of class annotations
 
-    private List<Annotation> _classAnnotations;
+    private List<Annotation> classAnnotations;
 
     // Cache of method annotations
 
-    private Map<CtMethod, List<Annotation>> _methodAnnotations = newMap();
+    private Map<CtMethod, List<Annotation>> methodAnnotations = newMap();
 
-    private Map<CtMethod, TransformMethodSignature> _methodSignatures = newMap();
+    private Map<CtMethod, TransformMethodSignature> methodSignatures = newMap();
 
-    private Map<TransformMethodSignature, InvocationBuilder> _methodToInvocationBuilder = CollectionFactory.newMap();
-
-    // Key is field name, value is expression used to replace read access
-
-    private Map<String, String> _fieldReadTransforms;
+    private Map<TransformMethodSignature, InvocationBuilder> methodToInvocationBuilder = CollectionFactory.newMap();
 
     // Key is field name, value is expression used to replace read access
-    private Map<String, String> _fieldWriteTransforms;
 
-    private Set<String> _removedFieldNames;
+    private Map<String, String> fieldReadTransforms;
+
+    // Key is field name, value is expression used to replace read access
+    private Map<String, String> fieldWriteTransforms;
+
+    private Set<String> removedFieldNames;
 
     /**
      * Contains the assembled Javassist code for the class' default constructor.
      */
-    private StringBuilder _constructor = new StringBuilder();
+    private StringBuilder constructor = new StringBuilder(INIT_BUFFER_SIZE);
 
-    private final List<ConstructorArg> _constructorArgs;
+    private final List<ConstructorArg> constructorArgs;
 
-    private final ComponentModel _componentModel;
+    private final ComponentModel componentModel;
 
-    private final String _resourcesFieldName;
+    private final String resourcesFieldName;
 
-    private final StringBuilder _description = new StringBuilder();
+    private final StringBuilder description = new StringBuilder(INIT_BUFFER_SIZE);
 
-    private Formatter _formatter = new Formatter(_description);
+    private Formatter formatter = new Formatter(description);
 
-    private final ClassFactory _classFactory;
+    private final ClassFactory classFactory;
 
-    private final ComponentClassCache _componentClassCache;
+    private final ComponentClassCache componentClassCache;
 
-    private final CtClassSource _classSource;
+    private final CtClassSource classSource;
 
     /**
      * Signature for newInstance() method of Instantiator.
@@ -160,32 +162,32 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                                            ComponentClassCache componentClassCache,
                                            ComponentModel componentModel, CtClassSource classSource)
     {
-        _ctClass = ctClass;
-        _componentClassCache = componentClassCache;
-        _classSource = classSource;
-        _classPool = _ctClass.getClassPool();
-        _classFactory = classFactory;
-        _parentTransformation = null;
-        _componentModel = componentModel;
+        this.ctClass = ctClass;
+        this.componentClassCache = componentClassCache;
+        this.classSource = classSource;
+        classPool = this.ctClass.getClassPool();
+        this.classFactory = classFactory;
+        parentTransformation = null;
+        this.componentModel = componentModel;
 
-        _idAllocator = new IdAllocator();
+        idAllocator = new IdAllocator();
 
-        _logger = componentModel.getLogger();
+        logger = componentModel.getLogger();
 
         preloadMemberNames();
 
-        _constructorArgs = newList();
-        _constructor.append("{\n");
+        constructorArgs = newList();
+        constructor.append("{\n");
 
         addImplementedInterface(Component.class);
 
-        _resourcesFieldName = addInjectedFieldUncached(InternalComponentResources.class, "resources", null);
+        resourcesFieldName = addInjectedFieldUncached(InternalComponentResources.class, "resources", null);
 
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PUBLIC | Modifier.FINAL,
                                                                     ComponentResources.class.getName(),
                                                                     "getComponentResources", null, null);
 
-        addMethod(sig, "return " + _resourcesFieldName + ";");
+        addMethod(sig, "return " + resourcesFieldName + ";");
 
         // The "}" will be added later, inside  finish().
     }
@@ -198,79 +200,77 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                                             ComponentClassCache componentClassCache,
                                             ComponentModel componentModel)
     {
-        _ctClass = ctClass;
-        _componentClassCache = componentClassCache;
-        _classSource = classSource;
-        _classPool = _ctClass.getClassPool();
-        _classFactory = classFactory;
-        _logger = componentModel.getLogger();
-        _parentTransformation = parentTransformation;
-        _componentModel = componentModel;
+        this.ctClass = ctClass;
+        this.componentClassCache = componentClassCache;
+        this.classSource = classSource;
+        classPool = this.ctClass.getClassPool();
+        this.classFactory = classFactory;
+        logger = componentModel.getLogger();
+        this.parentTransformation = parentTransformation;
+        this.componentModel = componentModel;
 
-        _resourcesFieldName = parentTransformation.getResourcesFieldName();
+        resourcesFieldName = parentTransformation.getResourcesFieldName();
 
-        _idAllocator = parentTransformation.getIdAllocator();
+        idAllocator = parentTransformation.getIdAllocator();
 
         preloadMemberNames();
 
-        _constructorArgs = parentTransformation.getConstructorArgs();
+        constructorArgs = parentTransformation.getConstructorArgs();
 
-        int count = _constructorArgs.size();
+        int count = constructorArgs.size();
 
         // Build the call to the super-constructor.
 
-        _constructor.append("{ super(");
+        constructor.append("{ super(");
 
         for (int i = 1; i <= count; i++)
         {
-            if (i > 1) _constructor.append(", ");
+            if (i > 1) constructor.append(", ");
 
             // $0 is implicitly self, so the 0-index ConstructorArg will be Javassisst
             // pseudeo-variable $1, and so forth.
 
-            _constructor.append("$");
-            _constructor.append(i);
+            constructor.append("$");
+            constructor.append(i);
         }
 
-        _constructor.append(");\n");
+        constructor.append(");\n");
 
         // The "}" will be added later, inside  finish().
     }
 
     public InternalClassTransformation createChildTransformation(CtClass childClass, MutableComponentModel childModel)
     {
-        return new InternalClassTransformationImpl(childClass, this, _classFactory, _classSource, _componentClassCache,
+        return new InternalClassTransformationImpl(childClass, this, classFactory, classSource, componentClassCache,
                                                    childModel
         );
     }
 
     private void freeze()
     {
-        _frozen = true;
+        frozen = true;
 
         // Free up stuff we don't need after freezing.
         // Everything else should be final.
 
-        _fieldAnnotations = null;
-        _claimedFields = null;
-        _addedFieldNames = null;
-        _addedMethods = null;
-        _classAnnotations = null;
-        _methodAnnotations = null;
-        _methodSignatures = null;
-        _fieldReadTransforms = null;
-        _fieldWriteTransforms = null;
-        _removedFieldNames = null;
-        _constructor = null;
-        _formatter = null;
-        // _ctClass = null; -- needed by toString()
-        _classPool = null;
-        _methodToInvocationBuilder = null;
+        fieldAnnotations = null;
+        claimedFields = null;
+        addedFieldNames = null;
+        addedMethods = null;
+        classAnnotations = null;
+        methodAnnotations = null;
+        methodSignatures = null;
+        fieldReadTransforms = null;
+        fieldWriteTransforms = null;
+        removedFieldNames = null;
+        constructor = null;
+        formatter = null;
+        methodToInvocationBuilder = null;
     }
 
     public String getResourcesFieldName()
     {
-        return _resourcesFieldName;
+        return resourcesFieldName;
     }
 
     /**
@@ -279,19 +279,19 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void preloadMemberNames()
     {
-        addMemberNames(_ctClass.getDeclaredFields());
-        addMemberNames(_ctClass.getDeclaredMethods());
+        addMemberNames(ctClass.getDeclaredFields());
+        addMemberNames(ctClass.getDeclaredMethods());
     }
 
     void verifyFields()
     {
         List<String> names = newList();
 
-        for (CtField field : _ctClass.getDeclaredFields())
+        for (CtField field : ctClass.getDeclaredFields())
         {
             String name = field.getName();
 
-            if (_addedFieldNames.contains(name)) continue;
+            if (addedFieldNames.contains(name)) continue;
 
             int modifiers = field.getModifiers();
 
@@ -320,7 +320,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         for (CtMember member : members)
         {
-            _idAllocator.allocateId(member.getName());
+            idAllocator.allocateId(member.getName());
         }
     }
 
@@ -339,7 +339,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         CtMethod method = findMethod(signature);
 
-        if (method == null) throw new IllegalArgumentException(ServicesMessages.noDeclaredMethod(_ctClass, signature));
+        if (method == null) throw new IllegalArgumentException(ServicesMessages.noDeclaredMethod(ctClass, signature));
 
         List<Annotation> annotations = findMethodAnnotations(method);
 
@@ -372,12 +372,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private List<Annotation> findFieldAnnotations(String fieldName)
     {
-        List<Annotation> annotations = _fieldAnnotations.get(fieldName);
+        List<Annotation> annotations = fieldAnnotations.get(fieldName);
 
         if (annotations == null)
         {
             annotations = findAnnotationsForField(fieldName);
-            _fieldAnnotations.put(fieldName, annotations);
+            fieldAnnotations.put(fieldName, annotations);
         }
 
         return annotations;
@@ -385,13 +385,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private List<Annotation> findMethodAnnotations(CtMethod method)
     {
-        List<Annotation> annotations = _methodAnnotations.get(method);
+        List<Annotation> annotations = methodAnnotations.get(method);
 
         if (annotations == null)
         {
             annotations = extractAnnotations(method);
 
-            _methodAnnotations.put(method, annotations);
+            methodAnnotations.put(method, annotations);
         }
 
         return annotations;
@@ -433,11 +433,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         try
         {
-            return _ctClass.getDeclaredField(fieldName);
+            return ctClass.getDeclaredField(fieldName);
         }
         catch (NotFoundException ex)
         {
-            throw new RuntimeException(ServicesMessages.missingDeclaredField(_ctClass, fieldName), ex);
+            throw new RuntimeException(ServicesMessages.missingDeclaredField(ctClass, fieldName), ex);
         }
     }
 
@@ -447,7 +447,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String memberName = InternalUtils.createMemberName(notBlank(suggested, "suggested"));
 
-        return _idAllocator.allocateId(memberName);
+        return idAllocator.allocateId(memberName);
     }
 
     public String newMemberName(String prefix, String baseName)
@@ -463,13 +463,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            CtClass ctInterface = _classPool.get(interfaceName);
+            CtClass ctInterface = classPool.get(interfaceName);
 
             if (classImplementsInterface(ctInterface)) return;
 
             implementDefaultMethodsForInterface(ctInterface);
 
-            _ctClass.addInterface(ctInterface);
+            ctClass.addInterface(ctInterface);
 
         }
         catch (NotFoundException ex)
@@ -515,7 +515,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            CtMethod newMethod = CtNewMethod.copy(method, _ctClass, null);
+            CtMethod newMethod = CtNewMethod.copy(method, ctClass, null);
 
             // Methods from interfaces are always public. We definitely
             // need to change the modifiers of the method so that
@@ -528,7 +528,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             newMethod.setBody(null);
 
-            _ctClass.addMethod(newMethod);
+            ctClass.addMethod(newMethod);
 
             TransformMethodSignature sig = getMethodSignature(newMethod);
 
@@ -536,7 +536,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         }
         catch (CannotCompileException ex)
         {
-            throw new RuntimeException(ServicesMessages.errorAddingMethod(_ctClass, method
+            throw new RuntimeException(ServicesMessages.errorAddingMethod(ctClass, method
                     .getName(), ex), ex);
         }
 
@@ -551,7 +551,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     private boolean classImplementsInterface(CtClass ctInterface) throws NotFoundException
     {
 
-        for (CtClass current = _ctClass; current != null; current = current.getSuperclass())
+        for (CtClass current = ctClass; current != null; current = current.getSuperclass())
         {
             for (CtClass anInterface : current.getInterfaces())
             {
@@ -569,18 +569,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         failIfFrozen();
 
-        Object existing = _claimedFields.get(fieldName);
+        Object existing = claimedFields.get(fieldName);
 
         if (existing != null)
         {
-            String message = ServicesMessages.fieldAlreadyClaimed(fieldName, _ctClass, existing, tag);
+            String message = ServicesMessages.fieldAlreadyClaimed(fieldName, ctClass, existing, tag);
 
             throw new RuntimeException(message);
         }
 
         // TODO: Ensure that fieldName is a known field?
 
-        _claimedFields.put(fieldName, tag);
+        claimedFields.put(fieldName, tag);
     }
 
     public void addMethod(TransformMethodSignature signature, String methodBody)
@@ -602,13 +602,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            CtMethod existing = _ctClass.getDeclaredMethod(signature.getMethodName(), parameters);
+            CtMethod existing = ctClass.getDeclaredMethod(signature.getMethodName(), parameters);
 
             if (existing != null)
             {
                 action = "replace" + suffix;
 
-                _ctClass.removeMethod(existing);
+                ctClass.removeMethod(existing);
             }
         }
         catch (NotFoundException ex)
@@ -622,7 +622,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         try
         {
 
-            CtMethod method = new CtMethod(returnType, signature.getMethodName(), parameters, _ctClass);
+            CtMethod method = new CtMethod(returnType, signature.getMethodName(), parameters, ctClass);
 
             // TODO: Check for duplicate method add
 
@@ -631,9 +631,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             method.setBody(methodBody);
             method.setExceptionTypes(exceptions);
 
-            _ctClass.addMethod(method);
+            ctClass.addMethod(method);
 
-            if (addAsNew) _addedMethods.add(method);
+            if (addAsNew) addedMethods.add(method);
         }
         catch (CannotCompileException ex)
         {
@@ -667,7 +667,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         try
         {
-            return _classPool.get(type);
+            return classPool.get(type);
         }
         catch (NotFoundException ex)
         {
@@ -693,7 +693,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addMethodToDescription("extend", methodSignature, methodBody);
 
-        _addedMethods.add(method);
+        addedMethods.add(method);
     }
 
     public void extendExistingMethod(TransformMethodSignature methodSignature, String methodBody)
@@ -726,7 +726,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            CtMethod method = new CtMethod(returnType, newMethodName, parameters, _ctClass);
+            CtMethod method = new CtMethod(returnType, newMethodName, parameters, ctClass);
 
             method.setModifiers(modifiers);
 
@@ -734,7 +734,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
             method.setBody(source, null);
 
-            _ctClass.addMethod(method);
+            ctClass.addMethod(method);
 
         }
         catch (CannotCompileException ex)
@@ -751,7 +751,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // The new method is *not* considered an added method, so field references inside the method
         // will be transformed.
 
-        _formatter.format("\n%s renamed to %s\n\n", sourceMethod, newMethodName);
+        formatter.format("\n%s renamed to %s\n\n", sourceMethod, newMethodName);
     }
 
     public void addCatch(TransformMethodSignature methodSignature, String exceptionType, String body)
@@ -796,29 +796,29 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void addMethodToDescription(String operation, TransformMethodSignature methodSignature, String methodBody)
     {
-        _formatter.format("%s method: %s %s %s(", operation, Modifier.toString(methodSignature
+        formatter.format("%s method: %s %s %s(", operation, Modifier.toString(methodSignature
                 .getModifiers()), methodSignature.getReturnType(), methodSignature.getMethodName());
 
         String[] parameterTypes = methodSignature.getParameterTypes();
         for (int i = 0; i < parameterTypes.length; i++)
         {
-            if (i > 0) _description.append(", ");
+            if (i > 0) description.append(", ");
 
-            _formatter.format("%s $%d", parameterTypes[i], i + 1);
+            formatter.format("%s $%d", parameterTypes[i], i + 1);
         }
 
-        _description.append(")");
+        description.append(")");
 
         String[] exceptionTypes = methodSignature.getExceptionTypes();
         for (int i = 0; i < exceptionTypes.length; i++)
         {
-            if (i == 0) _description.append("\n  throws ");
-            else _description.append(", ");
+            if (i == 0) description.append("\n  throws ");
+            else description.append(", ");
 
-            _description.append(exceptionTypes[i]);
+            description.append(exceptionTypes[i]);
         }
 
-        _formatter.format("\n%s\n\n", methodBody);
+        formatter.format("\n%s\n\n", methodBody);
     }
 
     private CtMethod findMethod(TransformMethodSignature methodSignature)
@@ -831,12 +831,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         if (result != null) return result;
 
-        throw new IllegalArgumentException(ServicesMessages.noDeclaredMethod(_ctClass, methodSignature));
+        throw new IllegalArgumentException(ServicesMessages.noDeclaredMethod(ctClass, methodSignature));
     }
 
     private CtMethod findDeclaredMethod(TransformMethodSignature methodSignature)
     {
-        for (CtMethod method : _ctClass.getDeclaredMethods())
+        for (CtMethod method : ctClass.getDeclaredMethods())
         {
             if (match(method, methodSignature)) return method;
         }
@@ -848,7 +848,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         try
         {
-            for (CtClass current = _ctClass; current != null; current = current.getSuperclass())
+            for (CtClass current = ctClass; current != null; current = current.getSuperclass())
             {
                 for (CtMethod method : current.getDeclaredMethods())
                 {
@@ -857,8 +857,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                         // TODO: If the moethod is not overridable (i.e. private, or final)?
                         // Perhaps we should limit it to just public methods.
 
-                        CtMethod newMethod = CtNewMethod.delegator(method, _ctClass);
-                        _ctClass.addMethod(newMethod);
+                        CtMethod newMethod = CtNewMethod.delegator(method, ctClass);
+                        ctClass.addMethod(newMethod);
 
                         return newMethod;
                     }
@@ -951,13 +951,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            for (CtField field : _ctClass.getDeclaredFields())
+            for (CtField field : ctClass.getDeclaredFields())
             {
                 if (!isInstanceField(field)) continue;
 
                 String fieldName = field.getName();
 
-                if (skipClaimedFields && _claimedFields.containsKey(fieldName)) continue;
+                if (skipClaimedFields && claimedFields.containsKey(fieldName)) continue;
 
                 if (filter.accept(fieldName, field.getType().getName())) result.add(fieldName);
 
@@ -979,7 +979,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         List<TransformMethodSignature> result = newList();
 
-        for (CtMethod method : _ctClass.getDeclaredMethods())
+        for (CtMethod method : ctClass.getDeclaredMethods())
         {
             List<Annotation> annotations = findMethodAnnotations(method);
 
@@ -1001,7 +1001,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         List<TransformMethodSignature> result = newList();
 
-        for (CtMethod method : _ctClass.getDeclaredMethods())
+        for (CtMethod method : ctClass.getDeclaredMethods())
         {
             TransformMethodSignature sig = getMethodSignature(method);
 
@@ -1015,7 +1015,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private TransformMethodSignature getMethodSignature(CtMethod method)
     {
-        TransformMethodSignature result = _methodSignatures.get(method);
+        TransformMethodSignature result = methodSignatures.get(method);
         if (result == null)
         {
             try
@@ -1027,7 +1027,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 result = new TransformMethodSignature(method.getModifiers(), type, method.getName(), parameters,
                                                       exceptions);
 
-                _methodSignatures.put(method, result);
+                methodSignatures.put(method, result);
             }
             catch (NotFoundException ex)
             {
@@ -1056,12 +1056,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         Set<String> skipped = newSet();
 
-        skipped.addAll(_claimedFields.keySet());
-        skipped.addAll(_addedFieldNames);
+        skipped.addAll(claimedFields.keySet());
+        skipped.addAll(addedFieldNames);
 
-        if (_removedFieldNames != null) skipped.addAll(_removedFieldNames);
+        if (removedFieldNames != null) skipped.addAll(removedFieldNames);
 
-        for (CtField field : _ctClass.getDeclaredFields())
+        for (CtField field : ctClass.getDeclaredFields())
         {
             if (!isInstanceField(field)) continue;
 
@@ -1101,7 +1101,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            CtField field = _ctClass.getDeclaredField(fieldName);
+            CtField field = ctClass.getDeclaredField(fieldName);
 
             return isInstanceField(field);
         }
@@ -1117,7 +1117,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            return _ctClass.getDeclaredField(fieldName).getModifiers();
+            return ctClass.getDeclaredField(fieldName).getModifiers();
         }
         catch (NotFoundException ex)
         {
@@ -1129,7 +1129,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
     {
         try
         {
-            CtField field = _ctClass.getDeclaredField(fieldName);
+            CtField field = ctClass.getDeclaredField(fieldName);
 
             return field.getType();
         }
@@ -1149,10 +1149,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             CtClass ctType = convertNameToCtType(type);
 
-            CtField field = new CtField(ctType, fieldName, _ctClass);
+            CtField field = new CtField(ctType, fieldName, ctClass);
             field.setModifiers(modifiers);
 
-            _ctClass.addField(field);
+            ctClass.addField(field);
         }
         catch (NotFoundException ex)
         {
@@ -1163,10 +1163,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
             throw new RuntimeException(ex);
         }
 
-        _formatter
+        formatter
                 .format("add field: %s %s %s;\n\n", Modifier.toString(modifiers), type, fieldName);
 
-        _addedFieldNames.add(fieldName);
+        addedFieldNames.add(fieldName);
 
         return fieldName;
     }
@@ -1189,7 +1189,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         // Remember the injection in-case this class, or a subclass, injects the value again.
 
-        _injectionCache.put(key, fieldName);
+        injectionCache.put(key, fieldName);
 
         return fieldName;
     }
@@ -1205,7 +1205,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            ctType = _classPool.get(type.getName());
+            ctType = classPool.get(type.getName());
         }
         catch (NotFoundException ex)
         {
@@ -1216,18 +1216,18 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         addInjectToConstructor(fieldName, ctType, value);
 
-        _addedFieldNames.add(fieldName);
+        addedFieldNames.add(fieldName);
 
         return fieldName;
     }
 
     public String searchForPreviousInjection(MultiKey key)
     {
-        String result = _injectionCache.get(key);
+        String result = injectionCache.get(key);
 
         if (result != null) return result;
 
-        if (_parentTransformation != null) return _parentTransformation.searchForPreviousInjection(key);
+        if (parentTransformation != null) return parentTransformation.searchForPreviousInjection(key);
 
         return null;
     }
@@ -1237,12 +1237,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         Defense.notNull(methodSignature, "methodSignature");
         Defense.notNull(advice, "advice");
 
-        InvocationBuilder builder = _methodToInvocationBuilder.get(methodSignature);
+        InvocationBuilder builder = methodToInvocationBuilder.get(methodSignature);
 
         if (builder == null)
         {
-            builder = new InvocationBuilder(this, _componentClassCache, methodSignature, _classSource);
-            _methodToInvocationBuilder.put(methodSignature, builder);
+            builder = new InvocationBuilder(this, componentClassCache, methodSignature, classSource);
+            methodToInvocationBuilder.put(methodSignature, builder);
         }
 
         builder.addAdvice(advice);
@@ -1257,9 +1257,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
      */
     private void addInjectToConstructor(String fieldName, CtClass fieldType, Object value)
     {
-        _constructorArgs.add(new ConstructorArg(fieldType, value));
+        constructorArgs.add(new ConstructorArg(fieldType, value));
 
-        extendConstructor(format("  %s = $%d;", fieldName, _constructorArgs.size()));
+        extendConstructor(format("  %s = $%d;", fieldName, constructorArgs.size()));
     }
 
     public void injectField(String fieldName, Object value)
@@ -1277,14 +1277,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private CtClass convertNameToCtType(String type) throws NotFoundException
     {
-        return _classPool.get(type);
+        return classPool.get(type);
     }
 
     public void finish()
     {
         failIfFrozen();
 
-        for (InvocationBuilder builder : _methodToInvocationBuilder.values())
+        for (InvocationBuilder builder : methodToInvocationBuilder.values())
         {
             builder.commit();
         }
@@ -1300,30 +1300,30 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void addConstructor()
     {
-        String initializer = _idAllocator.allocateId("initializer");
+        String initializer = idAllocator.allocateId("initializer");
 
         try
         {
-            CtConstructor defaultConstructor = _ctClass.getConstructor("()V");
+            CtConstructor defaultConstructor = ctClass.getConstructor("()V");
 
-            CtMethod initializerMethod = defaultConstructor.toMethod(initializer, _ctClass);
+            CtMethod initializerMethod = defaultConstructor.toMethod(initializer, ctClass);
 
-            _ctClass.addMethod(initializerMethod);
+            ctClass.addMethod(initializerMethod);
         }
         catch (Exception ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _formatter.format("convert default constructor: %s();\n\n", initializer);
+        formatter.format("convert default constructor: %s();\n\n", initializer);
 
-        int count = _constructorArgs.size();
+        int count = constructorArgs.size();
 
         CtClass[] types = new CtClass[count];
 
         for (int i = 0; i < count; i++)
         {
-            ConstructorArg arg = _constructorArgs.get(i);
+            ConstructorArg arg = constructorArgs.get(i);
 
             types[i] = arg.type;
         }
@@ -1331,57 +1331,57 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // Add a call to the initializer; the method converted fromt the classes default
         // constructor.
 
-        _constructor.append("  ");
-        _constructor.append(initializer);
+        constructor.append("  ");
+        constructor.append(initializer);
 
         // This finally matches the "{" added inside the constructor
 
-        _constructor.append("();\n\n}");
+        constructor.append("();\n\n}");
 
-        String constructorBody = _constructor.toString();
+        String constructorBody = constructor.toString();
 
         try
         {
-            CtConstructor cons = CtNewConstructor.make(types, null, constructorBody, _ctClass);
-            _ctClass.addConstructor(cons);
+            CtConstructor cons = CtNewConstructor.make(types, null, constructorBody, ctClass);
+            ctClass.addConstructor(cons);
         }
         catch (CannotCompileException ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _formatter.format("add constructor: %s(", _ctClass.getName());
+        formatter.format("add constructor: %s(", ctClass.getName());
 
         for (int i = 0; i < count; i++)
         {
-            if (i > 0) _description.append(", ");
+            if (i > 0) description.append(", ");
 
-            _formatter.format("%s $%d", types[i].getName(), i + 1);
+            formatter.format("%s $%d", types[i].getName(), i + 1);
         }
 
-        _formatter.format(")\n%s\n\n", constructorBody);
+        formatter.format(")\n%s\n\n", constructorBody);
     }
 
     public Instantiator createInstantiator()
     {
-        String componentClassName = _ctClass.getName();
+        String componentClassName = ctClass.getName();
 
         String name = ClassFabUtils.generateClassName("Instantiator");
 
-        ClassFab cf = _classFactory.newClass(name, AbstractInstantiator.class);
+        ClassFab cf = classFactory.newClass(name, AbstractInstantiator.class);
 
         BodyBuilder constructor = new BodyBuilder();
 
-        // This is realy -1 + 2: The first value in _constructorArgs is the InternalComponentResources, which doesn't
+        // This is realy -1 + 2: The first value in constructorArgs is the InternalComponentResources, which doesn't
         // count toward's the Instantiator's constructor ... then we add in the Model and String description.
         // It's tricky because there's the constructor parameters for the Instantiator, most of which are stored
         // in fields and then used as the constructor parameters for the Component.
 
-        Class[] constructorParameterTypes = new Class[_constructorArgs.size() + 1];
-        Object[] constructorParameterValues = new Object[_constructorArgs.size() + 1];
+        Class[] constructorParameterTypes = new Class[constructorArgs.size() + 1];
+        Object[] constructorParameterValues = new Object[constructorArgs.size() + 1];
 
         constructorParameterTypes[0] = ComponentModel.class;
-        constructorParameterValues[0] = _componentModel;
+        constructorParameterValues[0] = componentModel;
 
         constructorParameterTypes[1] = String.class;
         constructorParameterValues[1] = String.format("Instantiator[%s]", componentClassName);
@@ -1399,9 +1399,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // Again, skip the (implicit) InternalComponentResources field, that's
         // supplied to the Instantiator's newInstance() method.
 
-        for (int i = 1; i < _constructorArgs.size(); i++)
+        for (int i = 1; i < constructorArgs.size(); i++)
         {
-            ConstructorArg arg = _constructorArgs.get(i);
+            ConstructorArg arg = constructorArgs.get(i);
 
             CtClass argCtType = arg.type;
             Class argType = toClass(argCtType.getName());
@@ -1454,48 +1454,48 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private void failIfFrozen()
     {
-        if (_frozen) throw new IllegalStateException(
-                "The ClassTransformation instance (for " + _ctClass.getName() + ") has completed all transformations and may not be further modified.");
+        if (frozen) throw new IllegalStateException(
+                "The ClassTransformation instance (for " + ctClass.getName() + ") has completed all transformations and may not be further modified.");
     }
 
     private void failIfNotFrozen()
     {
-        if (!_frozen) throw new IllegalStateException(
-                "The ClassTransformation instance (for " + _ctClass.getName() + ") has not yet completed all transformations.");
+        if (!frozen) throw new IllegalStateException(
+                "The ClassTransformation instance (for " + ctClass.getName() + ") has not yet completed all transformations.");
     }
 
     public IdAllocator getIdAllocator()
     {
         failIfNotFrozen();
 
-        return _idAllocator;
+        return idAllocator;
     }
 
     public List<ConstructorArg> getConstructorArgs()
     {
         failIfNotFrozen();
 
-        return CollectionFactory.newList(_constructorArgs);
+        return CollectionFactory.newList(constructorArgs);
     }
 
     public List<Annotation> getClassAnnotations()
     {
         failIfFrozen();
 
-        if (_classAnnotations == null) assembleClassAnnotations();
+        if (classAnnotations == null) assembleClassAnnotations();
 
-        return _classAnnotations;
+        return classAnnotations;
     }
 
     private void assembleClassAnnotations()
     {
-        _classAnnotations = newList();
+        classAnnotations = newList();
 
         try
         {
-            for (CtClass current = _ctClass; current != null; current = current.getSuperclass())
+            for (CtClass current = ctClass; current != null; current = current.getSuperclass())
             {
-                addAnnotationsToList(_classAnnotations, current.getAnnotations());
+                addAnnotationsToList(classAnnotations, current.getAnnotations());
             }
         }
         catch (NotFoundException ex)
@@ -1517,10 +1517,10 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         {
             Formatter formatter = new Formatter(builder);
 
-            formatter.format("%s %s extends %s", Modifier.toString(_ctClass.getModifiers()), _ctClass.getName(),
-                             _ctClass.getSuperclass().getName());
+            formatter.format("%s %s extends %s", Modifier.toString(ctClass.getModifiers()), ctClass.getName(),
+                             ctClass.getSuperclass().getName());
 
-            CtClass[] interfaces = _ctClass.getInterfaces();
+            CtClass[] interfaces = ctClass.getInterfaces();
 
             for (int i = 0; i < interfaces.length; i++)
             {
@@ -1530,7 +1530,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 builder.append(interfaces[i].getName());
             }
 
-            formatter.format("\n\n%s", _description.toString());
+            formatter.format("\n\n%s", description.toString());
         }
         catch (NotFoundException ex)
         {
@@ -1551,7 +1551,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         TransformMethodSignature sig = new TransformMethodSignature(Modifier.PRIVATE, "void", methodName,
                                                                     new String[] { fieldType }, null);
 
-        String message = ServicesMessages.readOnlyField(_ctClass.getName(), fieldName);
+        String message = ServicesMessages.readOnlyField(ctClass.getName(), fieldName);
 
         String body = format("throw new java.lang.RuntimeException(\"%s\");", message);
 
@@ -1562,13 +1562,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public void removeField(String fieldName)
     {
-        _formatter.format("remove field %s;\n\n", fieldName);
+        formatter.format("remove field %s;\n\n", fieldName);
 
         // TODO: We could check that there's an existing field read and field write transform ...
 
-        if (_removedFieldNames == null) _removedFieldNames = newSet();
+        if (removedFieldNames == null) removedFieldNames = newSet();
 
-        _removedFieldNames.add(fieldName);
+        removedFieldNames.add(fieldName);
 
     }
 
@@ -1579,13 +1579,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String body = String.format("$_ = $0.%s();", methodName);
 
-        if (_fieldReadTransforms == null) _fieldReadTransforms = newMap();
+        if (fieldReadTransforms == null) fieldReadTransforms = newMap();
 
         // TODO: Collisions?
 
-        _fieldReadTransforms.put(fieldName, body);
+        fieldReadTransforms.put(fieldName, body);
 
-        _formatter.format("replace read %s: %s();\n\n", fieldName, methodName);
+        formatter.format("replace read %s: %s();\n\n", fieldName, methodName);
     }
 
     public void replaceWriteAccess(String fieldName, String methodName)
@@ -1595,13 +1595,13 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         String body = String.format("$0.%s($1);", methodName);
 
-        if (_fieldWriteTransforms == null) _fieldWriteTransforms = newMap();
+        if (fieldWriteTransforms == null) fieldWriteTransforms = newMap();
 
         // TODO: Collisions?
 
-        _fieldWriteTransforms.put(fieldName, body);
+        fieldWriteTransforms.put(fieldName, body);
 
-        _formatter.format("replace write %s: %s();\n\n", fieldName, methodName);
+        formatter.format("replace write %s: %s();\n\n", fieldName, methodName);
     }
 
     private void performFieldTransformations()
@@ -1609,16 +1609,16 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // If no field transformations have been requested, then we can save ourselves some
         // trouble!
 
-        if (_fieldReadTransforms != null || _fieldWriteTransforms != null) replaceFieldAccess();
+        if (fieldReadTransforms != null || fieldWriteTransforms != null) replaceFieldAccess();
 
-        if (_removedFieldNames != null)
+        if (removedFieldNames != null)
         {
-            for (String fieldName : _removedFieldNames)
+            for (String fieldName : removedFieldNames)
             {
                 try
                 {
-                    CtField field = _ctClass.getDeclaredField(fieldName);
-                    _ctClass.removeField(field);
+                    CtField field = ctClass.getDeclaredField(fieldName);
+                    ctClass.removeField(field);
                 }
                 catch (NotFoundException ex)
                 {
@@ -1635,9 +1635,9 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
         // Provide empty maps here, to make the code in the inner class a tad
         // easier.
 
-        if (_fieldReadTransforms == null) _fieldReadTransforms = newMap();
+        if (fieldReadTransforms == null) fieldReadTransforms = newMap();
 
-        if (_fieldWriteTransforms == null) _fieldWriteTransforms = newMap();
+        if (fieldWriteTransforms == null) fieldWriteTransforms = newMap();
 
         ExprEditor editor = new ExprEditor()
         {
@@ -1652,28 +1652,28 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
                 String fieldName = access.getFieldName();
                 CtMethod method = (CtMethod) where;
 
-                _formatter.format("Checking field %s %s in method %s(): ", isRead ? "read" : "write", fieldName,
-                                  method.getName());
+                formatter.format("Checking field %s %s in method %s(): ", isRead ? "read" : "write", fieldName,
+                                 method.getName());
 
                 // Ignore any methods to were added as part of the transformation.
                 // If we reference the field there, we really mean the field.
 
-                if (_addedMethods.contains(where))
+                if (addedMethods.contains(where))
                 {
-                    _formatter.format("added method\n");
+                    formatter.format("added method\n");
                     return;
                 }
 
-                Map<String, String> transformMap = isRead ? _fieldReadTransforms : _fieldWriteTransforms;
+                Map<String, String> transformMap = isRead ? fieldReadTransforms : fieldWriteTransforms;
 
                 String body = transformMap.get(fieldName);
                 if (body == null)
                 {
-                    _formatter.format("field not transformed\n");
+                    formatter.format("field not transformed\n");
                     return;
                 }
 
-                _formatter.format("replacing with %s\n", body);
+                formatter.format("replacing with %s\n", body);
 
                 access.replace(body);
             }
@@ -1681,14 +1681,14 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            _ctClass.instrument(editor);
+            ctClass.instrument(editor);
         }
         catch (CannotCompileException ex)
         {
             throw new RuntimeException(ex);
         }
 
-        _formatter.format("\n");
+        formatter.format("\n");
     }
 
     public Class toClass(String type)
@@ -1697,7 +1697,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         try
         {
-            return Class.forName(finalType, true, _classFactory.getClassLoader());
+            return Class.forName(finalType, true, classFactory.getClassLoader());
         }
         catch (ClassNotFoundException ex)
         {
@@ -1707,12 +1707,12 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public String getClassName()
     {
-        return _ctClass.getName();
+        return ctClass.getName();
     }
 
     public Logger getLogger()
     {
-        return _logger;
+        return logger;
     }
 
     public void extendConstructor(String statement)
@@ -1721,8 +1721,8 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
         failIfFrozen();
 
-        _constructor.append(statement);
-        _constructor.append("\n");
+        constructor.append(statement);
+        constructor.append("\n");
     }
 
     public String getMethodIdentifier(TransformMethodSignature signature)
@@ -1741,7 +1741,7 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     public boolean isRootTransformation()
     {
-        return _parentTransformation == null;
+        return parentTransformation == null;
     }
 
 }

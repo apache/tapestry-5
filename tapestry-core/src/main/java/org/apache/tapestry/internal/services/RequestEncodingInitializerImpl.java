@@ -23,34 +23,34 @@ import org.apache.tapestry.services.Request;
 
 public class RequestEncodingInitializerImpl implements RequestEncodingInitializer
 {
-    private final RequestPageCache _cache;
+    private final RequestPageCache cache;
 
-    private final MetaDataLocator _locator;
+    private final MetaDataLocator locator;
 
-    private final Request _request;
+    private final Request request;
 
     public RequestEncodingInitializerImpl(RequestPageCache cache, MetaDataLocator locator, Request request)
     {
-        _cache = cache;
-        _locator = locator;
-        _request = request;
+        this.cache = cache;
+        this.locator = locator;
+        this.request = request;
     }
 
     public void initializeRequestEncoding(String pageName)
     {
-        Page page = _cache.get(pageName);
+        Page page = cache.get(pageName);
         ComponentResources pageResources = page.getRootElement().getComponentResources();
 
-        String contentTypeString = _locator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
-                                                     String.class);
+        String contentTypeString = locator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
+                                                    String.class);
         ContentType contentType = new ContentType(contentTypeString);
 
         String encoding = contentType.getParameter("charset");
 
         if (encoding == null)
-            encoding = _locator.findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources, String.class);
+            encoding = locator.findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources, String.class);
 
-        _request.setEncoding(encoding);
+        request.setEncoding(encoding);
     }
 
 }

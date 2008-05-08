@@ -28,26 +28,26 @@ import java.io.IOException;
  */
 public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 {
-    private final RequestPageCache _cache;
+    private final RequestPageCache cache;
 
-    private final ComponentEventResultProcessor _resultProcessor;
+    private final ComponentEventResultProcessor resultProcessor;
 
-    private final PageResponseRenderer _pageResponseRenderer;
+    private final PageResponseRenderer pageResponseRenderer;
 
     public PageRenderRequestHandlerImpl(RequestPageCache cache,
                                         @Traditional ComponentEventResultProcessor resultProcessor,
                                         PageResponseRenderer pageResponseRenderer)
     {
-        _cache = cache;
-        _resultProcessor = resultProcessor;
-        _pageResponseRenderer = pageResponseRenderer;
+        this.cache = cache;
+        this.resultProcessor = resultProcessor;
+        this.pageResponseRenderer = pageResponseRenderer;
     }
 
     public void handle(PageRenderRequestParameters parameters) throws IOException
     {
-        Page page = _cache.get(parameters.getLogicalPageName());
+        Page page = cache.get(parameters.getLogicalPageName());
 
-        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(_resultProcessor);
+        ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
         page.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT, parameters.getActivationContext(),
                                                   callback);
@@ -56,6 +56,6 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
         if (callback.isAborted()) return;
 
-        _pageResponseRenderer.renderPageResponse(page);
+        pageResponseRenderer.renderPageResponse(page);
     }
 }

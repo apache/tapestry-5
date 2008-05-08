@@ -26,16 +26,16 @@ import org.apache.tapestry.services.ValueEncoderFactory;
  */
 public class GenericValueEncoderFactory<V> implements ValueEncoderFactory<V>
 {
-    private final ValueEncoder<V> _encoder;
+    private final ValueEncoder<V> encoder;
 
     public GenericValueEncoderFactory(ValueEncoder<V> encoder)
     {
-        _encoder = encoder;
+        this.encoder = encoder;
     }
 
     public ValueEncoder<V> create(Class<V> type)
     {
-        return _encoder;
+        return encoder;
     }
 
     public static <V> GenericValueEncoderFactory<V> create(ValueEncoder<V> encoder)

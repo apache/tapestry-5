@@ -18,7 +18,7 @@ import org.apache.tapestry.Block;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ioc.BaseLocatable;
 import org.apache.tapestry.ioc.Location;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;
 
@@ -29,7 +29,7 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
     // We could lazily create this, but for <t:block> and <t:parameter>, the case
     // for an empty block is extremely rare.
 
-    private final List<PageElement> _elements = newList();
+    private final List<PageElement> elements = CollectionFactory.newList();
 
     public BlockImpl(Location location)
     {
@@ -38,7 +38,7 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
 
     public void addToBody(PageElement element)
     {
-        _elements.add(element);
+        elements.add(element);
     }
 
     /**
@@ -46,9 +46,9 @@ public class BlockImpl extends BaseLocatable implements Block, BodyPageElement, 
      */
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        int count = _elements.size();
+        int count = elements.size();
         for (int i = count - 1; i >= 0; i--)
-            queue.push(_elements.get(i));
+            queue.push(elements.get(i));
     }
 
 }
