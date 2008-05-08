@@ -36,15 +36,15 @@ import java.util.Locale;
 
 public class PageElementFactoryImpl implements PageElementFactory
 {
-    private final ComponentInstantiatorSource _componentInstantiatorSource;
+    private final ComponentInstantiatorSource componentInstantiatorSource;
 
-    private final ComponentClassResolver _componentClassResolver;
+    private final ComponentClassResolver componentClassResolver;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final BindingSource _bindingSource;
+    private final BindingSource bindingSource;
 
-    private final PageResourcesSource _pageResourcesSource;
+    private final PageResourcesSource pageResourcesSource;
 
     private static final String EXPANSION_START = "${";
 
@@ -67,11 +67,11 @@ public class PageElementFactoryImpl implements PageElementFactory
                                   ComponentClassResolver resolver, TypeCoercer typeCoercer, BindingSource bindingSource,
                                   PageResourcesSource pageResourcesSource)
     {
-        _componentInstantiatorSource = componentInstantiatorSource;
-        _componentClassResolver = resolver;
-        _typeCoercer = typeCoercer;
-        _bindingSource = bindingSource;
-        _pageResourcesSource = pageResourcesSource;
+        this.componentInstantiatorSource = componentInstantiatorSource;
+        componentClassResolver = resolver;
+        this.typeCoercer = typeCoercer;
+        this.bindingSource = bindingSource;
+        this.pageResourcesSource = pageResourcesSource;
     }
 
     public PageElement newAttributeElement(ComponentResources componentResources, AttributeToken token)
@@ -124,8 +124,8 @@ public class PageElementFactoryImpl implements PageElementFactory
 
             String expansion = expression.substring(expansionx + 2, endx);
 
-            final Binding binding = _bindingSource.newBinding("attribute expansion", resources, resources,
-                                                              PROP_BINDING_PREFIX, expansion, location);
+            final Binding binding = bindingSource.newBinding("attribute expansion", resources, resources,
+                                                             PROP_BINDING_PREFIX, expansion, location);
 
             final StringProvider provider = new StringProvider()
             {
@@ -135,7 +135,7 @@ public class PageElementFactoryImpl implements PageElementFactory
                     {
                         Object raw = binding.get();
 
-                        return _typeCoercer.coerce(raw, String.class);
+                        return typeCoercer.coerce(raw, String.class);
                     }
                     catch (Exception ex)
                     {
@@ -173,10 +173,10 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token)
     {
-        Binding binding = _bindingSource.newBinding("expansion", componentResources, componentResources,
-                                                    PROP_BINDING_PREFIX, token.getExpression(), token.getLocation());
+        Binding binding = bindingSource.newBinding("expansion", componentResources, componentResources,
+                                                   PROP_BINDING_PREFIX, token.getExpression(), token.getLocation());
 
-        return new ExpansionPageElement(binding, _typeCoercer);
+        return new ExpansionPageElement(binding, typeCoercer);
     }
 
     public ComponentPageElement newComponentElement(Page page, ComponentPageElement container, String id,
@@ -199,7 +199,7 @@ public class PageElementFactoryImpl implements PageElementFactory
 
                 try
                 {
-                    finalClassName = _componentClassResolver
+                    finalClassName = componentClassResolver
                             .resolveComponentTypeToClassName(componentType);
                 }
                 catch (IllegalArgumentException ex)
@@ -208,7 +208,7 @@ public class PageElementFactoryImpl implements PageElementFactory
                 }
             }
 
-            Instantiator instantiator = _componentInstantiatorSource
+            Instantiator instantiator = componentInstantiatorSource
                     .findInstantiator(finalClassName);
 
             // This is actually a good place to check for recursive templates, here where we've
@@ -254,9 +254,9 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public ComponentPageElement newRootComponentElement(Page page, String componentType, Locale locale)
     {
-        Instantiator instantiator = _componentInstantiatorSource.findInstantiator(componentType);
+        Instantiator instantiator = componentInstantiatorSource.findInstantiator(componentType);
 
-        PageResources pageResources = _pageResourcesSource.get(locale);
+        PageResources pageResources = pageResourcesSource.get(locale);
 
         ComponentPageElement result = new ComponentPageElementImpl(page, instantiator, pageResources);
 
@@ -276,14 +276,14 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     public void addMixinByTypeName(ComponentPageElement component, String mixinType)
     {
-        String mixinClassName = _componentClassResolver.resolveMixinTypeToClassName(mixinType);
+        String mixinClassName = componentClassResolver.resolveMixinTypeToClassName(mixinType);
 
         addMixinByClassName(component, mixinClassName);
     }
 
     public void addMixinByClassName(ComponentPageElement component, String mixinClassName)
     {
-        Instantiator mixinInstantiator = _componentInstantiatorSource.findInstantiator(mixinClassName);
+        Instantiator mixinInstantiator = componentInstantiatorSource.findInstantiator(mixinClassName);
 
         component.addMixin(mixinInstantiator);
     }
@@ -301,7 +301,7 @@ public class PageElementFactoryImpl implements PageElementFactory
             return new AttributeExpansionBinding(provider, location);
         }
 
-        return _bindingSource.newBinding(parameterName, loadingComponentResources,
-                                         embeddedComponentResources, defaultBindingPrefix, expression, location);
+        return bindingSource.newBinding(parameterName, loadingComponentResources,
+                                        embeddedComponentResources, defaultBindingPrefix, expression, location);
     }
 }

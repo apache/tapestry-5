@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
 
 public class RequestPathOptimizerImpl implements RequestPathOptimizer
 {
-    private final Request _request;
+    private final Request request;
 
-    private final boolean _forceAbsolute;
+    private final boolean forceAbsolute;
 
     /**
      * Used to split a URI up into individual folder/file names. Any number of consecutive slashes is treated as a
@@ -37,20 +37,20 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
                                     @Symbol(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL)
                                     boolean forceAbsolute)
     {
-        _request = request;
+        this.request = request;
 
-        _forceAbsolute = forceAbsolute;
+        this.forceAbsolute = forceAbsolute;
     }
 
     public String optimizePath(String absolutePath)
     {
-        if (_forceAbsolute || _request.isXHR()) return absolutePath;
+        if (forceAbsolute || request.isXHR()) return absolutePath;
 
-        String requestPath = _request.getPath();
+        String requestPath = request.getPath();
 
         StringBuilder builder = new StringBuilder();
 
-        builder.append(_request.getContextPath());
+        builder.append(request.getContextPath());
 
         builder.append(requestPath);
 

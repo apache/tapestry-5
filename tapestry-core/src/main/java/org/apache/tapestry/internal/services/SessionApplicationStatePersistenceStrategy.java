@@ -30,16 +30,16 @@ public class SessionApplicationStatePersistenceStrategy implements
 {
     static final String PREFIX = "aso:";
 
-    private final Request _request;
+    private final Request request;
 
     public SessionApplicationStatePersistenceStrategy(Request request)
     {
-        _request = request;
+        this.request = request;
     }
 
     private Session getSession()
     {
-        return _request.getSession(true);
+        return request.getSession(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -76,7 +76,7 @@ public class SessionApplicationStatePersistenceStrategy implements
     {
         String key = buildKey(asoClass);
 
-        Session session = _request.getSession(false);
+        Session session = request.getSession(false);
 
         return session != null && session.getAttribute(key) != null;
     }

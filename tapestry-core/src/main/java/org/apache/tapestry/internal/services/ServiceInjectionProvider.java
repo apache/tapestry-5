@@ -26,18 +26,18 @@ import org.apache.tapestry.services.InjectionProvider;
  */
 public class ServiceInjectionProvider implements InjectionProvider
 {
-    private final ObjectLocator _locator;
+    private final ObjectLocator locator;
 
     public ServiceInjectionProvider(ObjectLocator locator)
     {
-        _locator = locator;
+        this.locator = locator;
     }
 
     @SuppressWarnings("unchecked")
     public boolean provideInjection(String fieldName, Class fieldType, ObjectLocator locator,
                                     ClassTransformation transformation, MutableComponentModel componentModel)
     {
-        Object inject = _locator.getService(fieldType);
+        Object inject = this.locator.getService(fieldType);
 
         assert inject != null;
 

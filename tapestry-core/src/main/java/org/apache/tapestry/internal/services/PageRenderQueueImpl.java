@@ -31,14 +31,14 @@ import org.apache.tapestry.runtime.RenderCommand;
 @Scope(PERTHREAD_SCOPE)
 public class PageRenderQueueImpl implements PageRenderQueue
 {
-    private Page _page;
+    private Page page;
 
-    private RenderCommand _rootCommand;
+    private RenderCommand rootCommand;
 
     public void initializeForCompletePage(Page page)
     {
-        _page = page;
-        _rootCommand = page.getRootElement();
+        this.page = page;
+        rootCommand = page.getRootElement();
     }
 
 
@@ -46,38 +46,38 @@ public class PageRenderQueueImpl implements PageRenderQueue
     {
         Defense.notNull(page, "page");
 
-        _page = page;
+        this.page = page;
     }
 
     public boolean isPartialRenderInitialized()
     {
-        return _rootCommand != null;
+        return rootCommand != null;
     }
 
     public void initializeForPartialPageRender(RenderCommand rootCommand)
     {
         Defense.notNull(rootCommand, "rootCommand");
 
-        if (_page == null) throw new IllegalStateException("Page must be specified before root render command.");
+        if (page == null) throw new IllegalStateException("Page must be specified before root render command.");
 
-        _rootCommand = rootCommand;
+        this.rootCommand = rootCommand;
     }
 
     public RenderCommand getRootRenderCommand()
     {
-        return _rootCommand;
+        return rootCommand;
     }
 
     public Page getRenderingPage()
     {
-        return _page;
+        return page;
     }
 
     public void render(MarkupWriter writer)
     {
-        RenderQueueImpl queue = new RenderQueueImpl(_page.getLogger());
+        RenderQueueImpl queue = new RenderQueueImpl(page.getLogger());
 
-        queue.push(_rootCommand);
+        queue.push(rootCommand);
 
         // Run the queue until empty.
 

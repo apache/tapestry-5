@@ -22,22 +22,22 @@ package org.apache.tapestry.internal.services;
  */
 public class PageLinkTarget implements InvocationTarget
 {
-    private final String _pageName;
+    private final String pageName;
 
     public PageLinkTarget(String pageName)
     {
-        _pageName = pageName;
+        this.pageName = pageName;
 
     }
 
     public String getPath()
     {
-        return _pageName.toLowerCase();
+        return pageName.toLowerCase();
     }
 
     public String getPageName()
     {
-        return _pageName;
+        return pageName;
     }
 
 }

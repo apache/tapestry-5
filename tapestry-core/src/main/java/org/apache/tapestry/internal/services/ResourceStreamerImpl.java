@@ -29,18 +29,18 @@ import java.util.Map;
 
 public class ResourceStreamerImpl implements ResourceStreamer
 {
-    private final Response _response;
-
-    private final Map<String, String> _configuration;
-
-    private final int _bufferSize = 1000;
-
     private static final long TEN_YEARS = new TimeInterval("10y").milliseconds();
+
+    private static final int BUFFER_SIZE = 5000;
+
+    private final Response response;
+
+    private final Map<String, String> configuration;
 
     public ResourceStreamerImpl(final Response response, Map<String, String> configuration)
     {
-        _response = response;
-        _configuration = configuration;
+        this.response = response;
+        this.configuration = configuration;
     }
 
     public void streamResource(Resource resource) throws IOException
@@ -51,15 +51,15 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
         int contentLength = connection.getContentLength();
 
-        if (contentLength >= 0) _response.setContentLength(contentLength);
+        if (contentLength >= 0) response.setContentLength(contentLength);
 
         // Could get this from the ResourceCache, but can't imagine
         // it's very expensive.
 
         long lastModified = connection.getLastModified();
 
-        _response.setDateHeader("Last-Modified", lastModified);
-        _response.setDateHeader("Expires", lastModified + TEN_YEARS);
+        response.setDateHeader("Last-Modified", lastModified);
+        response.setDateHeader("Expires", lastModified + TEN_YEARS);
 
         String contentType = connection.getContentType();
 
@@ -74,7 +74,7 @@ public class ResourceStreamerImpl implements ResourceStreamer
             {
                 String extension = file.substring(dotx + 1);
 
-                contentType = _configuration.get(extension);
+                contentType = configuration.get(extension);
             }
 
             if (contentType == null) contentType = "application/octet-stream";
@@ -88,9 +88,9 @@ public class ResourceStreamerImpl implements ResourceStreamer
 
             is = new BufferedInputStream(connection.getInputStream());
 
-            OutputStream os = _response.getOutputStream(contentType);
+            OutputStream os = response.getOutputStream(contentType);
 
-            byte[] buffer = new byte[_bufferSize];
+            byte[] buffer = new byte[BUFFER_SIZE];
 
             while (true)
             {

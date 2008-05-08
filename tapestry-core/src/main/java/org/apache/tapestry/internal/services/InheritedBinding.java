@@ -27,29 +27,29 @@ import java.lang.annotation.Annotation;
  */
 public class InheritedBinding extends BaseLocatable implements Binding
 {
-    private final String _toString;
+    private final String toString;
 
-    private final Binding _binding;
+    private final Binding binding;
 
     public InheritedBinding(String toString, Binding binding, Location location)
     {
         super(location);
 
-        _toString = toString;
-        _binding = binding;
+        this.toString = toString;
+        this.binding = binding;
     }
 
     @Override
     public String toString()
     {
-        return _toString;
+        return toString;
     }
 
     public Object get()
     {
         try
         {
-            return _binding.get();
+            return binding.get();
         }
         catch (Exception ex)
         {
@@ -61,7 +61,7 @@ public class InheritedBinding extends BaseLocatable implements Binding
     {
         try
         {
-            return _binding.getBindingType();
+            return binding.getBindingType();
         }
         catch (Exception ex)
         {
@@ -73,7 +73,7 @@ public class InheritedBinding extends BaseLocatable implements Binding
     {
         try
         {
-            return _binding.isInvariant();
+            return binding.isInvariant();
         }
         catch (Exception ex)
         {
@@ -85,7 +85,7 @@ public class InheritedBinding extends BaseLocatable implements Binding
     {
         try
         {
-            _binding.set(value);
+            binding.set(value);
         }
         catch (Exception ex)
         {
@@ -97,7 +97,7 @@ public class InheritedBinding extends BaseLocatable implements Binding
     {
         try
         {
-            return _binding.getAnnotation(annotationClass);
+            return binding.getAnnotation(annotationClass);
         }
         catch (Exception ex)
         {

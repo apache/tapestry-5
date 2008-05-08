@@ -24,27 +24,28 @@ import org.apache.tapestry.runtime.RenderQueue;
 
 public class DTDPageElement implements PageElement
 {
+    private final String name;
 
-    private final String _name;
-    private final String _publicId;
-    private final String _systemId;
+    private final String publicId;
+
+    private final String systemId;
 
     public DTDPageElement(String name, String publicId, String systemId)
     {
-        _name = name;
-        _publicId = publicId;
-        _systemId = systemId;
+        this.name = name;
+        this.publicId = publicId;
+        this.systemId = systemId;
     }
 
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        writer.getDocument().dtd(_name, _publicId, _systemId);
+        writer.getDocument().dtd(name, publicId, systemId);
     }
 
     @Override
     public String toString()
     {
-        return String.format("DTD[name=%s; publicId=%s; systemId=%s]", _name, _publicId, _systemId);
+        return String.format("DTD[name=%s; publicId=%s; systemId=%s]", name, publicId, systemId);
     }
 
 }

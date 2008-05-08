@@ -17,8 +17,6 @@ package org.apache.tapestry.internal.services;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.internal.events.InvalidationListener;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.apache.tapestry.services.MetaDataLocator;
@@ -27,25 +25,25 @@ import java.util.Map;
 
 public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListener
 {
-    private final SymbolSource _symbolSource;
+    private final SymbolSource symbolSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final Map<String, Map<String, String>> _defaultsByFolder = newCaseInsensitiveMap();
+    private final Map<String, Map<String, String>> defaultsByFolder = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, String> _cache = newConcurrentMap();
+    private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
 
     public MetaDataLocatorImpl(SymbolSource symbolSource, TypeCoercer typeCoercer, Map<String, String> configuration)
     {
-        _symbolSource = symbolSource;
-        _typeCoercer = typeCoercer;
+        this.symbolSource = symbolSource;
+        this.typeCoercer = typeCoercer;
 
         loadDefaults(configuration);
     }
 
     public void objectWasInvalidated()
     {
-        _cache.clear();
+        cache.clear();
     }
 
     private void loadDefaults(Map<String, String> configuration)
@@ -58,12 +56,12 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
             String folderKey = colonx < 0 ? "" : key.substring(0, colonx);
 
-            Map<String, String> forFolder = _defaultsByFolder.get(folderKey);
+            Map<String, String> forFolder = defaultsByFolder.get(folderKey);
 
             if (forFolder == null)
             {
                 forFolder = CollectionFactory.newCaseInsensitiveMap();
-                _defaultsByFolder.put(folderKey, forFolder);
+                defaultsByFolder.put(folderKey, forFolder);
             }
 
             String defaultKey = colonx < 0 ? key : key.substring(colonx + 1);
@@ -76,28 +74,28 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
     {
         String value = getSymbolExpandedValueFromCache(key, resources);
 
-        return _typeCoercer.coerce(value, expectedType);
+        return typeCoercer.coerce(value, expectedType);
     }
 
     private String getSymbolExpandedValueFromCache(String key, ComponentResources resources)
     {
         String cacheKey = resources.getCompleteId() + "/" + key;
 
-        if (_cache.containsKey(cacheKey)) return _cache.get(cacheKey);
+        if (cache.containsKey(cacheKey)) return cache.get(cacheKey);
 
         String value = locate(key, resources);
 
         if (value == null)
         {
-            value = _symbolSource.valueForSymbol(key);
+            value = symbolSource.valueForSymbol(key);
         }
         else
         {
-            value = _symbolSource.expandSymbols(value);
+            value = symbolSource.expandSymbols(value);
 
         }
 
-        _cache.put(cacheKey, value);
+        cache.put(cacheKey, value);
 
         return value;
     }
@@ -135,7 +133,7 @@ public class MetaDataLocatorImpl implements MetaDataLocator, InvalidationListene
 
             String folderKey = lastSlashx < 0 ? "" : path.substring(0, lastSlashx);
 
-            Map<String, String> forFolder = _defaultsByFolder.get(folderKey);
+            Map<String, String> forFolder = defaultsByFolder.get(folderKey);
 
             if (forFolder != null && forFolder.containsKey(key)) return forFolder.get(key);
 

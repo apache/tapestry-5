@@ -34,43 +34,43 @@ public class RequestImpl implements Request
 
     static final String XML_HTTP_REQUEST = "XMLHttpRequest";
 
-    private final HttpServletRequest _request;
+    private final HttpServletRequest request;
 
     public RequestImpl(HttpServletRequest request)
     {
-        _request = request;
+        this.request = request;
     }
 
     public List<String> getParameterNames()
     {
-        return InternalUtils.toList(_request.getParameterNames());
+        return InternalUtils.toList(request.getParameterNames());
     }
 
     public List<String> getHeaderNames()
     {
-        return InternalUtils.toList(_request.getHeaderNames());
+        return InternalUtils.toList(request.getHeaderNames());
     }
 
     public String getParameter(String name)
     {
-        return _request.getParameter(name);
+        return request.getParameter(name);
     }
 
     public String[] getParameters(String name)
     {
-        return _request.getParameterValues(name);
+        return request.getParameterValues(name);
     }
 
     public String getHeader(String name)
     {
-        return _request.getHeader(name);
+        return request.getHeader(name);
     }
 
     public String getPath()
     {
-        String pathInfo = _request.getPathInfo();
+        String pathInfo = request.getPathInfo();
 
-        if (pathInfo == null) return _request.getServletPath();
+        if (pathInfo == null) return request.getServletPath();
 
         // Websphere 6.1 is a bit wonky (see TAPESTRY-1713), and tends to return the empty string
         // for the servlet path, and return the true path in pathInfo.
@@ -80,31 +80,31 @@ public class RequestImpl implements Request
 
     public String getContextPath()
     {
-        return _request.getContextPath();
+        return request.getContextPath();
     }
 
     public Session getSession(boolean create)
     {
-        HttpSession session = _request.getSession(create);
+        HttpSession session = request.getSession(create);
 
         return session == null ? null : new SessionImpl(session);
     }
 
     public Locale getLocale()
     {
-        return _request.getLocale();
+        return request.getLocale();
     }
 
     public long getDateHeader(String name)
     {
-        return _request.getDateHeader(name);
+        return request.getDateHeader(name);
     }
 
     public void setEncoding(String requestEncoding)
     {
         try
         {
-            _request.setCharacterEncoding(requestEncoding);
+            request.setCharacterEncoding(requestEncoding);
         }
         catch (UnsupportedEncodingException ex)
         {
@@ -114,31 +114,31 @@ public class RequestImpl implements Request
 
     public boolean isXHR()
     {
-        return XML_HTTP_REQUEST.equals(_request.getHeader(REQUESTED_WITH_HEADER));
+        return XML_HTTP_REQUEST.equals(request.getHeader(REQUESTED_WITH_HEADER));
     }
 
     public boolean isSecure()
     {
-        return _request.isSecure();
+        return request.isSecure();
     }
 
     public boolean isRequestedSessionIdValid()
     {
-        return _request.isRequestedSessionIdValid();
+        return request.isRequestedSessionIdValid();
     }
 
     public Object getAttribute(String name)
     {
-        return _request.getAttribute(name);
+        return request.getAttribute(name);
     }
 
     public void setAttribute(String name, Object value)
     {
-        _request.setAttribute(name, value);
+        request.setAttribute(name, value);
     }
 
     public String getServerName()
     {
-        return _request.getServerName();
+        return request.getServerName();
     }
 }

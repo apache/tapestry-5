@@ -21,8 +21,8 @@ import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Scope;
 import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.LocationImpl;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
@@ -83,16 +83,16 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     private static final Pattern EXPANSION_PATTERN = Pattern.compile(EXPANSION_REGEXP);
 
 
-    private XMLReader _reader;
+    private XMLReader reader;
 
     // Resource being parsed
-    private Resource _templateResource;
+    private Resource templateResource;
 
-    private Locator _locator;
+    private Locator locator;
 
-    private final List<TemplateToken> _tokens = newList();
+    private final List<TemplateToken> tokens = CollectionFactory.newList();
 
-    private final boolean _compressWhitespaceDefault;
+    private final boolean compressWhitespaceDefault;
 
     /**
      * Because {@link org.xml.sax.ContentHandler#startPrefixMapping(String, String)} events arrive before the
@@ -100,47 +100,47 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      * events, we need to accumlate the {@link org.apache.tapestry.internal.parser.DefineNamespacePrefixToken}s ahead of
      * time to get the correct ordering in the output tokens list.
      */
-    private final List<DefineNamespacePrefixToken> _defineNamespaceTokens = newList();
+    private final List<DefineNamespacePrefixToken> defineNamespaceTokens = newList();
 
     // Non-blank ids from start component elements
 
-    private final Set<String> _componentIds = newSet();
+    private final Set<String> componentIds = CollectionFactory.newSet();
 
     // Used to accumulate text provided by the characters() method. Even contiguous characters may
     // be broken up across multiple invocations due to parser internals. We accumulate those
     // together before forming a text token.
 
-    private final StringBuilder _textBuffer = new StringBuilder();
+    private final StringBuilder textBuffer = new StringBuilder();
 
-    private Location _textStartLocation;
+    private Location textStartLocation;
 
-    private boolean _textIsCData;
+    private boolean textIsCData;
 
-    private boolean _insideBody;
+    private boolean insideBody;
 
-    private boolean _insideBodyErrorLogged;
+    private boolean insideBodyErrorLogged;
 
-    private boolean _ignoreEvents;
+    private boolean ignoreEvents;
 
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final Map<String, URL> _configuration;
+    private final Map<String, URL> configuration;
 
-    private final Stack<Runnable> _endTagHandlerStack = new Stack<Runnable>();
+    private final Stack<Runnable> endTagHandlerStack = new Stack<Runnable>();
 
-    private boolean _compressWhitespace;
+    private boolean compressWhitespace;
 
-    private final Stack<Boolean> _compressWhitespaceStack = new Stack<Boolean>();
+    private final Stack<Boolean> compressWhitespaceStack = new Stack<Boolean>();
 
-    private final Runnable _endOfElementHandler = new Runnable()
+    private final Runnable endOfElementHandler = new Runnable()
     {
         public void run()
         {
-            _tokens.add(new EndElementToken(getCurrentLocation()));
+            tokens.add(new EndElementToken(getCurrentLocation()));
 
             // Restore the flag to how it was before the element was parsed.
 
-            _compressWhitespace = _compressWhitespaceStack.pop();
+            compressWhitespace = compressWhitespaceStack.pop();
         }
     };
 
@@ -148,7 +148,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     {
         public void run()
         {
-            _compressWhitespace = _compressWhitespaceStack.pop();
+            compressWhitespace = compressWhitespaceStack.pop();
         }
     };
 
@@ -158,48 +158,48 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
                               @Symbol(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL)
                               boolean compressWhitespaceDefault)
     {
-        _logger = logger;
-        _configuration = configuration;
-        _compressWhitespaceDefault = compressWhitespaceDefault;
+        this.logger = logger;
+        this.configuration = configuration;
+        this.compressWhitespaceDefault = compressWhitespaceDefault;
 
         reset();
     }
 
     private void reset()
     {
-        _tokens.clear();
-        _defineNamespaceTokens.clear();
-        _componentIds.clear();
-        _templateResource = null;
-        _locator = null;
-        _textBuffer.setLength(0);
-        _textStartLocation = null;
-        _textIsCData = false;
-        _insideBody = false;
-        _insideBodyErrorLogged = false;
-        _ignoreEvents = true;
+        tokens.clear();
+        defineNamespaceTokens.clear();
+        componentIds.clear();
+        templateResource = null;
+        locator = null;
+        textBuffer.setLength(0);
+        textStartLocation = null;
+        textIsCData = false;
+        insideBody = false;
+        insideBodyErrorLogged = false;
+        ignoreEvents = true;
 
-        _endTagHandlerStack.clear();
-        _compressWhitespaceStack.clear();
+        endTagHandlerStack.clear();
+        compressWhitespaceStack.clear();
     }
 
     public ComponentTemplate parseTemplate(Resource templateResource)
     {
-        _compressWhitespace = _compressWhitespaceDefault;
+        compressWhitespace = compressWhitespaceDefault;
 
-        if (_reader == null)
+        if (reader == null)
         {
             try
             {
-                _reader = XMLReaderFactory.createXMLReader();
+                reader = XMLReaderFactory.createXMLReader();
 
-                _reader.setContentHandler(this);
+                reader.setContentHandler(this);
 
-                _reader.setEntityResolver(this);
+                reader.setEntityResolver(this);
 
-                _reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
+                reader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
 
-                _reader.setProperty("http://xml.org/sax/properties/lexical-handler", this);
+                reader.setProperty("http://xml.org/sax/properties/lexical-handler", this);
             }
             catch (Exception ex)
             {
@@ -210,22 +210,22 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         if (!templateResource.exists())
             throw new RuntimeException(ServicesMessages.missingTemplateResource(templateResource));
 
-        _templateResource = templateResource;
+        this.templateResource = templateResource;
 
         try
         {
             InputSource source = new InputSource(templateResource.openStream());
 
-            _reader.parse(source);
+            reader.parse(source);
 
-            return new ComponentTemplateImpl(_templateResource, _tokens, _componentIds);
+            return new ComponentTemplateImpl(this.templateResource, tokens, componentIds);
         }
         catch (Exception ex)
         {
             // Some parsers get in an unknown state when an error occurs, and are are not
             // subsequently useable.
 
-            _reader = null;
+            reader = null;
 
             throw new TapestryException(ServicesMessages.templateParseError(templateResource, ex), getCurrentLocation(),
                                         ex);
@@ -238,7 +238,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     public void setDocumentLocator(Locator locator)
     {
-        _locator = locator;
+        this.locator = locator;
     }
 
     /**
@@ -246,13 +246,13 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      */
     public void characters(char[] ch, int start, int length) throws SAXException
     {
-        if (_ignoreEvents) return;
+        if (ignoreEvents) return;
 
         if (insideBody()) return;
 
-        if (_textBuffer.length() == 0) _textStartLocation = getCurrentLocation();
+        if (textBuffer.length() == 0) textStartLocation = getCurrentLocation();
 
-        _textBuffer.append(ch, start, length);
+        textBuffer.append(ch, start, length);
     }
 
 
@@ -262,20 +262,20 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      */
     private void processTextBuffer()
     {
-        if (_textBuffer.length() == 0) return;
+        if (textBuffer.length() == 0) return;
 
-        String text = _textBuffer.toString();
+        String text = textBuffer.toString();
 
-        _textBuffer.setLength(0);
+        textBuffer.setLength(0);
 
-        if (_textIsCData)
+        if (textIsCData)
         {
-            _tokens.add(new CDATAToken(text, _textStartLocation));
+            tokens.add(new CDATAToken(text, textStartLocation));
 
             return;
         }
 
-        if (_compressWhitespace)
+        if (compressWhitespace)
         {
             text = compressWhitespaceInText(text);
 
@@ -320,7 +320,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             {
                 String prefix = text.substring(startx, matchStart);
 
-                _tokens.add(new TextToken(prefix, _textStartLocation));
+                tokens.add(new TextToken(prefix, textStartLocation));
             }
 
             // Group 1 includes the real text of the expansion, with whitespace around the
@@ -328,7 +328,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
             String expression = matcher.group(1);
 
-            _tokens.add(new ExpansionToken(expression, _textStartLocation));
+            tokens.add(new ExpansionToken(expression, textStartLocation));
 
             startx = matcher.end();
         }
@@ -336,14 +336,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // Catch anything after the final regexp match.
 
         if (startx < text.length())
-            _tokens.add(new TextToken(text.substring(startx, text.length()), _textStartLocation));
+            tokens.add(new TextToken(text.substring(startx, text.length()), textStartLocation));
     }
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
-        _ignoreEvents = false;
+        ignoreEvents = false;
 
-        if (_insideBody) throw new IllegalStateException(ServicesMessages
+        if (insideBody) throw new IllegalStateException(ServicesMessages
                 .mayNotNestElementsInsideBody(localName));
 
         // Add any accumulated text into a text token
@@ -366,17 +366,17 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      */
     private boolean insideBody()
     {
-        if (_insideBody)
+        if (insideBody)
         {
             // Limit to one logged error per infraction.
 
-            if (!_insideBodyErrorLogged)
-                _logger.error(ServicesMessages.contentInsideBodyNotAllowed(getCurrentLocation()));
+            if (!insideBodyErrorLogged)
+                logger.error(ServicesMessages.contentInsideBodyNotAllowed(getCurrentLocation()));
 
-            _insideBodyErrorLogged = true;
+            insideBodyErrorLogged = true;
         }
 
-        return _insideBody;
+        return insideBody;
     }
 
     private void startTapestryElement(String localName, Attributes attributes)
@@ -417,11 +417,11 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private void startContainer(String elementName, Attributes attributes)
     {
-        _compressWhitespaceStack.push(_compressWhitespace);
+        compressWhitespaceStack.push(compressWhitespace);
 
         // Neither the container nor its end tag are considered tokens, just the contents inside.
 
-        _endTagHandlerStack.push(_ignoreEndElement);
+        endTagHandlerStack.push(_ignoreEndElement);
 
         for (int i = 0; i < attributes.getLength(); i++)
         {
@@ -450,7 +450,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         // null is ok for blockId
 
-        _tokens.add(new BlockToken(blockId, getCurrentLocation()));
+        tokens.add(new BlockToken(blockId, getCurrentLocation()));
 
         // TODO: Check for an xml:space attribute
     }
@@ -464,7 +464,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         if (InternalUtils.isBlank(parameterName))
             throw new TapestryException(ServicesMessages.parameterElementNameRequired(), getCurrentLocation(), null);
 
-        _tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
+        tokens.add(new ParameterToken(parameterName, getCurrentLocation()));
     }
 
     /**
@@ -474,9 +474,9 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     {
         // Record how the flag was set at the start of the element
 
-        _compressWhitespaceStack.push(_compressWhitespace);
+        compressWhitespaceStack.push(compressWhitespace);
 
-        _endTagHandlerStack.push(_endOfElementHandler);
+        endTagHandlerStack.push(endOfElementHandler);
 
 
     }
@@ -516,7 +516,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
             // "preserve" turns off whitespace compression
             // "default" (the other option, but we'll accept anything) turns it on (or leaves it on, more likely).
 
-            _compressWhitespace = !"preserve".equalsIgnoreCase(value);
+            compressWhitespace = !"preserve".equalsIgnoreCase(value);
 
             return true;
         }
@@ -605,18 +605,18 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         if (isComponent)
         {
-            _tokens.add(new StartComponentToken(elementName, id, type, mixins, location));
+            tokens.add(new StartComponentToken(elementName, id, type, mixins, location));
         }
         else
         {
-            _tokens.add(new StartElementToken(namespaceURI, elementName, location));
+            tokens.add(new StartElementToken(namespaceURI, elementName, location));
         }
 
         addDefineNamespaceTokens();
 
-        _tokens.addAll(attributeTokens);
+        tokens.addAll(attributeTokens);
 
-        if (id != null) _componentIds.add(id);
+        if (id != null) componentIds.add(id);
 
         // TODO: Is there value in having different end elements for components vs. ordinary
         // elements?
@@ -636,16 +636,16 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     private void startBody()
     {
-        _tokens.add(new BodyToken(getCurrentLocation()));
+        tokens.add(new BodyToken(getCurrentLocation()));
 
-        _insideBody = true;
-        _insideBodyErrorLogged = false;
+        insideBody = true;
+        insideBodyErrorLogged = false;
 
-        _endTagHandlerStack.push(new Runnable()
+        endTagHandlerStack.push(new Runnable()
         {
             public void run()
             {
-                _insideBody = false;
+                insideBody = false;
 
                 // And don't add an end element token.
             }
@@ -656,14 +656,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
     {
         processTextBuffer();
 
-        _endTagHandlerStack.pop().run();
+        endTagHandlerStack.pop().run();
     }
 
     private Location getCurrentLocation()
     {
-        if (_locator == null) return null;
+        if (locator == null) return null;
 
-        return new LocationImpl(_templateResource, _locator.getLineNumber(), _locator
+        return new LocationImpl(templateResource, locator.getLineNumber(), locator
                 .getColumnNumber());
     }
 
@@ -673,14 +673,14 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
      */
     private void addDefineNamespaceTokens()
     {
-        _tokens.addAll(_defineNamespaceTokens);
+        tokens.addAll(defineNamespaceTokens);
 
-        _defineNamespaceTokens.clear();
+        defineNamespaceTokens.clear();
     }
 
     public void comment(char[] ch, int start, int length) throws SAXException
     {
-        if (_ignoreEvents || insideBody()) return;
+        if (ignoreEvents || insideBody()) return;
 
         processTextBuffer();
 
@@ -698,7 +698,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // provided as a single call to comment(), so we're good for the meantime (until we find
         // out some parsers aren't so compliant).
 
-        _tokens.add(new CommentToken(comment, getCurrentLocation()));
+        tokens.add(new CommentToken(comment, getCurrentLocation()));
     }
 
     public void endCDATA() throws SAXException
@@ -709,19 +709,19 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         // Again, CDATA doesn't nest, so we know we're back to ordinary markup.
 
-        _textIsCData = false;
+        textIsCData = false;
     }
 
     public void startCDATA() throws SAXException
     {
-        if (_ignoreEvents || insideBody()) return;
+        if (ignoreEvents || insideBody()) return;
 
         processTextBuffer();
 
         // Because CDATA doesn't mix with any other SAX/lexical events, we can simply turn on a flag
         // here and turn it off when we see the end.
 
-        _textIsCData = true;
+        textIsCData = true;
     }
 
     // Empty methods defined by the various interfaces.
@@ -749,7 +749,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         // Since an exception is thrown for case #1 above, we can just add the DTDToken.
         // When we go to process the token (in PageLoaderProcessor), we can make sure
         // that the final page has only a single DTDToken (the first one).
-        _tokens.add(new DTDToken(name, publicId, systemId, getCurrentLocation()));
+        tokens.add(new DTDToken(name, publicId, systemId, getCurrentLocation()));
     }
 
     public void startEntity(String name) throws SAXException
@@ -788,7 +788,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         DefineNamespacePrefixToken token = new DefineNamespacePrefixToken(uri, prefix, getCurrentLocation());
 
-        _defineNamespaceTokens.add(token);
+        defineNamespaceTokens.add(token);
     }
 
     public void endPrefixMapping(String prefix) throws SAXException
@@ -797,7 +797,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     public InputSource resolveEntity(String publicId, String systemId) throws SAXException, IOException
     {
-        URL url = _configuration.get(publicId);
+        URL url = configuration.get(publicId);
 
         if (url != null) return new InputSource(url.openStream());
 

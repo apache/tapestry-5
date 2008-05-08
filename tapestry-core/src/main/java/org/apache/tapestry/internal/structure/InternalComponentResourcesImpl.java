@@ -22,7 +22,6 @@ import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
@@ -42,49 +41,49 @@ import java.util.Map;
  */
 public class InternalComponentResourcesImpl implements InternalComponentResources
 {
-    private final Page _page;
+    private final Page page;
 
-    private final String _completeId;
+    private final String completeId;
 
-    private final String _nestedId;
+    private final String nestedId;
 
-    private final ComponentModel _componentModel;
+    private final ComponentModel componentModel;
 
-    private final ComponentPageElement _element;
+    private final ComponentPageElement element;
 
-    private final Component _component;
+    private final Component component;
 
-    private final ComponentResources _containerResources;
+    private final ComponentResources containerResources;
 
-    private final PageResources _pageResources;
-
-    // Case insensitive
-    private Map<String, Binding> _bindings;
-
-    private Messages _messages;
+    private final PageResources pageResources;
 
     // Case insensitive
-    private Map<String, Object> _renderVariables;
+    private Map<String, Binding> bindings;
+
+    private Messages messages;
+
+    // Case insensitive
+    private Map<String, Object> renderVariables;
 
     public InternalComponentResourcesImpl(Page page, ComponentPageElement element,
                                           ComponentResources containerResources, PageResources pageResources,
                                           String completeId, String nestedId, Instantiator componentInstantiator
     )
     {
-        _page = page;
-        _element = element;
-        _containerResources = containerResources;
-        _pageResources = pageResources;
-        _completeId = completeId;
-        _nestedId = nestedId;
+        this.page = page;
+        this.element = element;
+        this.containerResources = containerResources;
+        this.pageResources = pageResources;
+        this.completeId = completeId;
+        this.nestedId = nestedId;
 
-        _componentModel = componentInstantiator.getModel();
-        _component = componentInstantiator.newInstance(this);
+        componentModel = componentInstantiator.getModel();
+        component = componentInstantiator.newInstance(this);
     }
 
     public Location getLocation()
     {
-        return _element.getLocation();
+        return element.getLocation();
     }
 
     @Override
@@ -95,22 +94,22 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public ComponentModel getComponentModel()
     {
-        return _componentModel;
+        return componentModel;
     }
 
     public Component getEmbeddedComponent(String embeddedId)
     {
-        return _element.getEmbeddedElement(embeddedId).getComponent();
+        return element.getEmbeddedElement(embeddedId).getComponent();
     }
 
     public Object getFieldChange(String fieldName)
     {
-        return _page.getFieldChange(_nestedId, fieldName);
+        return page.getFieldChange(nestedId, fieldName);
     }
 
     public String getId()
     {
-        return _element.getId();
+        return element.getId();
     }
 
     public boolean hasFieldChange(String fieldName)
@@ -126,17 +125,17 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
      */
     public Link createActionLink(String action, boolean forForm, Object... context)
     {
-        return _page.createActionLink(_element.getNestedId(), action, forForm, context);
+        return page.createActionLink(element.getNestedId(), action, forForm, context);
     }
 
     public Link createPageLink(String pageName, boolean override, Object... context)
     {
-        return _page.createPageLink(pageName, override, context);
+        return page.createPageLink(pageName, override, context);
     }
 
     public void discardPersistentFieldChanges()
     {
-        _page.discardPersistentFieldChanges();
+        page.discardPersistentFieldChanges();
     }
 
     public String getElementName()
@@ -146,12 +145,12 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public String getCompleteId()
     {
-        return _completeId;
+        return completeId;
     }
 
     public Component getComponent()
     {
-        return _component;
+        return component;
     }
 
     public boolean isBound(String parameterName)
@@ -170,27 +169,27 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public boolean isRendering()
     {
-        return _element.isRendering();
+        return element.isRendering();
     }
 
     public boolean triggerEvent(String eventType, Object[] context, ComponentEventCallback handler)
     {
-        return _element.triggerEvent(eventType, context, handler);
+        return element.triggerEvent(eventType, context, handler);
     }
 
     public boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback)
     {
-        return _element.triggerContextEvent(eventType, context, callback);
+        return element.triggerContextEvent(eventType, context, callback);
     }
 
     public String getNestedId()
     {
-        return _nestedId;
+        return nestedId;
     }
 
     public Component getPage()
     {
-        return _element.getContainingPage().getRootComponent();
+        return element.getContainingPage().getRootComponent();
     }
 
     public boolean isInvariant(String parameterName)
@@ -202,14 +201,14 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public boolean isLoaded()
     {
-        return _element.isLoaded();
+        return element.isLoaded();
     }
 
     public void persistFieldChange(String fieldName, Object newValue)
     {
         try
         {
-            _page.persistFieldChange(this, fieldName, newValue);
+            page.persistFieldChange(this, fieldName, newValue);
         }
         catch (Exception ex)
         {
@@ -220,9 +219,9 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public void bindParameter(String parameterName, Binding binding)
     {
-        if (_bindings == null) _bindings = newCaseInsensitiveMap();
+        if (bindings == null) bindings = CollectionFactory.newCaseInsensitiveMap();
 
-        _bindings.put(parameterName, binding);
+        bindings.put(parameterName, binding);
     }
 
     @SuppressWarnings("unchecked")
@@ -237,7 +236,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             Object boundValue = b.get();
 
-            return _pageResources.coerce(boundValue, expectedType);
+            return pageResources.coerce(boundValue, expectedType);
         }
         catch (Exception ex)
         {
@@ -248,7 +247,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Object readParameter(String parameterName, String desiredTypeName)
     {
-        Class parameterType = _pageResources.toClass(desiredTypeName);
+        Class parameterType = pageResources.toClass(desiredTypeName);
 
         return readParameter(parameterName, parameterType);
     }
@@ -269,7 +268,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
         try
         {
-            Object coerced = _pageResources.coerce(parameterValue, bindingType);
+            Object coerced = pageResources.coerce(parameterValue, bindingType);
 
             b.set(coerced);
         }
@@ -282,7 +281,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     private Binding getBinding(String parameterName)
     {
-        return _bindings == null ? null : _bindings.get(parameterName);
+        return bindings == null ? null : bindings.get(parameterName);
     }
 
     public AnnotationProvider getAnnotationProvider(String parameterName)
@@ -292,25 +291,25 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Logger getLogger()
     {
-        return _componentModel.getLogger();
+        return componentModel.getLogger();
     }
 
     public Component getMixinByClassName(String mixinClassName)
     {
-        return _element.getMixinByClassName(mixinClassName);
+        return element.getMixinByClassName(mixinClassName);
     }
 
     public void renderInformalParameters(MarkupWriter writer)
     {
-        if (_bindings == null) return;
+        if (bindings == null) return;
 
-        for (String name : _bindings.keySet())
+        for (String name : bindings.keySet())
         {
             // Skip all formal parameters.
 
-            if (_componentModel.getParameterModel(name) != null) continue;
+            if (componentModel.getParameterModel(name) != null) continue;
 
-            Binding b = _bindings.get(name);
+            Binding b = bindings.get(name);
 
             Object value = b.get();
 
@@ -321,7 +320,7 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
             if (value instanceof Block) continue;
 
-            String valueString = _pageResources.coerce(value, String.class);
+            String valueString = pageResources.coerce(value, String.class);
 
             writer.attributes(name, valueString);
         }
@@ -329,46 +328,46 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Component getContainer()
     {
-        if (_containerResources == null) return null;
+        if (containerResources == null) return null;
 
-        return _containerResources.getComponent();
+        return containerResources.getComponent();
     }
 
     public ComponentResources getContainerResources()
     {
-        return _containerResources;
+        return containerResources;
     }
 
     public Messages getContainerMessages()
     {
-        return _containerResources != null ? _containerResources.getMessages() : null;
+        return containerResources != null ? containerResources.getMessages() : null;
     }
 
     public Locale getLocale()
     {
-        return _element.getLocale();
+        return element.getLocale();
     }
 
     public Messages getMessages()
     {
-        if (_messages == null) _messages = _pageResources.getMessages(_componentModel);
+        if (messages == null) messages = pageResources.getMessages(componentModel);
 
-        return _messages;
+        return messages;
     }
 
     public String getElementName(String defaultElementName)
     {
-        return _element.getElementName(defaultElementName);
+        return element.getElementName(defaultElementName);
     }
 
     public void queueRender(RenderQueue queue)
     {
-        queue.push(_element);
+        queue.push(element);
     }
 
     public Block getBlock(String blockId)
     {
-        return _element.getBlock(blockId);
+        return element.getBlock(blockId);
     }
 
     public Block getBlockParameter(String parameterName)
@@ -383,31 +382,31 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Block findBlock(String blockId)
     {
-        return _element.findBlock(blockId);
+        return element.findBlock(blockId);
     }
 
     public Resource getBaseResource()
     {
-        return _componentModel.getBaseResource();
+        return componentModel.getBaseResource();
     }
 
     public String getPageName()
     {
-        return _element.getPageName();
+        return element.getPageName();
     }
 
     public Map<String, Binding> getInformalParameterBindings()
     {
         Map<String, Binding> result = CollectionFactory.newMap();
 
-        if (_bindings != null)
+        if (bindings != null)
         {
-            for (String name : _bindings.keySet())
+            for (String name : bindings.keySet())
             {
 
-                if (_componentModel.getParameterModel(name) != null) continue;
+                if (componentModel.getParameterModel(name) != null) continue;
 
-                result.put(name, _bindings.get(name));
+                result.put(name, bindings.get(name));
             }
         }
 
@@ -416,11 +415,11 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
 
     public Object getRenderVariable(String name)
     {
-        Object result = InternalUtils.get(_renderVariables, name);
+        Object result = InternalUtils.get(renderVariables, name);
 
         if (result == null) throw new IllegalArgumentException(StructureMessages.missingRenderVariable(getCompleteId(),
                                                                                                        name,
-                                                                                                       _renderVariables == null ? null : _renderVariables.keySet()));
+                                                                                                       renderVariables == null ? null : renderVariables.keySet()));
 
         return result;
     }
@@ -430,21 +429,21 @@ public class InternalComponentResourcesImpl implements InternalComponentResource
         Defense.notBlank(name, "name");
         Defense.notNull(value, "value");
 
-        if (!_element.isRendering())
+        if (!element.isRendering())
             throw new IllegalStateException(StructureMessages.renderVariableSetWhenNotRendering(getCompleteId(), name));
 
-        if (_renderVariables == null) _renderVariables = CollectionFactory.newCaseInsensitiveMap();
+        if (renderVariables == null) renderVariables = CollectionFactory.newCaseInsensitiveMap();
 
-        _renderVariables.put(name, value);
+        renderVariables.put(name, value);
     }
 
     public void postRenderCleanup()
     {
-        if (_renderVariables != null) _renderVariables.clear();
+        if (renderVariables != null) renderVariables.clear();
     }
 
     public void addPageLifecycleListener(PageLifecycleListener listener)
     {
-        _page.addLifecycleListener(listener);
+        page.addLifecycleListener(listener);
     }
 }

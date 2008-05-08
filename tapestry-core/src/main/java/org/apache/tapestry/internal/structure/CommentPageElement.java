@@ -25,21 +25,21 @@ import org.apache.tapestry.runtime.RenderQueue;
  */
 public class CommentPageElement implements PageElement
 {
-    private final String _text;
+    private final String text;
 
     public CommentPageElement(final String text)
     {
-        _text = text;
+        this.text = text;
     }
 
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        writer.comment(_text);
+        writer.comment(text);
     }
 
     @Override
     public String toString()
     {
-        return String.format("Comment[%s]", _text);
+        return String.format("Comment[%s]", text);
     }
 }

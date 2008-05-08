@@ -27,81 +27,81 @@ import java.util.List;
  */
 public class MethodInvocationInfo
 {
-    private final TransformMethodSignature _methodSignature;
+    private final TransformMethodSignature methodSignature;
 
-    private final ComponentClassCache _componentClassCache;
+    private final ComponentClassCache componentClassCache;
 
-    private final List<ComponentMethodAdvice> _advice = CollectionFactory.newList();
+    private final List<ComponentMethodAdvice> advice = CollectionFactory.newList();
 
-    private Class _effectiveResultType;
+    private Class effectiveResultType;
 
     public MethodInvocationInfo(TransformMethodSignature methodSignature, ComponentClassCache componentClassCache)
     {
-        _methodSignature = methodSignature;
-        _componentClassCache = componentClassCache;
+        this.methodSignature = methodSignature;
+        this.componentClassCache = componentClassCache;
     }
 
     public String getMethodName()
     {
-        return _methodSignature.getMethodName();
+        return methodSignature.getMethodName();
     }
 
     public Class getResultType()
     {
-        return _componentClassCache.forName(_methodSignature.getReturnType());
+        return componentClassCache.forName(methodSignature.getReturnType());
     }
 
     public synchronized Class getEffectiveResultType()
     {
-        if (_effectiveResultType == null)
+        if (effectiveResultType == null)
         {
             Class resultType = getResultType();
 
-            _effectiveResultType = resultType.isPrimitive() ? ClassFabUtils.getWrapperType(resultType) : resultType;
+            effectiveResultType = resultType.isPrimitive() ? ClassFabUtils.getWrapperType(resultType) : resultType;
         }
 
-        return _effectiveResultType;
+        return effectiveResultType;
     }
 
     public int getParameterCount()
     {
-        return _methodSignature.getParameterTypes().length;
+        return methodSignature.getParameterTypes().length;
     }
 
     public Class getParameterType(int index)
     {
-        return _componentClassCache.forName(_methodSignature.getParameterTypes()[index]);
+        return componentClassCache.forName(methodSignature.getParameterTypes()[index]);
     }
 
     public int getAdviceCount()
     {
-        return _advice.size();
+        return advice.size();
     }
 
     public ComponentMethodAdvice getAdvice(int index)
     {
-        return _advice.get(index);
+        return advice.get(index);
     }
 
     public void addAdvice(ComponentMethodAdvice advice)
     {
         // Ultimately, the mutable portion of this object's lifecycle all occurs inside a synchronized block defined by
-        // the class loader.  After that the _advice list is only accessed for reads.  I don't think there
+        // the class loader.  After that the advice list is only accessed for reads.  I don't think there
         // are any concurrency issues with this approach.
 
-        _advice.add(advice);
+        this.advice.add(advice);
     }
 
     public Class[] getExceptionTypes()
     {
-        String[] exceptionTypes = _methodSignature.getExceptionTypes();
+        String[] exceptionTypes = methodSignature.getExceptionTypes();
         int count = exceptionTypes.length;
 
         Class[] result = new Class[count];
 
         for (int i = 0; i < count; i++)
         {
-            result[i] = _componentClassCache.forName(exceptionTypes[i]);
+            result[i] = componentClassCache.forName(exceptionTypes[i]);
         }
 
         return result;
@@ -109,6 +109,6 @@ public class MethodInvocationInfo
 
     public Class getExceptionType(int index)
     {
-        return _componentClassCache.forName(_methodSignature.getExceptionTypes()[index]);
+        return componentClassCache.forName(methodSignature.getExceptionTypes()[index]);
     }
 }

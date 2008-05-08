@@ -81,7 +81,10 @@ public final class RegistryBuilder
         add(TapestryIOCModule.class);
     }
 
-    public void add(ModuleDef moduleDef)
+    /**
+     * Adds a {@link ModuleDef} to the registry, returning the builder for further configuration.
+     */
+    public RegistryBuilder add(ModuleDef moduleDef)
     {
         lock.check();
 
@@ -90,9 +93,16 @@ public final class RegistryBuilder
         // do as there is no concept of ModuleDef identity.
 
         modules.add(moduleDef);
+
+        return this;
     }
 
-    public void add(Class... moduleBuilderClasses)
+    /**
+     * Adds a number of modules (as module classes) to the registry, returning the builder for further configuration.
+     *
+     * @see org.apache.tapestry.ioc.annotations.SubModule
+     */
+    public RegistryBuilder add(Class... moduleBuilderClasses)
     {
         lock.check();
 
@@ -117,9 +127,17 @@ public final class RegistryBuilder
 
             queue.addAll(Arrays.asList(annotation.value()));
         }
+
+        return this;
     }
 
-    public void add(String classname)
+    /**
+     * Adds a number of module classes (specified by fully qualified class name) to the registry, returning the builder
+     * for further configuration.
+     *
+     * @see org.apache.tapestry.ioc.annotations.SubModule
+     */
+    public RegistryBuilder add(String classname)
     {
         lock.check();
 
@@ -133,8 +151,14 @@ public final class RegistryBuilder
         {
             throw new IllegalArgumentException(ex);
         }
+
+        return this;
     }
 
+    /**
+     * Constructs and returns the registry; this may only be done once. The caller is responsible for invoking {@link
+     * org.apache.tapestry.ioc.Registry#performRegistryStartup()}.
+     */
     public Registry build()
     {
         lock.lock();
@@ -146,15 +170,11 @@ public final class RegistryBuilder
 
     public ClassLoader getClassLoader()
     {
-        lock.check();
-
         return classLoader;
     }
 
     public Logger getLogger()
     {
-        lock.check();
-
         return logger;
     }
 }

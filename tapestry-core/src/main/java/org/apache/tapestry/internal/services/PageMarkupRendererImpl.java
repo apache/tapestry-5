@@ -21,11 +21,11 @@ import org.apache.tapestry.services.MarkupRenderer;
 
 public class PageMarkupRendererImpl implements PageMarkupRenderer
 {
-    private final Environment _environment;
+    private final Environment environment;
 
-    private final PageRenderQueue _pageRenderQueue;
+    private final PageRenderQueue pageRenderQueue;
 
-    private final MarkupRenderer _markupRendererPipeline;
+    private final MarkupRenderer markupRendererPipeline;
 
     public PageMarkupRendererImpl(MarkupRenderer markupRendererPipeline, PageRenderQueue pageRenderQueue,
                                   Environment environment)
@@ -36,23 +36,23 @@ public class PageMarkupRendererImpl implements PageMarkupRenderer
         // - This service is the bridge between public and private
 
 
-        _pageRenderQueue = pageRenderQueue;
-        _environment = environment;
+        this.pageRenderQueue = pageRenderQueue;
+        this.environment = environment;
 
-        _markupRendererPipeline = markupRendererPipeline;
+        this.markupRendererPipeline = markupRendererPipeline;
     }
 
     public void renderPageMarkup(Page page, MarkupWriter writer)
     {
-        _environment.clear();
+        environment.clear();
 
         // This is why the PRQ is scope perthread; we tell it what to render here ...
 
-        _pageRenderQueue.initializeForCompletePage(page);
+        pageRenderQueue.initializeForCompletePage(page);
 
-        // ... then our fixed pipeline is able to (eventually) call into it.
+        // ... then our statically fixed pipeline is able to (eventually) call into it.
 
-        _markupRendererPipeline.renderMarkup(writer);
+        markupRendererPipeline.renderMarkup(writer);
 
         if (writer.getDocument().getRootElement() == null)
             throw new RuntimeException(ServicesMessages.noMarkupFromPageRender(page));

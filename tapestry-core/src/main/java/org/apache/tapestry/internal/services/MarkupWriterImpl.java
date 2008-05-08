@@ -26,11 +26,11 @@ import java.util.List;
 
 public class MarkupWriterImpl implements MarkupWriter
 {
-    private final Document _document;
+    private final Document document;
 
-    private Element _current;
+    private Element current;
 
-    private Text _currentText;
+    private Text currentText;
 
     private final List<MarkupWriterListener> _listeners = CollectionFactory.newList();
 
@@ -46,55 +46,55 @@ public class MarkupWriterImpl implements MarkupWriter
 
     public MarkupWriterImpl(MarkupModel model, String encoding)
     {
-        _document = new Document(model, encoding);
+        document = new Document(model, encoding);
     }
 
     public void toMarkup(PrintWriter writer)
     {
-        _document.toMarkup(writer);
+        document.toMarkup(writer);
     }
 
     @Override
     public String toString()
     {
-        return _document.toString();
+        return document.toString();
     }
 
     public Document getDocument()
     {
-        return _document;
+        return document;
     }
 
     public Element getElement()
     {
-        return _current;
+        return current;
     }
 
     public void cdata(String content)
     {
         ensureCurrentElement();
 
-        _current.cdata(content);
+        current.cdata(content);
 
-        _currentText = null;
+        currentText = null;
     }
 
     public void write(String text)
     {
         // Whitespace before and after the root element is quietly ignored.
-        if (_current == null && InternalUtils.isBlank(text)) return;
+        if (current == null && InternalUtils.isBlank(text)) return;
 
         ensureCurrentElement();
 
         if (text == null) return;
 
-        if (_currentText == null)
+        if (currentText == null)
         {
-            _currentText = _current.text(text);
+            currentText = current.text(text);
             return;
         }
 
-        _currentText.write(text);
+        currentText.write(text);
     }
 
     public void writef(String format, Object... args)
@@ -102,7 +102,7 @@ public class MarkupWriterImpl implements MarkupWriter
         // A bit of a cheat:
 
         write("");
-        _currentText.writef(format, args);
+        currentText.writef(format, args);
     }
 
     public void attributes(Object... namesAndValues)
@@ -120,37 +120,37 @@ public class MarkupWriterImpl implements MarkupWriter
 
             if (value == null) continue;
 
-            _current.attribute(name, value.toString());
+            current.attribute(name, value.toString());
         }
 
     }
 
     private void ensureCurrentElement()
     {
-        if (_current == null) throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
+        if (current == null) throw new IllegalStateException(ServicesMessages.markupWriterNoCurrentElement());
     }
 
     public Element element(String name, Object... namesAndValues)
     {
-        if (_current == null) _current = _document.newRootElement(name);
-        else _current = _current.element(name);
+        if (current == null) current = document.newRootElement(name);
+        else current = current.element(name);
 
         attributes(namesAndValues);
 
-        _currentText = null;
+        currentText = null;
 
         fireElementDidStart();
 
-        return _current;
+        return current;
     }
 
     public void writeRaw(String text)
     {
         ensureCurrentElement();
 
-        _currentText = null;
+        currentText = null;
 
-        _current.raw(text);
+        current.raw(text);
     }
 
     public Element end()
@@ -159,51 +159,51 @@ public class MarkupWriterImpl implements MarkupWriter
 
         fireElementDidEnd();
 
-        _current = _current.getParent();
+        current = current.getParent();
 
-        _currentText = null;
+        currentText = null;
 
-        return _current;
+        return current;
     }
 
     public void comment(String text)
     {
         ensureCurrentElement();
 
-        _current.comment(text);
+        current.comment(text);
 
-        _currentText = null;
+        currentText = null;
     }
 
     public Element attributeNS(String namespace, String attributeName, String attributeValue)
     {
         ensureCurrentElement();
 
-        _current.attribute(namespace, attributeName, attributeValue);
+        current.attribute(namespace, attributeName, attributeValue);
 
-        return _current;
+        return current;
     }
 
     public Element defineNamespace(String namespace, String namespacePrefix)
     {
         ensureCurrentElement();
 
-        _current.defineNamespace(namespace, namespacePrefix);
+        current.defineNamespace(namespace, namespacePrefix);
 
-        return _current;
+        return current;
     }
 
     public Element elementNS(String namespace, String elementName)
     {
-        if (_current == null) _current = _document.newRootElement(namespace, elementName);
-        else _current = _current.elementNS(namespace, elementName);
+        if (current == null) current = document.newRootElement(namespace, elementName);
+        else current = current.elementNS(namespace, elementName);
 
-        _currentText = null;
+        currentText = null;
 
 
         fireElementDidStart();
 
-        return _current;
+        return current;
     }
 
     public void addListener(MarkupWriterListener listener)
@@ -222,7 +222,7 @@ public class MarkupWriterImpl implements MarkupWriter
     {
         for (MarkupWriterListener l : _listeners)
         {
-            l.elementDidStart(_current);
+            l.elementDidStart(current);
         }
     }
 
@@ -230,7 +230,7 @@ public class MarkupWriterImpl implements MarkupWriter
     {
         for (MarkupWriterListener l : _listeners)
         {
-            l.elementDidEnd(_current);
+            l.elementDidEnd(current);
         }
     }
 }

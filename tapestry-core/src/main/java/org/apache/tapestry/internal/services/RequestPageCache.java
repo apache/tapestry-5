@@ -19,6 +19,10 @@ import org.apache.tapestry.internal.structure.Page;
 /**
  * Per-thread service that caches page instances for the duration of the request, and is also responsible for tracking
  * the active page (the page which will ultimately render the response).
+ * <p/>
+ * <p/>
+ * Since {@link org.apache.tapestry.internal.structure.Page} is internal, most user-code should use the {@link
+ * org.apache.tapestry.services.ComponentSource} service instead.
  */
 public interface RequestPageCache
 {

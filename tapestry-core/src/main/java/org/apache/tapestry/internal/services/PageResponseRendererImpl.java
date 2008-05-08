@@ -26,37 +26,37 @@ import java.io.PrintWriter;
 
 public class PageResponseRendererImpl implements PageResponseRenderer
 {
-    private final PageMarkupRenderer _markupRenderer;
+    private final PageMarkupRenderer markupRenderer;
 
-    private final MarkupWriterFactory _markupWriterFactory;
+    private final MarkupWriterFactory markupWriterFactory;
 
-    private final PageContentTypeAnalyzer _pageContentTypeAnalyzer;
+    private final PageContentTypeAnalyzer pageContentTypeAnalyzer;
 
-    private final Response _response;
+    private final Response response;
 
     public PageResponseRendererImpl(MarkupWriterFactory markupWriterFactory, PageMarkupRenderer markupRenderer,
                                     PageContentTypeAnalyzer pageContentTypeAnalyzer, Response response)
     {
-        _markupWriterFactory = markupWriterFactory;
-        _markupRenderer = markupRenderer;
-        _pageContentTypeAnalyzer = pageContentTypeAnalyzer;
-        _response = response;
+        this.markupWriterFactory = markupWriterFactory;
+        this.markupRenderer = markupRenderer;
+        this.pageContentTypeAnalyzer = pageContentTypeAnalyzer;
+        this.response = response;
     }
 
     public void renderPageResponse(Page page) throws IOException
     {
         Defense.notNull(page, "page");
 
-        ContentType contentType = _pageContentTypeAnalyzer.findContentType(page);
+        ContentType contentType = pageContentTypeAnalyzer.findContentType(page);
 
         // For the moment, the content type is all that's used determine the model for the markup writer.
         // It's something of a can of worms.
 
-        MarkupWriter writer = _markupWriterFactory.newMarkupWriter(contentType);
+        MarkupWriter writer = markupWriterFactory.newMarkupWriter(contentType);
 
-        _markupRenderer.renderPageMarkup(page, writer);
+        markupRenderer.renderPageMarkup(page, writer);
 
-        PrintWriter pw = _response.getPrintWriter(contentType.toString());
+        PrintWriter pw = response.getPrintWriter(contentType.toString());
 
         writer.toMarkup(pw);
 

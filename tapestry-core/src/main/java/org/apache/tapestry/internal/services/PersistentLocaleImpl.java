@@ -26,16 +26,16 @@ public class PersistentLocaleImpl implements PersistentLocale
      */
     private static final String LOCALE_COOKIE_NAME = "org.apache.tapestry.locale";
 
-    private final Cookies _cookieSource;
+    private final Cookies cookieSource;
 
     public PersistentLocaleImpl(Cookies cookieSource)
     {
-        _cookieSource = cookieSource;
+        this.cookieSource = cookieSource;
     }
 
     public void set(Locale locale)
     {
-        _cookieSource.writeCookieValue(LOCALE_COOKIE_NAME, locale.toString());
+        cookieSource.writeCookieValue(LOCALE_COOKIE_NAME, locale.toString());
     }
 
     public Locale get()
@@ -47,7 +47,7 @@ public class PersistentLocaleImpl implements PersistentLocale
 
     private String getCookieValue()
     {
-        return _cookieSource.readCookieValue(LOCALE_COOKIE_NAME);
+        return cookieSource.readCookieValue(LOCALE_COOKIE_NAME);
     }
 
     public boolean isSet()

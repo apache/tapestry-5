@@ -22,22 +22,22 @@ import org.apache.tapestry.runtime.RenderQueue;
  */
 public class TextPageElement implements PageElement
 {
-    private final String _text;
+    private final String text;
 
     public TextPageElement(String text)
     {
-        _text = text;
+        this.text = text;
     }
 
     public void render(MarkupWriter writer, RenderQueue queue)
     {
-        writer.write(_text);
+        writer.write(text);
     }
 
     @Override
     public String toString()
     {
-        return String.format("Text[%s]", _text);
+        return String.format("Text[%s]", text);
     }
 
 }

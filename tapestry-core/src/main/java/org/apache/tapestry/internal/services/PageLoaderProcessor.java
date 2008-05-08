@@ -23,7 +23,8 @@ import org.apache.tapestry.internal.parser.*;
 import org.apache.tapestry.internal.structure.*;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newCaseInsensitiveMap;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.isBlank;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.isNonBlank;
@@ -64,48 +65,48 @@ class PageLoaderProcessor
 
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
 
-    private Stack<ComponentPageElement> _activeElementStack = newStack();
+    private Stack<ComponentPageElement> activeElementStack = CollectionFactory.newStack();
 
-    private boolean _addAttributesAsComponentBindings = false;
+    private boolean addAttributesAsComponentBindings = false;
 
-    private boolean _dtdAdded;
+    private boolean dtdAdded;
 
-    private final Stack<BodyPageElement> _bodyPageElementStack = newStack();
+    private final Stack<BodyPageElement> bodyPageElementStack = CollectionFactory.newStack();
 
     // You can use a stack as a queue
-    private final Stack<ComponentPageElement> _componentQueue = newStack();
+    private final Stack<ComponentPageElement> componentQueue = CollectionFactory.newStack();
 
-    private final Stack<Boolean> _discardEndTagStack = newStack();
+    private final Stack<Boolean> discardEndTagStack = CollectionFactory.newStack();
 
-    private final Stack<Runnable> _endElementCommandStack = newStack();
+    private final Stack<Runnable> endElementCommandStack = CollectionFactory.newStack();
 
     /**
      * Used as a queue of Runnable objects used to handle final setup.
      */
 
-    private final List<Runnable> _finalization = CollectionFactory.newList();
+    private final List<Runnable> finalization = CollectionFactory.newList();
 
-    private final IdAllocator _idAllocator = new IdAllocator();
+    private final IdAllocator idAllocator = new IdAllocator();
 
-    private final LinkFactory _linkFactory;
+    private final LinkFactory linkFactory;
 
-    private ComponentModel _loadingComponentModel;
+    private ComponentModel loadingComponentModel;
 
-    private ComponentPageElement _loadingElement;
+    private ComponentPageElement loadingElement;
 
-    private final Map<String, Map<String, Binding>> _componentIdToBindingMap = newMap();
+    private final Map<String, Map<String, Binding>> componentIdToBindingMap = CollectionFactory.newMap();
 
-    private Locale _locale;
+    private Locale locale;
 
-    private final OneShotLock _lock = new OneShotLock();
+    private final OneShotLock lock = new OneShotLock();
 
-    private Page _page;
+    private Page page;
 
-    private final PageElementFactory _pageElementFactory;
+    private final PageElementFactory pageElementFactory;
 
-    private final PersistentFieldManager _persistentFieldManager;
+    private final PersistentFieldManager persistentFieldManager;
 
-    private final ComponentTemplateSource _templateSource;
+    private final ComponentTemplateSource templateSource;
 
     private static final PageElement END_ELEMENT = new PageElement()
     {
@@ -123,32 +124,32 @@ class PageLoaderProcessor
 
     private static class RenderBodyElement implements PageElement
     {
-        private final ComponentPageElement _component;
+        private final ComponentPageElement component;
 
         public RenderBodyElement(ComponentPageElement component)
         {
-            _component = component;
+            this.component = component;
         }
 
         public void render(MarkupWriter writer, RenderQueue queue)
         {
-            _component.enqueueBeforeRenderBody(queue);
+            component.enqueueBeforeRenderBody(queue);
         }
 
         @Override
         public String toString()
         {
-            return String.format("RenderBody[%s]", _component.getNestedId());
+            return String.format("RenderBody[%s]", component.getNestedId());
         }
     }
 
     PageLoaderProcessor(ComponentTemplateSource templateSource, PageElementFactory pageElementFactory,
                         LinkFactory linkFactory, PersistentFieldManager persistentFieldManager)
     {
-        _templateSource = templateSource;
-        _pageElementFactory = pageElementFactory;
-        _linkFactory = linkFactory;
-        _persistentFieldManager = persistentFieldManager;
+        this.templateSource = templateSource;
+        this.pageElementFactory = pageElementFactory;
+        this.linkFactory = linkFactory;
+        this.persistentFieldManager = persistentFieldManager;
     }
 
     private void bindParameterFromTemplate(ComponentPageElement component, AttributeToken token)
@@ -167,14 +168,14 @@ class PageLoaderProcessor
         String defaultBindingPrefix = determineDefaultBindingPrefix(component, name,
                                                                     TapestryConstants.LITERAL_BINDING_PREFIX);
 
-        Binding binding = findBinding(_loadingElement, component, name, token.getValue(), defaultBindingPrefix,
+        Binding binding = findBinding(loadingElement, component, name, token.getValue(), defaultBindingPrefix,
                                       token.getLocation());
 
         if (binding != null)
         {
             component.bindParameter(name, binding);
 
-            Map<String, Binding> bindingMap = _componentIdToBindingMap.get(component
+            Map<String, Binding> bindingMap = componentIdToBindingMap.get(component
                     .getCompleteId());
             bindingMap.put(name, binding);
         }
@@ -185,13 +186,13 @@ class PageLoaderProcessor
         if (model != null)
         {
             for (String mixinClassName : model.getMixinClassNames())
-                _pageElementFactory.addMixinByClassName(component, mixinClassName);
+                pageElementFactory.addMixinByClassName(component, mixinClassName);
         }
 
         if (mixins != null)
         {
             for (String type : COMMA_PATTERN.split(mixins))
-                _pageElementFactory.addMixinByTypeName(component, type);
+                pageElementFactory.addMixinByTypeName(component, type);
         }
     }
 
@@ -241,7 +242,7 @@ class PageLoaderProcessor
         if (value.startsWith(INHERIT_PREFIX))
         {
             String loadingParameterName = value.substring(INHERIT_PREFIX.length());
-            Map<String, Binding> loadingComponentBindingMap = _componentIdToBindingMap
+            Map<String, Binding> loadingComponentBindingMap = componentIdToBindingMap
                     .get(loadingComponent.getCompleteId());
 
             // This may return null if the parameter is not bound in the loading component.
@@ -261,8 +262,8 @@ class PageLoaderProcessor
             return new InheritedBinding(description, existing, location);
         }
 
-        return _pageElementFactory.newBinding(name, loadingComponent.getComponentResources(),
-                                              component.getComponentResources(), defaultBindingPrefix, value, location);
+        return pageElementFactory.newBinding(name, loadingComponent.getComponentResources(),
+                                             component.getComponentResources(), defaultBindingPrefix, value, location);
     }
 
     /**
@@ -284,7 +285,7 @@ class PageLoaderProcessor
 
     private void addToBody(PageElement element)
     {
-        _bodyPageElementStack.peek().addToBody(element);
+        bodyPageElementStack.peek().addToBody(element);
     }
 
     private void attribute(AttributeToken token)
@@ -292,15 +293,15 @@ class PageLoaderProcessor
         // This kind of bookkeeping is ugly, we probably should have distinct (if very similar)
         // tokens for attributes and for parameter bindings.
 
-        if (_addAttributesAsComponentBindings)
+        if (addAttributesAsComponentBindings)
         {
-            ComponentPageElement activeElement = _activeElementStack.peek();
+            ComponentPageElement activeElement = activeElementStack.peek();
 
             bindParameterFromTemplate(activeElement, token);
             return;
         }
 
-        PageElement element = _pageElementFactory.newAttributeElement(_loadingElement
+        PageElement element = pageElementFactory.newAttributeElement(loadingElement
                 .getComponentResources(), token);
 
         addToBody(element);
@@ -308,7 +309,7 @@ class PageLoaderProcessor
 
     private void body()
     {
-        addToBody(new RenderBodyElement(_loadingElement));
+        addToBody(new RenderBodyElement(loadingElement));
 
         // BODY tokens are *not* matched by END_ELEMENT tokens. Nor will there be
         // text or comment content "inside" the BODY.
@@ -330,8 +331,8 @@ class PageLoaderProcessor
      */
     private void configureEnd(boolean discard, Runnable command)
     {
-        _discardEndTagStack.push(discard);
-        _endElementCommandStack.push(command);
+        discardEndTagStack.push(discard);
+        endElementCommandStack.push(command);
     }
 
     private void endElement()
@@ -339,11 +340,11 @@ class PageLoaderProcessor
         // discard will be false if the matching start token was for a static element, and will be
         // true otherwise (component, block, parameter).
 
-        boolean discard = _discardEndTagStack.pop();
+        boolean discard = discardEndTagStack.pop();
 
         if (!discard) addToBody(END_ELEMENT);
 
-        Runnable command = _endElementCommandStack.pop();
+        Runnable command = endElementCommandStack.pop();
 
         // Used to return environment to prior state.
 
@@ -352,7 +353,7 @@ class PageLoaderProcessor
 
     private void expansion(ExpansionToken token)
     {
-        PageElement element = _pageElementFactory.newExpansionElement(_loadingElement
+        PageElement element = pageElementFactory.newExpansionElement(loadingElement
                 .getComponentResources(), token);
 
         addToBody(element);
@@ -381,11 +382,11 @@ class PageLoaderProcessor
     {
         // Ensure that loadPage() may only be invoked once.
 
-        _lock.lock();
+        lock.lock();
 
-        _locale = locale;
+        this.locale = locale;
 
-        _page = new PageImpl(logicalPageName, _locale, _linkFactory, _persistentFieldManager);
+        page = new PageImpl(logicalPageName, this.locale, linkFactory, persistentFieldManager);
 
         loadRootComponent(pageClassName);
 
@@ -393,7 +394,7 @@ class PageLoaderProcessor
 
         // Take care of any finalization logic that's been deferred out.
 
-        for (Runnable r : _finalization)
+        for (Runnable r : finalization)
         {
             r.run();
         }
@@ -402,18 +403,18 @@ class PageLoaderProcessor
         // This is to help ensure that no client-specific information leaks
         // into the page.
 
-        _page.loaded();
+        page.loaded();
 
-        return _page;
+        return page;
     }
 
     private void loadRootComponent(String className)
     {
-        ComponentPageElement rootComponent = _pageElementFactory.newRootComponentElement(_page, className, _locale);
+        ComponentPageElement rootComponent = pageElementFactory.newRootComponentElement(page, className, locale);
 
-        _page.setRootElement(rootComponent);
+        page.setRootElement(rootComponent);
 
-        _componentQueue.push(rootComponent);
+        componentQueue.push(rootComponent);
     }
 
     /**
@@ -421,45 +422,45 @@ class PageLoaderProcessor
      * large and hard to test. I think a lot of instance and local variables need to be bundled up into some kind of
      * process object. This code is effectively too big to be tested except through integration testing.
      */
-    private void loadTemplateForComponent(ComponentPageElement loadingElement)
+    private void loadTemplateForComponent(final ComponentPageElement loadingElement)
     {
-        _loadingElement = loadingElement;
-        _loadingComponentModel = loadingElement.getComponentResources().getComponentModel();
+        this.loadingElement = loadingElement;
+        loadingComponentModel = loadingElement.getComponentResources().getComponentModel();
 
-        String componentClassName = _loadingComponentModel.getComponentClassName();
-        ComponentTemplate template = _templateSource.getTemplate(_loadingComponentModel, _locale);
+        String componentClassName = loadingComponentModel.getComponentClassName();
+        ComponentTemplate template = templateSource.getTemplate(loadingComponentModel, locale);
 
         // When the template for a component is missing, we pretend it consists of just a RenderBody
         // phase. Missing is not an error ... many component simply do not have a template.
 
         if (template.isMissing())
         {
-            _loadingElement.addToTemplate(new RenderBodyElement(_loadingElement));
+            this.loadingElement.addToTemplate(new RenderBodyElement(this.loadingElement));
             return;
         }
 
         // Pre-allocate ids to avoid later name collisions.
 
-        Logger logger = _loadingComponentModel.getLogger();
+        Logger logger = loadingComponentModel.getLogger();
 
         // Don't have a case-insensitive Set, so we'll make due with a Map
         Map<String, Boolean> embeddedIds = newCaseInsensitiveMap();
 
-        for (String id : _loadingComponentModel.getEmbeddedComponentIds())
+        for (String id : loadingComponentModel.getEmbeddedComponentIds())
             embeddedIds.put(id, true);
 
-        _idAllocator.clear();
+        idAllocator.clear();
 
         for (String id : template.getComponentIds())
         {
-            _idAllocator.allocateId(id);
+            idAllocator.allocateId(id);
             embeddedIds.remove(id);
         }
 
         if (!embeddedIds.isEmpty())
             logger.error(ServicesMessages.embeddedComponentsNotInTemplate(embeddedIds.keySet(), componentClassName));
 
-        _addAttributesAsComponentBindings = false;
+        addAttributesAsComponentBindings = false;
 
         // The outermost elements of the template belong in the loading component's template list,
         // not its body list. This shunt allows everyone else to not have to make that decision,
@@ -470,11 +471,11 @@ class PageLoaderProcessor
         {
             public void addToBody(PageElement element)
             {
-                _loadingElement.addToTemplate(element);
+                loadingElement.addToTemplate(element);
             }
         };
 
-        _bodyPageElementStack.push(shunt);
+        bodyPageElementStack.push(shunt);
 
         for (TemplateToken token : template.getTokens())
         {
@@ -539,7 +540,7 @@ class PageLoaderProcessor
 
         // For neatness / symmetry:
 
-        _bodyPageElementStack.pop(); // the shunt
+        bodyPageElementStack.pop(); // the shunt
 
         // TODO: Check that all stacks are empty. That should never happen, as long
         // as the ComponentTemplate is valid.
@@ -582,20 +583,20 @@ class PageLoaderProcessor
 
         // TODO: Check that the t:parameter doesn't appear outside of an embedded component.
 
-        _activeElementStack.peek().bindParameter(name, binding);
+        activeElementStack.peek().bindParameter(name, binding);
 
         setupBlock(block);
     }
 
     private void setupBlock(BodyPageElement block)
     {
-        _bodyPageElementStack.push(block);
+        bodyPageElementStack.push(block);
 
         Runnable cleanup = new Runnable()
         {
             public void run()
             {
-                _bodyPageElementStack.pop();
+                bodyPageElementStack.pop();
             }
         };
 
@@ -611,7 +612,7 @@ class PageLoaderProcessor
 
         String id = token.getId();
 
-        if (id != null) _loadingElement.addBlock(id, block);
+        if (id != null) loadingElement.addBlock(id, block);
 
         setupBlock(block);
     }
@@ -629,9 +630,9 @@ class PageLoaderProcessor
 
         // We know that if embeddedId is null, embeddedType is not.
 
-        if (embeddedId == null) embeddedId = generateEmbeddedId(embeddedType, _idAllocator);
+        if (embeddedId == null) embeddedId = generateEmbeddedId(embeddedType, idAllocator);
 
-        final EmbeddedComponentModel embeddedModel = _loadingComponentModel
+        final EmbeddedComponentModel embeddedModel = loadingComponentModel
                 .getEmbeddedComponentModel(embeddedId);
 
         if (embeddedModel != null)
@@ -640,7 +641,7 @@ class PageLoaderProcessor
 
             if (isNonBlank(modelType) && embeddedType != null)
             {
-                Logger log = _loadingComponentModel.getLogger();
+                Logger log = loadingComponentModel.getLogger();
                 log.error(ServicesMessages.compTypeConflict(embeddedId, embeddedType, modelType));
             }
 
@@ -649,40 +650,40 @@ class PageLoaderProcessor
         }
 
         if (isBlank(embeddedType) && isBlank(embeddedComponentClassName)) throw new TapestryException(
-                ServicesMessages.noTypeForEmbeddedComponent(embeddedId, _loadingComponentModel.getComponentClassName()),
+                ServicesMessages.noTypeForEmbeddedComponent(embeddedId, loadingComponentModel.getComponentClassName()),
                 token, null);
 
-        final ComponentPageElement newComponent = _pageElementFactory.newComponentElement(_page, _loadingElement,
-                                                                                          embeddedId, embeddedType,
-                                                                                          embeddedComponentClassName,
-                                                                                          elementName,
-                                                                                          token.getLocation());
+        final ComponentPageElement newComponent = pageElementFactory.newComponentElement(page, loadingElement,
+                                                                                         embeddedId, embeddedType,
+                                                                                         embeddedComponentClassName,
+                                                                                         elementName,
+                                                                                         token.getLocation());
 
         addMixinsToComponent(newComponent, embeddedModel, token.getMixins());
 
         final Map<String, Binding> newComponentBindings = newMap();
-        _componentIdToBindingMap.put(newComponent.getCompleteId(), newComponentBindings);
+        componentIdToBindingMap.put(newComponent.getCompleteId(), newComponentBindings);
 
         if (embeddedModel != null)
-            bindParametersFromModel(embeddedModel, _loadingElement, newComponent, newComponentBindings);
+            bindParametersFromModel(embeddedModel, loadingElement, newComponent, newComponentBindings);
 
         addToBody(newComponent);
 
         // Remember to load the template for this new component
-        _componentQueue.push(newComponent);
+        componentQueue.push(newComponent);
 
         // Any attribute tokens that immediately follow should be
         // used to bind parameters.
 
-        _addAttributesAsComponentBindings = true;
+        addAttributesAsComponentBindings = true;
 
         // Any attributes (including component parameters) that come up belong on this component.
 
-        _activeElementStack.push(newComponent);
+        activeElementStack.push(newComponent);
 
         // Set things up so that content inside the component is added to the component's body.
 
-        _bodyPageElementStack.push(newComponent);
+        bodyPageElementStack.push(newComponent);
 
         // And clean that up when the end element is reached.
 
@@ -696,7 +697,7 @@ class PageLoaderProcessor
 
         if (embeddedModel != null && embeddedModel.getInheritInformalParameters() && newComponentModel.getSupportsInformalParameters())
         {
-            final ComponentPageElement loadingElement = _loadingElement;
+            final ComponentPageElement loadingElement = this.loadingElement;
 
             Runnable finalizer = new Runnable()
             {
@@ -708,7 +709,7 @@ class PageLoaderProcessor
                 }
             };
 
-            _finalization.add(finalizer);
+            finalization.add(finalizer);
         }
 
 
@@ -719,8 +720,8 @@ class PageLoaderProcessor
                 // May need a separate queue for this, to execute at the very end of page loading.
 
 
-                _activeElementStack.pop();
-                _bodyPageElementStack.pop();
+                activeElementStack.pop();
+                bodyPageElementStack.pop();
             }
         };
 
@@ -764,7 +765,7 @@ class PageLoaderProcessor
         addToBody(element);
 
         // Controls how attributes are interpretted.
-        _addAttributesAsComponentBindings = false;
+        addAttributesAsComponentBindings = false;
 
         // Index will be matched by end:
 
@@ -783,16 +784,16 @@ class PageLoaderProcessor
     private void dtd(DTDToken token)
     {
         // first DTD encountered wins.
-        if (_dtdAdded) return;
+        if (dtdAdded) return;
 
         PageElement element = new DTDPageElement(token.getName(), token.getPublicId(), token.getSystemId());
         // since rendering via the markup writer is to the document tree,
         // we don't really care where this gets placed in the tree; the
         // DTDPageElement will set the dtd of the document directly, rather than
         // writing anything to the markup writer
-        _page.getRootElement().addToTemplate(element);
+        page.getRootElement().addToTemplate(element);
 
-        _dtdAdded = true;
+        dtdAdded = true;
     }
 
     /**
@@ -800,9 +801,9 @@ class PageLoaderProcessor
      */
     private void workComponentQueue()
     {
-        while (!_componentQueue.isEmpty())
+        while (!componentQueue.isEmpty())
         {
-            ComponentPageElement componentElement = _componentQueue.pop();
+            ComponentPageElement componentElement = componentQueue.pop();
 
             loadTemplateForComponent(componentElement);
         }

@@ -26,13 +26,13 @@ import java.util.Map;
 
 public class TranslatorSourceImpl implements TranslatorSource, InvalidationListener
 {
-    private final Map<String, Translator> _translators;
+    private final Map<String, Translator> translators;
 
-    private final StrategyRegistry<Translator> _registry;
+    private final StrategyRegistry<Translator> registry;
 
     public TranslatorSourceImpl(Map<String, Translator> translators)
     {
-        _translators = translators;
+        this.translators = translators;
 
         Map<Class, Translator> typeToTranslator = CollectionFactory.newMap();
 
@@ -41,30 +41,30 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
             typeToTranslator.put(t.getType(), t);
         }
 
-        _registry = StrategyRegistry.newInstance(Translator.class, typeToTranslator, true);
+        registry = StrategyRegistry.newInstance(Translator.class, typeToTranslator, true);
     }
 
     public Translator get(String name)
     {
 
-        Translator result = _translators.get(name);
+        Translator result = translators.get(name);
 
         if (result == null)
             throw new RuntimeException(ServicesMessages.unknownTranslatorType(name, InternalUtils
-                    .sortedKeys(_translators)));
+                    .sortedKeys(translators)));
 
         return result;
     }
 
     public Translator getByType(Class valueType)
     {
-        Translator result = _registry.get(valueType);
+        Translator result = registry.get(valueType);
 
         if (result == null)
         {
             List<String> names = CollectionFactory.newList();
 
-            for (Class type : _registry.getTypes())
+            for (Class type : registry.getTypes())
             {
                 names.add(type.getName());
             }
@@ -77,11 +77,11 @@ public class TranslatorSourceImpl implements TranslatorSource, InvalidationListe
 
     public Translator findByType(Class valueType)
     {
-        return _registry.get(valueType);
+        return registry.get(valueType);
     }
 
     public void objectWasInvalidated()
     {
-        _registry.clearCache();
+        registry.clearCache();
     }
 }

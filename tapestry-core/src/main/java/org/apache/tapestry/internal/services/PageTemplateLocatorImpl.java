@@ -25,14 +25,14 @@ import java.util.Locale;
 
 public class PageTemplateLocatorImpl implements PageTemplateLocator
 {
-    private final Resource _contextRoot;
+    private final Resource contextRoot;
 
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
     public PageTemplateLocatorImpl(Resource contextRoot, ComponentClassResolver resolver)
     {
-        _contextRoot = contextRoot;
-        _resolver = resolver;
+        this.contextRoot = contextRoot;
+        this.resolver = resolver;
     }
 
     public Resource findPageTemplateResource(ComponentModel model, Locale locale)
@@ -43,7 +43,7 @@ public class PageTemplateLocatorImpl implements PageTemplateLocator
 
         if (!className.contains(".pages.")) return null;
 
-        String logicalName = _resolver.resolvePageClassNameToPageName(className);
+        String logicalName = resolver.resolvePageClassNameToPageName(className);
 
         int slashx = logicalName.lastIndexOf('/');
 
@@ -59,7 +59,7 @@ public class PageTemplateLocatorImpl implements PageTemplateLocator
 
         String path = format("%s.%s", logicalName, InternalConstants.TEMPLATE_EXTENSION);
 
-        return _contextRoot.forFile(path).forLocale(locale);
+        return contextRoot.forFile(path).forLocale(locale);
     }
 
 }

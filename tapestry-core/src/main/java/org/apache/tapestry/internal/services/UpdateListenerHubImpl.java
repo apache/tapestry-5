@@ -15,17 +15,17 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.events.UpdateListener;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newThreadSafeList;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.List;
 
 public class UpdateListenerHubImpl implements UpdateListenerHub
 {
-    private final List<UpdateListener> _listeners = newThreadSafeList();
+    private final List<UpdateListener> listeners = CollectionFactory.newThreadSafeList();
 
     public void addUpdateListener(UpdateListener listener)
     {
-        _listeners.add(listener);
+        listeners.add(listener);
 
     }
 
@@ -34,7 +34,7 @@ public class UpdateListenerHubImpl implements UpdateListenerHub
      */
     public void fireUpdateEvent()
     {
-        for (UpdateListener listener : _listeners)
+        for (UpdateListener listener : listeners)
         {
             listener.checkForUpdates();
         }

@@ -19,7 +19,7 @@ import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.MessageFormatter;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ValidationMessagesSource;
 
 import java.util.Collection;
@@ -28,37 +28,37 @@ import java.util.Map;
 
 public class ValidationMessagesSourceImpl implements ValidationMessagesSource, UpdateListener
 {
-    private final MessagesSource _messagesSource;
+    private final MessagesSource messagesSource;
 
-    private final MessagesBundle _bundle;
+    private final MessagesBundle bundle;
 
-    private final Map<Locale, Messages> _cache = newConcurrentMap();
+    private final Map<Locale, Messages> cache = CollectionFactory.newConcurrentMap();
 
     private class ValidationMessagesBundle implements MessagesBundle
     {
-        private final Resource _baseResource;
+        private final Resource baseResource;
 
-        private final MessagesBundle _parent;
+        private final MessagesBundle parent;
 
         public ValidationMessagesBundle(final Resource baseResource, final MessagesBundle parent)
         {
-            _baseResource = baseResource;
-            _parent = parent;
+            this.baseResource = baseResource;
+            this.parent = parent;
         }
 
         public Resource getBaseResource()
         {
-            return _baseResource;
+            return baseResource;
         }
 
         public Object getId()
         {
-            return _baseResource.getPath();
+            return baseResource.getPath();
         }
 
         public MessagesBundle getParent()
         {
-            return _parent;
+            return parent;
         }
 
     }
@@ -69,11 +69,11 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
      */
     private class ValidationMessages implements Messages
     {
-        private final Locale _locale;
+        private final Locale locale;
 
         public ValidationMessages(final Locale locale)
         {
-            _locale = locale;
+            this.locale = locale;
         }
 
         private Messages messages()
@@ -81,7 +81,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
             // The MessagesSource caches the value returned, until any underlying file is touched,
             // at which point an updated Messages will be returned.
 
-            return _messagesSource.getMessages(_bundle, _locale);
+            return messagesSource.getMessages(bundle, locale);
         }
 
         public boolean contains(String key)
@@ -115,7 +115,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
 
     ValidationMessagesSourceImpl(Collection<String> bundles, Resource classpathRoot, URLChangeTracker tracker)
     {
-        _messagesSource = new MessagesSourceImpl(tracker);
+        messagesSource = new MessagesSourceImpl(tracker);
 
         MessagesBundle parent = null;
 
@@ -126,17 +126,17 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
             parent = new ValidationMessagesBundle(bundleResource, parent);
         }
 
-        _bundle = parent;
+        bundle = parent;
     }
 
     public Messages getValidationMessages(Locale locale)
     {
-        Messages result = _cache.get(locale);
+        Messages result = cache.get(locale);
 
         if (result == null)
         {
             result = new ValidationMessages(locale);
-            _cache.put(locale, result);
+            cache.put(locale, result);
         }
 
         return result;
@@ -147,7 +147,7 @@ public class ValidationMessagesSourceImpl implements ValidationMessagesSource, U
         // When there are changes, the Messages cached inside the MessagesSource will be discarded
         // and will be rebuilt on demand by the ValidatonMessages instances.
 
-        _messagesSource.checkForUpdates();
+        messagesSource.checkForUpdates();
     }
 
 }

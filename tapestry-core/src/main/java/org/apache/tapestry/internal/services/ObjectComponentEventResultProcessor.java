@@ -24,17 +24,17 @@ import java.util.Collection;
  */
 public class ObjectComponentEventResultProcessor implements ComponentEventResultProcessor<Object>
 {
-    private final Collection<Class> _configuredClasses;
+    private final Collection<Class> configuredClasses;
 
     public ObjectComponentEventResultProcessor(Collection<Class> configuredClasses)
     {
-        _configuredClasses = configuredClasses;
+        this.configuredClasses = configuredClasses;
     }
 
     public void processResultValue(Object value) throws IOException
     {
         String message = ServicesMessages.invalidComponentEventResult(value,
-                                                                      _configuredClasses);
+                                                                      configuredClasses);
 
         throw new RuntimeException(message);
     }

@@ -19,7 +19,7 @@ import org.apache.tapestry.internal.util.MultiKey;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.LocalizedNameGenerator;
 
@@ -34,40 +34,40 @@ import java.util.*;
  */
 public class MessagesSourceImpl extends InvalidationEventHubImpl implements MessagesSource
 {
-    private final URLChangeTracker _tracker;
+    private final URLChangeTracker tracker;
 
     /**
      * Keyed on bundle id and locale.
      */
-    private final Map<MultiKey, Messages> _messagesByBundleIdAndLocale = newConcurrentMap();
+    private final Map<MultiKey, Messages> messagesByBundleIdAndLocale = CollectionFactory.newConcurrentMap();
 
     /**
      * Keyed on bundle id and locale, the coooked properties include properties inherited from less locale-specific
      * properties files, or inherited from parent bundles.
      */
-    private final Map<MultiKey, Map<String, String>> _cookedProperties = newConcurrentMap();
+    private final Map<MultiKey, Map<String, String>> cookedProperties = CollectionFactory.newConcurrentMap();
 
     /**
      * Raw properties represent just the properties read from a specific properties file, in isolation.
      */
-    private final Map<Resource, Map<String, String>> _rawProperties = newConcurrentMap();
+    private final Map<Resource, Map<String, String>> rawProperties = CollectionFactory.newConcurrentMap();
 
-    private final Map<String, String> _emptyMap = Collections.emptyMap();
+    private final Map<String, String> emptyMap = Collections.emptyMap();
 
     public MessagesSourceImpl(URLChangeTracker tracker)
     {
-        _tracker = tracker;
+        this.tracker = tracker;
     }
 
     public void checkForUpdates()
     {
-        if (_tracker.containsChanges())
+        if (tracker.containsChanges())
         {
-            _messagesByBundleIdAndLocale.clear();
-            _cookedProperties.clear();
-            _rawProperties.clear();
+            messagesByBundleIdAndLocale.clear();
+            cookedProperties.clear();
+            rawProperties.clear();
 
-            _tracker.clear();
+            tracker.clear();
 
             fireInvalidationEvent();
         }
@@ -77,12 +77,12 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
     {
         MultiKey key = new MultiKey(bundle.getId(), locale);
 
-        Messages result = _messagesByBundleIdAndLocale.get(key);
+        Messages result = messagesByBundleIdAndLocale.get(key);
 
         if (result == null)
         {
             result = buildMessages(bundle, locale);
-            _messagesByBundleIdAndLocale.put(key, result);
+            messagesByBundleIdAndLocale.put(key, result);
         }
 
         return result;
@@ -102,11 +102,11 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> findBundleProperties(MessagesBundle bundle, Locale locale)
     {
-        if (bundle == null) return _emptyMap;
+        if (bundle == null) return emptyMap;
 
         MultiKey key = new MultiKey(bundle.getId(), locale);
 
-        Map<String, String> existing = _cookedProperties.get(key);
+        Map<String, String> existing = cookedProperties.get(key);
 
         if (existing != null) return existing;
 
@@ -116,7 +116,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         Resource propertiesResource = bundle.getBaseResource().withExtension("properties");
 
-        List<Resource> localizations = newList();
+        List<Resource> localizations = CollectionFactory.newList();
 
         for (String localizedFile : new LocalizedNameGenerator(propertiesResource.getFile(), locale))
         {
@@ -138,13 +138,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
         {
             Map<String, String> rawProperties = getRawProperties(localization);
 
-            // Woould be nice to write into the _cookedProperties cache here,
+            // Woould be nice to write into the cookedProperties cache here,
             // but we can't because we don't know the locale part of the MultiKey.
 
             previous = extend(previous, rawProperties);
         }
 
-        _cookedProperties.put(key, previous);
+        cookedProperties.put(key, previous);
 
         return previous;
     }
@@ -159,7 +159,7 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
         // Make a copy of the base Map
 
-        Map<String, String> result = newCaseInsensitiveMap(base);
+        Map<String, String> result = CollectionFactory.newCaseInsensitiveMap(base);
 
         // Add or overwrite properties to the copy
 
@@ -170,13 +170,13 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
 
     private Map<String, String> getRawProperties(Resource localization)
     {
-        Map<String, String> result = _rawProperties.get(localization);
+        Map<String, String> result = rawProperties.get(localization);
 
         if (result == null)
         {
             result = readProperties(localization);
 
-            _rawProperties.put(localization, result);
+            rawProperties.put(localization, result);
         }
 
         return result;
@@ -187,11 +187,11 @@ public class MessagesSourceImpl extends InvalidationEventHubImpl implements Mess
      */
     private Map<String, String> readProperties(Resource resource)
     {
-        if (!resource.exists()) return _emptyMap;
+        if (!resource.exists()) return emptyMap;
 
-        _tracker.add(resource.toURL());
+        tracker.add(resource.toURL());
 
-        Map<String, String> result = newCaseInsensitiveMap();
+        Map<String, String> result = CollectionFactory.newCaseInsensitiveMap();
 
         Properties p = new Properties();
         InputStream is = null;

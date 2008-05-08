@@ -22,17 +22,17 @@ public class MethodCompileException extends RuntimeException
 {
     private static final long serialVersionUID = -2803586049370974986L;
 
-    private final String _methodBody;
+    private final String methodBody;
 
     public MethodCompileException(String message, String methodBody, Throwable cause)
     {
         super(message, cause);
 
-        _methodBody = methodBody;
+        this.methodBody = methodBody;
     }
 
     public String getMethodBody()
     {
-        return _methodBody;
+        return methodBody;
     }
 }

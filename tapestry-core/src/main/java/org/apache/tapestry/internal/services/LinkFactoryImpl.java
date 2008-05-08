@@ -37,25 +37,25 @@ import java.util.Map;
 
 public class LinkFactoryImpl implements LinkFactory
 {
-    private final Request _request;
+    private final Request request;
 
-    private final Response _response;
+    private final Response response;
 
-    private final ComponentInvocationMap _componentInvocationMap;
+    private final ComponentInvocationMap componentInvocationMap;
 
-    private final RequestPageCache _pageCache;
+    private final RequestPageCache pageCache;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
-    private final RequestPathOptimizer _optimizer;
+    private final RequestPathOptimizer optimizer;
 
-    private final PageRenderQueue _pageRenderQueue;
+    private final PageRenderQueue pageRenderQueue;
 
-    private final RequestSecurityManager _requestSecurityManager;
+    private final RequestSecurityManager requestSecurityManager;
 
-    private final List<LinkFactoryListener> _listeners = newThreadSafeList();
+    private final List<LinkFactoryListener> listeners = newThreadSafeList();
 
-    private final StrategyRegistry<PassivateContextHandler> _registry;
+    private final StrategyRegistry<PassivateContextHandler> registry;
 
 
     private interface PassivateContextHandler<T>
@@ -72,14 +72,14 @@ public class LinkFactoryImpl implements LinkFactory
                            ContextValueEncoder contextValueEncoder,
                            RequestSecurityManager requestSecurityManager)
     {
-        _request = request;
-        _response = response;
-        _componentInvocationMap = componentInvocationMap;
-        _pageCache = pageCache;
-        _optimizer = optimizer;
-        _pageRenderQueue = pageRenderQueue;
-        _contextValueEncoder = contextValueEncoder;
-        _requestSecurityManager = requestSecurityManager;
+        this.request = request;
+        this.response = response;
+        this.componentInvocationMap = componentInvocationMap;
+        this.pageCache = pageCache;
+        this.optimizer = optimizer;
+        this.pageRenderQueue = pageRenderQueue;
+        this.contextValueEncoder = contextValueEncoder;
+        this.requestSecurityManager = requestSecurityManager;
 
         Map<Class, PassivateContextHandler> registrations = newMap();
 
@@ -111,12 +111,12 @@ public class LinkFactoryImpl implements LinkFactory
             }
         });
 
-        _registry = StrategyRegistry.newInstance(PassivateContextHandler.class, registrations);
+        registry = StrategyRegistry.newInstance(PassivateContextHandler.class, registrations);
     }
 
     public void addListener(LinkFactoryListener listener)
     {
-        _listeners.add(listener);
+        listeners.add(listener);
     }
 
     public Link createActionLink(Page page, String nestedId, String eventType, boolean forForm, Object... context)
@@ -124,7 +124,7 @@ public class LinkFactoryImpl implements LinkFactory
         notNull(page, "page");
         notBlank(eventType, "action");
 
-        Page activePage = _pageRenderQueue.getRenderingPage();
+        Page activePage = pageRenderQueue.getRenderingPage();
 
         // See TAPESTRY-2184
         if (activePage == null) activePage = page;
@@ -137,9 +137,9 @@ public class LinkFactoryImpl implements LinkFactory
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, contextStrings, activationContext);
 
-        String baseURL = _requestSecurityManager.getBaseURL(activePage);
+        String baseURL = requestSecurityManager.getBaseURL(activePage);
 
-        Link link = new LinkImpl(_response, _optimizer, baseURL, _request.getContextPath(), invocation, forForm);
+        Link link = new LinkImpl(response, optimizer, baseURL, request.getContextPath(), invocation, forForm);
 
         // TAPESTRY-2044: Sometimes the active page drags in components from another page and we
         // need to differentiate that.
@@ -151,9 +151,9 @@ public class LinkFactoryImpl implements LinkFactory
 
         addActivationContextToLink(link, activationContext, forForm);
 
-        _componentInvocationMap.store(link, invocation);
+        componentInvocationMap.store(link, invocation);
 
-        for (LinkFactoryListener listener : _listeners)
+        for (LinkFactoryListener listener : listeners)
             listener.createdActionLink(link);
 
         return link;
@@ -205,13 +205,13 @@ public class LinkFactoryImpl implements LinkFactory
 
         ComponentInvocation invocation = new ComponentInvocationImpl(target, context, null);
 
-        String baseURL = _requestSecurityManager.getBaseURL(page);
+        String baseURL = requestSecurityManager.getBaseURL(page);
 
-        Link link = new LinkImpl(_response, _optimizer, baseURL, _request.getContextPath(), invocation, false);
+        Link link = new LinkImpl(response, optimizer, baseURL, request.getContextPath(), invocation, false);
 
-        _componentInvocationMap.store(link, invocation);
+        componentInvocationMap.store(link, invocation);
 
-        for (LinkFactoryListener listener : _listeners)
+        for (LinkFactoryListener listener : listeners)
             listener.createdPageLink(link);
 
         return link;
@@ -230,7 +230,7 @@ public class LinkFactoryImpl implements LinkFactory
             @SuppressWarnings("unchecked")
             public boolean handleResult(Object result)
             {
-                PassivateContextHandler contextHandler = _registry.getByInstance(result);
+                PassivateContextHandler contextHandler = registry.getByInstance(result);
 
                 contextHandler.handle(result, context);
 
@@ -256,7 +256,7 @@ public class LinkFactoryImpl implements LinkFactory
 
             Object value = context[i];
 
-            String encoded = value == null ? null : _contextValueEncoder.toClient(value);
+            String encoded = value == null ? null : contextValueEncoder.toClient(value);
 
             if (InternalUtils.isBlank(encoded))
                 throw new RuntimeException(ServicesMessages.contextValueMayNotBeNull());
@@ -270,7 +270,7 @@ public class LinkFactoryImpl implements LinkFactory
     public Link createPageLink(String logicalPageName, boolean override, Object... context)
     {
         // This verifies that the page name is valid.
-        Page page = _pageCache.get(logicalPageName);
+        Page page = pageCache.get(logicalPageName);
 
         return createPageLink(page, override, context);
     }

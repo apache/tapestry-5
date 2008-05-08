@@ -20,11 +20,11 @@ import org.apache.tapestry.services.PersistentFieldChange;
 
 public class PersistentFieldChangeImpl implements PersistentFieldChange
 {
-    private final String _componentId;
+    private final String componentId;
 
-    private final String _fieldName;
+    private final String fieldName;
 
-    private final Object _value;
+    private final Object value;
 
     public PersistentFieldChangeImpl(final String componentId, final String fieldName,
                                      final Object value)
@@ -32,23 +32,23 @@ public class PersistentFieldChangeImpl implements PersistentFieldChange
         notNull(componentId, "componentId");
         notBlank(fieldName, "fieldName");
 
-        _componentId = componentId;
-        _fieldName = fieldName;
-        _value = value;
+        this.componentId = componentId;
+        this.fieldName = fieldName;
+        this.value = value;
     }
 
     public String getComponentId()
     {
-        return _componentId;
+        return componentId;
     }
 
     public String getFieldName()
     {
-        return _fieldName;
+        return fieldName;
     }
 
     public Object getValue()
     {
-        return _value;
+        return value;
     }
 }

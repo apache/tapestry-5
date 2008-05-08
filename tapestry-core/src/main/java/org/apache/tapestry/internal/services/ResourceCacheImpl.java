@@ -18,7 +18,7 @@ import org.apache.tapestry.internal.event.InvalidationEventHubImpl;
 import org.apache.tapestry.internal.events.UpdateListener;
 import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Resource;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ResourceDigestGenerator;
 
 import java.net.URL;
@@ -27,25 +27,25 @@ import java.util.Map;
 public class ResourceCacheImpl extends InvalidationEventHubImpl implements ResourceCache,
         UpdateListener
 {
-    private final URLChangeTracker _tracker;
+    private final URLChangeTracker tracker;
 
-    private final ResourceDigestGenerator _digestGenerator;
+    private final ResourceDigestGenerator digestGenerator;
 
-    private final Map<Resource, Cached> _cache = newConcurrentMap();
+    private final Map<Resource, Cached> cache = CollectionFactory.newConcurrentMap();
 
     final static long MISSING_RESOURCE_TIME_MODIFIED = -1L;
 
     private class Cached
     {
-        final boolean _requiresDigest;
+        final boolean requiresDigest;
 
-        final String _digest;
+        final String digest;
 
-        final long _timeModified;
+        final long timeModified;
 
         Cached(Resource resource)
         {
-            _requiresDigest = _digestGenerator.requiresDigest(resource.getPath());
+            requiresDigest = digestGenerator.requiresDigest(resource.getPath());
 
             URL url = resource.toURL();
 
@@ -55,25 +55,25 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
             // no underlying file exists. Subsequently, we'll strip out the digest and resolve
             // to an actual resource.
 
-            _digest = (_requiresDigest && url != null) ? _digestGenerator.generateDigest(url)
-                      : null;
+            digest = (requiresDigest && url != null) ? digestGenerator.generateDigest(url)
+                     : null;
 
-            _timeModified = url != null ? _tracker.add(url) : MISSING_RESOURCE_TIME_MODIFIED;
+            timeModified = url != null ? tracker.add(url) : MISSING_RESOURCE_TIME_MODIFIED;
         }
     }
 
     public ResourceCacheImpl(final ResourceDigestGenerator digestGenerator)
     {
-        _digestGenerator = digestGenerator;
-        _tracker = new URLChangeTracker(true);
+        this.digestGenerator = digestGenerator;
+        tracker = new URLChangeTracker(true);
     }
 
     public void checkForUpdates()
     {
-        if (_tracker.containsChanges())
+        if (tracker.containsChanges())
         {
-            _cache.clear();
-            _tracker.clear();
+            cache.clear();
+            tracker.clear();
 
             fireInvalidationEvent();
         }
@@ -81,12 +81,12 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
 
     private Cached get(Resource resource)
     {
-        Cached result = _cache.get(resource);
+        Cached result = cache.get(resource);
 
         if (result == null)
         {
             result = new Cached(resource);
-            _cache.put(resource, result);
+            cache.put(resource, result);
         }
 
         return result;
@@ -94,17 +94,17 @@ public class ResourceCacheImpl extends InvalidationEventHubImpl implements Resou
 
     public String getDigest(Resource resource)
     {
-        return get(resource)._digest;
+        return get(resource).digest;
     }
 
     public long getTimeModified(Resource resource)
     {
-        return get(resource)._timeModified;
+        return get(resource).timeModified;
     }
 
     public boolean requiresDigest(Resource resource)
     {
-        return get(resource)._requiresDigest;
+        return get(resource).requiresDigest;
     }
 
 }

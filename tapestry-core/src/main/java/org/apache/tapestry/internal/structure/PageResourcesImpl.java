@@ -25,48 +25,48 @@ import java.util.Locale;
 
 public class PageResourcesImpl implements PageResources
 {
-    private final Locale _locale;
+    private final Locale locale;
 
-    private final ComponentMessagesSource _componentMessagesSource;
+    private final ComponentMessagesSource componentMessagesSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
-    private final ComponentClassCache _componentClassCache;
+    private final ComponentClassCache componentClassCache;
 
-    private final ContextValueEncoder _contextValueEncoder;
+    private final ContextValueEncoder contextValueEncoder;
 
     public PageResourcesImpl(Locale locale, ComponentMessagesSource componentMessagesSource, TypeCoercer typeCoercer,
                              ComponentClassCache componentClassCache, ContextValueEncoder contextValueEncoder)
     {
-        _componentMessagesSource = componentMessagesSource;
-        _locale = locale;
-        _typeCoercer = typeCoercer;
-        _componentClassCache = componentClassCache;
-        _contextValueEncoder = contextValueEncoder;
+        this.componentMessagesSource = componentMessagesSource;
+        this.locale = locale;
+        this.typeCoercer = typeCoercer;
+        this.componentClassCache = componentClassCache;
+        this.contextValueEncoder = contextValueEncoder;
     }
 
     public Messages getMessages(ComponentModel componentModel)
     {
-        return _componentMessagesSource.getMessages(componentModel, _locale);
+        return componentMessagesSource.getMessages(componentModel, locale);
     }
 
     public <S, T> T coerce(S input, Class<T> targetType)
     {
-        return _typeCoercer.coerce(input, targetType);
+        return typeCoercer.coerce(input, targetType);
     }
 
     public Class toClass(String className)
     {
-        return _componentClassCache.forName(className);
+        return componentClassCache.forName(className);
     }
 
     public String toClient(Object value)
     {
-        return _contextValueEncoder.toClient(value);
+        return contextValueEncoder.toClient(value);
     }
 
     public <T> T toValue(Class<T> requiredType, String clientValue)
     {
-        return _contextValueEncoder.toValue(requiredType, clientValue);
+        return contextValueEncoder.toValue(requiredType, clientValue);
     }
 }

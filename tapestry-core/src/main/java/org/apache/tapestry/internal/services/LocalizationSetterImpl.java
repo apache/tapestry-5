@@ -16,8 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newConcurrentMap;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.PersistentLocale;
 
@@ -31,40 +30,40 @@ import java.util.Set;
  */
 public class LocalizationSetterImpl implements LocalizationSetter
 {
-    private final ThreadLocale _threadLocale;
+    private final ThreadLocale threadLocale;
 
-    private final Locale _defaultLocale;
+    private final Locale defaultLocale;
 
-    private final Set<String> _acceptedLocaleNames;
+    private final Set<String> acceptedLocaleNames;
 
-    private final Map<String, Locale> _localeCache = newConcurrentMap();
+    private final Map<String, Locale> localeCache = CollectionFactory.newConcurrentMap();
 
-    private final PersistentLocale _persistentLocale;
+    private final PersistentLocale persistentLocale;
 
     public LocalizationSetterImpl(PersistentLocale persistentLocale, ThreadLocale threadLocale,
                                   @Inject
                                   @Symbol("tapestry.supported-locales")
                                   String acceptedLocaleNames)
     {
-        _persistentLocale = persistentLocale;
+        this.persistentLocale = persistentLocale;
 
-        _threadLocale = threadLocale;
+        this.threadLocale = threadLocale;
 
         String[] names = acceptedLocaleNames.split(",");
 
-        _defaultLocale = toLocale(names[0]);
+        defaultLocale = toLocale(names[0]);
 
-        _acceptedLocaleNames = newSet(names);
+        this.acceptedLocaleNames = CollectionFactory.newSet(names);
     }
 
     Locale toLocale(String localeName)
     {
-        Locale result = _localeCache.get(localeName);
+        Locale result = localeCache.get(localeName);
 
         if (result == null)
         {
             result = constructLocale(localeName);
-            _localeCache.put(localeName, result);
+            localeCache.put(localeName, result);
         }
 
         return result;
@@ -94,11 +93,11 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
     public void setThreadLocale(Locale desiredLocale)
     {
-        if (_persistentLocale.get() != null) desiredLocale = _persistentLocale.get();
+        if (persistentLocale.get() != null) desiredLocale = persistentLocale.get();
 
         Locale locale = findClosestAcceptedLocale(desiredLocale);
 
-        _threadLocale.setLocale(locale);
+        threadLocale.setLocale(locale);
     }
 
     private Locale findClosestAcceptedLocale(Locale desiredLocale)
@@ -107,14 +106,14 @@ public class LocalizationSetterImpl implements LocalizationSetter
 
         while (true)
         {
-            if (_acceptedLocaleNames.contains(localeName)) return toLocale(localeName);
+            if (acceptedLocaleNames.contains(localeName)) return toLocale(localeName);
 
             localeName = stripTerm(localeName);
 
             if (localeName.length() == 0) break;
         }
 
-        return _defaultLocale;
+        return defaultLocale;
     }
 
     static String stripTerm(String localeName)

@@ -21,14 +21,14 @@ import java.util.Locale;
  */
 public class PageLocator
 {
-    private final String _pageName;
+    private final String pageName;
 
-    private final Locale _locale;
+    private final Locale locale;
 
     public PageLocator(String pageName, Locale locale)
     {
-        _pageName = pageName;
-        _locale = locale;
+        this.pageName = pageName;
+        this.locale = locale;
     }
 
     @Override
@@ -39,19 +39,19 @@ public class PageLocator
             return false;
         }
         PageLocator locator = (PageLocator) obj;
-        return _pageName.equals(locator._pageName) && _locale.equals(locator._locale);
+        return pageName.equals(locator.pageName) && locale.equals(locator.locale);
     }
 
     @Override
     public int hashCode()
     {
-        return _pageName.hashCode() * 17 + _locale.hashCode();
+        return pageName.hashCode() * 17 + locale.hashCode();
     }
 
     @Override
     public String toString()
     {
-        return String.format("%s[%s, %s]", getClass().getSimpleName(), _pageName, _locale
+        return String.format("%s[%s, %s]", getClass().getSimpleName(), pageName, locale
                 .toString());
     }
 }

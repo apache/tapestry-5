@@ -28,33 +28,33 @@ import java.util.List;
  */
 public class SessionImpl implements Session
 {
-    private final HttpSession _session;
+    private final HttpSession session;
 
     public SessionImpl(HttpSession session)
     {
-        _session = session;
+        this.session = session;
     }
 
     public Object getAttribute(String name)
     {
-        return _session.getAttribute(name);
+        return session.getAttribute(name);
     }
 
     public List<String> getAttributeNames()
     {
-        return InternalUtils.toList(_session.getAttributeNames());
+        return InternalUtils.toList(session.getAttributeNames());
     }
 
     public void setAttribute(String name, Object value)
     {
-        _session.setAttribute(name, value);
+        session.setAttribute(name, value);
     }
 
     public List<String> getAttributeNames(String prefix)
     {
         List<String> result = newList();
 
-        Enumeration e = _session.getAttributeNames();
+        Enumeration e = session.getAttributeNames();
         while (e.hasMoreElements())
         {
             String name = (String) e.nextElement();
@@ -69,17 +69,17 @@ public class SessionImpl implements Session
 
     public int getMaxInactiveInterval()
     {
-        return _session.getMaxInactiveInterval();
+        return session.getMaxInactiveInterval();
     }
 
     public void invalidate()
     {
-        _session.invalidate();
+        session.invalidate();
     }
 
     public void setMaxInactiveInterval(int seconds)
     {
-        _session.setMaxInactiveInterval(seconds);
+        session.setMaxInactiveInterval(seconds);
     }
 
 }

@@ -30,16 +30,16 @@ import java.io.PrintWriter;
  */
 public class JSONObjectEventResultProcessor implements ComponentEventResultProcessor<JSONObject>
 {
-    private final Response _response;
+    private final Response response;
 
     public JSONObjectEventResultProcessor(Response response)
     {
-        _response = response;
+        this.response = response;
     }
 
     public void processResultValue(JSONObject value) throws IOException
     {
-        PrintWriter pw = _response.getPrintWriter(InternalConstants.JSON_MIME_TYPE);
+        PrintWriter pw = response.getPrintWriter(InternalConstants.JSON_MIME_TYPE);
 
         pw.print(value.toString());
 

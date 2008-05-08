@@ -49,7 +49,7 @@ Living on the Frontier
 
   Coding applications the traditional way is like being a homesteader on the American frontier in the 1800's.  You're responsible for
   every aspect of your house: every board, every nail, every stick of furniture is something you personally created. There <is> a great
-  comfort in total self reliance, and even if house is small, the windows are a bit drafty or the floorboards creak a little, you know exactly <why> 
+  comfort in total self reliance. Even if your house is small, the windows are a bit drafty or the floorboards creak a little, you know exactly <why> 
   things are not-quite perfect.
   
   Flash forward to modern cities or modern suburbia and it's a whole different story.  Houses are built to specification from design plans, made
@@ -161,7 +161,7 @@ public class TableMetricProducer implements MetricProducer
 {
   . . . 
 
-  private QueueWriter queueWriter = new QueueWriter();
+  private final QueueWriter queueWriter = new QueueWriter();
 
   public void execute() 
   {
@@ -308,7 +308,7 @@ public class MonitorModule
   run.
 
   The contributeMetricScheduler() method allows the module to <contribute> into the MetricProducer service's <configuration>. More testability:
-  the MetricProducer isn't tied to a pre-set list of producers, instead it will have a Collection<MetricProducer> injected into its
+  the MetricProducer isn't tied to a pre-set list of producers, instead it will have a Collection\<MetricProducer\> injected into its
   constructor.  Thus, when we're coding the MetricProducerImpl class, we can test it against mock implementations of MetricProducer.
 
   The QueueWriter service in injected into the contributeMetricScheduler() method.   Since there's only one QueueWriter service,

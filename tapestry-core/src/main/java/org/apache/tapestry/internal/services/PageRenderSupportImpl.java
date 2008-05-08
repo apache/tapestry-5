@@ -31,19 +31,19 @@ import java.util.List;
 
 public class PageRenderSupportImpl implements PageRenderSupport
 {
-    private final IdAllocator _idAllocator;
+    private final IdAllocator idAllocator;
 
-    private final DocumentLinker _linker;
+    private final DocumentLinker linker;
 
-    private final SymbolSource _symbolSource;
+    private final SymbolSource symbolSource;
 
-    private final AssetSource _assetSource;
+    private final AssetSource assetSource;
 
-    private final List<String> _coreScripts;
+    private final List<String> coreScripts;
 
-    private boolean _coreAssetsAdded;
+    private boolean coreAssetsAdded;
 
-    private final JSONObject _init = new JSONObject();
+    private final JSONObject init = new JSONObject();
 
     /**
      * @param linker       Used to assemble JavaScript includes and snippets
@@ -73,17 +73,17 @@ public class PageRenderSupportImpl implements PageRenderSupport
                                  AssetSource assetSource, IdAllocator idAllocator, String... coreScripts)
 
     {
-        _linker = linker;
-        _symbolSource = symbolSource;
-        _assetSource = assetSource;
-        _idAllocator = idAllocator;
+        this.linker = linker;
+        this.symbolSource = symbolSource;
+        this.assetSource = assetSource;
+        this.idAllocator = idAllocator;
 
-        _coreScripts = Arrays.asList(coreScripts);
+        this.coreScripts = Arrays.asList(coreScripts);
     }
 
     public String allocateClientId(String id)
     {
-        return _idAllocator.allocateId(id);
+        return idAllocator.allocateId(id);
     }
 
     public String allocateClientId(ComponentResources resources)
@@ -99,7 +99,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
         {
             notNull(asset, "scriptAsset");
 
-            _linker.addScriptLink(asset.toClientURL());
+            linker.addScriptLink(asset.toClientURL());
         }
     }
 
@@ -113,11 +113,11 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
     private void addScriptLinkFromClasspath(String path)
     {
-        String expanded = _symbolSource.expandSymbols(path);
+        String expanded = symbolSource.expandSymbols(path);
 
-        Asset asset = _assetSource.getAsset(null, expanded, null);
+        Asset asset = assetSource.getAsset(null, expanded, null);
 
-        _linker.addScriptLink(asset.toClientURL());
+        linker.addScriptLink(asset.toClientURL());
     }
 
     public void addScript(String format, Object... arguments)
@@ -128,7 +128,7 @@ public class PageRenderSupportImpl implements PageRenderSupport
 
         String script = format(format, arguments);
 
-        _linker.addScript(script);
+        linker.addScript(script);
     }
 
     public void addInit(String functionName, JSONArray parameterList)
@@ -164,12 +164,12 @@ public class PageRenderSupportImpl implements PageRenderSupport
         Defense.notBlank(functionName, "functionName");
         Defense.notNull(parameters, "parameters");
 
-        JSONArray invocations = _init.has(functionName) ? _init.getJSONArray(functionName) : null;
+        JSONArray invocations = init.has(functionName) ? init.getJSONArray(functionName) : null;
 
         if (invocations == null)
         {
             invocations = new JSONArray();
-            _init.put(functionName, invocations);
+            init.put(functionName, invocations);
         }
 
         invocations.put(parameters);
@@ -180,9 +180,9 @@ public class PageRenderSupportImpl implements PageRenderSupport
      */
     public void commit()
     {
-        if (_init.length() > 0)
+        if (init.length() > 0)
         {
-            addScript("Tapestry.init(%s);", _init);
+            addScript("Tapestry.init(%s);", init);
         }
     }
 
@@ -190,17 +190,17 @@ public class PageRenderSupportImpl implements PageRenderSupport
     {
         notNull(stylesheet, "stylesheet");
 
-        _linker.addStylesheetLink(stylesheet.toClientURL(), media);
+        linker.addStylesheetLink(stylesheet.toClientURL(), media);
     }
 
     private void addCore()
     {
-        if (!_coreAssetsAdded)
+        if (!coreAssetsAdded)
         {
-            for (String path : _coreScripts)
+            for (String path : coreScripts)
                 addScriptLinkFromClasspath(path);
 
-            _coreAssetsAdded = true;
+            coreAssetsAdded = true;
         }
     }
 }

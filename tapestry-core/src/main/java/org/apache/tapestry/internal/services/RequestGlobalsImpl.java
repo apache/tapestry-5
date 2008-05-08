@@ -29,44 +29,44 @@ import javax.servlet.http.HttpServletResponse;
 @Scope(PERTHREAD_SCOPE)
 public class RequestGlobalsImpl implements RequestGlobals
 {
-    private HttpServletRequest _servletRequest;
+    private HttpServletRequest servletRequest;
 
-    private HttpServletResponse _servletResponse;
+    private HttpServletResponse servletResponse;
 
-    private Request _request;
+    private Request request;
 
-    private Response _response;
+    private Response response;
 
     public void storeServletRequestResponse(HttpServletRequest request, HttpServletResponse response)
     {
-        _servletRequest = request;
-        _servletResponse = response;
+        servletRequest = request;
+        servletResponse = response;
     }
 
     public HttpServletRequest getHTTPServletRequest()
     {
-        return _servletRequest;
+        return servletRequest;
     }
 
     public HttpServletResponse getHTTPServletResponse()
     {
-        return _servletResponse;
+        return servletResponse;
     }
 
     public void storeRequestResponse(Request request, Response response)
     {
-        _request = request;
-        _response = response;
+        this.request = request;
+        this.response = response;
     }
 
     public Request getRequest()
     {
-        return _request;
+        return request;
     }
 
     public Response getResponse()
     {
-        return _response;
+        return response;
     }
 
 }

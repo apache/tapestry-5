@@ -24,19 +24,19 @@ import java.io.IOException;
 
 /**
  * Recognizes a request for the application root (i.e., "/") and handles this the same as a render request for the
- * "Start" page.
+ * "Start" page.    Support for the Start page is kept for legacy purposes, Index pages are the correct approach.
  */
 public class RootPathDispatcher implements Dispatcher
 {
-    private final ComponentClassResolver _componentClassResolver;
-
-    private final PageRenderRequestHandler _handler;
-
-    private final String _startPageName;
-
     private static final EventContext EMPTY_CONTEXT = new EmptyEventContext();
 
-    private final PageRenderRequestParameters _parameters;
+    private final ComponentClassResolver componentClassResolver;
+
+    private final PageRenderRequestHandler handler;
+
+    private final String startPageName;
+
+    private final PageRenderRequestParameters parameters;
 
     public RootPathDispatcher(ComponentClassResolver componentClassResolver,
 
@@ -45,20 +45,20 @@ public class RootPathDispatcher implements Dispatcher
                               @Inject @Symbol("tapestry.start-page-name")
                               String startPageName)
     {
-        _componentClassResolver = componentClassResolver;
-        _handler = handler;
-        _startPageName = startPageName;
+        this.componentClassResolver = componentClassResolver;
+        this.handler = handler;
+        this.startPageName = startPageName;
 
-        _parameters = new PageRenderRequestParameters(_startPageName, EMPTY_CONTEXT);
+        parameters = new PageRenderRequestParameters(this.startPageName, EMPTY_CONTEXT);
     }
 
     public boolean dispatch(Request request, final Response response) throws IOException
     {
         // Only match the root path
 
-        if (request.getPath().equals("/") && _componentClassResolver.isPageName(_startPageName))
+        if (request.getPath().equals("/") && componentClassResolver.isPageName(startPageName))
         {
-            _handler.handle(_parameters);
+            handler.handle(parameters);
 
             return true;
         }

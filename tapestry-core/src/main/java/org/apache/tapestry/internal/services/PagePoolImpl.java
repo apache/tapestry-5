@@ -50,23 +50,23 @@ import java.util.Map;
  */
 public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListener
 {
-    private final Logger _logger;
+    private final Logger logger;
 
-    private final PageLoader _pageLoader;
+    private final PageLoader pageLoader;
 
-    private final ThreadLocale _threadLocale;
+    private final ThreadLocale threadLocale;
 
-    private final ComponentClassResolver _resolver;
+    private final ComponentClassResolver resolver;
 
-    private final int _softLimit;
+    private final int softLimit;
 
-    private final long _softWait;
+    private final long softWait;
 
-    private final int _hardLimit;
+    private final int hardLimit;
 
-    private final long _activeWindow;
+    private final long activeWindow;
 
-    private final Map<PageLocator, PagePoolCache> _pool = CollectionFactory.newMap();
+    private final Map<PageLocator, PagePoolCache> pool = CollectionFactory.newMap();
 
     public PagePoolImpl(Logger logger,
 
@@ -88,21 +88,21 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
                         @Symbol("tapestry.page-pool.active-window") @IntermediateType(TimeInterval.class)
                         long activeWindow)
     {
-        _logger = logger;
-        _pageLoader = pageLoader;
-        _threadLocale = threadLocale;
-        _resolver = resolver;
-        _softLimit = softLimit;
-        _softWait = softWait;
-        _hardLimit = hardLimit;
-        _activeWindow = activeWindow;
+        this.logger = logger;
+        this.pageLoader = pageLoader;
+        this.threadLocale = threadLocale;
+        this.resolver = resolver;
+        this.softLimit = softLimit;
+        this.softWait = softWait;
+        this.hardLimit = hardLimit;
+        this.activeWindow = activeWindow;
     }
 
     public Page checkout(String logicalPageName)
     {
-        String canonicalPageName = _resolver.canonicalizePageName(logicalPageName);
+        String canonicalPageName = resolver.canonicalizePageName(logicalPageName);
 
-        PagePoolCache cache = get(canonicalPageName, _threadLocale.getLocale());
+        PagePoolCache cache = get(canonicalPageName, threadLocale.getLocale());
 
         return cache.checkout();
     }
@@ -116,7 +116,7 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
 
         if (page.detached())
         {
-            _logger.error(ServicesMessages.pageIsDirty(page));
+            logger.error(ServicesMessages.pageIsDirty(page));
 
             cache.remove(page);
 
@@ -131,15 +131,15 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
     {
         PageLocator locator = new PageLocator(pageName, locale);
 
-        PagePoolCache result = _pool.get(locator);
+        PagePoolCache result = pool.get(locator);
 
         if (result == null)
         {
             // TODO: It might be nice to allow individual pages to override the default limits.
 
-            result = new PagePoolCache(pageName, locale, _pageLoader, _softLimit, _softWait, _hardLimit, _activeWindow);
+            result = new PagePoolCache(pageName, locale, pageLoader, softLimit, softWait, hardLimit, activeWindow);
 
-            _pool.put(locator, result);
+            pool.put(locator, result);
         }
 
         return result;
@@ -150,12 +150,12 @@ public class PagePoolImpl implements PagePool, InvalidationListener, UpdateListe
      */
     public synchronized void objectWasInvalidated()
     {
-        _pool.clear();
+        pool.clear();
     }
 
     public synchronized void checkForUpdates()
     {
-        for (PagePoolCache cache : _pool.values())
+        for (PagePoolCache cache : pool.values())
         {
             cache.cleanup();
         }

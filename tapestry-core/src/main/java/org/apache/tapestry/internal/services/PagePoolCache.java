@@ -59,23 +59,23 @@ final class PagePoolCache
     /**
      * Pages that are available for use.
      */
-    private LinkedList<CachedPage> _available = CollectionFactory.newLinkedList();
+    private LinkedList<CachedPage> available = CollectionFactory.newLinkedList();
 
     /**
      * Pages that are currently in use.
      */
-    private LinkedList<CachedPage> _inUse = CollectionFactory.newLinkedList();
+    private LinkedList<CachedPage> inUse = CollectionFactory.newLinkedList();
 
     /**
      * Guards access to the available and in use lists.
      */
-    private final Lock _lock = new ReentrantLock();
+    private final Lock lock = new ReentrantLock();
 
     /**
      * Condition signalled whenever an in-use page is returned to the cache, which is useful if some other thread may be
      * waiting for a page to be available.
      */
-    private final Condition _pageAvailable = _lock.newCondition();
+    private final Condition pageAvailable = lock.newCondition();
 
     /**
      * Tracks the usage of a page instance, allowing a last access property to be associated with the page. CachedPage
@@ -133,7 +133,7 @@ final class PagePoolCache
     {
         // The only problem here is that *each* new page attached to the request
         // may wait the soft limit.  The alternative would be to timestamp the request
-        // itself, and compute the wait period from that ... an dangerous and expensive option.
+        // itself, and compute the wait period from that ... a dangerous and expensive option.
 
         long start = System.currentTimeMillis();
 
@@ -142,7 +142,7 @@ final class PagePoolCache
         // releasing pages from the in use list back into the active list. We go to some trouble to
         // ensure that the PageLoader is invoked OUTSIDE of the lock.
 
-        _lock.lock();
+        lock.lock();
 
         try
         {
@@ -161,7 +161,7 @@ final class PagePoolCache
                 // which is largely accurate as long as there haven't been a lot
                 // of request exceptions.  We'll take the count at face value.
 
-                if (_inUse.size() < softLimit) break;
+                if (inUse.size() < softLimit) break;
 
                 // We'll wait for pages to be available, but careful that the
                 // total wait period is less than the soft wait limit.
@@ -176,7 +176,7 @@ final class PagePoolCache
                 {
                     // Note: await() will release the lock, but will re-acquire it
                     // before returning. 
-                    _pageAvailable.await(waitMillis, TimeUnit.MILLISECONDS);
+                    pageAvailable.await(waitMillis, TimeUnit.MILLISECONDS);
                 }
                 catch (InterruptedException ex)
                 {
@@ -195,12 +195,12 @@ final class PagePoolCache
 
             // If past the hard limit, we don't try to create the page fresh.
 
-            if (_inUse.size() >= hardLimit)
+            if (inUse.size() >= hardLimit)
                 throw new RuntimeException(ServicesMessages.pagePoolExausted(pageName, locale, hardLimit));
         }
         finally
         {
-            _lock.unlock();
+            lock.unlock();
         }
 
         // This may take a moment, so we're careful to do it outside of a write lock.
@@ -209,15 +209,15 @@ final class PagePoolCache
 
         Page page = pageLoader.loadPage(pageName, locale);
 
-        _lock.lock();
+        lock.lock();
 
         try
         {
-            _inUse.addFirst(new CachedPage(page));
+            inUse.addFirst(new CachedPage(page));
         }
         finally
         {
-            _lock.unlock();
+            lock.unlock();
         }
 
         return page;
@@ -233,12 +233,11 @@ final class PagePoolCache
      */
     private Page findAvailablePage()
     {
+        if (available.isEmpty()) return null;
 
-        if (_available.isEmpty()) return null;
+        CachedPage cachedPage = available.removeFirst();
 
-        CachedPage cachedPage = _available.removeFirst();
-
-        _inUse.addFirst(cachedPage);
+        inUse.addFirst(cachedPage);
 
         return cachedPage.page;
     }
@@ -248,13 +247,13 @@ final class PagePoolCache
      */
     void release(Page page)
     {
-        _lock.lock();
+        lock.lock();
 
         try
         {
             CachedPage cached = null;
 
-            ListIterator<CachedPage> i = _inUse.listIterator();
+            ListIterator<CachedPage> i = inUse.listIterator();
 
             while (i.hasNext())
             {
@@ -280,14 +279,14 @@ final class PagePoolCache
 
             cached.lastAccess = System.currentTimeMillis();
 
-            _available.addFirst(cached);
+            available.addFirst(cached);
 
-            _pageAvailable.signal();
+            pageAvailable.signal();
 
         }
         finally
         {
-            _lock.unlock();
+            lock.unlock();
         }
     }
 
@@ -297,11 +296,11 @@ final class PagePoolCache
      */
     void remove(Page page)
     {
-        _lock.lock();
+        lock.lock();
 
         try
         {
-            ListIterator<CachedPage> i = _inUse.listIterator();
+            ListIterator<CachedPage> i = inUse.listIterator();
 
             while (i.hasNext())
             {
@@ -317,7 +316,7 @@ final class PagePoolCache
         }
         finally
         {
-            _lock.unlock();
+            lock.unlock();
         }
     }
 
@@ -329,12 +328,12 @@ final class PagePoolCache
     {
         long cutoff = System.currentTimeMillis() - activeWindow;
 
-        _lock.lock();
+        lock.lock();
 
         try
         {
 
-            ListIterator<CachedPage> i = _available.listIterator();
+            ListIterator<CachedPage> i = available.listIterator();
 
             while (i.hasNext())
             {
@@ -345,7 +344,7 @@ final class PagePoolCache
         }
         finally
         {
-            _lock.unlock();
+            lock.unlock();
         }
     }
 
