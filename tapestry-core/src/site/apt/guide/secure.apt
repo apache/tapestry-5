@@ -7,7 +7,7 @@ Securing your application with HTTPS
   Tapestry assumes your application will be primarily deployed as a standard web application, using HTTP
   (not HTTPS) as the transport mechanism.
 
-  However, many applications will need to have some of their pages secured: only accessible via HTTP.
+  However, many applications will need to have some of their pages secured: only accessible via HTTPS.
   This could be a login page, or a product ordering wizard, or administrative pages.
 
   All that is necessary to mark a page as secure is to add

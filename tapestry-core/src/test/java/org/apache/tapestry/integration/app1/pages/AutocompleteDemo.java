@@ -26,14 +26,14 @@ import java.util.List;
 public class AutocompleteDemo
 {
     @Inject
-    private MusicLibrary _library;
+    private MusicLibrary library;
 
     @Persist
-    private String _title;
+    private String title;
 
     List onProvideCompletionsFromTitle(String partialTitle) throws Exception
     {
-        List<Track> matches = _library.findByMatchingTitle(partialTitle);
+        List<Track> matches = library.findByMatchingTitle(partialTitle);
 
         List<String> result = CollectionFactory.newList();
 
@@ -49,11 +49,11 @@ public class AutocompleteDemo
 
     public String getTitle()
     {
-        return _title;
+        return title;
     }
 
     public void setTitle(String title)
     {
-        _title = title;
+        this.title = title;
     }
 }

@@ -27,49 +27,49 @@ import java.util.List;
 public class ToDoList
 {
     @Inject
-    private ToDoDatabase _database;
+    private ToDoDatabase database;
 
-    private ToDoItem _item;
+    private ToDoItem item;
 
-    private DefaultPrimaryKeyEncoder<Long, ToDoItem> _encoder;
+    private DefaultPrimaryKeyEncoder<Long, ToDoItem> encoder;
 
     @Component
-    private Form _form;
+    private Form form;
 
     public List<ToDoItem> getItems()
     {
-        return _encoder.getValues();
+        return encoder.getValues();
     }
 
     public ToDoItem getItem()
     {
-        return _item;
+        return item;
     }
 
     public void setItem(ToDoItem item)
     {
-        _item = item;
+        this.item = item;
     }
 
     public ToDoDatabase getDatabase()
     {
-        return _database;
+        return database;
     }
 
     public PrimaryKeyEncoder getEncoder()
     {
-        return _encoder;
+        return encoder;
     }
 
     void onPrepare()
     {
-        List<ToDoItem> items = _database.findAll();
+        List<ToDoItem> items = database.findAll();
 
-        _encoder = new DefaultPrimaryKeyEncoder<Long, ToDoItem>();
+        encoder = new DefaultPrimaryKeyEncoder<Long, ToDoItem>();
 
         for (ToDoItem item : items)
         {
-            _encoder.add(item.getId(), item);
+            encoder.add(item.getId(), item);
         }
     }
 
@@ -77,27 +77,27 @@ public class ToDoList
     {
         int order = 0;
 
-        for (ToDoItem item : _encoder.getValues())
+        for (ToDoItem item : encoder.getValues())
         {
             item.setOrder(order++);
-            _database.update(item);
+            database.update(item);
         }
     }
 
     void onSelectedFromAddNew()
     {
-        if (_form.isValid())
+        if (form.isValid())
         {
             ToDoItem item = new ToDoItem();
             item.setTitle("<New To Do>");
-            item.setOrder(_encoder.getValues().size());
+            item.setOrder(encoder.getValues().size());
 
-            _database.add(item);
+            database.add(item);
         }
     }
 
     void onActionFromReset()
     {
-        _database.reset();
+        database.reset();
     }
 }

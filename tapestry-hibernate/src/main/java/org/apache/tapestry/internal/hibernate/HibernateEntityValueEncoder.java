@@ -28,24 +28,28 @@ import java.io.Serializable;
 
 public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 {
-    private final Class<E> _entityClass;
-    private final Session _session;
-    private final TypeCoercer _typeCoercer;
-    private final String _idPropertyName;
-    private final PropertyAdapter _propertyAdapter;
+    private final Class<E> entityClass;
+
+    private final Session session;
+
+    private final TypeCoercer typeCoercer;
+
+    private final String idPropertyName;
+
+    private final PropertyAdapter propertyAdapter;
 
     public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass, Session session,
                                        PropertyAccess propertyAccess, TypeCoercer typeCoercer)
     {
-        _entityClass = entityClass;
-        _session = session;
-        _typeCoercer = typeCoercer;
+        this.entityClass = entityClass;
+        this.session = session;
+        this.typeCoercer = typeCoercer;
 
         Property property = persistentClass.getIdentifierProperty();
 
-        _idPropertyName = property.getName();
+        idPropertyName = property.getName();
 
-        _propertyAdapter = propertyAccess.getAdapter(_entityClass).getPropertyAdapter(_idPropertyName);
+        propertyAdapter = propertyAccess.getAdapter(this.entityClass).getPropertyAdapter(idPropertyName);
     }
 
 
@@ -53,14 +57,14 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
     {
         if (value == null) return null;
 
-        Object id = _propertyAdapter.get(value);
+        Object id = propertyAdapter.get(value);
 
         if (id == null)
             throw new IllegalStateException(String.format(
                     "Entity %s has an %s property of null; this probably means that it has not been persisted yet.",
-                    value, _idPropertyName));
+                    value, idPropertyName));
 
-        return _typeCoercer.coerce(id, String.class);
+        return typeCoercer.coerce(id, String.class);
     }
 
     @SuppressWarnings("unchecked")
@@ -68,11 +72,11 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
     {
         if (InternalUtils.isBlank(clientValue)) return null;
 
-        Object id = _typeCoercer.coerce(clientValue, _propertyAdapter.getType());
+        Object id = typeCoercer.coerce(clientValue, propertyAdapter.getType());
 
         Serializable ser = Defense.cast(id, Serializable.class, "id");
 
-        return (E) _session.get(_entityClass, ser);
+        return (E) session.get(entityClass, ser);
     }
 
 }

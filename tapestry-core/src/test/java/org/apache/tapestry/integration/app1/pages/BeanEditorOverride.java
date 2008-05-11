@@ -23,17 +23,17 @@ import org.apache.tapestry.integration.app1.data.RegistrationData;
 public class BeanEditorOverride
 {
     @Component
-    private Form _form;
+    private Form form;
 
-    @Component(parameters = {"object=registrationData"})
-    private BeanEditor _editor;
+    @Component(parameters = { "object=registrationData" })
+    private BeanEditor editor;
 
     @ApplicationState
-    private RegistrationData _data;
+    private RegistrationData data;
 
     public RegistrationData getRegistrationData()
     {
-        return _data;
+        return data;
     }
 
     Object onSuccess()
@@ -43,7 +43,7 @@ public class BeanEditorOverride
 
     void onActionFromClear()
     {
-        _data = null;
-        _form.clearErrors();
+        data = null;
+        form.clearErrors();
     }
 }

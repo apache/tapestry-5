@@ -435,11 +435,16 @@ Showing Addresses
     }
 ----
 
+  Here, we're using the Hibernate Session object to find all Address objects in the database.
+  Any sorting that takes place will be done in memory.  This is fine for now (with only
+  a handful of Address objects in the database). Later we'll
+  see how to optimize this for very large result sets.
+  
 What's Next?
 
   We have lots more to talk about: more components, more customizations, built-in Ajax support,
   more common design and implementation patterns,
-  and event writing your own components (which is easy!).
+  and even writing your own components (which is easy!).
 
   ... but Tapestry and this tutorial are a work in progress, so stay patient, and check out
   the other Tapestry tutorials and resources available on the

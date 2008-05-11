@@ -21,23 +21,23 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class PersistentDemo
 {
     @Persist
-    private String _message;
+    private String message;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     void onActionFromUpdateMessage(String message)
     {
-        _message = message;
+        this.message = message;
     }
 
     void onActionFromDiscardChanges()
     {
-        _resources.discardPersistentFieldChanges();
+        resources.discardPersistentFieldChanges();
     }
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 }

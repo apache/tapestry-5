@@ -22,7 +22,7 @@ import org.testng.annotations.Test;
 
 public class PrefixMethodTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void prefix_method() throws Exception
@@ -30,15 +30,15 @@ public class PrefixMethodTest extends Assert
         // REFACTOR this happens in a bunch of places
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName, PageTester.DEFAULT_CONTEXT_PATH, LocaleAppModule.class);
-        Document doc = _tester.renderPage("TestPrefixMethod");
+        tester = new PageTester(appPackage, appName, PageTester.DEFAULT_CONTEXT_PATH, LocaleAppModule.class);
+        Document doc = tester.renderPage("TestPrefixMethod");
 
         // make sure you can use on methods that have injected fields
         assertEquals(doc.getElementById("value2").getChildMarkup(), "42");
         assertEquals(doc.getElementById("value3").getChildMarkup(), "1");
 
         // should override the method in the superclass
-        doc = _tester.renderPage("TestPrefixMethod2");
+        doc = tester.renderPage("TestPrefixMethod2");
         assertEquals(doc.getElementById("value").getChildMarkup(), "42");
     }
 }

@@ -30,6 +30,8 @@ import java.net.URL;
  */
 public class ParserExperiment extends DefaultHandler
 {
+    private Locator locator;
+
     public static void main(String[] args) throws Exception
     {
         new ParserExperiment().parse("basic.tml");
@@ -69,9 +71,9 @@ public class ParserExperiment extends DefaultHandler
 
         buffer.append(String.format("%-25s:", methodName));
 
-        if (_locator != null)
+        if (locator != null)
         {
-            buffer.append(String.format(" [Line %d, column %d]", _locator.getLineNumber(), _locator
+            buffer.append(String.format(" [Line %d, column %d]", locator.getLineNumber(), locator
                     .getColumnNumber()));
         }
 
@@ -129,12 +131,10 @@ public class ParserExperiment extends DefaultHandler
         log("pi", "target=" + target, "data=" + data);
     }
 
-    private Locator _locator;
-
     @Override
     public void setDocumentLocator(Locator locator)
     {
-        _locator = locator;
+        this.locator = locator;
 
         log("setDocumentLocator", "publicId=" + locator.getPublicId(), "systemId=" + locator.getSystemId());
     }

@@ -21,7 +21,7 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.tapestry.ioc.annotations.Inject;
 import org.apache.tapestry.ioc.annotations.Symbol;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ThreadCleanupListener;
 import org.apache.tapestry.upload.services.MultipartDecoder;
 import org.apache.tapestry.upload.services.UploadSymbols;
@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupListener
 {
-    private final Map<String, UploadedFileItem> _uploads = newMap();
+    private final Map<String, UploadedFileItem> uploads = CollectionFactory.newMap();
 
     private final String repositoryLocation;
 
@@ -70,7 +70,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     public UploadedFile getFileUpload(String parameterName)
     {
-        return _uploads.get(parameterName);
+        return uploads.get(parameterName);
     }
 
     public HttpServletRequest decode(HttpServletRequest request)
@@ -82,7 +82,7 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     public void threadDidCleanup()
     {
-        for (UploadedFileItem uploaded : _uploads.values())
+        for (UploadedFileItem uploaded : uploads.values())
         {
             uploaded.cleanup();
         }
@@ -155,6 +155,6 @@ public class MultipartDecoderImpl implements MultipartDecoder, ThreadCleanupList
 
     protected void addUploadedFile(String name, UploadedFileItem file)
     {
-        _uploads.put(name, file);
+        uploads.put(name, file);
     }
 }

@@ -19,15 +19,15 @@ import org.apache.tapestry.annotations.Retain;
 public class PageLoadedDemo
 {
     @Retain
-    private String _message;
+    private String message;
 
     void pageLoaded()
     {
-        _message = "pageLoaded() was invoked.";
+        message = "pageLoaded() was invoked.";
     }
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 }

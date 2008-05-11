@@ -16,15 +16,15 @@ package org.apache.tapestry.internal.services;
 
 public class CompositeBean
 {
-    private SimpleBean _simple = new SimpleBean();
+    private SimpleBean simple = new SimpleBean();
 
     public SimpleBean getSimple()
     {
-        return _simple;
+        return simple;
     }
 
     public void setSimple(SimpleBean simple)
     {
-        _simple = simple;
+        this.simple = simple;
     }
 }

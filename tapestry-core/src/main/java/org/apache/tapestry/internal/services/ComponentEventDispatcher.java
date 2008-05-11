@@ -53,7 +53,7 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private final RequestEncodingInitializer requestEncodingInitializer;
 
-    private final EventContext _emptyContext = new EmptyEventContext();
+    private final EventContext emptyContext = new EmptyEventContext();
 
     public ComponentEventDispatcher(@Traditional ComponentEventRequestHandler componentEventRequestHandler,
                                     ComponentClassResolver componentClassResolver,
@@ -140,7 +140,7 @@ public class ComponentEventDispatcher implements Dispatcher
 
     private EventContext decodeContext(String input)
     {
-        if (input == null) return _emptyContext;
+        if (input == null) return emptyContext;
 
         String[] values = TapestryInternalUtils.splitPath(input);
 

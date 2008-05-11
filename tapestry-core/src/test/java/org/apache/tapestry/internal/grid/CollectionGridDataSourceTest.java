@@ -44,12 +44,12 @@ public class CollectionGridDataSourceTest extends InternalBaseTestCase
 
     // Arrays.asList returns an unmodifiable list
 
-    private final List _raw = Arrays.asList(new Datum(FRED, "Fred"), new Datum(BARNEY, "Barney"),
-                                            new Datum(WILMA, "Wilma"), new Datum(BETTY, null));
+    private final List raw = Arrays.asList(new Datum(FRED, "Fred"), new Datum(BARNEY, "Barney"),
+                                           new Datum(WILMA, "Wilma"), new Datum(BETTY, null));
 
-    private final CollectionGridDataSource _source = new CollectionGridDataSource(_raw);
+    private final CollectionGridDataSource source = new CollectionGridDataSource(raw);
 
-    private BeanModel _model;
+    private BeanModel model;
 
     @BeforeClass
     public void setup()
@@ -64,7 +64,7 @@ public class CollectionGridDataSourceTest extends InternalBaseTestCase
 
         replay();
 
-        _model = source.create(Datum.class, false, resources);
+        model = source.create(Datum.class, false, resources);
 
         verify();
     }
@@ -72,7 +72,7 @@ public class CollectionGridDataSourceTest extends InternalBaseTestCase
     @AfterClass
     public void cleanup()
     {
-        _model = null;
+        model = null;
     }
 
     @Test
@@ -106,18 +106,19 @@ public class CollectionGridDataSourceTest extends InternalBaseTestCase
 
     private void sort(String propertyName, boolean ascending, int... ids)
     {
-        PropertyModel propertyModel = _model.get(propertyName);
+        PropertyModel propertyModel = model.get(propertyName);
 
-        int availableRows = _source.getAvailableRows();
+        int availableRows = source.getAvailableRows();
 
-        SortConstraint constraint = new SortConstraint(propertyModel, ascending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING);
+        SortConstraint constraint = new SortConstraint(propertyModel,
+                                                       ascending ? ColumnSort.ASCENDING : ColumnSort.DESCENDING);
         List<SortConstraint> constraints = Collections.singletonList(constraint);
 
-        _source.prepare(0, availableRows - 1, constraints);
+        source.prepare(0, availableRows - 1, constraints);
 
         for (int i = 0; i < ids.length; i++)
         {
-            Datum row = (Datum) _source.getRowValue(i);
+            Datum row = (Datum) source.getRowValue(i);
 
             assertEquals(row.getId(), ids[i], "Id for Datum #" + i);
         }

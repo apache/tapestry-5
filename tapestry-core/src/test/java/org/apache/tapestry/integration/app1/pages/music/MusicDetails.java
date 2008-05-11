@@ -18,20 +18,20 @@ import org.apache.tapestry.integration.app1.data.Track;
 
 public class MusicDetails
 {
-    private Track _track;
+    private Track track;
 
     void onActivate(Track track)
     {
-        _track = track;
+        this.track = track;
     }
 
     Object onPassivate()
     {
-        return _track;
+        return track;
     }
 
     public Track getTrack()
     {
-        return _track;
+        return track;
     }
 }

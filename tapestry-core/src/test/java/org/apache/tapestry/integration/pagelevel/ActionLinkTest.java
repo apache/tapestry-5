@@ -23,26 +23,26 @@ import org.testng.annotations.Test;
 
 public class ActionLinkTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void click_link()
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName);
-        Document doc = _tester.renderPage("TestPageForActionLink");
+        tester = new PageTester(appPackage, appName);
+        Document doc = tester.renderPage("TestPageForActionLink");
         Element link = doc.getElementById("link1");
-        doc = _tester.clickLink(link);
+        doc = tester.clickLink(link);
         assertTrue(doc.toString().contains("You chose: 123"));
     }
 
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

@@ -39,16 +39,16 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
     public static class Bean
     {
-        private int _value;
+        private int value;
 
         public int getValue()
         {
-            return _value;
+            return value;
         }
 
         public void setValue(int value)
         {
-            _value = value;
+            this.value = value;
         }
 
         @Override
@@ -137,16 +137,16 @@ public class PropertyAccessImplTest extends IOCInternalTestCase
 
     public static class BooleanHolder
     {
-        private boolean _flag;
+        private boolean flag;
 
         public boolean isFlag()
         {
-            return _flag;
+            return flag;
         }
 
         public void setFlag(boolean flag)
         {
-            _flag = flag;
+            this.flag = flag;
         }
     }
 

@@ -22,24 +22,24 @@ import org.testng.annotations.Test;
 
 public class TemplateInContextTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void template_in_web_context()
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName, "src/test/app2");
-        Document doc = _tester.renderPage("TestPageForTemplateInContext");
+        tester = new PageTester(appPackage, appName, "src/test/app2");
+        Document doc = tester.renderPage("TestPageForTemplateInContext");
         assertTrue(doc.toString().contains("How are you?"));
     }
 
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

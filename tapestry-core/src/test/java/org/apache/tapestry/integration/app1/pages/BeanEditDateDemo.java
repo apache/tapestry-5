@@ -20,16 +20,16 @@ import org.apache.tapestry.integration.app1.data.BirthdayReminder;
 public class BeanEditDateDemo
 {
     @ApplicationState
-    private BirthdayReminder _reminder;
+    private BirthdayReminder reminder;
 
     public BirthdayReminder getReminder()
     {
-        return _reminder;
+        return reminder;
     }
 
     void onActionFromClear()
     {
-        _reminder = null;
+        reminder = null;
     }
 
     Object onSuccess()

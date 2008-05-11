@@ -37,7 +37,7 @@ public class PersistEntity
     private Session session;
 
     @Inject
-    private HibernateSessionManager _manager;
+    private HibernateSessionManager manager;
 
     void onCreateEntity()
     {

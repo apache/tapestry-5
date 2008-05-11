@@ -24,20 +24,20 @@ import java.util.Date;
 public class DateFieldDemo
 {
     @Persist
-    private Date _birthday;
+    private Date birthday;
 
     @Persist
-    private Date _asteroidImpact;
+    private Date asteroidImpact;
 
     @Validate("required")
     public Date getBirthday()
     {
-        return _birthday;
+        return birthday;
     }
 
     public void setBirthday(Date birthday)
     {
-        _birthday = birthday;
+        this.birthday = birthday;
     }
 
     public DateFormat getDateFormat()
@@ -48,11 +48,11 @@ public class DateFieldDemo
     @Validate("required")
     public Date getAsteroidImpact()
     {
-        return _asteroidImpact;
+        return asteroidImpact;
     }
 
     public void setAsteroidImpact(Date asteroidImpact)
     {
-        _asteroidImpact = asteroidImpact;
+        this.asteroidImpact = asteroidImpact;
     }
 }

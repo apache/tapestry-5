@@ -16,15 +16,15 @@ package org.apache.tapestry.integration.app2;
 
 public class SimpleASO
 {
-    private String _foo = "bar";
+    private String foo = "bar";
 
     public void setFoo(String foo)
     {
-        _foo = foo;
+        this.foo = foo;
     }
 
     public String getFoo()
     {
-        return _foo;
+        return foo;
     }
 }

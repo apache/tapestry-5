@@ -18,16 +18,16 @@ import org.apache.tapestry.internal.parser.TokenType;
 
 public class EnumBean
 {
-    private TokenType _token;
+    private TokenType token;
 
     public TokenType getToken()
     {
-        return _token;
+        return token;
     }
 
     public void setToken(TokenType token)
     {
-        _token = token;
+        this.token = token;
     }
 
 }

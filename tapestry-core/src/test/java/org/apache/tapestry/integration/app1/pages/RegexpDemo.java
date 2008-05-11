@@ -20,17 +20,17 @@ import org.apache.tapestry.beaneditor.Validate;
 public class RegexpDemo
 {
     @Persist
-    private String _zipCode;
+    private String zipCode;
 
     // regexp requires a constraint, that'll come from the message catalog
     @Validate("required,regexp")
     public String getZipCode()
     {
-        return _zipCode;
+        return zipCode;
     }
 
     public void setZipCode(String zipCode)
     {
-        _zipCode = zipCode;
+        this.zipCode = zipCode;
     }
 }

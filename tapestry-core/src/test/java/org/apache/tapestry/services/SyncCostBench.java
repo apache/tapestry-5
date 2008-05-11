@@ -22,18 +22,16 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * Tests single-thread synchronization overhead using different techniques. Note that we're fudging
- * things a bit by getting a read lock for a write operation .... it's just that I'm more concerned
- * about read locks (which will be very common) than about write locks (very rare). Another concern
- * is that hotspot is going to mess up our synchronization when it see we're not really doing
- * anything multi-threaded.
+ * Tests single-thread synchronization overhead using different techniques. Note that we're fudging things a bit by
+ * getting a read lock for a write operation .... it's just that I'm more concerned about read locks (which will be very
+ * common) than about write locks (very rare). Another concern is that hotspot is going to mess up our synchronization
+ * when it see we're not really doing anything multi-threaded.
  * <p/>
- * The results show that using the {@link org.apache.tapestry.internal.annotations.Concurrent}
- * aspect (which used a {@link java.util.concurrent.locks.ReentrantReadWriteLock} under the covers)
- * is about 4x as expensive as just using the synchronized keyword. There are some anomolous results
- * ... for example, ReadWriteLockRunner is consistently slower than ReadWriteLockAspectRunner (one
- * would expect it to be the other way around ... must be something about how AspectJ weaves the
- * code ... and it's use of static methods in many cases).
+ * The results show that using the {@link org.apache.tapestry.internal.annotations.Concurrent} aspect (which used a
+ * {@link java.util.concurrent.locks.ReentrantReadWriteLock} under the covers) is about 4x as expensive as just using
+ * the synchronized keyword. There are some anomolous results ... for example, ReadWriteLockRunner is consistently
+ * slower than ReadWriteLockAspectRunner (one would expect it to be the other way around ... must be something about how
+ * AspectJ weaves the code ... and it's use of static methods in many cases).
  * <p/>
  * Well, the Concurrent aspect is gone, replaced with the {@link ConcurrentBarrier} utility.
  */
@@ -44,75 +42,75 @@ public class SyncCostBench
      */
     static class Worker implements Runnable
     {
-        private long[] _series = {1, 1};
+        private long[] series = { 1, 1 };
 
         public void run()
         {
-            long value = _series[0] + _series[1];
+            long value = series[0] + series[1];
 
             // Now shift the values down to prepare for the next iteration.
 
-            _series[0] = _series[1];
-            _series[1] = value;
+            series[0] = series[1];
+            series[1] = value;
         }
     }
 
     static class SimpleRunner implements Runnable
     {
-        private final Runnable _delegate;
+        private final Runnable delegate;
 
         public SimpleRunner(Runnable delegate)
         {
-            _delegate = delegate;
+            this.delegate = delegate;
         }
 
         public void run()
         {
-            _delegate.run();
+            delegate.run();
         }
     }
 
     static class SynchronizedRunner implements Runnable
     {
-        private final Runnable _delegate;
+        private final Runnable delegate;
 
         public SynchronizedRunner(Runnable delegate)
         {
-            _delegate = delegate;
+            this.delegate = delegate;
         }
 
         public synchronized void run()
         {
-            _delegate.run();
+            delegate.run();
         }
     }
 
     static class ReadWriteLockAspectRunner implements Runnable
     {
-        private final ConcurrentBarrier _barrier = new ConcurrentBarrier();
+        private final ConcurrentBarrier barrier = new ConcurrentBarrier();
 
-        private final Runnable _delegate;
+        private final Runnable delegate;
 
         public ReadWriteLockAspectRunner(Runnable delegate)
         {
-            _delegate = delegate;
+            this.delegate = delegate;
         }
 
         public void run()
         {
-            _barrier.withRead(_delegate);
+            barrier.withRead(delegate);
         }
     }
 
     static class ReadWriteLockRunner implements Runnable
     {
-        private final Runnable _delegate;
+        private final Runnable delegate;
 
-        private final ReadWriteLock _lock = new ReentrantReadWriteLock();
+        private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
         public ReadWriteLockRunner(Runnable delegate)
         {
-            _delegate = delegate;
+            this.delegate = delegate;
         }
 
         public void run()
@@ -120,13 +118,13 @@ public class SyncCostBench
 
             try
             {
-                _lock.readLock().lock();
+                lock.readLock().lock();
 
-                _delegate.run();
+                delegate.run();
             }
             finally
             {
-                _lock.readLock().unlock();
+                lock.readLock().unlock();
             }
 
         }
@@ -138,20 +136,20 @@ public class SyncCostBench
 
     static class BlockRunner implements Runnable
     {
-        private final Runnable _delegate;
+        private final Runnable delegate;
 
-        private final int _blockSize;
+        private final int blockSize;
 
         public BlockRunner(int blockSize, Runnable delegate)
         {
-            _blockSize = blockSize;
-            _delegate = delegate;
+            this.blockSize = blockSize;
+            this.delegate = delegate;
         }
 
         public void run()
         {
-            for (int i = 0; i < _blockSize; i++)
-                _delegate.run();
+            for (int i = 0; i < blockSize; i++)
+                delegate.run();
         }
     }
 

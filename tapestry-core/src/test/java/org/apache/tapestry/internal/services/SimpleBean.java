@@ -18,41 +18,41 @@ import org.apache.tapestry.beaneditor.Width;
 
 public class SimpleBean
 {
-    private String _firstName;
+    private String firstName;
 
-    private String _lastName;
+    private String lastName;
 
-    private int _age;
+    private int age;
 
     public String getFirstName()
     {
-        return _firstName;
+        return firstName;
     }
 
     public String getLastName()
     {
-        return _lastName;
+        return lastName;
     }
 
     @Width(2)
     public int getAge()
     {
-        return _age;
+        return age;
     }
 
     public void setAge(int age)
     {
-        _age = age;
+        this.age = age;
     }
 
     public void setFirstName(String firstName)
     {
-        _firstName = firstName;
+        this.firstName = firstName;
     }
 
     public void setLastName(String lastName)
     {
-        _lastName = lastName;
+        this.lastName = lastName;
     }
 
 }

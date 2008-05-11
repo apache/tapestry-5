@@ -48,17 +48,17 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
         this.defaultMarkers = defaultMarkers;
     }
 
-    private String _serviceId;
+    private String serviceId;
 
-    private Class _serviceInterface;
+    private Class serviceInterface;
 
-    private final Set<Class> _markers = CollectionFactory.newSet();
+    private final Set<Class> markers = CollectionFactory.newSet();
 
-    private Class _serviceImplementation;
+    private Class serviceImplementation;
 
-    private boolean _eagerLoad;
+    private boolean eagerLoad;
 
-    private String _scope;
+    private String scope;
 
     public void finish()
     {
@@ -69,7 +69,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
     protected void flush()
     {
-        if (_serviceInterface == null) return;
+        if (serviceInterface == null) return;
 
         final Constructor constructor = findConstructor();
 
@@ -88,26 +88,26 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         // Combine service-specific markers with those inherited form the module.
         Set<Class> markers = CollectionFactory.newSet(defaultMarkers);
-        markers.addAll(_markers);
+        markers.addAll(this.markers);
 
-        ServiceDef serviceDef = new ServiceDefImpl(_serviceInterface, _serviceId, markers, _scope, _eagerLoad, source);
+        ServiceDef serviceDef = new ServiceDefImpl(serviceInterface, serviceId, markers, scope, eagerLoad, source);
 
         accumulator.addServiceDef(serviceDef);
 
-        _serviceId = null;
-        _serviceInterface = null;
-        _markers.clear();
-        _serviceImplementation = null;
-        _eagerLoad = false;
-        _scope = null;
+        serviceId = null;
+        serviceInterface = null;
+        this.markers.clear();
+        serviceImplementation = null;
+        eagerLoad = false;
+        scope = null;
     }
 
     private Constructor findConstructor()
     {
-        Constructor result = InternalUtils.findAutobuildConstructor(_serviceImplementation);
+        Constructor result = InternalUtils.findAutobuildConstructor(serviceImplementation);
 
         if (result == null) throw new RuntimeException(IOCMessages
-                .noConstructor(_serviceImplementation, _serviceId));
+                .noConstructor(serviceImplementation, serviceId));
 
         return result;
     }
@@ -126,24 +126,24 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         flush();
 
-        _serviceInterface = serviceInterface;
-        _serviceImplementation = serviceImplementation;
+        this.serviceInterface = serviceInterface;
+        this.serviceImplementation = serviceImplementation;
 
         // Set defaults for the other properties.
 
-        _eagerLoad = serviceImplementation.getAnnotation(EagerLoad.class) != null;
-        _serviceId = serviceInterface.getSimpleName();
+        eagerLoad = serviceImplementation.getAnnotation(EagerLoad.class) != null;
+        serviceId = serviceInterface.getSimpleName();
 
         Scope scope = serviceImplementation.getAnnotation(Scope.class);
 
-        _scope = scope != null ? scope.value() : IOCConstants.DEFAULT_SCOPE;
+        this.scope = scope != null ? scope.value() : IOCConstants.DEFAULT_SCOPE;
 
         Marker marker = serviceImplementation.getAnnotation(Marker.class);
 
         if (marker != null)
         {
             InternalUtils.validateMarkerAnnotations(marker.value());
-            _markers.addAll(Arrays.asList(marker.value()));
+            markers.addAll(Arrays.asList(marker.value()));
         }
 
         return this;
@@ -153,7 +153,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
     {
         lock.check();
 
-        _eagerLoad = true;
+        eagerLoad = true;
 
         return this;
     }
@@ -164,7 +164,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         lock.check();
 
-        _serviceId = id;
+        serviceId = id;
 
         return this;
     }
@@ -175,7 +175,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         lock.check();
 
-        _scope = scope;
+        this.scope = scope;
 
         return this;
     }
@@ -186,7 +186,7 @@ public class ServiceBinderImpl implements ServiceBinder, ServiceBindingOptions
 
         InternalUtils.validateMarkerAnnotations(marker);
 
-        _markers.addAll(Arrays.asList(marker));
+        markers.addAll(Arrays.asList(marker));
 
         return this;
     }

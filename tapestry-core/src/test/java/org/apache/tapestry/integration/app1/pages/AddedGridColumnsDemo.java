@@ -27,53 +27,53 @@ import java.util.List;
 
 public class AddedGridColumnsDemo
 {
-    @Component(parameters = {"source=tracks", "row=track", "model=model"})
-    private Grid _grid;
+    @Component(parameters = { "source=tracks", "row=track", "model=model" })
+    private Grid grid;
 
     @Inject
-    private MusicLibrary _library;
+    private MusicLibrary library;
 
-    private Track _track;
-
-    @Inject
-    private BeanModelSource _source;
-
-    private final BeanModel _model;
+    private Track track;
 
     @Inject
-    private ComponentResources _resources;
+    private BeanModelSource source;
+
+    private final BeanModel model;
+
+    @Inject
+    private ComponentResources resources;
 
     {
-        _model = _source.create(Track.class, true, _resources);
+        model = source.create(Track.class, true, resources);
 
-        _model.exclude("album", "artist", "genre", "playcount", "rating");
+        model.exclude("album", "artist", "genre", "playcount", "rating");
 
-        _model.add("viewlink", null);
+        model.add("viewlink", null);
 
-        _model.add("title.length()").label("Title Length");
+        model.add("title.length()").label("Title Length");
 
         // This is to test the case where there's no property conduit or override block.
 
-        _model.add("dummy", null);
+        model.add("dummy", null);
     }
 
     public Track getTrack()
     {
-        return _track;
+        return track;
     }
 
     public void setTrack(Track track)
     {
-        _track = track;
+        this.track = track;
     }
 
     public List<Track> getTracks()
     {
-        return _library.getTracks();
+        return library.getTracks();
     }
 
     public BeanModel getModel()
     {
-        return _model;
+        return model;
     }
 }

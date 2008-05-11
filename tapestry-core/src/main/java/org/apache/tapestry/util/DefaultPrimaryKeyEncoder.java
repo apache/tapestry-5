@@ -182,9 +182,9 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
     /**
      * Modifies a keySet to add or remove the current key. If necessary, a new Set is created.
      * <p/>
-     * Useage: <code> private Set<K> _myFlagKeys;
+     * Useage: <code> private Set<K> myFlagKeys;
      * <p/>
-     * public boolean void setMyFlag(boolean value) { _myFlagKeys = modifySet(_myFlagKeys, value); } </code>
+     * public boolean void setMyFlag(boolean value) { myFlagKeys = modifySet(myFlagKeys, value); } </code>
      *
      * @param keySet the set of keys, or null
      * @param value  true to add the current key, false to remove

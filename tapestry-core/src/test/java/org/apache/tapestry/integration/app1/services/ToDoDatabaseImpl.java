@@ -16,8 +16,8 @@ package org.apache.tapestry.integration.app1.services;
 
 import org.apache.tapestry.integration.app1.data.ToDoItem;
 import org.apache.tapestry.integration.app1.data.Urgency;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -25,15 +25,14 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * We clone everything that comes in or goes out. This does a reasonable job of simulating an
- * external database. We just use cloned copies of objects to represent data that's been marshalled
- * into tables and columns.
+ * We clone everything that comes in or goes out. This does a reasonable job of simulating an external database. We just
+ * use cloned copies of objects to represent data that's been marshalled into tables and columns.
  */
 public class ToDoDatabaseImpl implements ToDoDatabase
 {
-    private long _nextId = 1000;
+    private long nextId = 1000;
 
-    private final Map<Long, ToDoItem> _items = newMap();
+    private final Map<Long, ToDoItem> items = CollectionFactory.newMap();
 
     public ToDoDatabaseImpl()
     {
@@ -44,13 +43,13 @@ public class ToDoDatabaseImpl implements ToDoDatabase
 
     public void clear()
     {
-        _items.clear();
+        items.clear();
     }
 
 
     public void reset()
     {
-        _items.clear();
+        items.clear();
 
         add("End World Hunger", Urgency.MEDIUM, 1);
         add("Develop Faster-Than-Light Travel", Urgency.HIGH, 2);
@@ -70,18 +69,18 @@ public class ToDoDatabaseImpl implements ToDoDatabase
 
     public void add(ToDoItem item)
     {
-        long id = _nextId++;
+        long id = nextId++;
 
         item.setId(id);
 
-        _items.put(id, item.clone());
+        items.put(id, item.clone());
     }
 
     public List<ToDoItem> findAll()
     {
         List<ToDoItem> result = newList();
 
-        for (ToDoItem item : _items.values())
+        for (ToDoItem item : items.values())
             result.add(item.clone());
 
         Comparator<ToDoItem> comparator = new Comparator<ToDoItem>()
@@ -101,15 +100,15 @@ public class ToDoDatabaseImpl implements ToDoDatabase
     {
         long id = item.getId();
 
-        if (!_items.containsKey(id))
+        if (!items.containsKey(id))
             throw new RuntimeException(String.format("ToDoItem #%d not found.", id));
 
-        _items.put(id, item.clone());
+        items.put(id, item.clone());
     }
 
     public void remove(long itemId)
     {
-        ToDoItem item = _items.remove(itemId);
+        ToDoItem item = items.remove(itemId);
 
         if (item == null)
             throw new RuntimeException(String.format("ToDoItem #%d not found.", itemId));

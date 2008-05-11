@@ -220,7 +220,7 @@ public class Grid implements GridModel
     @SuppressWarnings("unused")
     @Component(
             parameters = { "rowClass=rowClass", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "row=row", "volatile=inherit:volatile", "lean=inherit:lean" })
-    private GridRows _rows;
+    private GridRows rows;
 
     @Component(parameters = { "source=dataSource", "rowsPerPage=rowsPerPage", "currentPage=currentPage", "zone=zone" })
     private GridPager pager;

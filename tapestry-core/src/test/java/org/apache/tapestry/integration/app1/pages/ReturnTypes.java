@@ -31,10 +31,10 @@ import java.net.URL;
 public class ReturnTypes
 {
     @InjectPage
-    private Start _start;
+    private Start start;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     Object onActionFromNullReturnValue()
     {
@@ -53,12 +53,12 @@ public class ReturnTypes
 
     Object onActionFromPageReturnValue()
     {
-        return _start;
+        return start;
     }
 
     Object onActionFromLinkReturnValue()
     {
-        return _resources.createPageLink("start", false);
+        return resources.createPageLink("start", false);
     }
 
     Object onActionFromStreamReturnValue()

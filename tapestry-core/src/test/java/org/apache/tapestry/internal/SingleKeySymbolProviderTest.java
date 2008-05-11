@@ -20,23 +20,23 @@ import org.testng.annotations.Test;
 
 public class SingleKeySymbolProviderTest extends Assert
 {
-    private final SymbolProvider _provider = new SingleKeySymbolProvider("fred", "flintstone");
+    private final SymbolProvider provider = new SingleKeySymbolProvider("fred", "flintstone");
 
     @Test
     public void exact_match()
     {
-        assertEquals(_provider.valueForSymbol("fred"), "flintstone");
+        assertEquals(provider.valueForSymbol("fred"), "flintstone");
     }
 
     @Test
     public void case_insensitive()
     {
-        assertEquals(_provider.valueForSymbol("FRED"), "flintstone");
+        assertEquals(provider.valueForSymbol("FRED"), "flintstone");
     }
 
     @Test
     public void non_match()
     {
-        assertNull(_provider.valueForSymbol("barney"));
+        assertNull(provider.valueForSymbol("barney"));
     }
 }

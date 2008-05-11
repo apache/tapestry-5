@@ -24,48 +24,48 @@ import org.apache.tapestry.integration.app1.data.UserCredentials;
 public class MultiBeanEditDemo
 {
     @ApplicationState
-    private UserCredentials _credentials;
+    private UserCredentials credentials;
 
     @ApplicationState
-    private RolePath _rolePath;
+    private RolePath rolePath;
 
     @InjectPage
-    private MultiBeanDemoResult _resultPage;
+    private MultiBeanDemoResult resultPage;
 
     @Component
-    private Form _form;
+    private Form form;
 
     public UserCredentials getCredentials()
     {
-        return _credentials;
+        return credentials;
     }
 
     public RolePath getRolePath()
     {
-        return _rolePath;
+        return rolePath;
     }
 
     public void setCredentials(UserCredentials credentials)
     {
-        _credentials = credentials;
+        this.credentials = credentials;
     }
 
     public void setRolePath(RolePath rolePath)
     {
-        _rolePath = rolePath;
+        this.rolePath = rolePath;
     }
 
     Object onSuccess()
     {
-        return _resultPage;
+        return resultPage;
     }
 
     void onActionFromClear()
     {
         // Force these to be re-created.
-        _credentials = null;
-        _rolePath = null;
+        credentials = null;
+        rolePath = null;
 
-        _form.clearErrors();
+        form.clearErrors();
     }
 }

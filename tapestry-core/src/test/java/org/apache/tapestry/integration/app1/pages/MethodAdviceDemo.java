@@ -22,18 +22,18 @@ import org.apache.tapestry.integration.app1.services.ReverseStrings;
 public class MethodAdviceDemo
 {
     @Persist
-    private String _text;
+    private String text;
 
     @Validate("required")
     public String getText()
     {
-        return _text;
+        return text;
     }
 
     @ReverseStrings
     public void setText(String text)
     {
-        _text = text;
+        this.text = text;
     }
 
     @ReverseStrings

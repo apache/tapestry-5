@@ -29,12 +29,12 @@ import java.util.Map;
 
 public class MetaDataLocatorImplTest extends InternalBaseTestCase
 {
-    private TypeCoercer _typeCoercer;
+    private TypeCoercer typeCoercer;
 
     @BeforeClass
     public void setup()
     {
-        _typeCoercer = getService(TypeCoercer.class);
+        typeCoercer = getService(TypeCoercer.class);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -99,7 +99,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -132,7 +132,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         Map<String, String> configuration = newMap();
         configuration.put(key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -174,7 +174,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         Map<String, String> configuration = newMap();
         configuration.put(key.toUpperCase(), value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -217,7 +217,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
         configuration.put(key, "xxx");
         configuration.put("foo:" + key, value);
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -255,7 +255,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocatorImpl locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertSame(locator.findMeta(key, resources, String.class), value);
 
@@ -302,7 +302,7 @@ public class MetaDataLocatorImplTest extends InternalBaseTestCase
 
         Map<String, String> configuration = Collections.emptyMap();
 
-        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, _typeCoercer, configuration);
+        MetaDataLocator locator = new MetaDataLocatorImpl(symbolSource, typeCoercer, configuration);
 
         assertEquals(locator.findMeta(key, resources, Integer.class), new Integer(99));
 

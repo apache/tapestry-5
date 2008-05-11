@@ -23,32 +23,32 @@ import org.apache.tapestry.annotations.InjectPage;
 public class BlockCaller
 {
     @InjectPage
-    private BlockHolder _blockHolder;
+    private BlockHolder blockHolder;
 
-    private int _activationContext;
+    private int activationContext;
 
     public void setActivationContext(int value)
     {
-        _activationContext = value;
+        activationContext = value;
     }
 
     public int getActivationContext()
     {
-        return _activationContext;
+        return activationContext;
     }
 
     void onActivate(int activationContext)
     {
-        _activationContext = activationContext;
+        this.activationContext = activationContext;
     }
 
     int onPassivate()
     {
-        return _activationContext;
+        return activationContext;
     }
 
     public Block getBlock()
     {
-        return _blockHolder.getLinks();
+        return blockHolder.getLinks();
     }
 }

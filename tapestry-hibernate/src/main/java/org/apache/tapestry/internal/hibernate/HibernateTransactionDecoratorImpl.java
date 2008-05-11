@@ -35,7 +35,7 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
      * The rules for advice are the same for any method: commit on success or checked exception, abort on thrown
      * exception ... so we can use a single shared advice object.
      */
-    private final MethodAdvice _advice = new MethodAdvice()
+    private final MethodAdvice advice = new MethodAdvice()
     {
         public void advise(Invocation invocation)
         {
@@ -79,7 +79,7 @@ public class HibernateTransactionDecoratorImpl implements HibernateTransactionDe
         {
             if (m.getAnnotation(CommitAfter.class) != null)
             {
-                builder.adviseMethod(m, _advice);
+                builder.adviseMethod(m, advice);
             }
         }
 

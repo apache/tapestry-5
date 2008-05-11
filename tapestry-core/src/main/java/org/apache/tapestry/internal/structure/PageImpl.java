@@ -49,7 +49,7 @@ public class PageImpl implements Page
      * Obtained from the {@link org.apache.tapestry.internal.services.PersistentFieldManager} when first needed,
      * discarded at the end of the request.
      */
-    private PersistentFieldBundle _fieldBundle;
+    private PersistentFieldBundle fieldBundle;
 
     public PageImpl(String logicalPageName, Locale locale, LinkFactory linkFactory,
                     PersistentFieldManager persistentFieldManager)
@@ -127,7 +127,7 @@ public class PageImpl implements Page
             }
         }
 
-        _fieldBundle = null;
+        fieldBundle = null;
 
         return result;
     }
@@ -168,9 +168,9 @@ public class PageImpl implements Page
 
     public Object getFieldChange(String nestedId, String fieldName)
     {
-        if (_fieldBundle == null) _fieldBundle = persistentFieldManager.gatherChanges(logicalPageName);
+        if (fieldBundle == null) fieldBundle = persistentFieldManager.gatherChanges(logicalPageName);
 
-        return _fieldBundle.getValue(nestedId, fieldName);
+        return fieldBundle.getValue(nestedId, fieldName);
     }
 
     public void decrementDirtyCount()

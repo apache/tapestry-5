@@ -14,28 +14,28 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.integration.app1.data.IntegerHolder;
 import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.integration.app1.data.IntegerHolder;
 
 public class NumberBeanEditorDemo
 {
-    private IntegerHolder _holder;
+    private IntegerHolder holder;
 
     @InjectPage
-    private NumberBeanDisplayDemo _page;
+    private NumberBeanDisplayDemo page;
 
     public IntegerHolder getHolder()
     {
-        return _holder;
+        return holder;
     }
 
     public void setHolder(IntegerHolder holder)
     {
-        _holder = holder;
+        this.holder = holder;
     }
 
     Object onSuccess()
     {
-        return _page.initialize(_holder);
+        return page.initialize(holder);
     }
 }

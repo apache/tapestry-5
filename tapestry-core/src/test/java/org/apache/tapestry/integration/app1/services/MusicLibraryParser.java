@@ -15,8 +15,7 @@
 package org.apache.tapestry.integration.app1.services;
 
 import org.apache.tapestry.integration.app1.data.Track;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newStack;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.util.Stack;
 import org.slf4j.Logger;
 import org.xml.sax.Attributes;
@@ -37,7 +36,7 @@ import java.util.List;
  */
 public class MusicLibraryParser
 {
-    private final Logger _logger;
+    private final Logger logger;
 
     private static final int STATE_START = 0;
 
@@ -89,35 +88,35 @@ public class MusicLibraryParser
 
     private class Handler extends DefaultHandler
     {
-        private final List<Track> _tracks = newList();
+        private final List<Track> tracks = CollectionFactory.newList();
 
-        private Stack<Item> _stack = newStack();
+        private Stack<Item> stack = CollectionFactory.newStack();
 
-        private int _state = STATE_START;
+        private int state = STATE_START;
 
         /**
          * Most recently seen key.
          */
-        private String _key;
+        private String key;
 
         /**
          * Currently building Track.
          */
-        private Track _track;
+        private Track track;
 
         public List<Track> getTracks()
         {
-            return _tracks;
+            return tracks;
         }
 
         private Item peek()
         {
-            return _stack.peek();
+            return stack.peek();
         }
 
         private void pop()
         {
-            _state = _stack.pop()._priorState;
+            state = stack.pop()._priorState;
         }
 
         private void push(int newState)
@@ -127,11 +126,11 @@ public class MusicLibraryParser
 
         protected void push(int newState, boolean ignoreCharacterData)
         {
-            Item item = new Item(_state, ignoreCharacterData);
+            Item item = new Item(state, ignoreCharacterData);
 
-            _stack.push(item);
+            stack.push(item);
 
-            _state = newState;
+            state = newState;
         }
 
         @Override
@@ -161,7 +160,7 @@ public class MusicLibraryParser
 
         private void begin(String element)
         {
-            switch (_state)
+            switch (state)
             {
                 case STATE_START:
                     enterStart(element);
@@ -233,9 +232,9 @@ public class MusicLibraryParser
 
         private void beginDictTrack(String element)
         {
-            _track = new Track();
+            track = new Track();
 
-            _tracks.add(_track);
+            tracks.add(track);
 
             push(STATE_DICT_TRACK);
         }
@@ -264,7 +263,7 @@ public class MusicLibraryParser
 
         private void end(String element)
         {
-            switch (_state)
+            switch (state)
             {
                 case STATE_COLLECT_KEY:
 
@@ -282,7 +281,7 @@ public class MusicLibraryParser
 
         private void endCollectKey(String element)
         {
-            _key = peek().getContent();
+            key = peek().getContent();
 
             pop();
         }
@@ -293,44 +292,44 @@ public class MusicLibraryParser
 
             pop();
 
-            if (_key.equals("Track ID"))
+            if (key.equals("Track ID"))
             {
-                _track.setId(Long.parseLong(value));
+                track.setId(Long.parseLong(value));
             }
 
-            if (_key.equals("Name"))
+            if (key.equals("Name"))
             {
-                _track.setTitle(value);
+                track.setTitle(value);
                 return;
             }
 
-            if (_key.equals("Artist"))
+            if (key.equals("Artist"))
             {
-                _track.setArtist(value);
+                track.setArtist(value);
                 return;
             }
 
-            if (_key.equals("Album"))
+            if (key.equals("Album"))
             {
-                _track.setAlbum(value);
+                track.setAlbum(value);
                 return;
             }
 
-            if (_key.equals("Genre"))
+            if (key.equals("Genre"))
             {
-                _track.setGenre(value);
+                track.setGenre(value);
                 return;
             }
 
-            if (_key.equals("Play Count"))
+            if (key.equals("Play Count"))
             {
-                _track.setPlayCount(Integer.parseInt(value));
+                track.setPlayCount(Integer.parseInt(value));
                 return;
             }
 
-            if (_key.equals("Rating"))
+            if (key.equals("Rating"))
             {
-                _track.setRating(Integer.parseInt(value));
+                track.setRating(Integer.parseInt(value));
                 return;
             }
 
@@ -358,12 +357,12 @@ public class MusicLibraryParser
 
     public MusicLibraryParser(final Logger logger)
     {
-        _logger = logger;
+        this.logger = logger;
     }
 
     public List<Track> parseTracks(URL resource)
     {
-        _logger.info(format("Parsing music library %s", resource));
+        logger.info(format("Parsing music library %s", resource));
 
         long start = System.currentTimeMillis();
 
@@ -388,7 +387,7 @@ public class MusicLibraryParser
         List<Track> result = handler.getTracks();
         long elapsed = System.currentTimeMillis() - start;
 
-        _logger.info(format("Parsed %d tracks in %d ms", result.size(), elapsed));
+        logger.info(format("Parsed %d tracks in %d ms", result.size(), elapsed));
 
         return result;
     }

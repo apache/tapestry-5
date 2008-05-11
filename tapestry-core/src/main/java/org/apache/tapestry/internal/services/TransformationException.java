@@ -25,17 +25,17 @@ public class TransformationException extends TapestryException
 {
     private static final long serialVersionUID = -7312854113157232961L;
 
-    private final ClassTransformation _transformation;
+    private final ClassTransformation transformation;
 
     public TransformationException(ClassTransformation transformation, Throwable cause)
     {
         super(cause.getMessage(), cause);
 
-        _transformation = transformation;
+        this.transformation = transformation;
     }
 
     public ClassTransformation getTransformation()
     {
-        return _transformation;
+        return transformation;
     }
 }

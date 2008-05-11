@@ -27,42 +27,42 @@ import java.util.Map;
 
 public class SubmitTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
-    private Document _doc;
+    private Document doc;
 
-    private Map<String, String> _fieldValues;
+    private Map<String, String> fieldValues;
 
     @Test
     public void submit_form()
     {
-        Element submitButton = _doc.getElementById("capitalize1");
-        _fieldValues.put("t1", "hello");
-        _doc = _tester.clickSubmit(submitButton, _fieldValues);
-        assertTrue(_doc.toString().contains("Value is: HELLO"));
+        Element submitButton = doc.getElementById("capitalize1");
+        fieldValues.put("t1", "hello");
+        doc = tester.clickSubmit(submitButton, fieldValues);
+        assertTrue(doc.toString().contains("Value is: HELLO"));
     }
 
     @Test
     public void access_following_fields()
     {
-        Element submitButton = _doc.getElementById("capitalize2");
-        _fieldValues.put("t2", "world");
-        _doc = _tester.clickSubmit(submitButton, _fieldValues);
-        assertTrue(_doc.toString().contains("Value is: WORLD"));
+        Element submitButton = doc.getElementById("capitalize2");
+        fieldValues.put("t2", "world");
+        doc = tester.clickSubmit(submitButton, fieldValues);
+        assertTrue(doc.toString().contains("Value is: WORLD"));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void not_a_submit()
     {
-        Element submitButton = _doc.getElementById("t1");
-        _tester.clickSubmit(submitButton, _fieldValues);
+        Element submitButton = doc.getElementById("t1");
+        tester.clickSubmit(submitButton, fieldValues);
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void not_in_form()
     {
-        Element submitButton = _doc.getElementById("orphanedSubmit");
-        _tester.clickSubmit(submitButton, _fieldValues);
+        Element submitButton = doc.getElementById("orphanedSubmit");
+        tester.clickSubmit(submitButton, fieldValues);
     }
 
     @BeforeMethod
@@ -70,17 +70,17 @@ public class SubmitTest extends Assert
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName);
-        _doc = _tester.renderPage("TestPageForSubmit");
-        _fieldValues = CollectionFactory.newMap();
+        tester = new PageTester(appPackage, appName);
+        doc = tester.renderPage("TestPageForSubmit");
+        fieldValues = CollectionFactory.newMap();
     }
 
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

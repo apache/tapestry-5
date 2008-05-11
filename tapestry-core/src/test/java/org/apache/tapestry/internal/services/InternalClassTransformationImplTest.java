@@ -61,26 +61,26 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 {
     private static final String STRING_CLASS_NAME = "java.lang.String";
 
-    private PropertyAccess _access;
+    private PropertyAccess access;
 
-    private final ClassLoader _contextClassLoader = currentThread().getContextClassLoader();
+    private final ClassLoader contextClassLoader = currentThread().getContextClassLoader();
 
-    private ClassFactory _classFactory;
+    private ClassFactory classFactory;
 
-    private Loader _loader;
+    private Loader loader;
 
-    private ClassFactoryClassPool _classFactoryClassPool;
+    private ClassFactoryClassPool classFactoryClassPool;
 
     @BeforeClass
     public void setup_access()
     {
-        _access = getService("PropertyAccess", PropertyAccess.class);
+        access = getService("PropertyAccess", PropertyAccess.class);
     }
 
     @AfterClass
     public void cleanup_access()
     {
-        _access = null;
+        access = null;
     }
 
     /**
@@ -92,27 +92,27 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
     {
         //  _classPool = new ClassPool();
 
-        _classFactoryClassPool = new ClassFactoryClassPool(_contextClassLoader);
+        classFactoryClassPool = new ClassFactoryClassPool(contextClassLoader);
 
-        _loader = new TestPackageAwareLoader(_contextClassLoader, _classFactoryClassPool);
+        loader = new TestPackageAwareLoader(contextClassLoader, classFactoryClassPool);
 
         // Inside Maven Surefire, the system classpath is not sufficient to find all
         // the necessary files.
-        _classFactoryClassPool.appendClassPath(new LoaderClassPath(_loader));
+        classFactoryClassPool.appendClassPath(new LoaderClassPath(loader));
 
         Logger logger = LoggerFactory.getLogger(InternalClassTransformationImplTest.class);
 
-        _classFactory = new ClassFactoryImpl(_loader, _classFactoryClassPool, logger);
+        classFactory = new ClassFactoryImpl(loader, classFactoryClassPool, logger);
     }
 
     private CtClass findCtClass(Class targetClass) throws NotFoundException
     {
-        return _classFactoryClassPool.get(targetClass.getName());
+        return classFactoryClassPool.get(targetClass.getName());
     }
 
     private Class toClass(CtClass ctClass) throws Exception
     {
-        return _classFactoryClassPool.toClass(ctClass, _loader, null);
+        return classFactoryClassPool.toClass(ctClass, loader, null);
     }
 
     @Test
@@ -173,7 +173,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl("unknown-class", logger, null, null);
 
-        return new InternalClassTransformationImpl(_classFactory, ctClass, null, model, null);
+        return new InternalClassTransformationImpl(classFactory, ctClass, null, model, null);
     }
 
     @Test
@@ -483,7 +483,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         // Default behavior is to add an injected field for the InternalComponentResources object,
@@ -516,7 +516,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         String parentFieldName = ct.addInjectedField(String.class, "_value", value);
@@ -549,7 +549,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         Object instance = instantiator.newInstance(resources);
 
-        Object actual = _access.get(instance, "value");
+        Object actual = access.get(instance, "value");
 
         assertSame(actual, value);
 
@@ -568,7 +568,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         ct.addImplementedInterface(FooInterface.class);
@@ -616,7 +616,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         ct.makeReadOnly("_value");
@@ -627,7 +627,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         try
         {
-            _access.set(target, "value", "anything");
+            access.set(target, "value", "anything");
             unreachable();
         }
         catch (RuntimeException ex)
@@ -673,7 +673,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         ct.extendConstructor("_value = \"from constructor\";");
@@ -682,7 +682,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         Object target = instantiate(ReadOnlyBean.class, ct, resources);
 
-        assertEquals(_access.get(target, "value"), "from constructor");
+        assertEquals(access.get(target, "value"), "from constructor");
 
         verify();
     }
@@ -699,7 +699,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(ReadOnlyBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         ct.injectField("_value", "Tapestry");
@@ -708,11 +708,11 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         Object target = instantiate(ReadOnlyBean.class, ct, resources);
 
-        assertEquals(_access.get(target, "value"), "Tapestry");
+        assertEquals(access.get(target, "value"), "Tapestry");
 
         try
         {
-            _access.set(target, "value", "anything");
+            access.set(target, "value", "anything");
             unreachable();
         }
         catch (RuntimeException ex)
@@ -742,7 +742,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldAccessBean.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         replaceAccessToField(ct, "foo");
@@ -768,7 +768,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         try
         {
-            _access.get(target, propertyName);
+            access.get(target, propertyName);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -779,7 +779,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         try
         {
-            _access.set(target, propertyName, "new value");
+            access.set(target, propertyName, "new value");
             unreachable();
         }
         catch (RuntimeException ex)
@@ -1038,7 +1038,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         // 66 reflects the change to the field.
 
-        assertEquals(_access.get(target, "targetValue"), 66);
+        assertEquals(access.get(target, "targetValue"), 66);
 
         verify();
     }
@@ -1090,7 +1090,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         // 66 reflects the change to the field, +1 reflects the extension of the method.
 
-        assertEquals(_access.get(target, "targetValue"), 67);
+        assertEquals(access.get(target, "targetValue"), 67);
 
         verify();
     }
@@ -1130,7 +1130,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         CtClass targetObjectCtClass = findCtClass(FieldRemoval.class);
 
-        InternalClassTransformation ct = new InternalClassTransformationImpl(_classFactory, targetObjectCtClass, null,
+        InternalClassTransformation ct = new InternalClassTransformationImpl(classFactory, targetObjectCtClass, null,
                                                                              model, null);
 
         ct.removeField("_fieldToRemove");

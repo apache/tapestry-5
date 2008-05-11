@@ -20,17 +20,17 @@ import org.apache.tapestry.integration.app1.data.IntegerHolder;
 public class NumberBeanDisplayDemo
 {
     @Persist
-    private IntegerHolder _holder;
+    private IntegerHolder holder;
 
     Object initialize(IntegerHolder holder)
     {
-        _holder = holder;
+        this.holder = holder;
 
         return this;
     }
 
     public IntegerHolder getHolder()
     {
-        return _holder;
+        return holder;
     }
 }

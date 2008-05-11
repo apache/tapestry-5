@@ -30,14 +30,15 @@ import java.util.Map;
 
 public class TranslatorSourceImplTest extends InternalBaseTestCase
 {
-    private TranslatorSource _source;
-    private ValidationMessagesSource _messagesSource;
+    private TranslatorSource source;
+
+    private ValidationMessagesSource messagesSource;
 
     @BeforeClass
     public void setup()
     {
-        _source = getService(TranslatorSource.class);
-        _messagesSource = getService(ValidationMessagesSource.class);
+        source = getService(TranslatorSource.class);
+        messagesSource = getService(ValidationMessagesSource.class);
     }
 
 
@@ -100,19 +101,19 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "to_client_data")
     public Object[][] to_client_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
-                {Byte.class, (byte) 65, "65"},
+                { Byte.class, (byte) 65, "65" },
 
-                {Integer.class, 997, "997"},
+                { Integer.class, 997, "997" },
 
-                {Long.class, 12345l, "12345"},
+                { Long.class, 12345l, "12345" },
 
-                {Double.class, 123.45d, "123.45"},
+                { Double.class, 123.45d, "123.45" },
 
-                {String.class, "abcd", "abcd"},
+                { String.class, "abcd", "abcd" },
 
-                {Float.class, (float) -22.7, "-22.7"}
+                { Float.class, (float) -22.7, "-22.7" }
 
         };
     }
@@ -120,7 +121,7 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @Test(dataProvider = "to_client_data")
     public void to_client(Class type, Object value, String expected)
     {
-        Translator t = _source.getByType(type);
+        Translator t = source.getByType(type);
 
         String actual = t.toClient(value);
 
@@ -130,19 +131,19 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_client_success_data")
     public Object[][] parse_client_success_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
-                {Byte.class, " 23 ", (byte) 23},
+                { Byte.class, " 23 ", (byte) 23 },
 
-                {Integer.class, " 123 ", 123},
+                { Integer.class, " 123 ", 123 },
 
-                {Long.class, "  -1234567 ", -1234567l},
+                { Long.class, "  -1234567 ", -1234567l },
 
-                {Double.class, " 3.14 ", 3.14d},
+                { Double.class, " 3.14 ", 3.14d },
 
-                {String.class, " abcdef ", " abcdef "},
+                { String.class, " abcdef ", " abcdef " },
 
-                {Float.class, " 28.95 ", (float) 28.95},
+                { Float.class, " 28.95 ", (float) 28.95 },
 
         };
     }
@@ -150,9 +151,9 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @Test(dataProvider = "parse_client_success_data")
     public void parse_client(Class type, String input, Object expected) throws Exception
     {
-        Translator t = _source.getByType(type);
+        Translator t = source.getByType(type);
 
-        Object actual = t.parseClient(input, _messagesSource.getValidationMessages(Locale.ENGLISH));
+        Object actual = t.parseClient(input, messagesSource.getValidationMessages(Locale.ENGLISH));
 
         assertEquals(actual, expected);
     }
@@ -160,17 +161,17 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     @DataProvider(name = "parse_client_failure_data")
     public Object[][] parse_client_failure_data()
     {
-        return new Object[][]{
+        return new Object[][] {
 
-                {Byte.class, "fred", "The input value 'fred' is not parseable as an integer value."},
+                { Byte.class, "fred", "The input value 'fred' is not parseable as an integer value." },
 
-                {Integer.class, "fred", "The input value 'fred' is not parseable as an integer value."},
+                { Integer.class, "fred", "The input value 'fred' is not parseable as an integer value." },
 
-                {Long.class, "fred", "The input value 'fred' is not parseable as an integer value."},
+                { Long.class, "fred", "The input value 'fred' is not parseable as an integer value." },
 
-                {Double.class, "fred", "The input value 'fred' is not parseable as a numeric value."},
+                { Double.class, "fred", "The input value 'fred' is not parseable as a numeric value." },
 
-                {Float.class, "fred", "The input value 'fred' is not parseable as a numeric value."}
+                { Float.class, "fred", "The input value 'fred' is not parseable as a numeric value." }
 
         };
     }
@@ -179,11 +180,11 @@ public class TranslatorSourceImplTest extends InternalBaseTestCase
     public void parse_client_failure(Class type, String input, String expectedMessage)
     {
 
-        Translator t = _source.getByType(type);
+        Translator t = source.getByType(type);
 
         try
         {
-            t.parseClient(input, _messagesSource.getValidationMessages(Locale.ENGLISH));
+            t.parseClient(input, messagesSource.getValidationMessages(Locale.ENGLISH));
             unreachable();
         }
         catch (ValidationException ex)

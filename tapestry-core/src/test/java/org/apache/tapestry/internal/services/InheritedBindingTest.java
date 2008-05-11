@@ -27,7 +27,7 @@ public class InheritedBindingTest extends TapestryTestCase
 
     private static final String MESSAGE = "Exception in inner.";
 
-    private static final Throwable _exception = new RuntimeException(MESSAGE);
+    private static final Throwable exception = new RuntimeException(MESSAGE);
 
     @Test
     public void to_string_and_location()
@@ -69,7 +69,7 @@ public class InheritedBindingTest extends TapestryTestCase
         Binding inner = mockBinding();
         Location l = mockLocation();
 
-        expect(inner.get()).andThrow(_exception);
+        expect(inner.get()).andThrow(exception);
 
         replay();
 
@@ -113,7 +113,7 @@ public class InheritedBindingTest extends TapestryTestCase
         Location l = mockLocation();
         String description = BINDING_DESCRIPTION;
 
-        expect(inner.getBindingType()).andThrow(_exception);
+        expect(inner.getBindingType()).andThrow(exception);
 
         replay();
 
@@ -136,7 +136,7 @@ public class InheritedBindingTest extends TapestryTestCase
     {
         assertEquals(ex.getMessage(), MESSAGE);
         assertEquals(ex.getLocation(), l);
-        assertSame(ex.getCause(), _exception);
+        assertSame(ex.getCause(), exception);
     }
 
     @Test
@@ -162,7 +162,7 @@ public class InheritedBindingTest extends TapestryTestCase
     {
         Binding inner = mockBinding();
         Location l = mockLocation();
-        expect(inner.isInvariant()).andThrow(_exception);
+        expect(inner.isInvariant()).andThrow(exception);
 
         replay();
 
@@ -208,7 +208,7 @@ public class InheritedBindingTest extends TapestryTestCase
         Object parameter = new Object();
 
         inner.set(parameter);
-        getMocksControl().andThrow(_exception);
+        getMocksControl().andThrow(exception);
 
         replay();
 
@@ -251,7 +251,7 @@ public class InheritedBindingTest extends TapestryTestCase
         Binding inner = mockBinding();
         Location l = mockLocation();
 
-        expect(inner.getAnnotation(Inject.class)).andThrow(_exception);
+        expect(inner.getAnnotation(Inject.class)).andThrow(exception);
 
         replay();
 

@@ -28,13 +28,13 @@ import java.util.Locale;
 
 public class ValidationMessagesSourceImplTest extends Assert
 {
-    private ValidationMessagesSource _source;
+    private ValidationMessagesSource source;
 
     @BeforeClass
     public void setup()
     {
         Resource rootResource = new ClasspathResource("/");
-        _source = new ValidationMessagesSourceImpl(Arrays.asList(
+        source = new ValidationMessagesSourceImpl(Arrays.asList(
                 "org/apache/tapestry/internal/ValidationMessages",
                 "org/apache/tapestry/internal/ValidationTestMessages"), rootResource);
     }
@@ -42,7 +42,7 @@ public class ValidationMessagesSourceImplTest extends Assert
     @Test
     public void builtin_message()
     {
-        Messages messages = _source.getValidationMessages(Locale.ENGLISH);
+        Messages messages = source.getValidationMessages(Locale.ENGLISH);
 
         assertEquals(
                 messages.format("required", "My Field"),
@@ -52,7 +52,7 @@ public class ValidationMessagesSourceImplTest extends Assert
     @Test
     public void contributed_message()
     {
-        Messages messages = _source.getValidationMessages(Locale.ENGLISH);
+        Messages messages = source.getValidationMessages(Locale.ENGLISH);
 
         assertEquals(
                 messages.get("contributed"),
@@ -62,7 +62,7 @@ public class ValidationMessagesSourceImplTest extends Assert
     @Test
     public void localization_of_message()
     {
-        Messages messages = _source.getValidationMessages(Locale.FRENCH);
+        Messages messages = source.getValidationMessages(Locale.FRENCH);
 
         assertEquals(messages.get("contributed"), "Zees eez Cohntributahd.");
     }
@@ -70,7 +70,7 @@ public class ValidationMessagesSourceImplTest extends Assert
     @Test
     public void contains()
     {
-        Messages messages = _source.getValidationMessages(Locale.ENGLISH);
+        Messages messages = source.getValidationMessages(Locale.ENGLISH);
 
         assertEquals(messages.contains("required"), true);
         assertEquals(messages.contains("contributed"), true);
@@ -80,7 +80,7 @@ public class ValidationMessagesSourceImplTest extends Assert
     @Test
     public void message_formatter()
     {
-        Messages messages = _source.getValidationMessages(Locale.ENGLISH);
+        Messages messages = source.getValidationMessages(Locale.ENGLISH);
 
         MessageFormatter formatter = messages.getFormatter("required");
 
@@ -90,11 +90,11 @@ public class ValidationMessagesSourceImplTest extends Assert
     @Test
     public void messages_instances_are_cached()
     {
-        Messages english = _source.getValidationMessages(Locale.ENGLISH);
-        Messages french = _source.getValidationMessages(Locale.FRENCH);
+        Messages english = source.getValidationMessages(Locale.ENGLISH);
+        Messages french = source.getValidationMessages(Locale.FRENCH);
 
-        assertSame(_source.getValidationMessages(Locale.ENGLISH), english);
-        assertSame(_source.getValidationMessages(Locale.FRENCH), french);
+        assertSame(source.getValidationMessages(Locale.ENGLISH), english);
+        assertSame(source.getValidationMessages(Locale.FRENCH), french);
         assertNotSame(french, english);
     }
 }

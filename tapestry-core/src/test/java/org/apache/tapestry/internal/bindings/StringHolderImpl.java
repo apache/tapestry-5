@@ -16,21 +16,21 @@ package org.apache.tapestry.internal.bindings;
 
 public class StringHolderImpl implements StringHolder
 {
-    private String _value;
+    private String value;
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(String value)
     {
-        _value = value;
+        this.value = value;
     }
 
     public String stringValue()
     {
-        return _value;
+        return value;
     }
 
     public void voidMethod()

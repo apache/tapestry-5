@@ -24,11 +24,11 @@ public class BeanEditorDemo
 {
     @Component(id = "registrationData", parameters =
             { "clientValidation=clientValidation" })
-    private BeanEditForm _form;
+    private BeanEditForm form;
 
     @ApplicationState
     @Property
-    private RegistrationData _registrationData;
+    private RegistrationData registrationData;
 
     Object onSuccess()
     {
@@ -37,8 +37,8 @@ public class BeanEditorDemo
 
     void onActionFromClear()
     {
-        _registrationData = null;
-        _form.clearErrors();
+        registrationData = null;
+        form.clearErrors();
     }
 
     public boolean getClientValidation()

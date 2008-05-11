@@ -22,10 +22,10 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class ActionViaLinkDemo
 {
     @Persist("flash")
-    private String _message;
+    private String message;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     Object[]
     onPassivate()
@@ -35,19 +35,19 @@ public class ActionViaLinkDemo
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     void onUpdateMessage(String message)
     {
         getActionURL();
 
-        _message = message;
+        this.message = message;
     }
 
     public String getActionURL()
     {
-        Link link = _resources.createActionLink("UpdateMessage", false, "from getActionURL()");
+        Link link = resources.createActionLink("UpdateMessage", false, "from getActionURL()");
 
         return link.toURI();
     }

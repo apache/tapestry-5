@@ -26,8 +26,8 @@ import org.testng.annotations.Test;
 import java.util.Locale;
 
 /**
- * Tests {@link ComponentMessagesSourceImpl} as well as {@link MessagesSourceImpl} (which contains
- * code refactored out of CMSI).
+ * Tests {@link ComponentMessagesSourceImpl} as well as {@link MessagesSourceImpl} (which contains code refactored out
+ * of CMSI).
  */
 @Test(sequential = true)
 public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
@@ -36,13 +36,13 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
     private static final String SIMPLE_COMPONENT_CLASS_NAME = "org.apache.tapestry.internal.services.SimpleComponent";
 
-    private final URLChangeTracker _tracker = new URLChangeTracker();
+    private final URLChangeTracker tracker = new URLChangeTracker();
 
-    private final Resource _simpleComponentResource = new ClasspathResource(
+    private final Resource simpleComponentResource = new ClasspathResource(
             "org/apache/tapestry/internal/services/SimpleComponent.class");
 
-    private final ComponentMessagesSourceImpl _source = new ComponentMessagesSourceImpl(
-            _simpleComponentResource, "AppCatalog.properties", _tracker);
+    private final ComponentMessagesSourceImpl source = new ComponentMessagesSourceImpl(
+            simpleComponentResource, "AppCatalog.properties", tracker);
 
     @Test
     public void simple_component()
@@ -51,7 +51,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(model, SIMPLE_COMPONENT_CLASS_NAME);
 
-        train_getBaseResource(model, _simpleComponentResource);
+        train_getBaseResource(model, simpleComponentResource);
 
         train_getParentModel(model, null);
 
@@ -59,20 +59,20 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        Messages messages = _source.getMessages(model, Locale.ENGLISH);
+        Messages messages = source.getMessages(model, Locale.ENGLISH);
 
         assertEquals(messages.get("color"), "color");
         assertEquals(messages.get("framework"), "Tapestry");
 
         // Check normal caching
 
-        assertSame(_source.getMessages(model, Locale.ENGLISH), messages);
+        assertSame(source.getMessages(model, Locale.ENGLISH), messages);
 
         // Now, force a cache clear and retry.
 
         forceCacheClear();
 
-        Messages messages2 = _source.getMessages(model, Locale.ENGLISH);
+        Messages messages2 = source.getMessages(model, Locale.ENGLISH);
 
         // Check that a new Messages was created
 
@@ -86,8 +86,8 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
     private void forceCacheClear()
     {
-        _tracker.forceChange();
-        _source.checkForUpdates();
+        tracker.forceChange();
+        source.checkForUpdates();
     }
 
     @Test
@@ -97,7 +97,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(model, SIMPLE_COMPONENT_CLASS_NAME);
 
-        train_getBaseResource(model, _simpleComponentResource);
+        train_getBaseResource(model, simpleComponentResource);
 
         train_getParentModel(model, null);
 
@@ -105,7 +105,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        Messages messages = _source.getMessages(model, Locale.UK);
+        Messages messages = source.getMessages(model, Locale.UK);
 
         assertEquals(messages.get("color"), "colour");
         assertEquals(messages.get("framework"), "Tapestry");
@@ -120,7 +120,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(model, SIMPLE_COMPONENT_CLASS_NAME);
 
-        train_getBaseResource(model, _simpleComponentResource);
+        train_getBaseResource(model, simpleComponentResource);
 
         train_getParentModel(model, null);
 
@@ -128,7 +128,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        Messages messages = _source.getMessages(model, Locale.UK);
+        Messages messages = source.getMessages(model, Locale.UK);
 
         assertEquals(messages.get("COlor"), "colour");
         assertEquals(messages.get("Framework"), "Tapestry");
@@ -153,7 +153,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(parent, SIMPLE_COMPONENT_CLASS_NAME);
 
-        train_getBaseResource(parent, _simpleComponentResource);
+        train_getBaseResource(parent, simpleComponentResource);
 
         train_getParentModel(parent, null);
 
@@ -161,7 +161,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        Messages messages = _source.getMessages(model, Locale.ENGLISH);
+        Messages messages = source.getMessages(model, Locale.ENGLISH);
 
         assertEquals(messages.get("color"), "color");
         assertEquals(messages.get("framework"), "Tapestry");
@@ -170,7 +170,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
         assertEquals(messages.get("app-catalog-source"), "AppCatalog");
         assertEquals(messages.get("app-catalog-overridden"), "Overridden by Component");
 
-        messages = _source.getMessages(model, Locale.UK);
+        messages = source.getMessages(model, Locale.UK);
 
         assertEquals(messages.get("color"), "colour");
         assertEquals(messages.get("framework"), "Tapestry");
@@ -197,7 +197,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         train_getComponentClassName(parent, SIMPLE_COMPONENT_CLASS_NAME);
 
-        train_getBaseResource(parent, _simpleComponentResource);
+        train_getBaseResource(parent, simpleComponentResource);
 
         train_getParentModel(parent, null);
 
@@ -205,7 +205,7 @@ public class ComponentMessagesSourceImplTest extends InternalBaseTestCase
 
         forceCacheClear();
 
-        ComponentMessagesSource source = new ComponentMessagesSourceImpl(_simpleComponentResource,
+        ComponentMessagesSource source = new ComponentMessagesSourceImpl(simpleComponentResource,
                                                                          "NoSuchAppCatalog.properties");
 
         Messages messages = source.getMessages(model, Locale.ENGLISH);

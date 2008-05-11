@@ -29,62 +29,62 @@ public class InjectDemo
     // Named --- now demonstrating case insensitivity
     // Now vestigial!
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
     @Symbol("app.injected-symbol")
-    private String _injectedSymbol;
+    private String injectedSymbol;
 
     // Via ComponentResourcesInjectionProvider
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     // Via ??? -- have to ensure that BindingSource
     // stays unique.
     @Inject
-    private BindingSource _bindingSource;
+    private BindingSource bindingSource;
 
     @InjectPage
-    private Fred _fred;
+    private Fred fred;
 
     // Again, demonstrates case insensitivity
     @InjectPage("barney")
-    private Runnable _barney;
+    private Runnable barney;
 
     @Inject
     @French
-    private Greeter _greeter;
+    private Greeter greeter;
 
     public String getGreeting()
     {
-        return _greeter.getGreeting();
+        return greeter.getGreeting();
     }
 
     public BindingSource getBindingSource()
     {
-        return _bindingSource;
+        return bindingSource;
     }
 
     public Request getRequest()
     {
-        return _request;
+        return request;
     }
 
     public ComponentResources getResources()
     {
-        return _resources;
+        return resources;
     }
 
     @OnEvent(component = "fred")
     Object clickFred()
     {
-        return _fred;
+        return fred;
     }
 
     @OnEvent(component = "barney")
     Object clickBarney()
     {
-        return _barney;
+        return barney;
     }
 
     @OnEvent(component = "wilma")
@@ -95,6 +95,6 @@ public class InjectDemo
 
     public String getInjectedSymbol()
     {
-        return _injectedSymbol;
+        return injectedSymbol;
     }
 }

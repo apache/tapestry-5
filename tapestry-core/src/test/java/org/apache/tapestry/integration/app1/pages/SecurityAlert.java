@@ -19,16 +19,16 @@ import org.apache.tapestry.annotations.Persist;
 public class SecurityAlert
 {
     @Persist("flash")
-    private String _message;
+    private String message;
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     public void setMessage(String mesasge)
     {
-        _message = mesasge;
+        message = mesasge;
     }
 
 }

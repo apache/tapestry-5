@@ -49,13 +49,13 @@ public class PageLink extends AbstractLink
     @Parameter
     private List context;
 
-    private final Object[] _emptyContext = new Object[0];
+    private final Object[] emptyContext = new Object[0];
 
     void beginRender(MarkupWriter writer)
     {
         if (isDisabled()) return;
 
-        Object[] activationContext = context != null ? context.toArray() : _emptyContext;
+        Object[] activationContext = context != null ? context.toArray() : emptyContext;
 
         Link link = resources.createPageLink(page, resources.isBound("context"), activationContext);
 

@@ -22,19 +22,19 @@ public class AssetDemo
 {
     @Inject
     @Path("context:images/tapestry_banner.gif")
-    private Asset _icon;
+    private Asset icon;
 
     @Inject
     @Path("tapestry-button.png")
-    private Asset _button;
+    private Asset button;
 
     public Asset getIcon()
     {
-        return _icon;
+        return icon;
     }
 
     public Asset getButton()
     {
-        return _button;
+        return button;
     }
 }

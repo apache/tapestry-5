@@ -24,13 +24,13 @@ import java.util.List;
 public class DeleteFromGridDemo
 {
     @Inject
-    private ToDoDatabase _database;
+    private ToDoDatabase database;
 
-    private ToDoItem _item;
+    private ToDoItem item;
 
     void onActionFromSetup()
     {
-        _database.clear();
+        database.clear();
 
         for (int i = 1; i <= 10; i++)
         {
@@ -38,24 +38,27 @@ public class DeleteFromGridDemo
             item.setTitle(String.format("ToDo #%d", i));
             item.setOrder(i);
 
-            _database.add(item);
+            database.add(item);
         }
     }
 
     void onActionFromDelete(long id)
     {
-        _database.remove(id);
+        database.remove(id);
     }
 
-    public List<ToDoItem> getItems() { return _database.findAll(); }
+    public List<ToDoItem> getItems()
+    {
+        return database.findAll();
+    }
 
     public ToDoItem getItem()
     {
-        return _item;
+        return item;
     }
 
     public void setItem(ToDoItem item)
     {
-        _item = item;
+        this.item = item;
     }
 }

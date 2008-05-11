@@ -23,42 +23,42 @@ import org.apache.tapestry.services.Environment;
 
 public class OverrideValidationDecorator
 {
-    private String _value;
+    private String value;
 
-    private long _requiredValue;
+    private long requiredValue;
 
     @Inject
-    private Environment _environment;
+    private Environment environment;
 
     void beginRender(MarkupWriter writer)
     {
-        ValidationDecorator existing = _environment.peekRequired(ValidationDecorator.class);
+        ValidationDecorator existing = environment.peekRequired(ValidationDecorator.class);
 
-        _environment.push(ValidationDecorator.class, new ChattyValidationDecorator(writer, existing));
+        environment.push(ValidationDecorator.class, new ChattyValidationDecorator(writer, existing));
     }
 
     void afterRender()
     {
-        _environment.pop(ValidationDecorator.class);
+        environment.pop(ValidationDecorator.class);
     }
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(String value)
     {
-        _value = value;
+        this.value = value;
     }
 
     public long getRequiredValue()
     {
-        return _requiredValue;
+        return requiredValue;
     }
 
     public void setRequiredValue(long requiredValue)
     {
-        _requiredValue = requiredValue;
+        this.requiredValue = requiredValue;
     }
 }

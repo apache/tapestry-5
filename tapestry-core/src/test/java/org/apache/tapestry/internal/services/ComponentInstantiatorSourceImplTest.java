@@ -45,22 +45,21 @@ import java.util.UUID;
  */
 public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 {
-    private static final ClassLoader _contextLoader = Thread.currentThread()
-            .getContextClassLoader();
+    private static final ClassLoader contextLoader = Thread.currentThread().getContextClassLoader();
 
     private static final String SYNTH_COMPONENT_CLASSNAME = "org.apache.tapestry.internal.transform.pages.SynthComponent";
 
-    private File _extraClasspath;
+    private File extraClasspath;
 
-    private ComponentInstantiatorSource _source;
+    private ComponentInstantiatorSource source;
 
-    private Registry _registry;
+    private Registry registry;
 
-    private PropertyAccess _access;
+    private PropertyAccess access;
 
-    private ClassLoader _extraLoader;
+    private ClassLoader extraLoader;
 
-    private String _tempDir;
+    private String tempDir;
 
     @Test
     public void controlled_packages() throws Exception
@@ -70,7 +69,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, _contextLoader, transformer,
+        ComponentInstantiatorSourceImpl e = new ComponentInstantiatorSourceImpl(logger, contextLoader, transformer,
                                                                                 null);
 
         assertEquals(e.inControlledPackage("foo.bar.Baz"), false);
@@ -107,24 +106,24 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         // Should not be an instance, since it is loaded by a different class loader.
         assertFalse(BasicComponent.class.isInstance(target));
 
-        _access.set(target, "value", "some default value");
-        assertEquals(_access.get(target, "value"), "some default value");
+        access.set(target, "value", "some default value");
+        assertEquals(access.get(target, "value"), "some default value");
 
-        _access.set(target, "retainedValue", "some retained value");
-        assertEquals(_access.get(target, "retainedValue"), "some retained value");
+        access.set(target, "retainedValue", "some retained value");
+        assertEquals(access.get(target, "retainedValue"), "some retained value");
 
         // Setting a property value before pageDidLoad will cause that value
         // to be the default when the page detaches.
 
         target.containingPageDidLoad();
 
-        _access.set(target, "value", "some transient value");
-        assertEquals(_access.get(target, "value"), "some transient value");
+        access.set(target, "value", "some transient value");
+        assertEquals(access.get(target, "value"), "some transient value");
 
         target.containingPageDidDetach();
 
-        assertEquals(_access.get(target, "value"), "some default value");
-        assertEquals(_access.get(target, "retainedValue"), "some retained value");
+        assertEquals(access.get(target, "value"), "some default value");
+        assertEquals(access.get(target, "retainedValue"), "some retained value");
     }
 
     @Test
@@ -134,16 +133,16 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         target.containingPageDidLoad();
 
-        _access.set(target, "value", "base class");
-        assertEquals(_access.get(target, "value"), "base class");
+        access.set(target, "value", "base class");
+        assertEquals(access.get(target, "value"), "base class");
 
-        _access.set(target, "intValue", 33);
-        assertEquals(_access.get(target, "intValue"), 33);
+        access.set(target, "intValue", 33);
+        assertEquals(access.get(target, "intValue"), 33);
 
         target.containingPageDidDetach();
 
-        assertNull(_access.get(target, "value"));
-        assertEquals(_access.get(target, "intValue"), 0);
+        assertNull(access.get(target, "value"));
+        assertEquals(access.get(target, "intValue"), 0);
     }
 
     /**
@@ -154,19 +153,19 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
     {
         // Ensure it doesn't already exist:
 
-        assertFalse(_source.exists(SYNTH_COMPONENT_CLASSNAME));
+        assertFalse(source.exists(SYNTH_COMPONENT_CLASSNAME));
 
         // Create the class on the fly.
 
         createSynthComponentClass("Original");
 
-        assertTrue(_source.exists(SYNTH_COMPONENT_CLASSNAME));
+        assertTrue(source.exists(SYNTH_COMPONENT_CLASSNAME));
 
         Named named = (Named) createComponent(SYNTH_COMPONENT_CLASSNAME);
 
         assertEquals(named.getName(), "Original");
 
-        String path = _tempDir + "/" + SYNTH_COMPONENT_CLASSNAME.replace('.', '/') + ".class";
+        String path = tempDir + "/" + SYNTH_COMPONENT_CLASSNAME.replace('.', '/') + ".class";
         URL url = new File(path).toURL();
 
         long dtm = readDTM(url);
@@ -182,7 +181,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         // Detect the change and clear out the internal caches
 
-        UpdateListenerHub hub = _registry.getService("UpdateListenerHub", UpdateListenerHub.class);
+        UpdateListenerHub hub = registry.getService("UpdateListenerHub", UpdateListenerHub.class);
 
         hub.fireUpdateEvent();
 
@@ -207,7 +206,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         ClassPool pool = new ClassPool();
         // Inside Maven Surefire, the system classpath is not sufficient to find all
         // the necessary files.
-        pool.appendClassPath(new LoaderClassPath(_extraLoader));
+        pool.appendClassPath(new LoaderClassPath(extraLoader));
 
         CtClass ctClass = pool.makeClass(SYNTH_COMPONENT_CLASSNAME);
 
@@ -220,7 +219,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         ctClass.addInterface(pool.get(Named.class.getName()));
 
-        ctClass.writeFile(_extraClasspath.getAbsolutePath());
+        ctClass.writeFile(extraClasspath.getAbsolutePath());
     }
 
     private Component createComponent(Class componentClass)
@@ -236,7 +235,7 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        Instantiator inst = _source.findInstantiator(classname);
+        Instantiator inst = source.findInstantiator(classname);
 
         Component target = inst.newInstance(resources);
 
@@ -251,17 +250,17 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
         String tempdir = System.getProperty("java.io.tmpdir");
         String uid = UUID.randomUUID().toString();
 
-        _tempDir = tempdir + "/tapestry-test-classpath/" + uid;
-        _extraClasspath = new File(_tempDir);
+        tempDir = tempdir + "/tapestry-test-classpath/" + uid;
+        extraClasspath = new File(tempDir);
 
-        System.out.println("Creating dir: " + _extraClasspath);
+        System.out.println("Creating dir: " + extraClasspath);
 
-        _extraClasspath.mkdirs();
+        extraClasspath.mkdirs();
 
-        URL url = _extraClasspath.toURL();
+        URL url = extraClasspath.toURL();
 
-        _extraLoader = new URLClassLoader(new URL[] { url }, _contextLoader);
-        RegistryBuilder builder = new RegistryBuilder(_extraLoader);
+        extraLoader = new URLClassLoader(new URL[] { url }, contextLoader);
+        RegistryBuilder builder = new RegistryBuilder(extraLoader);
 
         builder.add(TapestryModule.class);
 
@@ -273,23 +272,23 @@ public class ComponentInstantiatorSourceImplTest extends InternalBaseTestCase
 
         builder.add(module);
 
-        _registry = builder.build();
+        registry = builder.build();
 
-        // _registry.getService("Alias", Alias.class).setMode("servlet");
+        // registry.getService("Alias", Alias.class).setMode("servlet");
 
-        _source = _registry.getService(ComponentInstantiatorSource.class);
-        _access = _registry.getService(PropertyAccess.class);
+        source = registry.getService(ComponentInstantiatorSource.class);
+        access = registry.getService(PropertyAccess.class);
 
-        _source.addPackage("org.apache.tapestry.internal.transform.pages");
+        source.addPackage("org.apache.tapestry.internal.transform.pages");
     }
 
     @AfterClass
     public void cleanup_tests()
     {
-        _registry.shutdown();
+        registry.shutdown();
 
-        _registry = null;
-        _source = null;
-        _access = null;
+        registry = null;
+        source = null;
+        access = null;
     }
 }

@@ -21,5 +21,5 @@ public class ParameterConflict
 {
     @SuppressWarnings("unused")
     @Component(parameters = "value=literal:ClassValue")
-    private Echo _echo;
+    private Echo echo;
 }

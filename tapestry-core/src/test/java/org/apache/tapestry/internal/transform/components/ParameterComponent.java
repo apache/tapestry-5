@@ -22,68 +22,68 @@ import org.apache.tapestry.annotations.Parameter;
 public class ParameterComponent
 {
     @Parameter
-    private String _object;
+    private String object;
 
     @Parameter(cache = false, name = "uncached", defaultPrefix = "literal")
-    private String _uncachedObject;
+    private String uncachedObject;
 
     @Parameter(required = true)
-    private int _primitive;
+    private int primitive;
 
     @Parameter
-    private String _invariantObject;
+    private String invariantObject;
 
     @Parameter
-    private long _invariantPrimitive;
+    private long invariantPrimitive;
 
     public String getObject()
     {
-        return _object;
+        return object;
     }
 
     public void setObject(String object)
     {
-        _object = object;
+        this.object = object;
     }
 
     public int getPrimitive()
     {
-        return _primitive;
+        return primitive;
     }
 
     public void setPrimitive(int primitive)
     {
-        _primitive = primitive;
+        this.primitive = primitive;
     }
 
     public String getUncachedObject()
     {
-        return _uncachedObject;
+        return uncachedObject;
     }
 
     public void setUncachedObject(String uncachedObject)
     {
-        _uncachedObject = uncachedObject;
+        this.uncachedObject = uncachedObject;
     }
 
     public String getInvariantObject()
     {
-        return _invariantObject;
+        return invariantObject;
     }
 
     public void setInvariantObject(String invariantObject)
     {
-        _invariantObject = invariantObject;
+        this.invariantObject = invariantObject;
     }
 
     public long getInvariantPrimitive()
     {
-        return _invariantPrimitive;
+        return invariantPrimitive;
     }
 
     public void setInvariantPrimitive(long invariantPrimitive)
     {
-        _invariantPrimitive = invariantPrimitive;
+        this.invariantPrimitive = invariantPrimitive;
     }
 
 }

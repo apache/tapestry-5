@@ -21,11 +21,11 @@ import org.apache.tapestry.internal.transform.ParameterWorkerTest;
 public class DefaultParameterBindingMethodComponent
 {
     @Parameter
-    private String _value;
+    private String value;
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
     Binding defaultValue()

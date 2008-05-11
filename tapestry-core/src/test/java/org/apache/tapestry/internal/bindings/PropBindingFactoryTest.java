@@ -33,18 +33,18 @@ import org.testng.annotations.Test;
 
 public class PropBindingFactoryTest extends InternalBaseTestCase
 {
-    private BindingFactory _factory;
+    private BindingFactory factory;
 
     @BeforeClass
     public void setup_factory()
     {
-        _factory = getService("PropBindingFactory", BindingFactory.class);
+        factory = getService("PropBindingFactory", BindingFactory.class);
     }
 
     @AfterClass
     public void cleanup_factory()
     {
-        _factory = null;
+        factory = null;
     }
 
     private ComponentResources newComponentResources(Component component)
@@ -66,7 +66,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "objectValue", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "objectValue", l);
 
         assertSame(binding.getBindingType(), String.class);
 
@@ -93,7 +93,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "readOnly", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "readOnly", l);
 
         assertEquals(binding.getAnnotation(OrderBefore.class).value(), "writeOnly");
 
@@ -109,7 +109,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "writeOnly", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "writeOnly", l);
 
         assertEquals(binding.getAnnotation(OrderAfter.class).value(), "foobar");
 
@@ -125,7 +125,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "intValue", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "intValue", l);
 
         assertNull(binding.getAnnotation(OrderBefore.class));
 
@@ -141,7 +141,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding(
+        Binding binding = factory.newBinding(
                 "test binding",
                 resources,
                 null,
@@ -162,7 +162,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "objectValue", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "objectValue", l);
 
         assertEquals(binding.getAnnotation(OrderAfter.class).value(), "readOnly");
 
@@ -178,7 +178,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding(
+        Binding binding = factory.newBinding(
                 "test binding",
                 resources,
                 null,
@@ -214,7 +214,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding(
+        Binding binding = factory.newBinding(
                 "test binding",
                 resources,
                 null,
@@ -243,7 +243,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding(
+        Binding binding = factory.newBinding(
                 "test binding",
                 resources,
                 null,
@@ -286,7 +286,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding("test binding", resources, null, "isThatRealBlood().value", l);
+            factory.newBinding("test binding", resources, null, "isThatRealBlood().value", l);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -312,7 +312,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding(
+            factory.newBinding(
                     "test binding",
                     resources,
                     null,
@@ -343,7 +343,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding("test binding", resources, null, "voidMethod().value", l);
+            factory.newBinding("test binding", resources, null, "voidMethod().value", l);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -369,7 +369,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding("test binding", resources, null, "stringHolder.voidMethod()", l);
+            factory.newBinding("test binding", resources, null, "stringHolder.voidMethod()", l);
             unreachable();
         }
         catch (RuntimeException ex)
@@ -397,7 +397,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding("test binding", resources, null, propertyPath, l);
+            factory.newBinding("test binding", resources, null, propertyPath, l);
             unreachable();
         }
         catch (TapestryException ex)
@@ -427,7 +427,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding("test binding", resources, null, propertyPath, l);
+            factory.newBinding("test binding", resources, null, propertyPath, l);
             unreachable();
         }
         catch (TapestryException ex)
@@ -451,7 +451,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "intValue", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "intValue", l);
 
         assertSame(binding.getBindingType(), int.class);
 
@@ -475,7 +475,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "readOnly", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "readOnly", l);
 
         assertEquals(binding.get(), "ReadOnly");
 
@@ -504,11 +504,11 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding("test binding", resources, null, "writeOnly", l);
+        Binding binding = factory.newBinding("test binding", resources, null, "writeOnly", l);
 
         binding.set("updated");
 
-        assertEquals(bean._writeOnly, "updated");
+        assertEquals(bean.writeOnly, "updated");
 
         try
         {
@@ -539,7 +539,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         try
         {
-            _factory.newBinding("test binding", resources, null, "missingProperty", l);
+            factory.newBinding("test binding", resources, null, "missingProperty", l);
             unreachable();
         }
         catch (TapestryException ex)
@@ -567,7 +567,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding(description, resources, null, "this", l);
+        Binding binding = factory.newBinding(description, resources, null, "this", l);
 
         assertSame(binding.get(), component);
 
@@ -583,7 +583,7 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
 
         replay();
 
-        Binding binding = _factory.newBinding(description, resources, null, expression, l);
+        Binding binding = factory.newBinding(description, resources, null, expression, l);
 
         assertEquals(binding.get(), expected);
 
@@ -595,26 +595,26 @@ public class PropBindingFactoryTest extends InternalBaseTestCase
     {
         return new Object[][]
                 {
-                        {"true", true,},
-                        {"True", true,},
-                        {" true ", true,},
-                        {"false", false},
-                        {"null", null},
-                        {"3", 3l},
-                        {" 37 ", 37l},
-                        {" -227", -227l},
-                        {" 5.", 5d},
-                        {" -100.", -100d},
-                        {" -0.0 ", -0d},
-                        {"1..10", new IntegerRange(1, 10)},
-                        {" -20 .. -30 ", new IntegerRange(-20, -30)},
-                        {"0.", 0d},
-                        {" 227.75", 227.75d},
-                        {" -10123.67", -10123.67d},
-                        {"'Hello World'", "Hello World"},
-                        {" 'Whitespace Ignored' ", "Whitespace Ignored"},
-                        {" ' Inside ' ", " Inside "},
-                        {" 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside"},
-                        {"'''", "'"}};
+                        { "true", true, },
+                        { "True", true, },
+                        { " true ", true, },
+                        { "false", false },
+                        { "null", null },
+                        { "3", 3l },
+                        { " 37 ", 37l },
+                        { " -227", -227l },
+                        { " 5.", 5d },
+                        { " -100.", -100d },
+                        { " -0.0 ", -0d },
+                        { "1..10", new IntegerRange(1, 10) },
+                        { " -20 .. -30 ", new IntegerRange(-20, -30) },
+                        { "0.", 0d },
+                        { " 227.75", 227.75d },
+                        { " -10123.67", -10123.67d },
+                        { "'Hello World'", "Hello World" },
+                        { " 'Whitespace Ignored' ", "Whitespace Ignored" },
+                        { " ' Inside ' ", " Inside " },
+                        { " 'Nested ' Quotes ' Inside'", "Nested ' Quotes ' Inside" },
+                        { "'''", "'" } };
     }
 }

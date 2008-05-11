@@ -16,23 +16,23 @@ package org.apache.tapestry.internal.grid;
 
 public class Datum
 {
-    private final int _id;
+    private final int id;
 
-    private final String _value;
+    private final String value;
 
     public Datum(final int id, final String value)
     {
-        _id = id;
-        _value = value;
+        this.id = id;
+        this.value = value;
     }
 
     public int getId()
     {
-        return _id;
+        return id;
     }
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 }

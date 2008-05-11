@@ -20,10 +20,10 @@ import org.apache.tapestry.integration.app1.data.BirthdayReminder;
 public class ShowBirthdayReminder
 {
     @ApplicationState
-    private BirthdayReminder _reminder;
+    private BirthdayReminder reminder;
 
     public BirthdayReminder getReminder()
     {
-        return _reminder;
+        return reminder;
     }
 }

@@ -21,10 +21,9 @@ import org.apache.tapestry.corelib.mixins.RenderDisabled;
 public class InjectContainerMismatch
 {
     /**
-     * This mixin only works with components of type {@link Field}. That's the mismatch right
-     * there.
+     * This mixin only works with components of type {@link Field}. That's the mismatch right there.
      */
     @SuppressWarnings("unused")
     @Mixin
-    private RenderDisabled _renderDisabled;
+    private RenderDisabled renderDisabled;
 }

@@ -26,15 +26,15 @@ import java.io.IOException;
  */
 public class RenderCommandComponentEventResultProcessor implements ComponentEventResultProcessor<RenderCommand>
 {
-    private PageRenderQueue _pageRenderQueue;
+    private PageRenderQueue pageRenderQueue;
 
     public RenderCommandComponentEventResultProcessor(PageRenderQueue pageRenderQueue)
     {
-        _pageRenderQueue = pageRenderQueue;
+        this.pageRenderQueue = pageRenderQueue;
     }
 
     public void processResultValue(RenderCommand value) throws IOException
     {
-        _pageRenderQueue.initializeForPartialPageRender(value);
+        pageRenderQueue.initializeForPartialPageRender(value);
     }
 }

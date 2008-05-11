@@ -18,27 +18,27 @@ import org.apache.tapestry.annotations.OnEvent;
 
 public class ShowSelection
 {
-    private int _selected;
+    private int selected;
 
     public int getSelected()
     {
-        return _selected;
+        return selected;
     }
 
     public void setSelected(int selected)
     {
-        _selected = selected;
+        this.selected = selected;
     }
 
     @OnEvent("passivate")
     int passivate()
     {
-        return _selected;
+        return selected;
     }
 
     @OnEvent("activate")
     void activate(int selected)
     {
-        _selected = selected;
+        this.selected = selected;
     }
 }

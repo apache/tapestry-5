@@ -24,26 +24,26 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class PasswordFieldDemo
 {
     @Retain
-    private String _userName;
+    private String userName;
 
     // Normally not retained, just want to prove that the output value is always the blank string.
     @Retain
-    private String _password;
+    private String password;
 
     @Inject
-    private UserAuthenticator _authenticator;
+    private UserAuthenticator authenticator;
 
     @Component(id = "password")
-    private PasswordField _passwordField;
+    private PasswordField passwordField;
 
     @Component
-    private Form _form;
+    private Form form;
 
     String onSuccess()
     {
-        if (!_authenticator.isValid(_userName, _password))
+        if (!authenticator.isValid(userName, password))
         {
-            _form.recordError(_passwordField, "Invalid user name or password.");
+            form.recordError(passwordField, "Invalid user name or password.");
             return null;
         }
 
@@ -52,22 +52,22 @@ public class PasswordFieldDemo
 
     public String getPassword()
     {
-        return _password;
+        return password;
     }
 
     public void setPassword(String password)
     {
-        _password = password;
+        this.password = password;
     }
 
     public String getUserName()
     {
-        return _userName;
+        return userName;
     }
 
     public void setUserName(String userName)
     {
-        _userName = userName;
+        this.userName = userName;
     }
 
 }

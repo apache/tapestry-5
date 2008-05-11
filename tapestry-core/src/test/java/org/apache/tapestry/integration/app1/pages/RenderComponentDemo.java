@@ -21,23 +21,23 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class RenderComponentDemo
 {
     @Persist
-    private boolean _enabled;
+    private boolean enabled;
 
     @Inject
-    private Block _optional;
+    private Block optional;
 
     public boolean isEnabled()
     {
-        return _enabled;
+        return enabled;
     }
 
     public void setEnabled(boolean enable)
     {
-        _enabled = enable;
+        enabled = enable;
     }
 
     public Object getThing()
     {
-        return _enabled ? _optional : null;
+        return enabled ? optional : null;
     }
 }

@@ -32,25 +32,25 @@ import java.io.Serializable;
  */
 public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 {
-    private PropertyConduitSource _source;
+    private PropertyConduitSource source;
 
     @BeforeClass
     public void setup()
     {
-        _source = getObject(PropertyConduitSource.class, null);
+        source = getObject(PropertyConduitSource.class, null);
     }
 
     @AfterClass
     public void cleanup()
     {
-        _source = null;
+        source = null;
     }
 
     @Test
     public void question_dot_operator_for_object_type()
     {
-        PropertyConduit normal = _source.create(CompositeBean.class, "simple.firstName");
-        PropertyConduit smart = _source.create(CompositeBean.class, "simple?.firstName");
+        PropertyConduit normal = source.create(CompositeBean.class, "simple.firstName");
+        PropertyConduit smart = source.create(CompositeBean.class, "simple?.firstName");
 
         CompositeBean bean = new CompositeBean();
         bean.setSimple(null);
@@ -85,7 +85,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void method_names_are_matched_caselessly()
     {
-        PropertyConduit conduit = _source.create(CompositeBean.class, "GETSIMPLE().firstName");
+        PropertyConduit conduit = source.create(CompositeBean.class, "GETSIMPLE().firstName");
 
         CompositeBean bean = new CompositeBean();
         SimpleBean inner = new SimpleBean();
@@ -121,7 +121,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
 
         simple.setFirstName("Howard");
 
-        PropertyConduit conduit = _source.create(proxyClass, "firstName");
+        PropertyConduit conduit = source.create(proxyClass, "firstName");
 
         assertEquals(conduit.get(simple), "Howard");
     }
@@ -135,7 +135,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
         StringHolderBean bean = new StringHolderBean();
         bean.setValue(stringHolder);
 
-        PropertyConduit conduit = _source.create(StringHolderBean.class, "value.get()");
+        PropertyConduit conduit = source.create(StringHolderBean.class, "value.get()");
 
         assertSame(conduit.get(bean), string);
 
@@ -145,7 +145,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void null_root_object()
     {
-        PropertyConduit conduit = _source.create(StringHolderBean.class, "value.get()");
+        PropertyConduit conduit = source.create(StringHolderBean.class, "value.get()");
 
         try
         {
@@ -161,7 +161,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void null_property_in_chain()
     {
-        PropertyConduit conduit = _source.create(CompositeBean.class, "simple.lastName");
+        PropertyConduit conduit = source.create(CompositeBean.class, "simple.lastName");
 
         CompositeBean bean = new CompositeBean();
         bean.setSimple(null);
@@ -181,7 +181,7 @@ public class PropertyConduitSourceImplTest extends InternalBaseTestCase
     @Test
     public void last_term_may_be_null()
     {
-        PropertyConduit conduit = _source.create(CompositeBean.class, "simple.firstName");
+        PropertyConduit conduit = source.create(CompositeBean.class, "simple.firstName");
 
         CompositeBean bean = new CompositeBean();
 

@@ -17,15 +17,15 @@ package org.apache.tapestry.internal.transform.pages;
 /**  */
 public class BasicSubComponent extends BasicComponent
 {
-    private int _intValue;
+    private int intValue;
 
     public final int getIntValue()
     {
-        return _intValue;
+        return intValue;
     }
 
     public final void setIntValue(int intValue)
     {
-        _intValue = intValue;
+        this.intValue = intValue;
     }
 }

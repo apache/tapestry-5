@@ -32,12 +32,12 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
 
     private final ValidationMessagesSource messagesSource;
 
-    private final TypeCoercer _typeCoercer;
+    private final TypeCoercer typeCoercer;
 
     public FieldValidationSupportImpl(ValidationMessagesSource messagesSource, TypeCoercer typeCoercer)
     {
         this.messagesSource = messagesSource;
-        _typeCoercer = typeCoercer;
+        this.typeCoercer = typeCoercer;
     }
 
     @SuppressWarnings({ "unchecked" })
@@ -84,7 +84,7 @@ public class FieldValidationSupportImpl implements FieldValidationSupport
         // And now, whether its a value from a bound property, or from the null field strategy,
         // get it into the right format for the translator and let it translate.
 
-        Object coerced = _typeCoercer.coerce(effectiveValue, translator.getType());
+        Object coerced = typeCoercer.coerce(effectiveValue, translator.getType());
 
         return translator.toClient(coerced);
 

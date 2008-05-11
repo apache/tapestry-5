@@ -148,7 +148,7 @@ public class ProductDetail
   
   void onActivate(long productId)
   {
-     _product = _productDAO.getById(productId);
+     product = productDAO.getById(productId);
   }
   
   . . .
@@ -193,7 +193,7 @@ Page Navigation Patterns
   {
     details.setProductId(productId);
     
-    return _details;
+    return details;
   }
 +---+
 

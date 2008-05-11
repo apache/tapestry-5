@@ -16,52 +16,52 @@ package org.apache.tapestry.internal;
 
 public class DataBeanSubclass extends DataBean
 {
-    private String _street;
+    private String street;
 
-    private String _city;
+    private String city;
 
-    private String _state;
+    private String state;
 
-    private String _zip;
+    private String zip;
 
     public String getStreet()
     {
-        return _street;
+        return street;
     }
 
     public String getCity()
     {
-        return _city;
+        return city;
     }
 
     public String getState()
     {
-        return _state;
+        return state;
     }
 
     public String getZip()
     {
-        return _zip;
+        return zip;
     }
 
     public void setCity(String city)
     {
-        _city = city;
+        this.city = city;
     }
 
     public void setStreet(String street)
     {
-        _street = street;
+        this.street = street;
     }
 
     public void setState(String state)
     {
-        _state = state;
+        this.state = state;
     }
 
     public void setZip(String zip)
     {
-        _zip = zip;
+        this.zip = zip;
     }
 
 }

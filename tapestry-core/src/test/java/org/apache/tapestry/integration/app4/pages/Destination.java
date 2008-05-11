@@ -16,35 +16,35 @@ package org.apache.tapestry.integration.app4.pages;
 
 public class Destination
 {
-    private String _message;
+    private String message;
 
-    private String _value;
+    private String value;
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(String value)
     {
-        _value = value;
+        this.value = value;
     }
 
     String onPassivate()
     {
-        return _value;
+        return value;
     }
 
     void onActivate(String value)
     {
         addMessage("onActivate(String) invoked");
 
-        _value = value;
+        this.value = value;
     }
 
     void onActivate()
@@ -54,13 +54,13 @@ public class Destination
 
     private void addMessage(String text)
     {
-        if (_message == null)
+        if (message == null)
         {
-            _message = text;
+            message = text;
             return;
         }
 
-        _message += " - " + text;
+        message += " - " + text;
     }
 
 

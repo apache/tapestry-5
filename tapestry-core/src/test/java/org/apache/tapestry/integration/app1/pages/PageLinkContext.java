@@ -20,7 +20,7 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class PageLinkContext
 {
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     public Object[] getComputedContext()
     {
@@ -39,7 +39,7 @@ public class PageLinkContext
 
     Object onActionFromNullContext()
     {
-        return _resources.createPageLink("target", true, new Object[] { null });
+        return resources.createPageLink("target", true, new Object[] { null });
     }
 
 }

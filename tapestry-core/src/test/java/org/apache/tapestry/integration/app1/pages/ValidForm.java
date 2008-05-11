@@ -20,16 +20,16 @@ import org.apache.tapestry.integration.app1.data.IncidentData;
 public class ValidForm
 {
     @Persist
-    private IncidentData _incident;
+    private IncidentData incident;
 
     public IncidentData getIncident()
     {
-        return _incident;
+        return incident;
     }
 
     void onPrepare()
     {
-        if (_incident == null)
-            _incident = new IncidentData();
+        if (incident == null)
+            incident = new IncidentData();
     }
 }

@@ -14,22 +14,22 @@
 
 package org.apache.tapestry.integration.app3.pages;
 
-import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.InjectPage;
 import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotations.Property;
 
 public class Index
 {
     @InjectPage
-    private Login _login;
+    private Login login;
 
     @Persist
     @Property
-    private String _message;
+    private String message;
 
     boolean onActivate(String message)
     {
-        _message = message;
+        this.message = message;
 
         // Terminate the event before it gets to the no-args onActivate().
 
@@ -40,6 +40,6 @@ public class Index
     {
 
         // Perform a redirect to the login page.
-        return _login;
+        return login;
     }
 }

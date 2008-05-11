@@ -32,7 +32,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
     // This will change once we start supporting application localization.
 
-    private final Locale _locale = Locale.getDefault();
+    private final Locale locale = Locale.getDefault();
 
     @Test
     public void checkout_when_page_list_is_null()
@@ -45,9 +45,9 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
-        train_getLocale(tl, _locale);
+        train_getLocale(tl, locale);
 
-        train_loadPage(loader, LOGICAL_PAGE_NAME, _locale, page);
+        train_loadPage(loader, LOGICAL_PAGE_NAME, locale, page);
 
         replay();
 
@@ -70,9 +70,9 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
 
-        train_getLocale(tl, _locale);
+        train_getLocale(tl, locale);
 
-        train_loadPage(loader, LOGICAL_PAGE_NAME, _locale, page1);
+        train_loadPage(loader, LOGICAL_PAGE_NAME, locale, page1);
 
         replay();
 
@@ -84,7 +84,7 @@ public class PagePoolImplTest extends InternalBaseTestCase
 
         train_detached(page1, false);
         train_getLogicalName(page1, LOGICAL_PAGE_NAME);
-        train_getLocale(page1, _locale);
+        train_getLocale(page1, locale);
 
         replay();
 
@@ -93,12 +93,12 @@ public class PagePoolImplTest extends InternalBaseTestCase
         verify();
 
         train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
-        train_getLocale(tl, _locale);
+        train_getLocale(tl, locale);
 
         train_canonicalizePageName(resolver, INPUT_PAGE_NAME, LOGICAL_PAGE_NAME);
-        train_getLocale(tl, _locale);
+        train_getLocale(tl, locale);
 
-        train_loadPage(loader, LOGICAL_PAGE_NAME, _locale, page2);
+        train_loadPage(loader, LOGICAL_PAGE_NAME, locale, page2);
 
         replay();
 

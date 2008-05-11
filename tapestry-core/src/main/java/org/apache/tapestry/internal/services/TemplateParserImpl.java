@@ -144,7 +144,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
         }
     };
 
-    private final Runnable _ignoreEndElement = new Runnable()
+    private final Runnable ignoreEndElement = new Runnable()
     {
         public void run()
         {
@@ -421,7 +421,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
         // Neither the container nor its end tag are considered tokens, just the contents inside.
 
-        endTagHandlerStack.push(_ignoreEndElement);
+        endTagHandlerStack.push(ignoreEndElement);
 
         for (int i = 0; i < attributes.getLength(); i++)
         {

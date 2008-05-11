@@ -19,18 +19,18 @@ import org.apache.tapestry.annotations.Persist;
 public class MagicValueEncoder
 {
     @Persist("flash")
-    private int _number;
+    private int number;
 
-    private static final int[] OPTIONS = {5, 10, 25, 100};
+    private static final int[] OPTIONS = { 5, 10, 25, 100 };
 
     public int getNumber()
     {
-        return _number;
+        return number;
     }
 
     public void setNumber(int number)
     {
-        _number = number;
+        this.number = number;
     }
 
     public int[] getOptions()

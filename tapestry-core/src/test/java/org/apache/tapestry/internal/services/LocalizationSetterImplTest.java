@@ -23,7 +23,7 @@ import java.util.Locale;
 
 public class LocalizationSetterImplTest extends Assert
 {
-    private PersistentLocale _nullPersistentLocale = new PersistentLocale()
+    private PersistentLocale nullPersistentLocale = new PersistentLocale()
     {
         public boolean isSet()
         {
@@ -42,7 +42,7 @@ public class LocalizationSetterImplTest extends Assert
 
     };
 
-    private PersistentLocale _frenchPersistentLocale = new PersistentLocale()
+    private PersistentLocale frenchPersistentLocale = new PersistentLocale()
     {
         public boolean isSet()
         {
@@ -88,7 +88,7 @@ public class LocalizationSetterImplTest extends Assert
     @Test
     public void to_locale_is_cached()
     {
-        LocalizationSetterImpl filter = new LocalizationSetterImpl(_nullPersistentLocale, null,
+        LocalizationSetterImpl filter = new LocalizationSetterImpl(nullPersistentLocale, null,
                                                                    "en");
 
         Locale l1 = filter.toLocale("en");
@@ -111,7 +111,7 @@ public class LocalizationSetterImplTest extends Assert
     @Test
     public void to_locale()
     {
-        LocalizationSetterImpl filter = new LocalizationSetterImpl(_nullPersistentLocale, null,
+        LocalizationSetterImpl filter = new LocalizationSetterImpl(nullPersistentLocale, null,
                                                                    "en");
 
         checkLocale(filter.toLocale("en"), "en", "", "");
@@ -124,7 +124,7 @@ public class LocalizationSetterImplTest extends Assert
     {
         ThreadLocale threadLocale = new ThreadLocaleImpl();
         threadLocale.setLocale(Locale.FRENCH);
-        LocalizationSetter setter = new LocalizationSetterImpl(_nullPersistentLocale, threadLocale,
+        LocalizationSetter setter = new LocalizationSetterImpl(nullPersistentLocale, threadLocale,
                                                                "en,fr");
         setter.setThreadLocale(Locale.CANADA_FRENCH);
         assertEquals(threadLocale.getLocale(), Locale.FRENCH);
@@ -136,7 +136,7 @@ public class LocalizationSetterImplTest extends Assert
     {
         ThreadLocale threadLocale = new ThreadLocaleImpl();
         threadLocale.setLocale(Locale.FRENCH);
-        LocalizationSetter setter = new LocalizationSetterImpl(_nullPersistentLocale, threadLocale,
+        LocalizationSetter setter = new LocalizationSetterImpl(nullPersistentLocale, threadLocale,
                                                                "en,fr");
         setter.setThreadLocale(Locale.JAPANESE);
         assertEquals(threadLocale.getLocale(), Locale.ENGLISH);
@@ -146,7 +146,7 @@ public class LocalizationSetterImplTest extends Assert
     public void use_persistent_locale()
     {
         ThreadLocale threadLocale = new ThreadLocaleImpl();
-        LocalizationSetter setter = new LocalizationSetterImpl(_frenchPersistentLocale,
+        LocalizationSetter setter = new LocalizationSetterImpl(frenchPersistentLocale,
                                                                threadLocale, "en,fr");
         setter.setThreadLocale(Locale.ENGLISH);
         assertEquals(threadLocale.getLocale(), Locale.FRENCH);

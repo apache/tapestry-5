@@ -22,11 +22,11 @@ import org.apache.tapestry.annotations.Parameter;
 public class DefaultParameterComponent
 {
     @Parameter("literal:greeting")
-    private String _value;
+    private String value;
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
 }

@@ -19,48 +19,48 @@ import org.apache.tapestry.beaneditor.OrderBefore;
 
 public class StoogeBean
 {
-    private int _moe, _larry, _curly, _shemp;
+    private int moe, larry, curly, shemp;
 
     public int getMoe()
     {
-        return _moe;
+        return moe;
     }
 
     @OrderAfter("shemp")
     public int getCurly()
     {
-        return _curly;
+        return curly;
     }
 
     @OrderBefore("moe")
     public int getLarry()
     {
-        return _larry;
+        return larry;
     }
 
     public int getShemp()
     {
-        return _shemp;
+        return shemp;
     }
 
     public void setCurly(int curly)
     {
-        _curly = curly;
+        this.curly = curly;
     }
 
     public void setLarry(int larry)
     {
-        _larry = larry;
+        this.larry = larry;
     }
 
     public void setMoe(int moe)
     {
-        _moe = moe;
+        this.moe = moe;
     }
 
     public void setShemp(int shemp)
     {
-        _shemp = shemp;
+        this.shemp = shemp;
     }
 
 }
