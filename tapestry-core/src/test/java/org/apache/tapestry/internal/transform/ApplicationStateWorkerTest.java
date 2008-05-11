@@ -41,15 +41,15 @@ import org.testng.annotations.Test;
 
 public class ApplicationStateWorkerTest extends InternalBaseTestCase
 {
-    private final ClassLoader _contextClassLoader = Thread.currentThread().getContextClassLoader();
+    private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
-    private PropertyAccess _access = new PropertyAccessImpl();
+    private PropertyAccess access = new PropertyAccessImpl();
 
-    private ClassFactory _classFactory;
+    private ClassFactory classFactory;
 
-    private Loader _loader;
+    private Loader loader;
 
-    private ClassFactoryClassPool _classFactoryClassPool;
+    private ClassFactoryClassPool classFactoryClassPool;
 
     /**
      * We need a new ClassPool for each individual test, since many of the tests will end up modifying one or more
@@ -60,33 +60,33 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
     {
         //  _classPool = new ClassPool();
 
-        _classFactoryClassPool = new ClassFactoryClassPool(_contextClassLoader);
+        classFactoryClassPool = new ClassFactoryClassPool(contextClassLoader);
 
-        _loader = new TestPackageAwareLoader(_contextClassLoader, _classFactoryClassPool);
+        loader = new TestPackageAwareLoader(contextClassLoader, classFactoryClassPool);
 
         // Inside Maven Surefire, the system classpath is not sufficient to find all
         // the necessary files.
-        _classFactoryClassPool.appendClassPath(new LoaderClassPath(_loader));
+        classFactoryClassPool.appendClassPath(new LoaderClassPath(loader));
 
         Logger logger = LoggerFactory.getLogger(InternalClassTransformationImplTest.class);
 
-        _classFactory = new ClassFactoryImpl(_loader, _classFactoryClassPool, logger);
+        classFactory = new ClassFactoryImpl(loader, classFactoryClassPool, logger);
     }
 
     private CtClass findCtClass(Class targetClass) throws NotFoundException
     {
-        return _classFactoryClassPool.get(targetClass.getName());
+        return classFactoryClassPool.get(targetClass.getName());
     }
 
     private Class toClass(CtClass ctClass) throws Exception
     {
-        return _classFactoryClassPool.toClass(ctClass, _loader, null);
+        return classFactoryClassPool.toClass(ctClass, loader, null);
     }
 
     @AfterClass
     public void cleanup()
     {
-        _access = null;
+        access = null;
     }
 
     @Test
@@ -127,7 +127,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, ctClass, null,
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(classFactory, ctClass, null,
                                                                                          model, null);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
@@ -145,7 +145,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "beanExists"), true);
+        assertEquals(access.get(component, "beanExists"), true);
 
         verify();
 
@@ -157,7 +157,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(_access.get(component, "bean"), aso);
+        assertSame(access.get(component, "bean"), aso);
 
         verify();
 
@@ -169,7 +169,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "bean", aso2);
+        access.set(component, "bean", aso2);
 
         verify();
     }
@@ -194,7 +194,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        InternalClassTransformation transformation = new InternalClassTransformationImpl(_classFactory, ctClass, null,
+        InternalClassTransformation transformation = new InternalClassTransformationImpl(classFactory, ctClass, null,
                                                                                          model, null);
         new ApplicationStateWorker(manager, cache).transform(transformation, model);
 
@@ -212,7 +212,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertNull(_access.get(component, "bean"));
+        assertNull(access.get(component, "bean"));
 
         verify();
 
@@ -223,7 +223,7 @@ public class ApplicationStateWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(_access.get(component, "bean"), aso);
+        assertSame(access.get(component, "bean"), aso);
 
         verify();
     }

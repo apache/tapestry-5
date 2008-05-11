@@ -38,18 +38,18 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
     private static final String PAGE_LOGICAL_NAME = "sub/MyPage";
 
-    private ContextValueEncoder _contextValueEncoder;
+    private ContextValueEncoder contextValueEncoder;
 
     @BeforeClass
     public void setup()
     {
-        _contextValueEncoder = getObject(ContextValueEncoder.class, null);
+        contextValueEncoder = getObject(ContextValueEncoder.class, null);
     }
 
     @AfterClass
     public void cleanup()
     {
-        _contextValueEncoder = null;
+        contextValueEncoder = null;
     }
 
     @Test
@@ -119,7 +119,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder,
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, contextValueEncoder,
                                                   securityManager);
 
         factory.addListener(listener);
@@ -171,7 +171,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null,
-                                                  _contextValueEncoder,
+                                                  contextValueEncoder,
                                                   securityManager);
 
         factory.addListener(listener);
@@ -220,7 +220,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder,
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, contextValueEncoder,
                                                   securityManager);
         factory.addListener(listener);
 
@@ -267,7 +267,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, _contextValueEncoder,
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, null, optimizer, null, contextValueEncoder,
                                                   securityManager);
         factory.addListener(listener);
 
@@ -317,7 +317,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, _contextValueEncoder,
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, contextValueEncoder,
                                                   securityManager);
         factory.addListener(listener);
 
@@ -369,7 +369,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, _contextValueEncoder,
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, contextValueEncoder,
                                                   securityManager);
         factory.addListener(listener);
 
@@ -421,7 +421,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
 
         replay();
 
-        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, _contextValueEncoder,
+        LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, null, contextValueEncoder,
                                                   securityManager);
         factory.addListener(listener);
 
@@ -543,7 +543,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  _contextValueEncoder, securityManager);
+                                                  contextValueEncoder, securityManager);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, null, "myaction", false, "1.2.3", "4.5.6");
@@ -596,7 +596,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  _contextValueEncoder, securityManager);
+                                                  contextValueEncoder, securityManager);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(containingPage, null, "myaction", false);
@@ -651,7 +651,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         replay();
 
         LinkFactory factory = new LinkFactoryImpl(request, response, map, cache, optimizer, queue,
-                                                  _contextValueEncoder, securityManager);
+                                                  contextValueEncoder, securityManager);
         factory.addListener(listener);
 
         Link link = factory.createActionLink(page, nestedId, eventName, false, context);

@@ -26,47 +26,47 @@ public class SecurePage
 {
 
     @Persist("flash")
-    private String _message;
+    private String message;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
     @Path("context:images/tapestry_banner.gif")
-    private Asset _icon;
+    private Asset icon;
 
     @Inject
     @Path("nested/tapestry-button.png")
-    private Asset _button;
+    private Asset button;
 
     public Asset getIcon()
     {
-        return _icon;
+        return icon;
     }
 
     public Asset getButton()
     {
-        return _button;
+        return button;
     }
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     void onActionFromSecureLink()
     {
-        _message = "Link clicked";
+        message = "Link clicked";
     }
 
     void onSubmit()
     {
-        _message = "Form submitted";
+        message = "Form submitted";
     }
 
     SecurePage initialize(String message)
     {
-        _message = message;
+        this.message = message;
 
         return this;
     }

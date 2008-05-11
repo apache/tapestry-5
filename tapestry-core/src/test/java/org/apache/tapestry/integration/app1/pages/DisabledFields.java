@@ -23,53 +23,53 @@ import java.util.List;
 
 public class DisabledFields
 {
-    private String _stringValue;
+    private String stringValue;
 
-    private boolean _flag;
+    private boolean flag;
 
-    private Date _date;
+    private Date date;
 
-    private List<String> _values;
+    private List<String> values;
 
     @Validate("required")
     public String getStringValue()
     {
-        return _stringValue;
+        return stringValue;
     }
 
     public void setStringValue(String stringValue)
     {
-        _stringValue = stringValue;
+        this.stringValue = stringValue;
     }
 
     public boolean isFlag()
     {
-        return _flag;
+        return flag;
     }
 
     public void setFlag(boolean flag)
     {
-        _flag = flag;
+        this.flag = flag;
     }
 
     public Date getDate()
     {
-        return _date;
+        return date;
     }
 
     public void setDate(Date date)
     {
-        _date = date;
+        this.date = date;
     }
 
     public List<String> getValues()
     {
-        return _values;
+        return values;
     }
 
     public void setValues(List<String> values)
     {
-        _values = values;
+        this.values = values;
     }
 
     public ValueEncoder getEncoder()

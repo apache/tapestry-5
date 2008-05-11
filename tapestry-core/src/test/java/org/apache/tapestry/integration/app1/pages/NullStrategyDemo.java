@@ -19,15 +19,15 @@ import org.apache.tapestry.annotations.Persist;
 public class NullStrategyDemo
 {
     @Persist
-    private Long _number;
+    private Long number;
 
     public Long getNumber()
     {
-        return _number;
+        return number;
     }
 
     public void setNumber(Long number)
     {
-        _number = number;
+        this.number = number;
     }
 }

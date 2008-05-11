@@ -20,10 +20,10 @@ import org.apache.tapestry.integration.app1.data.RegistrationData;
 public class ViewRegistration
 {
     @ApplicationState
-    private RegistrationData _data;
+    private RegistrationData data;
 
     public RegistrationData getRegistrationData()
     {
-        return _data;
+        return data;
     }
 }

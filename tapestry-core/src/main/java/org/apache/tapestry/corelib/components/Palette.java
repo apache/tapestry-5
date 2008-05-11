@@ -22,7 +22,9 @@ import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.internal.util.SelectModelRenderer;
 import org.apache.tapestry.ioc.annotations.Inject;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
+import org.apache.tapestry.ioc.internal.util.CollectionFactory;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
+import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newSet;
 import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.services.Request;
 
@@ -238,6 +240,11 @@ public class Palette extends AbstractField
     private int size;
 
     /**
+     * The natural order of elements, in terms of their client ids.
+     */
+    private List<String> naturalOrder;
+
+    /**
      * Defaults the selected parameter to a container property whose name matches this component's id.
      */
     final Binding defaultSelected()
@@ -304,7 +311,7 @@ public class Palette extends AbstractField
 
         JSONArray naturalOrder = new JSONArray();
 
-        for (String value : _naturalOrder)
+        for (String value : this.naturalOrder)
         {
             naturalOrder.put(value);
         }
@@ -326,18 +333,13 @@ public class Palette extends AbstractField
         return false;
     }
 
-    /**
-     * The natural order of elements, in terms of their client ids.
-     */
-    private List<String> _naturalOrder;
-
     @SuppressWarnings("unchecked")
     void setupRender(MarkupWriter writer)
     {
-        valueToOptionModel = newMap();
-        availableOptions = newList();
-        selectedOptions = newList();
-        _naturalOrder = newList();
+        valueToOptionModel = CollectionFactory.newMap();
+        availableOptions = CollectionFactory.newList();
+        selectedOptions = CollectionFactory.newList();
+        naturalOrder = CollectionFactory.newList();
         renderer = new SelectModelRenderer(writer, encoder);
 
         final Set selectedSet = newSet(getSelected());
@@ -362,7 +364,7 @@ public class Palette extends AbstractField
 
                 String clientValue = toClient(value);
 
-                _naturalOrder.add(clientValue);
+                naturalOrder.add(clientValue);
 
                 if (isSelected)
                 {

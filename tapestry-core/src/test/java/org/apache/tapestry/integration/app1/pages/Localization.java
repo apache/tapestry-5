@@ -24,42 +24,42 @@ import java.util.Locale;
 public class Localization
 {
     @Inject
-    private Messages _messages;
+    private Messages messages;
 
 
     @Inject
-    private Locale _locale;
+    private Locale locale;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     @Inject
-    private PersistentLocale _persistentLocale;
+    private PersistentLocale persistentLocale;
 
     public Locale getLocale()
     {
-        return _locale;
+        return locale;
     }
 
     public Request getRequest()
     {
-        return _request;
+        return request;
     }
 
     public String getInjectedMessage()
     {
-        return _messages.get("via-inject");
+        return messages.get("via-inject");
     }
 
 
     public void onActionFromFrench()
     {
-        _persistentLocale.set(Locale.FRENCH);
+        persistentLocale.set(Locale.FRENCH);
     }
 
     public void onActionFromEnglish()
     {
-        _persistentLocale.set(Locale.ENGLISH);
+        persistentLocale.set(Locale.ENGLISH);
     }
 
 }

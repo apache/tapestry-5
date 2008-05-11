@@ -19,12 +19,12 @@ import org.apache.tapestry.annotations.InjectPage;
 public class Kicker
 {
     @InjectPage
-    private Target _target;
+    private Target target;
 
     Object onAction()
     {
-        _target.setActivationContext(new String[]{"betty", "wilma", "betty/wilma", "\u82B1\u5B50"});
+        target.setActivationContext(new String[] { "betty", "wilma", "betty/wilma", "\u82B1\u5B50" });
 
-        return _target;
+        return target;
     }
 }

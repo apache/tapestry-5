@@ -653,11 +653,11 @@ public final class TapestryModule
 
         add(configuration, void.class, GridDataSource.class, new Coercion<Void, GridDataSource>()
         {
-            private final GridDataSource _source = new NullDataSource();
+            private final GridDataSource source = new NullDataSource();
 
             public GridDataSource coerce(Void input)
             {
-                return _source;
+                return source;
             }
         });
 

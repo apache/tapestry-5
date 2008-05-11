@@ -22,15 +22,15 @@ import org.testng.annotations.Test;
 
 public class LoopTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void render()
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName);
-        Document doc = _tester.renderPage("TestPageForLoop");
+        tester = new PageTester(appPackage, appName);
+        Document doc = tester.renderPage("TestPageForLoop");
         assertTrue(doc.toString().contains("abcabcabc"));
         assertEquals(doc.getElementById("1").getChildMarkup(), "xyz");
     }
@@ -38,9 +38,9 @@ public class LoopTest extends Assert
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

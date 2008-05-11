@@ -45,9 +45,9 @@ import org.testng.annotations.Test;
  */
 public class ParameterWorkerTest extends InternalBaseTestCase
 {
-    private final ClassLoader _contextClassLoader = Thread.currentThread().getContextClassLoader();
+    private final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
 
-    private PropertyAccess _access = new PropertyAccessImpl();
+    private PropertyAccess access = new PropertyAccessImpl();
 
     /**
      * Accessed by DefaultParameterBindingMethodComponent.
@@ -57,7 +57,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
     @AfterClass
     public void cleanup()
     {
-        _access = null;
+        access = null;
         _binding = null;
     }
 
@@ -86,7 +86,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertSame(_access.get(component, "invariantObject"), value);
+        assertSame(access.get(component, "invariantObject"), value);
 
         verify();
 
@@ -96,19 +96,19 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         // Still cached ...
 
-        assertSame(_access.get(component, "invariantObject"), value);
+        assertSame(access.get(component, "invariantObject"), value);
 
         component.postRenderCleanup();
 
         // Still cached ...
 
-        assertSame(_access.get(component, "invariantObject"), value);
+        assertSame(access.get(component, "invariantObject"), value);
 
         component.containingPageDidDetach();
 
         // Still cached ...
 
-        assertSame(_access.get(component, "invariantObject"), value);
+        assertSame(access.get(component, "invariantObject"), value);
 
         verify();
     }
@@ -130,7 +130,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "invariantPrimitive"), value);
+        assertEquals(access.get(component, "invariantPrimitive"), value);
 
         verify();
 
@@ -140,13 +140,13 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         // Still cached ...
 
-        assertEquals(_access.get(component, "invariantPrimitive"), value);
+        assertEquals(access.get(component, "invariantPrimitive"), value);
 
         component.postRenderCleanup();
 
         // Still cached ...
 
-        assertEquals(_access.get(component, "invariantPrimitive"), value);
+        assertEquals(access.get(component, "invariantPrimitive"), value);
 
         verify();
     }
@@ -170,7 +170,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertNull(_access.get(component, "object"));
+        assertNull(access.get(component, "object"));
 
         verify();
 
@@ -178,7 +178,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "object", "new-default");
+        access.set(component, "object", "new-default");
 
         verify();
 
@@ -186,7 +186,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "object"), "new-default");
+        assertEquals(access.get(component, "object"), "new-default");
 
         verify();
 
@@ -216,12 +216,12 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "object", "new-value");
-        assertEquals(_access.get(component, "object"), "new-value");
+        access.set(component, "object", "new-value");
+        assertEquals(access.get(component, "object"), "new-value");
 
         component.postRenderCleanup();
 
-        assertEquals(_access.get(component, "object"), "new-default");
+        assertEquals(access.get(component, "object"), "new-default");
 
         verify();
     }
@@ -240,7 +240,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "object"), "first");
+        assertEquals(access.get(component, "object"), "first");
 
         verify();
 
@@ -253,7 +253,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "object"), "second");
+        assertEquals(access.get(component, "object"), "second");
 
         verify();
 
@@ -266,11 +266,11 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "object"), "third");
+        assertEquals(access.get(component, "object"), "third");
 
         // Does not cause readParameter() to be invoked:
 
-        assertEquals(_access.get(component, "object"), "third");
+        assertEquals(access.get(component, "object"), "third");
 
         verify();
 
@@ -283,7 +283,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         component.postRenderCleanup();
 
-        assertEquals(_access.get(component, "object"), "fourth");
+        assertEquals(access.get(component, "object"), "fourth");
 
         verify();
     }
@@ -307,8 +307,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "object", "first");
-        assertEquals(_access.get(component, "object"), "second");
+        access.set(component, "object", "first");
+        assertEquals(access.get(component, "object"), "second");
 
         verify();
 
@@ -321,8 +321,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "object", "third");
-        assertEquals(_access.get(component, "object"), "third");
+        access.set(component, "object", "third");
+        assertEquals(access.get(component, "object"), "third");
 
         verify();
 
@@ -337,7 +337,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         component.postRenderCleanup();
 
-        assertEquals(_access.get(component, "object"), "fourth");
+        assertEquals(access.get(component, "object"), "fourth");
 
         verify();
     }
@@ -362,8 +362,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "primitive", 321);
-        assertEquals(_access.get(component, "primitive"), 123);
+        access.set(component, "primitive", 321);
+        assertEquals(access.get(component, "primitive"), 123);
 
         verify();
 
@@ -376,8 +376,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "primitive", 567);
-        assertEquals(_access.get(component, "primitive"), 567);
+        access.set(component, "primitive", 567);
+        assertEquals(access.get(component, "primitive"), 567);
 
         verify();
 
@@ -392,7 +392,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         component.postRenderCleanup();
 
-        assertEquals(_access.get(component, "primitive"), 890);
+        assertEquals(access.get(component, "primitive"), 890);
 
         verify();
     }
@@ -417,8 +417,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "uncachedObject"), "first");
-        assertEquals(_access.get(component, "uncachedObject"), "second");
+        assertEquals(access.get(component, "uncachedObject"), "first");
+        assertEquals(access.get(component, "uncachedObject"), "second");
 
         verify();
     }
@@ -449,8 +449,8 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        _access.set(component, "uncachedObject", "first");
-        assertEquals(_access.get(component, "uncachedObject"), "second");
+        access.set(component, "uncachedObject", "first");
+        assertEquals(access.get(component, "uncachedObject"), "second");
 
         verify();
     }
@@ -495,7 +495,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         replay();
 
-        assertEquals(_access.get(component, "value"), boundValue);
+        assertEquals(access.get(component, "value"), boundValue);
 
         verify();
     }
@@ -539,7 +539,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         stub_isDebugEnabled(logger, false);
         replay();
 
-        assertEquals(_access.get(component, "value"), boundValue);
+        assertEquals(access.get(component, "value"), boundValue);
 
         verify();
     }
@@ -590,9 +590,9 @@ public class ParameterWorkerTest extends InternalBaseTestCase
                                               String componentClassName, MutableComponentModel model,
                                               BindingSource source, Runnable phaseTwoTraining) throws Exception
     {
-        ClassFactoryClassPool pool = new ClassFactoryClassPool(_contextClassLoader);
+        ClassFactoryClassPool pool = new ClassFactoryClassPool(contextClassLoader);
 
-        Loader loader = new TestPackageAwareLoader(_contextClassLoader, pool);
+        Loader loader = new TestPackageAwareLoader(contextClassLoader, pool);
 
         pool.appendClassPath(new LoaderClassPath(loader));
 

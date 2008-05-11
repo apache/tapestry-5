@@ -24,54 +24,54 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class FormInjectorDemo
 {
     @Persist
-    private double _sum;
+    private double sum;
 
-    private double _value;
-
-    @Inject
-    private Block _newRow;
+    private double value;
 
     @Inject
-    private PageRenderSupport _pageRenderSupport;
+    private Block newRow;
+
+    @Inject
+    private PageRenderSupport pageRenderSupport;
 
     @Component
-    private FormInjector _formInjector;
+    private FormInjector formInjector;
 
     public double getSum()
     {
-        return _sum;
+        return sum;
     }
 
     public double getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(double value)
     {
-        _value = value;
+        this.value = value;
     }
 
     void onPrepareForSubmit()
     {
-        _sum = 0;
+        sum = 0;
     }
 
     void onAfterSubmit()
     {
-        _sum += _value;
+        sum += value;
     }
 
 
     void afterRender()
     {
-        _pageRenderSupport.addScript(
+        pageRenderSupport.addScript(
                 "$('addnewrow').observe('click', function() { $('%s').trigger(); return false; });",
-                _formInjector.getClientId());
+                formInjector.getClientId());
     }
 
     Object onActionFromFormInjector()
     {
-        return _newRow;
+        return newRow;
     }
 }

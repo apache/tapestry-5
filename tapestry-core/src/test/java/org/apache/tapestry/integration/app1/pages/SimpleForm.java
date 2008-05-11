@@ -20,33 +20,33 @@ import org.apache.tapestry.integration.app1.data.IncidentData;
 public class SimpleForm
 {
     @Persist
-    private IncidentData _incident;
+    private IncidentData incident;
 
     @Persist
-    private boolean _disabled;
+    private boolean disabled;
 
     public boolean isDisabled()
     {
-        return _disabled;
+        return disabled;
     }
 
     public void setDisabled(boolean disable)
     {
-        _disabled = disable;
+        disabled = disable;
     }
 
     public IncidentData getIncident()
     {
-        return _incident;
+        return incident;
     }
 
     void onPrepare()
     {
-        if (_incident == null)
+        if (incident == null)
         {
-            _incident = new IncidentData();
-            _incident.setUrgent(true);
-            _incident.setOperatingSystem("osx");
+            incident = new IncidentData();
+            incident.setUrgent(true);
+            incident.setOperatingSystem("osx");
         }
     }
 }

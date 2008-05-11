@@ -39,16 +39,16 @@ public final class CoercionTuple<S, T>
      */
     private class CoercionWrapper<WS, WT> implements Coercion<WS, WT>
     {
-        private final Coercion<WS, WT> _coercion;
+        private final Coercion<WS, WT> coercion;
 
         public CoercionWrapper(Coercion<WS, WT> coercion)
         {
-            _coercion = coercion;
+            this.coercion = coercion;
         }
 
         public WT coerce(WS input)
         {
-            return _coercion.coerce(input);
+            return coercion.coerce(input);
         }
 
         @Override

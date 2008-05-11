@@ -39,12 +39,12 @@ public class Orderer<T>
 
     private final Map<String, Orderable<T>> idToOrderable = CollectionFactory.newCaseInsensitiveMap();
 
-    private final Map<String, DependencyNode<T>> _dependencyNodesById = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, DependencyNode<T>> dependencyNodesById = CollectionFactory.newCaseInsensitiveMap();
 
     // Special node that is always dead last: all other nodes are a dependency
     // of the trailer.
 
-    private DependencyNode<T> _trailer;
+    private DependencyNode<T> trailer;
 
     interface DependencyLinker<T>
     {
@@ -124,7 +124,7 @@ public class Orderer<T>
 
         List<T> result = newList();
 
-        for (Orderable<T> orderable : _trailer.getOrdered())
+        for (Orderable<T> orderable : trailer.getOrdered())
         {
             T target = orderable.getTarget();
 
@@ -138,7 +138,7 @@ public class Orderer<T>
 
     private void initializeGraph()
     {
-        _trailer = new DependencyNode<T>(logger, new Orderable<T>("*-trailer-*", null));
+        trailer = new DependencyNode<T>(logger, new Orderable<T>("*-trailer-*", null));
 
         addNodes();
 
@@ -151,9 +151,9 @@ public class Orderer<T>
         {
             DependencyNode<T> node = new DependencyNode<T>(logger, orderable);
 
-            _dependencyNodesById.put(orderable.getId(), node);
+            dependencyNodesById.put(orderable.getId(), node);
 
-            _trailer.addDependency(node);
+            trailer.addDependency(node);
         }
     }
 
@@ -202,7 +202,7 @@ public class Orderer<T>
     {
         Collection<DependencyNode<T>> nodes = findDependencies(sourceId, patternList);
 
-        DependencyNode<T> source = _dependencyNodesById.get(sourceId);
+        DependencyNode<T> source = dependencyNodesById.get(sourceId);
 
         for (DependencyNode<T> target : nodes)
         {
@@ -216,11 +216,11 @@ public class Orderer<T>
 
         Collection<DependencyNode<T>> result = newList();
 
-        for (String id : _dependencyNodesById.keySet())
+        for (String id : dependencyNodesById.keySet())
         {
             if (sourceId.equals(id)) continue;
 
-            if (matcher.matches(id)) result.add(_dependencyNodesById.get(id));
+            if (matcher.matches(id)) result.add(dependencyNodesById.get(id));
         }
 
         return result;

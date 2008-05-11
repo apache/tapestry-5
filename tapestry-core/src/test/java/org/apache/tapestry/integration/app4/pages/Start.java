@@ -19,31 +19,31 @@ import org.apache.tapestry.annotations.InjectPage;
 public class Start
 {
     @InjectPage
-    private Destination _destination;
+    private Destination destination;
 
-    private String _input;
+    private String input;
 
     public String getInput()
     {
-        return _input;
+        return input;
     }
 
     public void setInput(String input)
     {
-        _input = input;
+        this.input = input;
     }
 
     Object onSuccess()
     {
-        _destination.setValue(_input);
+        destination.setValue(input);
 
-        return _destination;
+        return destination;
     }
 
     Object onActionFromBypass()
     {
-        _destination.setValue("automatic value");
+        destination.setValue("automatic value");
 
-        return _destination;
+        return destination;
     }
 }

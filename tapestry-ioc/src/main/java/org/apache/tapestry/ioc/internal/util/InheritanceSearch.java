@@ -54,7 +54,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
         CLASS, INTERFACE, DONE
     }
 
-    private State _state;
+    private State state;
 
     public InheritanceSearch(Class searchClass)
     {
@@ -62,7 +62,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
         queueInterfaces(searchClass);
 
-        _state = searchClass == Object.class ? State.INTERFACE : State.CLASS;
+        state = searchClass == Object.class ? State.INTERFACE : State.CLASS;
     }
 
     private void queueInterfaces(Class searchClass)
@@ -83,12 +83,12 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
     public boolean hasNext()
     {
-        return _state != State.DONE;
+        return state != State.DONE;
     }
 
     public Class next()
     {
-        switch (_state)
+        switch (state)
         {
             case CLASS:
 
@@ -96,7 +96,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
                 searchClass = parentOf(searchClass);
 
-                if (searchClass == null) _state = State.INTERFACE;
+                if (searchClass == null) state = State.INTERFACE;
                 else queueInterfaces(searchClass);
 
                 return result;
@@ -105,7 +105,7 @@ public class InheritanceSearch implements Iterator<Class>, Iterable<Class>
 
                 if (interfaceQueue.isEmpty())
                 {
-                    _state = State.DONE;
+                    state = State.DONE;
                     return Object.class;
                 }
 

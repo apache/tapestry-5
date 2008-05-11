@@ -23,9 +23,9 @@ import java.util.Map;
  */
 public final class TransformUtils
 {
-    private static final Map<String, PrimitiveTypeInfo> _nameToInfo = newMap();
+    private static final Map<String, PrimitiveTypeInfo> nameToInfo = newMap();
 
-    private static final Map<Class, PrimitiveTypeInfo> _classToInfo = newMap();
+    private static final Map<Class, PrimitiveTypeInfo> classToInfo = newMap();
 
     static class PrimitiveTypeInfo
     {
@@ -63,8 +63,8 @@ public final class TransformUtils
     {
         PrimitiveTypeInfo info = new PrimitiveTypeInfo(wrapperType, unwrapperMethodName, defaultValue);
 
-        _classToInfo.put(primitiveType, info);
-        _nameToInfo.put(primitiveType.getName(), info);
+        classToInfo.put(primitiveType, info);
+        nameToInfo.put(primitiveType.getName(), info);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class TransformUtils
      */
     public static boolean isPrimitive(String type)
     {
-        return _nameToInfo.containsKey(type);
+        return nameToInfo.containsKey(type);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class TransformUtils
      */
     public static String getWrapperTypeName(String type)
     {
-        PrimitiveTypeInfo info = _nameToInfo.get(type);
+        PrimitiveTypeInfo info = nameToInfo.get(type);
 
         return info == null ? type : info.wrapperType.getName();
     }
@@ -96,7 +96,7 @@ public final class TransformUtils
      */
     public static String getUnwrapperMethodName(String type)
     {
-        PrimitiveTypeInfo info = _nameToInfo.get(type);
+        PrimitiveTypeInfo info = nameToInfo.get(type);
 
         return info == null ? null : info.unwrapperMethodName;
     }
@@ -109,7 +109,7 @@ public final class TransformUtils
      */
     public static Class getWrapperType(Class type)
     {
-        PrimitiveTypeInfo info = _classToInfo.get(type);
+        PrimitiveTypeInfo info = classToInfo.get(type);
 
         return info == null ? type : info.wrapperType;
     }
@@ -120,7 +120,7 @@ public final class TransformUtils
      */
     public static String getDefaultValue(String type)
     {
-        PrimitiveTypeInfo info = _nameToInfo.get(type);
+        PrimitiveTypeInfo info = nameToInfo.get(type);
 
         return info == null ? "null" : info.defaultValue;
     }

@@ -22,7 +22,7 @@ import org.apache.tapestry.services.FormSupport;
 public class FormEncodingType
 {
     @Environmental
-    private FormSupport _support;
+    private FormSupport support;
 
     public Renderable getForceEncodingType()
     {
@@ -30,7 +30,7 @@ public class FormEncodingType
         {
             public void render(MarkupWriter writer)
             {
-                _support.setEncodingType("x-override");
+                support.setEncodingType("x-override");
             }
         };
     }

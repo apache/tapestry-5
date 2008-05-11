@@ -19,7 +19,7 @@ import org.apache.tapestry.services.*;
 
 public class ReverseStringsWorker implements ComponentClassTransformWorker
 {
-    private final ComponentMethodAdvice _advice = new ComponentMethodAdvice()
+    private final ComponentMethodAdvice advice = new ComponentMethodAdvice()
     {
         public void advise(ComponentMethodInvocation invocation)
         {
@@ -73,7 +73,7 @@ public class ReverseStringsWorker implements ComponentClassTransformWorker
     {
         for (TransformMethodSignature sig : transformation.findMethodsWithAnnotation(ReverseStrings.class))
         {
-            transformation.advise(sig, _advice);
+            transformation.advise(sig, advice);
         }
     }
 }

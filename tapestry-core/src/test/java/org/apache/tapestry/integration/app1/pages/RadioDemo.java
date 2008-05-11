@@ -23,15 +23,15 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class RadioDemo
 {
     @Persist
-    private Department _department;
+    private Department department;
 
     @Persist
-    private String _position;
+    private String position;
 
-    private Department _loopValue;
+    private Department loopValue;
 
     @Inject
-    private Messages _messages;
+    private Messages messages;
 
     public Department[] getDepartments()
     {
@@ -40,36 +40,36 @@ public class RadioDemo
 
     public Department getDepartment()
     {
-        return _department;
+        return department;
     }
 
     public String getPosition()
     {
-        return _position;
+        return position;
     }
 
     public Department getLoopValue()
     {
-        return _loopValue;
+        return loopValue;
     }
 
     public void setDepartment(Department department)
     {
-        _department = department;
+        this.department = department;
     }
 
     public void setPosition(String position)
     {
-        _position = position;
+        this.position = position;
     }
 
     public void setLoopValue(Department loopValue)
     {
-        _loopValue = loopValue;
+        this.loopValue = loopValue;
     }
 
     public String getLabel()
     {
-        return TapestryInternalUtils.getLabelForEnum(_messages, _loopValue);
+        return TapestryInternalUtils.getLabelForEnum(messages, loopValue);
     }
 }

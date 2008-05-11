@@ -19,10 +19,10 @@ import org.apache.tapestry.annotations.Persist;
 public class ExceptionEventDemo
 {
     @Persist("flash")
-    private String _message;
+    private String message;
 
     @Persist
-    private boolean _intercept = true;
+    private boolean intercept = true;
 
     public Object getInvalidContext()
     {
@@ -31,19 +31,19 @@ public class ExceptionEventDemo
 
     void onActivate(float context)
     {
-        _message = "Activation context: " + context;
+        message = "Activation context: " + context;
     }
 
     void onActionFromFail(float context)
     {
-        _message = "Event context: " + context;
+        message = "Event context: " + context;
     }
 
     Object onException(Throwable exception)
     {
-        if (!_intercept) return null;
+        if (!intercept) return null;
 
-        _message = "Exception: " + exception.getMessage();
+        message = "Exception: " + exception.getMessage();
 
         return this;
     }
@@ -51,21 +51,21 @@ public class ExceptionEventDemo
 
     void onActionFromEnable()
     {
-        _intercept = true;
+        intercept = true;
     }
 
     void onActionFromDisable()
     {
-        _intercept = false;
+        intercept = false;
     }
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     public boolean isIntercept()
     {
-        return _intercept;
+        return intercept;
     }
 }

@@ -19,19 +19,25 @@ import org.apache.tapestry.annotations.Persist;
 public class TextFieldWrapperTypeDemo
 {
     @Persist
-    private Integer _count;
+    private Integer count;
 
     public Integer getCount()
     {
-        return _count;
+        return count;
     }
 
     public void setCount(Integer count)
     {
-        _count = count;
+        this.count = count;
     }
 
-    public boolean isCountNull() { return _count == null; }
+    public boolean isCountNull()
+    {
+        return count == null;
+    }
 
-    void onActionFromClear() { _count = null; }
+    void onActionFromClear()
+    {
+        count = null;
+    }
 }

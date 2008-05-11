@@ -22,10 +22,10 @@ public class TestPageForAsset
 {
     @Inject
     @Path("context:css/test.css")
-    private Asset _asset;
+    private Asset asset;
 
     public String getStylePath()
     {
-        return _asset.toClientURL();
+        return asset.toClientURL();
     }
 }

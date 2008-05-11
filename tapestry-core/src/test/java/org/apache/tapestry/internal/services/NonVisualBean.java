@@ -18,28 +18,28 @@ import org.apache.tapestry.beaneditor.NonVisual;
 
 public class NonVisualBean
 {
-    private int _id;
+    private int id;
 
-    private String _name;
+    private String name;
 
     @NonVisual
     public int getId()
     {
-        return _id;
+        return id;
     }
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     public void setId(int id)
     {
-        _id = id;
+        this.id = id;
     }
 
     public void setName(String name)
     {
-        _name = name;
+        this.name = name;
     }
 }

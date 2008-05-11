@@ -19,10 +19,10 @@ import org.apache.tapestry.annotations.InjectPage;
 public class IndirectProtectedFields
 {
     @InjectPage
-    private ProtectedFields _protectedFields;
+    private ProtectedFields protectedFields;
 
     Object onActionFromGo()
     {
-        return _protectedFields;
+        return protectedFields;
     }
 }

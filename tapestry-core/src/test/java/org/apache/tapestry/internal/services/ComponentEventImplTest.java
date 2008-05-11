@@ -26,18 +26,18 @@ import org.testng.annotations.Test;
 
 public class ComponentEventImplTest extends InternalBaseTestCase
 {
-    private TypeCoercer _coercer;
+    private TypeCoercer coercer;
 
     @BeforeClass
     public void setup_coercer()
     {
-        _coercer = getObject(TypeCoercer.class, null);
+        coercer = getObject(TypeCoercer.class, null);
     }
 
     @AfterClass
     public void cleanup_coercer()
     {
-        _coercer = null;
+        coercer = null;
     }
 
     @Test

@@ -28,31 +28,31 @@ public final class IntegerRange implements Iterable<Integer>
 
     private class RangeIterator implements Iterator<Integer>
     {
-        private final int _increment;
+        private final int increment;
 
-        private int _value = start;
+        private int value = start;
 
-        private boolean _hasNext = true;
+        private boolean hasNext = true;
 
         RangeIterator()
         {
-            _increment = start < finish ? +1 : -1;
+            increment = start < finish ? +1 : -1;
         }
 
         public boolean hasNext()
         {
-            return _hasNext;
+            return hasNext;
         }
 
         public Integer next()
         {
-            if (!_hasNext) throw new IllegalStateException();
+            if (!hasNext) throw new IllegalStateException();
 
-            int result = _value;
+            int result = value;
 
-            _hasNext = _value != finish;
+            hasNext = value != finish;
 
-            _value += _increment;
+            value += increment;
 
             return result;
         }

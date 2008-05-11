@@ -20,10 +20,10 @@ import org.apache.tapestry.integration.app2.SimpleASO;
 public class TestPageForASO
 {
     @ApplicationState
-    private SimpleASO _aso;
+    private SimpleASO aso;
 
     public String getFooString()
     {
-        return _aso.getFoo();
+        return aso.getFoo();
     }
 }

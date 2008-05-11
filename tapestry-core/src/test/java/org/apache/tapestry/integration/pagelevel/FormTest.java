@@ -26,28 +26,28 @@ import java.util.Map;
 
 public class FormTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void submit_form()
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName);
-        Document doc = _tester.renderPage("TestPageForForm");
+        tester = new PageTester(appPackage, appName);
+        Document doc = tester.renderPage("TestPageForForm");
         Element form = doc.getElementById("form1");
         Map<String, String> fieldValues = CollectionFactory.newMap();
         fieldValues.put("t1", "hello");
-        doc = _tester.submitForm(form, fieldValues);
+        doc = tester.submitForm(form, fieldValues);
         assertTrue(doc.toString().contains("You entered: hello"));
     }
 
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

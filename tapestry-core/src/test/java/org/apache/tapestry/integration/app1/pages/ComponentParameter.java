@@ -19,17 +19,17 @@ import org.apache.tapestry.annotations.Persist;
 public class ComponentParameter
 {
     @Persist("flash")
-    private String _message;
+    private String message;
 
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     void onActionFromBlockAction()
     {
-        _message = "Link was clicked.";
+        message = "Link was clicked.";
     }
 
 }

@@ -32,15 +32,14 @@ import org.testng.annotations.Test;
 
 public class PageElementFactoryImplTest extends InternalBaseTestCase
 {
-    private static MarkupModel _xmlModel = new XMLMarkupModel();
-
+    private static MarkupModel xmlModel = new XMLMarkupModel();
 
     @Test
     public void attribute()
     {
         ComponentInstantiatorSource source = mockComponentInstantiatorSource();
         ComponentClassResolver resolver = mockComponentClassResolver();
-        MarkupWriter writer = new MarkupWriterImpl(_xmlModel);
+        MarkupWriter writer = new MarkupWriterImpl(xmlModel);
         Location l = mockLocation();
         RenderQueue queue = mockRenderQueue();
 

@@ -30,7 +30,7 @@ public class SymbolSourceImpl implements SymbolSource
     /**
      * Cache of symbol name to fully expanded symbol value.
      */
-    private final Map<String, String> _cache = CollectionFactory.newConcurrentMap();
+    private final Map<String, String> cache = CollectionFactory.newConcurrentMap();
 
     /**
      * Contains execution data needed when performing an expansion (largely, to check for endless recursion).
@@ -92,13 +92,13 @@ public class SymbolSourceImpl implements SymbolSource
 
         String valueForSymbol(String symbolName)
         {
-            String value = _cache.get(symbolName);
+            String value = cache.get(symbolName);
 
             if (value == null)
             {
                 value = expandSymbol(symbolName);
 
-                _cache.put(symbolName, value);
+                cache.put(symbolName, value);
             }
 
             return value;
@@ -206,7 +206,7 @@ public class SymbolSourceImpl implements SymbolSource
 
     public String valueForSymbol(String symbolName)
     {
-        String value = _cache.get(symbolName);
+        String value = cache.get(symbolName);
 
         // If already in the cache, then return it. Otherwise, let the SE find the value and
         // update the cache.

@@ -17,44 +17,44 @@ package org.apache.tapestry.internal;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
 /**
- * Used as test when setting the order of properties via
- * {@link TapestryInternalUtils#orderProperties(org.apache.tapestry.ioc.services.ClassPropertyAdapter, ClassFactory, java.util.List)}.
+ * Used as test when setting the order of properties via {@link TapestryInternalUtils#orderProperties(org.apache.tapestry.ioc.services.ClassPropertyAdapter,
+ * ClassFactory, java.util.List)}.
  */
 public class DataBean
 {
-    private String _firstName;
+    private String firstName;
 
-    private String _lastName;
+    private String lastName;
 
-    private int _age;
+    private int age;
 
     public String getFirstName()
     {
-        return _firstName;
+        return firstName;
     }
 
     public String getLastName()
     {
-        return _lastName;
+        return lastName;
     }
 
     public int getAge()
     {
-        return _age;
+        return age;
     }
 
     public void setAge(int age)
     {
-        _age = age;
+        this.age = age;
     }
 
     public void setFirstName(String firstName)
     {
-        _firstName = firstName;
+        this.firstName = firstName;
     }
 
     public void setLastName(String lastName)
     {
-        _lastName = lastName;
+        this.lastName = lastName;
     }
 }

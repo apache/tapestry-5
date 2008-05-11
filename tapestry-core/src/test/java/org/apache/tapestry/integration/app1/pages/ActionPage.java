@@ -18,35 +18,35 @@ import org.apache.tapestry.annotations.Persist;
 
 public class ActionPage
 {
-    private int _index;
+    private int index;
 
     // Must be persistent, to survive from one request to the next.
     // An action request is always followed by a redirect request.
     @Persist
-    private int _value;
+    private int value;
 
     void onActionFromChoose(int value)
     {
-        _value = value;
+        this.value = value;
     }
 
     public int getIndex()
     {
-        return _index;
+        return index;
     }
 
     public void setIndex(int index)
     {
-        _index = index;
+        this.index = index;
     }
 
     public int getValue()
     {
-        return _value;
+        return value;
     }
 
     public String getLinkClass()
     {
-        return _index == _value ? "selected" : null;
+        return index == value ? "selected" : null;
     }
 }

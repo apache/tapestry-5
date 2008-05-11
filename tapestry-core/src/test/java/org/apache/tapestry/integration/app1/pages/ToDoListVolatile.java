@@ -25,65 +25,65 @@ import java.util.List;
 public class ToDoListVolatile
 {
     @Inject
-    private ToDoDatabase _database;
+    private ToDoDatabase database;
 
-    private ToDoItem _item;
+    private ToDoItem item;
 
-    private List<ToDoItem> _items;
+    private List<ToDoItem> items;
 
     @Component
-    private Form _form;
+    private Form form;
 
     public List<ToDoItem> getItems()
     {
-        return _items;
+        return items;
     }
 
     public ToDoItem getItem()
     {
-        return _item;
+        return item;
     }
 
     public void setItem(ToDoItem item)
     {
-        _item = item;
+        this.item = item;
     }
 
     public ToDoDatabase getDatabase()
     {
-        return _database;
+        return database;
     }
 
     void onPrepare()
     {
-        _items = _database.findAll();
+        items = database.findAll();
     }
 
     void onSuccess()
     {
         int order = 0;
 
-        for (ToDoItem item : _items)
+        for (ToDoItem item : items)
         {
             item.setOrder(order++);
-            _database.update(item);
+            database.update(item);
         }
     }
 
     void onSelectedFromAddNew()
     {
-        if (_form.isValid())
+        if (form.isValid())
         {
             ToDoItem item = new ToDoItem();
             item.setTitle("<New To Do>");
-            item.setOrder(_items.size());
+            item.setOrder(items.size());
 
-            _database.add(item);
+            database.add(item);
         }
     }
 
     void onActionFromReset()
     {
-        _database.reset();
+        database.reset();
     }
 }

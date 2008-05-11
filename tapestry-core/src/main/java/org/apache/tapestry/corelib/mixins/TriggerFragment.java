@@ -33,7 +33,7 @@ import org.apache.tapestry.services.Heartbeat;
 public class TriggerFragment
 {
     @InjectContainer
-    private Field _container;
+    private Field container;
 
     /**
      * The {@link org.apache.tapestry.corelib.components.FormFragment} instance to make dynamically visible or hidden.
@@ -54,7 +54,7 @@ public class TriggerFragment
             public void run()
             {
                 JSONArray spec = new JSONArray();
-                spec.put(_container.getClientId());
+                spec.put(container.getClientId());
                 spec.put(fragment.getClientId());
 
                 pageRenderSupport.addInit("linkTriggerToFormFragment", spec);

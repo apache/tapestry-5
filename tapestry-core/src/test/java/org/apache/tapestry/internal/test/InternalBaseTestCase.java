@@ -62,9 +62,9 @@ import java.util.ResourceBundle;
  */
 public class InternalBaseTestCase extends TapestryTestCase implements Registry
 {
-    private static Registry _registry;
+    private static Registry registry;
 
-    private Messages _validationMessages;
+    private Messages validationMessages;
 
     @BeforeSuite
     public final void setup_registry()
@@ -83,55 +83,55 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
 
         builder.add(module);
 
-        _registry = builder.build();
+        registry = builder.build();
 
-        // _registry.getService(Alias.class).setMode("servlet");
+        // registry.getService(Alias.class).setMode("servlet");
 
-        _registry.performRegistryStartup();
+        registry.performRegistryStartup();
     }
 
     @AfterSuite
     public final void shutdown_registry()
     {
-        _registry.shutdown();
+        registry.shutdown();
 
-        _registry = null;
+        registry = null;
     }
 
     @AfterMethod
     public final void cleanupThread()
     {
-        _registry.cleanupThread();
+        registry.cleanupThread();
     }
 
     public void performRegistryStartup()
     {
-        _registry.performRegistryStartup();
+        registry.performRegistryStartup();
     }
 
     public final <T> T getObject(Class<T> objectType, AnnotationProvider annotationProvider)
     {
-        return _registry.getObject(objectType, annotationProvider);
+        return registry.getObject(objectType, annotationProvider);
     }
 
     public final <T> T getService(Class<T> serviceInterface)
     {
-        return _registry.getService(serviceInterface);
+        return registry.getService(serviceInterface);
     }
 
     public final <T> T getService(String serviceId, Class<T> serviceInterface)
     {
-        return _registry.getService(serviceId, serviceInterface);
+        return registry.getService(serviceId, serviceInterface);
     }
 
     public final <T> T autobuild(Class<T> clazz)
     {
-        return _registry.autobuild(clazz);
+        return registry.autobuild(clazz);
     }
 
     public <T> T proxy(Class<T> interfaceClass, Class<? extends T> implementationClass)
     {
-        return _registry.proxy(interfaceClass, implementationClass);
+        return registry.proxy(interfaceClass, implementationClass);
     }
 
     public final void shutdown()
@@ -416,15 +416,15 @@ public class InternalBaseTestCase extends TapestryTestCase implements Registry
      */
     protected final Messages validationMessages()
     {
-        if (_validationMessages == null)
+        if (validationMessages == null)
         {
             ResourceBundle bundle = ResourceBundle
                     .getBundle("org.apache.tapestry.internal.ValidationMessages");
 
-            _validationMessages = new MessagesImpl(Locale.ENGLISH, bundle);
+            validationMessages = new MessagesImpl(Locale.ENGLISH, bundle);
         }
 
-        return _validationMessages;
+        return validationMessages;
     }
 
     protected final LinkFactoryListener mockLinkFactoryListener()

@@ -20,21 +20,21 @@ import org.apache.tapestry.annotations.Persist;
 public class EventMethodTranslate
 {
     @Persist
-    private int _count;
+    private int count;
 
     public int getCount()
     {
-        return _count;
+        return count;
     }
 
     public void setCount(int count)
     {
-        _count = count;
+        this.count = count;
     }
 
     String onToClientFromCount()
     {
-        if (_count == 0) return "zero";
+        if (count == 0) return "zero";
 
         // Get the default behavior
         return null;

@@ -25,7 +25,7 @@ import java.util.Locale;
 
 public class PageImplTest extends InternalBaseTestCase
 {
-    private final Locale _locale = Locale.ENGLISH;
+    private final Locale locale = Locale.ENGLISH;
 
     private static final String LOGICAL_PAGE_NAME = "MyPage";
 
@@ -36,13 +36,13 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null);
 
         assertNull(page.getRootElement());
 
         page.setRootElement(root);
 
-        assertSame(page.getLocale(), _locale);
+        assertSame(page.getLocale(), locale);
         assertSame(page.getRootElement(), root);
         assertSame(page.getLogicalName(), LOGICAL_PAGE_NAME);
 
@@ -60,7 +60,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, _locale, null, null);
+        Page page = new PageImpl(null, locale, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -82,7 +82,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, _locale, null, null);
+        Page page = new PageImpl(null, locale, null, null);
 
         page.addLifecycleListener(listener);
 
@@ -116,7 +116,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, _locale, null, null);
+        Page page = new PageImpl(null, locale, null, null);
         page.setRootElement(element);
 
         page.addLifecycleListener(listener1);
@@ -145,7 +145,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(null, _locale, null, null);
+        Page page = new PageImpl(null, locale, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -171,7 +171,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null);
 
         page.addLifecycleListener(listener1);
         page.addLifecycleListener(listener2);
@@ -188,7 +188,7 @@ public class PageImplTest extends InternalBaseTestCase
 
         replay();
 
-        Page page = new PageImpl(LOGICAL_PAGE_NAME, _locale, null, null);
+        Page page = new PageImpl(LOGICAL_PAGE_NAME, locale, null, null);
 
         page.setRootElement(root);
 

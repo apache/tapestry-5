@@ -18,15 +18,15 @@ import java.util.List;
 
 public class ListEventContextDemo
 {
-    private List _eventContext;
+    private List eventContext;
 
     public List getEventContext()
     {
-        return _eventContext;
+        return eventContext;
     }
 
     void onActivate(List context)
     {
-        _eventContext = context;
+        eventContext = context;
     }
 }

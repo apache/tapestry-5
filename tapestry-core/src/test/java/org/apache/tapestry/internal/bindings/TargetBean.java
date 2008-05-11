@@ -20,23 +20,23 @@ import org.apache.tapestry.beaneditor.OrderBefore;
 
 public class TargetBean extends DefaultComponent
 {
-    private String _objectValue;
+    private String objectValue;
 
-    private int _intValue;
+    private int intValue;
 
-    String _writeOnly;
+    String writeOnly;
 
-    private StringHolder _stringHolder = new StringHolderImpl();
+    private StringHolder stringHolder = new StringHolderImpl();
 
     public StringHolder getStringHolder()
     {
-        return _stringHolder;
+        return stringHolder;
     }
 
     @BeforeRenderBody
     public StringHolder stringHolderMethod()
     {
-        return _stringHolder;
+        return stringHolder;
     }
 
     public void voidMethod()
@@ -46,30 +46,30 @@ public class TargetBean extends DefaultComponent
 
     public int getIntValue()
     {
-        return _intValue;
+        return intValue;
     }
 
     public void setIntValue(int intValue)
     {
-        _intValue = intValue;
+        this.intValue = intValue;
     }
 
     @OrderAfter("readOnly")
     public String getObjectValue()
     {
-        return _objectValue;
+        return objectValue;
     }
 
     @OrderAfter("writeOnly")
     public void setObjectValue(String objectValue)
     {
-        _objectValue = objectValue;
+        this.objectValue = objectValue;
     }
 
     @OrderAfter("foobar")
     public void setWriteOnly(String value)
     {
-        _writeOnly = value;
+        writeOnly = value;
     }
 
     @OrderBefore("writeOnly")

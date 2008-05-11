@@ -35,12 +35,12 @@ import java.util.Collections;
  */
 public class BeanModelSourceImplTest extends InternalBaseTestCase
 {
-    private BeanModelSource _source;
+    private BeanModelSource source;
 
     @BeforeClass
     public void setup()
     {
-        _source = getObject(BeanModelSource.class, null);
+        source = getObject(BeanModelSource.class, null);
     }
 
     /**
@@ -57,7 +57,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertSame(model.getBeanType(), SimpleBean.class);
 
@@ -114,7 +114,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertSame(model.getBeanType(), SimpleBean.class);
 
@@ -144,7 +144,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
@@ -175,7 +175,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel<SimpleBean> model = _source.create(SimpleBean.class, true, resources);
+        BeanModel<SimpleBean> model = source.create(SimpleBean.class, true, resources);
 
         SimpleBean s1 = model.newInstance();
 
@@ -200,7 +200,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         model.exclude("firstname");
 
@@ -236,7 +236,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("firstName", "lastName", "age"));
 
@@ -262,11 +262,11 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(ReadOnlyBean.class, true, resources);
+        BeanModel model = source.create(ReadOnlyBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("value"));
 
-        model = _source.create(ReadOnlyBean.class, false, resources);
+        model = source.create(ReadOnlyBean.class, false, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("value", "readOnly"));
 
@@ -284,7 +284,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(EnumBean.class, true, resources);
+        BeanModel model = source.create(EnumBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("token"));
 
@@ -304,7 +304,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         try
         {
@@ -331,7 +331,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         try
         {
@@ -358,7 +358,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         model.add("shrub.foo()", null);
 
@@ -388,7 +388,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         PropertyModel pm = model.add("shrub.foo()", null);
 
@@ -408,7 +408,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         PropertyModel pm = model.add("shrub.foo()", null);
 
@@ -429,7 +429,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(StoogeBean.class, true, resources);
+        BeanModel model = source.create(StoogeBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("larry", "moe", "shemp", "curly"));
 
@@ -447,7 +447,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources).get("age").label("Decrepitude").model();
+        BeanModel model = source.create(SimpleBean.class, true, resources).get("age").label("Decrepitude").model();
 
         assertEquals(model.get("age").getLabel(), "Decrepitude");
 
@@ -468,7 +468,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertEquals(model.get("age").getLabel(), "Decrepitude");
 
@@ -486,7 +486,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(StringArrayBean.class, true, resources);
+        BeanModel model = source.create(StringArrayBean.class, true, resources);
 
         // There's not editor for string arrays yet, so it won't show up normally.
 
@@ -523,7 +523,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(CompositeBean.class, true, resources);
+        BeanModel model = source.create(CompositeBean.class, true, resources);
 
         // No editor for CompositeBean, so this will be empty.
 
@@ -564,7 +564,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(WriteOnlyBean.class, false, resources);
+        BeanModel model = source.create(WriteOnlyBean.class, false, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("readOnly", "readWrite"));
 
@@ -582,7 +582,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         PropertyModel property = model.add("placeholder", null);
 
@@ -604,7 +604,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertSame(model.exclude("age"), model);
 
@@ -624,7 +624,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertSame(model.exclude("frobozz"), model);
 
@@ -644,7 +644,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(NonVisualBean.class, true, resources);
+        BeanModel model = source.create(NonVisualBean.class, true, resources);
 
         assertEquals(model.getPropertyNames(), Arrays.asList("name"));
 
@@ -662,7 +662,7 @@ public class BeanModelSourceImplTest extends InternalBaseTestCase
 
         replay();
 
-        BeanModel model = _source.create(SimpleBean.class, true, resources);
+        BeanModel model = source.create(SimpleBean.class, true, resources);
 
         assertSame(model.getBeanType(), SimpleBean.class);
 

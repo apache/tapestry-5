@@ -23,33 +23,33 @@ import org.apache.tapestry.integration.app1.data.SubscribeData;
 public class FormFragmentDemo
 {
     @Property
-    private SubscribeData _subscribe;
+    private SubscribeData subscribe;
 
     @Property
-    private boolean _subscribeToEmail;
+    private boolean subscribeToEmail;
 
     @Property
-    private boolean _codeVisible;
+    private boolean codeVisible;
 
     @Component
-    private Form _form;
+    private Form form;
 
     @InjectPage
-    private FormFragmentOutput _outputPage;
+    private FormFragmentOutput outputPage;
 
     public SubscribeData getSubscribe()
     {
-        return _subscribe;
+        return subscribe;
     }
 
     void onPrepare()
     {
-        _subscribe = new SubscribeData();
+        subscribe = new SubscribeData();
     }
 
     void onActionFromClear()
     {
-        _form.clearErrors();
+        form.clearErrors();
     }
 
     Object onFailure()
@@ -59,6 +59,6 @@ public class FormFragmentDemo
 
     Object onSuccess()
     {
-        return _outputPage.initialize(_subscribe);
+        return outputPage.initialize(subscribe);
     }
 }

@@ -301,7 +301,7 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
 
     private transient int modCount = 0;
 
-    private transient Set<Map.Entry<String, V>> _entrySet;
+    private transient Set<Map.Entry<String, V>> entrySet;
 
     public CaseInsensitiveMap()
     {
@@ -377,9 +377,9 @@ public class CaseInsensitiveMap<V> extends AbstractMap<String, V> implements Ser
     @Override
     public Set<Map.Entry<String, V>> entrySet()
     {
-        if (_entrySet == null) _entrySet = new EntrySet();
+        if (entrySet == null) entrySet = new EntrySet();
 
-        return _entrySet;
+        return entrySet;
     }
 
     private Position select(Object key)

@@ -21,18 +21,18 @@ public class Countdown
 {
     @SuppressWarnings("unused")
     @Component(parameters =
-            {"start=10", "end=1", "value=countValue"})
-    private Count _count;
+            { "start=10", "end=1", "value=countValue" })
+    private Count count;
 
-    private int _countValue;
+    private int countValue;
 
     public int getCountValue()
     {
-        return _countValue;
+        return countValue;
     }
 
     public void setCountValue(int countValue)
     {
-        _countValue = countValue;
+        this.countValue = countValue;
     }
 }

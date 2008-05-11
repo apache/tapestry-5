@@ -21,29 +21,29 @@ import org.apache.tapestry.services.Request;
 public class ClientPersistenceDemo
 {
     @Persist("client")
-    private Object _persistedValue;
+    private Object persistedValue;
 
     @Inject
-    private Request _request;
+    private Request request;
 
     public Object getPersistedValue()
     {
-        return _persistedValue;
+        return persistedValue;
     }
 
     public boolean getSessionExists()
     {
-        return _request.getSession(false) != null;
+        return request.getSession(false) != null;
     }
 
     void onActionFromStoreString()
     {
-        _persistedValue = "A String";
+        persistedValue = "A String";
     }
 
     void onActionFromStoreBad()
     {
-        _persistedValue = new Runnable()
+        persistedValue = new Runnable()
         {
             public void run()
             {

@@ -68,7 +68,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
 
     private final String webappRoot;
 
-    private final String _seleniumBrowserCommand;
+    private final String seleniumBrowserCommand;
 
     private JettyRunner jettyRunner;
 
@@ -100,7 +100,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
     protected AbstractIntegrationTestSuite(String webAppRoot, String browserCommand)
     {
         webappRoot = webAppRoot;
-        _seleniumBrowserCommand = browserCommand;
+        seleniumBrowserCommand = browserCommand;
     }
 
     protected final void assertSourcePresent(String... expected)
@@ -255,7 +255,7 @@ public class AbstractIntegrationTestSuite extends Assert implements Selenium
         server.start();
 
         CommandProcessor cp = new HttpCommandProcessor("localhost", SeleniumServer.DEFAULT_PORT,
-                                                       _seleniumBrowserCommand, BASE_URL);
+                                                       seleniumBrowserCommand, BASE_URL);
 
         selenium = new DefaultSelenium(new ErrorReportingCommandProcessor(cp));
 

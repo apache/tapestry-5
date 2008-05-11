@@ -24,22 +24,22 @@ import java.util.Set;
 public class GridSetDemo
 {
     @Inject
-    private MusicLibrary _library;
+    private MusicLibrary library;
 
-    private Track _track;
+    private Track track;
 
     public Track getTrack()
     {
-        return _track;
+        return track;
     }
 
     public void setTrack(Track track)
     {
-        _track = track;
+        this.track = track;
     }
 
     public Set<Track> getTracks()
     {
-        return CollectionFactory.newSet(_library.getTracks());
+        return CollectionFactory.newSet(library.getTracks());
     }
 }

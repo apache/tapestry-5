@@ -21,28 +21,28 @@ import org.apache.tapestry.annotations.Retain;
  */
 public class BasicComponent
 {
-    private String _value;
+    private String value;
 
     @Retain
-    private String _retainedValue;
+    private String retainedValue;
 
     public final String getRetainedValue()
     {
-        return _retainedValue;
+        return retainedValue;
     }
 
     public final void setRetainedValue(String retainedValue)
     {
-        _retainedValue = retainedValue;
+        this.retainedValue = retainedValue;
     }
 
     public final String getValue()
     {
-        return _value;
+        return value;
     }
 
     public final void setValue(String value)
     {
-        _value = value;
+        this.value = value;
     }
 }

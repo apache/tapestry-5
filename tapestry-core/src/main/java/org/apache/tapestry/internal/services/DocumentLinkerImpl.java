@@ -41,27 +41,27 @@ public class DocumentLinkerImpl implements DocumentLinker
 
     private class IncludedStylesheet
     {
-        private final String _url;
+        private final String url;
 
-        private final String _media;
+        private final String media;
 
         IncludedStylesheet(String url, String media)
         {
-            _url = url;
-            _media = media;
+            this.url = url;
+            this.media = media;
         }
 
         void add(Element head, int index)
         {
             head.elementAt(index, "link",
 
-                           "href", _url,
+                           "href", url,
 
                            "rel", "stylesheet",
 
                            "type", "text/css",
 
-                           "media", _media);
+                           "media", media);
         }
     }
 

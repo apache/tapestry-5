@@ -38,7 +38,7 @@ import java.util.List;
  */
 public class GridRows
 {
-    private int _startRow;
+    private int startRow;
 
     static class SetupForRow implements ComponentAction<GridRows>
     {
@@ -129,7 +129,7 @@ public class GridRows
 
         if (rc != null) classes.add(rc);
 
-        if (rowIndex == _startRow) classes.add(GridConstants.FIRST_CLASS);
+        if (rowIndex == startRow) classes.add(GridConstants.FIRST_CLASS);
 
         if (rowIndex == endRow) classes.add(GridConstants.LAST_CLASS);
 
@@ -176,10 +176,10 @@ public class GridRows
 
         if (currentPage > maxPages) currentPage = maxPages;
 
-        _startRow = (currentPage - 1) * rowsPerPage;
-        endRow = Math.min(availableRows - 1, _startRow + rowsPerPage - 1);
+        startRow = (currentPage - 1) * rowsPerPage;
+        endRow = Math.min(availableRows - 1, startRow + rowsPerPage - 1);
 
-        rowIndex = _startRow;
+        rowIndex = startRow;
 
         recordingStateInsideForm = !volatileState && formSupport != null;
     }

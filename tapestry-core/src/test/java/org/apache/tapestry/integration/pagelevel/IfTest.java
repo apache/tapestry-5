@@ -22,15 +22,15 @@ import org.testng.annotations.Test;
 
 public class IfTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void render()
     {
         String appPackage = "org.apache.tapestry.integration.app2";
         String appName = "";
-        _tester = new PageTester(appPackage, appName);
-        Document doc = _tester.renderPage("TestPageForIf");
+        tester = new PageTester(appPackage, appName);
+        Document doc = tester.renderPage("TestPageForIf");
         assertNotNull(doc.getElementById("1"));
         assertNotNull(doc.getElementById("3"));
         assertNotNull(doc.getElementById("5"));
@@ -44,9 +44,9 @@ public class IfTest extends Assert
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

@@ -23,15 +23,15 @@ import java.util.List;
 public class GridFormDemo
 {
     @Inject
-    private ToDoDatabase _database;
+    private ToDoDatabase database;
 
-    private ToDoItem _item;
+    private ToDoItem item;
 
-    private List<ToDoItem> _items;
+    private List<ToDoItem> items;
 
     void onPrepare()
     {
-        _items = _database.findAll();
+        items = database.findAll();
     }
 
     void onSuccess()
@@ -40,28 +40,28 @@ public class GridFormDemo
         // If we provided our own GridDataSource, we would be able to update just the items
         // currently visible. But as is, we have to update each one!
 
-        for (ToDoItem item : _items)
-            _database.update(item);
+        for (ToDoItem item : items)
+            database.update(item);
     }
 
     public List<ToDoItem> getItems()
     {
-        return _items;
+        return items;
     }
 
     public ToDoItem getItem()
     {
-        return _item;
+        return item;
     }
 
     public void setItem(ToDoItem item)
     {
-        _item = item;
+        this.item = item;
     }
 
     void onActionFromReset()
     {
-        _database.clear();
+        database.clear();
 
         for (int i = 0; i < 20; i++)
         {
@@ -69,7 +69,7 @@ public class GridFormDemo
             item.setTitle("ToDo # " + (i + 1));
             item.setOrder(i);
 
-            _database.add(item);
+            database.add(item);
         }
     }
 

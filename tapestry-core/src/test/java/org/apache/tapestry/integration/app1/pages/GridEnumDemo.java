@@ -23,15 +23,15 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class GridEnumDemo
 {
     @Inject
-    private ToDoDatabase _database;
+    private ToDoDatabase database;
 
     void onActionFromReset()
     {
-        _database.reset();
+        database.reset();
     }
 
     public ToDoDatabase getDatabase()
     {
-        return _database;
+        return database;
     }
 }

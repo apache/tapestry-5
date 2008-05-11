@@ -50,16 +50,16 @@ public class PageElementFactoryImpl implements PageElementFactory
 
     private static class LiteralStringProvider implements StringProvider
     {
-        private final String _string;
+        private final String string;
 
         LiteralStringProvider(String string)
         {
-            _string = string;
+            this.string = string;
         }
 
         public String provideString()
         {
-            return _string;
+            return string;
         }
     }
 

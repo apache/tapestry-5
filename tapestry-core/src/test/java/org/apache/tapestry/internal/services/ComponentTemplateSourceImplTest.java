@@ -36,11 +36,11 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
     static public final String PATH = "org/apache/tapestry/internal/pageload";
 
-    private final ClassLoader _loader = Thread.currentThread().getContextClassLoader();
+    private final ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
     /**
-     * Creates a new class loader, whose parent is the thread's context class loader, but adds a
-     * single classpath root from the filesystem.
+     * Creates a new class loader, whose parent is the thread's context class loader, but adds a single classpath root
+     * from the filesystem.
      *
      * @see #createClasspathRoot()
      */
@@ -52,7 +52,7 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
         URL url = new URL(urlPath + "/");
 
         return new URLClassLoader(new URL[]
-                {url}, _loader);
+                { url }, loader);
     }
 
     /**
@@ -308,6 +308,6 @@ public class ComponentTemplateSourceImplTest extends InternalBaseTestCase
 
     private Resource newResource(String name)
     {
-        return new ClasspathResource(_loader, PATH + "/" + name);
+        return new ClasspathResource(loader, PATH + "/" + name);
     }
 }

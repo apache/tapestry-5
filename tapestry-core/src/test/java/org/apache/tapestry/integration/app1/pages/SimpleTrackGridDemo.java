@@ -27,33 +27,33 @@ import java.util.List;
 public class SimpleTrackGridDemo
 {
     @Inject
-    private MusicLibrary _library;
+    private MusicLibrary library;
 
     @Inject
-    private BeanModelSource _beanModelSource;
+    private BeanModelSource beanModelSource;
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
-    private SimpleTrack _track;
+    private SimpleTrack track;
 
     public SimpleTrack getTrack()
     {
-        return _track;
+        return track;
     }
 
     public void setTrack(SimpleTrack track)
     {
-        _track = track;
+        this.track = track;
     }
 
     public List<Track> getTracks()
     {
-        return _library.getTracks();
+        return library.getTracks();
     }
 
     public BeanModel getSimpleTrackModel()
     {
-        return _beanModelSource.create(SimpleTrack.class, false, _resources);
+        return beanModelSource.create(SimpleTrack.class, false, resources);
     }
 }

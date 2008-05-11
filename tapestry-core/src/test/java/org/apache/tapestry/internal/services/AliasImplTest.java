@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class AliasImplTest extends InternalBaseTestCase
 {
-    private Map<Class, Object> _emptyMap = Collections.emptyMap();
+    private Map<Class, Object> emptyMap = Collections.emptyMap();
 
     protected final AliasManager newAliasManager()
     {
@@ -51,7 +51,7 @@ public class AliasImplTest extends InternalBaseTestCase
         configuration.put(Runnable.class, r);
 
         train_getAliasesForMode(manager, mode, configuration);
-        train_getAliasesForMode(overridesManager, mode, _emptyMap);
+        train_getAliasesForMode(overridesManager, mode, emptyMap);
 
         replay();
 
@@ -120,8 +120,8 @@ public class AliasImplTest extends InternalBaseTestCase
 
         ObjectLocator locator = mockObjectLocator();
 
-        train_getAliasesForMode(manager, mode, _emptyMap);
-        train_getAliasesForMode(overridesManager, mode, _emptyMap);
+        train_getAliasesForMode(manager, mode, emptyMap);
+        train_getAliasesForMode(overridesManager, mode, emptyMap);
 
         replay();
 

@@ -21,19 +21,19 @@ import org.apache.tapestry.integration.app1.data.UserCredentials;
 public class MultiBeanDemoResult
 {
     @ApplicationState
-    private UserCredentials _credentials;
+    private UserCredentials credentials;
 
     @ApplicationState
-    private RolePath _rolePath;
+    private RolePath rolePath;
 
     public UserCredentials getCredentials()
     {
-        return _credentials;
+        return credentials;
     }
 
     public RolePath getRolePath()
     {
-        return _rolePath;
+        return rolePath;
     }
 
 }

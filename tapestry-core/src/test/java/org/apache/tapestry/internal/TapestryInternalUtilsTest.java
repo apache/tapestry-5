@@ -35,22 +35,22 @@ import java.util.regex.Pattern;
 
 public class TapestryInternalUtilsTest extends InternalBaseTestCase
 {
-    private ClassFactory _classFactory;
+    private ClassFactory classFactory;
 
-    private PropertyAccess _access;
+    private PropertyAccess access;
 
     @BeforeClass
     public void setup()
     {
-        _classFactory = getService("ClassFactory", ClassFactory.class);
-        _access = getService("PropertyAccess", PropertyAccess.class);
+        classFactory = getService("ClassFactory", ClassFactory.class);
+        access = getService("PropertyAccess", PropertyAccess.class);
     }
 
     @AfterClass
     public void cleanup()
     {
-        _access = null;
-        _classFactory = null;
+        access = null;
+        classFactory = null;
     }
 
 
@@ -297,13 +297,13 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @Test
     public void property_order_basic()
     {
-        ClassPropertyAdapter adapter = _access.getAdapter(DataBean.class);
+        ClassPropertyAdapter adapter = access.getAdapter(DataBean.class);
 
         List<String> names = adapter.getPropertyNames();
 
         names.remove("class");
 
-        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, _classFactory, names);
+        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, classFactory, names);
 
         assertEquals(sorted, Arrays.asList("firstName", "lastName", "age"));
     }
@@ -311,13 +311,13 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @Test
     public void property_order_on_subclass()
     {
-        ClassPropertyAdapter adapter = _access.getAdapter(DataBeanSubclass.class);
+        ClassPropertyAdapter adapter = access.getAdapter(DataBeanSubclass.class);
 
         List<String> names = adapter.getPropertyNames();
 
         names.remove("class");
 
-        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, _classFactory, names);
+        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, classFactory, names);
 
         // Subclass properties listed after superclass properties, as desired.
 
@@ -327,13 +327,13 @@ public class TapestryInternalUtilsTest extends InternalBaseTestCase
     @Test
     public void properties_with_order_annotation_filtered()
     {
-        ClassPropertyAdapter adapter = _access.getAdapter(PropertyOrderBean.class);
+        ClassPropertyAdapter adapter = access.getAdapter(PropertyOrderBean.class);
 
         List<String> names = adapter.getPropertyNames();
 
         names.remove("class");
 
-        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, _classFactory, names);
+        List<String> sorted = TapestryInternalUtils.orderProperties(null, adapter, classFactory, names);
 
         // Property third has an explicit @OrderBefore
 

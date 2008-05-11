@@ -30,12 +30,12 @@ import org.testng.annotations.Test;
 
 public class PageRenderDispatcherTest extends InternalBaseTestCase
 {
-    private ContextValueEncoder _contextValueEncoder;
+    private ContextValueEncoder contextValueEncoder;
 
     @BeforeClass
     public void setup()
     {
-        _contextValueEncoder = getService(ContextValueEncoder.class);
+        contextValueEncoder = getService(ContextValueEncoder.class);
     }
 
     @Test
@@ -115,7 +115,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, _contextValueEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextValueEncoder);
 
         assertTrue(d.dispatch(request, response));
 
@@ -212,7 +212,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         PageRenderRequestHandler handler = new PageRenderRequestHandlerImpl(cache, processor, renderer);
 
-        Dispatcher d = new PageRenderDispatcher(resolver, handler, _contextValueEncoder);
+        Dispatcher d = new PageRenderDispatcher(resolver, handler, contextValueEncoder);
 
         assertTrue(d.dispatch(request, response));
 

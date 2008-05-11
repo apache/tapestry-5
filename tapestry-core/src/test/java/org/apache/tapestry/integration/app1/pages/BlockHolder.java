@@ -21,31 +21,31 @@ import org.apache.tapestry.ioc.annotations.Inject;
 public class BlockHolder
 {
     @InjectPage
-    private BlockCaller _blockCaller;
+    private BlockCaller blockCaller;
 
 
     @Inject
-    private Block _links;
+    private Block links;
 
-    private int _index;
+    private int index;
 
     public int getIndex()
     {
-        return _index;
+        return index;
     }
 
     public void setIndex(int index)
     {
-        _index = index;
+        this.index = index;
     }
 
     void onActionFromLink(int eventContext)
     {
-        _blockCaller.setActivationContext(eventContext);
+        blockCaller.setActivationContext(eventContext);
     }
 
     Block getLinks()
     {
-        return _links;
+        return links;
     }
 }

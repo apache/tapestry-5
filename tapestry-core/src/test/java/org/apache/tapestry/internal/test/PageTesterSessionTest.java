@@ -23,46 +23,46 @@ import java.util.Collections;
 
 public class PageTesterSessionTest extends Assert
 {
-    private PageTesterSession _session;
+    private PageTesterSession session;
 
     @BeforeMethod
     public void before()
     {
-        _session = new PageTesterSession();
+        session = new PageTesterSession();
     }
 
     @Test
     public void empty()
     {
-        assertEquals(_session.getAttributeNames(), Collections.EMPTY_LIST);
-        assertNull(_session.getAttribute("x"));
+        assertEquals(session.getAttributeNames(), Collections.EMPTY_LIST);
+        assertNull(session.getAttribute("x"));
     }
 
     @Test
     public void set_attributes()
     {
-        _session.setAttribute("b", 10);
-        _session.setAttribute("a", 20);
-        assertEquals(_session.getAttribute("a"), 20);
-        assertEquals(_session.getAttribute("b"), 10);
+        session.setAttribute("b", 10);
+        session.setAttribute("a", 20);
+        assertEquals(session.getAttribute("a"), 20);
+        assertEquals(session.getAttribute("b"), 10);
     }
 
     @Test
     public void remove_if_value_is_null()
     {
-        _session.setAttribute("b", 10);
-        _session.setAttribute("a", 20);
-        assertEquals(_session.getAttributeNames().size(), 2);
-        _session.setAttribute("b", null);
-        assertEquals(_session.getAttributeNames().size(), 1);
+        session.setAttribute("b", 10);
+        session.setAttribute("a", 20);
+        assertEquals(session.getAttributeNames().size(), 2);
+        session.setAttribute("b", null);
+        assertEquals(session.getAttributeNames().size(), 1);
     }
 
     @Test
     public void names_sorted()
     {
-        _session.setAttribute("b", 10);
-        _session.setAttribute("a", 20);
-        _session.setAttribute("c", 50);
-        assertEquals(_session.getAttributeNames(), Arrays.asList("a", "b", "c"));
+        session.setAttribute("b", 10);
+        session.setAttribute("a", 20);
+        session.setAttribute("c", 50);
+        assertEquals(session.getAttributeNames(), Arrays.asList("a", "b", "c"));
     }
 }

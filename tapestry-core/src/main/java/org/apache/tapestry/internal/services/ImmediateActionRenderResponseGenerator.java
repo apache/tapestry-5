@@ -27,11 +27,11 @@ import java.io.IOException;
  */
 public class ImmediateActionRenderResponseGenerator implements ActionRenderResponseGenerator
 {
-    private final Request _request;
+    private final Request request;
 
     public ImmediateActionRenderResponseGenerator(Request request)
     {
-        _request = request;
+        this.request = request;
     }
 
     public void generateResponse(Page page) throws IOException
@@ -41,7 +41,7 @@ public class ImmediateActionRenderResponseGenerator implements ActionRenderRespo
         // This can happen when the ComponentEventRequestHandlerImpl notices that the response
         // is not yet committed, and sets up to render a default response for the page containing
         // the component.
-        if (_request.getAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE) != null) return;
+        if (request.getAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE) != null) return;
 
         // We are somewhere in the middle of processing an action request, possibly something
         // complicated like a form submission.  Tapestry components are not re-entrant, so we
@@ -49,6 +49,6 @@ public class ImmediateActionRenderResponseGenerator implements ActionRenderRespo
         // a response as an attribute, and let a filter on the ComponentEventRequestHandler service
         // do the work.
 
-        _request.setAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE, page);
+        request.setAttribute(InternalConstants.IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE, page);
     }
 }

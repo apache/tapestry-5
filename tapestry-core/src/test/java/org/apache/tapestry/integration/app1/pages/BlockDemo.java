@@ -25,38 +25,38 @@ import java.util.Map;
 public class BlockDemo
 {
     @Inject
-    private Block _fred;
+    private Block fred;
 
     @Inject
-    private Block _barney;
+    private Block barney;
 
     // Blocks not injected until page load, so must lazily initialize the map.
     @Retain
-    private Map<String, Block> _blocks = null;
+    private Map<String, Block> blocks = null;
 
     @Persist
-    private String _blockName;
+    private String blockName;
 
     public Block getBlockToRender()
     {
-        if (_blocks == null)
+        if (blocks == null)
         {
-            _blocks = CollectionFactory.newMap();
-            _blocks.put("fred", _fred);
-            _blocks.put("barney", _barney);
+            blocks = CollectionFactory.newMap();
+            blocks.put("fred", fred);
+            blocks.put("barney", barney);
         }
 
-        return _blocks.get(_blockName);
+        return blocks.get(blockName);
     }
 
     public String getBlockName()
     {
-        return _blockName;
+        return blockName;
     }
 
     public void setBlockName(String blockName)
     {
-        _blockName = blockName;
+        this.blockName = blockName;
     }
 
 }

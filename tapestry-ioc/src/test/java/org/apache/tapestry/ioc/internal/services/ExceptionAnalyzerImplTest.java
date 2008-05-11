@@ -28,18 +28,18 @@ import java.util.Arrays;
 
 public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
 {
-    private ExceptionAnalyzer _analyzer;
+    private ExceptionAnalyzer analyzer;
 
     @BeforeClass
     public void setup_analyzer()
     {
-        _analyzer = getService("ExceptionAnalyzer", ExceptionAnalyzer.class);
+        analyzer = getService("ExceptionAnalyzer", ExceptionAnalyzer.class);
     }
 
     @AfterClass
     public void cleanup_analyzer()
     {
-        _analyzer = null;
+        analyzer = null;
     }
 
     @Test
@@ -49,7 +49,7 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
 
         Throwable t = new RuntimeException(message);
 
-        ExceptionAnalysis ea = _analyzer.analyze(t);
+        ExceptionAnalysis ea = analyzer.analyze(t);
 
         assertEquals(ea.getExceptionInfos().size(), 1);
 
@@ -71,7 +71,7 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
 
         Throwable t = new TapestryException("Message", l, null);
 
-        ExceptionAnalysis ea = _analyzer.analyze(t);
+        ExceptionAnalysis ea = analyzer.analyze(t);
 
         assertEquals(ea.getExceptionInfos().size(), 1);
 
@@ -90,7 +90,7 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
         Throwable inner = new RuntimeException("Inner");
         Throwable outer = new RuntimeException("Outer", inner);
 
-        ExceptionAnalysis ea = _analyzer.analyze(outer);
+        ExceptionAnalysis ea = analyzer.analyze(outer);
 
         assertEquals(ea.getExceptionInfos().size(), 2);
 
@@ -112,7 +112,7 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
         Throwable middle = new RuntimeException("Middle", inner);
         Throwable outer = new RuntimeException("Outer: Middle", middle);
 
-        ExceptionAnalysis ea = _analyzer.analyze(outer);
+        ExceptionAnalysis ea = analyzer.analyze(outer);
 
         assertEquals(ea.getExceptionInfos().size(), 2);
 
@@ -138,7 +138,7 @@ public class ExceptionAnalyzerImplTest extends IOCInternalTestCase
         Throwable middle = new TapestryException("Middle", l, inner);
         Throwable outer = new RuntimeException("Outer: Middle", middle);
 
-        ExceptionAnalysis ea = _analyzer.analyze(outer);
+        ExceptionAnalysis ea = analyzer.analyze(outer);
 
         assertEquals(ea.getExceptionInfos().size(), 3);
 

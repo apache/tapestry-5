@@ -23,22 +23,22 @@ import java.util.List;
 public class Music
 {
     @Inject
-    private MusicLibrary _library;
+    private MusicLibrary library;
 
-    private Track _track;
+    private Track track;
 
     public List<Track> getTracks()
     {
-        return _library.getTracks();
+        return library.getTracks();
     }
 
     public Track getTrack()
     {
-        return _track;
+        return track;
     }
 
     public void setTrack(Track track)
     {
-        _track = track;
+        this.track = track;
     }
 }

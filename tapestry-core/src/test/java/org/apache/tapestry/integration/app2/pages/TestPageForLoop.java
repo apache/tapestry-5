@@ -16,23 +16,23 @@ package org.apache.tapestry.integration.app2.pages;
 
 public class TestPageForLoop
 {
-    private String[] _array =
-            {"x", "y", "z"};
+    private String[] array =
+            { "x", "y", "z" };
 
-    private String _value;
+    private String value;
 
     public String[] getArray()
     {
-        return _array;
+        return array;
     }
 
     public String getValue()
     {
-        return _value;
+        return value;
     }
 
     public void setValue(String value)
     {
-        this._value = value;
+        this.value = value;
     }
 }

@@ -18,40 +18,40 @@ import org.apache.tapestry.beaneditor.OrderBefore;
 
 public class PropertyOrderBean
 {
-    private String _first;
+    private String first;
 
-    private String _second;
+    private String second;
 
-    private String _third;
+    private String third;
 
     public String getFirst()
     {
-        return _first;
+        return first;
     }
 
     public String getSecond()
     {
-        return _second;
+        return second;
     }
 
     @OrderBefore("first")
     public String getThird()
     {
-        return _third;
+        return third;
     }
 
     public void setFirst(String first)
     {
-        _first = first;
+        this.first = first;
     }
 
     public void setSecond(String second)
     {
-        _second = second;
+        this.second = second;
     }
 
     public void setThird(String third)
     {
-        _third = third;
+        this.third = third;
     }
 }

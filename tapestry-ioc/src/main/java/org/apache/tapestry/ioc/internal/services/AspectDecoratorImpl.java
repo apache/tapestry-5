@@ -58,20 +58,20 @@ public class AspectDecoratorImpl implements AspectDecorator
 
         return new AspectInterceptorBuilder<T>()
         {
-            private AspectInterceptorBuilder<T> _builder;
+            private AspectInterceptorBuilder<T> builder;
 
             public void adviseMethod(Method method, MethodAdvice advice)
             {
-                if (_builder == null)
-                    _builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate,
-                                                                   description);
+                if (builder == null)
+                    builder = new AspectInterceptorBuilderImpl<T>(classFactory, serviceInterface, delegate,
+                                                                  description);
 
-                _builder.adviseMethod(method, advice);
+                builder.adviseMethod(method, advice);
             }
 
             public T build()
             {
-                return _builder == null ? delegate : _builder.build();
+                return builder == null ? delegate : builder.build();
             }
         };
     }

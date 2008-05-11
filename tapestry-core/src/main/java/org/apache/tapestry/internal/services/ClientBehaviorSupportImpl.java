@@ -26,7 +26,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
     private final PageRenderSupport pageRenderSupport;
 
-    private final JSONObject _validations = new JSONObject();
+    private final JSONObject validations = new JSONObject();
 
     public ClientBehaviorSupportImpl(PageRenderSupport pageRenderSupport)
     {
@@ -107,11 +107,11 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         JSONArray specs;
 
-        if (_validations.has(fieldId)) specs = _validations.getJSONArray(fieldId);
+        if (validations.has(fieldId)) specs = validations.getJSONArray(fieldId);
         else
         {
             specs = new JSONArray();
-            _validations.put(fieldId, specs);
+            validations.put(fieldId, specs);
         }
 
         JSONArray thisSpec = new JSONArray();
@@ -130,9 +130,9 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
      */
     public void commit()
     {
-        for (String field : _validations.keys())
+        for (String field : validations.keys())
         {
-            JSONArray specs = _validations.getJSONArray(field);
+            JSONArray specs = validations.getJSONArray(field);
 
             JSONArray parameters = new JSONArray();
             parameters.put(field);

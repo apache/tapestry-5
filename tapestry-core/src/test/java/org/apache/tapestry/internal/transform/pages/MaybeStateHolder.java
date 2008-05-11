@@ -20,11 +20,11 @@ import org.apache.tapestry.internal.services.SimpleASO;
 public class MaybeStateHolder
 {
     @ApplicationState(create = false)
-    private SimpleASO _bean;
+    private SimpleASO bean;
 
 
     public SimpleASO getBean()
     {
-        return _bean;
+        return bean;
     }
 }

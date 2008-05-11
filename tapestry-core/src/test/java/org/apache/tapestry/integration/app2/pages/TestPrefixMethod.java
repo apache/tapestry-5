@@ -30,27 +30,27 @@ public class TestPrefixMethod
     }
 
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Inject
-    private BeanModelSource _modelSource;
+    private BeanModelSource modelSource;
 
     @InjectPage
-    private TestPrefixMethod2 _otherPage;
+    private TestPrefixMethod2 otherPage;
 
     private int foo;
 
     @FortyTwo
     public int getValue2()
     {
-        foo = _modelSource.hashCode();
+        foo = modelSource.hashCode();
         return foo;
     }
 
     @PlusOne
     public int getValue3()
     {
-        int value = _otherPage.hashCode();
+        int value = otherPage.hashCode();
         return value * 0;
     }
 }

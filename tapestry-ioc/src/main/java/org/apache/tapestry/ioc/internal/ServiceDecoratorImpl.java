@@ -37,7 +37,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
     private final Map<Class, Object> parameterDefaults = newMap();
 
-    private final Logger _logger;
+    private final Logger logger;
 
     private final ServiceResources resources;
 
@@ -55,12 +55,12 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         this.moduleBuilderSource = moduleBuilderSource;
         this.resources = resources;
         serviceInterface = resources.getServiceInterface();
-        _logger = resources.getLogger();
+        logger = resources.getLogger();
         this.classFactory = classFactory;
 
         parameterDefaults.put(String.class, serviceId);
         parameterDefaults.put(ServiceResources.class, resources);
-        parameterDefaults.put(Logger.class, _logger);
+        parameterDefaults.put(Logger.class, logger);
         parameterDefaults.put(Class.class, serviceInterface);
 
     }
@@ -77,7 +77,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
         Map<Class, Object> parameterDefaults = newMap(this.parameterDefaults);
         parameterDefaults.put(Object.class, delegate);
 
-        if (_logger.isDebugEnabled()) _logger.debug(IOCMessages.invokingMethod(methodId()));
+        if (logger.isDebugEnabled()) logger.debug(IOCMessages.invokingMethod(methodId()));
 
         Object result = null;
         Throwable failure = null;
@@ -112,7 +112,7 @@ public class ServiceDecoratorImpl implements ServiceDecorator
 
         if (result != null && !serviceInterface.isInstance(result))
         {
-            _logger.warn(IOCMessages.decoratorReturnedWrongType(
+            logger.warn(IOCMessages.decoratorReturnedWrongType(
                     decoratorMethod,
                     serviceId,
                     result,

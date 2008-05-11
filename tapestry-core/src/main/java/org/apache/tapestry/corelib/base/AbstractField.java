@@ -75,16 +75,16 @@ public abstract class AbstractField implements Field
     {
         private static final long serialVersionUID = 2690270808212097020L;
 
-        private final String _controlName;
+        private final String controlName;
 
         public SetupAction(String controlName)
         {
-            _controlName = controlName;
+            this.controlName = controlName;
         }
 
         public void execute(AbstractField component)
         {
-            component.setupControlName(_controlName);
+            component.setupControlName(controlName);
         }
     }
 

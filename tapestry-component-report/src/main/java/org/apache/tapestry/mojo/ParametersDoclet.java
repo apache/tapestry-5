@@ -39,7 +39,7 @@ public class ParametersDoclet extends Doclet
     {
         private PrintWriter out;
 
-        private final Pattern _stripper = Pattern.compile("(<.*?>|&.*?;)", Pattern.DOTALL);
+        private final Pattern stripper = Pattern.compile("(<.*?>|&.*?;)", Pattern.DOTALL);
 
         public void run(String outputPath, RootDoc root) throws Exception
         {
@@ -191,7 +191,7 @@ public class ParametersDoclet extends Doclet
 
             // Remove any simple open or close tags found in the text, as well as any XML entities.
 
-            String stripped = _stripper.matcher(text).replaceAll("");
+            String stripped = stripper.matcher(text).replaceAll("");
 
             out.print(stripped);
         }

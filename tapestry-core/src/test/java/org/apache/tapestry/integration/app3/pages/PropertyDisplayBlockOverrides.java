@@ -20,10 +20,10 @@ import org.apache.tapestry.services.PropertyOutputContext;
 public class PropertyDisplayBlockOverrides
 {
     @Environmental
-    private PropertyOutputContext _context;
+    private PropertyOutputContext context;
 
     public PropertyOutputContext getContext()
     {
-        return _context;
+        return context;
     }
 }

@@ -33,7 +33,7 @@ public final class ContentType
 
     private String subType = "";
 
-    private final Map<String, String> _parameters = CollectionFactory.newCaseInsensitiveMap();
+    private final Map<String, String> parameters = CollectionFactory.newCaseInsensitiveMap();
 
     /**
      * Creates a new empty content type.
@@ -65,7 +65,7 @@ public final class ContentType
 
         ContentType ct = (ContentType) o;
 
-        return baseType.equals(ct.baseType) && subType.equals(ct.subType) && _parameters.equals(ct._parameters);
+        return baseType.equals(ct.baseType) && subType.equals(ct.subType) && parameters.equals(ct.parameters);
     }
 
     /**
@@ -117,7 +117,7 @@ public final class ContentType
      */
     public List<String> getParameterNames()
     {
-        return InternalUtils.sortedKeys(_parameters);
+        return InternalUtils.sortedKeys(parameters);
     }
 
     /**
@@ -128,7 +128,7 @@ public final class ContentType
     {
         Defense.notNull(key, "key");
 
-        return _parameters.get(key);
+        return parameters.get(key);
     }
 
     /**
@@ -140,7 +140,7 @@ public final class ContentType
         Defense.notNull(key, "key");
         Defense.notNull(value, "value");
 
-        _parameters.put(key, value);
+        parameters.put(key, value);
     }
 
     /**
@@ -153,7 +153,7 @@ public final class ContentType
     {
         baseType = "";
         subType = "";
-        _parameters.clear();
+        parameters.clear();
 
         StringTokenizer tokens = new StringTokenizer(contentType, ";");
         if (!tokens.hasMoreTokens()) return;
@@ -186,7 +186,7 @@ public final class ContentType
             buffer.append(";");
             buffer.append(parameterName);
             buffer.append("=");
-            buffer.append(_parameters.get(parameterName));
+            buffer.append(parameters.get(parameterName));
         }
 
         return buffer.toString();

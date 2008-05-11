@@ -20,16 +20,16 @@ import org.apache.tapestry.integration.app1.data.SubscribeData;
 public class FormFragmentOutput
 {
     @Persist
-    private SubscribeData _subscribe;
+    private SubscribeData subscribe;
 
     FormFragmentOutput initialize(SubscribeData subscribe)
     {
-        _subscribe = subscribe;
+        this.subscribe = subscribe;
         return this;
     }
 
     public SubscribeData getSubscribe()
     {
-        return _subscribe;
+        return subscribe;
     }
 }

@@ -28,35 +28,35 @@ public class Start
 {
     public static class Item implements Comparable<Item>
     {
-        private final String _pageName;
-        private final String _label;
-        private final String _description;
+        private final String pageName;
+        private final String label;
+        private final String description;
 
         public Item(String pageName, String label, String description)
         {
-            _pageName = pageName;
-            _label = label;
-            _description = description;
+            this.pageName = pageName;
+            this.label = label;
+            this.description = description;
         }
 
         public String getPageName()
         {
-            return _pageName;
+            return pageName;
         }
 
         public String getLabel()
         {
-            return _label;
+            return label;
         }
 
         public String getDescription()
         {
-            return _description;
+            return description;
         }
 
         public int compareTo(Item o)
         {
-            return _label.compareTo(o._label);
+            return label.compareTo(o.label);
         }
     }
 
@@ -269,7 +269,10 @@ public class Start
         Collections.sort(ITEMS);
     }
 
-    private Item _item;
+    private Item item;
+
+    @InjectPage
+    private SecurePage securePage;
 
     public List<Item> getItems()
     {
@@ -278,20 +281,17 @@ public class Start
 
     public Item getItem()
     {
-        return _item;
+        return item;
     }
 
     public void setItem(Item item)
     {
-        _item = item;
+        this.item = item;
     }
-
-    @InjectPage
-    private SecurePage _securePage;
 
     Object onActionFromSecurePage()
     {
-        return _securePage.initialize("Triggered from Start");
+        return securePage.initialize("Triggered from Start");
     }
 
     public List getDemoContext()

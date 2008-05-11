@@ -25,6 +25,6 @@ public class OuterAny
     // leading underscore.
 
     @Component(inheritInformalParameters = true)
-    private Any _innerAny;
+    private Any innerAny;
 
 }

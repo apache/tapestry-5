@@ -19,12 +19,12 @@ import org.apache.tapestry.annotations.InjectPage;
 public class Protected
 {
     @InjectPage
-    private SecurityAlert _alertPage;
+    private SecurityAlert alertPage;
 
     Object onActivate()
     {
-        _alertPage.setMessage("Access to Protected page is denied.");
+        alertPage.setMessage("Access to Protected page is denied.");
 
-        return _alertPage;
+        return alertPage;
     }
 }

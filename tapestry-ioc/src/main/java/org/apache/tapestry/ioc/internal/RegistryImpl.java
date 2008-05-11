@@ -761,13 +761,13 @@ public class RegistryImpl implements Registry, InternalRegistry, ServiceProxyPro
 
         ObjectCreator justInTime = new ObjectCreator()
         {
-            private Object _delegate;
+            private Object delegate;
 
             public synchronized Object createObject()
             {
-                if (_delegate == null) _delegate = autobuildCreator.createObject();
+                if (delegate == null) delegate = autobuildCreator.createObject();
 
-                return _delegate;
+                return delegate;
             }
         };
 

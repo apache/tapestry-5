@@ -32,7 +32,7 @@ public class PropertyDisplayBlocks
     @Inject
     private Locale locale;
 
-    private final DateFormat _dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
+    private final DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, locale);
 
     public String getConvertedEnumValue()
     {
@@ -45,7 +45,7 @@ public class PropertyDisplayBlocks
 
     public DateFormat getDateFormat()
     {
-        return _dateFormat;
+        return dateFormat;
     }
 
     public PropertyOutputContext getContext()

@@ -16,39 +16,39 @@ package org.apache.tapestry.integration.app1.pages;
 
 public class PageContextInForm
 {
-    private Object[] _activationContext;
+    private Object[] activationContext;
 
-    private Object _object;
+    private Object object;
 
     void onActivate(Object[] context)
     {
-        _activationContext = context;
+        activationContext = context;
     }
 
     Object[] onPassivate()
     {
-        if (_activationContext != null)
+        if (activationContext != null)
         {
-            return _activationContext;
+            return activationContext;
         }
         else
         {
-            return new Object[]{"betty", "wilma", "context with spaces", "context/with/slashes"};
+            return new Object[] { "betty", "wilma", "context with spaces", "context/with/slashes" };
         }
     }
 
     public Object[] getActivationContext()
     {
-        return _activationContext;
+        return activationContext;
     }
 
     public Object getObject()
     {
-        return _object;
+        return object;
     }
 
     public void setObject(Object object)
     {
-        _object = object;
+        this.object = object;
     }
 }

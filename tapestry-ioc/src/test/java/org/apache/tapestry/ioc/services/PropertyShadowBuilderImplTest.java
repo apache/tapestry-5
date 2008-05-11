@@ -48,25 +48,25 @@ public class PropertyShadowBuilderImplTest extends IOCTestCase
 
     public class FooHolder
     {
-        private Foo _foo;
+        private Foo foo;
 
-        private int _count = 0;
+        private int count = 0;
 
         public Foo getFoo()
         {
-            _count++;
+            count++;
 
-            return _foo;
+            return foo;
         }
 
         public int getCount()
         {
-            return _count;
+            return count;
         }
 
         public void setFoo(Foo foo)
         {
-            _foo = foo;
+            this.foo = foo;
         }
 
         @Override

@@ -29,10 +29,10 @@ import java.util.Map;
 
 public class AssetSourceImplTest extends InternalBaseTestCase
 {
-    private final Resource _baseResource = new ClasspathResource(
+    private final Resource baseResource = new ClasspathResource(
             "org/apache/tapestry/internal/services/SimpleComponent.class");
 
-    private final Resource _rootResource = new ClasspathResource("/");
+    private final Resource rootResource = new ClasspathResource("/");
 
     @Test
     public void relative_asset()
@@ -41,9 +41,9 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         ThreadLocale threadLocale = mockThreadLocale();
         Asset asset = mockAsset();
 
-        Resource expectedResource = _baseResource.forFile("SimpleComponent_en_GB.properties");
+        Resource expectedResource = baseResource.forFile("SimpleComponent_en_GB.properties");
 
-        train_getRootResource(factory, _rootResource);
+        train_getRootResource(factory, rootResource);
 
         train_createAsset(factory, expectedResource, asset);
 
@@ -55,11 +55,11 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         // First try creates it:
 
-        assertSame(source.getAsset(_baseResource, "SimpleComponent.properties", Locale.UK), asset);
+        assertSame(source.getAsset(baseResource, "SimpleComponent.properties", Locale.UK), asset);
 
         // Second try shows that it is cached
 
-        assertSame(source.getAsset(_baseResource, "SimpleComponent.properties", Locale.UK), asset);
+        assertSame(source.getAsset(baseResource, "SimpleComponent.properties", Locale.UK), asset);
 
         verify();
     }
@@ -71,9 +71,9 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         ThreadLocale threadLocale = mockThreadLocale();
         Asset asset = mockAsset();
 
-        Resource expectedResource = _baseResource.forFile("SimpleComponent_en_GB.properties");
+        Resource expectedResource = baseResource.forFile("SimpleComponent_en_GB.properties");
 
-        train_getRootResource(factory, _rootResource);
+        train_getRootResource(factory, rootResource);
 
         train_createAsset(factory, expectedResource, asset);
 
@@ -100,9 +100,9 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         Asset asset = mockAsset();
         Locale locale = Locale.UK;
 
-        Resource expectedResource = _baseResource.forFile("SimpleComponent_en_GB.properties");
+        Resource expectedResource = baseResource.forFile("SimpleComponent_en_GB.properties");
 
-        train_getRootResource(factory, _rootResource);
+        train_getRootResource(factory, rootResource);
 
         train_createAsset(factory, expectedResource, asset);
 
@@ -129,10 +129,10 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         ThreadLocale threadLocale = mockThreadLocale();
         Asset asset = mockAsset();
 
-        Resource expectedResource = _rootResource
+        Resource expectedResource = rootResource
                 .forFile("org/apache/tapestry/internal/services/SimpleComponent_en_GB.properties");
 
-        train_getRootResource(factory, _rootResource);
+        train_getRootResource(factory, rootResource);
 
         train_createAsset(factory, expectedResource, asset);
 
@@ -143,14 +143,14 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         AssetSource source = new AssetSourceImpl(threadLocale, configuration);
 
         assertSame(source.getAsset(
-                _baseResource,
+                baseResource,
                 "classpath:org/apache/tapestry/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
         // Check that a leading slash is not a problem:
 
         assertSame(source.getAsset(
-                _baseResource,
+                baseResource,
                 "classpath:/org/apache/tapestry/internal/services/SimpleComponent.properties",
                 Locale.UK), asset);
 
@@ -171,7 +171,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
         try
         {
             source.getAsset(
-                    _baseResource,
+                    baseResource,
                     "classpath:org/apache/tapestry/internal/services/SimpleComponent.properties",
                     Locale.UK);
             unreachable();
@@ -199,7 +199,7 @@ public class AssetSourceImplTest extends InternalBaseTestCase
 
         try
         {
-            source.getAsset(_baseResource, "DoesNotExist.properties", Locale.UK);
+            source.getAsset(baseResource, "DoesNotExist.properties", Locale.UK);
             unreachable();
         }
         catch (RuntimeException ex)

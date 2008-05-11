@@ -25,35 +25,35 @@ import java.util.List;
 public class GridDemo
 {
     @Inject
-    private MusicLibrary _library;
+    private MusicLibrary library;
 
-    private Track _track;
+    private Track track;
 
     @Component
-    private Grid _grid;
+    private Grid grid;
 
     public Track getTrack()
     {
-        return _track;
+        return track;
     }
 
     public void setTrack(Track track)
     {
-        _track = track;
+        this.track = track;
     }
 
     public List<Track> getTracks()
     {
-        return _library.getTracks();
+        return library.getTracks();
     }
 
     void onActionFromSortRating()
     {
-        _grid.getSortModel().updateSort("rating");
+        grid.getSortModel().updateSort("rating");
     }
 
     void onActionFromReset()
     {
-        _grid.reset();
+        grid.reset();
     }
 }

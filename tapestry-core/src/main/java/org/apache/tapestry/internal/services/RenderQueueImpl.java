@@ -31,11 +31,11 @@ public class RenderQueueImpl implements RenderQueue
 
     private final Stack<ComponentResources> renderingComponents = CollectionFactory.newStack();
 
-    private final Logger _logger;
+    private final Logger logger;
 
     public RenderQueueImpl(Logger logger)
     {
-        _logger = logger;
+        this.logger = logger;
     }
 
     public void push(RenderCommand command)
@@ -47,7 +47,7 @@ public class RenderQueueImpl implements RenderQueue
     {
         RenderCommand command = null;
 
-        boolean traceEnabled = _logger.isTraceEnabled();
+        boolean traceEnabled = logger.isTraceEnabled();
 
         long startNanos = System.nanoTime();
         int commandCount = 0;
@@ -63,7 +63,7 @@ public class RenderQueueImpl implements RenderQueue
 
                 commandCount++;
 
-                if (traceEnabled) _logger.trace(String.format("Executing: %s", command));
+                if (traceEnabled) logger.trace(String.format("Executing: %s", command));
 
                 command.render(writer, this);
             }
@@ -75,22 +75,22 @@ public class RenderQueueImpl implements RenderQueue
 
             String message = ServicesMessages.renderQueueError(command, ex);
 
-            _logger.error(message, ex);
+            logger.error(message, ex);
 
             throw new RenderQueueException(message, renderingComponents.getSnapshot(), ex);
         }
 
         long endNanos = System.nanoTime();
 
-        if (_logger.isDebugEnabled())
+        if (logger.isDebugEnabled())
         {
 
             long elapsedNanos = endNanos - startNanos;
             double elapsedSeconds = ((float) elapsedNanos) / 1000000000F;
 
-            _logger.debug(String.format("Executed %,d rendering commands in %.3f seconds",
-                                        commandCount,
-                                        elapsedSeconds));
+            logger.debug(String.format("Executed %,d rendering commands in %.3f seconds",
+                                       commandCount,
+                                       elapsedSeconds));
         }
 
     }

@@ -25,38 +25,38 @@ import java.util.Locale;
 
 public class LocaleTest extends Assert
 {
-    private PageTester _tester;
+    private PageTester tester;
 
     @Test
     public void no_preferred_language()
     {
-        Document doc = _tester.renderPage("TestPageForLocale");
+        Document doc = tester.renderPage("TestPageForLocale");
         assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
     }
 
     @Test
     public void prefer_canada_french()
     {
-        _tester.setPreferedLanguage(Locale.CANADA_FRENCH);
-        Document doc = _tester.renderPage("TestPageForLocale");
+        tester.setPreferedLanguage(Locale.CANADA_FRENCH);
+        Document doc = tester.renderPage("TestPageForLocale");
         assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @Test
     public void change_language_in_browser()
     {
-        Document doc = _tester.renderPage("TestPageForLocale");
+        Document doc = tester.renderPage("TestPageForLocale");
         assertEquals(doc.getElementById("id1").getChildMarkup(), "English page");
-        _tester.setPreferedLanguage(Locale.CANADA_FRENCH);
-        doc = _tester.renderPage("TestPageForLocale");
+        tester.setPreferedLanguage(Locale.CANADA_FRENCH);
+        doc = tester.renderPage("TestPageForLocale");
         assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
     @Test
     public void persist_locale()
     {
-        Document doc = _tester.renderPage("TestPageForLocale");
-        doc = _tester.clickLink(doc.getElementById("changeLocale"));
+        Document doc = tester.renderPage("TestPageForLocale");
+        doc = tester.clickLink(doc.getElementById("changeLocale"));
         assertEquals(doc.getElementById("id1").getChildMarkup(), "French page");
     }
 
@@ -66,15 +66,15 @@ public class LocaleTest extends Assert
         String appPackage = "org.apache.tapestry.integration.app2";
         // LocaleAppModule.java has configured support for a certain locales.
         String appName = "LocaleApp";
-        _tester = new PageTester(appPackage, appName);
+        tester = new PageTester(appPackage, appName);
     }
 
     @AfterMethod
     public void after()
     {
-        if (_tester != null)
+        if (tester != null)
         {
-            _tester.shutdown();
+            tester.shutdown();
         }
     }
 }

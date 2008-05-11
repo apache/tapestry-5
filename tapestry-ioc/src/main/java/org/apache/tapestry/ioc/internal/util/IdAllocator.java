@@ -43,18 +43,18 @@ public final class IdAllocator
      */
     private static class NameGenerator implements Cloneable
     {
-        private final String _baseId;
+        private final String baseId;
 
-        private int _index;
+        private int index;
 
         NameGenerator(String baseId)
         {
-            _baseId = baseId + SEPARATOR;
+            this.baseId = baseId + SEPARATOR;
         }
 
         public String nextId()
         {
-            return _baseId + _index++;
+            return baseId + index++;
         }
 
         /**

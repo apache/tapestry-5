@@ -20,23 +20,23 @@ import org.apache.tapestry.internal.services.SimpleASO;
 public class StateHolder
 {
     @ApplicationState
-    private SimpleASO _bean;
+    private SimpleASO bean;
 
-    private boolean _beanExists;
+    private boolean beanExists;
 
     public SimpleASO getBean()
     {
-        return _bean;
+        return bean;
     }
 
     public void setBean(SimpleASO bean)
     {
-        _bean = bean;
+        this.bean = bean;
     }
 
     public boolean getBeanExists()
     {
-        return _beanExists;
+        return beanExists;
     }
 
 }

@@ -28,37 +28,37 @@ import java.util.List;
 public class PaletteDemo
 {
     @Inject
-    private ComponentResources _resources;
+    private ComponentResources resources;
 
     @Persist
-    private List<ProgrammingLanguage> _languages;
+    private List<ProgrammingLanguage> languages;
 
     @Persist
-    private boolean _reorder;
+    private boolean reorder;
 
     public boolean isReorder()
     {
-        return _reorder;
+        return reorder;
     }
 
     public void setReorder(boolean reorder)
     {
-        _reorder = reorder;
+        this.reorder = reorder;
     }
 
     public List<ProgrammingLanguage> getLanguages()
     {
-        return _languages;
+        return languages;
     }
 
     public void setLanguages(List<ProgrammingLanguage> selected)
     {
-        _languages = selected;
+        languages = selected;
     }
 
     public SelectModel getLanguageModel()
     {
-        return new EnumSelectModel(ProgrammingLanguage.class, _resources.getMessages());
+        return new EnumSelectModel(ProgrammingLanguage.class, resources.getMessages());
     }
 
     @SuppressWarnings("unchecked")
@@ -69,7 +69,7 @@ public class PaletteDemo
 
     void onActionFromReset()
     {
-        _reorder = false;
-        _languages = null;
+        reorder = false;
+        languages = null;
     }
 }

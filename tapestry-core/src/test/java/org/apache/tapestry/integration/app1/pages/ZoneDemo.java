@@ -26,23 +26,23 @@ import org.apache.tapestry.json.JSONObject;
 public class ZoneDemo
 {
     @Component
-    private BeanEditForm _form;
+    private BeanEditForm form;
 
-    private String _name;
+    private String name;
 
     @ApplicationState
-    private RegistrationData _registration;
+    private RegistrationData registration;
 
     private static final String[] NAMES = { "Fred & Wilma", "Mr. <Roboto>", "Grim Fandango", "Registration" };
 
     @Inject
-    private Block _showName;
+    private Block showName;
 
     @Inject
-    private Block _registrationForm;
+    private Block registrationForm;
 
     @Inject
-    private Block _registrationOutput;
+    private Block registrationOutput;
 
     public String[] getNames()
     {
@@ -52,40 +52,40 @@ public class ZoneDemo
 
     public String getName()
     {
-        return _name;
+        return name;
     }
 
     public void setName(String name)
     {
-        _name = name;
+        this.name = name;
     }
 
     @Log
     Object onActionFromSelect(String name)
     {
-        _name = name;
+        this.name = name;
 
-        if (name.equals("Registration")) return _registrationForm;
+        if (name.equals("Registration")) return registrationForm;
 
-        return _showName;
+        return showName;
     }
 
     Object onSuccess()
     {
-        return _registrationOutput;
+        return registrationOutput;
     }
 
     Object onActionFromClear()
     {
-        _form.clearErrors();
-        _registration = null;
+        form.clearErrors();
+        registration = null;
 
-        return _registrationForm;
+        return registrationForm;
     }
 
     public RegistrationData getRegistration()
     {
-        return _registration;
+        return registration;
     }
 
     Object onActionFromJSON()

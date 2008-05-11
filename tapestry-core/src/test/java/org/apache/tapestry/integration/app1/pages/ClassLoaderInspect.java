@@ -32,49 +32,49 @@ import java.util.jar.JarEntry;
 
 public class ClassLoaderInspect
 {
-    private static final ClassLoader _classLoader = Thread.currentThread().getContextClassLoader();
+    private static final ClassLoader CLASS_LOADER = Thread.currentThread().getContextClassLoader();
 
-    private ClassLoader _loader;
+    private ClassLoader loader;
 
     @Persist
-    private String _resource;
+    private String resource;
 
     @Component
-    private Form _search;
+    private Form search;
 
     @Persist
-    private List<URL> _URLs;
+    private List<URL> URLs;
 
     @Persist
-    private boolean _showMatches;
+    private boolean showMatches;
 
-    private URL _URL;
+    private URL URL;
 
-    private JarEntry _jarEntry;
+    private JarEntry jarEntry;
 
     public URL getURL()
     {
-        return _URL;
+        return URL;
     }
 
     public void setURL(URL url)
     {
-        _URL = url;
+        URL = url;
     }
 
     public ClassLoader getClassLoader()
     {
-        return _classLoader;
+        return CLASS_LOADER;
     }
 
     public ClassLoader getLoader()
     {
-        return _loader;
+        return loader;
     }
 
     public void setLoader(ClassLoader loader)
     {
-        _loader = loader;
+        this.loader = loader;
     }
 
     public List<ClassLoader> getLoaders()
@@ -95,33 +95,33 @@ public class ClassLoaderInspect
 
     public int getListSize()
     {
-        return _URLs == null ? 0 : _URLs.size();
+        return URLs == null ? 0 : URLs.size();
     }
 
     void onFailure()
     {
-        _showMatches = false;
-        _URLs = null;
+        showMatches = false;
+        URLs = null;
     }
 
     void onSuccess()
     {
-        _showMatches = false;
+        showMatches = false;
 
-        _URLs = null;
+        URLs = null;
 
         try
         {
             List<URL> urls = CollectionFactory.newList();
 
-            Enumeration<URL> e = _classLoader.getResources(_resource);
+            Enumeration<URL> e = CLASS_LOADER.getResources(resource);
 
             while (e.hasMoreElements())
                 urls.add(e.nextElement());
 
-            _URLs = urls;
+            URLs = urls;
 
-            _showMatches = true;
+            showMatches = true;
         }
         catch (Exception ex)
         {
@@ -130,28 +130,28 @@ public class ClassLoaderInspect
             if (InternalUtils.isBlank(message))
                 message = ex.getClass().getName();
 
-            _search.recordError(message);
+            search.recordError(message);
         }
     }
 
     public String getResource()
     {
-        return _resource;
+        return resource;
     }
 
     public void setResource(String resource)
     {
-        _resource = resource;
+        this.resource = resource;
     }
 
     public List<URL> getURLs()
     {
-        return _URLs;
+        return URLs;
     }
 
     public boolean getShowMatches()
     {
-        return _showMatches;
+        return showMatches;
     }
 
     public String getContentStreamContents()
@@ -160,7 +160,7 @@ public class ClassLoaderInspect
 
         try
         {
-            InputStream is = _URL.openStream();
+            InputStream is = URL.openStream();
             InputStreamReader reader = new InputStreamReader(is);
 
             char[] buffer = new char[1000];
@@ -189,7 +189,7 @@ public class ClassLoaderInspect
     {
         try
         {
-            URLConnection rawConnection = _URL.openConnection();
+            URLConnection rawConnection = URL.openConnection();
 
             JarURLConnection jarConnection = (JarURLConnection) rawConnection;
 
@@ -222,7 +222,7 @@ public class ClassLoaderInspect
     {
         try
         {
-            return _URL.openConnection();
+            return URL.openConnection();
         }
         catch (IOException ex)
         {
@@ -232,11 +232,11 @@ public class ClassLoaderInspect
 
     public JarEntry getJarEntry()
     {
-        return _jarEntry;
+        return jarEntry;
     }
 
     public void setJarEntry(JarEntry jarEntry)
     {
-        _jarEntry = jarEntry;
+        this.jarEntry = jarEntry;
     }
 }

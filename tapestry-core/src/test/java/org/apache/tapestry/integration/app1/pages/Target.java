@@ -19,47 +19,47 @@ import org.apache.tapestry.annotations.Persist;
 
 public class Target
 {
-    private Object[] _activationContext;
+    private Object[] activationContext;
 
     @Persist("flash")
-    private Object[] _componentContext;
+    private Object[] componentContext;
 
-    private Object _object;
+    private Object object;
 
     @OnEvent("passivate")
     public Object[] getActivationContext()
     {
-        return _activationContext;
+        return activationContext;
     }
 
     public Object[] getComponentContext()
     {
-        return _componentContext;
+        return componentContext;
     }
 
     @OnEvent("activate")
     public void setActivationContext(Object[] activationContext)
     {
-        _activationContext = activationContext;
+        this.activationContext = activationContext;
     }
 
     void onAction(Object[] componentContext)
     {
-        _componentContext = componentContext;
+        this.componentContext = componentContext;
     }
 
     public Object[] getContextToEncode()
     {
-        return new Object[]{"fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE"};
+        return new Object[] { "fred", "barney", "clark kent", "fred/barney", "\u592A\u90CE" };
     }
 
     public Object getObject()
     {
-        return _object;
+        return object;
     }
 
     public void setObject(Object object)
     {
-        _object = object;
+        this.object = object;
     }
 }

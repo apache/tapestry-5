@@ -36,16 +36,16 @@ public class VisibilityBean
     public String _$myPublic;
 
     @Retain
-    private long _$myLong;
+    private long $myLong;
 
     public long getMyLong()
     {
-        return _$myLong;
+        return $myLong;
     }
 
     public void setMyLong(long myLong)
     {
-        _$myLong = myLong;
+        $myLong = myLong;
     }
 
 }

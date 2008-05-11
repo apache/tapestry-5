@@ -15,7 +15,6 @@
 package org.apache.tapestry.ioc.util;
 
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
-import static org.apache.tapestry.ioc.internal.util.CollectionFactory.*;
 import org.apache.tapestry.ioc.internal.util.InheritanceSearch;
 
 import java.util.Collection;
@@ -34,14 +33,14 @@ public final class StrategyRegistry<A>
 
     private final boolean allowNonMatch;
 
-    private final Map<Class, A> registrations = newMap();
+    private final Map<Class, A> registrations = CollectionFactory.newMap();
 
-    private final Map<Class, A> cache = newConcurrentMap();
+    private final Map<Class, A> cache = CollectionFactory.newConcurrentMap();
 
     /**
      * Used to identify types for which there is no matching adapter; we're using it as if it were a ConcurrentSet.
      */
-    private final Map<Class, Boolean> _unmatched = newConcurrentMap();
+    private final Map<Class, Boolean> unmatched = CollectionFactory.newConcurrentMap();
 
     private StrategyRegistry(Class<A> adapterType, Map<Class, A> registrations, boolean allowNonMatch)
     {
@@ -80,7 +79,7 @@ public final class StrategyRegistry<A>
     public void clearCache()
     {
         cache.clear();
-        _unmatched.clear();
+        unmatched.clear();
     }
 
     public Class<A> getAdapterType()
@@ -116,7 +115,7 @@ public final class StrategyRegistry<A>
 
         if (result != null) return result;
 
-        if (_unmatched.containsKey(type)) return null;
+        if (unmatched.containsKey(type)) return null;
 
 
         result = findMatch(type);
@@ -130,7 +129,7 @@ public final class StrategyRegistry<A>
         }
         else
         {
-            _unmatched.put(type, true);
+            unmatched.put(type, true);
         }
 
         return result;
@@ -150,7 +149,7 @@ public final class StrategyRegistry<A>
         // Report the error. These things really confused the hell out of people in Tap4, so we're
         // going the extra mile on the exception message.
 
-        List<String> names = newList();
+        List<String> names = CollectionFactory.newList();
         for (Class t : registrations.keySet())
             names.add(t.getName());
 

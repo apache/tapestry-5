@@ -22,17 +22,17 @@ import org.apache.tapestry.ioc.internal.util.TapestryException;
  */
 public class RenderQueueException extends TapestryException
 {
-    private final Object[] _activeComponents;
+    private final Object[] activeComponents;
 
     public RenderQueueException(String message, Object[] activeComponents, Throwable cause)
     {
         super(message, cause);
 
-        _activeComponents = activeComponents;
+        this.activeComponents = activeComponents;
     }
 
     public Object[] getActiveComponents()
     {
-        return _activeComponents;
+        return activeComponents;
     }
 }

@@ -16,15 +16,15 @@ package org.apache.tapestry.internal.services;
 
 public class StringArrayBean
 {
-    private String[] _array;
+    private String[] array;
 
     public String[] getArray()
     {
-        return _array;
+        return array;
     }
 
     public void setArray(String[] array)
     {
-        _array = array;
+        this.array = array;
     }
 }

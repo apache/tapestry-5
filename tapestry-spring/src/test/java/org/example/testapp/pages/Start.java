@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class Start
 {
     @Retain
-    private String _input;
+    private String input;
 
     // We're matching on type here, just as we would a service provided in a T5 IoC module.
     @Inject
@@ -36,17 +36,17 @@ public class Start
 
     void onSuccess()
     {
-        _input = upcaseBean.toUpperCase(_input);
+        input = upcaseBean.toUpperCase(input);
     }
 
     public String getInput()
     {
-        return _input;
+        return input;
     }
 
     public void setInput(String input)
     {
-        _input = input;
+        this.input = input;
     }
 
     public String getSpringBeans()

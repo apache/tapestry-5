@@ -20,13 +20,25 @@ import org.apache.tapestry.annotations.Persist;
 public class BooleanDemo
 {
     @Persist
-    private boolean _flag;
+    private boolean flag;
 
-    public boolean getFlagUsingGet() { return _flag; }
+    public boolean getFlagUsingGet()
+    {
+        return flag;
+    }
 
-    public boolean isFlagUsingIs() { return _flag; }
+    public boolean isFlagUsingIs()
+    {
+        return flag;
+    }
 
-    public void onActionFromSet() { _flag = true; }
+    public void onActionFromSet()
+    {
+        flag = true;
+    }
 
-    public void onActionFromClear() { _flag = false; }
+    public void onActionFromClear()
+    {
+        flag = false;
+    }
 }

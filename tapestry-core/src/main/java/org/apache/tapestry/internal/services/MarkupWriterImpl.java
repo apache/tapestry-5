@@ -32,7 +32,7 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private Text currentText;
 
-    private final List<MarkupWriterListener> _listeners = CollectionFactory.newList();
+    private final List<MarkupWriterListener> listeners = CollectionFactory.newList();
 
     public MarkupWriterImpl()
     {
@@ -210,17 +210,17 @@ public class MarkupWriterImpl implements MarkupWriter
     {
         Defense.notNull(listener, "listener");
 
-        _listeners.add(listener);
+        listeners.add(listener);
     }
 
     public void removeListener(MarkupWriterListener listener)
     {
-        _listeners.remove(listener);
+        listeners.remove(listener);
     }
 
     private void fireElementDidStart()
     {
-        for (MarkupWriterListener l : _listeners)
+        for (MarkupWriterListener l : listeners)
         {
             l.elementDidStart(current);
         }
@@ -228,7 +228,7 @@ public class MarkupWriterImpl implements MarkupWriter
 
     private void fireElementDidEnd()
     {
-        for (MarkupWriterListener l : _listeners)
+        for (MarkupWriterListener l : listeners)
         {
             l.elementDidEnd(current);
         }

@@ -18,30 +18,30 @@ import org.apache.tapestry.annotations.InjectPage;
 
 public class NumberSelect
 {
-    private int _index;
+    private int index;
+
+    @InjectPage
+    private ShowSelection showSelection;
 
     public int getIndex()
     {
-        return _index;
+        return index;
     }
 
     public void setIndex(int index)
     {
-        _index = index;
+        this.index = index;
     }
 
     public boolean isNotFirst()
     {
-        return _index != 1;
+        return index != 1;
     }
-
-    @InjectPage
-    private ShowSelection _showSelection;
 
     Object onActionFromSelect(int index)
     {
-        _showSelection.setSelected(index);
+        showSelection.setSelected(index);
 
-        return _showSelection;
+        return showSelection;
     }
 }

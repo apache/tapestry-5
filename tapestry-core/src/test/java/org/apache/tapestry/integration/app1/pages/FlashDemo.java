@@ -22,15 +22,15 @@ import org.apache.tapestry.integration.app1.base.BaseComponent;
 public class FlashDemo extends BaseComponent
 {
     @Persist
-    private String _message;
+    private String message;
 
     public String getMessage()
     {
-        return _message;
+        return message;
     }
 
     void onAction()
     {
-        _message = "You clicked the link!";
+        message = "You clicked the link!";
     }
 }

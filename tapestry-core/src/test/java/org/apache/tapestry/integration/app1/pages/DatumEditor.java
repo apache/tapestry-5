@@ -21,7 +21,7 @@ public class DatumEditor
 {
     @Retain
     @Property(write = false)
-    private Datum _datum = new Datum();
+    private Datum datum = new Datum();
 
 
 }
