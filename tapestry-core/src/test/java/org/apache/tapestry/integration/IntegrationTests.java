@@ -164,6 +164,16 @@ public class IntegrationTests extends AbstractIntegrationTestSuite
     }
 
     @Test
+    public void inject_component_failure() throws Exception
+    {
+        start("InjectComponentMismatch");
+
+        assertTextPresent(
+                "Unable to inject component 'form' into field form of component InjectComponentMismatch. Class org.apache.tapestry.corelib.components.BeanEditForm is not assignable to a field of type org.apache.tapestry.corelib.components.Form.",
+                "ClassCastException");
+    }
+
+    @Test
     public void injection() throws Exception
     {
         start("Inject Demo");
