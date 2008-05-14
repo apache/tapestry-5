@@ -59,6 +59,9 @@ public class StreamResponseResultProcessor implements ComponentEventResultProces
                 os.write(buffer, 0, length);
             }
 
+            // TAPESTRY-2415: WebLogic needs this flush() call.            
+            os.flush();
+
             os.close();
             os = null;
 
