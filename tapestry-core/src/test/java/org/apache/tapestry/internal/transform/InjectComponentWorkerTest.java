@@ -21,6 +21,8 @@ import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformConstants;
 import org.apache.tapestry.test.TapestryTestCase;
+import static org.easymock.EasyMock.contains;
+import static org.easymock.EasyMock.same;
 import org.testng.annotations.Test;
 
 public class InjectComponentWorkerTest extends TapestryTestCase
@@ -43,8 +45,9 @@ public class InjectComponentWorkerTest extends TapestryTestCase
         expect(annotation.value()).andReturn("");
         ct.makeReadOnly("myfield");
 
-        train_extendMethod(ct, TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE,
-                           "myfield = (" + CLASS_NAME + ") resources.getEmbeddedComponent(\"myfield\");");
+        ct.extendMethod(same(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE),
+                        contains(
+                                "myfield = (" + CLASS_NAME + ") resources.getEmbeddedComponent(\"myfield\");"));
 
 
         replay();
@@ -68,8 +71,10 @@ public class InjectComponentWorkerTest extends TapestryTestCase
         train_getResourcesFieldName(ct, "resources");
         expect(annotation.value()).andReturn("id_provided_as_annotation").atLeastOnce();
         ct.makeReadOnly("myfield");
-        train_extendMethod(ct, TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE,
-                           "myfield = (" + CLASS_NAME + ") resources.getEmbeddedComponent(\"id_provided_as_annotation\");");
+
+        ct.extendMethod(same(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE),
+                        contains(
+                                "myfield = (" + CLASS_NAME + ") resources.getEmbeddedComponent(\"id_provided_as_annotation\");"));
 
         replay();
 
