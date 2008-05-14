@@ -20,6 +20,7 @@ import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 final class StructureMessages
 {
@@ -35,9 +36,10 @@ final class StructureMessages
                 .getComponentResources().getComponentModel().getComponentClassName());
     }
 
-    static String noSuchComponent(ComponentPageElement parent, String embeddedId)
+    static String noSuchComponent(ComponentPageElement parent, String embeddedId, Set<String> components)
     {
-        return MESSAGES.format("no-such-component", parent.getCompleteId(), embeddedId);
+        return MESSAGES.format("no-such-component", parent.getCompleteId(), embeddedId,
+                               InternalUtils.joinSorted(components));
     }
 
     static String getParameterFailure(String parameterName, String componentId, Throwable cause)

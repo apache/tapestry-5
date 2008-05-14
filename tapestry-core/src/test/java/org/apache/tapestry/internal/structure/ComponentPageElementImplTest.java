@@ -371,10 +371,12 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         TypeCoercer coercer = mockTypeCoercer();
 
         Instantiator ins = newInstantiator(component, model);
+        Instantiator ins2 = newInstantiator(component, model);
 
         replay();
 
         ComponentPageElement cpe = new ComponentPageElementImpl(page, ins, null);
+        cpe.addEmbeddedElement(new ComponentPageElementImpl(page, cpe, "nested", null, ins2, null, null));
 
         try
         {
@@ -384,7 +386,7 @@ public class ComponentPageElementImplTest extends InternalBaseTestCase
         catch (TapestryException ex)
         {
             assertEquals(ex.getMessage(),
-                         "Component " + PAGE_NAME + " does not contain an embedded component with id 'unknown'.");
+                         "Component " + PAGE_NAME + " does not contain an embedded component with id 'unknown'. Available components: nested.");
         }
 
         verify();
