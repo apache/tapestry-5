@@ -143,7 +143,8 @@ public class HibernateModule
                                                     final HibernateSessionSource sessionSource,
                                                     final Session session,
                                                     final TypeCoercer typeCoercer,
-                                                    final PropertyAccess propertyAccess)
+                                                    final PropertyAccess propertyAccess,
+                                                    final LoggerSource loggerSource)
     {
         org.hibernate.cfg.Configuration config = sessionSource.getConfiguration();
         Iterator<PersistentClass> mappings = config.getClassMappings();
@@ -157,7 +158,7 @@ public class HibernateModule
                 public ValueEncoder create(Class type)
                 {
                     return new HibernateEntityValueEncoder(entityClass, persistentClass, session, propertyAccess,
-                                                           typeCoercer);
+                                                           typeCoercer, loggerSource.getLogger(entityClass));
                 }
             };
 
