@@ -34,10 +34,7 @@ import org.apache.tapestry.model.ParameterModel;
 import org.apache.tapestry.runtime.*;
 import org.slf4j.Logger;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Implements {@link org.apache.tapestry.internal.structure.PageElement} and represents a component within an overall
@@ -801,7 +798,11 @@ public class ComponentPageElementImpl extends BaseLocatable implements Component
                 .toLowerCase());
 
         if (embeddedElement == null)
-            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId), this, null);
+        {
+            Set<String> ids = children == null ? null : children.keySet();
+
+            throw new TapestryException(StructureMessages.noSuchComponent(this, embeddedId, ids), this, null);
+        }
 
         return embeddedElement;
     }
