@@ -14,8 +14,10 @@
 
 package org.apache.tapestry.internal.transform;
 
+import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.annotations.InjectComponent;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
+import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
@@ -45,14 +47,30 @@ public class InjectComponentWorker implements ComponentClassTransformWorker
 
             transformation.makeReadOnly(fieldName);
 
-            String body = String.format(
+            BodyBuilder builder = new BodyBuilder().addln("try").begin();
+
+            builder.addln(
                     "%s = (%s) %s.getEmbeddedComponent(\"%s\");",
                     fieldName,
                     type,
                     resourcesFieldName,
                     componentId);
+            builder.end();
+            builder.addln("catch (ClassCastException ex)").begin();
+            builder.addln("throw new RuntimeException(%s.formatMessage(%s, \"%s\", \"%s\", \"%s\"), ex);",
+                          getClass().getName(), resourcesFieldName, fieldName, type, componentId);
+            builder.end();
 
-            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);
+            transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, builder.toString());
         }
+    }
+
+    public static String formatMessage(ComponentResources resources, String fieldName, String fieldType,
+                                       String componentId)
+    {
+        return String.format(
+                "Unable to inject component '%s' into field %s of component %s.  Class %s is not assignable to a field of type %s.",
+                componentId, fieldName, resources.getCompleteId(),
+                resources.getEmbeddedComponent(componentId).getClass().getName(), fieldType);
     }
 }

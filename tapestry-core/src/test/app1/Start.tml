@@ -37,6 +37,12 @@
         </li>
 
         <li>
+            <a href="injectcomponentmismatch">InjectComponentMismatch</a>
+            -- check error reporting when @InjectComponent
+            doesn't match actual field type
+        </li>
+
+        <li>
             <a href="recursivedemo">Recursive Demo</a>
             -- check for handling of recursive components
         </li>
