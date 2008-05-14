@@ -23,6 +23,7 @@ import org.apache.tapestry.ioc.services.TypeCoercer;
 import org.hibernate.Session;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
+import org.slf4j.Logger;
 
 import java.io.Serializable;
 
@@ -38,12 +39,15 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
     private final PropertyAdapter propertyAdapter;
 
+    private final Logger logger;
+
     public HibernateEntityValueEncoder(Class<E> entityClass, PersistentClass persistentClass, Session session,
-                                       PropertyAccess propertyAccess, TypeCoercer typeCoercer)
+                                       PropertyAccess propertyAccess, TypeCoercer typeCoercer, Logger logger)
     {
         this.entityClass = entityClass;
         this.session = session;
         this.typeCoercer = typeCoercer;
+        this.logger = logger;
 
         Property property = persistentClass.getIdentifierProperty();
 
@@ -76,7 +80,15 @@ public final class HibernateEntityValueEncoder<E> implements ValueEncoder<E>
 
         Serializable ser = Defense.cast(id, Serializable.class, "id");
 
-        return (E) session.get(entityClass, ser);
+        E result = (E) session.get(entityClass, ser);
+
+        if (result == null)
+        {
+            // We don't identify the entity type in the message because the logger is based on the entity type.
+            logger.error(String.format("Unable to convert client value '%s' into an entity instance.", clientValue));
+        }
+
+        return result;
     }
 
 }
