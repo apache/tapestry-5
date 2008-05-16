@@ -124,7 +124,7 @@ public class ParametersDoclet extends Doclet
         {
             for (AnnotationDesc annotation : fd.annotations())
             {
-                if (annotation.annotationType().qualifiedTypeName().equals("org.apache.tapestry.annotations.Parameter"))
+                if (annotation.annotationType().qualifiedTypeName().equals("org.apache.tapestry.annotation.Parameter"))
                 {
                     Map<String, String> result = new HashMap<String, String>();
 
