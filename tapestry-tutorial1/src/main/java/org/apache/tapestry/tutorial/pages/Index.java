@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.tutorial.pages;
 
-import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.InjectPage;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.tutorial.entities.Address;
 import org.hibernate.Session;
 

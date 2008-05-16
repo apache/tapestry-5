@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotations.*;
+import org.apache.tapestry.ioc.annotation.*;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;

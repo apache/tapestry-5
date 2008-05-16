@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.Marker;
+import org.apache.tapestry.ioc.annotation.Marker;
 
 @Marker(RedMarker.class)
 public class RedGreeterImpl implements Greeter

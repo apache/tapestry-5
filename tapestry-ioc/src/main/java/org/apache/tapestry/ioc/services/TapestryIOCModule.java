@@ -16,8 +16,8 @@ package org.apache.tapestry.ioc.services;
 
 import org.apache.tapestry.ioc.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Marker;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.annotation.Marker;
+import org.apache.tapestry.ioc.annotation.Value;
 import org.apache.tapestry.ioc.internal.services.*;
 import org.apache.tapestry.ioc.util.TimeInterval;
 

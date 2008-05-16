@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.SubModule;
+import org.apache.tapestry.ioc.annotation.SubModule;
 
 @SubModule(HelterModule.class)
 public class SkelterModule

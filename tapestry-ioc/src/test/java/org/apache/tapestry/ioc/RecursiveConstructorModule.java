@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.InjectService;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.IntegrationTest}.

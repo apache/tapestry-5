@@ -76,7 +76,7 @@ public interface Module extends ModuleBuilderSource
     Set<ContributionDef> getContributorDefsForService(String serviceId);
 
     /**
-     * Locates services with the {@link org.apache.tapestry.ioc.annotations.EagerLoad} annotation and generates proxies
+     * Locates services with the {@link org.apache.tapestry.ioc.annotation.EagerLoad} annotation and generates proxies
      * for them, then adds them to the proxies list for instantiation.
      *
      * @param proxies collection of proxies to which any eager load services in the module should be added

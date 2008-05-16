@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.EagerLoad;
+import org.apache.tapestry.ioc.annotation.EagerLoad;
 
 /**
  * Public access to the IoC service registry.
@@ -22,8 +22,8 @@ import org.apache.tapestry.ioc.annotations.EagerLoad;
 public interface Registry extends ObjectLocator
 {
     /**
-     * Invoked at the end of a request to discard any thread-specific information accumulated during
-     * the current request.
+     * Invoked at the end of a request to discard any thread-specific information accumulated during the current
+     * request.
      *
      * @see org.apache.tapestry.ioc.services.PerthreadManager
      * @see org.apache.tapestry.ioc.services.ThreadCleanupListener
@@ -31,9 +31,8 @@ public interface Registry extends ObjectLocator
     void cleanupThread();
 
     /**
-     * Shuts down a Registry instance. Notifies all listeners that the registry has shutdown.
-     * Further method invocations on the Registry are no longer allowed, and the Registry instance
-     * should be discarded.
+     * Shuts down a Registry instance. Notifies all listeners that the registry has shutdown. Further method invocations
+     * on the Registry are no longer allowed, and the Registry instance should be discarded.
      *
      * @see org.apache.tapestry.ioc.services.RegistryShutdownHub
      * @see org.apache.tapestry.ioc.services.RegistryShutdownListener
@@ -41,8 +40,8 @@ public interface Registry extends ObjectLocator
     void shutdown();
 
     /**
-     * Invoked to eagerly load services marked with the {@link EagerLoad} annotation, and to execute
-     * all contributions to the Startup service.
+     * Invoked to eagerly load services marked with the {@link EagerLoad} annotation, and to execute all contributions
+     * to the Startup service.
      */
     void performRegistryStartup();
 }

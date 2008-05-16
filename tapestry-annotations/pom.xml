@@ -2,7 +2,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.apache.tapestry</groupId>
-    <artifactId>tapestry-annotations</artifactId>
+    <!-- We've been lucky on T4/T5 name mismatches elsewhere, but T4 has a tapestry-annotation artifact. -->
+    <artifactId>tapestry5-annotations</artifactId>
     <packaging>jar</packaging>
     <!-- This should change to tapestry-project -->
     <parent>

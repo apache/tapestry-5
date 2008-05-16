@@ -18,8 +18,8 @@ import org.apache.tapestry.ioc.AnnotationProvider;
 import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.InjectService;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -204,7 +204,7 @@ public class InternalUtils
         }
 
         // Otherwise, make use of the MasterObjectProvider service to resolve this type (plus
-        // any other information gleaned from additional annotations) into the correct object.
+        // any other information gleaned from additional annotation) into the correct object.
 
         return locator.getObject(parameterType, provider);
     }
@@ -450,7 +450,7 @@ public class InternalUtils
      * Searches a class for the "best" constructor, the public constructor with the most parameters. Returns null if
      * there are no public constructors. If there is more than one constructor with the maximum number of parameters, it
      * is not determined which will be returned (don't build a class like that!). In addition, if a constructor is
-     * annotated with {@link org.apache.tapestry.ioc.annotations.Inject}, it will be used (no check for multiple such
+     * annotated with {@link org.apache.tapestry.ioc.annotation.Inject}, it will be used (no check for multiple such
      * constructors is made, only at most a single constructor should have the annotation).
      *
      * @param clazz to search for a constructor for

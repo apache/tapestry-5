@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.util;
 
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 public class InjectoBean
 {

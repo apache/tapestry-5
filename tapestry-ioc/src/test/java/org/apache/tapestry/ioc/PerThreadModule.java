@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 
 public class PerThreadModule
 {

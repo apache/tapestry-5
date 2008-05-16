@@ -15,9 +15,9 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.ServiceResources;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.InjectService;
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.InjectService;
+import org.apache.tapestry.ioc.annotation.Value;
 import org.slf4j.Logger;
 import org.testng.Assert;
 

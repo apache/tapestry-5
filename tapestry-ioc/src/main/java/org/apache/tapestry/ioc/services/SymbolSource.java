@@ -14,19 +14,18 @@
 
 package org.apache.tapestry.ioc.services;
 
-import org.apache.tapestry.ioc.annotations.Value;
+import org.apache.tapestry.ioc.annotation.Value;
 
 /**
- * Used to manage <em>symbols</em>, configuration properties whose value is evaluated at runtime.
- * Symbols use the Ant syntax: <code>${foo.bar.baz}</code> where <code>foo.bar.baz</code> is the
- * name of the symbol. The symbol may appear inside annotation, such as {@link Value}. Values for
- * symbols are provided by {@link SymbolProvider}.
+ * Used to manage <em>symbols</em>, configuration properties whose value is evaluated at runtime. Symbols use the Ant
+ * syntax: <code>${foo.bar.baz}</code> where <code>foo.bar.baz</code> is the name of the symbol. The symbol may appear
+ * inside annotation, such as {@link Value}. Values for symbols are provided by {@link SymbolProvider}.
  */
 public interface SymbolSource
 {
     /**
-     * Expands the value for a particular symbol. This may involve recursive expansion, if the
-     * immediate value for the symbol itself contains symbols.
+     * Expands the value for a particular symbol. This may involve recursive expansion, if the immediate value for the
+     * symbol itself contains symbols.
      *
      * @param symbolName
      * @return the expanded string
@@ -36,8 +35,8 @@ public interface SymbolSource
     String valueForSymbol(String symbolName);
 
     /**
-     * Given an input string that <em>may</em> contain symbols, returns the string with any and
-     * all symbols fully expanded.
+     * Given an input string that <em>may</em> contain symbols, returns the string with any and all symbols fully
+     * expanded.
      *
      * @param input
      * @return expanded input

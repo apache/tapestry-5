@@ -33,45 +33,42 @@ public interface ServiceDef
     ObjectCreator createServiceCreator(ServiceBuilderResources resources);
 
     /**
-     * Returns the service id, derived from the method name or the unqualified service interface
-     * name. Service ids must be unique among <em>all</em> services in all modules. Service ids
-     * are used in a heavy handed way to support ultimate disambiguation, but their primary purpose
-     * is to support service contribution methods.
+     * Returns the service id, derived from the method name or the unqualified service interface name. Service ids must
+     * be unique among <em>all</em> services in all modules. Service ids are used in a heavy handed way to support
+     * ultimate disambiguation, but their primary purpose is to support service contribution methods.
      */
     String getServiceId();
 
     /**
-     * Returns an optional <em>marker annotation</em>. Marker annotations are used to
-     * disambiguate services; the combination of a marker annotation and a service type is expected
-     * to be unique. The annotation is placed on the field or method/constructor parameter and the
-     * service is located by combining the marker with service type (the parameter or field type).
+     * Returns an optional <em>marker annotation</em>. Marker annotations are used to disambiguate services; the
+     * combination of a marker annotation and a service type is expected to be unique. The annotation is placed on the
+     * field or method/constructor parameter and the service is located by combining the marker with service type (the
+     * parameter or field type).
      *
      * @return the annotation, or null if the service has no annotation
      */
     Set<Class> getMarkers();
 
     /**
-     * Returns the service interface associated with this service. This is the interface exposed to
-     * the outside world, as well as the one used to build proxies. In cases where the service is
-     * <em>not</em> defined in terms of an interface, this will return the actual implementation
-     * class of the service. Services without a true service interfaced are <strong>not proxied</strong>.
+     * Returns the service interface associated with this service. This is the interface exposed to the outside world,
+     * as well as the one used to build proxies. In cases where the service is <em>not</em> defined in terms of an
+     * interface, this will return the actual implementation class of the service. Services without a true service
+     * interfaced are <strong>not proxied</strong>.
      */
     Class getServiceInterface();
 
     /**
-     * Returns the lifecycle defined for the service. This is indicated by adding a
-     * {@link org.apache.tapestry.ioc.annotations.Scope} annotation to the service builder method
-     * for the service.
+     * Returns the lifecycle defined for the service. This is indicated by adding a {@link
+     * org.apache.tapestry.ioc.annotation.Scope} annotation to the service builder method for the service.
      * <p/>
-     * Services that are not proxied will ignore their scope; such services are always treated as
-     * singletons.
+     * Services that are not proxied will ignore their scope; such services are always treated as singletons.
      */
     String getServiceScope();
 
     /**
      * Returns true if the service should be eagerly loaded at Registry startup.
      *
-     * @see org.apache.tapestry.ioc.annotations.EagerLoad
+     * @see org.apache.tapestry.ioc.annotation.EagerLoad
      */
     boolean isEagerLoad();
 }

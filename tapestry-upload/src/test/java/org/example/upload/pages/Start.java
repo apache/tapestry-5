@@ -14,7 +14,7 @@
 
 package org.example.upload.pages;
 
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.upload.services.UploadedFile;
 
 import java.io.File;

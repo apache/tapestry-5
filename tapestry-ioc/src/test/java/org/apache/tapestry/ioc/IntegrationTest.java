@@ -681,7 +681,7 @@ public class IntegrationTest extends IOCInternalTestCase
         train_getAnnotation(ap, Builtin.class, annotation);
 
         // On the build server, the order of keys inside the RegistryImpl's _markerToServiceDef
-        // is different, and so it *may* query ofr a number of other annotations
+        // is different, and so it *may* query ofr a number of other annotation
         // besides Builtin.
 
         expect(ap.getAnnotation(EasyMock.isA(Class.class))).andStubReturn(null);

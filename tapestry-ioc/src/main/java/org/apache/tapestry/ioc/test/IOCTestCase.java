@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc.test;
 
 import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotations.IntermediateType;
+import org.apache.tapestry.ioc.annotation.IntermediateType;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.def.DecoratorDef;
 import org.apache.tapestry.ioc.def.ModuleDef;

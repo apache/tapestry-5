@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.InjectService;
 import org.apache.tapestry.ioc.def.ContributionDef;
 import org.apache.tapestry.ioc.test.IOCTestCase;
 import static org.easymock.EasyMock.eq;
