@@ -14,13 +14,12 @@
 
 package org.example.upload.services;
 
-import org.apache.tapestry.ioc.annotations.SubModule;
+import org.apache.tapestry.ioc.annotation.SubModule;
 import org.apache.tapestry.upload.services.UploadModule;
 
 /**
- * The SubModule is not normally needed, except that during tests of tapestry-upload, the necessary
- * JAR Manifest does not yet exist, so we force the tapestry.upload module into the registry
- * explicitly.
+ * The SubModule is not normally needed, except that during tests of tapestry-upload, the necessary JAR Manifest does
+ * not yet exist, so we force the tapestry.upload module into the registry explicitly.
  */
 @SubModule(UploadModule.class)
 public class AppModule

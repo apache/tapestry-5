@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.SubModule;
+import org.apache.tapestry.ioc.annotation.SubModule;
 import org.apache.tapestry.ioc.def.ModuleDef;
 import org.apache.tapestry.ioc.internal.DefaultModuleDefImpl;
 import org.apache.tapestry.ioc.internal.LoggerSourceImpl;
@@ -100,7 +100,7 @@ public final class RegistryBuilder
     /**
      * Adds a number of modules (as module classes) to the registry, returning the builder for further configuration.
      *
-     * @see org.apache.tapestry.ioc.annotations.SubModule
+     * @see org.apache.tapestry.ioc.annotation.SubModule
      */
     public RegistryBuilder add(Class... moduleBuilderClasses)
     {
@@ -135,7 +135,7 @@ public final class RegistryBuilder
      * Adds a number of module classes (specified by fully qualified class name) to the registry, returning the builder
      * for further configuration.
      *
-     * @see org.apache.tapestry.ioc.annotations.SubModule
+     * @see org.apache.tapestry.ioc.annotation.SubModule
      */
     public RegistryBuilder add(String classname)
     {

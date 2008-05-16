@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.tapestry</groupId>
-            <artifactId>tapestry-annotations</artifactId>
+            <artifactId>tapestry5-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
 

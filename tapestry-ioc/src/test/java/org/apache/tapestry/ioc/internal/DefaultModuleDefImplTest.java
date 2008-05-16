@@ -557,7 +557,7 @@ public class DefaultModuleDefImplTest extends IOCTestCase
         verify();
     }
 
-    // TODO: We're short on tests that ensure that marker annotations are additive (i.e., module
-    // marker annotations are
+    // TODO: We're short on tests that ensure that marker annotation are additive (i.e., module
+    // marker annotation are
     // merged into the set specific to the service).
 }

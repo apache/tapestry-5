@@ -14,23 +14,21 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
 
 /**
- * Allows a module to bind service interfaces to service implementation classes in support of
- * autobuilding services. A ServiceBinder is passed to to a method with the following signature:
- * <code>public static void bind(ServiceBinder binder)</code>. This is an adaptation of ideas
- * from <a href="http://code.google.com/p/google-guice/">Guice</a>.
+ * Allows a module to bind service interfaces to service implementation classes in support of autobuilding services. A
+ * ServiceBinder is passed to to a method with the following signature: <code>public static void bind(ServiceBinder
+ * binder)</code>. This is an adaptation of ideas from <a href="http://code.google.com/p/google-guice/">Guice</a>.
  */
 public interface ServiceBinder
 {
     /**
-     * Defines a service in terms of an implementation class, without a service interface. In this
-     * case, the service will not be proxiable (proxying requires a service interface) and
-     * {@link ServiceDef#getServiceInterface()} will return the implementation class. In this
-     * situation, the service will not be proxied; it will be instantiated fully on first reference
-     * (ignoring its scope, if any) and will not be decorated.
+     * Defines a service in terms of an implementation class, without a service interface. In this case, the service
+     * will not be proxiable (proxying requires a service interface) and {@link ServiceDef#getServiceInterface()} will
+     * return the implementation class. In this situation, the service will not be proxied; it will be instantiated
+     * fully on first reference (ignoring its scope, if any) and will not be decorated.
      *
      * @param <T>
      * @param implementationClass
@@ -39,9 +37,9 @@ public interface ServiceBinder
     <T> ServiceBindingOptions bind(Class<T> implementationClass);
 
     /**
-     * Binds the service interface to a service implementation class. The default service name is
-     * the unqualified name of the service interface. The default service scope is "singleton",
-     * unless the service implementation class includes the {@link Scope} annotation.
+     * Binds the service interface to a service implementation class. The default service name is the unqualified name
+     * of the service interface. The default service scope is "singleton", unless the service implementation class
+     * includes the {@link Scope} annotation.
      *
      * @param <T>
      * @param serviceInterface      service interface (used when locating services, and when building proxies)

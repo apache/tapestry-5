@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.tapestry.ioc.annotations.EagerLoad;
+import org.apache.tapestry.ioc.annotation.EagerLoad;
 
 @EagerLoad
 public class EagerLoadViaAnnotationServiceImpl implements Runnable

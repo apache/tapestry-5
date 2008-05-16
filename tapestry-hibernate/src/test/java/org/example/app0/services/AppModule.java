@@ -19,8 +19,8 @@ import org.apache.tapestry.hibernate.HibernateModule;
 import org.apache.tapestry.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.ServiceBinder;
-import org.apache.tapestry.ioc.annotations.Match;
-import org.apache.tapestry.ioc.annotations.SubModule;
+import org.apache.tapestry.ioc.annotation.Match;
+import org.apache.tapestry.ioc.annotation.SubModule;
 
 @SubModule(HibernateModule.class)
 public class AppModule

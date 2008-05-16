@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.InjectService;
 
 /**
  * Module builder used by {@link ModuleImplTest}.

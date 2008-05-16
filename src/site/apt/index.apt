@@ -129,6 +129,12 @@ What's changed since Tapestry 4?
   
 New and Noteworthy
 
+  * In order to support Tapestry 4 applications co-existing with Tapestry 5 applications within the same WAR,
+    a small number of Tapestry 5 classes and packages have been renamed or refactored.  For more information,
+    see the upgrade notes for
+    {{{tapestry-ioc/upgrade.html}tapestry-ioc}} and
+    {{{tapestry-core/upgrade.html}tapestry-core}}.
+
   * A {{{faq/general.html}FAQ (Frequently Asked Questions) page}} has been added.
 
   * An {{{tapestry-ioc/overview.html}overview}} and {{{tapestry-ioc/cookbook/}cookbook}} for Tapestry IoC has been written.

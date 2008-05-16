@@ -15,7 +15,7 @@
 package org.apache.tapestry.ioc.internal.services;
 
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.ioc.internal.IOCInternalTestCase;
 import org.apache.tapestry.ioc.internal.util.Pair;
 import org.apache.tapestry.ioc.internal.util.StringLongPair;

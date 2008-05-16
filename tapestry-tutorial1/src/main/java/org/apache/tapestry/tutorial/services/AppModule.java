@@ -17,7 +17,7 @@ package org.apache.tapestry.tutorial.services;
 import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.annotations.Marker;
+import org.apache.tapestry.ioc.annotation.Marker;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.services.RequestFilter;
 import org.apache.tapestry.services.RequestHandler;

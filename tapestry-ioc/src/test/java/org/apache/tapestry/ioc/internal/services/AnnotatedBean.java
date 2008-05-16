@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal.services;
 
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 
 public class AnnotatedBean
 {

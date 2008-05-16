@@ -16,7 +16,7 @@ package org.apache.tapestry.ioc.internal.util;
 
 import org.apache.tapestry.ioc.Locatable;
 import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.InternalUtils.toList;
 import org.apache.tapestry.ioc.test.IOCTestCase;
@@ -306,7 +306,7 @@ public class InternalUtilsTest extends IOCTestCase
         assertEquals(map.get("fred"), Arrays.asList(1, 2));
     }
 
-    // Test the check for runtime annotations. This is all well and good, we actually don't have a proper test
+    // Test the check for runtime annotation. This is all well and good, we actually don't have a proper test
     // that this code is used (ideally we should have tests for @Marker on a module, on a service impl, and passed
     // to ServiceBindingOptions.withMarker(), to prove that those are wired for checks.
 

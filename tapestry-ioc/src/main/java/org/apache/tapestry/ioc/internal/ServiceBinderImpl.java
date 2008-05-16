@@ -15,9 +15,9 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotations.EagerLoad;
-import org.apache.tapestry.ioc.annotations.Marker;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.EagerLoad;
+import org.apache.tapestry.ioc.annotation.Marker;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.ioc.def.ServiceDef;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.Defense.notBlank;

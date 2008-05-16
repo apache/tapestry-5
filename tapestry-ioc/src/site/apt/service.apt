@@ -300,7 +300,7 @@ Injecting Dependencies for Autobuilt Services
 +---+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.InjectService;
 
 public class IndexerImpl implements Indexer
 {
@@ -330,7 +330,7 @@ public class IndexerImpl implements Indexer
 +---+
 package org.example.myapp.services;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.InjectService;
 
 public class IndexerImpl implements Indexer
 {

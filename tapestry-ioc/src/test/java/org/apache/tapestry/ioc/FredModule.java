@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.Match;
-import org.apache.tapestry.ioc.annotations.Order;
+import org.apache.tapestry.ioc.annotation.Match;
+import org.apache.tapestry.ioc.annotation.Order;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.Collection;

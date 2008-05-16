@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc;
 
-import org.apache.tapestry.ioc.annotations.EagerLoad;
+import org.apache.tapestry.ioc.annotation.EagerLoad;
 
 /**
  * Used to test service eager loading.

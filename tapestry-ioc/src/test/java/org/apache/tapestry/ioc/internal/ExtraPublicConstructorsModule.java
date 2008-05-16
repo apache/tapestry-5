@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.ioc.internal;
 
-import org.apache.tapestry.ioc.annotations.InjectService;
+import org.apache.tapestry.ioc.annotation.InjectService;
 import org.apache.tapestry.ioc.services.ClassFactory;
 
 /**
@@ -29,8 +29,8 @@ public class ExtraPublicConstructorsModule
     }
 
     /**
-     * Should be the first constructor, the one that gets invoked. I'm worried that different
-     * compilers or JVMs will order the constructors differently.
+     * Should be the first constructor, the one that gets invoked. I'm worried that different compilers or JVMs will
+     * order the constructors differently.
      */
     public ExtraPublicConstructorsModule(@InjectService("ClassFactory")
     ClassFactory factory)

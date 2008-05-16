@@ -15,8 +15,8 @@
 package org.apache.tapestry.ioc.internal;
 
 import org.apache.tapestry.ioc.Configuration;
-import org.apache.tapestry.ioc.annotations.EagerLoad;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.EagerLoad;
+import org.apache.tapestry.ioc.annotation.Scope;
 
 /**
  * Used by {@link org.apache.tapestry.ioc.internal.DefaultModuleDefImplTest}.
@@ -45,8 +45,7 @@ public class SimpleModule
     }
 
     /**
-     * Minimal decorator method that uses generics to qualify the delegate passed in and the object
-     * returned.
+     * Minimal decorator method that uses generics to qualify the delegate passed in and the object returned.
      */
     public <T> T decorateLogging(Class<T> serviceInterace, T delegate)
     {
