@@ -11,7 +11,7 @@ Securing your application with HTTPS
   This could be a login page, or a product ordering wizard, or administrative pages.
 
   All that is necessary to mark a page as secure is to add
-  the {{{../../apidocs/org/apache/tapestry/annotations/Secure.html}Secure}} annotation to the page class:
+  the {{{../../apidocs/org/apache/tapestry/annotation/Secure.html}Secure}} annotation to the page class:
 
 ----
 @Secure

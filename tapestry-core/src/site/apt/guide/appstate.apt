@@ -14,7 +14,7 @@ Application State
   With an ASO, the value is automatically stored outside the page; with the default storage strategy, it is stored in the session. 
   
   A field holding an ASO is marked with the
-  {{{../../apidocs/org/apache/tapestry/annotations/ApplicationState.html}ApplicationState}} annotation.
+  {{{../../apidocs/org/apache/tapestry/annotation/ApplicationState.html}ApplicationState}} annotation.
   
   Example:
   

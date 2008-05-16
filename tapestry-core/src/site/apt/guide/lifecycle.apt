@@ -136,11 +136,11 @@ Page Lifecycle Methods
   
   The annotations / method names are:
   
-   * {{{../../apidocs/org/apache/tapestry/annotations/PageLoaded.html}PageLoaded}} annotation, or method name "pageLoaded"
+   * {{{../../apidocs/org/apache/tapestry/annotation/PageLoaded.html}PageLoaded}} annotation, or method name "pageLoaded"
    
-   * {{{../../apidocs/org/apache/tapestry/annotations/PageAttached.html}PageAttached}} annotation, or method name "pageAttached"
+   * {{{../../apidocs/org/apache/tapestry/annotation/PageAttached.html}PageAttached}} annotation, or method name "pageAttached"
    
-   * {{{../../apidocs/org/apache/tapestry/annotations/PageDetached.html}PageDetached}} annotation, or method name "pageDetached"
+   * {{{../../apidocs/org/apache/tapestry/annotation/PageDetached.html}PageDetached}} annotation, or method name "pageDetached"
    
    
    

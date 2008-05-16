@@ -13,7 +13,7 @@ Persistent Page Data
   to it in later requests.
   
   This is accomplished with the 
-  {{{../../apidocs/org/apache/tapestry/annotations/Persist.html}Persist annotation}}.
+  {{{../../apidocs/org/apache/tapestry/annotation/Persist.html}Persist annotation}}.
   
   This annotation is applied to private instance fields.
     
@@ -76,7 +76,7 @@ Persistence Search
   
   For each component, the meta-data property <<<tapestry.persistence-strategy>>> is checked.
   This can be specified using the 
-  {{{../../apidocs/org/apache/tapestry/annotations/Meta.html}Meta}} annotation.
+  {{{../../apidocs/org/apache/tapestry/annotation/Meta.html}Meta}} annotation.
   
   If the value is non-blank, then that strategy is used. This allows a component to control
   the persistence strategy used inside any sub-components (that don't explicitly use a different

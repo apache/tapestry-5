@@ -34,7 +34,7 @@ Component Classes
 package org.example.myapp.components;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.BeginRender;
+import org.apache.tapestry.annotation.BeginRender;
 
 public class HelloWorld
 {
@@ -47,7 +47,7 @@ public class HelloWorld
 +----+  
   
   This component's only job is to write out a fixed message. The
-  {{{../../apidocs/org/apache/tapestry/annotations/BeginRender.html}BeginRender}} annotation is
+  {{{../../apidocs/org/apache/tapestry/annotation/BeginRender.html}BeginRender}} annotation is
   a type of <{{{rendering.html}component lifecycle annotation}}>, a method annotation that instructs
   Tapestry when and under what circumstances to invoke methods of your class.
  
@@ -138,7 +138,7 @@ Instance Variables
   
   Be aware that you will need to provide getter and setter methods to access your classes'
   instance variables. Tapestry <does not> do this automatically unless you provide
-  the {{{../../apidocs/org/apache/tapestry/annotations/Property.html}Property}} annotation on the field.
+  the {{{../../apidocs/org/apache/tapestry/annotation/Property.html}Property}} annotation on the field.
     
   
 Transient Instance Variables
@@ -151,7 +151,7 @@ Transient Instance Variables
   
   If you have a variable that can keep its value between requests and you would like
   to defeat that reset logic, then you should attach a
-  {{{../../apidocs/org/apache/tapestry/annotations/Retain.html}Retain}} annotation to the field.  You should take
+  {{{../../apidocs/org/apache/tapestry/annotation/Retain.html}Retain}} annotation to the field.  You should take
   care that no client-specific data is stored into such a field, since on a later request
   the same page <instance> may be used for a different user. Likewise, on a later request for the <same> user,
   a <different> page instance may be used.
@@ -173,7 +173,7 @@ Injection
 Parameters
 
   {{{parameters.html}Component parameters}} are also identified using private fields of your class, with
-  the {{{.../apidocs/org/apache/tapestry/annotations/Parameter.html}Parameter}} annotation.
+  the {{{.../apidocs/org/apache/tapestry/annotation/Parameter.html}Parameter}} annotation.
   
 Persistent Fields
 
@@ -187,7 +187,7 @@ Persistent Fields
   
   You can define the type of component inside template, or you can create an instance variable for the component
   and use the
-  {{{../../apidocs/org/apache/tapestry/annotations/Component.html}Component}} annotation to define the component type
+  {{{../../apidocs/org/apache/tapestry/annotation/Component.html}Component}} annotation to define the component type
   and parameters. 
   
   Example:
@@ -195,8 +195,8 @@ Persistent Fields
 +---+
 package org.example.app.pages;
 
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.Component;
+import org.apache.tapestry.annotation.Property;
 import org.example.app.components.Count;
 
 public class Countdown

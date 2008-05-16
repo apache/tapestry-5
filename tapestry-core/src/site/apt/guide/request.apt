@@ -33,7 +33,7 @@ HttpServletRequestHandler Pipeline
   
   The terminator for the pipeline does two things:
   
-  * It stores the request and response into the {{{../../apidocs/org/apache/tapestry/services/RequestGlobals.html}RequestGlobals}}
+  * It stores the request and response into the {{{../../apidocs/org/apache/tapestry5/services/RequestGlobals.html}RequestGlobals}}
     service. This is a threaded service that stores per-thread/per-request information.
     
   * It wraps the request and response as a

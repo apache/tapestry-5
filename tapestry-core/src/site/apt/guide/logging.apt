@@ -37,7 +37,7 @@ public class MyPage
 
 @Log annotation
 
-  You may mark any component method with the {{{../../apidocs/org/apache/tapestry/annotations/Log.html}Log}} annotation.
+  You may mark any component method with the {{{../../apidocs/org/apache/tapestry/annotation/Log.html}Log}} annotation.
   Method entry, exit (and any thrown exceptions) will be logged at DEBUG level. This is very convienient for
   debugging, especially when placed on event handler methods.
 

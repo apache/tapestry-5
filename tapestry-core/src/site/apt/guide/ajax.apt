@@ -111,7 +111,7 @@ Basic JavaScript
 * Injecting RenderSupport
 
   RenderSupport is an <environmental> object, so you will normally inject it via the
-  {{{../../apidocs/org/apache/tapestry/annotations/Environmental.html}Environmental}} annotation:
+  {{{../../apidocs/org/apache/tapestry/annotation/Environmental.html}Environmental}} annotation:
 
 +---+
   @Environmental
@@ -142,7 +142,7 @@ Basic JavaScript
 IncludeJavaScriptLibrary Annotation
 
   The
-  {{{../../apidocs/org/apache/tapestry/annotations/IncludeJavaScriptLibrary.html}IncludeJavaScriptLibrary}} annotation
+  {{{../../apidocs/org/apache/tapestry/annotation/IncludeJavaScriptLibrary.html}IncludeJavaScriptLibrary}} annotation
   is the easy way to include one or more JavaScript libraries.
 
   The previous example could be re-written as:

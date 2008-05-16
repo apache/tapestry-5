@@ -164,7 +164,7 @@ Configuring Tapestry
     an entirely new page instance.  The default is "10 ms".
 
   [tapestry.secure-page]
-    If true, then the page may only be accessed via HTTPS.  The {{{../../apidocs/org/apache/tapestry/annotations/Secure.html}@Secure}}
+    If true, then the page may only be accessed via HTTPS.  The {{{../../apidocs/org/apache/tapestry/annotation/Secure.html}@Secure}}
     annotation will set this value to true.
 
   [tapestry.scriptaculous]

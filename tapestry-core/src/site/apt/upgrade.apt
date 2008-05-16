@@ -30,6 +30,20 @@ Release 5.0.12
   {{{../apidocs/org/apache/tapestry/MarkupUtils.html}MarkupUtils}} and
   {{{../apidocs/org/apache/tapestry/VersionUtils.html}VersionUtils}}.
 
+  Because of naming conflicts, several classes and interfaces were moved under an
+  org.apache.tapestry5 package:
+
+  * {{{../apidocs/org/apache/tapestry5/services/ApplicationInitializer.html}ApplicationInitializer}} and
+    {{{../apidocs/org/apache/tapestry5/services/ApplicationInitializerFilter.html}ApplicationInitializerFilter}}.
+
+  * {{{../apidocs/org/apache/tapestry5/services/ComponentMessagesSource.html}ComponentMessagesSource}}.
+
+  * {{{../apidocs/org/apache/tapestry5/services/RequestGlobals.html}RequestGlobals}}.
+
+  * {{{../apidocs/org/apache/tapestry5/json/JSONObject.html}JSONObject}} (and the other JSON classes).
+
+  []
+
 * TapestryModule
 
   Many of the internal services of Tapestry have been split off into their own module,

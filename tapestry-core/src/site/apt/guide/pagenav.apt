@@ -62,7 +62,7 @@ Action Requests
   
   You may also return an instance of a page, rather than the name or class of a page.
   
-  A page may be injected via the {{{../../apidocs/org/apache/tapestry/annotations/InjectPage.html}InjectPage}} annotation.  
+  A page may be injected via the {{{../../apidocs/org/apache/tapestry/annotation/InjectPage.html}InjectPage}} annotation.
   
   Often, you will configure the page in some way before returning the page (examples below).
   

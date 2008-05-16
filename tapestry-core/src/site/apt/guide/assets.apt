@@ -19,7 +19,7 @@ Injecting Assets
   Components learn about assets via injection.  The 
   {{{inject.html}Inject}} annotation allows Assets to be injected into components as read-only properties.  The path to
   the resource is specified using the
-  {{{../../apidocs/org/apache/tapestry/annotations/Path.html}Path}} annotation.
+  {{{../../apidocs/org/apache/tapestry/annotation/Path.html}Path}} annotation.
   
 +----+
   @Inject
