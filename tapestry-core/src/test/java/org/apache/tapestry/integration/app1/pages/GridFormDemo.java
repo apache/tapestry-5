@@ -16,7 +16,7 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.integration.app1.data.ToDoItem;
 import org.apache.tapestry.integration.app1.services.ToDoDatabase;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 import java.util.List;
 

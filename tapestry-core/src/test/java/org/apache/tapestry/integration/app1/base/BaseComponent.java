@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.integration.app1.base;
 
-import org.apache.tapestry.annotations.ApplicationState;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.ApplicationState;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.integration.app1.data.IncidentData;
 
 public class BaseComponent

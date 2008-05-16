@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.integration.app1.components;
 
-import org.apache.tapestry.annotations.IncludeStylesheet;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.IncludeStylesheet;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.services.Builtin;
 import org.apache.tapestry.ioc.services.ClassFactory;
 import org.apache.tapestry.services.ComponentLayer;

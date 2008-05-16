@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.PersistentLocale;
 import org.apache.tapestry.services.Request;
 

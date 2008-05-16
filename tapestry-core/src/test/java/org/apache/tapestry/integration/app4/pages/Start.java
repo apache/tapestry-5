@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app4.pages;
 
-import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.annotation.InjectPage;
 
 public class Start
 {

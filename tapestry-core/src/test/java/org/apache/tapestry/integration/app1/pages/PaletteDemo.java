@@ -17,9 +17,9 @@ package org.apache.tapestry.integration.app1.pages;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.SelectModel;
 import org.apache.tapestry.ValueEncoder;
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.integration.app1.data.ProgrammingLanguage;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.util.EnumSelectModel;
 import org.apache.tapestry.util.EnumValueEncoder;
 

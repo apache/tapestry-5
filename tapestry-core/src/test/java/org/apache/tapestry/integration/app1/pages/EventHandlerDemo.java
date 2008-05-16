@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.annotation.OnEvent;
 import org.apache.tapestry.integration.app1.base.BaseEventHandlerDemo;
 
 public class EventHandlerDemo extends BaseEventHandlerDemo
@@ -63,6 +63,6 @@ public class EventHandlerDemo extends BaseEventHandlerDemo
 
     public Object[] getTwoContext()
     {
-        return new Object[]{1, 2};
+        return new Object[] { 1, 2 };
     }
 }

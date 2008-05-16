@@ -15,10 +15,10 @@
 package org.apache.tapestry.integration.app2.pages;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.annotation.InjectPage;
 import org.apache.tapestry.integration.app2.FortyTwo;
 import org.apache.tapestry.integration.app2.PlusOne;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.BeanModelSource;
 
 public class TestPrefixMethod

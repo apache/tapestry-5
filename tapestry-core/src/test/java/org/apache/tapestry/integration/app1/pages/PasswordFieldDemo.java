@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Retain;
+import org.apache.tapestry.annotation.Component;
+import org.apache.tapestry.annotation.Retain;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.corelib.components.PasswordField;
 import org.apache.tapestry.integration.app1.services.UserAuthenticator;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 public class PasswordFieldDemo
 {

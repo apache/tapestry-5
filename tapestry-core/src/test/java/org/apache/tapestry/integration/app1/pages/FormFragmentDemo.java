@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.Component;
+import org.apache.tapestry.annotation.InjectPage;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.integration.app1.data.SubscribeData;
 

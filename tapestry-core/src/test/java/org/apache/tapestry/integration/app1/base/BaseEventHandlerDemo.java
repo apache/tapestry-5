@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.integration.app1.base;
 
-import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry.annotation.Persist;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.List;

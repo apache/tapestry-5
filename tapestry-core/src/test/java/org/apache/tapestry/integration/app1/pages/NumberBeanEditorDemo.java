@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.annotation.InjectPage;
 import org.apache.tapestry.integration.app1.data.IntegerHolder;
 
 public class NumberBeanEditorDemo

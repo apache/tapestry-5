@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.app1.components;
 
 import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 
 public class Outer
 {

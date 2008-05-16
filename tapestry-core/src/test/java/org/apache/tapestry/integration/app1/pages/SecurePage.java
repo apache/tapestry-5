@@ -15,10 +15,10 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Asset;
-import org.apache.tapestry.annotations.Path;
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.annotations.Secure;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.Path;
+import org.apache.tapestry.annotation.Persist;
+import org.apache.tapestry.annotation.Secure;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.Request;
 
 @Secure

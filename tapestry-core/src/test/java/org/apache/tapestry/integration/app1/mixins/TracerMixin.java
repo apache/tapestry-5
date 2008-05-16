@@ -15,8 +15,8 @@
 package org.apache.tapestry.integration.app1.mixins;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeginRender;
+import org.apache.tapestry.annotation.AfterRender;
+import org.apache.tapestry.annotation.BeginRender;
 
 public class TracerMixin
 {

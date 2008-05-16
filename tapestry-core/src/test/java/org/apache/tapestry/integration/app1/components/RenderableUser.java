@@ -16,8 +16,8 @@ package org.apache.tapestry.integration.app1.components;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.Renderable;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotation.BeginRender;
+import org.apache.tapestry.annotation.Environmental;
 
 /**
  * Used, with {@link RenderableProvider}, to test the {@link Environmental} annotation.

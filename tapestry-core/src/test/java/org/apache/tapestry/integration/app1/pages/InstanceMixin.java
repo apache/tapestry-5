@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotation.*;
 import org.apache.tapestry.integration.app1.components.Output;
 import org.apache.tapestry.integration.app1.mixins.Emphasis;
 

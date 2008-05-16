@@ -15,7 +15,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Persist;
 
 public class BooleanDemo
 {

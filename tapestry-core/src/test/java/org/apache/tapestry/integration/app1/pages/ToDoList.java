@@ -15,11 +15,11 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.PrimaryKeyEncoder;
-import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotation.Component;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.integration.app1.data.ToDoItem;
 import org.apache.tapestry.integration.app1.services.ToDoDatabase;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.util.DefaultPrimaryKeyEncoder;
 
 import java.util.List;

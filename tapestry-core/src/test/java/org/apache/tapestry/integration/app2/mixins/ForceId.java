@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.app2.mixins;
 
 import org.apache.tapestry.ClientElement;
-import org.apache.tapestry.annotations.InjectContainer;
+import org.apache.tapestry.annotation.InjectContainer;
 
 public class ForceId
 {

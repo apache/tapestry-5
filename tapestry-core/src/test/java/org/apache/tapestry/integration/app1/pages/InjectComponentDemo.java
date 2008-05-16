@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.InjectComponent;
+import org.apache.tapestry.annotation.InjectComponent;
 import org.apache.tapestry.corelib.components.Form;
 
 public class InjectComponentDemo

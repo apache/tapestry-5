@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotation.Component;
 import org.apache.tapestry.corelib.components.Grid;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.integration.app1.services.MusicLibrary;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 import java.util.List;
 

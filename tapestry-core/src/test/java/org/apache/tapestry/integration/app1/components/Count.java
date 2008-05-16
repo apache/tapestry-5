@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.integration.app1.components;
 
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.annotation.AfterRender;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.SetupRender;
 import org.apache.tapestry.internal.util.IntegerRange;
 
 /**

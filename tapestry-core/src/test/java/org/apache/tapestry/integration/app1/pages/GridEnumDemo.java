@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.integration.app1.services.ToDoDatabase;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 /**
  * Used to demonstrate the built-in support for enum types.

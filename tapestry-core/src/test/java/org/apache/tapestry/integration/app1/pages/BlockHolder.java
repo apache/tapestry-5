@@ -15,8 +15,8 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.InjectPage;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 public class BlockHolder
 {
