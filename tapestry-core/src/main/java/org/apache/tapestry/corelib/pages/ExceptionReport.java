@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.corelib.pages;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.annotations.ContentType;
 import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Responsible for reporting runtime exceptions. This page is quite verbose and is usually overridden in a production
- * application. When {@link TapestryConstants#PRODUCTION_MODE_SYMBOL} is "true", it is very abbreviated.
+ * application. When {@link org.apache.tapestry.SymbolConstants#PRODUCTION_MODE} is "true", it is very abbreviated.
  *
  * @see org.apache.tapestry.corelib.components.ExceptionDisplay
  */
@@ -45,12 +45,12 @@ public class ExceptionReport implements ExceptionReporter
     private Request request;
 
     @Inject
-    @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
+    @Symbol(SymbolConstants.PRODUCTION_MODE)
     @Property(write = false)
     private boolean productionMode;
 
     @Inject
-    @Symbol(TapestryConstants.TAPESTRY_VERSION_SYMBOL)
+    @Symbol(SymbolConstants.TAPESTRY_VERSION)
     @Property(write = false)
     private String tapestryVersion;
 

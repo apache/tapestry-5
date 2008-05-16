@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.EventContext;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -107,7 +107,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
 
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[] { "foo", "bar" }, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "foo", "bar" }, false);
 
         renderer.renderPageResponse(page);
 
@@ -154,7 +154,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[0], false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[0], false);
 
         renderer.renderPageResponse(page);
 
@@ -204,7 +204,7 @@ public class PageRenderDispatcherTest extends InternalBaseTestCase
         train_get(cache, "foo/Bar", page);
         train_getRootElement(page, rootElement);
 
-        train_triggerContextEvent(rootElement, TapestryConstants.ACTIVATE_EVENT, new Object[] { "zip", "zoom" }, false);
+        train_triggerContextEvent(rootElement, EventConstants.ACTIVATE, new Object[] { "zip", "zoom" }, false);
 
         renderer.renderPageResponse(page);
 

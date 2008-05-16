@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.tutorial.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
 import org.apache.tapestry.ioc.annotations.Marker;
@@ -42,8 +42,8 @@ public class AppModule
         // you can extend this list of locales (it's a comma seperated series of locale names;
         // the first locale name is the default when there's no reasonable match).
 
-        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en");
-        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
     }
 
     /**

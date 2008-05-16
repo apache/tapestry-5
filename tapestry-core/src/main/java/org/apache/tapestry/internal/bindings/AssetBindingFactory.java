@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.bindings;
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.annotations.Symbol;
@@ -78,7 +78,7 @@ public class AssetBindingFactory implements BindingFactory
 
     public AssetBindingFactory(AssetSource source,
 
-                               @Symbol(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL)
+                               @Symbol(SymbolConstants.FORCE_ABSOLUTE_URIS)
                                boolean forceAbsoluteURIs)
     {
         this.source = source;

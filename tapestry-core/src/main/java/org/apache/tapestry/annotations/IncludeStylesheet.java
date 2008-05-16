@@ -25,7 +25,7 @@ import java.lang.annotation.*;
  * This saves the work of injecting the asset into a field and injecting the PageRenderSupport environmental service,
  * and invoking the method.
  * <p/>
- * Does not support setting a media type; if that is required. use {@link org.apache.tapestry.PageRenderSupport#addStylesheetLink(org.apache.tapestry.Asset,
+ * Does not support setting a media type; if that is required. use {@link org.apache.tapestry.RenderSupport#addStylesheetLink(org.apache.tapestry.Asset,
  * String)} directly.
  *
  * @see org.apache.tapestry.annotations.Path

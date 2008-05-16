@@ -75,7 +75,7 @@ public class GridPager
     private ClientBehaviorSupport clientBehaviorSupport;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     void beginRender(MarkupWriter writer)
     {
@@ -140,7 +140,7 @@ public class GridPager
                            ? new Object[] { pageIndex }
                            : new Object[] { pageIndex, zone };
 
-        Link link = resources.createActionLink(TapestryConstants.ACTION_EVENT, false, context);
+        Link link = resources.createActionLink(EventConstants.ACTION, false, context);
 
         Element element = writer.element("a", "href", link, "title", messages.format("goto-page", pageIndex));
 
@@ -149,7 +149,7 @@ public class GridPager
 
         if (zone != null)
         {
-            String id = pageRenderSupport.allocateClientId(resources);
+            String id = renderSupport.allocateClientId(resources);
 
             element.attribute("id", id);
 

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.internal.EmptyEventContext;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.URLEventContext;
@@ -85,7 +85,7 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void event_on_page_dotted_parameters() throws Exception
     {
-        test("/foo/MyPage:action/1.2.3/4.5.6", "foo/MyPage", "", TapestryConstants.ACTION_EVENT, "1.2.3", "4.5.6");
+        test("/foo/MyPage:action/1.2.3/4.5.6", "foo/MyPage", "", EventConstants.ACTION, "1.2.3", "4.5.6");
     }
 
     @Test
@@ -97,20 +97,20 @@ public class ComponentEventDispatcherTest extends InternalBaseTestCase
     @Test
     public void default_event_with_nested_id() throws Exception
     {
-        test("/foo/MyPage.fred", "foo/MyPage", "fred", TapestryConstants.ACTION_EVENT);
+        test("/foo/MyPage.fred", "foo/MyPage", "fred", EventConstants.ACTION);
     }
 
     @Test
     public void default_event_with_nested_id_and_context() throws Exception
     {
-        test("/foo/MyPage.fred/fee/fie/foe/fum", "foo/MyPage", "fred", TapestryConstants.ACTION_EVENT, "fee", "fie",
+        test("/foo/MyPage.fred/fee/fie/foe/fum", "foo/MyPage", "fred", EventConstants.ACTION, "fee", "fie",
              "foe", "fum");
     }
 
     @Test
     public void default_event_with_context_that_includes_a_colon() throws Exception
     {
-        test("/foo/MyPage.underdog/a:b:c/d", "foo/MyPage", "underdog", TapestryConstants.ACTION_EVENT, "a:b:c", "d");
+        test("/foo/MyPage.underdog/a:b:c/d", "foo/MyPage", "underdog", EventConstants.ACTION, "a:b:c", "d");
     }
 
     @Test

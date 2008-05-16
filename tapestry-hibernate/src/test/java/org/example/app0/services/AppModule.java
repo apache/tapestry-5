@@ -14,7 +14,7 @@
 
 package org.example.app0.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.hibernate.HibernateModule;
 import org.apache.tapestry.hibernate.HibernateTransactionDecorator;
 import org.apache.tapestry.ioc.MappedConfiguration;
@@ -32,7 +32,7 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
     }
 
     @Match("*DAO")

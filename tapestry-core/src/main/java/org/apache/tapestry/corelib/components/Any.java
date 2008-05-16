@@ -26,13 +26,13 @@ import org.apache.tapestry.ioc.annotations.Inject;
 @SupportsInformalParameters
 public class Any implements ClientElement
 {
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
     /**
      * The desired client id, which defaults to the components id.
      */
-    @Parameter(value = "prop:componentResources.id", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
     private String clientId;
 
     private Element anyElement;
@@ -43,7 +43,7 @@ public class Any implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     String defaultElement()
     {
@@ -71,7 +71,7 @@ public class Any implements ClientElement
     {
         if (uniqueId == null)
         {
-            uniqueId = pageRenderSupport.allocateClientId(clientId);
+            uniqueId = renderSupport.allocateClientId(clientId);
             anyElement.forceAttributes("id", clientId);
         }
 
@@ -83,9 +83,9 @@ public class Any implements ClientElement
         writer.end(); // the element
     }
 
-    void inject(PageRenderSupport support, ComponentResources resources, String element, String clientId)
+    void inject(RenderSupport support, ComponentResources resources, String element, String clientId)
     {
-        this.pageRenderSupport = support;
+        this.renderSupport = support;
         this.resources = resources;
         this.element = element;
         this.clientId = clientId;

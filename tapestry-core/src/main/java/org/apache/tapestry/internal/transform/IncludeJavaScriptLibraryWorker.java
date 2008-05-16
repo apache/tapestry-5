@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Asset;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -24,18 +24,18 @@ import org.apache.tapestry.services.ClassTransformation;
 
 /**
  * Recognizes the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation, and ensures that {@link
- * org.apache.tapestry.PageRenderSupport#addScriptLink(org.apache.tapestry.Asset[])} is invoked.
+ * org.apache.tapestry.RenderSupport#addScriptLink(org.apache.tapestry.Asset[])} is invoked.
  */
 public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 {
-    private final PageRenderSupport pageRenderSupport;
+    private final RenderSupport renderSupport;
 
-    public IncludeJavaScriptLibraryWorker(AssetSource assetSource, PageRenderSupport pageRenderSupport,
+    public IncludeJavaScriptLibraryWorker(AssetSource assetSource, RenderSupport renderSupport,
                                           SymbolSource symbolSource)
     {
         super(assetSource, symbolSource);
 
-        this.pageRenderSupport = pageRenderSupport;
+        this.renderSupport = renderSupport;
     }
 
     public void transform(ClassTransformation transformation, final MutableComponentModel model)
@@ -47,6 +47,6 @@ public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker
 
     protected void handleAsset(Asset asset)
     {
-        pageRenderSupport.addScriptLink(asset);
+        renderSupport.addScriptLink(asset);
     }
 }

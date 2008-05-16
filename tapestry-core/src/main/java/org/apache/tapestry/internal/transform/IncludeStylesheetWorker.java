@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Asset;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.annotations.IncludeStylesheet;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -24,18 +24,18 @@ import org.apache.tapestry.services.ClassTransformation;
 
 /**
  * Recognizes the {@link org.apache.tapestry.annotations.IncludeStylesheet} annotation and ensures that {@link
- * org.apache.tapestry.PageRenderSupport#addStylesheetLink(org.apache.tapestry.Asset, String)} is invoked.
+ * org.apache.tapestry.RenderSupport#addStylesheetLink(org.apache.tapestry.Asset, String)} is invoked.
  */
 public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
 {
-    private final PageRenderSupport pageRenderSupport;
+    private final RenderSupport renderSupport;
 
-    public IncludeStylesheetWorker(AssetSource assetSource, PageRenderSupport pageRenderSupport,
+    public IncludeStylesheetWorker(AssetSource assetSource, RenderSupport renderSupport,
                                    SymbolSource symbolSource)
     {
         super(assetSource, symbolSource);
 
-        this.pageRenderSupport = pageRenderSupport;
+        this.renderSupport = renderSupport;
     }
 
     public void transform(ClassTransformation transformation, final MutableComponentModel model)
@@ -48,6 +48,6 @@ public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker
 
     protected void handleAsset(Asset asset)
     {
-        pageRenderSupport.addStylesheetLink(asset, null);
+        renderSupport.addStylesheetLink(asset, null);
     }
 }

@@ -41,7 +41,7 @@ public class Radio implements Field
      * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String label;
 
     /**
@@ -70,7 +70,7 @@ public class Radio implements Field
     private DiscardBody discardBody;
 
     @Inject
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     private String clientId;
 
@@ -124,7 +124,7 @@ public class Radio implements Field
     {
         String value = container.toClient(this.value);
 
-        clientId = pageRenderSupport.allocateClientId(resources);
+        clientId = renderSupport.allocateClientId(resources);
         controlName = container.getElementName();
 
         writer.element("input", "type", "radio", "id", clientId, "name", controlName, "value", value);

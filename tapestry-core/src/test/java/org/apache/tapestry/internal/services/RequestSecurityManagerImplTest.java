@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.runtime.Component;
@@ -158,7 +158,7 @@ public class RequestSecurityManagerImplTest extends InternalBaseTestCase
         train_getRootComponent(page, component);
         train_getComponentResources(component, resources);
 
-        train_findMeta(locator, TapestryConstants.SECURE_PAGE, resources, Boolean.class, secure);
+        train_findMeta(locator, MetaDataConstants.SECURE_PAGE, resources, Boolean.class, secure);
     }
 
 

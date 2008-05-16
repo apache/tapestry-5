@@ -47,7 +47,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
     /**
      * The text label for the submit button of the form, by default "Create/Update".
      */
-    @Parameter(value = "message:submit-label", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(value = "message:submit-label", defaultPrefix = BindingConstants.LITERAL)
     @Property
     private String submitLabel;
 
@@ -68,7 +68,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * case-insensitive.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
     /**
@@ -76,7 +76,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * The names are case-insensitive.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String exclude;
 
     /**
@@ -85,7 +85,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * order.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
 
     /**
@@ -98,7 +98,7 @@ public class BeanEditForm implements ClientElement, FormValidationControl
      * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
      * indicated zone.  Often a BeanEditForm will update the same zone that contains it.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
     @Component(parameters = { "clientValidation=inherit:clientValidation", "zone=inherit:zone" })

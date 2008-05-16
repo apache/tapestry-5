@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ContentType;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
@@ -65,7 +65,7 @@ public class AjaxComponentEventRequestHandler implements ComponentEventRequestHa
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
 
-        activePage.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT,
+        activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE,
                                                         parameters.getPageActivationContext(), callback);
 
 

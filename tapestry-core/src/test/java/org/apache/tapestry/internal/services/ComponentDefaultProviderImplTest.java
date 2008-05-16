@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.Translator;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Messages;
@@ -138,7 +138,7 @@ public class ComponentDefaultProviderImplTest extends InternalBaseTestCase
                 bindingSource,
                 "default myparam",
                 containerResources,
-                TapestryConstants.PROP_BINDING_PREFIX,
+                BindingConstants.PROP,
                 id,
                 binding);
 

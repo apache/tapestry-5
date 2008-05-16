@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
@@ -48,7 +47,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
 
         train_getContextPath(request, "/ctx");
 
-        train_optimizePath(optimizer, "/ctx" + TapestryConstants.ASSET_PATH_PREFIX + expectedClientURL, OPTIMIZED);
+        train_optimizePath(optimizer, "/ctx" + RequestConstants.ASSET_PATH_PREFIX + expectedClientURL, OPTIMIZED);
 
 
         replay();
@@ -63,10 +62,11 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
     @DataProvider(name = "to_client_url_data")
     public Object[][] to_client_url_data()
     {
-        return new Object[][]{{"foo/bar/Baz.txt", "foo/bar/Baz.txt"}, {"com/example/mylib/Foo.bar", "mylib/Foo.bar"},
-                              {"com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar"},
-                              {"org/apache/tapestry/internal/Foo.bar", "tapestry-internal/Foo.bar"},
-                              {"org/apache/tapestry/Foo.bar", "tapestry/Foo.bar"},};
+        return new Object[][] { { "foo/bar/Baz.txt", "foo/bar/Baz.txt" },
+                { "com/example/mylib/Foo.bar", "mylib/Foo.bar" },
+                { "com/example/mylib/nested/Foo.bar", "mylib/nested/Foo.bar" },
+                { "org/apache/tapestry/internal/Foo.bar", "tapestry-internal/Foo.bar" },
+                { "org/apache/tapestry/Foo.bar", "tapestry/Foo.bar" }, };
     }
 
     @Test(dataProvider = "to_resource_path_data")
@@ -85,7 +85,7 @@ public class ClasspathAssetAliasManagerImplTest extends InternalBaseTestCase
         for (Object[] pair : data)
         {
             Object buffer = pair[0];
-            pair[0] = TapestryConstants.ASSET_PATH_PREFIX + pair[1];
+            pair[0] = RequestConstants.ASSET_PATH_PREFIX + pair[1];
             pair[1] = buffer;
         }
 

@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.ContentType;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.MetaDataLocator;
@@ -34,7 +34,7 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
     {
         ComponentResources pageResources = page.getRootComponent().getComponentResources();
 
-        String contentTypeString = metaDataLocator.findMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, pageResources,
+        String contentTypeString = metaDataLocator.findMeta(MetaDataConstants.RESPONSE_CONTENT_TYPE, pageResources,
                                                             String.class);
         ContentType contentType = new ContentType(contentTypeString);
 
@@ -45,7 +45,7 @@ public class PageContentTypeAnalyzerImpl implements PageContentTypeAnalyzer
         if (encoding == null)
         {
             encoding = metaDataLocator
-                    .findMeta(TapestryConstants.RESPONSE_ENCODING, pageResources, String.class);
+                    .findMeta(MetaDataConstants.RESPONSE_ENCODING, pageResources, String.class);
             contentType.setParameter(InternalConstants.CHARSET_CONTENT_TYPE_PARAMETER, encoding);
         }
 

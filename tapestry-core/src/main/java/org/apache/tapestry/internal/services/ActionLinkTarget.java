@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 
 /**
@@ -55,7 +55,7 @@ public class ActionLinkTarget implements InvocationTarget
         // If no nested component id, then must append the action; the ':' and the action become the
         // delimiter between the page name and the event context.
 
-        if (!hasComponentId || !eventType.equals(TapestryConstants.ACTION_EVENT))
+        if (!hasComponentId || !eventType.equals(EventConstants.ACTION))
         {
             builder.append(":");
             builder.append(eventType);

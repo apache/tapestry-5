@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.corelib.base;
 
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.internal.services.ClientBehaviorSupport;
@@ -40,7 +40,7 @@ public abstract class AbstractComponentEventLink extends AbstractLink
     /**
      * Binding the zone parameter turns the link into a an Ajax control that causes the related zone to be updated.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
     @Environmental

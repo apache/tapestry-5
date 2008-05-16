@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Link;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.BaseURLSource;
 import org.apache.tapestry.services.MetaDataLocator;
@@ -71,7 +71,7 @@ public class RequestSecurityManagerImpl implements RequestSecurityManager
 
     private boolean isSecure(Page page)
     {
-        return locator.findMeta(TapestryConstants.SECURE_PAGE,
+        return locator.findMeta(MetaDataConstants.SECURE_PAGE,
                                 page.getRootComponent().getComponentResources(), Boolean.class);
     }
 

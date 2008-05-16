@@ -68,7 +68,7 @@ public class Autocomplete
     private ComponentResources resources;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     @Inject
     private Request request;
@@ -86,7 +86,7 @@ public class Autocomplete
     /**
      * Overwrites the default minimum characters to trigger a server round trip (the default is 1).
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private int minChars;
 
     @Inject
@@ -97,14 +97,14 @@ public class Autocomplete
      * Overrides the default check frequency for determining whether to send a server request. The default is .4
      * seconds.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private double frequency;
 
     /**
      * If given, then the autocompleter will support multiple input values, seperated by any of the individual
      * characters in the string.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String tokens;
 
     /**
@@ -128,7 +128,7 @@ public class Autocomplete
 
                        "src", loader.toClientURL(),
 
-                       "class", TapestryConstants.INVISIBLE_CLASS,
+                       "class", CSSClassConstants.INVISIBLE,
 
                        "id", loaderId);
         writer.end();
@@ -162,8 +162,8 @@ public class Autocomplete
         // Let subclasses do more.
         configure(config);
 
-        pageRenderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toAbsoluteURI(),
-                                    config);
+        renderSupport.addScript("new Ajax.Autocompleter('%s', '%s', '%s', %s);", id, menuId, link.toAbsoluteURI(),
+                                config);
     }
 
     Object onAutocomplete()

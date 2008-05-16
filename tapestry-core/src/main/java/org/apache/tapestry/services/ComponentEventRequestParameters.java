@@ -111,7 +111,7 @@ public final class ComponentEventRequestParameters
 
     /**
      * The type of event.  When not specified in the URL, a default type of "action" ({@link
-     * org.apache.tapestry.TapestryConstants#ACTION_EVENT}) is provided.
+     * org.apache.tapestry.EventConstants#ACTION}) is provided.
      */
     public String getEventType()
     {

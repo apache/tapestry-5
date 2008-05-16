@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
@@ -58,7 +57,7 @@ public class AssetDispatcher implements Dispatcher
         // Remember that the request path does not include the context path, so we can simply start
         // looking for the asset path prefix right off the bat.
 
-        if (!path.startsWith(TapestryConstants.ASSET_PATH_PREFIX)) return false;
+        if (!path.startsWith(RequestConstants.ASSET_PATH_PREFIX)) return false;
 
         // ClassLoaders like their paths to start with a leading slash.
 

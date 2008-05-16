@@ -19,7 +19,7 @@ import java.lang.annotation.*;
 
 /**
  * An annotation on a page component used to identify the content type the page returns. An alternative to the {@link
- * org.apache.tapestry.annotations.Meta} annotation with the {@link org.apache.tapestry.TapestryConstants#RESPONSE_CONTENT_TYPE}
+ * org.apache.tapestry.annotations.Meta} annotation with the {@link org.apache.tapestry.MetaDataConstants#RESPONSE_CONTENT_TYPE}
  * key.
  *
  * @see org.apache.tapestry.annotations.ResponseEncoding

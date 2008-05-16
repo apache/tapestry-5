@@ -15,7 +15,6 @@
 package org.apache.tapestry.corelib.base;
 
 import org.apache.tapestry.*;
-import static org.apache.tapestry.TapestryConstants.LITERAL_BINDING_PREFIX;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.SetupRender;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
@@ -35,7 +34,7 @@ public abstract class AbstractLink implements ClientElement
     /**
      * An anchor value to append to the generated URL (the hash separator will be added automatically).
      */
-    @Parameter(defaultPrefix = LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String anchor;
 
     /**
@@ -49,7 +48,7 @@ public abstract class AbstractLink implements ClientElement
     private ComponentResources resources;
 
     @Inject
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     private Link link;
 
@@ -121,7 +120,7 @@ public abstract class AbstractLink implements ClientElement
                         String.format("Client id for %s is not available as it did not render yet (or was disabled).",
                                       resources.getCompleteId()));
 
-            clientId = pageRenderSupport.allocateClientId(resources);
+            clientId = renderSupport.allocateClientId(resources);
 
             element.forceAttributes("id", clientId);
         }

@@ -57,21 +57,21 @@ public class FormFragment implements ClientElement
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the fragment visible.
      * If not specified, then the default "slidedown" function is used.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked when the fragment is to be
      * hidden. If not specified, the default "slideup" function is used.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String hide;
 
     @Inject
     private Environment environment;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
 
     @Inject
@@ -138,14 +138,14 @@ public class FormFragment implements ClientElement
         String id = resources.getId();
 
         controlName = formSupport.allocateControlName(id);
-        clientId = pageRenderSupport.allocateClientId(id);
+        clientId = renderSupport.allocateClientId(id);
 
         Element element = writer.element("div", "id", clientId);
 
         resources.renderInformalParameters(writer);
 
         if (!visible)
-            element.addClassName(TapestryConstants.INVISIBLE_CLASS);
+            element.addClassName(CSSClassConstants.INVISIBLE);
 
 
         writer.element("input",

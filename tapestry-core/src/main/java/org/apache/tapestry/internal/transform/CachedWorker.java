@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Binding;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.annotations.Cached;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -76,7 +76,7 @@ public class CachedWorker implements ComponentClassTransformWorker
                                             bindingField,
                                             bindingSourceField,
                                             transformation.getResourcesFieldName(),
-                                            TapestryConstants.PROP_BINDING_PREFIX,
+                                            BindingConstants.PROP,
                                             once.watch());
 
                 transformation.extendMethod(TransformConstants.CONTAINING_PAGE_DID_LOAD_SIGNATURE, body);

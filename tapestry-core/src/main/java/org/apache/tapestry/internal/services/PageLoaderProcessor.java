@@ -15,9 +15,9 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.internal.parser.*;
 import org.apache.tapestry.internal.structure.*;
@@ -166,7 +166,7 @@ class PageLoaderProcessor
         // Meta default of literal for the template.
 
         String defaultBindingPrefix = determineDefaultBindingPrefix(component, name,
-                                                                    TapestryConstants.LITERAL_BINDING_PREFIX);
+                                                                    BindingConstants.LITERAL);
 
         Binding binding = findBinding(loadingElement, component, name, token.getValue(), defaultBindingPrefix,
                                       token.getLocation());
@@ -213,7 +213,7 @@ class PageLoaderProcessor
             String value = model.getParameterValue(name);
 
             String defaultBindingPrefix = determineDefaultBindingPrefix(newComponent, name,
-                                                                        TapestryConstants.PROP_BINDING_PREFIX);
+                                                                        BindingConstants.PROP);
 
             Binding binding = findBinding(loadingComponent, newComponent, name, value, defaultBindingPrefix,
                                           newComponent.getLocation());

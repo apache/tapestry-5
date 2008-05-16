@@ -15,8 +15,8 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Binding;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.annotations.Property;
 import org.apache.tapestry.annotations.SupportsInformalParameters;
@@ -68,14 +68,14 @@ public class BeanDisplay
      * case-insensitive.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
     /**
      * A comma-separated list of property names to be removed from the {@link BeanModel}. The names are
      * case-insensitive.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String exclude;
 
     /**
@@ -83,7 +83,7 @@ public class BeanDisplay
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
      * order.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
 
     /**

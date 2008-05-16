@@ -80,7 +80,7 @@ public class ComponentDefaultProviderImpl implements ComponentDefaultProvider
         return bindingSource.newBinding(
                 "default " + parameterName,
                 containerResources,
-                TapestryConstants.PROP_BINDING_PREFIX,
+                BindingConstants.PROP,
                 componentId);
     }
 

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.annotations.Secure;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -22,7 +22,7 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 
 /**
  * Recognizes the {@link org.apache.tapestry.annotations.Secure} annotation and sets the {@link
- * org.apache.tapestry.TapestryConstants#SECURE_PAGE} meta data to "true".
+ * org.apache.tapestry.MetaDataConstants#SECURE_PAGE} meta data to "true".
  */
 public class SecureWorker implements ComponentClassTransformWorker
 {
@@ -31,6 +31,6 @@ public class SecureWorker implements ComponentClassTransformWorker
         Secure secure = transformation.getAnnotation(Secure.class);
 
         if (secure != null)
-            model.setMeta(TapestryConstants.SECURE_PAGE, "true");
+            model.setMeta(MetaDataConstants.SECURE_PAGE, "true");
     }
 }

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app4.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ioc.MappedConfiguration;
 
 /**
@@ -25,6 +25,6 @@ public class AppModule
 {
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(TapestryConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL, "true");
+        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "true");
     }
 }

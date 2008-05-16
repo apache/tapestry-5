@@ -229,23 +229,23 @@ public final class TapestryModule
 
                                                ObjectLocator locator)
     {
-        configuration.add(TapestryConstants.LITERAL_BINDING_PREFIX, new LiteralBindingFactory());
-        configuration.add(TapestryConstants.PROP_BINDING_PREFIX, propBindingFactory);
+        configuration.add(BindingConstants.LITERAL, new LiteralBindingFactory());
+        configuration.add(BindingConstants.PROP, propBindingFactory);
 
-        configuration.add(TapestryConstants.COMPONENT_BINDING_PREFIX, new ComponentBindingFactory());
-        configuration.add(TapestryConstants.MESSAGE_BINDING_PREFIX, new MessageBindingFactory());
-        configuration.add(TapestryConstants.VALIDATE_BINDING_PREFIX, locator.autobuild(ValidateBindingFactory.class));
-        configuration.add(TapestryConstants.TRANSLATE_BINDING_PREFIX, locator.autobuild(TranslateBindingFactory.class));
-        configuration.add(TapestryConstants.BLOCK_BINDING_PREFIX, new BlockBindingFactory());
-        configuration.add(TapestryConstants.ASSET_BINDING_PREFIX, locator.autobuild(AssetBindingFactory.class));
-        configuration.add(TapestryConstants.VAR_BINDING_PREFIX, new RenderVariableBindingFactory());
-        configuration.add(TapestryConstants.NULLFIELDSTRATEGY_BINDING_PREFIX,
+        configuration.add(BindingConstants.COMPONENT, new ComponentBindingFactory());
+        configuration.add(BindingConstants.MESSAGE, new MessageBindingFactory());
+        configuration.add(BindingConstants.VALIDATE, locator.autobuild(ValidateBindingFactory.class));
+        configuration.add(BindingConstants.TRANSLATE, locator.autobuild(TranslateBindingFactory.class));
+        configuration.add(BindingConstants.BLOCK, new BlockBindingFactory());
+        configuration.add(BindingConstants.ASSET, locator.autobuild(AssetBindingFactory.class));
+        configuration.add(BindingConstants.VAR, new RenderVariableBindingFactory());
+        configuration.add(BindingConstants.NULLFIELDSTRATEGY,
                           locator.autobuild(NullFieldStrategyBindingFactory.class));
     }
 
     public static void contributeClasspathAssetAliasManager(MappedConfiguration<String, String> configuration,
 
-                                                            @Symbol(TapestryConstants.TAPESTRY_VERSION_SYMBOL)
+                                                            @Symbol(SymbolConstants.TAPESTRY_VERSION)
                                                             String version,
 
                                                             // @Inject not needed, because this isn't a service builder method
@@ -565,11 +565,11 @@ public final class TapestryModule
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
 
                                          // @Inject not needed because its a long, not a String
-                                         @Symbol(TapestryConstants.FILE_CHECK_INTERVAL_SYMBOL)
+                                         @Symbol(SymbolConstants.FILE_CHECK_INTERVAL)
                                          @IntermediateType(TimeInterval.class)
                                          long checkInterval,
 
-                                         @Symbol(TapestryConstants.FILE_CHECK_UPDATE_TIMEOUT_SYMBOL)
+                                         @Symbol(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT)
                                          @IntermediateType(TimeInterval.class)
                                          long updateTimeout,
 
@@ -830,12 +830,12 @@ public final class TapestryModule
     }
 
     /**
-     * Builds a proxy to the current {@link org.apache.tapestry.PageRenderSupport} inside this thread's {@link
+     * Builds a proxy to the current {@link org.apache.tapestry.RenderSupport} inside this thread's {@link
      * Environment}.
      */
-    public PageRenderSupport buildPageRenderSupport()
+    public RenderSupport buildRenderSupport()
     {
-        return environmentalBuilder.build(PageRenderSupport.class);
+        return environmentalBuilder.build(RenderSupport.class);
     }
 
     /**
@@ -1368,15 +1368,15 @@ public final class TapestryModule
     /**
      * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental}
      * service.  Filters often provide {@link Environmental} services needed by components as they render. <dl>
-     * <dt>PageRenderSupport</dt>  <dd>Provides {@link PageRenderSupport}</dd> <dt>ClientBehaviorSupport</dt>
-     * <dd>Provides {@link org.apache.tapestry.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt>
-     * <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides
-     * {@link org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
-     * </dl>
+     * <dt>PageRenderSupport</dt>  <dd>Provides {@link org.apache.tapestry.RenderSupport}</dd>
+     * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry.internal.services.ClientBehaviorSupport}</dd>
+     * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>
+     * <dt>DefaultValidationDecorator</dt> <dd>Provides {@link org.apache.tapestry.ValidationDecorator} (as an instance
+     * of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd> </dl>
      */
     public void contributeMarkupRenderer(OrderedConfiguration<MarkupRendererFilter> configuration,
 
-                                         @Symbol(TapestryConstants.PRODUCTION_MODE_SYMBOL)
+                                         @Symbol(SymbolConstants.PRODUCTION_MODE)
                                          final boolean productionMode,
 
                                          @Path("${tapestry.default-stylesheet}")
@@ -1397,21 +1397,21 @@ public final class TapestryModule
             {
                 DocumentLinkerImpl linker = new DocumentLinkerImpl(productionMode);
 
-                PageRenderSupportImpl support = new PageRenderSupportImpl(linker, symbolSource, assetSource,
+                RenderSupportImpl support = new RenderSupportImpl(linker, symbolSource, assetSource,
 
-                                                                          // Core scripts added to any page that uses scripting
+                                                                  // Core scripts added to any page that uses scripting
 
-                                                                          "${tapestry.scriptaculous}/prototype.js",
-                                                                          "${tapestry.scriptaculous}/scriptaculous.js",
-                                                                          "${tapestry.scriptaculous}/effects.js",
+                                                                  "${tapestry.scriptaculous}/prototype.js",
+                                                                  "${tapestry.scriptaculous}/scriptaculous.js",
+                                                                  "${tapestry.scriptaculous}/effects.js",
 
-                                                                          // Uses functions defined by the prior three
+                                                                  // Uses functions defined by the prior three
 
-                                                                          "org/apache/tapestry/tapestry.js");
+                                                                  "org/apache/tapestry/tapestry.js");
 
                 support.addStylesheetLink(stylesheetAsset, null);
 
-                environment.push(PageRenderSupport.class, support);
+                environment.push(RenderSupport.class, support);
 
                 renderer.renderMarkup(writer);
 
@@ -1419,7 +1419,7 @@ public final class TapestryModule
 
                 linker.updateDocument(writer.getDocument());
 
-                environment.pop(PageRenderSupport.class);
+                environment.pop(RenderSupport.class);
             }
         };
 
@@ -1427,9 +1427,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, MarkupRenderer renderer)
             {
-                PageRenderSupport pageRenderSupport = environment.peekRequired(PageRenderSupport.class);
+                RenderSupport renderSupport = environment.peekRequired(RenderSupport.class);
 
-                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(pageRenderSupport);
+                ClientBehaviorSupportImpl clientBehaviorSupport = new ClientBehaviorSupportImpl(renderSupport);
 
                 environment.push(ClientBehaviorSupport.class, clientBehaviorSupport);
 
@@ -1477,9 +1477,9 @@ public final class TapestryModule
         };
 
 
-        configuration.add("PageRenderSupport", pageRenderSupport);
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:PageRenderSupport");
-        configuration.add("Heartbeat", heartbeat, "after:PageRenderSupport");
+        configuration.add("RenderSupport", pageRenderSupport);
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
+        configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
@@ -1489,7 +1489,7 @@ public final class TapestryModule
      * to {@link #contributeMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration, org.apache.tapestry.Asset,
      * org.apache.tapestry.Asset, ValidationMessagesSource, org.apache.tapestry.ioc.services.SymbolSource, AssetSource)}
      * } and overlaps it to some degree. <dl> <dt>   PageRenderSupport     </dt> <dd>Provides {@link
-     * org.apache.tapestry.PageRenderSupport}</dd> <dt>ClientBehaviorSupport</dt> <dd>Provides {@link
+     * org.apache.tapestry.RenderSupport}</dd> <dt>ClientBehaviorSupport</dt> <dd>Provides {@link
      * org.apache.tapestry.internal.services.ClientBehaviorSupport}</dd> <dt>Heartbeat</dt> <dd>Provides {@link
      * org.apache.tapestry.services.Heartbeat}</dd> <dt>DefaultValidationDecorator</dt> <dd>Provides {@link
      * org.apache.tapestry.ValidationDecorator} (as an instance of {@link org.apache.tapestry.internal.DefaultValidationDecorator})</dd>
@@ -1536,16 +1536,16 @@ public final class TapestryModule
                 };
 
 
-                PageRenderSupportImpl support = new PageRenderSupportImpl(builder, symbolSource, assetSource,
-                                                                          idAllocator);
+                RenderSupportImpl support = new RenderSupportImpl(builder, symbolSource, assetSource,
+                                                                  idAllocator);
 
-                environment.push(PageRenderSupport.class, support);
+                environment.push(RenderSupport.class, support);
 
                 renderer.renderMarkup(writer, reply);
 
                 support.commit();
 
-                environment.pop(PageRenderSupport.class);
+                environment.pop(RenderSupport.class);
 
                 if (buffer.length() > 0)
                     reply.put("script", buffer.toString());
@@ -1556,9 +1556,9 @@ public final class TapestryModule
         {
             public void renderMarkup(MarkupWriter writer, JSONObject reply, PartialMarkupRenderer renderer)
             {
-                PageRenderSupport pageRenderSupport = environment.peekRequired(PageRenderSupport.class);
+                RenderSupport renderSupport = environment.peekRequired(RenderSupport.class);
 
-                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(pageRenderSupport);
+                ClientBehaviorSupportImpl support = new ClientBehaviorSupportImpl(renderSupport);
 
                 environment.push(ClientBehaviorSupport.class, support);
 
@@ -1606,9 +1606,9 @@ public final class TapestryModule
         };
 
 
-        configuration.add("PageRenderSupport", pageRenderSupport);
-        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:PageRenderSupport");
-        configuration.add("Heartbeat", heartbeat, "after:PageRenderSupport");
+        configuration.add("RenderSupport", pageRenderSupport);
+        configuration.add("ClientBehaviorSupport", clientBehaviorSupport, "after:RenderSupport");
+        configuration.add("Heartbeat", heartbeat, "after:RenderSupport");
         configuration.add("DefaultValidationDecorator", defaultValidationDecorator, "after:Heartbeat");
     }
 
@@ -1625,7 +1625,7 @@ public final class TapestryModule
                                                  PersistentFieldStrategy clientStrategy)
     {
         configuration.add("session", new SessionPersistentFieldStrategy(request));
-        configuration.add(TapestryConstants.FLASH_PERSISTENCE_STRATEGY, new FlashPersistentFieldStrategy(request));
+        configuration.add(PersistenceConstants.FLASH, new FlashPersistentFieldStrategy(request));
         configuration.add("client", clientStrategy);
     }
 
@@ -1727,14 +1727,14 @@ public final class TapestryModule
         // Remember this is request-to-request time, presumably it'll take the developer more than
         // one second to make a change, save it, and switch back to the browser.
 
-        configuration.add(TapestryConstants.FILE_CHECK_INTERVAL_SYMBOL, "1 s");
-        configuration.add(TapestryConstants.FILE_CHECK_UPDATE_TIMEOUT_SYMBOL, "50 ms");
+        configuration.add(SymbolConstants.FILE_CHECK_INTERVAL, "1 s");
+        configuration.add(SymbolConstants.FILE_CHECK_UPDATE_TIMEOUT, "50 ms");
 
         // This should be overridden for particular applications.
-        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,it,zh_CN");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,it,zh_CN");
 
-        configuration.add(TapestryConstants.TAPESTRY_VERSION_SYMBOL,
-                          TapestryUtils.readVersionNumber(
+        configuration.add(SymbolConstants.TAPESTRY_VERSION,
+                          VersionUtils.readVersionNumber(
                                   "META-INF/maven/org.apache.tapestry/tapestry-core/pom.properties"));
 
         configuration.add("tapestry.default-cookie-max-age", "7 d");
@@ -1749,15 +1749,15 @@ public final class TapestryModule
         configuration.add("tapestry.page-pool.hard-limit", "20");
         configuration.add("tapestry.page-pool.active-window", "10 m");
 
-        configuration.add(TapestryConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL, "false");
+        configuration.add(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS, "false");
 
-        configuration.add(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL, "false");
+        configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "false");
 
-        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "true");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "true");
 
-        configuration.add(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL, "true");
+        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "true");
 
-        configuration.add(TapestryConstants.SECURE_PAGE, "false");
+        configuration.add(MetaDataConstants.SECURE_PAGE, "false");
 
         // This is designed to make it easy to keep synchronized with script.aculo.ous. As we
         // support a new version, we create a new folder, and update the path entry. We can then
@@ -1776,8 +1776,8 @@ public final class TapestryModule
 
         configuration.add(PersistentFieldManagerImpl.META_KEY, PersistentFieldManagerImpl.DEFAULT_STRATEGY);
 
-        configuration.add(TapestryConstants.RESPONSE_CONTENT_TYPE, "text/html");
-        configuration.add(TapestryConstants.RESPONSE_ENCODING, "UTF-8");
+        configuration.add(MetaDataConstants.RESPONSE_CONTENT_TYPE, "text/html");
+        configuration.add(MetaDataConstants.RESPONSE_ENCODING, "UTF-8");
     }
 
 
@@ -1969,9 +1969,9 @@ public final class TapestryModule
     /**
      * Contributes filters: <dl> <dt>Ajax</dt> <dd>Determines if the request is Ajax oriented, and redirects to an
      * alternative handler if so</dd> <dt>ImmediateRender</dt> <dd>When {@linkplain
-     * TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL immediate action response rendering} is enabled,
-     * generates the markup response (instead of a page redirect response, which is the normal behavior) </dd>
-     * <dt>Secure</dt> <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
+     * org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS immediate action response rendering}
+     * is enabled, generates the markup response (instead of a page redirect response, which is the normal behavior)
+     * </dd> <dt>Secure</dt> <dd>Sends a redirect if an non-secure request accesses a secure page</dd></dl>
      */
     public void contributeComponentEventRequestHandler(OrderedConfiguration<ComponentEventRequestFilter> configuration,
                                                        final RequestSecurityManager requestSecurityManager,

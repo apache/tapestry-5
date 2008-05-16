@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.internal.services.ClassFactoryImpl;
 import org.apache.tapestry.ioc.services.ClassFactory;
@@ -27,11 +27,11 @@ public class EnvironmentalShadowBuilderImplTest extends InternalBaseTestCase
     @Test
     public void proxy_class()
     {
-        PageRenderSupport delegate = newMock(PageRenderSupport.class);
+        RenderSupport delegate = newMock(RenderSupport.class);
         ClassFactory factory = new ClassFactoryImpl();
         Environment env = mockEnvironment();
 
-        train_peekRequired(env, PageRenderSupport.class, delegate);
+        train_peekRequired(env, RenderSupport.class, delegate);
 
         expect(delegate.allocateClientId("fred")).andReturn("barney");
 
@@ -39,7 +39,7 @@ public class EnvironmentalShadowBuilderImplTest extends InternalBaseTestCase
 
         EnvironmentalShadowBuilder builder = new EnvironmentalShadowBuilderImpl(factory, env);
 
-        PageRenderSupport proxy = builder.build(PageRenderSupport.class);
+        RenderSupport proxy = builder.build(RenderSupport.class);
 
         assertEquals(proxy.allocateClientId("fred"), "barney");
 

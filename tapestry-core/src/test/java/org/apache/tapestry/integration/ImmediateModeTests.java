@@ -18,10 +18,10 @@ import org.apache.tapestry.test.AbstractIntegrationTestSuite;
 import org.testng.annotations.Test;
 
 /**
- * Tests for immediate mode (aka T4 mode, aka {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
+ * Tests for immediate mode (aka T4 mode, aka {@linkplain org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS
  * redirects suppressed} mode).
  */
-@Test(timeOut = 50000, sequential = true, groups = {"integration"})
+@Test(timeOut = 50000, sequential = true, groups = { "integration" })
 public class ImmediateModeTests extends AbstractIntegrationTestSuite
 {
     public ImmediateModeTests()

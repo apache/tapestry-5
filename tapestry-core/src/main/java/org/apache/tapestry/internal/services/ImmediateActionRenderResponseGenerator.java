@@ -22,7 +22,7 @@ import org.apache.tapestry.services.Request;
 import java.io.IOException;
 
 /**
- * Alternative implementation, used when {@link org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL}
+ * Alternative implementation, used when {@link org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS}
  * is set to true.
  */
 public class ImmediateActionRenderResponseGenerator implements ActionRenderResponseGenerator

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.*;
@@ -54,7 +54,7 @@ public class ImmediateActionRenderResponseFilter implements ComponentEventReques
         {
             // We don't have a context to provide but this still nags me as not the right thing to do.
 
-            page.getRootElement().triggerEvent(TapestryConstants.ACTIVATE_EVENT, new Object[0], null);
+            page.getRootElement().triggerEvent(EventConstants.ACTIVATE, new Object[0], null);
 
             renderer.renderPageResponse(page);
             return;

@@ -48,9 +48,9 @@ Basic JavaScript
   the JavaScript libraries.
 
   Most of this is accomplished via the
-  {{{../../apidocs/org/apache/tapestry/PageRenderSupport.html}PageRenderSupport}} object.
+  {{{../../apidocs/org/apache/tapestry/RenderSupport.html}RenderSupport}} object.
 
-  PageRenderSupport include a number of methods that will be used by components, or event by
+  RenderSupport include a number of methods that will be used by components, or event by
   services that are called from components.
 
 * addScriptLink()
@@ -76,11 +76,11 @@ Basic JavaScript
   private Asset dragDropLibrary;
 
   @Environmental
-  private PageRenderSupport pageRenderSupport;
+  private RenderSupport renderSupport;
 
   void setupRender()
   {
-    pageRenderSupport.addScriptLink(dragDropLibrary);
+    renderSupport.addScriptLink(dragDropLibrary);
   }
 
 +---+
@@ -88,10 +88,10 @@ Basic JavaScript
   The Asset is injected, using the $\{tapestry.scriptaculous\} symbol to reference the location
   of the Scriptaculous library.
 
-  The PageRenderSupport is accessed as an Environmental service.
+  The RenderSupport is accessed as an Environmental service.
 
   The setupRender() method (the name is specifically linked to a
-  {{{rendering.html}render phase}}) is the correct place to inform the PageRenderSupport service that
+  {{{rendering.html}render phase}}) is the correct place to inform the RenderSupport service that
   the library is needed.
 
   
@@ -108,35 +108,35 @@ Basic JavaScript
   for arguments.  This saves you the trouble of calling String.format() yourself.  In any case, the
   formatting JavaScript is added to the script block.
 
-* Injecting PageRenderSupport
+* Injecting RenderSupport
 
-  PageRenderSupport is an <environmental> object, so you will normally inject it via the
+  RenderSupport is an <environmental> object, so you will normally inject it via the
   {{{../../apidocs/org/apache/tapestry/annotations/Environmental.html}Environmental}} annotation:
 
 +---+
   @Environmental
-  private PageRenderSupport pageRenderSupport;
+  private RenderSupport renderSupport;
 +---+
 
   Environmental only works inside components and occasionally a service may want to
-  inject PageRenderSupport.  Fortunately, a proxy of PageRenderSupport has been set up.  The upshot of which
+  inject RenderSupport.  Fortunately, a proxy of RenderSupport has been set up.  The upshot of which
   is, you may also:
 
 +---+
   @Inject
-  private PageRenderSupport pageRenderSupport;
+  private RenderSupport renderSupport;
 +----+
 
   ... or, in a service implementation constructor:
 
 +---+
-  public MyServiceImpl(PageRenderSupport support)
+  public MyServiceImpl(RenderSupport support)
   {
     . . .
   }
 +---+
 
-  Inside a component, you should use Environmental, to highlight the fact that PageRenderSupport (like most
+  Inside a component, you should use Environmental, to highlight the fact that RenderSupport (like most
   environmental objects) is only available during rendering, not during action requests.
 
 IncludeJavaScriptLibrary Annotation
@@ -155,8 +155,8 @@ public class MyComponent
 }
 +---+
 
-  This saves you the effort of injecting the asset and making the call to PageRenderSupport.
-  Chances are you will <still> inject PageRenderSupport so as to add some initialization JavaScript.
+  This saves you the effort of injecting the asset and making the call to RenderSupport.
+  Chances are you will <still> inject RenderSupport so as to add some initialization JavaScript.
 
 Ajax Components and Mixins
 

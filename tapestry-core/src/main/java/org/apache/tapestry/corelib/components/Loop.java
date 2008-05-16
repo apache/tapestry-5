@@ -185,7 +185,7 @@ public class Loop
      * The element to render. If not null, then the loop will render the indicated element around its body (on each pass
      * through the loop). The default is derived from the component template.
      */
-    @Parameter(value = "prop:componentResources.elementName", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(value = "prop:componentResources.elementName", defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
     /**

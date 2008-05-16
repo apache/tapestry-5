@@ -20,7 +20,7 @@ package org.apache.tapestry.internal.services;
  * URL.  Of course, you need to make sure that's turned off inside an Ajax request since the base URL of the client it
  * totally unknown in that situation.
  *
- * @see org.apache.tapestry.TapestryConstants#FORCE_ABSOLUTE_URIS_SYMBOL
+ * @see org.apache.tapestry.SymbolConstants#FORCE_ABSOLUTE_URIS
  */
 public interface RequestPathOptimizer
 {

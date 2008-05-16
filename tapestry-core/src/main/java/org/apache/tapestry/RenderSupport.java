@@ -24,7 +24,7 @@ import org.apache.tapestry.services.AssetSource;
  * important for JavaScript generation) as well as accumulating JavaScript to be sent to the client. PageRenderSupport
  * also allows for the incremental addition of stylesheets.
  */
-public interface PageRenderSupport
+public interface RenderSupport
 {
     /**
      * Allocates a unique id based on the component's id. In some cases, the return value will not precisely match the

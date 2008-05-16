@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.annotations.ResponseEncoding;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -51,7 +51,7 @@ public class ResponseEncodingWorkerTest extends TapestryTestCase
 
         expect(annotation.value()).andReturn(value);
 
-        model.setMeta(TapestryConstants.RESPONSE_ENCODING, value);
+        model.setMeta(MetaDataConstants.RESPONSE_ENCODING, value);
 
         replay();
 

@@ -56,11 +56,11 @@ public class DateField extends AbstractField
     @SuppressWarnings("unchecked")
     private FieldValidator<Object> validate = NOOP_VALIDATOR;
 
-    @Parameter(defaultPrefix = TapestryConstants.ASSET_BINDING_PREFIX, value = "datefield.gif")
+    @Parameter(defaultPrefix = BindingConstants.ASSET, value = "datefield.gif")
     private Asset icon;
 
     @Environmental
-    private PageRenderSupport support;
+    private RenderSupport support;
 
     @Environmental
     private ValidationTracker tracker;

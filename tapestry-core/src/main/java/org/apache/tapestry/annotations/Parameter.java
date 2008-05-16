@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.annotations;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.services.BindingFactory;
 
 import java.lang.annotation.Documented;
@@ -64,8 +64,10 @@ public @interface Parameter
      * is <em>rarely</em> a reason to override this. Typically, non-standard default binding prefixes are paired with
      * specific {@link BindingFactory} implementations, and used with parameters whose name reflects the binding
      * prefix.
+     *
+     * @see org.apache.tapestry.BindingConstants
      */
-    String defaultPrefix() default TapestryConstants.PROP_BINDING_PREFIX;
+    String defaultPrefix() default BindingConstants.PROP;
 
     /**
      * Used to mark a parameter as requiring earlier initialization than other parameters. This is used when default

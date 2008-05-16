@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.annotations.ContentType;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -52,7 +52,7 @@ public class ContentTypeWorkerTest extends TapestryTestCase
 
         expect(annotation.value()).andReturn(value);
 
-        model.setMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, value);
+        model.setMeta(MetaDataConstants.RESPONSE_CONTENT_TYPE, value);
 
         replay();
 

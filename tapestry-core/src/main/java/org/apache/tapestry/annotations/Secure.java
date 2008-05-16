@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * A marker annotation that indicates that the page in question may only be accessed via HTTPS.
  *
- * @see org.apache.tapestry.TapestryConstants#SECURE_PAGE
+ * @see org.apache.tapestry.MetaDataConstants#SECURE_PAGE
  */
 @Target(TYPE)
 @Retention(RUNTIME)

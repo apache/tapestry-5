@@ -18,7 +18,7 @@ import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
 import org.apache.tapestry.Binding;
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.services.Instantiator;
 import org.apache.tapestry.internal.services.InternalClassTransformation;
@@ -466,7 +466,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         MutableComponentModel model = mockMutableComponentModel(logger);
 
-        model.addParameter("value", false, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter("value", false, BindingConstants.PROP);
 
         Runnable phaseTwoTraining = new Runnable()
         {
@@ -474,7 +474,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
             {
                 train_isBound(resources, "value", false);
 
-                expect(source.newBinding("default value", resources, TapestryConstants.PROP_BINDING_PREFIX,
+                expect(source.newBinding("default value", resources, BindingConstants.PROP,
                                          "literal:greeting")).andReturn(binding);
 
                 resources.bindParameter("value", binding);
@@ -511,7 +511,7 @@ public class ParameterWorkerTest extends InternalBaseTestCase
 
         MutableComponentModel model = mockMutableComponentModel(logger);
 
-        model.addParameter("value", false, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter("value", false, BindingConstants.PROP);
 
         Runnable phaseTwoTraining = new Runnable()
         {
@@ -563,11 +563,11 @@ public class ParameterWorkerTest extends InternalBaseTestCase
         final Logger logger = mockLogger();
         MutableComponentModel model = mockMutableComponentModel(logger);
 
-        model.addParameter("invariantObject", false, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("invariantPrimitive", false, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("object", false, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("primitive", true, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("uncached", false, TapestryConstants.LITERAL_BINDING_PREFIX);
+        model.addParameter("invariantObject", false, BindingConstants.PROP);
+        model.addParameter("invariantPrimitive", false, BindingConstants.PROP);
+        model.addParameter("object", false, BindingConstants.PROP);
+        model.addParameter("primitive", true, BindingConstants.PROP);
+        model.addParameter("uncached", false, BindingConstants.LITERAL);
 
 
         Runnable phaseTwoTraining = new Runnable()

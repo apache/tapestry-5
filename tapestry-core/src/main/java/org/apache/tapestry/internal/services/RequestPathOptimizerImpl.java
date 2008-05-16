@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ioc.annotations.Symbol;
 import org.apache.tapestry.services.Request;
 
@@ -34,7 +34,7 @@ public class RequestPathOptimizerImpl implements RequestPathOptimizer
 
     public RequestPathOptimizerImpl(Request request,
 
-                                    @Symbol(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL)
+                                    @Symbol(SymbolConstants.FORCE_ABSOLUTE_URIS)
                                     boolean forceAbsolute)
     {
         this.request = request;

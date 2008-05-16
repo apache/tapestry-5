@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.internal.structure.PageResourcesSource;
 import org.apache.tapestry.internal.structure.PageResourcesSourceImpl;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
@@ -91,7 +91,7 @@ public class InternalModule
      */
     public static ActionRenderResponseGenerator buildActionRenderResponseGenerator(
 
-            @Symbol(TapestryConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL)
+            @Symbol(SymbolConstants.SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS)
             boolean immediateMode,
 
             ObjectLocator locator)
