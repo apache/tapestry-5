@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.InjectComponent;
+import org.apache.tapestry.annotation.InjectComponent;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -24,7 +24,7 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformConstants;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotations.InjectComponent} annotation, and converts the field into a
+ * Recognizes the {@link org.apache.tapestry.annotation.InjectComponent} annotation, and converts the field into a
  * read-only field containing the component.  The id of the component may be explicitly stated or will be determined
  * from the field name.
  */

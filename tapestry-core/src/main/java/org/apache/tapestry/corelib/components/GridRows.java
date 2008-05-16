@@ -15,9 +15,9 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentAction;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.GridConstants;
 import org.apache.tapestry.grid.GridDataSource;

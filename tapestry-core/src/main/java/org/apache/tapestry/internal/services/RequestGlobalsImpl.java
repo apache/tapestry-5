@@ -15,10 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.services.RequestGlobals;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

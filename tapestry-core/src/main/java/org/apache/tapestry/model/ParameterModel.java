@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.model;
 
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * Model for a <em>formal</em> parameter of a component.

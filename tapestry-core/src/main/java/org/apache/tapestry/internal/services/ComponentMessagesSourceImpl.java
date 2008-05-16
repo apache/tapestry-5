@@ -20,7 +20,7 @@ import org.apache.tapestry.internal.util.URLChangeTracker;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.ComponentMessagesSource;
+import org.apache.tapestry5.services.ComponentMessagesSource;
 
 import java.util.Locale;
 

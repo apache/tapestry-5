@@ -18,11 +18,11 @@ import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ClientElement;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.InjectContainer;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.json.JSONArray;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.InjectContainer;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.services.Heartbeat;
+import org.apache.tapestry5.json.JSONArray;
 
 /**
  * A mixin that can be applied to a {@link org.apache.tapestry.corelib.components.Checkbox} or {@link

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.Meta;
+import org.apache.tapestry.annotation.Meta;
 import org.apache.tapestry.internal.KeyValue;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.model.MutableComponentModel;

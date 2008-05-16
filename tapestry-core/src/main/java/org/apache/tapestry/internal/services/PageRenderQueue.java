@@ -16,8 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
+import org.apache.tapestry5.json.JSONObject;
 
 
 /**

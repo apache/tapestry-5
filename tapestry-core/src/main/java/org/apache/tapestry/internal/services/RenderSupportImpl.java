@@ -21,9 +21,9 @@ import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.json.JSONArray;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 
 import static java.lang.String.format;
 import java.util.Arrays;

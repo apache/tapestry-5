@@ -33,7 +33,7 @@
         <packages>
             <package name="org.apache.tapestry"/>
             <package name="org.apache.tapestry.dom"/>
-            <package name="org.apache.tapestry.json"/>
+            <package name="org.apache.tapestry5.json"/>
             <package name="org.apache.tapestry.services"/>
             <package name="org.apache.tapestry.util"/>
             <package name="org.apache.tapestry.runtime"/>

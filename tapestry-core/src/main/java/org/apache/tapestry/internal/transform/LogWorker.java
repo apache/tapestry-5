@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.Log;
+import org.apache.tapestry.annotation.Log;
 import org.apache.tapestry.ioc.MethodAdvice;
 import org.apache.tapestry.ioc.internal.services.LoggingAdvice;
 import org.apache.tapestry.ioc.services.ExceptionTracker;
@@ -24,7 +24,7 @@ import org.apache.tapestry.services.*;
 import java.util.List;
 
 /**
- * Looks for the {@link org.apache.tapestry.annotations.Log} marker annotation and adds method advice to perform the
+ * Looks for the {@link org.apache.tapestry.annotation.Log} marker annotation and adds method advice to perform the
  * logging. This is similar to what the {@link org.apache.tapestry.ioc.services.LoggingDecorator} does for service
  * interface methods.
  */

@@ -82,11 +82,11 @@ public final class InternalClassTransformationImpl implements InternalClassTrans
 
     private Set<CtBehavior> addedMethods = newSet();
 
-    // Cache of class annotations
+    // Cache of class annotation
 
     private List<Annotation> classAnnotations;
 
-    // Cache of method annotations
+    // Cache of method annotation
 
     private Map<CtMethod, List<Annotation>> methodAnnotations = newMap();
 

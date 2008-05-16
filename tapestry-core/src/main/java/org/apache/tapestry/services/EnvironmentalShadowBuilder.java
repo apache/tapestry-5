@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.services;
 
-import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotation.Environmental;
 import org.apache.tapestry.ioc.services.PropertyShadowBuilder;
 
 /**

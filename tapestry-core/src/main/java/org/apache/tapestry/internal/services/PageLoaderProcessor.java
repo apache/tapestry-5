@@ -199,7 +199,7 @@ class PageLoaderProcessor
 
     /**
      * @param model                embededded model defining the new component, from an {@link
-     *                             org.apache.tapestry.annotations.Component} annotation
+     *                             org.apache.tapestry.annotation.Component} annotation
      * @param loadingComponent     the currently loading container component
      * @param newComponent         the new child of the container whose parameters are being bound
      * @param newComponentBindings map of bindings for the new component (used to handle inheriting of informal

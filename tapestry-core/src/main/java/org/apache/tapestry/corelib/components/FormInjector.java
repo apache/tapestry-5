@@ -15,16 +15,16 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.corelib.data.InsertPosition;
 import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.internal.services.ClientBehaviorSupport;
 import org.apache.tapestry.internal.services.ComponentResultProcessorWrapper;
 import org.apache.tapestry.internal.services.PageRenderQueue;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.runtime.RenderQueue;

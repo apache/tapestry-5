@@ -15,10 +15,10 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Mixin;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Mixin;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.corelib.internal.FormSupportImpl;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
 import org.apache.tapestry.dom.Element;
@@ -29,7 +29,7 @@ import org.apache.tapestry.internal.services.HeartbeatImpl;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.runtime.Component;

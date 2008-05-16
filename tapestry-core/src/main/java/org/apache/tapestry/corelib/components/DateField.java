@@ -15,17 +15,17 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
-import org.apache.tapestry.annotations.IncludeStylesheet;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.IncludeJavaScriptLibrary;
+import org.apache.tapestry.annotation.IncludeStylesheet;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.FieldValidatorDefaultSource;
 import org.apache.tapestry.services.Request;
+import org.apache.tapestry5.json.JSONObject;
 
 import java.text.DateFormat;
 import java.text.ParseException;

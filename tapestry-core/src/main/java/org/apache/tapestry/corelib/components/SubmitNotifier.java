@@ -16,13 +16,13 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentAction;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.FormSupport;
 
 /**
  * A non visual component used to provide notifications to its container during a form submission. Records actions into
- * the form on {@link org.apache.tapestry.annotations.BeginRender} and {@link org.apache.tapestry.annotations.AfterRender}
+ * the form on {@link org.apache.tapestry.annotation.BeginRender} and {@link org.apache.tapestry.annotation.AfterRender}
  * that (during the form submission) triggers "BeginSubmit" and "AfterSubmit" events.  The container can receive these
  * events to perform setup before a group of components process their submission, and perform cleanup afterwards.
  */

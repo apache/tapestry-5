@@ -15,7 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * Conditionally renders its body.

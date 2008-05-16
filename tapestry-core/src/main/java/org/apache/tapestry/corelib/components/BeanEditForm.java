@@ -15,13 +15,13 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Property;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.Component;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.Property;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.internal.beaneditor.BeanModelUtils;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.BeanModelSource;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 

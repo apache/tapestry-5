@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.test;
 import org.apache.tapestry.ContentType;
 import org.apache.tapestry.MarkupWriter;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.services.Core;
 import org.apache.tapestry.services.MarkupWriterFactory;
 

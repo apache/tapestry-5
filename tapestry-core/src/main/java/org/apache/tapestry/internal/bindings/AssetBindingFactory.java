@@ -20,7 +20,7 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.BindingFactory;
 

@@ -18,10 +18,10 @@ import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.structure.Page;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.RenderCommand;
+import org.apache.tapestry5.json.JSONObject;
 
 /**
  * This services keeps track of the page being rendered and the root command for the partial render, it is therefore

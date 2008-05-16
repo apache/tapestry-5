@@ -24,7 +24,7 @@ import org.apache.tapestry.services.InjectionProvider;
 import java.lang.annotation.Annotation;
 
 /**
- * Worker for the {@link org.apache.tapestry.ioc.annotations.Inject} annotation that delegates out to the master {@link
+ * Worker for the {@link org.apache.tapestry.ioc.annotation.Inject} annotation that delegates out to the master {@link
  * org.apache.tapestry.ioc.services.MasterObjectProvider} to access the value. This worker must be scheduled after
  * certain other workers, such as {@link BlockInjectionProvider} (which is keyed off a combination of type and the
  * Inject annotation).

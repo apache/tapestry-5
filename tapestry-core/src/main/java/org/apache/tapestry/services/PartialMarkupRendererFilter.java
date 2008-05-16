@@ -15,12 +15,12 @@
 package org.apache.tapestry.services;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.json.JSONObject;
+import org.apache.tapestry5.json.JSONObject;
 
 /**
  * A filter (the main interface being {@link PartialMarkupRenderer}) applied when performing a partial page render as
  * part of an Ajax-oriented request.  This is similar to {@link org.apache.tapestry.services.MarkupRendererFilter} and
- * filters are often in place so as to contribute {@link org.apache.tapestry.annotations.Environmental} services to the
+ * filters are often in place so as to contribute {@link org.apache.tapestry.annotation.Environmental} services to the
  * pages and components that render.
  *
  * @see org.apache.tapestry.services.TapestryModule#contributePartialMarkupRenderer(org.apache.tapestry.ioc.OrderedConfiguration,

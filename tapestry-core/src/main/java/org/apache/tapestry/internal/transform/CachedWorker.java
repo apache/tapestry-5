@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.BindingConstants;
-import org.apache.tapestry.annotations.Cached;
+import org.apache.tapestry.annotation.Cached;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.*;

@@ -19,8 +19,8 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.corelib.data.InsertPosition;
 import org.apache.tapestry.ioc.internal.util.Defense;
-import org.apache.tapestry.json.JSONArray;
-import org.apache.tapestry.json.JSONObject;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {

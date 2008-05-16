@@ -22,7 +22,7 @@ import org.apache.tapestry.internal.beaneditor.BeanModelImpl;
 import org.apache.tapestry.ioc.LoggerSource;
 import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.annotations.Primary;
+import org.apache.tapestry.ioc.annotation.Primary;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.*;

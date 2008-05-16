@@ -15,7 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * A component that does not do any rendering of its own, but will delegate to some other object that can do rendering.

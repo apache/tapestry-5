@@ -16,15 +16,15 @@ package org.apache.tapestry.corelib.mixins;
 
 import org.apache.tapestry.*;
 import org.apache.tapestry.ContentType;
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotation.*;
 import org.apache.tapestry.internal.services.ResponseRenderer;
 import org.apache.tapestry.internal.util.Holder;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.MarkupWriterFactory;
 import org.apache.tapestry.services.Request;
 import org.apache.tapestry.util.TextStreamResponse;
+import org.apache.tapestry5.json.JSONObject;
 
 import java.util.Collections;
 import java.util.List;

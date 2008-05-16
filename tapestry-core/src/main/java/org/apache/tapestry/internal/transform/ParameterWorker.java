@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Binding;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.bindings.LiteralBinding;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
@@ -27,7 +27,7 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 /**
- * Responsible for identifying parameters via the {@link org.apache.tapestry.annotations.Parameter} annotation on
+ * Responsible for identifying parameters via the {@link org.apache.tapestry.annotation.Parameter} annotation on
  * component fields. This is one of the most complex of the transformations.
  */
 public class ParameterWorker implements ComponentClassTransformWorker

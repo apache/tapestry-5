@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * Used to render portions of a page as part of an {@linkplain AjaxComponentEventRequestHandler Ajax request}.    This
  * encapsulates rendering of the partial response and then the construction of a {@linkplain
- * org.apache.tapestry.json.JSONObject JSON reply}. Works with the pipeline defined by the {@link
+ * org.apache.tapestry5.json.JSONObject JSON reply}. Works with the pipeline defined by the {@link
  * org.apache.tapestry.services.PartialMarkupRenderer} service.
  *
  * @see org.apache.tapestry.internal.services.PageRenderQueue

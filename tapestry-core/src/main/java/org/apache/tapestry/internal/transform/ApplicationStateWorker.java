@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.annotation.ApplicationState;
 import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ApplicationStateManager;

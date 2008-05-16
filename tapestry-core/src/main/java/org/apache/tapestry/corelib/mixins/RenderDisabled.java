@@ -16,8 +16,8 @@ package org.apache.tapestry.corelib.mixins;
 
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.InjectContainer;
-import org.apache.tapestry.annotations.MixinAfter;
+import org.apache.tapestry.annotation.InjectContainer;
+import org.apache.tapestry.annotation.MixinAfter;
 
 /**
  * Renders an "disabled" attribute if the containing {@link Field#isDisabled() is disabled}.

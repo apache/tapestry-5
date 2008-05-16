@@ -2,7 +2,7 @@ package org.apache.tapestry;
 
 /**
  * Constants for the built-in binding prefixes.  These are often used with the {@link
- * org.apache.tapestry.annotations.Parameter#defaultPrefix()} annotation attribute.
+ * org.apache.tapestry.annotation.Parameter#defaultPrefix()} annotation attribute.
  */
 public class BindingConstants
 {
@@ -12,7 +12,7 @@ public class BindingConstants
     public static final String LITERAL = "literal";
     /**
      * Binding expression prefix used to bind to a property of the component. When {@link
-     * org.apache.tapestry.annotations.Parameter#defaultPrefix()} is not specified, the default is PROP.
+     * org.apache.tapestry.annotation.Parameter#defaultPrefix()} is not specified, the default is PROP.
      */
     public static final String PROP = "prop";
 

@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.annotations.Secure;
+import org.apache.tapestry.annotation.Secure;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotations.Secure} annotation and sets the {@link
+ * Recognizes the {@link org.apache.tapestry.annotation.Secure} annotation and sets the {@link
  * org.apache.tapestry.MetaDataConstants#SECURE_PAGE} meta data to "true".
  */
 public class SecureWorker implements ComponentClassTransformWorker

@@ -17,9 +17,9 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 /**
  * A close relative of {@link org.apache.tapestry.corelib.components.ActionLink} except in two ways.

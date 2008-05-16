@@ -64,7 +64,7 @@ public interface ComponentResourcesCommon extends Locatable
      * @throws org.apache.tapestry.runtime.ComponentEventException
      *          if an event handler method throws a checked or unchecked exception
      * @see org.apache.tapestry.internal.transform.OnEventWorker
-     * @see org.apache.tapestry.annotations.OnEvent
+     * @see org.apache.tapestry.annotation.OnEvent
      */
     boolean triggerEvent(String eventType, Object[] contextValues, ComponentEventCallback callback);
 
@@ -86,7 +86,7 @@ public interface ComponentResourcesCommon extends Locatable
      * @throws org.apache.tapestry.runtime.ComponentEventException
      *          if an event handler method throws a checked or unchecked exception
      * @see org.apache.tapestry.internal.transform.OnEventWorker
-     * @see org.apache.tapestry.annotations.OnEvent
+     * @see org.apache.tapestry.annotation.OnEvent
      */
     boolean triggerContextEvent(String eventType, EventContext context, ComponentEventCallback callback);
 

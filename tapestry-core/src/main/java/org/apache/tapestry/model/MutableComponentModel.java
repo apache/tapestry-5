@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.model;
 
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.ioc.Location;
 

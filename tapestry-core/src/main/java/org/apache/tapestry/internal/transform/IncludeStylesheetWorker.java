@@ -16,14 +16,14 @@ package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.annotations.IncludeStylesheet;
+import org.apache.tapestry.annotation.IncludeStylesheet;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.ClassTransformation;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotations.IncludeStylesheet} annotation and ensures that {@link
+ * Recognizes the {@link org.apache.tapestry.annotation.IncludeStylesheet} annotation and ensures that {@link
  * org.apache.tapestry.RenderSupport#addStylesheetLink(org.apache.tapestry.Asset, String)} is invoked.
  */
 public class IncludeStylesheetWorker extends AbstractIncludeAssetWorker

@@ -54,7 +54,7 @@ public final class StringToEnumCoercion<T extends Enum> implements Coercion<Stri
         T result = stringToEnum.get(input);
 
         if (result == null)
-            throw new RuntimeException(UtilMessages.missingEnumValue(
+            throw new RuntimeException(PublicUtilMessages.missingEnumValue(
                     input,
                     enumClass,
                     stringToEnum.keySet()));

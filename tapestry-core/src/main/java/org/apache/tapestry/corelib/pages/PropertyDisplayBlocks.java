@@ -16,9 +16,9 @@ package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.Renderable;
-import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotation.Environmental;
 import org.apache.tapestry.internal.TapestryInternalUtils;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.PropertyOutputContext;
 
 import java.text.DateFormat;

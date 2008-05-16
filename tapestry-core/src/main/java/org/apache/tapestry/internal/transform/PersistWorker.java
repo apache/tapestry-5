@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.*;
@@ -23,7 +23,7 @@ import static java.lang.String.format;
 import java.lang.reflect.Modifier;
 
 /**
- * Converts fields with the {@link org.apache.tapestry.annotations.Persist} annotation into persistent fields.
+ * Converts fields with the {@link org.apache.tapestry.annotation.Persist} annotation into persistent fields.
  */
 public class PersistWorker implements ComponentClassTransformWorker
 {

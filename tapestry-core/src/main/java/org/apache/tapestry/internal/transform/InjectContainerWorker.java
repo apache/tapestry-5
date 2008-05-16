@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.InjectContainer;
+import org.apache.tapestry.annotation.InjectContainer;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.runtime.Component;
@@ -25,7 +25,7 @@ import org.apache.tapestry.services.TransformConstants;
 import java.util.List;
 
 /**
- * Identifies the {@link org.apache.tapestry.annotations.InjectContainer} annotation and adds code to initialize it to
+ * Identifies the {@link org.apache.tapestry.annotation.InjectContainer} annotation and adds code to initialize it to
  * the core component.
  */
 public class InjectContainerWorker implements ComponentClassTransformWorker

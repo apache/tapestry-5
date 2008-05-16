@@ -14,13 +14,13 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.MixinAfter;
+import org.apache.tapestry.annotation.MixinAfter;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 
 /**
- * Looks for the {@link org.apache.tapestry.annotations.MixinAfter} annotatation and sets the {@link
+ * Looks for the {@link org.apache.tapestry.annotation.MixinAfter} annotatation and sets the {@link
  * org.apache.tapestry.model.ComponentModel#isMixinAfter() mixinAfter flag} is present.
  */
 public class MixinAfterWorker implements ComponentClassTransformWorker

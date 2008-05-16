@@ -17,8 +17,8 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.CSSClassConstants;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationTracker;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.corelib.internal.InternalMessages;
 import org.apache.tapestry.services.FormSupport;
 

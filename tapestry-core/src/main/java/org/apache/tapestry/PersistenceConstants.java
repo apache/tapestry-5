@@ -3,7 +3,7 @@ package org.apache.tapestry;
 /**
  * Constants for persistent field strategies.
  *
- * @see org.apache.tapestry.annotations.Persist#value()
+ * @see org.apache.tapestry.annotation.Persist#value()
  */
 public class PersistenceConstants
 {

@@ -15,8 +15,8 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.*;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.*;
+import org.apache.tapestry.ioc.annotation.Inject;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newList;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
