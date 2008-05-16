@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Meta;
+import org.apache.tapestry.annotation.Meta;
 
 @Meta("tapestry.response-content-type=text/xml")
 public class XMLContent

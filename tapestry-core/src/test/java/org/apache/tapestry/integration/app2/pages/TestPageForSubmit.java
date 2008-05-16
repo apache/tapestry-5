@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.integration.app2.pages;
 
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Component;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.corelib.components.Form;
 import org.apache.tapestry.corelib.components.Submit;
 import org.apache.tapestry.corelib.components.TextField;

@@ -16,7 +16,7 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.Renderable;
-import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotation.Environmental;
 import org.apache.tapestry.services.FormSupport;
 
 public class FormEncodingType

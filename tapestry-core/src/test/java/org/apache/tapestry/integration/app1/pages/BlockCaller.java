@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.annotation.InjectPage;
 
 /**
  * Part of testing for TAPESTRY-2044

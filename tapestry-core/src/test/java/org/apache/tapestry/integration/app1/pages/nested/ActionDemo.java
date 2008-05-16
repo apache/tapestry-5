@@ -14,15 +14,15 @@
 
 package org.apache.tapestry.integration.app1.pages.nested;
 
-import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry.annotation.Property;
 
 public class ActionDemo
 {
     @Property
     private Long number;
 
-    @OnEvent(component="actionlink", value="action")
+    @OnEvent(component = "actionlink", value = "action")
     public void onAction(Long number)
     {
         this.number = number;

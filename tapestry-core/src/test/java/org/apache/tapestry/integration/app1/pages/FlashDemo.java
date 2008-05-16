@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Meta;
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Meta;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.integration.app1.base.BaseComponent;
 
 @Meta("tapestry.persistence-strategy=flash")

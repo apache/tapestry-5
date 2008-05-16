@@ -15,8 +15,8 @@
 package org.apache.tapestry.integration.app1.components;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.BeginRender;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * Echos out its value parameter. Uused to test parameter overrides between component annoation and template. Also, used

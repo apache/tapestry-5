@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app2.pages;
 
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Persist;
 
 public class TestPageForForm
 {

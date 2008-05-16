@@ -15,12 +15,12 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.InjectPage;
-import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.annotation.InjectPage;
+import org.apache.tapestry.annotation.OnEvent;
 import org.apache.tapestry.integration.app1.services.French;
 import org.apache.tapestry.integration.app1.services.Greeter;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.services.BindingSource;
 import org.apache.tapestry.services.Request;
 

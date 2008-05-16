@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.integration.app2.pages;
 
-import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.PersistentLocale;
 
 import java.util.Locale;

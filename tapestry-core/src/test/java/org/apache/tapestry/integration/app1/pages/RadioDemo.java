@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Persist;
+import org.apache.tapestry.annotation.Persist;
 import org.apache.tapestry.integration.app1.data.Department;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 public class RadioDemo
 {

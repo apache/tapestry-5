@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app3.pages;
 
-import org.apache.tapestry.annotations.Environmental;
+import org.apache.tapestry.annotation.Environmental;
 import org.apache.tapestry.services.PropertyOutputContext;
 
 public class PropertyDisplayBlockOverrides

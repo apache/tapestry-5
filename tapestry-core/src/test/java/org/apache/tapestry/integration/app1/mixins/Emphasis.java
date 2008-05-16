@@ -15,9 +15,9 @@
 package org.apache.tapestry.integration.app1.mixins;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.BeginRender;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.AfterRender;
+import org.apache.tapestry.annotation.BeginRender;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * Mixin that adds emphasis to a component if a test is true.

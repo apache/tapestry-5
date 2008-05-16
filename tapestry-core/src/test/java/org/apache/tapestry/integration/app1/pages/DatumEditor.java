@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.Property;
-import org.apache.tapestry.annotations.Retain;
+import org.apache.tapestry.annotation.Property;
+import org.apache.tapestry.annotation.Retain;
 
 public class DatumEditor
 {

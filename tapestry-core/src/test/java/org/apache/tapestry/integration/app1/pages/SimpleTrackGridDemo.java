@@ -19,7 +19,7 @@ import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.integration.app1.data.SimpleTrack;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.integration.app1.services.MusicLibrary;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.BeanModelSource;
 
 import java.util.List;

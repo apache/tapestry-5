@@ -16,7 +16,7 @@ package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.integration.app1.services.MusicLibrary;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.Set;

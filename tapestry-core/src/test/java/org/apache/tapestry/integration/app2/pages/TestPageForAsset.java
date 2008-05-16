@@ -15,8 +15,8 @@
 package org.apache.tapestry.integration.app2.pages;
 
 import org.apache.tapestry.Asset;
-import org.apache.tapestry.annotations.Path;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.Path;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 public class TestPageForAsset
 {

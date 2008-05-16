@@ -21,7 +21,7 @@ import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
 import org.apache.tapestry.ioc.Configuration;
 import org.apache.tapestry.ioc.MappedConfiguration;
 import org.apache.tapestry.ioc.OrderedConfiguration;
-import org.apache.tapestry.ioc.annotations.Marker;
+import org.apache.tapestry.ioc.annotation.Marker;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.*;
 import org.apache.tapestry.test.JettyRunner;

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.pages;
 
-import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.annotation.OnEvent;
 
 public class ShowSelection
 {
