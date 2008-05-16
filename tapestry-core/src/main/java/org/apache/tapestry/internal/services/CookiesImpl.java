@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ioc.annotations.IntermediateType;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.IntermediateType;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.ioc.util.TimeInterval;
 import org.apache.tapestry.services.Cookies;
 import org.apache.tapestry.services.Request;

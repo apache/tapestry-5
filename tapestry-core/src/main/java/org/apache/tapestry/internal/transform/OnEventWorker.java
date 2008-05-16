@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.EventContext;
-import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.annotation.OnEvent;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.*;
@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * Provides implementations of the {@link org.apache.tapestry.runtime.Component#dispatchComponentEvent(org.apache.tapestry.runtime.ComponentEvent)}
- * method, based on {@link org.apache.tapestry.annotations.OnEvent} annotations.
+ * method, based on {@link org.apache.tapestry.annotation.OnEvent} annotations.
  */
 public class OnEventWorker implements ComponentClassTransformWorker
 {

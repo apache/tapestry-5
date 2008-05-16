@@ -16,12 +16,12 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Mixin;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Mixin;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.corelib.base.AbstractField;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.FormSupport;
 import org.apache.tapestry.services.Heartbeat;
 import org.apache.tapestry.services.Request;

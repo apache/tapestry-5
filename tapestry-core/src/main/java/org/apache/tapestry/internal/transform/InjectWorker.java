@@ -15,14 +15,14 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.ioc.ObjectLocator;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.InjectionProvider;
 
 /**
- * Performs injection triggered by any field annotated with the {@link org.apache.tapestry.ioc.annotations.Inject}
+ * Performs injection triggered by any field annotated with the {@link org.apache.tapestry.ioc.annotation.Inject}
  * annotation.
  * <p/>
  * The implementation of this worker mostly delegates to a chain of command of {@link

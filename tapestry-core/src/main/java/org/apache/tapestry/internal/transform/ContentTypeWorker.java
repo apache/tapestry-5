@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.MetaDataConstants;
-import org.apache.tapestry.annotations.ContentType;
+import org.apache.tapestry.annotation.ContentType;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;
 
 /**
- * Checks for the {@link org.apache.tapestry.annotations.ContentType} annotation, adding a corresponding meta-data value
+ * Checks for the {@link org.apache.tapestry.annotation.ContentType} annotation, adding a corresponding meta-data value
  * when found.
  */
 public class ContentTypeWorker implements ComponentClassTransformWorker

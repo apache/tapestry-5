@@ -15,12 +15,12 @@
 package org.apache.tapestry.corelib.base;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SetupRender;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.SetupRender;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 /**
  * Provides base utilities for classes that generate clickable links.

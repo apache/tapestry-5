@@ -15,10 +15,10 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 /**
  * Renders an arbitrary element including informal parameters.

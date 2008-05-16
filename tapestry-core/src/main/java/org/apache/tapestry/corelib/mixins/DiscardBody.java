@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.corelib.mixins;
 
-import org.apache.tapestry.annotations.BeforeRenderBody;
-import org.apache.tapestry.annotations.MixinAfter;
+import org.apache.tapestry.annotation.BeforeRenderBody;
+import org.apache.tapestry.annotation.MixinAfter;
 
 /**
  * Discards a component's body. Returns false from the {@link BeforeRenderBody} phase, which prevents the rendering of

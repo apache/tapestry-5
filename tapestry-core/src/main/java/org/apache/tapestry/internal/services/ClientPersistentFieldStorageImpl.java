@@ -18,7 +18,7 @@ import org.apache.tapestry.Link;
 import org.apache.tapestry.internal.util.Base64ObjectInputStream;
 import org.apache.tapestry.internal.util.Base64ObjectOutputStream;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;

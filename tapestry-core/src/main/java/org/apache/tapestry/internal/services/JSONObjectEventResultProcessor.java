@@ -15,16 +15,16 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.json.JSONObject;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 
 /**
- * Implemention of {@link ComponentEventResultProcessor} for {@link org.apache.tapestry.json.JSONObject}, allowing a
+ * Implemention of {@link ComponentEventResultProcessor} for {@link org.apache.tapestry5.json.JSONObject}, allowing a
  * component event handler to return a JSONObject that will be sent directly to the client as the reply. This is often
  * used with custom components that need a custom JSON response.
  */

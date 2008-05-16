@@ -16,8 +16,8 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.EventContext;
 import org.apache.tapestry.internal.EmptyEventContext;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.services.*;
 
 import java.io.IOException;

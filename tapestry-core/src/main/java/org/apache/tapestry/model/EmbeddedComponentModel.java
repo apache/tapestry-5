@@ -14,14 +14,14 @@
 
 package org.apache.tapestry.model;
 
-import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotation.Component;
 import org.apache.tapestry.ioc.Locatable;
 
 import java.util.List;
 
 /**
  * The model for a component embedded within another component, as defined by the {@link
- * org.apache.tapestry.annotations.Component} annotation.
+ * org.apache.tapestry.annotation.Component} annotation.
  */
 public interface EmbeddedComponentModel extends Locatable
 {

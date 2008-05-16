@@ -18,9 +18,9 @@ import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Field;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ValidationDecorator;
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotation.*;
 import org.apache.tapestry.dom.Element;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.services.Heartbeat;
 

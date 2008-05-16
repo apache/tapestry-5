@@ -16,14 +16,14 @@ package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.annotations.IncludeJavaScriptLibrary;
+import org.apache.tapestry.annotation.IncludeJavaScriptLibrary;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.AssetSource;
 import org.apache.tapestry.services.ClassTransformation;
 
 /**
- * Recognizes the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary} annotation, and ensures that {@link
+ * Recognizes the {@link org.apache.tapestry.annotation.IncludeJavaScriptLibrary} annotation, and ensures that {@link
  * org.apache.tapestry.RenderSupport#addScriptLink(org.apache.tapestry.Asset[])} is invoked.
  */
 public class IncludeJavaScriptLibraryWorker extends AbstractIncludeAssetWorker

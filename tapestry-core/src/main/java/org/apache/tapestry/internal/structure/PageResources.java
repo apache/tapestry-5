@@ -31,7 +31,7 @@ public interface PageResources extends ContextValueEncoder
      *
      * @param componentModel
      * @return the message catalog for the component, in the indicated locale
-     * @see org.apache.tapestry.services.ComponentMessagesSource
+     * @see org.apache.tapestry5.services.ComponentMessagesSource
      */
     Messages getMessages(ComponentModel componentModel);
 

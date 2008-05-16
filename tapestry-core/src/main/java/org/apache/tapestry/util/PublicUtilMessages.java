@@ -20,9 +20,9 @@ import org.apache.tapestry.ioc.internal.util.MessagesImpl;
 
 import java.util.Collection;
 
-final class UtilMessages
+final class PublicUtilMessages
 {
-    private static final Messages MESSAGES = MessagesImpl.forClass(UtilMessages.class);
+    private static final Messages MESSAGES = MessagesImpl.forClass(PublicUtilMessages.class);
 
     static String duplicateKey(Object key, Object newValue, Object existingValue)
     {

@@ -28,7 +28,7 @@ import static org.apache.tapestry.ioc.internal.util.CollectionFactory.newMap;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.services.SymbolProvider;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
-import org.apache.tapestry.services.ApplicationGlobals;
+import org.apache.tapestry5.services.ApplicationGlobals;
 
 import java.util.Locale;
 import java.util.Map;

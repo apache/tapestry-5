@@ -15,7 +15,7 @@
 package org.apache.tapestry.services;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotation.*;
 import org.apache.tapestry.beaneditor.Validate;
 import org.apache.tapestry.corelib.data.BlankOption;
 import org.apache.tapestry.corelib.data.GridPagerPosition;
@@ -34,18 +34,19 @@ import org.apache.tapestry.internal.transform.*;
 import org.apache.tapestry.internal.translator.*;
 import org.apache.tapestry.internal.util.IntegerRange;
 import org.apache.tapestry.ioc.*;
-import org.apache.tapestry.ioc.annotations.*;
+import org.apache.tapestry.ioc.annotation.*;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
 import org.apache.tapestry.ioc.services.*;
 import org.apache.tapestry.ioc.util.StrategyRegistry;
 import org.apache.tapestry.ioc.util.TimeInterval;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.runtime.Component;
 import org.apache.tapestry.runtime.ComponentResourcesAware;
 import org.apache.tapestry.runtime.RenderCommand;
 import org.apache.tapestry.util.StringToEnumCoercion;
 import org.apache.tapestry.validator.*;
+import org.apache.tapestry5.json.JSONObject;
+import org.apache.tapestry5.services.*;
 import org.slf4j.Logger;
 
 import javax.servlet.ServletContext;
@@ -275,15 +276,15 @@ public final class TapestryModule
      * Adds a number of standard component class transform workers: <dl> <dt>Retain </dt> <dd>Allows fields to retain
      * their values between requests</dd> <dt>Persist </dt> <dd>Allows fields to store their their value persistently
      * between requests</dd> <dt>Parameter </dt> <dd>Identifies parameters based on the {@link
-     * org.apache.tapestry.annotations.Parameter} annotation</dd> <dt>Component </dt> <dd>Defines embedded components
-     * based on the {@link org.apache.tapestry.annotations.Component} annotation</dd> <dt>Mixin </dt> <dd>Adds a mixin
-     * as part of a component's implementation</dd> <dt>Environment </dt> <dd>Allows fields to contain values extracted
+     * org.apache.tapestry.annotation.Parameter} annotation</dd> <dt>Component </dt> <dd>Defines embedded components
+     * based on the {@link org.apache.tapestry.annotation.Component} annotation</dd> <dt>Mixin </dt> <dd>Adds a mixin as
+     * part of a component's implementation</dd> <dt>Environment </dt> <dd>Allows fields to contain values extracted
      * from the {@link org.apache.tapestry.services.Environment} service</dd> <dt>Inject </dt> <dd>Used with the {@link
-     * org.apache.tapestry.ioc.annotations.Inject} annotation, when a value is supplied</dd> <dt>InjectPage</dt>
-     * <dd>Adds code to allow access to other pages via the {@link org.apache.tapestry.annotations.InjectPage} field
+     * org.apache.tapestry.ioc.annotation.Inject} annotation, when a value is supplied</dd> <dt>InjectPage</dt> <dd>Adds
+     * code to allow access to other pages via the {@link org.apache.tapestry.annotation.InjectPage} field
      * annotation</dd> <dt>InjectBlock </dt> <dd>Allows a block from the template to be injected into a field</dd>
-     * <dt>IncludeStylesheet </dt> <dd>Supports the {@link org.apache.tapestry.annotations.IncludeStylesheet}
-     * annotation</dd> <dt>IncludeJavaScriptLibrary </dt> <dd>Supports the {@link org.apache.tapestry.annotations.IncludeJavaScriptLibrary}
+     * <dt>IncludeStylesheet </dt> <dd>Supports the {@link org.apache.tapestry.annotation.IncludeStylesheet}
+     * annotation</dd> <dt>IncludeJavaScriptLibrary </dt> <dd>Supports the {@link org.apache.tapestry.annotation.IncludeJavaScriptLibrary}
      * annotation</dd> <dt>SupportsInformalParameters </dt> <dd>Checks for the annotation</dd> <dt>Meta </dt> <dd>Checks
      * for meta data and adds it to the component model</dd> <dt>ApplicationState </dt> <dd>Converts fields that
      * reference application state objects <dt>UnclaimedField </dt> <dd>Identifies unclaimed fields and resets them to
@@ -291,13 +292,13 @@ public final class TapestryModule
      * {@link org.apache.tapestry.runtime.RenderCommand}</dd> <dt>SetupRender, BeginRender, etc. </dt> <dd>Correspond to
      * component render phases and annotations</dd> <dt>InvokePostRenderCleanupOnResources </dt> <dd>Makes sure {@link
      * org.apache.tapestry.internal.InternalComponentResources#postRenderCleanup()} is invoked after a component
-     * finishes rendering</dd> <dt>Secure</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.Secure}
-     * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotations.ContentType}
-     * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotations.ResponseEncoding}
+     * finishes rendering</dd> <dt>Secure</dt> <dd>Checks for the {@link org.apache.tapestry.annotation.Secure}
+     * annotation</dd> <dt>ContentType</dt> <dd>Checks for {@link org.apache.tapestry.annotation.ContentType}
+     * annotation</dd> <dt>ResponseEncoding</dt> <dd>Checks for the {@link org.apache.tapestry.annotation.ResponseEncoding}
      * annotation</dd> <dt>GenerateAccessors</dt> <dd>Generates accessor methods if {@link
-     * org.apache.tapestry.annotations.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link
-     * org.apache.tapestry.annotations.Cached} annotation</dd><dt>Log</dt> <dd>Checks for the {@link
-     * org.apache.tapestry.annotations.Log} annotation</dd></dl>
+     * org.apache.tapestry.annotation.Property} annotation is present </dd> <dt>Cached</dt> <dd>Checks for the {@link
+     * org.apache.tapestry.annotation.Cached} annotation</dd><dt>Log</dt> <dd>Checks for the {@link
+     * org.apache.tapestry.annotation.Log} annotation</dd></dl>
      */
     public static void contributeComponentClassTransformWorker(
             OrderedConfiguration<ComponentClassTransformWorker> configuration,
@@ -559,7 +560,7 @@ public final class TapestryModule
      * <dt>ErrorFilter</dt> <dd>Catches request errors and lets the {@link org.apache.tapestry.services.RequestExceptionHandler}
      * handle them</dd> <dt>Localization</dt> <dd>Determines the locale for the current request from header data or
      * cookies in the request</dd> <dt>StoreIntoGlobals</dt> <dd>Stores the request and response into the {@link
-     * org.apache.tapestry.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
+     * org.apache.tapestry5.services.RequestGlobals} service (this is repeated at the end of the pipeline, in case any
      * filter substitutes the request or response). </dl>
      */
     public void contributeRequestHandler(OrderedConfiguration<RequestFilter> configuration, Context context,
@@ -1274,7 +1275,7 @@ public final class TapestryModule
      * Contributes handlers for the following types: <dl> <dt>Object</dt> <dd>Failure case, added to provide more useful
      * exception message</dd> <dt>{@link RenderCommand}</dt> <dd>Typically, a {@link org.apache.tapestry.Block}</dd>
      * <dt>{@link Component}</dt> <dd>Renders the component and its body</dd> <dt>{@link
-     * org.apache.tapestry.json.JSONObject}</dt> <dd>The JSONObject is returned as a text/javascript response</dd>
+     * org.apache.tapestry5.json.JSONObject}</dt> <dd>The JSONObject is returned as a text/javascript response</dd>
      * <dt>{@link org.apache.tapestry.StreamResponse}</dt> <dd>The stream response is sent as the actual response</dd>
      * </dl>
      */
@@ -1366,8 +1367,8 @@ public final class TapestryModule
 
 
     /**
-     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotations.Environmental}
-     * service.  Filters often provide {@link Environmental} services needed by components as they render. <dl>
+     * Adds page render filters, each of which provides an {@link org.apache.tapestry.annotation.Environmental} service.
+     * Filters often provide {@link Environmental} services needed by components as they render. <dl>
      * <dt>PageRenderSupport</dt>  <dd>Provides {@link org.apache.tapestry.RenderSupport}</dd>
      * <dt>ClientBehaviorSupport</dt> <dd>Provides {@link org.apache.tapestry.internal.services.ClientBehaviorSupport}</dd>
      * <dt>Heartbeat</dt> <dd>Provides {@link org.apache.tapestry.services.Heartbeat}</dd>

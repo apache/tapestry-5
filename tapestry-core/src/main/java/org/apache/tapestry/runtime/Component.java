@@ -15,7 +15,7 @@
 package org.apache.tapestry.runtime;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.annotation.OnEvent;
 
 /**
  * Interface that defines the lifecycle of a component, within a page, allowing for callbacks into the component for
@@ -32,7 +32,7 @@ public interface Component extends ComponentResourcesAware, PageLifecycleListene
 {
 
     /**
-     * Lifecycle method invoked at the end of the {@link org.apache.tapestry.annotations.CleanupRender} render phase.
+     * Lifecycle method invoked at the end of the {@link org.apache.tapestry.annotation.CleanupRender} render phase.
      * There is no annotation for this method, it is part of CleanupRender, but is always invoked. Its specific use is
      * to allow components to clean up cached parameter values.
      */

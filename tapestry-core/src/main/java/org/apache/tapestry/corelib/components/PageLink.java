@@ -17,9 +17,9 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.corelib.base.AbstractLink;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 import java.util.List;
 

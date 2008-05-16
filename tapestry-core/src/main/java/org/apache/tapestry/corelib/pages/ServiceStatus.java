@@ -15,11 +15,11 @@
 package org.apache.tapestry.corelib.pages;
 
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Meta;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.Meta;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.ioc.Registry;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.services.ServiceActivity;
 import org.apache.tapestry.ioc.services.ServiceActivityScoreboard;
 import org.apache.tapestry.services.BeanModelSource;

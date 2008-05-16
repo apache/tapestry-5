@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -28,7 +28,7 @@ import java.lang.reflect.Modifier;
  * be transformed as necessary by other annotations. This worker needs to be scheduled before any worker that might
  * delete a field.
  *
- * @see org.apache.tapestry.annotations.Property
+ * @see org.apache.tapestry.annotation.Property
  */
 public class PropertyWorker implements ComponentClassTransformWorker
 {
@@ -61,7 +61,7 @@ public class PropertyWorker implements ComponentClassTransformWorker
                 transformation.addTransformedMethod(setter, fieldName + " = $1;");
             }
 
-            // The field is NOT claimed, because we want annotations for the fields to operate.
+            // The field is NOT claimed, because we want annotation for the fields to operate.
         }
 
     }

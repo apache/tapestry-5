@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.model;
 
-import org.apache.tapestry.annotations.MixinAfter;
-import org.apache.tapestry.annotations.Persist;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.MixinAfter;
+import org.apache.tapestry.annotation.Persist;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.ioc.Resource;
 import org.slf4j.Logger;
 
@@ -44,7 +44,7 @@ public interface ComponentModel
 
     /**
      * Returns the ids of all embedded components defined within the component class (via the {@link
-     * org.apache.tapestry.annotations.Component} annotation).
+     * org.apache.tapestry.annotation.Component} annotation).
      */
     List<String> getEmbeddedComponentIds();
 

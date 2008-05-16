@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.Component;
-import org.apache.tapestry.annotations.MixinClasses;
-import org.apache.tapestry.annotations.Mixins;
+import org.apache.tapestry.annotation.Component;
+import org.apache.tapestry.annotation.MixinClasses;
+import org.apache.tapestry.annotation.Mixins;
 import org.apache.tapestry.internal.KeyValue;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Location;
@@ -31,7 +31,7 @@ import org.apache.tapestry.services.ComponentClassTransformWorker;
 import org.apache.tapestry.services.TransformConstants;
 
 /**
- * Finds fields with the {@link org.apache.tapestry.annotations.Component} annotation and updates the model. Also checks
+ * Finds fields with the {@link org.apache.tapestry.annotation.Component} annotation and updates the model. Also checks
  * for the {@link Mixins} and {@link MixinClasses} annotations and uses them to update the {@link ComponentModel}.
  */
 public class ComponentWorker implements ComponentClassTransformWorker

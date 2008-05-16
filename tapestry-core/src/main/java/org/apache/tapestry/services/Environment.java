@@ -24,7 +24,7 @@ import java.util.NoSuchElementException;
  * type. Most often, a stack has zero or one elements, but on occasion, a particular component will push an override
  * onto the stack for the benefit of the components it encloses.
  *
- * @see org.apache.tapestry.annotations.Environmental
+ * @see org.apache.tapestry.annotation.Environmental
  * @see org.apache.tapestry.services.EnvironmentalShadowBuilder
  */
 public interface Environment

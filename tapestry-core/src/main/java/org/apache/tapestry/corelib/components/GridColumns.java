@@ -17,7 +17,7 @@ package org.apache.tapestry.corelib.components;
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.Block;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotation.*;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.grid.ColumnSort;
 import org.apache.tapestry.grid.GridConstants;
@@ -26,7 +26,7 @@ import org.apache.tapestry.grid.GridSortModel;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 
 import java.util.List;

@@ -15,9 +15,9 @@
 package org.apache.tapestry;
 
 import org.apache.tapestry.ioc.services.SymbolSource;
-import org.apache.tapestry.json.JSONArray;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.AssetSource;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 
 /**
  * Provides support to all components that render. This is primarily about generating unique client-side ids (very
@@ -92,7 +92,7 @@ public interface RenderSupport
     void addInit(String functionName, JSONArray parameterList);
 
     /**
-     * Alternate version of {@link #addInit(String, org.apache.tapestry.json.JSONArray)} where just a single object is
+     * Alternate version of {@link #addInit(String, org.apache.tapestry5.json.JSONArray)} where just a single object is
      * passed.
      *
      * @param functionName the name of the function (on the client-side Tapestry object) to invoke.
@@ -101,7 +101,7 @@ public interface RenderSupport
     void addInit(String functionName, JSONObject parameter);
 
     /**
-     * Alternate version of {@link #addInit(String, org.apache.tapestry.json.JSONArray)} where one or more strings are
+     * Alternate version of {@link #addInit(String, org.apache.tapestry5.json.JSONArray)} where one or more strings are
      * passed.  A single string is added to the initialization call as itself; otherwise, the parameters are combined to
      * form a {@link JSONArray}.
      *

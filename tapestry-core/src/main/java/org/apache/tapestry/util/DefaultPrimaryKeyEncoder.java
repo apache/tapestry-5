@@ -52,7 +52,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
         Defense.notNull(value, "value");
 
         V existing = keyToValue.get(key);
-        if (existing != null) throw new IllegalArgumentException(UtilMessages.duplicateKey(key, value, existing));
+        if (existing != null) throw new IllegalArgumentException(PublicUtilMessages.duplicateKey(key, value, existing));
 
         keyToValue.put(key, value);
 
@@ -118,7 +118,7 @@ public class DefaultPrimaryKeyEncoder<K extends Serializable, V> implements Prim
 
         currentKey = valueToKey.get(value);
 
-        if (currentKey == null) throw new IllegalArgumentException(UtilMessages.missingValue(value, valueToKey
+        if (currentKey == null) throw new IllegalArgumentException(PublicUtilMessages.missingValue(value, valueToKey
                 .keySet()));
 
         return currentKey;

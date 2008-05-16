@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.ThreadLocale;
 import org.apache.tapestry.services.PersistentLocale;

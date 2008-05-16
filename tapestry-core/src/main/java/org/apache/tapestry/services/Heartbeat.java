@@ -20,7 +20,7 @@ package org.apache.tapestry.services;
  * is a Label and the field it labels; since we don't know which order the two will render, we can't tell if the field's
  * id is correct until after both have rendered.
  * <p/>
- * The Heartbeat is injected into components via the {@link org.apache.tapestry.annotations.Environmental} annotation.
+ * The Heartbeat is injected into components via the {@link org.apache.tapestry.annotation.Environmental} annotation.
  */
 public interface Heartbeat
 {

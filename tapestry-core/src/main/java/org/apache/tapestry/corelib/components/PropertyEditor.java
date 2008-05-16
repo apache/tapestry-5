@@ -15,12 +15,12 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.beaneditor.BeanModel;
 import org.apache.tapestry.beaneditor.PropertyModel;
 import org.apache.tapestry.ioc.Messages;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.TapestryException;
 import org.apache.tapestry.services.*;
 

@@ -18,9 +18,9 @@ import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 
 /**
- * Provides some form of injection when the value for an {@link org.apache.tapestry.ioc.annotations.Inject} annotation
- * is present. In this case, the provider is responsible for determining the value to be injected from the field name
- * and field type.
+ * Provides some form of injection when the value for an {@link org.apache.tapestry.ioc.annotation.Inject} annotation is
+ * present. In this case, the provider is responsible for determining the value to be injected from the field name and
+ * field type.
  * <p/>
  * This interface will be used as part of a {@link org.apache.tapestry.ioc.services.ChainBuilder chain of command}.
  */

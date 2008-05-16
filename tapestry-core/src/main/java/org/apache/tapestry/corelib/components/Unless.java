@@ -15,7 +15,7 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * A close relative of the {@link org.apache.tapestry.corelib.components.If} component that inverts the meaning of its

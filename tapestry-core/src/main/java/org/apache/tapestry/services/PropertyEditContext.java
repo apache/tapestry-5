@@ -22,7 +22,7 @@ import org.apache.tapestry.ioc.Messages;
 
 /**
  * Defines a context for editing a property of a bean via {@link org.apache.tapestry.corelib.components.BeanEditor}.
- * This value is made available to blocks via the {@link org.apache.tapestry.annotations.Environmental} annotation.
+ * This value is made available to blocks via the {@link org.apache.tapestry.annotation.Environmental} annotation.
  *
  * @see org.apache.tapestry.services.BeanBlockSource
  */

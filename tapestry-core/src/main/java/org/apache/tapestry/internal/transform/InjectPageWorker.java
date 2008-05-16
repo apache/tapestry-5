@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.InjectPage;
+import org.apache.tapestry.annotation.InjectPage;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.ioc.util.BodyBuilder;
 import org.apache.tapestry.model.MutableComponentModel;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * Peforms transformations that allow pages to be injected into components.
  *
- * @see org.apache.tapestry.annotations.InjectPage
+ * @see org.apache.tapestry.annotation.InjectPage
  */
 public class InjectPageWorker implements ComponentClassTransformWorker
 {

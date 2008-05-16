@@ -15,11 +15,11 @@
 package org.apache.tapestry.corelib.base;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.*;
+import org.apache.tapestry.annotation.*;
 import org.apache.tapestry.corelib.mixins.DiscardBody;
 import org.apache.tapestry.corelib.mixins.RenderDisabled;
 import org.apache.tapestry.corelib.mixins.RenderInformals;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.services.ComponentDefaultProvider;
 import org.apache.tapestry.services.FormSupport;
 

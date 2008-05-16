@@ -16,11 +16,11 @@ package org.apache.tapestry.corelib.mixins;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.*;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.annotation.*;
+import org.apache.tapestry.ioc.annotation.Inject;
 
 /**
- * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry.annotations.BeginRender}
+ * Used to render out all informal parameters, at the end of the {@link org.apache.tapestry.annotation.BeginRender}
  * phase.
  * <p/>
  * This mixin can be used with components that render a single tag inside the {@link BeginRender} phase. RenderInformals

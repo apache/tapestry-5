@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.SymbolConstants;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.services.Request;
 
 import java.util.regex.Pattern;

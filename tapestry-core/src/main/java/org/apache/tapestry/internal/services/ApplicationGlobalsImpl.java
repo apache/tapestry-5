@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.services.ApplicationGlobals;
 import org.apache.tapestry.services.Context;
+import org.apache.tapestry5.services.ApplicationGlobals;
 
 import javax.servlet.ServletContext;
 

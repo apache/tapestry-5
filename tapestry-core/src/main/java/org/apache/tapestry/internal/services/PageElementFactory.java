@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.Component;
+import org.apache.tapestry.annotation.Component;
 import org.apache.tapestry.internal.parser.AttributeToken;
 import org.apache.tapestry.internal.parser.ExpansionToken;
 import org.apache.tapestry.internal.structure.ComponentPageElement;

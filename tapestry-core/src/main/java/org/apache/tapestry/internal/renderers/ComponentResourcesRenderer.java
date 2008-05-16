@@ -17,7 +17,7 @@ package org.apache.tapestry.internal.renderers;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
 import org.apache.tapestry.ioc.Location;
-import org.apache.tapestry.ioc.annotations.Primary;
+import org.apache.tapestry.ioc.annotation.Primary;
 import org.apache.tapestry.services.ObjectRenderer;
 
 /**

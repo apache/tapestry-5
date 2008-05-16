@@ -18,8 +18,8 @@ import org.apache.tapestry.internal.services.ComponentClassCache;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.ioc.services.TypeCoercer;
-import org.apache.tapestry.services.ComponentMessagesSource;
 import org.apache.tapestry.services.ContextValueEncoder;
+import org.apache.tapestry5.services.ComponentMessagesSource;
 
 import java.util.Locale;
 import java.util.Map;

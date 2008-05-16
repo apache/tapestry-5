@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.Mixin;
+import org.apache.tapestry.annotation.Mixin;
 import org.apache.tapestry.ioc.internal.util.InternalUtils;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -25,7 +25,7 @@ import org.apache.tapestry.services.TransformConstants;
 import java.util.List;
 
 /**
- * Supports the {@link org.apache.tapestry.annotations.Mixin} annotation, which allows a mixin to be part of the
+ * Supports the {@link org.apache.tapestry.annotation.Mixin} annotation, which allows a mixin to be part of the
  * implementation of a component. The annotation is applied to a field, which will become read-only, and contain a
  * reference to the mixin instance.
  */

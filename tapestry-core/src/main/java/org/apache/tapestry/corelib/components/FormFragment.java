@@ -15,14 +15,14 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.*;
-import org.apache.tapestry.annotations.Environmental;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.Environmental;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.corelib.internal.FormSupportAdapter;
 import org.apache.tapestry.corelib.internal.WrappedComponentAction;
 import org.apache.tapestry.dom.Element;
 import org.apache.tapestry.internal.services.ClientBehaviorSupport;
-import org.apache.tapestry.ioc.annotations.Inject;
+import org.apache.tapestry.ioc.annotation.Inject;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.runtime.Component;

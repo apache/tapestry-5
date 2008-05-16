@@ -19,8 +19,8 @@ import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.services.*;
+import org.apache.tapestry5.json.JSONObject;
 
 import java.io.IOException;
 

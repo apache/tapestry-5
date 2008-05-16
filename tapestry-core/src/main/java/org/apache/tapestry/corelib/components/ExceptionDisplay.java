@@ -14,11 +14,11 @@
 
 package org.apache.tapestry.corelib.components;
 
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.Property;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.Property;
 import org.apache.tapestry.internal.InternalConstants;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Symbol;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.Symbol;
 import org.apache.tapestry.ioc.services.ExceptionAnalysis;
 import org.apache.tapestry.ioc.services.ExceptionAnalyzer;
 import org.apache.tapestry.ioc.services.ExceptionInfo;

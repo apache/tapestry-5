@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.SupportsInformalParameters;
+import org.apache.tapestry.annotation.SupportsInformalParameters;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
 import org.apache.tapestry.services.ComponentClassTransformWorker;

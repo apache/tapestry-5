@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
-import org.apache.tapestry.ioc.annotations.Scope;
+import org.apache.tapestry.ioc.annotation.Scope;
 
 
 @Scope(PERTHREAD_SCOPE)

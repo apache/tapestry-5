@@ -15,10 +15,10 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 import org.apache.tapestry.corelib.pages.ExceptionReport;
-import org.apache.tapestry.ioc.annotations.Inject;
-import org.apache.tapestry.ioc.annotations.Primary;
+import org.apache.tapestry.ioc.annotation.Inject;
+import org.apache.tapestry.ioc.annotation.Primary;
 import org.apache.tapestry.services.ObjectRenderer;
 
 /**
