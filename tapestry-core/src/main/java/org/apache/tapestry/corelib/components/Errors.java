@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.corelib.components;
 
+import org.apache.tapestry.CSSClassConstants;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ValidationTracker;
 import org.apache.tapestry.annotations.Environmental;
 import org.apache.tapestry.annotations.Parameter;
@@ -42,7 +42,7 @@ public class Errors
      * The CSS class for the div element rendered by the component. The default value is "t-error".
      */
     @Parameter(name = "class")
-    private String className = TapestryConstants.ERROR_CLASS;
+    private String className = CSSClassConstants.ERROR;
 
     // Allow null so we can generate a better error message if missing
     @Environmental(false)

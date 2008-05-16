@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Field;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.corelib.data.InsertPosition;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import org.apache.tapestry.json.JSONArray;
@@ -24,13 +24,13 @@ import org.apache.tapestry.json.JSONObject;
 
 public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 {
-    private final PageRenderSupport pageRenderSupport;
+    private final RenderSupport renderSupport;
 
     private final JSONObject validations = new JSONObject();
 
-    public ClientBehaviorSupportImpl(PageRenderSupport pageRenderSupport)
+    public ClientBehaviorSupportImpl(RenderSupport renderSupport)
     {
-        this.pageRenderSupport = pageRenderSupport;
+        this.renderSupport = renderSupport;
     }
 
     public void addZone(String clientId, String showFunctionName, String updateFunctionName)
@@ -49,13 +49,13 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         if (spec.length() == 0)
         {
-            pageRenderSupport.addInit(functionName, clientId);
+            renderSupport.addInit(functionName, clientId);
             return;
         }
 
         spec.put("element", clientId);
 
-        pageRenderSupport.addInit(functionName, spec);
+        renderSupport.addInit(functionName, spec);
     }
 
 
@@ -70,7 +70,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
         spec.put(linkId);
         spec.put(elementId);
 
-        pageRenderSupport.addInit("linkZone", spec);
+        renderSupport.addInit("linkZone", spec);
     }
 
     public void addFormFragment(String clientId, String showFunctionName, String hideFunctionName)
@@ -97,7 +97,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
 
         // Always has at least two properties.
 
-        pageRenderSupport.addInit("formInjector", spec);
+        renderSupport.addInit("formInjector", spec);
     }
 
 
@@ -125,7 +125,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
     }
 
     /**
-     * Invoked at the end of rendering to commit (to the {@link org.apache.tapestry.PageRenderSupport}) any accumulated
+     * Invoked at the end of rendering to commit (to the {@link org.apache.tapestry.RenderSupport}) any accumulated
      * validations.
      */
     public void commit()
@@ -138,7 +138,7 @@ public class ClientBehaviorSupportImpl implements ClientBehaviorSupport
             parameters.put(field);
             parameters.put(specs);
 
-            pageRenderSupport.addInit("validate", parameters);
+            renderSupport.addInit("validate", parameters);
         }
     }
 }

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.annotations.ContentType;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -30,6 +30,6 @@ public class ContentTypeWorker implements ComponentClassTransformWorker
     {
         ContentType annotation = transformation.getAnnotation(ContentType.class);
 
-        if (annotation != null) model.setMeta(TapestryConstants.RESPONSE_CONTENT_TYPE, annotation.value());
+        if (annotation != null) model.setMeta(MetaDataConstants.RESPONSE_CONTENT_TYPE, annotation.value());
     }
 }

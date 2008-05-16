@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.annotations;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -52,8 +52,10 @@ public @interface OnEvent
     /**
      * The event type to match. The handler will only be invoked if the client event type matches the value. The default
      * value is "action".  Matching is case-insensitive.
+     *
+     * @see org.apache.tapestry.EventConstants
      */
-    String value() default TapestryConstants.ACTION_EVENT;
+    String value() default EventConstants.ACTION;
 
     /**
      * The local id of the component from which the event originates. If not specified, then the default is to match any

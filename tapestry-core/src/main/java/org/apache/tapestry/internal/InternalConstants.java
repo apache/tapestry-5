@@ -84,8 +84,8 @@ public final class InternalConstants
 
     /**
      * Request attribute that stores a {@link org.apache.tapestry.internal.structure.Page} instance that will be
-     * rendered as the {@linkplain org.apache.tapestry.TapestryConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS_SYMBOL
-     * immediate mode response}.
+     * rendered as the {@linkplain org.apache.tapestry.SymbolConstants#SUPPRESS_REDIRECT_FROM_ACTION_REQUESTS immediate
+     * mode response}.
      */
     public static final String IMMEDIATE_RESPONSE_PAGE_ATTRIBUTE = "tapestry.immediate-response-page";
 

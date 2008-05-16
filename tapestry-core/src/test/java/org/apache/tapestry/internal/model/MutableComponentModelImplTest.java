@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.model;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Location;
 import org.apache.tapestry.ioc.Resource;
@@ -70,13 +70,13 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         String parameterName = "value";
 
-        model.addParameter(parameterName, true, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter(parameterName, true, BindingConstants.PROP);
 
         ParameterModel pm = model.getParameterModel(parameterName);
 
         assertEquals(pm.getName(), parameterName);
         assertEquals(true, pm.isRequired());
-        assertEquals(pm.getDefaultBindingPrefix(), TapestryConstants.PROP_BINDING_PREFIX);
+        assertEquals(pm.getDefaultBindingPrefix(), BindingConstants.PROP);
 
         assertEquals(model.getDeclaredParameterNames(), Arrays.asList(parameterName));
 
@@ -101,9 +101,9 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        model.addParameter("fred", true, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("wilma", true, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("barney", true, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter("fred", true, BindingConstants.PROP);
+        model.addParameter("wilma", true, BindingConstants.PROP);
+        model.addParameter("barney", true, BindingConstants.PROP);
 
         assertEquals(model.getDeclaredParameterNames(), Arrays.asList("barney", "fred", "wilma"));
 
@@ -124,9 +124,9 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, parent);
 
-        model.addParameter("fred", true, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("wilma", true, TapestryConstants.PROP_BINDING_PREFIX);
-        model.addParameter("barney", true, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter("fred", true, BindingConstants.PROP);
+        model.addParameter("wilma", true, BindingConstants.PROP);
+        model.addParameter("barney", true, BindingConstants.PROP);
 
         assertEquals(model.getDeclaredParameterNames(), Arrays.asList("barney", "fred", "wilma"));
         assertEquals(model.getParameterNames(), Arrays.asList("barney", "betty", "fred", "wilma"));
@@ -144,13 +144,13 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
 
-        model.addParameter("fred", true, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter("fred", true, BindingConstants.PROP);
 
         try
         {
             // This also helps check that the comparison is caseless!
 
-            model.addParameter("Fred", true, TapestryConstants.PROP_BINDING_PREFIX);
+            model.addParameter("Fred", true, BindingConstants.PROP);
             unreachable();
         }
         catch (IllegalArgumentException ex)
@@ -186,7 +186,7 @@ public class MutableComponentModelImplTest extends InternalBaseTestCase
         replay();
 
         MutableComponentModel model = new MutableComponentModelImpl(CLASS_NAME, logger, r, null);
-        model.addParameter("fred", true, TapestryConstants.PROP_BINDING_PREFIX);
+        model.addParameter("fred", true, BindingConstants.PROP);
 
         assertNull(model.getParameterModel("barney"));
 

@@ -133,7 +133,7 @@ public class Form implements ClientElement, FormValidationControl
      * Binding the zone parameter will cause the form submission to be handled as an Ajax request that updates the
      * indicated zone.  Often a Form will update the same zone that contains it.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String zone;
 
     @Inject
@@ -143,7 +143,7 @@ public class Form implements ClientElement, FormValidationControl
     private ComponentResources resources;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     @Inject
     private Request request;
@@ -151,7 +151,7 @@ public class Form implements ClientElement, FormValidationControl
     @Inject
     private ComponentSource source;
 
-    @Persist(TapestryConstants.FLASH_PERSISTENCE_STRATEGY)
+    @Persist(PersistenceConstants.FLASH)
     private ValidationTracker defaultTracker;
 
     @Inject
@@ -207,7 +207,7 @@ public class Form implements ClientElement, FormValidationControl
             throw new RuntimeException(ex);
         }
 
-        name = pageRenderSupport.allocateClientId(resources);
+        name = renderSupport.allocateClientId(resources);
 
         formSupport = new FormSupportImpl(name, actions, clientBehaviorSupport, clientValidation);
 
@@ -228,7 +228,7 @@ public class Form implements ClientElement, FormValidationControl
 
         resources.triggerEvent(PREPARE, contextArray, null);
 
-        Link link = resources.createActionLink(TapestryConstants.ACTION_EVENT, true, contextArray);
+        Link link = resources.createActionLink(EventConstants.ACTION, true, contextArray);
 
         // Save the form element for later, in case we want to write an encoding type attribute.
 
@@ -239,7 +239,7 @@ public class Form implements ClientElement, FormValidationControl
 
         resources.renderInformalParameters(writer);
 
-        div = writer.element("div", "class", TapestryConstants.INVISIBLE_CLASS);
+        div = writer.element("div", "class", CSSClassConstants.INVISIBLE);
 
         for (String parameterName : link.getParameterNames())
         {

@@ -16,7 +16,6 @@ package org.apache.tapestry.internal.transform;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.PageRenderSupport;
 import org.apache.tapestry.internal.services.ComponentResourcesOperation;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.ioc.services.SymbolSource;
@@ -31,7 +30,7 @@ import java.util.Locale;
 
 /**
  * Base class for workers that automatically inlcude assets in the page (via methods on {@link
- * org.apache.tapestry.PageRenderSupport}).
+ * org.apache.tapestry.RenderSupport}).
  */
 public abstract class AbstractIncludeAssetWorker implements ComponentClassTransformWorker
 {
@@ -99,7 +98,7 @@ public abstract class AbstractIncludeAssetWorker implements ComponentClassTransf
 
     /**
      * Invoked, from the component's setup render phase, for each asset. This method must be threadsafe.  Most
-     * implementation pass the asset to a particular method of {@link PageRenderSupport}.
+     * implementation pass the asset to a particular method of {@link org.apache.tapestry.RenderSupport}.
      *
      * @param asset to be processed
      */

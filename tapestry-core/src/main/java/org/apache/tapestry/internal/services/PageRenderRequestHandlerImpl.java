@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.ComponentEventResultProcessor;
 import org.apache.tapestry.services.PageRenderRequestHandler;
@@ -49,7 +49,7 @@ public class PageRenderRequestHandlerImpl implements PageRenderRequestHandler
 
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(resultProcessor);
 
-        page.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT, parameters.getActivationContext(),
+        page.getRootElement().triggerContextEvent(EventConstants.ACTIVATE, parameters.getActivationContext(),
                                                   callback);
 
         // The handler will have asked the result processor to send a response.

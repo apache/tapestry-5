@@ -14,9 +14,9 @@
 
 package org.apache.tapestry.corelib.components;
 
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.annotations.Parameter;
 import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry.ioc.annotations.Inject;
@@ -38,7 +38,7 @@ public class EventLink extends AbstractComponentEventLink
      * org.apache.tapestry.corelib.components.ActionLink} triggers an "action" event on itself, and EventLink component
      * triggers any arbitrary event on <em>its container</em>.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String event;
 
     @Inject

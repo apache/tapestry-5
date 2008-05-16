@@ -59,7 +59,7 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
     {
         if (field == null) return;
 
-        if (inError(field)) element.addClassName(TapestryConstants.ERROR_CLASS);
+        if (inError(field)) element.addClassName(CSSClassConstants.ERROR);
     }
 
     @Override
@@ -90,6 +90,6 @@ public final class DefaultValidationDecorator extends BaseValidationDecorator
 
     private void addErrorClassToCurrentElement()
     {
-        markupWriter.getElement().addClassName(TapestryConstants.ERROR_CLASS);
+        markupWriter.getElement().addClassName(CSSClassConstants.ERROR);
     }
 }

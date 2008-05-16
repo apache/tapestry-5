@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.integration.app1.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.ValueEncoder;
 import org.apache.tapestry.integration.app1.data.Track;
 import org.apache.tapestry.internal.services.GenericValueEncoderFactory;
@@ -123,9 +123,9 @@ public class AppModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(TapestryConstants.SUPPORTED_LOCALES_SYMBOL, "en,fr");
-        configuration.add(TapestryConstants.PRODUCTION_MODE_SYMBOL, "false");
-        configuration.add(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL, "false");
+        configuration.add(SymbolConstants.SUPPORTED_LOCALES, "en,fr");
+        configuration.add(SymbolConstants.PRODUCTION_MODE, "false");
+        configuration.add(SymbolConstants.COMPRESS_WHITESPACE, "false");
 
         configuration.add("app.injected-symbol", "Symbol contributed to ApplicationDefaults");
     }

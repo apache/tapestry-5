@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Asset;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.ioc.internal.util.Defense;
 import static org.apache.tapestry.ioc.internal.util.Defense.notNull;
 import org.apache.tapestry.ioc.internal.util.IdAllocator;
@@ -29,7 +29,7 @@ import static java.lang.String.format;
 import java.util.Arrays;
 import java.util.List;
 
-public class PageRenderSupportImpl implements PageRenderSupport
+public class RenderSupportImpl implements RenderSupport
 {
     private final IdAllocator idAllocator;
 
@@ -53,8 +53,8 @@ public class PageRenderSupportImpl implements PageRenderSupport
      * @param coreScripts  core scripts (evaluated as classpaths scripts) that are added to any page that includes a
      *                     script link or script block
      */
-    public PageRenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                                 AssetSource assetSource, String... coreScripts)
+    public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
+                             AssetSource assetSource, String... coreScripts)
     {
         this(linker, symbolSource, assetSource, new IdAllocator(), coreScripts);
     }
@@ -69,8 +69,8 @@ public class PageRenderSupportImpl implements PageRenderSupport
      *                     script link or script block
      */
 
-    public PageRenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
-                                 AssetSource assetSource, IdAllocator idAllocator, String... coreScripts)
+    public RenderSupportImpl(DocumentLinker linker, SymbolSource symbolSource,
+                             AssetSource assetSource, IdAllocator idAllocator, String... coreScripts)
 
     {
         this.linker = linker;

@@ -37,7 +37,7 @@ public abstract class AbstractField implements Field
      * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String label;
 
     /**
@@ -108,7 +108,7 @@ public abstract class AbstractField implements Field
      * times, a suffix will be appended to the to id to ensure uniqueness. The uniqued value may be accessed via the
      * {@link #getClientId() clientId property}.
      */
-    @Parameter(value = "prop:componentResources.id", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(value = "prop:componentResources.id", defaultPrefix = BindingConstants.LITERAL)
     private String clientId;
 
     private String assignedClientId;
@@ -119,7 +119,7 @@ public abstract class AbstractField implements Field
     private FormSupport formSupport;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     @Inject
     private ComponentResources resources;
@@ -149,7 +149,7 @@ public abstract class AbstractField implements Field
         // exceptions, including a form that renders inside a loop, or a form inside a component
         // that is used multiple times.
 
-        assignedClientId = pageRenderSupport.allocateClientId(id);
+        assignedClientId = renderSupport.allocateClientId(id);
         String controlName = formSupport.allocateControlName(id);
 
         formSupport.storeAndExecute(this, new SetupAction(controlName));

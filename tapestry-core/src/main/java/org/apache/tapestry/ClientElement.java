@@ -23,7 +23,7 @@ package org.apache.tapestry;
  * <p/>
  * Some components must be configured to provide a client id. In many cases, the client id matches the component's
  * {@linkplain ComponentResourcesCommon#getId() component id}, typically passed through {@link
- * PageRenderSupport#allocateClientId(String)} to ensure uniqueness.
+ * RenderSupport#allocateClientId(String)} to ensure uniqueness.
  */
 public interface ClientElement
 {

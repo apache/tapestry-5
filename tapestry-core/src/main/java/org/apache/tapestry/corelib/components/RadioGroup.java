@@ -41,7 +41,7 @@ public class RadioGroup implements Field
      * id, first by looking for a message key named "id-label" (substituting the component's actual id), then by
      * converting the actual id to a presentable string (for example, "userId" to "User Id").
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String label;
 
     /**

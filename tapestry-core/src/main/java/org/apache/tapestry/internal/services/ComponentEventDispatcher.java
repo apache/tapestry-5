@@ -14,8 +14,8 @@
 
 package org.apache.tapestry.internal.services;
 
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.EventContext;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.EmptyEventContext;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
@@ -118,7 +118,7 @@ public class ComponentEventDispatcher implements Dispatcher
 
         // The event type is often omitted, and defaults to "action".
 
-        if (eventType == null) eventType = TapestryConstants.ACTION_EVENT;
+        if (eventType == null) eventType = EventConstants.ACTION;
 
         if (nestedComponentId == null) nestedComponentId = "";
 

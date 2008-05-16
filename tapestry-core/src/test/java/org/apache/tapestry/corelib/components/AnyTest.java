@@ -16,7 +16,7 @@ package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.dom.DefaultMarkupModel;
 import org.apache.tapestry.internal.services.MarkupWriterImpl;
 import org.apache.tapestry.test.TapestryTestCase;
@@ -28,7 +28,7 @@ public class AnyTest extends TapestryTestCase
     public void render_simple()
     {
         ComponentResources resources = mockComponentResources();
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         MarkupWriter writer = new MarkupWriterImpl(new DefaultMarkupModel());
 
@@ -52,7 +52,7 @@ public class AnyTest extends TapestryTestCase
     public void render_with_id()
     {
         ComponentResources resources = mockComponentResources();
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         MarkupWriter writer = new MarkupWriterImpl(new DefaultMarkupModel());
 

@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
@@ -149,7 +148,7 @@ public class AssetDispatcherTest extends InternalBaseTestCase
         ResourceCache cache = mockResourceCache();
         ResourceStreamer streamer = mockResourceStreamer();
 
-        String clientURL = TapestryConstants.ASSET_PATH_PREFIX + "app1/pages/smiley.RIGHT.png";
+        String clientURL = RequestConstants.ASSET_PATH_PREFIX + "app1/pages/smiley.RIGHT.png";
         String resourcePath = "org/apache/tapestry/integration/app1/pages/smiley.RIGHT.png";
 
         train_getPath(request, clientURL);

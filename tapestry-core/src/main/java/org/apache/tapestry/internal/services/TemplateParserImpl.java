@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.internal.parser.*;
 import static org.apache.tapestry.ioc.IOCConstants.PERTHREAD_SCOPE;
 import org.apache.tapestry.ioc.Location;
@@ -155,7 +155,7 @@ public class TemplateParserImpl implements TemplateParser, LexicalHandler, Conte
 
     public TemplateParserImpl(Logger logger, Map<String, URL> configuration,
 
-                              @Symbol(TapestryConstants.COMPRESS_WHITESPACE_SYMBOL)
+                              @Symbol(SymbolConstants.COMPRESS_WHITESPACE)
                               boolean compressWhitespaceDefault)
     {
         this.logger = logger;

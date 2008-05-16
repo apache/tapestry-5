@@ -90,14 +90,14 @@ public final class Select extends AbstractField
      * selected.  The value for the blank option is always the empty string, the label may be the blank string; the
      * label is from the blankLabel parameter (and is often also the empty string).
      */
-    @Parameter(value = "auto", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(value = "auto", defaultPrefix = BindingConstants.LITERAL)
     private BlankOption blankOption;
 
     /**
      * The label to use for the blank option, if rendered.  If not specified, the container's message catalog is
      * searched for a key, <code><em>id</em>-blanklabel</code>.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String blankLabel;
 
     @Inject

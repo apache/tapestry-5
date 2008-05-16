@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.test;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.SymbolConstants;
 import org.apache.tapestry.internal.services.ComponentInvocationMap;
 import org.apache.tapestry.internal.services.CookieSink;
 import org.apache.tapestry.internal.services.CookieSource;
@@ -74,6 +74,6 @@ public class PageTesterModule
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration)
     {
-        configuration.add(TapestryConstants.FORCE_ABSOLUTE_URIS_SYMBOL, "true");
+        configuration.add(SymbolConstants.FORCE_ABSOLUTE_URIS, "true");
     }
 }

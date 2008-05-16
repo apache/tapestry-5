@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.TapestryInternalUtils;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
@@ -240,7 +240,7 @@ public class LinkFactoryImpl implements LinkFactory
 
         ComponentPageElement rootElement = page.getRootElement();
 
-        rootElement.triggerEvent(TapestryConstants.PASSIVATE_EVENT, null, callback);
+        rootElement.triggerEvent(EventConstants.PASSIVATE, null, callback);
 
         return toContextStrings(context.toArray());
     }

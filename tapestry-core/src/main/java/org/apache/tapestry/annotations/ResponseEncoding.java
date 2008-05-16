@@ -20,7 +20,7 @@ import java.lang.annotation.*;
 /**
  * An annotation on a page component used to identify the respones encoding (the character set of the text sent in the
  * response). An alternative to the {@link org.apache.tapestry.annotations.Meta} annotation with the {@link
- * org.apache.tapestry.TapestryConstants#RESPONSE_ENCODING} key.
+ * org.apache.tapestry.MetaDataConstants#RESPONSE_ENCODING} key.
  *
  * @see org.apache.tapestry.annotations.ContentType
  */

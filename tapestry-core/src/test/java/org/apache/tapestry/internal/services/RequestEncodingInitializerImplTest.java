@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.MetaDataConstants;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
@@ -42,7 +42,7 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
 
         train_findMeta(
                 locator,
-                TapestryConstants.RESPONSE_CONTENT_TYPE,
+                MetaDataConstants.RESPONSE_CONTENT_TYPE,
                 resources,
                 String.class,
                 "text/html;charset=zebra");
@@ -75,9 +75,9 @@ public class RequestEncodingInitializerImplTest extends InternalBaseTestCase
         train_getRootElement(page, element);
         train_getComponentResources(element, resources);
 
-        train_findMeta(locator, TapestryConstants.RESPONSE_CONTENT_TYPE, resources, String.class, "text/html");
+        train_findMeta(locator, MetaDataConstants.RESPONSE_CONTENT_TYPE, resources, String.class, "text/html");
 
-        train_findMeta(locator, TapestryConstants.RESPONSE_ENCODING, resources, String.class, encoding);
+        train_findMeta(locator, MetaDataConstants.RESPONSE_ENCODING, resources, String.class, encoding);
 
         request.setEncoding(encoding);
 

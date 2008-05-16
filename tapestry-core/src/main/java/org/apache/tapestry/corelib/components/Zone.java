@@ -47,7 +47,7 @@ public class Zone implements ClientElement
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make the Zone's
      * &lt;div&gt; visible before being updated.  If not specified, then the basic "show" method is used.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
 
     /**
@@ -55,13 +55,13 @@ public class Zone implements ClientElement
      * been updated. If not specified, then the basic "highlight" method is used, which performs a classic "yellow fade"
      * to indicate to the user that and update has taken place.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String update;
 
     private String clientId;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     @Environmental
     private ClientBehaviorSupport clientBehaviorSupport;
@@ -78,7 +78,7 @@ public class Zone implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        clientId = pageRenderSupport.allocateClientId(resources);
+        clientId = renderSupport.allocateClientId(resources);
 
         Element e = writer.element("div", "id", clientId);
 

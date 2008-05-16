@@ -15,13 +15,13 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Asset;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.services.SymbolSource;
 import org.apache.tapestry.services.AssetSource;
 import org.testng.annotations.Test;
 
-public class PageRenderSupportImplTest extends InternalBaseTestCase
+public class RenderSupportImplTest extends InternalBaseTestCase
 {
     private static final String CORE_ASSET_PATH_UNEXPANDED = "${core}";
 
@@ -42,7 +42,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(linker, null, null);
+        RenderSupport support = new RenderSupportImpl(linker, null, null);
 
         support.addScriptLink(asset);
 
@@ -71,8 +71,8 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(linker, symbolSource, assetSource,
-                                                              CORE_ASSET_PATH_UNEXPANDED);
+        RenderSupport support = new RenderSupportImpl(linker, symbolSource, assetSource,
+                                                      CORE_ASSET_PATH_UNEXPANDED);
 
         support.addScriptLink(asset);
 
@@ -88,7 +88,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(linker, null, null);
+        RenderSupport support = new RenderSupportImpl(linker, null, null);
 
         support.addScript("Tapestry.Foo(\"%s\");", "bar");
 
@@ -115,7 +115,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(linker, source, assetSource);
+        RenderSupport support = new RenderSupportImpl(linker, source, assetSource);
 
         support.addClasspathScriptLink(path);
 
@@ -134,7 +134,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupport support = new PageRenderSupportImpl(linker, null, null);
+        RenderSupport support = new RenderSupportImpl(linker, null, null);
 
         support.addStylesheetLink(asset, media);
 
@@ -150,7 +150,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupportImpl support = new PageRenderSupportImpl(linker, null, null);
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null);
 
         support.addInit("foo", "fred");
         support.addInit("foo", "barney");
@@ -169,7 +169,7 @@ public class PageRenderSupportImplTest extends InternalBaseTestCase
 
         replay();
 
-        PageRenderSupportImpl support = new PageRenderSupportImpl(linker, null, null);
+        RenderSupportImpl support = new RenderSupportImpl(linker, null, null);
 
         support.addInit("foo", "fred", "barney");
 

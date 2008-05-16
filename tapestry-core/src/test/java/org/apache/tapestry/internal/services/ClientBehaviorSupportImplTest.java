@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.json.JSONArray;
 import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.test.TapestryTestCase;
@@ -25,7 +25,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void no_changes()
     {
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         replay();
 
@@ -39,7 +39,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void add_links()
     {
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         support.addInit("linkZone", new JSONArray("['client1', 'zone1']"));
         support.addInit("linkZone", new JSONArray("['client2', 'zone2']"));
@@ -59,7 +59,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void add_zones()
     {
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         support.addInit("zone", "client1");
         support.addInit("zone", "client2");
@@ -79,7 +79,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void zones_with_functions()
     {
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         support.addInit("zone", new JSONObject("{'element':'client1', 'show':'showme' }"));
         support.addInit("zone", new JSONObject("{'element':'client2', 'update':'updateme' }"));
@@ -99,7 +99,7 @@ public class ClientBehaviorSupportImplTest extends TapestryTestCase
     @Test
     public void zone_function_names_are_converted_to_lower_case()
     {
-        PageRenderSupport support = mockPageRenderSupport();
+        RenderSupport support = mockRenderSupport();
 
         support.addInit("zone", new JSONObject("{'element':'client1', 'show':'showme' }"));
         support.addInit("zone", new JSONObject("{'element':'client2', 'update':'updateme' }"));

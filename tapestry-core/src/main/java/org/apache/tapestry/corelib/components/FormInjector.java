@@ -53,26 +53,26 @@ public class FormInjector implements ClientElement
     @Parameter
     private List<?> context;
 
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX, value = "above")
+    @Parameter(defaultPrefix = BindingConstants.LITERAL, value = "above")
     private InsertPosition position;
 
     /**
      * Name of a function on the client-side Tapestry.ElementEffect object that is invoked to make added content
      * visible. Leaving as null uses the default function, "highlight".
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String show;
 
     /**
      * The element name to render, which is normally the element name used to represent the FormInjector component in
      * the template, or "div".
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String element;
 
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     @Environmental
     private FormSupport formSupport;
@@ -106,7 +106,7 @@ public class FormInjector implements ClientElement
 
     void beginRender(MarkupWriter writer)
     {
-        clientId = pageRenderSupport.allocateClientId(resources);
+        clientId = renderSupport.allocateClientId(resources);
 
         writer.element(element,
 
@@ -148,7 +148,7 @@ public class FormInjector implements ClientElement
         ComponentResultProcessorWrapper callback = new ComponentResultProcessorWrapper(
                 componentEventResultProcessor);
 
-        resources.triggerContextEvent(TapestryConstants.ACTION_EVENT, context, callback);
+        resources.triggerContextEvent(EventConstants.ACTION, context, callback);
 
         if (!callback.isAborted()) return null;
 
@@ -195,7 +195,7 @@ public class FormInjector implements ClientElement
             {
                 // Kind of ugly, but the only way to ensure we don't have name collisions on the
                 // client side is to force a unique id into each name (as well as each id, but that's
-                // PageRenderSupport's job).  It would be nice if we could agree on the uid, but
+                // RenderSupport's job).  It would be nice if we could agree on the uid, but
                 // not essential.
 
                 String uid = Long.toHexString(System.currentTimeMillis());

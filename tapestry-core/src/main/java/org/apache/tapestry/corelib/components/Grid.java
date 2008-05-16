@@ -78,7 +78,7 @@ public class Grid implements GridModel
      * Defines where the pager (used to navigate within the "pages" of results) should be displayed: "top", "bottom",
      * "both" or "none".
      */
-    @Parameter(value = "top", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(value = "top", defaultPrefix = BindingConstants.LITERAL)
     private GridPagerPosition pagerPosition;
 
     /**
@@ -110,7 +110,7 @@ public class Grid implements GridModel
      * A comma-seperated list of property names to be added to the {@link org.apache.tapestry.beaneditor.BeanModel}.
      * Cells for added columns will be blank unless a cell override is provided.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String add;
 
     /**
@@ -119,14 +119,14 @@ public class Grid implements GridModel
      * case-insensitive.
      */
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String include;
 
     /**
      * A comma-separated list of property names to be removed from the {@link org.apache.tapestry.beaneditor.BeanModel}.
      * The names are case-insensitive.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String exclude;
 
     /**
@@ -134,7 +134,7 @@ public class Grid implements GridModel
      * names are case insensitive. Any properties not indicated in the list will be appended to the end of the display
      * order.
      */
-    @Parameter(defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String reorder;
 
     /**
@@ -175,7 +175,7 @@ public class Grid implements GridModel
      * CSS class for the &lt;table&gt; element.  In addition, informal parameters to the Grid are rendered in the table
      * element.
      */
-    @Parameter(name = "class", defaultPrefix = TapestryConstants.LITERAL_BINDING_PREFIX, value = "t-data-grid")
+    @Parameter(name = "class", defaultPrefix = BindingConstants.LITERAL, value = "t-data-grid")
     @Property(write = false)
     private String tableClass;
 
@@ -244,7 +244,7 @@ public class Grid implements GridModel
     private Request request;
 
     @Environmental
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     /**
      * Set up via the traditional or Ajax component event request handler
@@ -435,7 +435,7 @@ public class Grid implements GridModel
 
         if (inPlace && zone == null)
         {
-            zone = pageRenderSupport.allocateClientId(resources);
+            zone = renderSupport.allocateClientId(resources);
 
             writer.element("div", "id", zone);
 

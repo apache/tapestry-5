@@ -15,7 +15,7 @@
 package org.apache.tapestry.integration.app1.pages;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.PageRenderSupport;
+import org.apache.tapestry.RenderSupport;
 import org.apache.tapestry.annotations.Component;
 import org.apache.tapestry.annotations.Persist;
 import org.apache.tapestry.corelib.components.FormInjector;
@@ -32,7 +32,7 @@ public class FormInjectorDemo
     private Block newRow;
 
     @Inject
-    private PageRenderSupport pageRenderSupport;
+    private RenderSupport renderSupport;
 
     @Component
     private FormInjector formInjector;
@@ -65,7 +65,7 @@ public class FormInjectorDemo
 
     void afterRender()
     {
-        pageRenderSupport.addScript(
+        renderSupport.addScript(
                 "$('addnewrow').observe('click', function() { $('%s').trigger(); return false; });",
                 formInjector.getClientId());
     }

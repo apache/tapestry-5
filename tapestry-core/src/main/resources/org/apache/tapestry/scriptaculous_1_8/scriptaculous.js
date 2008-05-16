@@ -42,7 +42,7 @@ var Scriptaculous = {
         if ((typeof Prototype == 'undefined') || (typeof Element == 'undefined') || (typeof Element.Methods == 'undefined') || (convertVersionString(Prototype.Version) < convertVersionString(Scriptaculous.REQUIRED_PROTOTYPE)))
             throw("script.aculo.us requires the Prototype JavaScript framework >= " + Scriptaculous.REQUIRED_PROTOTYPE);
 
-// Tapestry turns off this mechanism, and replaces it with PageRenderSupport.addScriptLink().        
+// Tapestry turns off this mechanism, and replaces it with RenderSupport.addScriptLink().
         //        $A(document.getElementsByTagName("script")).findAll(function(s)
         //        {
         //            return (s.src && s.src.match(/scriptaculous\.js(\?.*)?$/))

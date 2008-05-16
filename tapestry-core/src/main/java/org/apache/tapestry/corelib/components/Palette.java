@@ -193,7 +193,7 @@ public class Palette extends AbstractField
      * Used to include scripting code in the rendered page.
      */
     @Environmental
-    private PageRenderSupport renderSupport;
+    private RenderSupport renderSupport;
 
     /**
      * Needed to access query parameters when processing form submission.

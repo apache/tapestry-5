@@ -14,12 +14,12 @@
 
 package org.apache.tapestry.integration.app1.components;
 
-import static org.apache.tapestry.TapestryConstants.LITERAL_BINDING_PREFIX;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.annotations.Parameter;
 
 public class Outer
 {
     @SuppressWarnings("unused")
-    @Parameter(defaultPrefix = LITERAL_BINDING_PREFIX)
+    @Parameter(defaultPrefix = BindingConstants.LITERAL)
     private String outerValue;
 }

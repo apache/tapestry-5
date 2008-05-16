@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
 import org.apache.tapestry.services.*;
@@ -53,7 +53,7 @@ public class ComponentEventRequestHandlerImpl implements ComponentEventRequestHa
         // If activating the page returns a "navigational result", then don't trigger the action
         // on the component.
 
-        activePage.getRootElement().triggerContextEvent(TapestryConstants.ACTIVATE_EVENT,
+        activePage.getRootElement().triggerContextEvent(EventConstants.ACTIVATE,
                                                         parameters.getPageActivationContext(), callback);
 
         if (callback.isAborted()) return;

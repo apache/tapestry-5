@@ -15,8 +15,8 @@
 package org.apache.tapestry.corelib.components;
 
 import org.apache.tapestry.ComponentResources;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.Link;
-import static org.apache.tapestry.TapestryConstants.ACTION_EVENT;
 import org.apache.tapestry.corelib.base.AbstractComponentEventLink;
 import org.apache.tapestry.ioc.annotations.Inject;
 
@@ -30,7 +30,7 @@ public class ActionLink extends AbstractComponentEventLink
 
     protected Link createLink(Object[] contextArray)
     {
-        return resources.createActionLink(ACTION_EVENT, false, contextArray);
+        return resources.createActionLink(EventConstants.ACTION, false, contextArray);
     }
 
 }

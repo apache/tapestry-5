@@ -14,7 +14,6 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.ioc.internal.util.CollectionFactory;
 import org.apache.tapestry.services.ClasspathAssetAliasManager;
 import org.apache.tapestry.services.Request;
@@ -99,7 +98,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
     private String toCompleteClientURI(String resourcePath)
     {
         StringBuilder builder = new StringBuilder(request.getContextPath());
-        builder.append(TapestryConstants.ASSET_PATH_PREFIX);
+        builder.append(RequestConstants.ASSET_PATH_PREFIX);
 
         for (String pathPrefix : sortedPathPrefixes)
         {
@@ -122,7 +121,7 @@ public class ClasspathAssetAliasManagerImpl implements ClasspathAssetAliasManage
 
     public String toResourcePath(String clientURL)
     {
-        String basePath = clientURL.substring(TapestryConstants.ASSET_PATH_PREFIX.length());
+        String basePath = clientURL.substring(RequestConstants.ASSET_PATH_PREFIX.length());
 
         for (String alias : sortedAliases)
         {

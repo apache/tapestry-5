@@ -74,7 +74,7 @@ public interface Validator<C, T>
 
     /**
      * Hook used by components to allow the validator to contribute additional attribute or (more often) client-side
-     * JavaScript (via the {@link PageRenderSupport}).
+     * JavaScript (via the {@link RenderSupport}).
      *
      * @param field           the field which is currently being rendered
      * @param constraintValue the value used to constrain input

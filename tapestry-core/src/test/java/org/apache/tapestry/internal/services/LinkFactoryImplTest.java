@@ -15,8 +15,8 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.ComponentEventCallback;
+import org.apache.tapestry.EventConstants;
 import org.apache.tapestry.Link;
-import org.apache.tapestry.TapestryConstants;
 import org.apache.tapestry.internal.InternalConstants;
 import org.apache.tapestry.internal.structure.ComponentPageElement;
 import org.apache.tapestry.internal.structure.Page;
@@ -68,14 +68,14 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
     @Test
     public void action_link_with_default_action()
     {
-        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", TapestryConstants.ACTION_EVENT, "/sub/mypage.foo.bar/fred/5",
+        testActionLink("", PAGE_LOGICAL_NAME, "foo.bar", EventConstants.ACTION, "/sub/mypage.foo.bar/fred/5",
                        "fred", 5);
     }
 
     @Test
     public void page_level_event_always_includes_action()
     {
-        testActionLink("", PAGE_LOGICAL_NAME, "", TapestryConstants.ACTION_EVENT, "/sub/mypage:action/barney/99",
+        testActionLink("", PAGE_LOGICAL_NAME, "", EventConstants.ACTION, "/sub/mypage:action/barney/99",
                        "barney", 99);
     }
 
@@ -447,7 +447,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         // Intercept the call to handle component event, and let the IAnswer
         // do the work.
 
-        expect(rootElement.triggerEvent(eq(TapestryConstants.PASSIVATE_EVENT), (Object[]) isNull(),
+        expect(rootElement.triggerEvent(eq(EventConstants.PASSIVATE), (Object[]) isNull(),
                                         isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
         listener.createdPageLink(isA(Link.class));
@@ -465,7 +465,7 @@ public class LinkFactoryImplTest extends InternalBaseTestCase
         // Intercept the call to handle component event, and let the IAnswer
         // do the work.
 
-        expect(rootElement.triggerEvent(eq(TapestryConstants.PASSIVATE_EVENT), (Object[]) isNull(),
+        expect(rootElement.triggerEvent(eq(EventConstants.PASSIVATE), (Object[]) isNull(),
                                         isA(ComponentEventCallback.class))).andAnswer(triggerEventAnswer);
 
         listener.createdActionLink(isA(Link.class));

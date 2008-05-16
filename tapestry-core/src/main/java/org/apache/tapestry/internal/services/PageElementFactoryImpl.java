@@ -15,9 +15,9 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Binding;
+import org.apache.tapestry.BindingConstants;
 import org.apache.tapestry.ComponentResources;
 import org.apache.tapestry.MarkupWriter;
-import static org.apache.tapestry.TapestryConstants.PROP_BINDING_PREFIX;
 import org.apache.tapestry.internal.parser.AttributeToken;
 import org.apache.tapestry.internal.parser.ExpansionToken;
 import org.apache.tapestry.internal.structure.*;
@@ -125,7 +125,7 @@ public class PageElementFactoryImpl implements PageElementFactory
             String expansion = expression.substring(expansionx + 2, endx);
 
             final Binding binding = bindingSource.newBinding("attribute expansion", resources, resources,
-                                                             PROP_BINDING_PREFIX, expansion, location);
+                                                             BindingConstants.PROP, expansion, location);
 
             final StringProvider provider = new StringProvider()
             {
@@ -174,7 +174,7 @@ public class PageElementFactoryImpl implements PageElementFactory
     public PageElement newExpansionElement(ComponentResources componentResources, ExpansionToken token)
     {
         Binding binding = bindingSource.newBinding("expansion", componentResources, componentResources,
-                                                   PROP_BINDING_PREFIX, token.getExpression(), token.getLocation());
+                                                   BindingConstants.PROP, token.getExpression(), token.getLocation());
 
         return new ExpansionPageElement(binding, typeCoercer);
     }

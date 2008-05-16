@@ -953,9 +953,9 @@ public abstract class TapestryTestCase extends IOCTestCase
         return newMock(FieldValidationSupport.class);
     }
 
-    protected final PageRenderSupport mockPageRenderSupport()
+    protected final RenderSupport mockRenderSupport()
     {
-        return newMock(PageRenderSupport.class);
+        return newMock(RenderSupport.class);
     }
 
     protected final void train_getInheritInformalParameters(EmbeddedComponentModel model, boolean inherits)
