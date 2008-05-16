@@ -319,7 +319,7 @@ Invisible Instrumentation
   element being instrumented.
     
   A component <must> have a type, either via the t:type attribute in the template, or by the defining the component in the Java class using the
-  {{{../../apidocs/org/apache/tapestry/annotations/Component.html}Component}} annotation (and using the t:id attribute on the element in the template).
+  {{{../../apidocs/org/apache/tapestry/annotation/Component.html}Component}} annotation (and using the t:id attribute on the element in the template).
 
   
   In <most> cases,it is an aesthetic choice between normal emebedded components, and embedded components via invisible instrumentation.  In a few instances,

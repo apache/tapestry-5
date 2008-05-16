@@ -67,7 +67,7 @@ public class Layout
 
   Components must always have a Java class. In this trivial example, the Layout component
   does not have much logic.  We can save ourselves some typing using the
-  {{{../../apidocs/org/apache/tapestry/annotations/IncludeStylesheet.html}@IncludeStylesheet}}
+  {{{../../apidocs/org/apache/tapestry/annotation/IncludeStylesheet.html}@IncludeStylesheet}}
   annotation (as opposed to directly adding the
   \<link\> element to the template.
 

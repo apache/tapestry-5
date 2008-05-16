@@ -12,7 +12,7 @@ Component Parameters
   a specific Java type (which may be a primitive value), and may be <optional> or <required>.
   
   Parameters are defined by placing a
-  {{{../../apidocs/org/apache/tapestry/annotations/Parameter.html}Parameter}} annotation
+  {{{../../apidocs/org/apache/tapestry/annotation/Parameter.html}Parameter}} annotation
   onto a private field.
   
   The component listed below is a looping component; it renders its body
@@ -23,9 +23,9 @@ Component Parameters
 +---+
 package org.example.app.components;
 
-import org.apache.tapestry.annotations.AfterRender;
-import org.apache.tapestry.annotations.Parameter;
-import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.annotation.AfterRender;
+import org.apache.tapestry.annotation.Parameter;
+import org.apache.tapestry.annotation.SetupRender;
 
 public class Count
 {
@@ -258,14 +258,14 @@ Informal Parameters
   \<input\> will support informal parameters.
 
   Only components whose class is annotated with
-  {{{../apidocs/org/apache/tapestry/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+  {{{../apidocs/org/apache/tapestry/annotation/SupportsInformalParameters.html}SupportsInformalParameters}}
   will support informal parameters.
 
   Informal parameters are often used to set the CSS class of an element, or to specify client-side event handlers.
   
   The default binding prefix for informal parameters depends on <where> the parameter binding is specified.
   If the parameter is bound inside a Java class, within the 
-  {{{../../apidocs/org/apache/tapestry/annotations/Component.html}Component}} annotation, then the default binding
+  {{{../../apidocs/org/apache/tapestry/annotation/Component.html}Component}} annotation, then the default binding
   prefix is "prop:".  If the parameter is bound inside the component template, then the default binding
   prefix is "literal:".  This reflects the fact that a parameter specified in the Java class, using the annotation, is most likely
   a computed value, whereas a value in the template should simply be copied, as is, into the result HTML stream.
@@ -273,7 +273,7 @@ Informal Parameters
 Supporting Informal Parameters
 
     <<Only>> components which area annotated with
-    {{{../apidocs/org/apache/tapestry/annotations/SupportsInformalParameters.html}SupportsInformalParameters}}
+    {{{../apidocs/org/apache/tapestry/annotation/SupportsInformalParameters.html}SupportsInformalParameters}}
     may have informal parameters. Tapestry silently drops informal parameters that are specified for components
     that do not have this annotation.
 
@@ -469,7 +469,7 @@ Determining if Bound
   In rare cases, you may want to take different behaviors based on whether a parameter is bound
   or not. This can be accomplished by querying the component's resources, which can be 
   {{{inject.html}injected}}  into the component using the
-  {{{../../apidocs/org/apache/tapestry/ioc/annotations/Inject.html}Inject}} annotation:
+  {{{../../apidocs/org/apache/tapestry/ioc/annotation/Inject.html}Inject}} annotation:
   
 +---+
 public class MyComponent

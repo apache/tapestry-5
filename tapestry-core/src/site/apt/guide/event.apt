@@ -33,7 +33,7 @@ Component Events
   
   Tapestry 5 introduces the concept of <event handler methods>, identified via a naming convention, or
   via the 
-  {{{../../apidocs/org/apache/tapestry/annotations/OnEvent.html}OnEvent annotation}}.  Event handler methods
+  {{{../../apidocs/org/apache/tapestry/annotation/OnEvent.html}OnEvent annotation}}.  Event handler methods
   have any visibility, even private (normally they are given package private visibility, to support testing).
   
   Rather than configure a component to invoke a particular method, you identify one or more
