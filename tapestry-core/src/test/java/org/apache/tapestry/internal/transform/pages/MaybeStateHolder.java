@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform.pages;
 
-import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.annotation.ApplicationState;
 import org.apache.tapestry.internal.services.SimpleASO;
 
 public class MaybeStateHolder

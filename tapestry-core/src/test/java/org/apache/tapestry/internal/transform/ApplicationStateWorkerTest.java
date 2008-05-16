@@ -18,7 +18,7 @@ import javassist.CtClass;
 import javassist.Loader;
 import javassist.LoaderClassPath;
 import javassist.NotFoundException;
-import org.apache.tapestry.annotations.ApplicationState;
+import org.apache.tapestry.annotation.ApplicationState;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.services.*;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;

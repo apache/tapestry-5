@@ -15,10 +15,10 @@
 package org.apache.tapestry.internal.services;
 
 import javassist.*;
-import org.apache.tapestry.annotations.Meta;
-import org.apache.tapestry.annotations.OnEvent;
-import org.apache.tapestry.annotations.Retain;
-import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.annotation.Meta;
+import org.apache.tapestry.annotation.OnEvent;
+import org.apache.tapestry.annotation.Retain;
+import org.apache.tapestry.annotation.SetupRender;
 import org.apache.tapestry.internal.InternalComponentResources;
 import org.apache.tapestry.internal.model.MutableComponentModelImpl;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
@@ -224,10 +224,10 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         ClassTransformation ct = createClassTransformation(ParentClass.class, logger);
 
-        // Field with annotations, but not that annotation
+        // Field with annotation, but not that annotation
         assertNull(ct.getFieldAnnotation("_annotatedField", Override.class));
 
-        // Field with no annotations
+        // Field with no annotation
         assertNull(ct.getFieldAnnotation("_parentField", Override.class));
 
         verify();
@@ -376,7 +376,7 @@ public class InternalClassTransformationImplTest extends InternalBaseTestCase
 
         assertNotNull(meta);
 
-        // Try again (the annotations will be cached). Use an annotation
+        // Try again (the annotation will be cached). Use an annotation
         // that will not be present.
 
         Target t = ct.getAnnotation(Target.class);

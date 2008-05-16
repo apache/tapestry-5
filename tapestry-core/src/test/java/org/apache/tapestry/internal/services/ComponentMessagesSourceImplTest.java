@@ -20,7 +20,7 @@ import org.apache.tapestry.ioc.Messages;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.model.ComponentModel;
-import org.apache.tapestry.services.ComponentMessagesSource;
+import org.apache.tapestry5.services.ComponentMessagesSource;
 import org.testng.annotations.Test;
 
 import java.util.Locale;

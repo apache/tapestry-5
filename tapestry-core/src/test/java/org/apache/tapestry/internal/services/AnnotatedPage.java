@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.MarkupWriter;
-import org.apache.tapestry.annotations.SetupRender;
+import org.apache.tapestry.annotation.SetupRender;
 
 public class AnnotatedPage
 {

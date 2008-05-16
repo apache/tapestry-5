@@ -18,8 +18,8 @@ import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.Resource;
 import org.apache.tapestry.ioc.internal.util.ClasspathResource;
 import org.apache.tapestry.services.Request;
-import org.apache.tapestry.services.RequestGlobals;
 import org.apache.tapestry.services.Response;
+import org.apache.tapestry5.services.RequestGlobals;
 import static org.easymock.EasyMock.*;
 import org.testng.annotations.Test;
 

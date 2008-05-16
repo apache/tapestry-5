@@ -16,7 +16,7 @@ package org.apache.tapestry.internal.bindings;
 
 import org.apache.tapestry.Binding;
 import org.apache.tapestry.ComponentResources;
-import org.apache.tapestry.annotations.BeforeRenderBody;
+import org.apache.tapestry.annotation.BeforeRenderBody;
 import org.apache.tapestry.beaneditor.OrderAfter;
 import org.apache.tapestry.beaneditor.OrderBefore;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform.pages;
 
-import org.apache.tapestry.annotations.Retain;
+import org.apache.tapestry.annotation.Retain;
 
 /**
  * Used to test retained vs. discard properties.

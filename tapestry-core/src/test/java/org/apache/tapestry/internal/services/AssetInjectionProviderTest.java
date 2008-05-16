@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.annotations.Path;
+import org.apache.tapestry.annotation.Path;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.ioc.Resource;
