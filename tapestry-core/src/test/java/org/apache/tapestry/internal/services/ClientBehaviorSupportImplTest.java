@@ -15,9 +15,9 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.RenderSupport;
-import org.apache.tapestry.json.JSONArray;
-import org.apache.tapestry.json.JSONObject;
 import org.apache.tapestry.test.TapestryTestCase;
+import org.apache.tapestry5.json.JSONArray;
+import org.apache.tapestry5.json.JSONObject;
 import org.testng.annotations.Test;
 
 public class ClientBehaviorSupportImplTest extends TapestryTestCase

@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform.pages;
 
-import org.apache.tapestry.annotations.OnEvent;
+import org.apache.tapestry.annotation.OnEvent;
 
 public class EventHandlerTarget
 {

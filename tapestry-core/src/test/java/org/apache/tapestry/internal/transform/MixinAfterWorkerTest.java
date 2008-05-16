@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.MixinAfter;
+import org.apache.tapestry.annotation.MixinAfter;
 import org.apache.tapestry.internal.test.InternalBaseTestCase;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;

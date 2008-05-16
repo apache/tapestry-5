@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform;
 
-import org.apache.tapestry.annotations.InjectComponent;
+import org.apache.tapestry.annotation.InjectComponent;
 import org.apache.tapestry.corelib.components.Grid;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;

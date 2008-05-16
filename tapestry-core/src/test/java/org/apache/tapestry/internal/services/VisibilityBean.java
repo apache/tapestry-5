@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.services;
 
-import org.apache.tapestry.annotations.Retain;
+import org.apache.tapestry.annotation.Retain;
 
 /**
  * Used to test some issues related to visibility.

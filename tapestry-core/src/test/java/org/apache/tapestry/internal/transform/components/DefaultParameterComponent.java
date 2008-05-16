@@ -14,7 +14,7 @@
 
 package org.apache.tapestry.internal.transform.components;
 
-import org.apache.tapestry.annotations.Parameter;
+import org.apache.tapestry.annotation.Parameter;
 
 /**
  * Used by {@link org.apache.tapestry.internal.transform.ParameterWorkerTest}.

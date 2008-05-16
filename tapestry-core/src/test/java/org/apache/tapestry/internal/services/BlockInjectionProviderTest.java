@@ -15,7 +15,7 @@
 package org.apache.tapestry.internal.services;
 
 import org.apache.tapestry.Block;
-import org.apache.tapestry.annotations.Id;
+import org.apache.tapestry.annotation.Id;
 import org.apache.tapestry.ioc.ObjectLocator;
 import org.apache.tapestry.model.MutableComponentModel;
 import org.apache.tapestry.services.ClassTransformation;
@@ -48,8 +48,8 @@ public class BlockInjectionProviderTest extends TapestryTestCase
     }
 
     /**
-     * This doesn't prove anything; later there will be integration tests that prove that the
-     * generated code is valid and works.
+     * This doesn't prove anything; later there will be integration tests that prove that the generated code is valid
+     * and works.
      */
     @Test
     public void explicit_block_id_provided_as_annotation()

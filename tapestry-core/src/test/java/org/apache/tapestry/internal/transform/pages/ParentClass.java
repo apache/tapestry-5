@@ -14,13 +14,12 @@
 
 package org.apache.tapestry.internal.transform.pages;
 
-import org.apache.tapestry.annotations.Meta;
-import org.apache.tapestry.annotations.Retain;
+import org.apache.tapestry.annotation.Meta;
+import org.apache.tapestry.annotation.Retain;
 import org.apache.tapestry.internal.transform.InheritedAnnotation;
 
 /**
- * Test class used with
- * {@link org.apache.tapestry.internal.services.InternalClassTransformationImplTest}
+ * Test class used with {@link org.apache.tapestry.internal.services.InternalClassTransformationImplTest}
  */
 @Meta("foo=bar")
 @InheritedAnnotation
